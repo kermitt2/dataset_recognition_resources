@@ -159,11 +159,6 @@ def process_coleridge(output):
         if not doc_id in document_dataset_map:
             document_dataset_map[doc_id] = []
 
-        # check if the dataset name is not a sub-string of an already existing
-        # dataset name, or on the contrary extends an existing one
-        #if len(document_dataset_map[doc_id])>0:
-        #    for previous_dataset in document_dataset_map[doc_id]: 
-
         document_dataset_map[doc_id].append(dataset_obj)
 
     # match the datasets into the documents
@@ -197,7 +192,7 @@ def process_coleridge(output):
                 section_title = section_part["section_title"]
                 section_text = section_part["text"]
 
-                sentence_texts = split_text(text)
+                sentence_texts = split_text(section_text)
 
                 for sentence_text in sentence_texts:
 
@@ -248,10 +243,10 @@ def process_coleridge(output):
 
                         local_document["body_text"].append(new_section_part)
 
-                if len(local_document["body_text"])>0:
-                    document_sentence["documents"].append(local_document)
+            if len(local_document["body_text"])>0:
+                document_sentence["documents"].append(local_document)
 
-    output_path = os.path.join(output, "coleridge_paragraph.json")
+    output_path = os.path.join(output, "coleridge_sentences.json")
     with open(output_path,'w') as out:
         out.write(json.dumps(document_sentence, indent=4))
 

@@ -2,11 +2,13 @@
 
 ## Original resources
 
-* Dataseer corpus
-* https://github.com/xjaeh/ner_dataset_recognition
-* Coleridge corpus
-* oddpub dataset https://osf.io/yv5rx/
-* transparency-indicators dataset https://osf.io/e58ws/
+Resources and install path of the resources
+
+* Dataseer corpus (`dataseer/`)
+* https://github.com/xjaeh/ner_dataset_recognition (`ner_dataset_recognition/`)
+* Coleridge corpus (`coleridge/`)
+* oddpub dataset https://osf.io/yv5rx/ (`oddpub-dataset/`)
+* transparency-indicators dataset https://osf.io/e58ws/ (`transparency-indicators-dataset/`)
 
 ## Assemble resources 
 
