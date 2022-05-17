@@ -4,11 +4,11 @@
 
 Resources and install path of the resources
 
-* Dataseer corpus (`dataseer/`)
-* https://github.com/xjaeh/ner_dataset_recognition (`ner_dataset_recognition/`)
-* Coleridge corpus (`coleridge/`)
-* oddpub dataset https://osf.io/yv5rx/ (`oddpub-dataset/`)
-* transparency-indicators dataset https://osf.io/e58ws/ (`transparency-indicators-dataset/`)
+* Dataseer corpus (`dataseer/`), biomedicine domain, annotations of implicit and explicit datasets, data types and annotation of data acquisition devices
+* https://github.com/xjaeh/ner_dataset_recognition (`ner_dataset_recognition/`), IR/ML/NLP domain, only explicitly named and reused datasets
+* oddpub dataset https://osf.io/yv5rx/ (`oddpub-dataset/`), biomedicine domain, only article screening (no annotation), only datasets with open access statements, only explicit datasets
+* transparency-indicators dataset https://osf.io/e58ws/ (`transparency-indicators-dataset/`), biomedicine domain, only article screening (no annotation)
+* Coleridge corpus (`coleridge/`), partial (only a very small subset of "datasets" considered), no explicit annotation, no valid definition of datasets (e.g. research initiative name considered as "dataset")
 
 ## Assemble resources 
 

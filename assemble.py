@@ -103,10 +103,12 @@ def process_ner_dataset_recognition(output):
 def process_dataseer(output):
     total_annotations = 0
 
+    '''
     document_paragraph = {}
     document_paragraph["lang"] = "en"
     document_paragraph["level"] = "paragraph"
     document_paragraph["documents"] = []
+    '''
 
     document_sentence = {}
     document_sentence["lang"] = "en"
@@ -223,8 +225,10 @@ def process_dataseer(output):
                             annotation2["type"] = "data_acquisition_device"
                             annotation2["datatype"] = local_dataset["dataset_type"]
 
-                            annotations.append(annotation2)
-                            #total_annotations += 1
+                            if overlap(annotation2["start"], annotation2["end"], spans) == -1:
+                                annotations.append(annotation2)
+                                total_annotations += 1
+                                spans.append([annotation2["start"], annotation2["end"]])
             
             if len(annotations)>0:
                 new_section_part = {}
@@ -279,7 +283,7 @@ def process_coleridge(output):
 
     # read "dataset" train file
     dataset_path_csv = os.path.join("coleridge", "train.csv")
-    df = pd.read_csv(dataset_path_csv) 
+    df = pd.read_csv(dataset_path_csv, keep_default_na=False) 
 
     # Id,pub_title,dataset_title,dataset_label,cleaned_label
 
@@ -397,7 +401,39 @@ def process_coleridge(output):
 
 def process_oddpub(output):
     total_annotations = 0
+
+    # read "dataset" file
+    dataset_path_csv = os.path.join("oddpub-dataset", "Data1_training_sample_1_results.csv")
+    df = pd.read_csv(dataset_path_csv, keep_default_na=False) 
     
+    # depending on the file:
+    #doi,oddpub_open_data,oddpub_open_code,open_data_statements,open_code_statements
+    for index, row in df.iterrows(): 
+        doi = row["doi"]
+        doi = doi.replace("https://doi.org/", "").strip()
+
+
+    dataset_path_csv = os.path.join("oddpub-dataset", "Data2_training_sample_2_results.csv")
+    df = pd.read_csv(dataset_path_csv, keep_default_na=False) 
+
+    # depending on the file:
+    #doi,manual_open_data,manual_open_code,oddpub_open_data,oddpub_open_code,open_data_statements,open_code_statements
+    for index, row in df.iterrows(): 
+        doi = row["doi"]
+        doi = doi.replace("https://doi.org/", "").strip()
+
+
+    # depending on the file:
+    #doi,manual_open_data,manual_open_code,oddpub_open_data,oddpub_open_code,open_data_statements,open_code_statements
+    dataset_path_csv = os.path.join("oddpub-dataset", "Data3_validation_sample_results.csv")
+    df = pd.read_csv(dataset_path_csv, keep_default_na=False) 
+
+    for index, row in df.iterrows(): 
+        doi = row["doi"]
+        doi = doi.replace("https://doi.org/", "").strip()
+
+
+
     print("\ntotal annotations oddpub:", str(total_annotations))
 
 
