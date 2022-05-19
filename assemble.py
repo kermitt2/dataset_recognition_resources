@@ -399,8 +399,34 @@ def process_coleridge(output):
     print("\ntotal annotations coleridge:", str(total_annotations))
 
 
-def process_oddpub(output):
+def process_oddpub(output, fulltext_tei_path="oddpub-dataset/tei"):
+    """
+    Align csv files with mention information with actual article content. 
+
+    It is supposed that prior to this process, we have downloaded available OA publications
+    and process them with Grobid to get usable full text derived from PDF.
+    See https://github.com/kermitt2/biblio-glutton-harvester for harvesting PDF
+    and https://github.com/kermitt2/grobid
+    """
+
     total_annotations = 0
+    map_publications = {}
+
+    document_data_sentence = {}
+    document_data_sentence["lang"] = "en"
+    document_data_sentence["level"] = "sentence"
+    document_data_sentence["documents"] = []
+
+    document_software_sentence = {}
+    document_software_sentence["lang"] = "en"
+    document_software_sentence["level"] = "sentence"
+    document_software_sentence["documents"] = []
+
+    # build map
+    with open(os.path.join(fulltext_tei_path, "map.jsonl"), "rt") as mapfile:
+        for line in mapfile:
+            entry_json = json.loads(line)
+            map_publications[entry_json["doi"]] = entry_json["id"]
 
     # read "dataset" file
     dataset_path_csv = os.path.join("oddpub-dataset", "Data1_training_sample_1_results.csv")
@@ -408,9 +434,131 @@ def process_oddpub(output):
     
     # depending on the file:
     #doi,oddpub_open_data,oddpub_open_code,open_data_statements,open_code_statements
+    nb_file_found = 0
     for index, row in df.iterrows(): 
         doi = row["doi"]
         doi = doi.replace("https://doi.org/", "").strip()
+
+        if doi in map_publications:
+            path_tei_file = os.path.join(fulltext_tei_path, map_publications[doi] + ".tei.xml")
+
+            if not os.path.exists(path_tei_file):
+                #print("cannot find file: ", path_tei_file)
+                continue
+
+            nb_file_found += 1
+
+            local_document_data = {}
+            local_document_data["id"] = doi
+            local_document_data["body_text"] = []
+
+            local_document_software = {}
+            local_document_software["id"] = doi
+            local_document_software["body_text"] = []
+
+            stored_data_sentences = []
+            stored_software_sentences = []
+
+            # weird csv formatting, statements are separated with ; but other punctuation (other from delimiter,) 
+            # could appear
+            # sometimes statements make no sense like 10.1186/s13058-015-0567-2 (raw article header with title and 
+            # authors, etc. but nothing related to data or software)
+
+            data_statements = []
+            if row["oddpub_open_data"] == True:
+                data_statements = row["open_data_statements"].split(";")
+                data_statements = [s.strip() for s in data_statements]
+
+            if len(data_statements) == 0:
+                continue
+
+            print(data_statements)
+
+            software_statements = []
+            if row["oddpub_open_code"] == True:
+                software_statements = row["open_code_statements"].split(";")
+                software_statements = [s.strip() for s in software_statements]
+
+            root = etree.parse(path_tei_file)
+
+            # get all data sentences with xpath
+            sentences = root.xpath('//tei:s/text()', namespaces={'tei': 'http://www.tei-c.org/ns/1.0'})
+            for sentence in sentences:
+
+                sentence = sentence.replace("\n"," ")
+                sentence = re.sub("( )+", " ", sentence)
+                sentence = sentence.strip()
+
+                if len(sentence) < 20:
+                    continue
+
+                simplified_sentence = simplify_text(sentence)
+
+                #print("simplified_sentence:", simplified_sentence)
+
+                for data_statement in data_statements:
+                    if len(data_statement) < 20:
+                        continue
+
+                    data_statement = data_statement.replace("\n"," ")
+                    data_statement = re.sub("( )+", " ", data_statement)
+                    simplified_data_statement = simplify_text(data_statement)
+
+                    #print("simplified_data_statement:", simplified_data_statement)
+                    
+                    if simplified_sentence.startswith(simplified_data_statement) or simplified_sentence.endswith(simplified_data_statement) or simplified_data_statement.startswith(simplified_sentence) or simplified_data_statement.endswith(simplified_sentence): 
+
+                        #annotations = []
+                        #spans = []
+
+                        new_section_part = {}
+                        #new_section_part["section_title"] = section_title
+                        new_section_part["text"] = sentence
+                        #new_section_part["annotation_spans"] = annotations
+
+                        if not sentence in stored_data_sentences:
+                            local_document_data["body_text"].append(new_section_part)
+                            stored_data_sentences.append(sentence)
+
+                for software_statement in software_statements:
+                    if len(software_statement) < 20:
+                        continue
+
+                    software_statement = software_statement.replace("\n"," ")
+                    software_statement = re.sub("( )+", " ", software_statement)
+                    simplified_software_statement = simplify_text(software_statement)
+
+                    #print("simplified_data_statement:", simplified_data_statement)
+                    
+                    if simplified_sentence.startswith(simplified_data_statement) or simplified_sentence.endswith(simplified_data_statement) or simplified_data_statement.startswith(simplified_sentence) or simplified_data_statement.endswith(simplified_sentence): 
+
+                        #annotations = []
+                        #spans = []
+
+                        new_section_part = {}
+                        #new_section_part["section_title"] = section_title
+                        new_section_part["text"] = sentence
+                        #new_section_part["annotation_spans"] = annotations
+
+                        if not sentence in stored_software_sentences:
+                            local_document_software["body_text"].append(new_section_part)
+                            stored_software_sentences.append(sentence)
+
+            if len(local_document_data["body_text"])>0:
+                document_data_sentence["documents"].append(local_document_data)
+
+            if len(local_document_software["body_text"])>0:
+                document_software_sentence["documents"].append(local_document_software)
+
+    output_path = os.path.join(output, "oddpub_data_sentences.json")
+    with open(output_path,'w') as out:
+        out.write(json.dumps(document_data_sentence, indent=4))
+
+    output_path = os.path.join(output, "oddpub_software_sentences.json")
+    with open(output_path,'w') as out:
+        out.write(json.dumps(document_software_sentence, indent=4))
+
+    print(nb_file_found)
 
 
     dataset_path_csv = os.path.join("oddpub-dataset", "Data2_training_sample_2_results.csv")
@@ -451,6 +599,11 @@ def overlap(start, end, spans):
 
 def split_text(text):
     return text_to_sentences(text).split('\n')
+
+def simplify_text(text):
+    if text == None:
+        return ""
+    return re.sub("[^a-zA-Z0-9]", "", text).lower()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Converter for datasets into json")
