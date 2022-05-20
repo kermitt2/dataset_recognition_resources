@@ -428,12 +428,36 @@ def process_oddpub(output, fulltext_tei_path="oddpub-dataset/tei"):
             entry_json = json.loads(line)
             map_publications[entry_json["doi"]] = entry_json["id"]
 
-    # read "dataset" file
     dataset_path_csv = os.path.join("oddpub-dataset", "Data1_training_sample_1_results.csv")
+    document_data_sentence, document_software_sentence = process_oddpub_file(dataset_path_csv, fulltext_tei_path, map_publications, document_data_sentence, document_software_sentence)
+
+    dataset_path_csv = os.path.join("oddpub-dataset", "Data2_training_sample_2_results.csv")
+    document_data_sentence, document_software_sentence = process_oddpub_file(dataset_path_csv, fulltext_tei_path, map_publications, document_data_sentence, document_software_sentence)
+
+    dataset_path_csv = os.path.join("oddpub-dataset", "Data3_validation_sample_results.csv")
+    document_data_sentence, document_software_sentence = process_oddpub_file(dataset_path_csv, fulltext_tei_path, map_publications, document_data_sentence, document_software_sentence)
+
+    output_path = os.path.join(output, "oddpub_data_sentences.json")
+    with open(output_path,'w') as out:
+        out.write(json.dumps(document_data_sentence, indent=4))
+
+    output_path = os.path.join(output, "oddpub_software_sentences.json")
+    with open(output_path,'w') as out:
+        out.write(json.dumps(document_software_sentence, indent=4))
+
+    print("\ntotal annotations oddpub:", str(total_annotations))
+
+
+def process_oddpub_file(dataset_path_csv, fulltext_tei_path, map_publications, document_data_sentence, document_software_sentence):
+    # read "dataset" file
+    
     df = pd.read_csv(dataset_path_csv, keep_default_na=False) 
     
     # depending on the file:
     #doi,oddpub_open_data,oddpub_open_code,open_data_statements,open_code_statements
+    # or
+    #doi,manual_open_data,manual_open_code,oddpub_open_data,oddpub_open_code,open_data_statements,open_code_statements
+
     nb_file_found = 0
     for index, row in df.iterrows(): 
         doi = row["doi"]
@@ -465,19 +489,29 @@ def process_oddpub(output, fulltext_tei_path="oddpub-dataset/tei"):
             # authors, etc. but nothing related to data or software)
 
             data_statements = []
-            if row["oddpub_open_data"] == True:
-                data_statements = row["open_data_statements"].split(";")
-                data_statements = [s.strip() for s in data_statements]
+            if row["oddpub_open_data"] == True or ("manual_open_data" in row and row["manual_open_data"] == True):
+                pre_data_statements = row["open_data_statements"].split(";")
+                pre_data_statements = [s.strip() for s in pre_data_statements]
+
+                for data_statement in pre_data_statements:
+                    pieces = split_text(data_statement)
+                    for piece in pieces:
+                        data_statements.append(piece)
 
             if len(data_statements) == 0:
                 continue
 
-            print(data_statements)
+            #print(data_statements)
 
             software_statements = []
-            if row["oddpub_open_code"] == True:
-                software_statements = row["open_code_statements"].split(";")
-                software_statements = [s.strip() for s in software_statements]
+            if row["oddpub_open_code"] == True or ("manual_open_code" in row and row["manual_open_code"] == True):
+                pre_software_statements = row["open_code_statements"].split(";")
+                pre_software_statements = [s.strip() for s in pre_software_statements]
+
+                for software_statement in pre_software_statements:
+                    pieces = split_text(software_statement)
+                    for piece in pieces:
+                        software_statements.append(piece)
 
             root = etree.parse(path_tei_file)
 
@@ -550,40 +584,7 @@ def process_oddpub(output, fulltext_tei_path="oddpub-dataset/tei"):
             if len(local_document_software["body_text"])>0:
                 document_software_sentence["documents"].append(local_document_software)
 
-    output_path = os.path.join(output, "oddpub_data_sentences.json")
-    with open(output_path,'w') as out:
-        out.write(json.dumps(document_data_sentence, indent=4))
-
-    output_path = os.path.join(output, "oddpub_software_sentences.json")
-    with open(output_path,'w') as out:
-        out.write(json.dumps(document_software_sentence, indent=4))
-
-    print(nb_file_found)
-
-
-    dataset_path_csv = os.path.join("oddpub-dataset", "Data2_training_sample_2_results.csv")
-    df = pd.read_csv(dataset_path_csv, keep_default_na=False) 
-
-    # depending on the file:
-    #doi,manual_open_data,manual_open_code,oddpub_open_data,oddpub_open_code,open_data_statements,open_code_statements
-    for index, row in df.iterrows(): 
-        doi = row["doi"]
-        doi = doi.replace("https://doi.org/", "").strip()
-
-
-    # depending on the file:
-    #doi,manual_open_data,manual_open_code,oddpub_open_data,oddpub_open_code,open_data_statements,open_code_statements
-    dataset_path_csv = os.path.join("oddpub-dataset", "Data3_validation_sample_results.csv")
-    df = pd.read_csv(dataset_path_csv, keep_default_na=False) 
-
-    for index, row in df.iterrows(): 
-        doi = row["doi"]
-        doi = doi.replace("https://doi.org/", "").strip()
-
-
-
-    print("\ntotal annotations oddpub:", str(total_annotations))
-
+    return document_data_sentence, document_software_sentence
 
 def overlap(start, end, spans):
     """
