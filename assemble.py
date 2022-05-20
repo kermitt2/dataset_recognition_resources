@@ -187,9 +187,6 @@ def process_dataseer(output):
 
             for local_dataset in local_datasets:
                 dataset_label = local_dataset["dataset_label"]
-                if "acquisition_device_label" in local_dataset:
-                    acquisition_device_label = local_dataset["acquisition_device_label"]
-
                 ind = data_sentence.find(dataset_label)
                 if ind != -1:
                     start = ind
@@ -212,12 +209,12 @@ def process_dataseer(output):
                         spans.append([annotation["start"], annotation["end"]])
 
                     if "acquisition_device_label" in local_dataset:
+                        acquisition_device_label = local_dataset["acquisition_device_label"]
                         ind2 = data_sentence.find(acquisition_device_label)
                         if ind2 != -1:                        
                             start2 = ind2
                             end2 = ind2 + len(acquisition_device_label)
 
-                            # do something
                             annotation2 = {}
                             annotation2["start"] = ind2
                             annotation2["end"] = ind2 + len(acquisition_device_label)
@@ -594,7 +591,7 @@ def overlap(start, end, spans):
         return -1;
 
     for indx, span in enumerate(spans):
-        if span[0] < end and end >= span[1] or span[0] <= start and start < span[1]:
+        if (span[0] <= start and start < span[1]) or (span[0] < end and end <= span[1]) or (start < span[0] and span[1] < end):
             return indx
     return -1
 
