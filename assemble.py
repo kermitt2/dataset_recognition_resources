@@ -219,7 +219,7 @@ def process_dataseer(output):
                             annotation2["start"] = ind2
                             annotation2["end"] = ind2 + len(acquisition_device_label)
                             annotation2["text"] = data_sentence[annotation2["start"]:annotation2["end"]]
-                            annotation2["type"] = "data_acquisition_device"
+                            annotation2["type"] = "data_device"
                             annotation2["datatype"] = local_dataset["dataset_type"]
 
                             if overlap(annotation2["start"], annotation2["end"], spans) == -1:
