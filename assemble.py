@@ -96,7 +96,7 @@ def process_ner_dataset_recognition(output):
         doc["body_text"].append(sentence_json)
         document["documents"].append(doc)
 
-    output_path = os.path.join(output, "ner_dataset_recognition_sentence.json")
+    output_path = os.path.join(output, "ner_dataset_recognition_sentences.json")
     with open(output_path,'w') as out:
         out.write(json.dumps(document, indent=4))
 
@@ -363,6 +363,7 @@ def process_coleridge(output):
                             annotation["end"] = ind + len(local_dataset_label)
                             annotation["text"] = sentence_text[annotation["start"]:annotation["end"]]
                             annotation["normalized_name"] = local_dataset_normalized_name
+                            annotation["type"] = "dataset_name"
 
                             # check with dataset name
                             if annotation["text"] != local_dataset_label:
