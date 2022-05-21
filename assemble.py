@@ -51,7 +51,7 @@ def process_ner_dataset_recognition(output):
     document = {}
     document["lang"] = "en"
     document["level"] = "sentence"
-    document["body_text"] = []
+    document["documents"] = []
 
     total_annotations = 0
     total_sentences = 0
@@ -62,6 +62,9 @@ def process_ner_dataset_recognition(output):
         sentence = row['text'].strip()
         labels = row['labels']
         datasets = row['datasets']
+
+        doc = {}
+        doc["body_text"] = []
 
         sentence_json = {}
         sentence_json["text"] = sentence
@@ -90,7 +93,8 @@ def process_ner_dataset_recognition(output):
             total_annotations += 1
 
         sentence_json["annotation_spans"] = annotations
-        document["body_text"].append(sentence_json)
+        doc["body_text"].append(sentence_json)
+        document["documents"].append(doc)
 
     output_path = os.path.join(output, "ner_dataset_recognition_sentence.json")
     with open(output_path,'w') as out:
