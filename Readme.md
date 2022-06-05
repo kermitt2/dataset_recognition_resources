@@ -9,6 +9,7 @@ Resources and install path of the resources
 * oddpub dataset https://osf.io/yv5rx/ (`oddpub-dataset/`), biomedicine domain, only article screening (no annotation), only datasets with open access statements, only explicit datasets
 * transparency-indicators dataset https://osf.io/e58ws/ (`transparency-indicators-dataset/`), biomedicine domain, only article screening (no annotation)
 * Coleridge corpus (`coleridge/`), partial (only a very small subset of "datasets" considered), no explicit annotation, no valid definition of datasets (e.g. research initiative name considered as "dataset")
+* SciREX, a dataset of 438 annotated arXiv documents only on ML domain, with identification of datasets (label is "Material"), see https://github.com/allenai/SciREX (reported IAA on 5 documents is 95% average cohen-κ scores), one drawback is the pre-tokenized words which is destructive (because we lose the original delimiters and we can't reconstruct the original text)
 
 ## Assemble resources 
 
