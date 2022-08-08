@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/024448</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Fasta-O-Matic: a tool to sanity check and if needed reformat FASTA files</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0002-3756-5270</contrib-id>
+<name>
+<surname>Shelton</surname>
+<given-names>Jennifer</given-names>
+</name>
+</contrib>
+<aff><institution>Kansas State University</institution></aff>
+</contrib-group>
+<pub-date pub-type="epub">
+<year>2015</year>
+</pub-date>
+<elocation-id>024448</elocation-id>
+<history>
+<date date-type="received">
+<day>11</day>
+<month>8</month>
+<year>2015</year>
+</date>
+<date date-type="accepted">
+<day>13</day>
+<month>8</month>
+<year>2015</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2015, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2015</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="024448.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>As the shear volume of bioinformatic sequence data increases the only way to take advantage of this content is to more completely automate robust analysis workflows. Analysis bottlenecks are often mundane and overlooked processing steps. Idiosyncrasies in reading and/or writing bioinformatics file formats can halt or impair analysis workflows by interfering with the transfer of data from one informatics tools to another. Fasta-O-Matic automates handling of common but minor format issues that otherwise may halt pipelines. The need for automation must be balanced by the need for manual confirmation that any formatting error is actually minor rather than indicative of a corrupt data file. To that end Fasta-O-Matic reports any issues detected to the user with optionally color coded and quiet or verbose logs.</p>
+<p>Fasta-O-Matic can be used as a general pre-processing tool in bioinformatics workflows (e.g. to automatically wrap FASTA files so that they can be read by BioPerl). It was also developed as a sanity check for bioinformatic core facilities that tend to repeat common analysis steps on FASTA files received from disparate sources. Fasta-O-Matic can be set with format requirements specific to downstream tools as a first step in a larger analysis workflow.</p>
+<p>Fasta-O-Matic is available free of charge to academic and non-profit in-stitutions at <ext-link ext-link-type="uri" xlink:href="https://github.com/i5K-KINBRE-script-share/read-cleaning-format-conversion/tree/master/KSU_bioinfo_lab/fasta-o-matic">https://github.com/i5K-KINBRE-script-share/read-cleaning-format-conversion/tree/master/KSU_bioinfo_lab/fasta-o-matic</ext-link>.</p>
+</abstract>
+<counts>
+<page-count count="10"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<label>1</label>
+<title>Introduction</title>
+<p>Sequence data can be stored as text with each letter representing a nucleic acid (DNA and RNA) or amino acid (protein). The linear nature of these molecules makes it natural to represent them as strings, finite sequences of characters. Although it has been argued that a graph, a network of edges connected by vertices, is a more accurate way to store genomic sequences because graphs allow the inclusion of alternate alleles and alternate possible assemblies [<xref rid="c3" ref-type="bibr">3</xref>] all of the most common methods for storing sequences (FASTA, FASTQ, SAM/BAM) use a linear strings.</p>
+<p>Other decisions about how to represent sequence data can be more arbitrary. For example, any character that is not used as base or an amino acid can be used to indicate the beginning of a new sequence. Additionally text can be wrapped to limit the information content in any one line of a file. The advantage of wrapping text is that some programs can then be designed to work one line at time limiting the burden of each step (e.g. the program would never have to process an entire chromosome of sequence data in a single step). The disadvantage is that code must be slightly more complex to load an entire sequence record into the working memory.</p>
+<sec id="s1a">
+<label>1.1</label>
+<title>FASTA file format specifications versus recommendationsm</title>
+<p>FASTA file format requirements are very minimal [<xref rid="c7" ref-type="bibr">7</xref>]. Each sequence is preceded by a header/description line that begins with a &#x003E; symbol. Sequence lines can include any standard IUB/IUPAC single character symbols for nucleic acids or amino acids or the ambiguous codes that indicate possible residues or bases [<xref rid="c2" ref-type="bibr">2</xref>]. They can also include &#x2013; to indicate alignment gaps and &#x002A; to indicate stop codons.</p>
+<p>NCBI recommends wrapping FASTA file sequences lines [<xref rid="c7" ref-type="bibr">7</xref>]. It is also common practice to use the first &#x2018;word&#x2019; in a header (i.e. any character string to the left of the first space in the header) as the unique sequence id. Although these features are common they are not required leading to format compatibility issues with tools that treat these conventions as required.</p>
+</sec>
+<sec id="s1b">
+<label>1.2</label>
+<title>Customizing FASTA files to ensure that information is properly interpreted by downstream tools</title>
+<p>Regardless of whether a FASTA file is technically improperly formatted or it&#x2019;s format merely violates a popular convention, it is critical to quality analysis workflows that data is converted into a format that will be correctly interpreted by downstream tools. Formatting issues can fall into multiple categories including actual format errors and formats that are not technically wrong but are non-standard that cause some tools to throw an error.</p>
+<p>Some format errors indicate a major problem like an attempt to use the wrong data format (e.g. the first line is not a FASTA header because it does not begin with a &#x003E; character). These types of errors will be subsequently referred to as fatal. Alternately, some formatting issues occur commonly without indicating the FASTA file is corrupt (e.g. improperly wrapped/unwrapped sequence lines, missing final new line characters, unusual new line characters like \r). These issues will be referred to as non-fatal. Fatal formatting issues should cause processing to stop. Non-fatal formatting issues should be automatically corrected according to the most common resolution for this type of error. While downstream processing continues the analyst can double check the automated decision to reformat non-fatal issues. This way workflow would not be slowed for trivial reformatting steps and the more rare problems (e.g. when a missing last new line was caused by incomplete file transfer) could still be caught.</p>
+</sec>
+<sec id="s1c">
+<label>1.3</label>
+<title>Existing tools</title>
+<p>Existing bioinformatics tools address FASTA format inconsistencies. However many tools either halt and exit with an error (e.g. BioPerl [<xref rid="c9" ref-type="bibr">9</xref>], [<xref rid="c11" ref-type="bibr">11</xref>], [<xref rid="c10" ref-type="bibr">10</xref>]) or can produce reformatted output FASTA but cannot determine if there is a formatting issue to begin with (e.g. EMBOSS Seqret [<xref rid="c8" ref-type="bibr">8</xref>]).</p>
+<p>The BioPerl module DB::Fasta will halt if a FASTA is inconsistently wrapped or if a line of sequence is too long (as in an unwrapped genome FASTA). This has the disadvantage of requiring intervention to wrap and restart analysis.</p>
+<p>Code:</p>
+<p><code>#!/usr/bin/perl</code>
+<code>use Bio::Seq;</code>
+<code>use Bio::SeqIO;</code>
+<code>use Bio::DB::Fasta; #makes a searchable db from FASTA file</code>
+<code>my &#x0024;out_file_temp = &#x2019;/home/bionano/test_db/all.fa&#x2019;;</code>
+<code>#Create new FASTA outfile object</code>
+<code>my &#x0024;seq_out = Bio::SeqIO-&#x003E;new(&#x2019;-file&#x2019; =&#x003E; &#x201C;&#x003E;&#x0024;out_file_temp&#x201D;,&#x2019;-format&#x2019; =&#x003E; &#x2019;fasta&#x2019;);</code>
+<code>#Load FASTA file as DB</code>
+<code>my &#x0024;db = Bio::DB::Fasta-&#x003E;new(&#x201C;/home/bionano/test_db/miswrapped.fa&#x201D;);</code>
+<code>my &#x0024;seq_obj = &#x0024;db-&#x003E;get_Seq_by_id(&#x2019;seq&#x2019;); # get FASTA records using headers</code>
+<code>#(where header = first &#x2019;word&#x2019; so really header whitespace should also be</code>
+<code>#removed for this file)</code>
+<code>&#x0024;seq_out-&#x003E;write_seq(&#x0024;seq_obj);</code></p>
+<p>Input:</p>
+<p>
+<code>&#x003E;seq 1</code>
+<code>ACTGTGTGCAATCGCTGNNNNCTCTCATCGGATCTTGCAATCGCTNNNCTCTCATCGGATTGCAATCGCTNNNCTtcatcCGGAT</code>
+<code>CGCTGNNNNCTGTGTGCAATCGCTGNNNNCTCCTGATCGCTGNNNNCTGTGTGCAATCGCTGNNNNCTCCTGCAATCGCTGNNNN</code>
+<code>CTCCTGTTCGNATCGatcctctgtttatgcttatagctagctgatcgtagnnntcaacgt</code>
+<code>CTAGAGCGCAGCTCTGGGGGATTACTACTCACTACATCATTAGATCAGATacgactcann</code></p>
+<p><code>&#x003E;seq 2</code>
+<code>cttatagctagctgatAATCGCTGNNTCATCGGATCTTGCCTTGCAATCGtcatcCGtcC</code>
+<code>CGCTGNNNNCTGTGTGCAnnnnnnnnnnncgtaaaacgcctcctccgactcgTCTCTAGG</code>
+<code>CTAGAGCGCAGCTCTGGGGGATTACTACTCACTACATCATTAGATCAGATacgactcann</code>
+<code>nnnctacgCTATCAGGTCTCGAG</code></p>
+<p><code>&#x003E;seq 3 ATCAGCGCTCTATATGGCTCTGATTATAGTTTGCATTCATATGCTGATCTTctcagnntc</code>
+<code>cttgacgctcgctATCTGTAGATCTGTACTtcagacagctcTCAGCAGNNNCTCAGCAGC</code>
+<code>CTACGACAGTcatgcagactagcagt</code></p>
+<p>Output:</p>
+<p><code>------------- EXCEPTION -------------</code></p>
+<p><code>MSG: Each line of the fasta entry must be the same length except the last. Line above #5 &#x2019;CTAGAGCGCAGCTCTGGGGG..&#x2019; is 61 != 86 chars&#x2026;</code></p>
+<p>EMBOSS seqret was designed as a very flexible tool to convert from one properly formatted file to another properly but distinctly formatted file. It also was designed to accept poorly formatted data (e.g. a FASTA missing the final new line that is improperly wrapped) and export a reformatted file (e.g. wrapped after 60 bases with a final newline).</p>
+<p>Code:</p>
+<p><code>seqret -stdout -sequence test.fa -outseq test_reformat.fa</code></p>
+<p>Input:</p>
+<p><code>&#x003E;my header</code>
+<code>AAAAAAAAAAAATTTTTTCCCCGGCGCGCGCGCTATAGCGCTATANNNNNNNNNNNNNNN</code>
+<code>ATATATATATAT</code>
+<code>ATTATTATATATATATTCTCTCTGGGCTCGCGTCTCGCTATTTATATATATATATATATTGCGCTCTCGTCTCCT</code></p>
+<p>Output:</p>
+<p><code>&#x003E;my header AAAAAAAAAAAATTTTTTCCCCGGCGCGCGCGCTATAGCGCTATANNNNNNNNNNNNNNN</code>
+<code>ATATATATATATATTATTATATATATATTCTCTCTGGGCTCGCGTCTCGCTATTTATATA</code>
+<code>TATATATATATTGCGCTCTCGTCTCCT</code></p>
+<p>However, seqret does not log the detected errors in the format. Another feature of Seqret is that an output file is created even if the output is identical to the input. Storing two identical files is an inefficient use of disk space. Seqtk [<xref rid="c5" ref-type="bibr">5</xref>] is another example of a tool that can automate FASTA reformatting but does not first check original format or report format issues.</p>
+<p>Another case to note is when an improperly formatted FASTA file is actually distributed as a component of a bioinformatics tool. Trimmomatic adapter sequences [<xref rid="c1" ref-type="bibr">1</xref>], for example, are distributed versions of the proprietary Illumina sequencing adapters but the FASTA files are missing final new lines. This can cause issues downstream if a workflow includes common analysis techniques like FASTA file concatenation.</p>
+<p>The process of restarting analysis manually after wrapping a FASTA file may only take minutes. The time consuming aspect of this interruption is the time it takes the analyst to become available and the number of jobs this step must be repeated for. Likewise, storage of one extra FASTA file is trivial unless the FASTA file in question stores a whole genome in which case the burden can add up for a bioinformatics core. Efficiency and automation are crucial as bioinformatic analysis projects become more numerous and time consuming. Many tools can either detect a format issue or repair a format issue. No existing tool was found that both validates FASTA format and reformats automatically only where required for a user defined list of non-fatal FASTA format issues.</p>
+</sec>
+</sec>
+<sec id="s2">
+<label>2</label>
+<title>Implementation</title>
+<p>Fasta-O-Matic was designed to fit seamlessly into an analysis workflow. It detects which format issues are actually present in the FASTA file. Then only produces a reformatted file if the current file violates the user defined format requirements.</p>
+<sec id="s2a">
+<label>2.1</label>
+<title>Portability</title>
+<p>Where possible Fasta-O-Matic was designed to be easy to distribute and use. Fasta-O-Matic is distributed on GitHub under a the MIT license to allow for easy access to or customization of the code. The tool was also built and tested on both Python2.7 and and Python3.3 to minimize incompatibility with existing linux environments. The script generates complete help menus when called from the command line with the <monospace>--help</monospace> command and from within python with <monospace>help(fasta_o_matic).</monospace> Additionally, Fasta-O-Matic includes a sample FASTA file with missing newlines, inconsistent wrapping and spaces in headers and a tutorial which describes how to reformat the sample. These features ensure that Fasta-O-Matic is easy to incorporate into existing workflows.</p>
+</sec>
+<sec id="s2b">
+<label>2.2</label>
+<title>Automate where appropriate</title>
+<p>The script was designed to efficiently execute the most likely solution given the presence or absence of format issues. Fasta-O-Matic returns the filename of the FASTA file that conforms to the user defined format. If the original file already conforms then Fasta-O-Matic returns the original filename rather than outputting a redundant FASTA file under a new name.</p>
+<p>Fasta-O-Matic will exit and report an error if the FASTA file cannot be read, the default or defined output directory cannot be written to, the input FASTA file does not begin with a &#x003E; or if the any sequence line includes a non-IUPAC character. The last two errors are considered the fatal FASTA format errors.</p>
+<p>Inconsistent or unwrapped sequence lines, spaces in headers and missing or non-standard new lines are considered non-fatal errors. Testing for these issues is optional. If they are detected the decision is made to reformat as requested, report the issue to the analyst and continue the workflow.</p>
+<p>The script also automatically adjusts to run the minimal number of steps sufficient to fix and report format issues. If it is included in the set of QC steps then wrapping is the first format issue tested because while repairing FASTA wrapping both headers and new lines can be corrected. New lines are given priority after wrapping because while repairing new lines it is also trivial to repair headers. Finally, headers are evaluated for format issues. If an early test returns a format issue and launches a reformatting that automatically repairs any remaining format issues then Fasta-O-Matic still tests for any additional format errors in the original file.</p>
+<p>All format issues are reported in the programs logs in case they indicate an unexpected issue with the data. Logs can be optionally color coded so that red indicates errors, yellow indicates warnings (e.g. a non-fatal issue was found and automatically reformatted) and green indicates status information. This method of logging is designed to draw the attention of the bioinformatics analyst to relevant warnings or errors even if they have grown accustomed to seeing Fasta-O-Matic output frequently.</p>
+</sec>
+<sec id="s2c">
+<label>2.3</label>
+<title>Workflow integration</title>
+<p>Sequence FASTA files are often passed as arguments to commandline tools. For example FASTA files can be passed as an argument to bowtie2-build to be indexed as an alignment reference [<xref rid="c4" ref-type="bibr">4</xref>] or passed to trimmomatic as adapters to detect sequencing artifacts. The output filename used by Fast-O-Matic varies to reflect the reformatting performed. For seamless integration into automated workflows Fasta-O-Matic returns the full path of the new properly formatted FASTA file or the original file (if it is already formatted properly). This can be captured as a variable and used as an argument in subsequent commands. The Bash commands below show and example of capturing the FASTA file name as a variable.</p>
+<p>Code (backslashes are used to indicate a new line that is for display in the article rather than the new lines being included in the actual code):</p>
+<p><code>filename="&#x0024;(python fasta_o_matic.py -f NC_010473_mock_scaffolds.fna \</code>
+<code>-o &#x223C;/out_fasta_o_matic -c)&#x201D; echo &#x0024;filename</code></p>
+</sec>
+</sec>
+<sec id="s3">
+<label>3</label>
+<title>Results</title>
+<sec id="s3a">
+<label>3.1</label>
+<title>Data</title>
+<p>FASTA format tools were tested on the Vicugna pacos-2.0.1 whole genome shotgun sequence scaffolds because the 2.17 Gb <italic>Vicugna pacos</italic> genome is large (<italic>&#x003E;</italic> 1 Gb) and has many scaffolds (276727) [<xref rid="c6" ref-type="bibr">6</xref>]. The large genome size and high number of individual sequences should approximate a typical large FASTA file. The FASTA file was downloaded from the NCBI FTP as NW 005882702.1 <italic>Vicugna pacos</italic> isolate Carlotta (AHFN-0088) Vicugna pacos-2.0.1 assembly scaffolds. An additional unwrapped sequence was added to the end of the file. This sequence was also missing a newline. Each FASTA record in the file also had spaces within the text of the headers.</p>
+<p>The additional simulated FASTA record is available on github.</p>
+</sec>
+<sec id="s3b">
+<label>3.2</label>
+<title>Reformatting tests</title>
+<p>No tool was found with all of Fasta-O-Matic&#x2019;s functions. Therefore sequence line wrapping was compared between Fasta-O-Matic and two other common reformatting tools, seqtk and seqret. Fasta-O-Matic was run with the <monospace>--qc_steps</monospace> flag set to either <monospace>wrap new_line header_whitespace (all), wrap (W) new_line</monospace> (NL) or <monospace>header_whitespace (HW)</monospace>. Seqtk was run with the arguments <monospace>seq -l 60.</monospace> Seqret was run using only the <monospace>-sequence</monospace> and <monospace>-outseq</monospace> arguments. Code used in tests or to produce figure can be found on github. Run time and max memory was reported for each tool. Tests were run on a Xeon Phi server with 48x12-core Intel Xeon CPUs, 256GB of RAM, Linux CentOS 7 and Python2.7.</p>
+</sec>
+<sec id="s3c">
+<label>3.3</label>
+<title>Comparison between results</title>
+<p>All tools could reformat the improperly wrapped FASTA file. Fasta-O-Matic had the lowest maximum memory requirements (<xref rid="fig1" ref-type="fig">Figure 1</xref>, <xref rid="tbl1" ref-type="table">Table 1</xref>). This may be useful if working on a large genome on a local machine or cluster headnode where memory usage is restricted. Fasta-O-Matic took several minutes rather than seconds (seqtk and seqret took &#x003C; 13 s) (<xref rid="fig2" ref-type="fig">Figure 2</xref>, <xref rid="tbl1" ref-type="table">Table 1</xref>).</p>
+<fig id="fig1" position="float" fig-type="figure">
+<label>Figure 1:</label>
+<caption><title>Figure 1 - Max memory used by various FASTA tools.</title>
+<p>Tools were run on the <italic>Vicugna pacos</italic> isolate Carlotta (AHFN-0088) Vicugna pacos- 2.0.1 whole genome shotgun sequence NW 005882702.1 with additional unwrapped FASTA sequence record.</p></caption>
+<graphic xlink:href="024448_fig1.tif"/>
+</fig>
+<fig id="fig2" position="float" fig-type="figure">
+<label>Figure 2:</label>
+<caption><title>Figure 2 Run time for various FASTA tools.</title>
+<p>Tools were run on the <italic>Vicugna pacos</italic> isolate Carlotta (AHFN-0088) Vicugna pacos-2.0.1 whole genome shotgun sequence NW 005882702.1 with additional unwrapped FASTA sequence record.</p></caption>
+<graphic xlink:href="024448_fig2.tif"/>
+</fig>
+<table-wrap id="tbl1" orientation="portrait" position="float">
+<graphic xlink:href="024448_utbl1.tif"/>
+</table-wrap>
+<p>Fully re-formatted simulated FASTA record (backslashes are used to indicate a new line that is for display in the article rather than the new lines being included in the actual FASTA record):</p>
+<p><code>&#x003E;NW_000000000.0_Vicugna_pacos_isolate_Carlotta_(AHFN-0088)_FAKE_genomic_scaffold,_\</code>
+<code>Vicugna_pacos-2.0.1_Scaffold-,_whole_genome_shotgun_sequence</code>
+<code>ATACAACCATAAAGGTGCTATTCAGTCCATGGTTACAGGACATAACTACAACACACACCC</code>
+<code>ACGTACACATGCGCATGCGCATGCACACACCCACGTACACGTACACGTACGCATACACAC</code>
+<code>CCACGTACACGTACACGTACGCATACACACCCACGTACACGTACACGTACGCATACACAC</code>
+<code>CCACGTACACGTACACGTACGCATACACACCCACGTACACGTACACGTACGCATACACAC</code>
+<code>CCACGTACGCACACACGTACACGTGTAGGCACGCATTTAGCAAGTATTTAGCTTGCTTAA</code>
+<code>ACAAACCCCCCCTACCCCCCACGAGCCCCACCTTATATACCAGACAGTCTTGCCAAACCC</code>
+<code>CAAAAACAAGACATAGCGCATAAGCTATAGAACCCGGACAAACCTTTGCCCACAAACCCA</code>
+<code>ACTTCTTAAATAATCACATGGCCAAATCGTACCAATGTGTTACTCTAGTATATTAAAAAT</code>
+<code>ATACAGACAGCTATCTCCCTAGATCCGCCAAAATTTTTAAAACAGAATTCAACAACCTTT</code>
+<code>TTAATGGCACCCCCCCCCCCCATAAATGACC</code></p>
+</sec>
+</sec>
+<sec id="s4">
+<label>4</label>
+<title>Conclusions</title>
+<p>Overall, both memory and run time requirements were small for all three programs. However, the extra minutes taken by Fasta-O-Matic to test for fatal and non-fatal format issues may prevent hours lost waiting for an analyst to manually restart analysis or worse discover that a file was corrupt only after analysis is complete. Fasta-O-Matic was also the only tool identified that skips reformatting if none is required balancing the need to prepare data to be properly interpreted by bioinformatics tools with the practical need to conserve disk space. Fasta-O-Matic is a portable and easy to use tool to facilitate bioinformatics analysis by automating FASTA file inspection in busy bioinformatics cores.</p>
+</sec>
+</body>
+<back>
+<ack>
+<label>5</label>
+<title>Acknowledgements</title>
+<p>Thanks to Sheldon McKay <ext-link ext-link-type="uri" xlink:href="https://github.com/mckays630">https://github.com/mckays630</ext-link> for contributing the editing of Fast-O-Matic.</p>
+<p>This project was supported by an Institutional Development Award (IDeA) from the National Institute of General Medical Sciences of the National Institutes of Health under grant number P20 GM103418. The content is solely the responsibility of the authors and does not necessarily represent the official views of the National Institute of General Medical Sciences or the National Institutes of Health.</p>
+<sec>
+<label>6</label>
+<title>Availability and requirements</title>
+<p><bold>Project name:</bold> Fasta-O-Matic tool</p>
+<p><bold>Project home page:</bold> The Fasta-O-Matic script and tutorial are available at <ext-link ext-link-type="uri" xlink:href="https://github.com/i5K-KINBRE-script-share/read-cleaning-format-conversion/tree/master/KSU_bioinfo_lab/fasta-o-matic">https://github.com/i5K-KINBRE-script-share/read-cleaning-format-conversion/tree/master/KSU_bioinfo_lab/fasta-o-matic</ext-link>.</p>
+<p><bold>Operating system(s):</bold> Linux (tested on CentOS 7, Gentoo and Ubuntu).</p>
+<p><bold>Programming language:</bold> Python2.7&#x002B;, Python3.3&#x002B;</p>
+<p><bold>License</bold>: Tool and tutorial are available free of charge to academic and non-profit institutions.</p>
+<p><bold>Any restrictions to use by non-academics:</bold> Please contact authors for commercial use.</p>
+<p><bold>Dependencies:</bold> Fasta-O-Matic requires the python modules Colorer and general which are distributed in the same git repository.</p>
+</sec>
+</ack>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>[1]</label><mixed-citation publication-type="journal"><string-name><given-names>Anthony M</given-names> <surname>Bolger</surname></string-name>, <string-name><given-names>Marc</given-names> <surname>Lohse</surname></string-name>, and <string-name><given-names>Bjoern</given-names> <surname>Usadel</surname></string-name>. <article-title>Trimmomatic: a flexible trimmer for Illumina sequence data</article-title>. <source>Bioinformatics</source>, page <fpage>btu170</fpage>, <year>2014</year>.</mixed-citation></ref>
+<ref id="c2"><label>[2]</label><mixed-citation publication-type="journal"><collab>IUPAC-IUB Comm</collab>. <article-title>Abbreviations and symbols for nucleic acids, polynucleotides, and their constituents</article-title>. <source>Biochemistry</source>, <volume>9</volume>(<issue>20</issue>):<fpage>4022</fpage>&#x2013;<lpage>4027</lpage>, <year>1970</year>.</mixed-citation></ref>
+<ref id="c3"><label>[3]</label><mixed-citation publication-type="other"><string-name><given-names>DB</given-names> <surname>Jaffe</surname></string-name> <etal>et al.</etal> <source>The FASTG Format Specification (v1.00)</source>. http. <year>2012</year>.</mixed-citation></ref>
+<ref id="c4"><label>[4]</label><mixed-citation publication-type="journal">Ben Langmead and <string-name><given-names>Steven L</given-names> <surname>Salzberg</surname></string-name>. <article-title>Fast gapped-read alignment with Bowtie 2</article-title>. <source>Nature methods</source>, <volume>9</volume>(<issue>4</issue>):<fpage>357</fpage>&#x2013;<lpage>359</lpage>, <year>2012</year>.</mixed-citation></ref>
+<ref id="c5"><label>[5]</label><mixed-citation publication-type="other"><string-name><given-names>H.</given-names> <surname>Li</surname></string-name>. <source>seqtk</source>, <year>2013</year>.</mixed-citation></ref>
+<ref id="c6"><label>[6]</label><mixed-citation publication-type="journal"><string-name><given-names>Kerstin</given-names> <surname>Lindblad-Toh</surname></string-name>, <string-name><given-names>Manuel</given-names> <surname>Garber</surname></string-name>, <string-name><given-names>Or</given-names> <surname>Zuk</surname></string-name>, <string-name><given-names>Michael F.</given-names> <surname>Lin</surname></string-name>, <string-name><given-names>Brian J.</given-names> <surname>Parker</surname></string-name>, <string-name><given-names>Stefan</given-names> <surname>Washietl</surname></string-name>, <string-name><given-names>Pouya</given-names> <surname>Kheradpour</surname></string-name>, <string-name><given-names>Jason</given-names> <surname>Ernst</surname></string-name>, <string-name><given-names>Gregory</given-names> <surname>Jordan</surname></string-name>, <string-name><given-names>Evan</given-names> <surname>Mauceli</surname></string-name>, <string-name><given-names>Lucas D.</given-names> <surname>Ward</surname></string-name>, <string-name><given-names>Craig B.</given-names> <surname>Lowe</surname></string-name>, <string-name><given-names>Alisha K.</given-names> <surname>Holloway</surname></string-name>, <string-name><given-names>Michele</given-names> <surname>Clamp</surname></string-name>, <string-name><given-names>Sante</given-names> <surname>Gnerre</surname></string-name>, <string-name><given-names>Jessica</given-names> <surname>Alf&#x00F6;ldi</surname></string-name>, <string-name><given-names>Kathryn</given-names> <surname>Beal</surname></string-name>, <string-name><given-names>Jean</given-names> <surname>Chang</surname></string-name>, <string-name><given-names>Hiram</given-names> <surname>Clawson</surname></string-name>, <string-name><given-names>James</given-names> <surname>Cuff</surname></string-name>, <string-name><given-names>Federica</given-names> <surname>Di Palma</surname></string-name>, <string-name><given-names>Stephen</given-names> <surname>Fitzgerald</surname></string-name>, <string-name><given-names>Paul</given-names> <surname>Flicek</surname></string-name>, <string-name><given-names>Mitchell</given-names> <surname>Guttman</surname></string-name>, <string-name><given-names>Melissa J.</given-names> <surname>Hubisz</surname></string-name>, <string-name><given-names>David B.</given-names> <surname>Jaffe</surname></string-name>, <string-name><given-names>Irwin</given-names> <surname>Jungreis</surname></string-name>, <string-name><given-names>W. James</given-names> <surname>Kent</surname></string-name>, <string-name><given-names>Dennis</given-names> <surname>Kostka</surname></string-name>, <string-name><given-names>Marcia</given-names> <surname>Lara</surname></string-name>, <string-name><given-names>Andre L.</given-names> <surname>Martins</surname></string-name>, <string-name><given-names>Tim</given-names> <surname>Massingham</surname></string-name>, <string-name><given-names>Ida</given-names> <surname>Moltke</surname></string-name>, <string-name><given-names>Brian J.</given-names> <surname>Raney</surname></string-name>, <string-name><given-names>Matthew D.</given-names> <surname>Rasmussen</surname></string-name>, <string-name><given-names>Jim</given-names> <surname>Robinson</surname></string-name>, <string-name><given-names>Alexander</given-names> <surname>Stark</surname></string-name>, <string-name><given-names>Albert J.</given-names> <surname>Vilella</surname></string-name>, <string-name><given-names>Jiayu</given-names> <surname>Wen</surname></string-name>, <string-name><given-names>Xiaohui</given-names> <surname>Xie</surname></string-name>, <string-name><given-names>Michael C.</given-names> <surname>Zody</surname></string-name>, <string-name><given-names>Jen</given-names> <surname>Baldwin</surname></string-name>, <string-name><given-names>Toby</given-names> <surname>Bloom</surname></string-name>, <string-name><given-names>Chee Whye</given-names> <surname>Chin</surname></string-name>, <string-name><given-names>Dave</given-names> <surname>Heiman</surname></string-name>, <string-name><given-names>Robert</given-names> <surname>Nicol</surname></string-name>, <string-name><given-names>Chad</given-names> <surname>Nusbaum</surname></string-name>, <string-name><given-names>Sarah</given-names> <surname>Young</surname></string-name>, <string-name><given-names>Jane</given-names> <surname>Wilkinson</surname></string-name>, <string-name><given-names>Kim C.</given-names> <surname>Worley</surname></string-name>, <string-name><given-names>Christie L.</given-names> <surname>Kovar</surname></string-name>, <string-name><given-names>Donna M.</given-names> <surname>Muzny</surname></string-name>, <string-name><given-names>Richard A.</given-names> <surname>Gibbs</surname></string-name>,<string-name><given-names>Andrew</given-names> <surname>Cree</surname></string-name>, <string-name><given-names>Huyen H.</given-names> <surname>Dihn</surname></string-name>, <string-name><given-names>Gerald</given-names> <surname>Fowler</surname></string-name>, <string-name><given-names>Shalili</given-names> <surname>Jhangiani</surname></string-name>, <string-name><given-names>Vandita</given-names> <surname>Joshi</surname></string-name>, <string-name><given-names>Sandra</given-names> <surname>Lee</surname></string-name>, <string-name><given-names>Lora R.</given-names> <surname>Lewis</surname></string-name>, <string-name><given-names>Lynne V.</given-names> <surname>Nazareth</surname></string-name>, <string-name><given-names>Geoffrey</given-names> <surname>Okwuonu</surname></string-name>, <string-name><given-names>Jireh</given-names> <surname>Santibanez</surname></string-name>, <string-name><given-names>Wesley C.</given-names> <surname>Warren</surname></string-name>, <string-name><given-names>Elaine R.</given-names> <surname>Mardis</surname></string-name>, <string-name><given-names>George M.</given-names> <surname>Weinstock</surname></string-name>, <string-name><given-names>Richard K.</given-names> <surname>Wilson</surname></string-name>, <string-name><given-names>Kim</given-names> <surname>Delehaunty</surname></string-name>, <string-name><given-names>David</given-names> <surname>Dooling</surname></string-name>, <string-name><given-names>Catrina</given-names> <surname>Fronik</surname></string-name>, <string-name><given-names>Lucinda</given-names> <surname>Fulton</surname></string-name>, <string-name><given-names>Bob</given-names> <surname>Fulton</surname></string-name>, <string-name><given-names>Tina</given-names> <surname>Graves</surname></string-name>, <string-name><given-names>Patrick</given-names> <surname>Minx</surname></string-name>, <string-name><given-names>Erica</given-names> <surname>Sodergren</surname></string-name>, <string-name><given-names>Ewan</given-names> <surname>Birney</surname></string-name>, <string-name><given-names>Elliott H.</given-names> <surname>Margulies</surname></string-name>, <string-name><given-names>Javier</given-names> <surname>Herrero</surname></string-name>, <string-name><given-names>Eric D.</given-names> <surname>Green</surname></string-name>, <string-name><given-names>David</given-names> <surname>Haussler</surname></string-name>, <string-name><given-names>Adam</given-names> <surname>Siepel</surname></string-name>, <string-name><given-names>Nick</given-names> <surname>Goldman</surname></string-name>, <string-name><given-names>Katherine S.</given-names> <surname>Pollard</surname></string-name>, <string-name><given-names>Jakob S.</given-names> <surname>Pedersen</surname></string-name>, <string-name><given-names>Eric S.</given-names> <surname>Lander</surname></string-name>, and <string-name><given-names>Manolis</given-names> <surname>Kellis</surname></string-name>. <article-title>A high-resolution map of human evolutionary constraint using 29 mammals</article-title>. <source>Nature</source>, <volume>478</volume>(<issue>7370</issue>):<fpage>476</fpage>&#x2013;<lpage>482</lpage>, <month>oct</month> <year>2011</year>.</mixed-citation></ref>
+<ref id="c7"><label>[7]</label><mixed-citation publication-type="other"><collab>NCBI</collab>. <source>Accepted input formats</source>, Accessed: <date-in-citation content-type="access-date">2015-08-06</date-in-citation>.</mixed-citation></ref>
+<ref id="c8"><label>[8]</label><mixed-citation publication-type="journal"><string-name><given-names>P</given-names> <surname>Rice</surname></string-name>, <string-name><given-names>I</given-names> <surname>Longden</surname></string-name>, and <string-name><given-names>A</given-names> <surname>Bleasby</surname></string-name>. <article-title>EMBOSS: the European Molecular Biology Open Software Suite</article-title>. <source>Trends in genetics : TIG</source>, <volume>16</volume>(<issue>6</issue>):<fpage>276</fpage>&#x2013;<lpage>277</lpage>, <month>June</month> <year>2000</year>.</mixed-citation></ref>
+<ref id="c9"><label>[9]</label><mixed-citation publication-type="journal"><string-name><given-names>J. E.</given-names> <surname>Stajich</surname></string-name>, <string-name><given-names>D.</given-names> <surname>Block</surname></string-name>, <string-name><given-names>K.</given-names> <surname>Boulez</surname></string-name>, <string-name><given-names>S. E.</given-names> <surname>Brenner</surname></string-name>, <string-name><given-names>S. A.</given-names> <surname>Chervitz</surname></string-name>, <string-name><given-names>C.</given-names> <surname>Dagdigian</surname></string-name>, <string-name><given-names>G.</given-names> <surname>Fuellen</surname></string-name>, <string-name><given-names>J. G.</given-names> <surname>Gilbert</surname></string-name>, <string-name><given-names>I.</given-names> <surname>Korf</surname></string-name>, <string-name><given-names>H.</given-names> <surname>Lapp</surname></string-name>, <string-name><given-names>H.</given-names> <surname>Lehvaslaiho</surname></string-name>, <string-name><given-names>C.</given-names> <surname>Matsalla</surname></string-name>, <string-name><given-names>C. J.</given-names> <surname>Mungall</surname></string-name>, <string-name><given-names>B. I.</given-names> <surname>Osborne</surname></string-name>, <string-name><given-names>M. R.</given-names> <surname>Pocock</surname></string-name>, <string-name><given-names>P.</given-names> <surname>Schattner</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Senger</surname></string-name>, <string-name><given-names>L. D.</given-names> <surname>Stein</surname></string-name>, <string-name><given-names>E.</given-names> <surname>Stupka</surname></string-name>, <string-name><given-names>M. D.</given-names> <surname>Wilkinson</surname></string-name>, and <string-name><given-names>E.</given-names> <surname>Birney</surname></string-name>. <article-title>The Bioperl toolkit: Perl modules for the life sciences</article-title>. <source>Genome Res</source>, <volume>12</volume>(<issue>10</issue>):<fpage>1611</fpage>&#x2013;<lpage>8</lpage>, <year>2002</year>.</mixed-citation></ref>
+<ref id="c10"><label>[10]</label><mixed-citation publication-type="journal"><string-name><given-names>Jason E.</given-names> <surname>Stajich</surname></string-name> and <string-name><given-names>Matthew W.</given-names> <surname>Hahn</surname></string-name>. <article-title>Disentangling the effects of demography and selection in human history</article-title>. <source>Molecular biology and evolution</source>, <volume>22</volume>(<issue>1</issue>):<fpage>63</fpage>&#x2013;<lpage>73</lpage>, <month>jan</month> <year>2005</year>.</mixed-citation></ref>
+<ref id="c11"><label>[11]</label><mixed-citation publication-type="journal"><string-name><given-names>L. D.</given-names> <surname>Stein</surname></string-name>, <string-name><given-names>C.</given-names> <surname>Mungall</surname></string-name>, <string-name><given-names>S.</given-names> <surname>Shu</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Caudy</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Mangone</surname></string-name>, <string-name><given-names>A.</given-names> <surname>Day</surname></string-name>, <string-name><given-names>E.</given-names> <surname>Nickerson</surname></string-name>, <string-name><given-names>J. E.</given-names> <surname>Stajich</surname></string-name>, <string-name><given-names>T. W.</given-names> <surname>Harris</surname></string-name>, <string-name><given-names>A.</given-names> <surname>Arva</surname></string-name>, and <string-name><given-names>S.</given-names> <surname>Lewis</surname></string-name>. <article-title>The generic genome browser: a building block for a model organism system database</article-title>. <source>Genome Res</source>, <volume>12</volume>(<issue>10</issue>):<fpage>1599</fpage>&#x2013;<lpage>610</lpage>, <year>2002</year>.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

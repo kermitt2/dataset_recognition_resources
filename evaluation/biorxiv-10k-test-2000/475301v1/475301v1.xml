@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/475301</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>RUPEE: A fast and accurate purely geometric protein structure search</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0003-2453-9214</contrib-id>
+<name><surname>Ayoub</surname><given-names>Ronald</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="author-notes" rid="n1">&#x002A;</xref>
+</contrib>
+<contrib contrib-type="author">
+<name><surname>Lee</surname><given-names>Yugyung</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>School of Computing and Engineering, University of Missouri at Kansas City</institution>, <country>USA</country></aff>
+</contrib-group>
+<author-notes>
+<fn id="n1" fn-type="other"><label>&#x002A;</label><p><email>ronaldayoub@mail.umkc.edu</email></p>
+</fn>
+</author-notes>
+<pub-date pub-type="epub"><year>2018</year></pub-date>
+<elocation-id>475301</elocation-id>
+<history>
+<date date-type="received">
+<day>20</day>
+<month>11</month>
+<year>2018</year>
+</date>
+<date date-type="rev-recd">
+<day>20</day>
+<month>11</month>
+<year>2018</year>
+</date>
+<date date-type="accepted">
+<day>20</day>
+<month>11</month>
+<year>2018</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2018, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2018</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="475301.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>Given the close relationship between protein structure and function, protein structure searches have long played an established role in bioinformatics. Despite their maturity, existing protein structure searches either use simplifying assumptions or compromise between fast response times and quality of results. These limitations can prevent the easy and efficient exploration of relationships between protein structures, which is the norm in other areas of inquiry. We have developed RUPEE, a fast, scalable, and purely geometric structure search combining techniques from information retrieval and big data with a novel approach to encoding sequences of torsion angles.</p>
+<p>Comparing our results to the output of mTM, SSM, and the CATHEDRAL structural scan, it is clear that RUPEE has set a new bar for purely geometric big data approaches to protein structure searches. RUPEE in top-aligned mode produces equal or better results than the best available protein structure searches, and RUPEE in fast mode demonstrates the fastest response times coupled with high quality results.</p>
+<p>The RUPEE protein structure search is available at <ext-link ext-link-type="uri" xlink:href="http://www.ayoubresearch.com">http://www.ayoubresearch.com</ext-link>. Code and data are available at <ext-link ext-link-type="uri" xlink:href="https://github.com/rayoub/rupee">https://github.com/rayoub/rupee</ext-link>.</p>
+</abstract>
+<counts>
+<page-count count="19"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<title>Introduction</title>
+<p>Proteins represent the functional end-product within the central dogma of molecular biology [<xref ref-type="bibr" rid="c1">1</xref>]. As such, understanding protein structure is a central goal within structural bioinformatics. Protein structure determination, prediction, alignment, and search all serve to advance this understanding. Below, we present our approach to a fast, scalable, and purely geometric protein structure search we refer to with the acronym of <italic>RUn Position Encoded Encodings</italic> of residue descriptors (RUPEE).</p>
+<p>Given a protein domain identifier, whole chain identifier or an uploaded PDB file, RUPEE can search for matches among domains defined in SCOPe 2.07 [<xref ref-type="bibr" rid="c2">2</xref>], CATH v4.2 [<xref ref-type="bibr" rid="c3">3</xref>], ECOD develop210 [<xref ref-type="bibr" rid="c4">4</xref>], or among whole chains defined in the PDB. RUPEE is able to search either of these databases using any identifier. For instance, you can search SCOPe using a CATH domain identifier.</p>
+<p>RUPEE has two modes of operation, fast and top-aligned. Fast mode is significantly faster than all other protein structure searches discussed below but at the expensive of accuracy. Despite this, we will show that the accuracy of RUPEE in fast mode is not far below that of the best available structure searches. On the other hand, the accuracy and response times of RUPEE in top-aligned mode are comparable to currently available protein structure searches that are commonly considered fast.</p>
+<p>RUPEE stands out as not just another protein structure search, of which there are many. RUPEE is the first, to our knowledge, purely geometric protein structure search to achieve results as good as the best available protein structure searches. Additionally, it can be argued that the kinds of matches that RUPEE does return have more added value than the current state of the art in that with equal scores it is able to return results not biased toward a structure classification hierarchy such as SCOPe or sequence clusters such as the PDB-90. In this regard, RUPEE makes a fundamental contribution to protein structure research that lends itself to being leveraged in existing systems. It also provided a path for further research activity in the direction of big data representations of protein structures.</p>
+<p>Besides our approach to protein structure search, we introduce a polar plot for torsion angles that may have wider applicability in the study of protein structure. Further, the <italic>run position encoding</italic> heuristic introduced below may have wider applicability to algorithms for character sequences containing long runs of repeats.</p>
+<p>We first discuss some related work to provide a context for our approach followed by a description of our method. We end with a comparison of results against the mTM-align structure search [<xref ref-type="bibr" rid="c5">5</xref>], the secondary structure matching (SSM) search [<xref ref-type="bibr" rid="c6">6</xref>], and the CATHEDRAL structural scan [<xref ref-type="bibr" rid="c7">7</xref>] available at the CATH website.</p>
+</sec>
+<sec id="s2">
+<title>Related work</title>
+<p>Pairwise alignment involves finding a set of spatial rotations and translations for two protein structures that minimizes a distance metric. Most commonly, the root mean squared deviation (RMSD) between <italic>&#x03B1;</italic>-carbons of aligned residues is minimized.</p>
+<p>The typical use case of aligning one protein structure to another does not impose tight response time requirements. For this reason, pairwise alignments can focus on accuracy. On the other hand, a protein structure search can involve thousands of comparisons and accuracy is often balanced against speed. In this case, pairwise alignment is still useful for evaluating the results of a search, and this is the approach we take.</p>
+<p>For pairwise alignment, Combinatorial Extensions (CE) [<xref ref-type="bibr" rid="c8">8</xref>] and FATCAT [<xref ref-type="bibr" rid="c9">9</xref>] are among the most popular tools, representing rigid and flexible protein alignments, respectively. CE performs a rigid alignment in order to minimize RMSD and FATCAT allows for a constrained number of twists in the protein chain in order to find a more flexible alignment before minimizing RMSD.</p>
+<p>Whereas pairwise structure alignments only depend on the sequence of <italic>&#x03B1;</italic>-carbon coordinates, protein structure searches often introduce a further dependence on the sequence order of amino acids. This approach often takes the form of clustering proteins based on sequences and pre-calculating results for pairwise alignments among cluster representatives. Then, these pre-calculated results are used for filtering the number of structures used for comparisons against a query protein. The exact formula for combining the use of representatives and pre-calculated results varies from system to system. However, all systems using this approach share the same disadvantage, an indirect dependence on amino acid sequences. In the absence of a reliance on sequence representatives and pre-calculated results, and without sacrificing accuracy, response times suffer greatly, often taking upwards of an hour for queries to complete.</p>
+<p>For protein structure searches, VAST [<xref ref-type="bibr" rid="c10">10</xref>] and the FATCAT server [<xref ref-type="bibr" rid="c11">11</xref>] are among the most popular. Nonetheless, these searches are slow in comparison to mTM, SSM, and CATHEDRAL when pre-calculated results are not used. If given a known protein domain, VAST can return structural neighbors in seconds using pre-calculated results. However, if uploading a PDB file where pre-calculated results are not used, response times for VAST can exceed 30 minutes. Similarly, the FATCAT server, that does not use pre-calculated results, can take over an hour to send results for a search against PDB-90 representatives [<xref ref-type="bibr" rid="c12">12</xref>].</p>
+<p>Given the above, there remains a need for a purely geometric protein structure search. For the serendipitous exploration of relations between protein structures performed in the trenches, this search should be fast. Moreover, with a 10&#x0025; yearly growth rate of solved structures deposited in the PDB [<xref ref-type="bibr" rid="c13">13</xref>], this search should be scalable. At a minimum, RUPEE takes a significant step in this direction as will be shown below.</p>
+</sec>
+<sec id="s3">
+<title>Methods</title>
+<p>Broadly, we define a linear encoding of protein structure and convert this linear encoding into a bag of features. Min-hashing and locality sensitive hashing (LSH), techniques drawn from big data, are then applied to implement a protein structure indexing method that serves as the foundation for both RUPEE operating modes, fast and top-aligned.</p>
+<p>Protein structure searches that use linear encodings are not unique [<xref ref-type="bibr" rid="c14">14</xref>&#x2013;<xref ref-type="bibr" rid="c16">16</xref>]. The novelty of our approach lies in its remarkable performance given its simplicity. Additionally, elements of our approach can be isolated and found to be useful in their own right.</p>
+<sec id="s3a">
+<title>Regions of Torsion Angles</title>
+<p>Our first step towards a linear encoding of protein structure is to identify separable regions of permissible torsion angles, but first we introduce a new plot of torsion angles better suited to this effort.</p>
+<p>Despite their utility and familiarity, Ramachandran plots [<xref ref-type="bibr" rid="c17">17</xref>] represent angular data using a square plot better suited for scalar data. This leads to the unwieldy arrangement where the top part of the plot is continuous with the bottom and the left is continuous with the right.</p>
+<p>To identify regions of torsion angles, we randomly sampled 10,000 residues from high-resolution CATH s35 representatives to account for precision and redundancy, respectively. A Ramachandran plot of the sampled torsions angles is shown in the left plot of <xref rid="fig1" ref-type="fig">Fig 1</xref>. As can be seen, a single cluster of residues, consisting primarily of <italic>&#x03B2;</italic>-strands, appears at all 4 corners of the Ramachandran plot.</p>
+<fig id="fig1" position="float" fig-type="figure">
+<label>Fig 1.</label>
+<caption><p>Ramachandran plot (right) and polar plot (left) of randomly sampled torsion angles</p></caption>
+<graphic xlink:href="475301_fig1.tif"/>
+</fig>
+<p>This continuity problem was partially addressed in [<xref ref-type="bibr" rid="c18">18</xref>] using <italic>wrapped</italic> and <italic>mirrored</italic> plots. Both wrapped and mirrored plots take advantage of the sparsely populated areas of the Ramachandran plot at <italic>&#x03C6;</italic> &#x003D; 0&#x00B0; and <italic>&#x03C8;</italic> &#x003D; &#x2212;120&#x00B0;. However, with larger samples of torsion angles, the area at <italic>&#x03C8;</italic> &#x003D; &#x2212;120&#x00B0; becomes less sparse. The use of a polar plot resolves this elegantly by only requiring one break in continuity at <italic>&#x03C6;</italic> &#x003D; 0&#x00B0;.</p>
+<p>In the right plot of <xref rid="fig1" ref-type="fig">Fig 1</xref>, we show the same torsion angles appearing in the Ramachandran plot using a polar plot. In this plot, <italic>&#x03C6;</italic> corresponds to the radius <italic>r</italic> and <italic>&#x03C8;</italic> corresponds to the angle <italic>&#x03B8;</italic> in traditional polar plots. Notice the residues appearing at the 4 corners of the Ramachandran plot now appear in one continuous region of the polar plot centered at <italic>&#x03C6;</italic> &#x003D; <italic>&#x00B1;</italic>180&#x00B0; and <italic>&#x03C8;</italic> &#x003D; <italic>&#x00B1;</italic>180&#x00B0;.</p>
+</sec>
+<sec id="s3b">
+<title>Linear Encoding of Protein Structure</title>
+<p>The polar plot described above is used to define torsion angle regions for each secondary structure assignment. The eight DSSP secondary structure assignment codes defined in [<xref ref-type="bibr" rid="c19">19</xref>] divide into three groups in which torsion angle regions are roughly the same: &#x2018;G&#x2019;,&#x2018;H&#x2019;,&#x2018;I&#x2019;, and &#x2018;T&#x2019; corresponding to 3<sub>10</sub>-helix, <italic>&#x03B1;</italic>-helix, <italic>&#x03C0;</italic>-helix, and turn, respectively; &#x2018;E&#x2019; and &#x2018;B&#x2019; corresponding to <italic>&#x03B2;</italic>-strand and <italic>&#x03B2;</italic>-bridge, respectively; and &#x2018;S&#x2019; and &#x2018;C&#x2019; corresponding to bend and coil, respectively.</p>
+<p>Polar plots for each group of DSSP assignment codes along with defined region and descriptor designations are shown in <xref rid="fig2" ref-type="fig">Fig 2</xref>, with the exception of turns and bridges, which receive descriptors 11 and 12, respectively. For each polar plot, there are well-defined continuous regions of torsion angles that remain continuous in the plots. The only exception is found in the bends and coil plot at <italic>&#x03C8;</italic> &#x003D; 60&#x00B0; between <italic>&#x03C6;</italic> &#x003D; &#x2212;180&#x00B0; and <italic>&#x03C6;</italic> &#x003D; 0&#x00B0;.</p>
+<fig id="fig2" position="float" fig-type="figure">
+<label>Fig 2.</label>
+<caption><p>Polar plots of randomly sampled torsion angles with designated descriptors for region and DSSP code combinations</p></caption>
+<graphic xlink:href="475301_fig2.tif"/>
+</fig>
+<p>As an example of our linear encoding, we apply our method to the <italic>&#x03B2;</italic>-turn-<italic>&#x03B2;</italic> motif shown in <xref rid="fig3" ref-type="fig">Fig 3</xref>. The corresponding sequence of residue descriptors is shown below.</p>
+<disp-formula id="eqn1">
+<alternatives>
+<graphic xlink:href="475301_eqn1.gif"/>
+</alternatives>
+</disp-formula>
+<fig id="fig3" position="float" fig-type="figure">
+<label>Fig 3.</label>
+<caption><p><italic>&#x03B2;</italic>-turn-<italic>&#x03B2;</italic> motif from CATH domain 1nycA00</p></caption>
+<graphic xlink:href="475301_fig3.tif"/>
+</fig>
+</sec>
+<sec id="s3c">
+<title>Bag representation of protein structure</title>
+<p>Once a linear encoding for a protein structure is obtained, it needs to be further transformed into a representation suitable for fast and scalable similarity comparisons to other structures. The processing of text documents within Information Retrieval (IR) has long been used to satisfy these requirements using bag representations. There are two distinct categories of representations for documents, syntactic and semantic, and much of the research applying IR to protein structure search has focused on the latter [<xref ref-type="bibr" rid="c20">20</xref>&#x2013;<xref ref-type="bibr" rid="c22">22</xref>].</p>
+<p>We have adapted the syntactic approach to document similarity, often referred to as shingling [<xref ref-type="bibr" rid="c23">23</xref>], to our linear encoding of protein structure. We transform a linear sequence of descriptors into a multiset of shingles consisting of 3 consecutive descriptors. The overlap between shingles ensures some of the order information within the original sequence is preserved in the bag.</p>
+<p>The length of a shingle is chosen to balance false positives, in the case of shorter shingles, against false negatives, in the case of longer shingles. In [<xref ref-type="bibr" rid="c24">24</xref>], we used 4 consecutive descriptors for our shingles. With the additions discussed in the <italic>Operating modes</italic> section below, we have found RUPEE is more tolerant of false positives and so accordingly we have cast a wider net by decreasing the shingle length to 3.</p>
+<p>By shingling, we obtain a multiset of ordered lists from an ordered list of numbers. As an example, the sequence in (1) is transformed into the following bag of shingles.</p>
+<disp-formula id="eqn2">
+<alternatives>
+<graphic xlink:href="475301_eqn2.gif"/>
+</alternatives>
+</disp-formula>
+<p>Next, each shingle <italic>s</italic> is hashed to an integer as shown in (3). The hash function used is a simplification of the hash function used in the Rabin-Karp algorithm [<xref ref-type="bibr" rid="c25">25</xref>]. The prime number 13 is used as the base since it is large enough to spread the descriptor values out in hash space without collisions.</p>
+<disp-formula id="eqn3">
+<alternatives>
+<graphic xlink:href="475301_eqn3.gif"/>
+</alternatives>
+</disp-formula>
+<p>Subsequently, the multiset in (2) becomes the following bag of integers.</p>
+<disp-formula id="eqn4">
+<alternatives>
+<graphic xlink:href="475301_eqn4.gif"/>
+</alternatives>
+</disp-formula>
+<p>This final step completes the transformation of an ordered list of descriptors to a multiset of integers that still retains some of the order information present in the original list.</p>
+<p>Notice in (4) the value 915, corresponding to the shingle [5, 5, 5], occurs frequently indicating the presence of <italic>&#x03B2;</italic>-strands. Since most proteins are dominated by regular secondary structure, the abundance of shingles for <italic>&#x03B2;</italic>-strands as well as the three types of helices, end up dominating comparisons. Moreover, since shingles are limited in length, this situation allows for structures with many short <italic>&#x03B2;</italic>-strands to match structures with fewer long <italic>&#x03B2;</italic>-strands. The same situation applies to helices.</p>
+<p>To address this lack of specificity, we introduce a heuristic we call <italic>run position encoding</italic> (RPE). To distinguish between short and long runs, thereby increasing the specificity of the shingles, we add a factor of 10<sup>5</sup> to each shingle hash as a function of the first residue&#x2019;s position in a run <italic>i</italic>.<disp-formula id="eqn5">
+<alternatives>
+<graphic xlink:href="475301_eqn5.gif"/>
+</alternatives>
+</disp-formula>
+where <italic>i</italic> is zero-based and <italic>l</italic> is the length of the run. Multiplying by 10<sup>5</sup> places the run factor as the left-most digit in the hash to avoid interference with the digits provided by the hash in (3). This placement is also convenient for visual inspection, since the run factor is isolated as the left-most digit.</p>
+<p>The run factors for the sequence in (1) are
+<disp-formula id="eqn6">
+<alternatives>
+<graphic xlink:href="475301_eqn6.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>Applied to the bag of integers in (4) gives
+<disp-formula id="eqn7">
+<alternatives>
+<graphic xlink:href="475301_eqn7.gif"/>
+</alternatives>
+</disp-formula>
+where the leading zero run factors are shown for clarity.</p>
+<p>This pyramidal approach preserves matches at the boundaries between secondary structure runs and loops that would not otherwise be preserved in the presence of differences in run lengths of one or more.</p>
+<p>Now that we have a representation of a protein structure as a bag of integers, similarity between any two structures <italic>a</italic> and <italic>b</italic> is defined as the Jaccard similarity [<xref ref-type="bibr" rid="c26">26</xref>] for multisets,
+<disp-formula id="eqn8">
+<alternatives>
+<graphic xlink:href="475301_eqn8.gif"/>
+</alternatives>
+</disp-formula>
+where <italic>i</italic> ranges over all possible shingle hashes <italic>s</italic><sub><italic>i</italic></sub> and <italic>a</italic><sub><italic>i</italic></sub> and <italic>b</italic><sub><italic>i</italic></sub> give the counts of shingle hash <italic>s</italic><sub><italic>i</italic></sub> in structures <italic>a</italic> and <italic>b</italic>, respectively.</p>
+</sec>
+<sec id="s3d">
+<title>Min-hashing and LSH</title>
+<p>In IR, the bag of shingles representation of documents is used in the near dupe clustering of documents [<xref ref-type="bibr" rid="c27">27</xref>]. One application of near dupe clustering is in the review stage of Electronic-Discovery [<xref ref-type="bibr" rid="c28">28</xref>], which is the most expensive stage in a discovery process. Often millions of documents must be examined by a staff of attorneys to make a reasonable effort at providing all documents relevant to the discovery request.</p>
+<p>Grouping documents into near dupe clusters and assigning all documents within a cluster to a single reviewer reduces duplication of effort.</p>
+<p>In the case of near dupe clustering, each document must be compared to every other document in the collection, taking quadratic time. For this task, min-hashing [<xref ref-type="bibr" rid="c29">29</xref>] and locality sensitive hashing (LSH) [<xref ref-type="bibr" rid="c30">30</xref>] can be combined to reduce this to subquadratic time. Although we do not near dupe cluster domains, we can still leverage the techniques of min-hashing and LSH to speed up protein structure search by a large constant factor.</p>
+<p>Min-hashing is used to randomly select items from a set of items by repeatedly randomly hashing the items, sorting the hashes into a list, and then selecting the minimum item in each permuted list. If the same random permutation of items is performed on each set of items in a collection, the key result is that the probability of matching min-hashes is equal to the Jaccard similarity [<xref ref-type="bibr" rid="c29">29</xref>]. In order to approximate the Jaccard similarity for a given pair of sets, a sufficient number of min-hashes must be obtained.</p>
+<p>In our case, the items are bags of shingle hashes for protein structures from which we obtain 99 min-hashes as described in [<xref ref-type="bibr" rid="c31">31</xref>]. Given the key result above, the Jaccard similarity can now be approximated by the proportion of matching min-hashes.</p>
+<p>Next, we use the LSH banding technique as described in [<xref ref-type="bibr" rid="c31">31</xref>]. The key result of the banding technique is that if <italic>any</italic> band positions are a match for a given pair of structures, the probability that a specific similarity threshold has been met can be calculated. We use 33 bands of 3-min-hashes where the probability of a Jaccard similarity of 60&#x0025; or greater is approximately 99&#x0025;. Banding allows the problem of finding similar items to be parallelized across bands since all that is needed for a match is a single band match.</p>
+<p>Together, min-hashing and LSH provide the foundation for both operating modes of RUPEE, fast and top-aligned.</p>
+</sec>
+<sec id="s3e">
+<title>Operating modes</title>
+<p>RUPEE provides two modes, fast and top-aligned. Each operating mode builds on the results provided by the min-hashing and LSH system described above. When a structure search is executed in either mode, a number of concurrent tasks are executed corresponding to the number of bands used for LSH. These concurrent tasks identify candidate matches based on a single band match and then validate the matches based on a comparison of min-hashes.</p>
+<p>In fast mode, the top 8,000 matches are obtained along with the original gram sequences defined for the structures. A further validation is done by performing a longest common subsequence (LCS) analysis of the matched gram sequences and adjusting the Jaccard similarity scores accordingly. This step accounts for possible gram matches among pairs of structures that are out of order since the min-hashing and LSH techniques themselves do not consider the order of the gram matches. The final step of fast mode is to sort the matches based on the adjusted scores and return the results.</p>
+<p>Top-aligned is an additional step following fast mode. First, unoptimized CE alignments are performed on the top 2,000 matches obtained from fast mode. Then optimized CE alignments are performed on the top 400 matches and these are finally returned sorted either by RMSD or TM-Score. Top-aligned is a simple layer following fast mode that establishes RUPEE fast mode as an effective filtering method that contains in its top 2,000 results enough good matches to compete with the best available structure searches.</p>
+</sec>
+</sec>
+<sec id="s4">
+<title>Results</title>
+<p>Protein structure searches can be evaluated using pairwise alignment scores or by comparison of results against the hierarchy of a protein structure classification database. The RMSD of aligned residues is widely used in evaluations but is not perfectly suited to full-length comparisons between structures since distances between unaligned residues are not factored into the score. On the other hand, the TM-score [<xref ref-type="bibr" rid="c32">32</xref>] takes all residues into account. Among protein structure classification databases for which corresponding structure searches exist, SCOPe [<xref ref-type="bibr" rid="c2">2</xref>] and CATH [<xref ref-type="bibr" rid="c3">3</xref>] are the most popular.</p>
+<p>For our results, we have created 3 benchmarks, scop d360, scop d62, and cath d99, for pairwise evaluations to mTM, SSM, and CATHEDRAL, respectively. scop d360 is derived from the d500 benchmark used in [<xref ref-type="bibr" rid="c5">5</xref>] filtered for domains in SCOPe 2.07 for which mTM returns 100 or more results. Similarly, scop d62 is derived from the d500 benchmark filtered for domains defined in SCOP 1.73 for which SSM returns 50 or more results. In keeping with our description of RUPEE in [<xref ref-type="bibr" rid="c24">24</xref>], the cath d99 benchmark contains 99 superfamily representatives from the top 100 most diverse superfamilies defined in CATH v4.2 for which CATHEDRAL returns results in less than 12 hours.</p>
+<p>We perform pairwise evaluations to ensure the fairness of our comparisons. First, for domain searches, SSM is working with the SCOP 1.73 database, so accordingly we operate RUPEE on SCOP 1.73 domains to ensure RUPEE does not have more domains to work with for scoring and precision evaluations. Second, mTM is updated to work with SCOPe 2.07 domain definitions but still retains domains from 2.06 that have since been redefined either through mergers or splits in 2.07. On the other hand, CATHEDRAL presents no such challenges but still requires a separate benchmark since it is working with a distinct hierarchy, CATH v4.2.</p>
+<p>All benchmark definitions can be found in S1 Benchmarks.</p>
+<sec id="s4a">
+<title>Scoring</title>
+<p><xref rid="fig4" ref-type="fig">Fig 4</xref> shows average cumulative values for each ranked result averaged over all searches. Both RMSD and TM-score values are shown, provided as outputs from optimized CE pairwise alignments. A TM-score above 0.5 is a good predictor for whether or not two domains are in the same fold [<xref ref-type="bibr" rid="c33">33</xref>]. TM-scores greater than 0.17 are considered potentially meaningful whereas TM-scores less than 0.17 are considered to be due to random alignment [<xref ref-type="bibr" rid="c32">32</xref>].</p>
+<fig id="fig4" position="float" fig-type="figure">
+<label>Fig 4.</label>
+<caption><p>Scoring from CE pairwise alignments for RUPEE fast, RUPEE top-aligned sorted by TM-Score, and RUPEE top-aligned sorted by RMSD</p></caption>
+<graphic xlink:href="475301_fig4.tif"/>
+</fig>
+<p>A figure similar to <xref rid="fig4" ref-type="fig">Fig 4</xref> but using FATCAT for pairwise comparisons can be found in S2 Fig. The same relative relationships hold with only small variations.</p>
+<p>RUPEE fast, top-aligned sorted by RMSD, and top-aligned sorted by TM-Score, perform better than SSM and CATHEDRAL. The scoring in the cath d99 benchmark comparisons are notably lower than for the other two benchmarks. This is expected since CATHEDRAL only returns CATH s35 representatives. Likewise, for this comparison RUPEE is filtered for s35 representatives to match. Given that the cath d99 benchmark is evaluated against representatives, there are fewer highly similar structures returned in the results.</p>
+<p>In our evaluation, mTM faired better than SSM and CATHEDRAL. mTM also performed better than RUPEE fast, although RUPEE fast is still within 0.08 TM-Score points of mTM at the 100<sup>th</sup> result, which is notable considering its speed.</p>
+<p>For TM-Score, RUPEE top-aligned and mTM are nearly identical with RUPEE slightly better for ranks less than 50 and mTM better for ranks greater than 50. For RMSD, RUPEE top-aligned does perform better than mTM but this can most likely be attributed to the fact that mTM only sorts by TM-Score. If mTM sorted by RMSD we suspect the results again would be nearly identical. Nevertheless, it is worth noting that the initial LSH and min-hashing technique does not explicitly bias results towards one particular measure.</p>
+</sec>
+<sec id="s4b">
+<title>Precision</title>
+<p>Fig 5 shows precision (i.e. positive predictive value or PPV) averaged over all searches, where positive results are defined as domains with the same classification for the indicated hierarchy level as the query domain. A plot of recall is unnecessary since <xref rid="fig5" ref-type="fig">Fig 5</xref> provides precision at specific ranks for identical sets of searches. Hence, recall curves have the same relative relationships as those shown for precision.</p>
+<fig id="fig5" position="float" fig-type="figure">
+<label>Fig 5.</label>
+<caption><p>Precision for RUPEE fast, RUPEE top-aligned sorted by TM-Score, and RUPEE top-aligned sorted by RMSD</p></caption>
+<graphic xlink:href="475301_fig5.tif"/>
+</fig>
+<p>We should expect a structure search to have reasonable precision with respect to the hierarchy levels of the structure classification it is searching. However, it is not clear how to define reasonable. On the other hand, if precision is too high, the search provides little value beyond that provided by the structure classification hierarchy it is searching. Towards the extreme end of high precision, it would be sufficient for a search to return the best match and from there refer to the hierarchy for additional results.</p>
+<p>Similar to the scoring evaluations above, RUPEE fast and top-aligned, sorted by both RMSD and TM-Score, show higher precision than SSM and CATHEDRAL with the exception of RUPEE top-aligned sorted by RMSD for ranks lower than 10 compared against SSM.</p>
+<p>Again, mTM faired better than SSM and CATHEDRAL. Notably, mTM also shows clearly higher precision than RUPEE top-aligned, sorted by both RMSD and TM-Score. In the absence of <xref rid="fig4" ref-type="fig">Fig 4</xref>, one may be led to regard this as a negative result. However, to the contrary, in the presence of <xref rid="fig4" ref-type="fig">Fig 4</xref>, where it is shown that RUPEE and mTM have almost identical scoring, this result is remarkable. This disparity suggest that RUPEE is better able to find significantly similar matches not necessarily aligned with the SCOPe hierarchy. In fact, since the initial min-hashing and LSH technique used by RUPEE check for similarity to all available structures, no structure is able to hide behind a sequence based cluster representative. So this result is in keeping with how RUPEE is intended to work and how it is described above.</p>
+</sec>
+<sec id="s4c">
+<title>Response Times</title>
+<p><xref rid="fig6" ref-type="fig">Fig 6</xref> shows response times in seconds for the scop d62 and cath d99 benchmarks. Here, we are able to show RUPEE fast and top-aligned, mTM and SSM on the same plot because scop d62 is a subset of the scop d360 benchmark. Both plots are shown with a logarithmic scale in order to include all outliers while still being able to view the overall trends in response times. Loess regression curves are also provided to further highlight the overall trends.</p>
+<fig id="fig6" position="float" fig-type="figure">
+<label>Fig 6.</label>
+<caption><p>Response times for RUPEE fast and RUPEE top-aligned. The response times for RUPEE top-aligned are dominated by pairwise structure alignments and do not depend on the sort order.</p></caption>
+<graphic xlink:href="475301_fig6.tif"/>
+</fig>
+<p>In all cases, RUPEE fast is considerably faster than all other searches. It is also clear that fast mode is not as sensitive to increasing residue counts in contrast to CATHEDRAL and RUPEE top-aligned. Response times for SSM are not affected by residue counts at all and always returns results in less than 100 seconds but this is at the expense of performance as shown in <xref rid="fig4" ref-type="fig">Fig 4</xref>.</p>
+<p>In the left plot of <xref rid="fig6" ref-type="fig">Fig 6</xref>, it is shown that RUPEE top-aligned is faster than mTM for residue counts below 200, but then response times for RUPEE increase beyond that of mTM. Down the stretch, mTM provides increasingly better response times than RUPEE, while RUPEE is still able to provide reasonable response times. The right plot of <xref rid="fig6" ref-type="fig">Fig 6</xref> shows RUPEE top-aligned is significantly faster than CATHEDRAL for all residue counts.</p>
+<p>The trend of increasing response times for RUPEE top-aligned is a direct result of the pairwise structure comparisons that are performed on the top 2,000 results provided by RUPEE fast mode.</p>
+<p>Response times to a large degree are a measure of the amount of resources available to an application. In the case of RUPEE, our response times were gathered from RUPEE running on a fairly old laptop with a 2nd generation Intel<sup>&#x00AE;</sup> Core&#x2122; i7-2720QM Quad-Core CPU and 8 GB of memory. With more resources the response times of RUPEE can be further improved since pairwise alignments can be run in parallel. For mTM, SSM, and CATHEDRAL, we gathered response times by automating their respective web sites using the Selenium WebDriver API.</p>
+</sec>
+</sec>
+<sec id="s5">
+<title>Discussion</title>
+<p>As shown above, a purely geometric big data approach to protein structure search can compete with the best available protein structure searches. Nonetheless, there remain avenues for further improvement and investigation.</p>
+<p>While our min-hashing and LSH scheme does allow for some flexibility in the size of matched protein structures, it is not specifically designed for containment searches. However, the initial min-hashing and LSH search does operate fast enough, within seconds, that it does present the possibility of executing multiple searches within the context of a single query. With more resources, we can distribute min-hash and band data across multiple compute units, with each data set representing a subset of chopped structure representations. With a 75&#x0025; overlap of these subsets, RUPEE searches effectively become containment searches.</p>
+<p>We have tried the overlapping subset idea and have found it to be effective. However, on a single compute unit, the time required is more than we are willing to accept for this first iteration of RUPEE.</p>
+<p>One possible drawback of RUPEE is that in both fast and top-aligned modes, it only returns the top 400 results. Again, with more resources, this number can be increased, but there still remains a need for some kind of cut-off. Nonetheless, in most search tools, having to looking past the first few hundred results usually indicates an ineffective search strategy. To this end, RUPEE provides filters that can be used for traversing structure space more efficiently. For SCOPe, CATH, and ECOD you can instruct the search to only return domains that differ from the query structure at a chosen hierarchy level classification. Additionally, for CATH you can filter results based on hierarchy level representatives. Since RUPEE does not rely on sequence clusters, these kinds of filters are easy to implement, do not reduce the number of returned results, and allow for the discovery of unexpected structural similarities across classification hierarchies.</p>
+<p>One area that stands out for possible improvement is our longest common subsequence (LCS) scoring adjustment to the results initially returned by RUPEE. While the LCS step has been shown to be effective, it is notable for its simplicity. A more complex step of validating the sequence of gram matches can take a form similar to the path extension algorithm used by CE. In this case, sequences of matches would only be extended when the difference of interresidue distances between gram pairs already in the sequence and a candidate pair to be added to the sequence fall below some threshold.</p>
+<p>On the other hand, it would be interesting to see where further analysis of the initial results returned by RUPEE before LCS and any sort of order enforcement beyond that of the grams themselves could lead. For instance, topological permutations such as circular permutations, segment-swapping and changing secondary structures within homologous proteins are not uncommon [<xref ref-type="bibr" rid="c34">34</xref>]. The initial RUPEE min-hashing and LSH algorithm provides candidate matches along with matched grams. With some thought, an algorithm similar to FATCAT can be developed allowing for permutations in addition to twists.</p>
+<p>As can be observed from considering <xref rid="fig4" ref-type="fig">Fig 4</xref> and <xref rid="fig5" ref-type="fig">Fig 5</xref> together, there are good domain matches aligned with the SCOPe hierarchy that mTM is able to find that RUPEE does not. Conversely, there are good domain matches not aligned with the SCOPe hierarchy that RUPEE finds and mTM does not. A comprehensive listing of these difference may find interesting similarities not previously known.</p>
+</sec>
+<sec id="s6">
+<title>Conclusion</title>
+<p>With the growth rate of solved structures deposited in the PDB, the need for a fast and scalable structure search is growing. Using run position encoded shingles of residue descriptors combined with min-hashing and LSH, we have shown that RUPEE fast is able to provide good results in seconds running on an Quad-Core laptop. Currently, RUPEE fast is the fastest available protein structure search providing the demonstrated level of accuracy. For RUPEE top-aligned, we have shown that a purely geometric big data approach to protein structure search is able to produce results equal to or better than the current state of the art protein structure searches that variously depend on clustered sequences or protein structure classification hierarchies. Moreover, we have shown evidence that suggests the results from RUPEE top-aligned provide more added value by discovering high scoring protein structure matches not necessarily aligned with a particular protein structure classification hierarchy or hiding behind cluster representatives. The ability for RUPEE to quickly examine all structures among hundreds of thousands sets it apart as a tool that can be used for discovering previously undetected structural similarities.</p>
+</sec>
+</body>
+<back>
+<sec id="s7">
+<title>Supporting information</title>
+<p><bold>S1 Benchmarks. Domains included in benchmarks used for evaluation.</bold></p>
+<p><bold>S2 Fig. Scoring from FATCAT pairwise alignments</bold>.</p>
+<p><bold>S3 Methods Addendum. Run factors for shingles instead of descriptors</bold>.</p>
+</sec>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>1.</label><mixed-citation publication-type="journal"><string-name><surname>Crick</surname> <given-names>F</given-names></string-name>. <article-title>Central dogma of molecular biology</article-title>. <source>Nature</source>. <year>1970</year>;<volume>227</volume>(<issue>5258</issue>):<fpage>561</fpage>&#x2013;<lpage>563</lpage>.</mixed-citation></ref>
+<ref id="c2"><label>2.</label><mixed-citation publication-type="journal"><string-name><surname>Fox</surname> <given-names>NK</given-names></string-name>, <string-name><surname>Brenner</surname> <given-names>SE</given-names></string-name>, <string-name><surname>Chandonia</surname> <given-names>JM</given-names></string-name>. <article-title>SCOPe: Structural Classification of Proteins - extended, integrating SCOP and ASTRAL data and classification of new structures</article-title>. <source>Nucleic Acids Res</source>. <year>2014</year>;<volume>42</volume>(<issue>1</issue>):<fpage>304</fpage>&#x2013;<lpage>309</lpage>.</mixed-citation></ref>
+<ref id="c3"><label>3.</label><mixed-citation publication-type="journal"><string-name><surname>Orengo</surname> <given-names>C</given-names></string-name>, <string-name><surname>Mitchie</surname> <given-names>A</given-names></string-name>, <string-name><surname>Jones</surname> <given-names>S</given-names></string-name>, <string-name><surname>Jones</surname> <given-names>DT</given-names></string-name>, <string-name><surname>Swindells</surname> <given-names>M</given-names></string-name>, <string-name><surname>Thornton</surname> <given-names>JM</given-names></string-name>. <article-title>CATH - A hierarchic classification of protein domain structures</article-title>. <source>Structure</source>. <year>1997</year>;<volume>5</volume>(<issue>8</issue>):<fpage>1093</fpage>&#x2013;<lpage>1109</lpage>.</mixed-citation></ref>
+<ref id="c4"><label>4.</label><mixed-citation publication-type="journal"><string-name><surname>Cheng</surname> <given-names>H</given-names></string-name>, <string-name><surname>Schaeffer</surname> <given-names>RD</given-names></string-name>, <string-name><surname>Liao</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Kinch</surname> <given-names>LN</given-names></string-name>, <string-name><surname>Pei</surname> <given-names>J</given-names></string-name>, <string-name><surname>Shi</surname> <given-names>S</given-names></string-name>, <etal>et al.</etal> <article-title>ECOD: An Evolutionary Classification of Protein Domains</article-title>. <source>PLoS Computational Biology</source>. <year>2014</year>;<volume>10</volume>(<issue>12</issue>).</mixed-citation></ref>
+<ref id="c5"><label>5.</label><mixed-citation publication-type="journal"><string-name><surname>Dong</surname> <given-names>R</given-names></string-name>, <string-name><surname>Pan</surname> <given-names>S</given-names></string-name>, <string-name><surname>Peng</surname> <given-names>Z</given-names></string-name>, <string-name><surname>Zhang</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Yang</surname> <given-names>J</given-names></string-name>. <article-title>mTM-align: a server for fast protein structure database search and multiple protein structure alignment</article-title>. <source>Nucleic Acids Research</source>. <year>2018</year>;<volume>46</volume>(July):<fpage>380</fpage>&#x2013;<lpage>386</lpage>.</mixed-citation></ref>
+<ref id="c6"><label>6.</label><mixed-citation publication-type="journal"><string-name><surname>Krissinel</surname> <given-names>E</given-names></string-name>, <string-name><surname>Henrick</surname> <given-names>K</given-names></string-name>. <article-title>Secondary-structure matching (SSM), a new tool for fast protein structure alignment in three dimensions</article-title>. <source>Acta Crystallographica Section D: Biological Crystallography</source>. <year>2004</year>;<volume>60</volume>(<issue>12</issue> I):<fpage>2256</fpage>&#x2013;<lpage>2268</lpage>.</mixed-citation></ref>
+<ref id="c7"><label>7.</label><mixed-citation publication-type="journal"><string-name><surname>Redfern</surname> <given-names>OC</given-names></string-name>, <string-name><surname>Harrison</surname> <given-names>A</given-names></string-name>, <string-name><surname>Dallman</surname> <given-names>T</given-names></string-name>, <string-name><surname>Pearl</surname> <given-names>FMG</given-names></string-name>, <string-name><surname>Orengo</surname> <given-names>CA</given-names></string-name>. <article-title>CATHEDRAL: A Fast and Effective Algorithm to Predict Folds and Domain Boundaries from Multidomain Protein Structures</article-title>. <source>PLoS Comput Biol</source>. <year>2007</year>;<volume>3</volume>(<issue>11</issue>):<fpage>e232</fpage>.</mixed-citation></ref>
+<ref id="c8"><label>8.</label><mixed-citation publication-type="journal"><string-name><surname>Shindyalov</surname> <given-names>IN</given-names></string-name>, <string-name><surname>Bourne</surname> <given-names>PE</given-names></string-name>. <article-title>Protein structure alignment by incremental combinatorial extension (CE) of the optimal path</article-title>. <source>Protein Eng Des Sel</source>. <year>1998</year>;<volume>11</volume>(<issue>9</issue>):<fpage>739</fpage>&#x2013;<lpage>747</lpage>.</mixed-citation></ref>
+<ref id="c9"><label>9.</label><mixed-citation publication-type="journal"><string-name><surname>Yuzhen Ye</surname> <given-names>AG</given-names></string-name>. <article-title>Flexible structure alignment by chaining aligned fragment pairs allowing twists</article-title>. <source>Bioinformatics</source>. <year>2003</year>;<volume>19</volume>(<issue>2</issue>):<fpage>246</fpage>&#x2013;<lpage>255</lpage>.</mixed-citation></ref>
+<ref id="c10"><label>10.</label><mixed-citation publication-type="journal"><string-name><surname>Gilbrat</surname> <given-names>JF</given-names></string-name>, <string-name><surname>Madej</surname> <given-names>T</given-names></string-name>, <string-name><surname>Bryant</surname> <given-names>SH</given-names></string-name>. <article-title>Surprising similarities in structure comparison</article-title>. <source>Curr Opin Struct Biol</source>. <year>1996</year>;<volume>6</volume>(<issue>3</issue>):<fpage>377</fpage>&#x2013;<lpage>385</lpage>.</mixed-citation></ref>
+<ref id="c11"><label>11.</label><mixed-citation publication-type="journal"><string-name><surname>Yuzhen Ye</surname> <given-names>AG</given-names></string-name>. <article-title>FATCAT: a web server for flexible structure comparison and structure similarity searching</article-title>. <source>Nucleic Acids Res</source>. <year>2004</year>;<volume>32</volume>(<issue>2</issue>):<fpage>582</fpage>&#x2013;<lpage>585</lpage>.</mixed-citation></ref>
+<ref id="c12"><label>12.</label><mixed-citation publication-type="journal"><string-name><surname>Prli&#x0107;</surname> <given-names>A</given-names></string-name>, <string-name><surname>Bliven</surname> <given-names>S</given-names></string-name>, <string-name><surname>Rose</surname> <given-names>PW</given-names></string-name>, <string-name><surname>Bluhm</surname> <given-names>WF</given-names></string-name>, <string-name><surname>Bizon</surname> <given-names>C</given-names></string-name>, <string-name><surname>Godzik</surname> <given-names>A</given-names></string-name>, <etal>et al.</etal> <article-title>Pre-calculated protein structure alignments at the RCSB PDB website</article-title>. <source>Bioinformatics</source>. <year>2010</year>;<volume>26</volume>(<issue>23</issue>):<fpage>2983</fpage>&#x2013;<lpage>2985</lpage>.</mixed-citation></ref>
+<ref id="c13"><label>13.</label><mixed-citation publication-type="journal"><string-name><surname>Rose</surname> <given-names>PW</given-names></string-name>, <string-name><surname>Prli&#x0107;</surname> <given-names>A</given-names></string-name>, <string-name><surname>Altunkaya</surname> <given-names>A</given-names></string-name>, <string-name><surname>Bi</surname> <given-names>C</given-names></string-name>, <string-name><surname>Bradley</surname> <given-names>AR</given-names></string-name>, <string-name><surname>Christie</surname> <given-names>CH</given-names></string-name>, <etal>et al.</etal> <article-title>The RCSB protein data bank: integrative view of protein, gene and 3D structural information</article-title>. <source>Nucleic Acids Res</source>. <year>2017</year>;<volume>45</volume>(<issue>D1</issue>):<fpage>D271</fpage>&#x2013;<lpage>D281</lpage>.</mixed-citation></ref>
+<ref id="c14"><label>14.</label><mixed-citation publication-type="journal"><string-name><surname>Carpentier</surname> <given-names>M</given-names></string-name>, <string-name><surname>Brouillet</surname> <given-names>S</given-names></string-name>, <string-name><surname>Pothier</surname> <given-names>J</given-names></string-name>. <article-title>YAKUSA: A fast structural database scanning method</article-title>. <source>Proteins</source>. <year>2005</year>;<volume>61</volume>(<issue>1</issue>):<fpage>137</fpage>&#x2013;<lpage>151</lpage>.</mixed-citation></ref>
+<ref id="c15"><label>15.</label><mixed-citation publication-type="journal"><string-name><surname>Daniluk</surname> <given-names>P</given-names></string-name>, <string-name><surname>Lesyng</surname> <given-names>B</given-names></string-name>. <article-title>A novel method to compare protein structures using local descriptors</article-title>. <source>BMC Bioinformatics</source>. <year>2011</year>;<volume>12</volume>(<issue>1</issue>):<fpage>344</fpage>.</mixed-citation></ref>
+<ref id="c16"><label>16.</label><mixed-citation publication-type="other"><string-name><surname>Mavridis</surname> <given-names>L</given-names></string-name>, <string-name><surname>Ritchie</surname> <given-names>DW</given-names></string-name>. <article-title>In: 3D-Blast: 3D protein structure alignment, comparison, and classification using spherical polar fourier correlations</article-title>. <source>World Scientific</source>; <year>2012</year>. p. <fpage>281</fpage>&#x2013;<lpage>292</lpage>.</mixed-citation></ref>
+<ref id="c17"><label>17.</label><mixed-citation publication-type="journal"><string-name><surname>Ramachandran</surname> <given-names>GN</given-names></string-name>, <string-name><surname>Sasisekharan</surname> <given-names>V</given-names></string-name>. <article-title>Conformation of polypeptides and proteins</article-title>. <source>Adv Protein Chem</source>. <year>1968</year>;<volume>23</volume>:<fpage>283</fpage>&#x2013;<lpage>438</lpage>.</mixed-citation></ref>
+<ref id="c18"><label>18.</label><mixed-citation publication-type="journal"><string-name><surname>Hollingsworth</surname> <given-names>SA</given-names></string-name>, <string-name><surname>Karplus</surname> <given-names>PA</given-names></string-name>. <article-title>A fresh look at the Ramachandran plot and the occurrence of standard structures in proteins</article-title>. <source>Biomol Concepts</source>. <year>2010</year>;<volume>1</volume>:<fpage>271</fpage>&#x2013;<lpage>283</lpage>.</mixed-citation></ref>
+<ref id="c19"><label>19.</label><mixed-citation publication-type="journal"><string-name><surname>Kabsch</surname> <given-names>W</given-names></string-name>, <string-name><surname>Sander</surname> <given-names>C</given-names></string-name>. <article-title>Dictionary of protein secondary structure: Pattern recognition of hydrogen-bonded and geometrical features</article-title>. <source>Biopolymers</source>. <year>1983</year>;<volume>22</volume>(<issue>12</issue>):<fpage>2577</fpage>&#x2013;<lpage>2637</lpage>.</mixed-citation></ref>
+<ref id="c20"><label>20.</label><mixed-citation publication-type="journal"><string-name><surname>Aungand</surname> <given-names>Z</given-names></string-name>, <string-name><surname>Tan</surname> <given-names>KL</given-names></string-name>. <article-title>Rapid 3D protein structure database searching using information retrieval techniques</article-title>. <source>Bioinformatics</source>. <year>2004</year>;<volume>20</volume>(<issue>7</issue>):<fpage>1045</fpage>&#x2013;<lpage>1052</lpage>.</mixed-citation></ref>
+<ref id="c21"><label>21.</label><mixed-citation publication-type="journal"><string-name><surname>Zhang</surname> <given-names>L</given-names></string-name>, <string-name><surname>Bailey</surname> <given-names>J</given-names></string-name>, <string-name><surname>Konagurthu</surname> <given-names>AS</given-names></string-name>, <string-name><surname>Ramamohanarao</surname> <given-names>K</given-names></string-name>. <article-title>A fast indexing approach for protein structure comparison</article-title>. <source>BMC Bioinformatics</source>. <year>2010</year>;<volume>11</volume>(Suppl <issue>1</issue>):<fpage>S46</fpage>.</mixed-citation></ref>
+<ref id="c22"><label>22.</label><mixed-citation publication-type="journal"><string-name><surname>Budowski-Tal</surname> <given-names>I</given-names></string-name>, <string-name><surname>Nov</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Kolodny</surname> <given-names>R</given-names></string-name>. <article-title>FragBag, an accurate representation of protein structure, retrieves structural neighbors from the entire PDB quickly and accurately</article-title>. <source>Proceedings of the National Academy of Sciences</source>. <year>2010</year>;<volume>107</volume>(<issue>8</issue>):<fpage>3481</fpage>&#x2013;<lpage>3486</lpage>.</mixed-citation></ref>
+<ref id="c23"><label>23.</label><mixed-citation publication-type="book"><string-name><surname>Broder</surname> <given-names>AZ</given-names></string-name>. <chapter-title>On the resemblance and containment of documents</chapter-title>. <source>In: Proc. Compression and Complexity of Sequences</source>. <publisher-name>Positano</publisher-name>, <publisher-loc>Italy</publisher-loc>; <year>1997</year>. p. <fpage>21</fpage>&#x2013;<lpage>29</lpage>.</mixed-citation></ref>
+<ref id="c24"><label>24.</label><mixed-citation publication-type="other"><string-name><surname>Ayoub</surname> <given-names>R</given-names></string-name>, <string-name><surname>Lee</surname> <given-names>Y</given-names></string-name>. <article-title>RUPEE: Scalable protein structure search using run position encoded residue descriptors</article-title>. <source>In: 2017 IEEE International Conference on Bioinformatics and Biomedicine (BIBM)</source>; <year>2017</year>. p. <fpage>74</fpage>&#x2013;<lpage>78</lpage>.</mixed-citation></ref>
+<ref id="c25"><label>25.</label><mixed-citation publication-type="journal"><string-name><surname>Karp</surname> <given-names>RM</given-names></string-name>, <string-name><surname>Rabin</surname> <given-names>MO</given-names></string-name>. <article-title>Efficient randomized pattern-matching algorithms</article-title>. <source>IBM Journal of Research and Development</source>. <year>1987</year>;<volume>31</volume>(<issue>2</issue>):<fpage>249</fpage>&#x2013;<lpage>260</lpage>.</mixed-citation></ref>
+<ref id="c26"><label>26.</label><mixed-citation publication-type="journal"><string-name><surname>Levandowsky</surname> <given-names>M</given-names></string-name>, <string-name><surname>Winter</surname> <given-names>D</given-names></string-name>. <article-title>Distance between Sets</article-title>. <source>Nature</source>. <year>1971</year>;<volume>234</volume>(<issue>5323</issue>):<fpage>34</fpage>&#x2013;<lpage>35</lpage>.</mixed-citation></ref>
+<ref id="c27"><label>27.</label><mixed-citation publication-type="journal"><string-name><surname>Broder</surname> <given-names>AZ</given-names></string-name>, <string-name><surname>Glassman</surname> <given-names>SC</given-names></string-name>, <string-name><surname>Manasse</surname> <given-names>MS</given-names></string-name>, <string-name><surname>Zweig</surname> <given-names>G</given-names></string-name>. <article-title>Syntactic clustering of the Web</article-title>. <source>Computer Networks and ISDN Systems</source>. <year>1997</year>;<volume>29</volume>(<issue>8-13</issue>):<fpage>1157</fpage>&#x2013;<lpage>1166</lpage>.</mixed-citation></ref>
+<ref id="c28"><label>28.</label><mixed-citation publication-type="journal"><string-name><surname>Joshi</surname> <given-names>S</given-names></string-name>, <string-name><surname>Contractor</surname> <given-names>D</given-names></string-name>, <string-name><surname>Ng</surname> <given-names>K</given-names></string-name>, <string-name><surname>Deshpande</surname> <given-names>PM</given-names></string-name>, <string-name><surname>Hampp</surname> <given-names>T</given-names></string-name>. <article-title>Auto-grouping emails for faster e-discovery</article-title>. <source>In: Proceedings of Very Large Databases Endowment</source> <year>2011</year>. vol. <volume>4</volume>; 2011. p. <fpage>1284</fpage>&#x2013;<lpage>1294</lpage>.</mixed-citation></ref>
+<ref id="c29"><label>29.</label><mixed-citation publication-type="book"><string-name><surname>Broder</surname> <given-names>AZ</given-names></string-name>, <string-name><surname>Charikar</surname> <given-names>M</given-names></string-name>, Frieze AM, <string-name><surname>Mitzenmacher</surname> <given-names>M</given-names></string-name>. <chapter-title>Min-wise independent permutations</chapter-title>. <source>In: ACM Symposium on Theory of Computing</source>. <publisher-name>Dallas</publisher-name>, <publisher-loc>USA</publisher-loc>; <year>1998</year>. p. <fpage>327</fpage>&#x2013;<lpage>336</lpage>.</mixed-citation></ref>
+<ref id="c30"><label>30.</label><mixed-citation publication-type="book"><string-name><surname>Indyk</surname> <given-names>P</given-names></string-name>, <string-name><surname>Motwani</surname> <given-names>R</given-names></string-name>. <chapter-title>Approximate nearest neighbors: towards removing the curse of dimensionality</chapter-title>. <source>In: ACM Symposium on Theory of Computing</source>. <publisher-name>Dallas</publisher-name>, <publisher-loc>USA</publisher-loc>; <year>1998</year>. p. <fpage>604</fpage>&#x2013;<lpage>613</lpage>.</mixed-citation></ref>
+<ref id="c31"><label>31.</label><mixed-citation publication-type="book"><string-name><surname>Rajaraman</surname> <given-names>A</given-names></string-name>, <string-name><surname>Ullman</surname> <given-names>JD</given-names></string-name>. 3. <chapter-title>In: Mining of Massive Datasets</chapter-title>. <publisher-name>Cambridge University Press</publisher-name>; <year>2012</year>. p. <fpage>53</fpage>&#x2013;<lpage>70</lpage>.</mixed-citation></ref>
+<ref id="c32"><label>32.</label><mixed-citation publication-type="journal"><string-name><surname>Zhang</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Skolnick</surname> <given-names>J</given-names></string-name>. <article-title>Scoring function for automated assessment of protein structure template quality</article-title>. <source>Proteins</source>. <year>2004</year>;<volume>57</volume>(<issue>4</issue>):<fpage>702</fpage>&#x2013;<lpage>710</lpage>.</mixed-citation></ref>
+<ref id="c33"><label>33.</label><mixed-citation publication-type="journal"><string-name><surname>J Xu</surname> <given-names>YZ</given-names></string-name>. <article-title>How significant is a protein structure similarity with TM-score = 0.5?</article-title> <source>Bioinformatics</source>. <year>2010</year>;<volume>26</volume>(<issue>7</issue>):<fpage>889</fpage>&#x2013;<lpage>895</lpage>.</mixed-citation></ref>
+<ref id="c34"><label>34.</label><mixed-citation publication-type="journal"><string-name><surname>Andreeva</surname> <given-names>A</given-names></string-name>, <string-name><surname>Prli&#x0107;</surname> <given-names>A</given-names></string-name>, <string-name><surname>Hubbard</surname> <given-names>TJP</given-names></string-name>, <string-name><surname>Murzin</surname> <given-names>AG</given-names></string-name>. <article-title>SISYPHUS: structural alignments for proteins with non-trivial relationships</article-title>. <source>Nucleic Acids Res</source>. <year>2007</year>;<volume>35</volume>(<issue>1</issue>):<fpage>253</fpage>&#x2013;<lpage>259</lpage>.</mixed-citation></ref>
+<ref id="c35"><label>35.</label><mixed-citation publication-type="journal"><string-name><surname>Prli&#x0107;</surname> <given-names>A</given-names></string-name>, <string-name><surname>Yates</surname> <given-names>A</given-names></string-name>, <string-name><surname>Bliven</surname> <given-names>SE</given-names></string-name>, <string-name><surname>Rose</surname> <given-names>PW</given-names></string-name>, <string-name><surname>Jacobsen</surname> <given-names>J</given-names></string-name>, <string-name><surname>Troshin</surname> <given-names>PV</given-names></string-name>, <etal>et al.</etal> <article-title>BioJava: an open-source framework for bioinformatics in 2012</article-title>. <source>Bioinformatics</source>. <year>2012</year>;<volume>28</volume>(<issue>20</issue>):<fpage>2693</fpage>&#x2013;<lpage>2695</lpage>.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

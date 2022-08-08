@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/188490</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>CscoreTool: Fast Hi-C Compartment Analysis at High Resolution</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author" corresp="yes">
+<name>
+<surname>Zheng</surname>
+<given-names>Xiaobin</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="corresp" rid="cor1">&#x002A;</xref>
+</contrib>
+<contrib contrib-type="author">
+<name>
+<surname>Zheng</surname>
+<given-names>Yixian</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>Department of Embryology, Carnegie Institution for Science</institution>, 3520 San Martin Dr., Baltimore, MD 21218, <country>USA</country>.</aff>
+</contrib-group>
+<author-notes>
+<corresp id="cor1"><label>&#x002A;</label>To whom correspondence should be addressed.</corresp>
+</author-notes>
+<pub-date pub-type="epub">
+<year>2017</year>
+</pub-date>
+<elocation-id>188490</elocation-id>
+<history>
+<date date-type="received">
+<day>13</day>
+<month>9</month>
+<year>2017</year>
+</date>
+<date date-type="rev-recd">
+<day>13</day>
+<month>9</month>
+<year>2017</year>
+</date>
+<date date-type="accepted">
+<day>13</day>
+<month>9</month>
+<year>2017</year>
+</date>
+</history><permissions><copyright-statement>&#x00A9; 2017, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2017</copyright-year><license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license></permissions>
+<self-uri xlink:href="188490.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<sec>
+<title>Summary</title>
+<p>The chromosome conformation capture (Hi-C) has revealed that the eukaryotic genome can be partitioned into A and B compartments that have distinctive chromatin and transcription features. Current Principle Component Analyses (PCA)-based method for the prediction of A/B compartment prediction from Hi-C data requires substantial CPU time and memory. We report the development of a method, CscoreTool, that enables fast and memory-efficient determination of A/B compartments at high resolution even in dataset with low sequencing depth.</p>
+</sec>
+<sec>
+<title>Availability</title>
+<p><ext-link ext-link-type="uri" xlink:href="http://github.com/scoutzxb/CscoreTool">github.com/scoutzxb/CscoreTool</ext-link></p>
+</sec>
+<sec>
+<title>Contact</title>
+<p><email>xzheng@carnegiescience.edu</email></p>
+</sec>
+</abstract>
+<counts>
+<page-count count="9"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<label>1</label>
+<title>Introduction</title>
+<p>The development of the proximity-ligation based methods for chromatin conformation capture (3C, 4C, 5C and Hi-C) has greatly improved the understanding of three-dimensional chromatin organization in the eukaryotic nucleus (<xref rid="c4" ref-type="bibr">Gibcus and Dekker, 2013</xref>). One important feature found in mammalian Hi-C studies is that the genome is organized into A or B compartments (<xref rid="c7" ref-type="bibr">Lieberman-Aiden, et al., 2009</xref>). Whereas the A compartment corresponds to genomic regions containing transcriptionally active and open chromatin (<xref rid="c7" ref-type="bibr">Lieberman-Aiden, et al., 2009</xref>), the B compartment corresponds to the peripheral heterochromatin associated with the nuclear lamina (<xref rid="c11" ref-type="bibr">van Steensel and Belmont, 2017</xref>). Recent studies showed that the A/B compartment organization is independent of the topologically associated domains (TADs) (<xref rid="c2" ref-type="bibr">Dixon, et al., 2012</xref>) and is more conserved than the organization of TADs at the single-cell level (<xref rid="c8" ref-type="bibr">Nora, et al., 2017</xref>; <xref rid="c10" ref-type="bibr">Stevens, et al., 2017</xref>). Therefore, understanding the A/B compartment organization is critical in deciphering 3D genome organization.</p>
+<p>The current method for calculating A/B compartments is based on the Principal Component Analysis (PCA) of the normalized Hi-C interaction matrix (<xref rid="c7" ref-type="bibr">Lieberman-Aiden, et al., 2009</xref>). The first eigenvector (Principal Component 1, PC1) of the correlation matrix is defined as the compartment score, and genomic windows with positive or negative compartment scores are defined as A or B compartment, respectively. The PCA-based method has two major limitations. First, PCA is a descriptive statistical method designed for reducing dimension and the exact biological meaning of the compartment score is elusive. In this sense, compartment scores calculated from different Hi-C datasets may not be directly comparable. Second, PCA is slow and memory-inefficient when applied to large interaction matrix. This prohibits its application to high-resolution analysis of the compartment structure for most labs.</p>
+<p>Here we proposed a statistical model to infer A/B compartments from Hi-C data. The output compartment score reflects the chance of a genomic window being in the A compartment. The implemented tool, namely CscoreTool, is &#x223C;30 times faster and memory-efficient than existing PCA-based method for the same resolution. CscoreTool also works on high resolution for dataset with low sequencing depth.</p>
+</sec>
+<sec id="s2">
+<label>2</label>
+<title>Methods</title>
+<p>We modeled the A/B compartments at individual cell level by allowing each individual cell to have its own A/B compartment segregation. Each genomic window <italic>i</italic> has a chance <italic>P</italic><sub><italic>i</italic></sub> to be in the A-compartment in an individual cell. Considering two genomic windows <italic>i</italic> and <italic>j</italic>, if their distributions in A and B compartments are independent within a cell population, the chance that they are in the same compartment status in an individual cell (defined as <italic>F</italic><sub><italic>ij</italic></sub>) should be
+<disp-formula><alternatives><graphic xlink:href="188490_ueqn1.gif"/></alternatives></disp-formula></p>
+<p>By defining C-score as <italic>C</italic><sub><italic>i</italic></sub> =2<italic>P</italic><sub><italic>i</italic></sub> &#x2212;1, which ranges between &#x2212;1 and 1, we rewrote <italic>F</italic><sub><italic>ij</italic></sub> =(1&#x002B;<italic>C</italic><sub><italic>i</italic></sub> <italic>C</italic><sub><italic>j</italic></sub>)/2.</p>
+<p>As windows from different compartment status are unlikely to specifically interact with each other, the number of Hi-C contact between two genomic window <italic>i</italic> and <italic>j</italic> should be proportional to <italic>F</italic><sub><italic>ij</italic></sub>. Considering the effect of linear genomic distance and experimental biases, we estimated the number of expected contact between windows <italic>i</italic> and <italic>j</italic> by <italic>E</italic><sub><italic>ij</italic></sub> = <italic>B</italic><sub><italic>i</italic></sub> <italic>B</italic><sub><italic>j</italic></sub> <italic>H</italic>(<italic>d</italic><sub><italic>ij</italic></sub>) (1&#x002B;<italic>C</italic><sub><italic>i</italic></sub> C<sub><italic>j</italic></sub>), where <italic>d</italic><sub><italic>ij</italic></sub> is the linear distance, <italic>H</italic>(<italic>d</italic><sub><italic>ij</italic></sub>) is the function for distance dependency, <italic>B</italic><sub><italic>i</italic></sub> and <italic>B</italic><sub><italic>j</italic></sub> are the bias factors from Hi-C experiments. We assumed that the observed number of contact (<italic>n</italic><sub><italic>ij</italic></sub>) follows a Poisson distribution <italic>n</italic><sub><italic>ij</italic></sub> &#x223C; Poisson(<italic>E</italic><sub><italic>ij</italic></sub>), and deduced a log-likelihood function
+<disp-formula><alternatives><graphic xlink:href="188490_ueqn2.gif"/></alternatives></disp-formula></p>
+<p>Where <italic>d</italic><sub><italic>ij</italic></sub> is the linear distance, <italic>H</italic>(<italic>d</italic><sub><italic>ij</italic></sub>) is the function of the distance dependency, <italic>B</italic><sub><italic>i</italic></sub> and <italic>B</italic><sub><italic>j</italic></sub> are the bias factors from Hi-C experiment, and <italic>C</italic><sub><italic>i</italic></sub> and <italic>C</italic><sub><italic>j</italic></sub> are the C-scores.</p>
+<p>Here since we assumed the distribution of window <italic>i</italic> and <italic>j</italic> in A and B compartments are independent with each other, we used only window pairs with at least 1Mb distance. This is an adjustable parameter in the CscoreTool with 1Mb as the default. We also used only intra-chromosome interactions to reduce noise. We then used a maximum-likelihood approach to estimate the C-scores.</p>
+<p>Note that - ln <italic>L</italic> is a convex function for each individual parameter. Thus our maximum-likelihood estimation was done by iteratively optimizing each of the model parameter one by one conditioning on other parameters, which ensures monotone increase of the likelihood function in each step. This monotone increase of the likelihood function ensures convergence based on the monotone convergence theorem. Details of the optimization steps are described as below:
+<disp-formula><alternatives><graphic xlink:href="188490_ueqn3.gif"/></alternatives></disp-formula></p>
+<p>Since <italic>N</italic><sub><italic>d</italic></sub> may be low for large <italic>d</italic>, we used exponentially growing distance bins [<italic>d</italic><sub><italic>n</italic></sub>, <italic>d</italic><sub><italic>n</italic> &#x002B;1</sub>), where <italic>d</italic><sub>0</sub> = 1 Kb, each <italic>d</italic><sub><italic>n</italic>&#x002B;1</sub> = <italic>d</italic><sub>n</sub> &#x00D7; 10<sup>0.04</sup>, and all distances within each bin were regarded as equal.</p>
+<p>For <italic>C</italic><sub><italic>i</italic></sub>, we remove irrelevant parts in the log-likelihood function and get ln <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="188490_inline1.gif"/></alternatives></inline-formula> &#x002B; <italic>constant.</italic> The maximum point of this function in (-1,1) does not have an explicit solution, but can be solved by Newton method, since - ln <italic>L</italic> is a convex function of <italic>C</italic><sub><italic>i</italic></sub>.</p>
+<p>The whole algorithm works as following: We first randomly generated the initial parameters, and then we performed iterative optimization for each parameter one by one as described above, in the order of <italic>H</italic>, <italic>B</italic> and <italic>C.</italic> The algorithm is considered convergent when the increase of the value of the likelihood function between two rounds (one round means updating all parameters once) is less than 1, and we can obtain the convergent values of C-scores. Each chromosome was analyzed separately, since inter chromosome reads were not used. In practice, the algorithm converged in &#x223C; 20 rounds, and was not sensitive to the initial parameters, since we tried 10 random initial parameters and obtained the same results. We implemented the algorithm with C&#x002B;&#x002B; and tested the resultant tool, namely CscoreTool, on the high resolution Hi-C dataset of the GM12878 cell line (<xref rid="c9" ref-type="bibr">Rao, et al., 2014</xref>). Among PCA-based variants, we chose HOMER for comparison (<xref rid="c5" ref-type="bibr">Heinz, et al., 2010</xref>), as it uses the computing-efficient R language (implemented by C and Fortran) for PCA. Mapped reads (to mm9) for Hi-C libraries HIC001-HIC029 were downloaded from the GEO database (GSE63525). Only reads with MAPQ &#x2265; 30 at both ends were kept, and since the analyses for each chromosome are independent, we focused our test on chromosome 1. CscoreTool was tested for 1Kb, 5Kb, 10Kb, 25Kb, 50Kb and 100Kb resolutions, while HOMER (runHiCpca.pl) was tested for 10Kb, 25Kb, 50Kb and 100Kb resolutions with all the other parameters set as default. When testing HOMER at a resolution of 5Kb, we obtained a warning message from HOMER indicating that the matrix was too big to handle. All tests were performed on the Memex high-performance computer of Carnegie Institution for Science. Although CscoreTool supports parallelization, we used only one CPU (2.5GHz) for the comparison, since HOMER does not support parallelization within one chromosome.</p>
+</sec>
+<sec id="s3">
+<label>3</label>
+<title>Results</title>
+<p>We first compared the running time and memory usage between CscoreTool and HOMER. At the same resolutions, CscoreTool is over 30 times faster than HOMER (<xref ref-type="fig" rid="fig1">Fig. 1A</xref>). HOMER uses 40 min-3 h for PCA analysis at 25-100Kb resolutions but requires over 20 hours for 10Kb-resolution, and it stopped running for 5Kb resolution because it could not handle the large matrix. By contrast, CscoreTool used a few minutes for analyses at 25-100Kb resolution; 35 min for 10Kb resolution; 2 hours for analyses at 5Kb resolution; and &#x223C;3 days for analysis at 1Kb resolution. The time consumed can be further reduced by using parallelization. For example, using 12 CPUs, the 1Kb-resolution analysis can be done in &#x223C;12 hours. The memory usage of CscoreTool is also much less than HOMER (<xref ref-type="fig" rid="fig1">Fig. 1B</xref>). The 1Kb-resolution analysis by CscoreTool used less than 10GB memory, whereas HOMER used more than 60GB memory for the same dataset at the 10-100Kb resolutions that we could test. Thus, CscoreTool is much faster and more memory-efficient than the PCA-based compartment analysis method.</p>
+<fig id="fig1" position="float" fig-type="figure">
+<label>Figure 1.</label>
+<caption><p><bold>A-B</bold>. Comparison of running time and memory usage between CscoreTool and HOMER. <bold>C</bold>. Whole-chromosome view of C-score by CscoreTool and PC1 by HOMER calculated at 10Kb resolution. <bold>D-E</bold>. Example regions showing CscoreTool can detect smaller B-or A-compartments missed by HOMER (in rectangles). <bold>F</bold>. Comparison of the results by CscoreTool and HOMER at 10Kb resolution when only small fractions (10&#x0025; or 1&#x0025;) of the reads are used. Arrows indicate regions showing inconsistencies among different resolutions analyzed by HOMER.</p></caption>
+<graphic xlink:href="188490_fig1.tif"/>
+</fig>
+<p>We then compared the distribution of C-score from CscoreTool to the PC1 score from HOMER at 10Kb resolution. Whole-chromosome view showed that the patterns are in general similar (<xref ref-type="fig" rid="fig1">Fig. 1C</xref>), indicating that both scores capture the large-scale structure of A/B compartments. Finer scale comparison reveals some regions showing differences between the methods (<xref ref-type="fig" rid="fig1">Fig. 1D-E</xref>). For example, HOMER predicted a long chromatin region as compartment A (<xref ref-type="fig" rid="fig1">Fig. 1D</xref>), whereas CscoreTool showed that a long stretch of chromatin within this region belonged to compartment B. Since DNaseI sensitivity is associated with chromatin in compartment A (<xref rid="c7" ref-type="bibr">Lieberman-Aiden, et al., 2009</xref>), we analyzed the ENCODE DNase I data (<xref rid="c1" ref-type="bibr">Consortium, 2012</xref>) in these cells and found that the compartment B chromatin predicted by CscoreTool had a very low DNaseI sensitivity (<xref ref-type="fig" rid="fig1">Fig. 1D</xref>), indicating that our method correctly predicted this region as B compartment. We also found small A-compartments with DNase I peaks that were missed by HOMER (<xref ref-type="fig" rid="fig1">Fig. 1E</xref>). These results show that CscoreTool is better at detecting smaller A-and B-compartments than HOMER.</p>
+<p>The high-resolution data we used here have 3.51G mapped non-redundant reads, which requires substantial amount of sequencing that are not practical for many labs and not necessary for many Hi-C experiments. Therefore, we created two smaller datasets by randomly selecting 10&#x0025; and 1&#x0025; of from the 3.51G mapped reads. The 10&#x0025; dataset (mid-depth) corresponds to 351M mapped non-redundant reads, which is common for most Hi-C read depth. The 1&#x0025; dataset (low-depth) corresponds to 35.1M mapped non-redundant reads, which is common for low-cell-number Hi-C data such as those in early embryo development (<xref rid="c3" ref-type="bibr">Du, et al., 2017</xref>; <xref rid="c6" ref-type="bibr">Ke, et al., 2017</xref>). We then tested the performance of CscoreTool and HOMER on these two smaller datasets. We found that CscoreTool gave very consistent results among all sequencing depth (<xref ref-type="fig" rid="fig1">Fig. 1F</xref>) on large scale. By contrast, HOMER showed more inconsistency between different analysis resolutions (<xref ref-type="fig" rid="fig1">Fig. 1F</xref>). Taken together, we show that CscoreTool can perform accurate high-resolution compartment analysis at both high and low sequencing depth with similar accuracy and it requires less time and computer memory than the commonly used PCA-based methods.</p>
+</sec>
+</body>
+<back>
+<sec>
+<title>Funding</title>
+<p>This work has been supported by the National Institutes of Health (R01GM106023 to Y.Z.).</p>
+<sec sec-type="COI-statement">
+<title>Conflict of Interest</title>
+<p>none declared.</p>
+</sec>
+</sec>
+<ref-list>
+<title>References</title>
+<ref id="c1"><mixed-citation publication-type="journal"><string-name><surname>Consortium</surname>, <given-names>E.P.</given-names></string-name> (<year>2012</year>) <article-title>An integrated encyclopedia of DNA elements in the human genome</article-title>, <source>Nature</source>, <volume>489</volume>, <fpage>57</fpage>&#x2013;<lpage>74</lpage>.</mixed-citation></ref>
+<ref id="c2"><mixed-citation publication-type="journal"><string-name><surname>Dixon</surname>, <given-names>J.R.</given-names></string-name>, <etal>et al.</etal> (<year>2012</year>) <article-title>Topological domains in mammalian genomes identified by analysis of chromatin interactions</article-title>, <source>Nature</source>, <volume>485</volume>, <fpage>376</fpage>&#x2013;<lpage>380</lpage>.</mixed-citation></ref>
+<ref id="c3"><mixed-citation publication-type="journal"><string-name><surname>Du</surname>, <given-names>Z.</given-names></string-name>, <etal>et al.</etal> (<year>2017</year>) <article-title>Allelic reprogramming of 3D chromatin architecture during early mammalian development</article-title>, <source>Nature</source>, <volume>547</volume>, <fpage>232</fpage>&#x2013;<lpage>235</lpage>.</mixed-citation></ref>
+<ref id="c4"><mixed-citation publication-type="journal"><string-name><surname>Gibcus</surname>, <given-names>J.H.</given-names></string-name> and <string-name><surname>Dekker</surname>, <given-names>J.</given-names></string-name> (<year>2013</year>) <article-title>The hierarchy of the 3D genome</article-title>, <source>Molecular Cell</source>, <volume>49</volume>, <fpage>773</fpage>&#x2013;<lpage>782</lpage>.</mixed-citation></ref>
+<ref id="c5"><mixed-citation publication-type="journal"><string-name><surname>Heinz</surname>, <given-names>S.</given-names></string-name>, <etal>et al.</etal> (<year>2010</year>) <article-title>Simple combinations of lineage-determining transcription factors prime cis-regulatory elements required for macrophage and B cell identities</article-title>, <source>Molecular Cell</source>, <volume>38</volume>, <fpage>576</fpage>&#x2013;<lpage>589</lpage>.</mixed-citation></ref>
+<ref id="c6"><mixed-citation publication-type="journal"><string-name><surname>Ke</surname>, <given-names>Y.</given-names></string-name>, <etal>et al.</etal> (<year>2017</year>) <article-title>3D Chromatin Structures of Mature Gametes and Structural Reprogramming during Mammalian Embryogenesis</article-title>, <source>Cell</source>, <volume>170</volume>, <fpage>367</fpage>&#x2013;<lpage>381 e320</lpage>.</mixed-citation></ref>
+<ref id="c7"><mixed-citation publication-type="journal"><string-name><surname>Lieberman-Aiden</surname>, <given-names>E.</given-names></string-name>, <etal>et al.</etal> (<year>2009</year>) <article-title>Comprehensive mapping of long-range interactions reveals folding principles of the human genome</article-title>, <source>Science</source>, <volume>326</volume>, <fpage>289</fpage>&#x2013;<lpage>293</lpage>.</mixed-citation></ref>
+<ref id="c8"><mixed-citation publication-type="journal"><string-name><surname>Nora</surname>, <given-names>E.P.</given-names></string-name>, <etal>et al.</etal> (<year>2017</year>) <article-title>Targeted Degradation of CTCF Decouples Local Insulation of Chromosome Domains from Genomic Compartmentalization</article-title>, <source>Cell</source>, <volume>169</volume>, <fpage>930</fpage>&#x2013;<lpage>944 e922</lpage>.</mixed-citation></ref>
+<ref id="c9"><mixed-citation publication-type="journal"><string-name><surname>Rao</surname>, <given-names>S.S.</given-names></string-name>, <etal>et al.</etal> (<year>2014</year>) <article-title>A 3D map of the human genome at kilobase resolution reveals principles of chromatin looping</article-title>, <source>Cell</source>, <volume>159</volume>, <fpage>1665</fpage>&#x2013;<lpage>1680</lpage>.</mixed-citation></ref>
+<ref id="c10"><mixed-citation publication-type="journal"><string-name><surname>Stevens</surname>, <given-names>T.J.</given-names></string-name>, <etal>et al.</etal> (<year>2017</year>) <article-title>3D structures of individual mammalian genomes studied by single-cell Hi-C</article-title>, <source>Nature</source>, <volume>544</volume>, <fpage>59</fpage>&#x2013;<lpage>64</lpage>.</mixed-citation></ref>
+<ref id="c11"><mixed-citation publication-type="journal"><string-name><surname>van Steensel</surname>, <given-names>B.</given-names></string-name> and <string-name><surname>Belmont</surname>, <given-names>A.S.</given-names></string-name> (<year>2017</year>) <article-title>Lamina-Associated Domains: Links with Chromosome Architecture, Heterochromatin, and Gene Repression</article-title>, <source>Cell</source>, <volume>169</volume>, <fpage>780</fpage>&#x2013;<lpage>791</lpage>.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

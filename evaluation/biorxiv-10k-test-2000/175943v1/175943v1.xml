@@ -1,0 +1,547 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/175943</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>A bestiary of localized sequence rearrangements in human DNA</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<name>
+<surname>Frith</surname>
+<given-names>Martin C.</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="aff" rid="a2">2</xref>
+<xref ref-type="aff" rid="a3">3</xref>
+</contrib>
+<contrib contrib-type="author">
+<name>
+<surname>Khan</surname>
+<given-names>Sofia</given-names>
+</name>
+<xref ref-type="aff" rid="a3">3</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>Artificial Intelligence Research Center, National Institute of Advanced Industrial Science and Technology (AIST)</institution>, Tokyo, <country>Japan</country></aff>
+<aff id="a2"><label>2</label><institution>Graduate School of Frontier Sciences, University of Tokyo</institution>, Chiba, <country>Japan</country></aff>
+<aff id="a3"><label>3</label><institution>Computational Bio Big-Data Open Innovation Laboratory (CBBD-OIL)</institution>, National Institute of Advanced Industrial Science and Technology (AIST), Tokyo, <country>Japan</country></aff>
+</contrib-group>
+<pub-date pub-type="epub">
+<year>2017</year>
+</pub-date>
+<elocation-id>175943</elocation-id>
+<history>
+<date date-type="received">
+<day>14</day>
+<month>8</month>
+<year>2017</year>
+</date>
+<date date-type="rev-recd">
+<day>14</day>
+<month>8</month>
+<year>2017</year>
+</date>
+<date date-type="accepted">
+<day>14</day>
+<month>8</month>
+<year>2017</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2017, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2017</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="175943.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>Genomes mutate and evolve in ways simple (substitution or deletion of bases) and complex (e.g. chromosome shattering). We do not fully understand what types of complex mutation occur, and we cannot routinely characterize arbitrarily-complex mutations in a high-throughput, genome-wide manner. Long-read DNA sequencing methods (e.g. PacBio, nanopore) are promising for this task, because one read may encompass a whole complex mutation.</p>
+<p>We describe an analysis pipeline to characterize arbitrarily-complex &#x201C;local&#x201D; mutations, i.e. intrachromosomal mutations encompassed by one DNA read. We apply it to nanopore and PacBio reads from one human cell line (NA12878), and survey sequence rearrangements, both real and artifactual. Almost all the real rearrangements belong to recurring patterns or motifs: the most common is tandem multiplication (e.g. heptuplication), but there are also complex patterns such as localized shattering, which resembles DNA damage by radiation. Gene conversions are identified, including one between hemoglobin gamma genes.</p>
+<p>This study demonstrates a way to find intricate rearrangements with any number of duplications, deletions, and repositionings. It demonstrates a probability-based method to resolve ambiguous rearrangements involving highly similar sequences, as occurs in gene conversion. We present a catalog of local rearrangements in one human cell line, and show which rearrangement patterns do, and do not, occur.</p>
+</abstract>
+<counts>
+<page-count count="33"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<title>Background</title>
+<p>Genomes mutate and evolve by base substitutions, deletions, inversions, tandem duplications, and more complex events [<xref rid="c1" ref-type="bibr">1</xref>], up to large-scale chromosome shattering [<xref rid="c2" ref-type="bibr">2</xref>]. DNA sequence rearrangements contribute to a wide range of disorders, including developmental disorders (e.g. [<xref rid="c3" ref-type="bibr">3</xref>, <xref rid="c4" ref-type="bibr">4</xref>]) and common diseases (e.g. [<xref rid="c5" ref-type="bibr">5</xref>]). In addition, somatic rearrangements serve as hallmarks in tumor genomes (e.g. [<xref rid="c6" ref-type="bibr">6</xref>, <xref rid="c7" ref-type="bibr">7</xref>]).</p>
+<p>The methods for studying structural variations have long been either laborious, time-consuming or low resolution, e.g. fluorescent in situ hybridization (FISH), comparative genomic hybridization (CGH) or genome-wide human SNP arrays (reviewed in [<xref rid="c8" ref-type="bibr">8</xref>]). The development of short-read DNA sequencing techniques has improved resolution to a single base level in high-throughput and genome-wide settings (e.g. [<xref rid="c9" ref-type="bibr">9</xref>, <xref rid="c10" ref-type="bibr">10</xref>]); however, the read length limits the types of structural variation detected, and limits reliable alignment to repetitive regions [<xref rid="c11" ref-type="bibr">11</xref>], including subtelomeric regions that are known to harbor rearrangements [<xref rid="c12" ref-type="bibr">12</xref>].</p>
+<p>A recent study surveyed &#x201C;large&#x201D; structural variation in 689 people, at <italic>&#x223C;</italic>5 kb resolution, by both long-insert and linked-read whole-genome sequencing [<xref rid="c3" ref-type="bibr">3</xref>]. On one hand, they found many novel &#x201C;complex&#x201D; variants: most (97&#x0025;) are intrachromosomal, and they were classified into 16 types. On the other hand, their data cannot resolve micro-complexity (<italic>&#x003C;</italic>5 kb), so they likely underestimate the complexity and diversity of complex variants.</p>
+<p>Long-read DNA sequencing technologies provide read lengths to span tens of thousands of bp and beyond, which enables investigation of complex rearrangement events spanned by one read. Long-read DNA sequencing has been used on its own [<xref rid="c13" ref-type="bibr">13</xref>, <xref rid="c14" ref-type="bibr">14</xref>], or in combination with short reads [<xref rid="c15" ref-type="bibr">15</xref>], to investigate structural variation. The present tools for structural variant calling solely from long read data focus on insertions, deletions, and inversions (SMRT-SV [<xref rid="c13" ref-type="bibr">13</xref>]) and additionally translocations (MultiBreaks-SV [<xref rid="c16" ref-type="bibr">16</xref>] and PBHoney [<xref rid="c17" ref-type="bibr">17</xref>]).</p>
+<p>To date there are two curated databases cataloging structural variants, the Database of Genomic Variants (DGV) that holds data for insertions, deletions, tandem repeats and inversions [<xref rid="c18" ref-type="bibr">18</xref>] and inversion database InvFEST [<xref rid="c19" ref-type="bibr">19</xref>].</p>
+<p>In this study, we describe a method for finding arbitrarily-complex &#x201C;local&#x201D; rearrangements, i.e. intrachromosomal rearrangements spanned by one DNA read. (We ignore pure deletions, which are relatively common and well-studied.) Our approach has two unusual features. First, we consider the ancestral state of each rearrangement, which is necessary in general to characterize them accurately. It also leads to a better understanding of &#x201C;insertions&#x201D;. Second, our approach is based on probabilities. There is often ambiguity in how to align rearranged fragments of a read, for example in gene conversion (replacement of a DNA segment by a duplicate of a similar segment). Such ambiguity can be resolved by calculating the probabilities of alternative alignments, based on the probabilities of substitutions and gaps due to sequencing error. These two features come together in an overlooked classical algorithm, the Repeated Matches Algorithm [<xref rid="c20" ref-type="bibr">20</xref>], which finds the most probable alignments of derived to ancestral sequences allowing for any number of duplications, deletions, repositionings, and insertions.</p>
+<p>This method is applied to both MinION and PacBio DNA reads from the same human cell line. We describe error rates, and the troubling presence of dubious rearrangements that are likely artifacts of the DNA sequencing process. By semi-manual analysis, we extract 166 likely-real rearrangements, many of which are found in both MinION and PacBio. This reveals several recurring patterns of rearrangement.</p>
+<p>As this manuscript was being finalized, a preprint appeared describing NGMLR and Sniffles, methods for finding structural variants in long reads [<xref rid="c21" ref-type="bibr">21</xref>]. Our study is largely complementary to theirs. Whereas Sniffles attempts to characterize variants automatically, we draw pictures of them and manually survey the types of rearrangement. We find intricate rearrangements, such as heptuplication, localized shattering, and gene conversion, not mentioned in NGMLR/Sniffles. Finally, NGMLR/Sniffles do not consider ancestral arrangements, and do not use fitted probabilities.</p>
+<p>The remainder of this Background section introduces the relevant aspects of DNA sequence evolution and probability-based alignment.</p>
+<sec id="s2">
+<title>Comparing rearranged sequences</title>
+<p>In order to find rearrangements between two sequences, we must first determine &#x201C;equivalent&#x201D; positions between them, i.e. align them. To clarify this, let us consider how DNA sequences can mutate:</p>
+<list list-type="bullet">
+<list-item><p>Substitution of bases.</p></list-item>
+<list-item><p>Deletion of one or more consecutive bases.</p></list-item>
+<list-item><p>Duplication of sequence.</p></list-item>
+<list-item><p>Spontaneous generation: insertion of sequence not descended from any ancestor. This is unusual. An example is retrotranscription and insertion of RNA poly-A tails, which are not descended from any ancestral sequence.</p></list-item>
+<list-item><p>Repositioning of sequence segments, e.g. inversion or translocation.</p></list-item>
+<list-item><p>Insertion of sequence from another (e.g. viral) genome.</p></list-item>
+</list>
+<p>One mutational event may produce several of these effects, e.g. repositioning and deletion and duplication [<xref rid="c1" ref-type="bibr">1</xref>].</p>
+<p>Let us now consider sequence evolution with complex mutations. <xref ref-type="fig" rid="fig1">Fig. 1</xref> shows an ancestral sequence (<bold>A</bold>) evolving into two derived sequences (<bold>B</bold> and <bold>C</bold>). In order to find rearrangements between two sequences, we must first determine &#x201C;equivalent&#x201D; positions between them. If we compare <bold>B</bold> and <bold>C</bold>, this means: identify bases that descend from the same base in the most recent common ancestor of the sequences. In general, this is hard: for example, it is hard to avoid an incorrect alignment between segment 3 in <bold>B</bold> and segment 4 in <bold>C</bold>.</p>
+<fig id="fig1" position="float" fig-type="figure">
+<label>Figure 1:</label>
+<caption><p>Left: sketch of sequence evolution by complex mutations. <bold>A</bold> is an ancestral sequence; <bold>B</bold> and <bold>C</bold> are derived. Same-color blocks (e.g. 3 and 4 in <bold>A</bold>) indicate similar sequences. The solid red block is &#x201C;spontaneously generated&#x201D;, i.e. not descended from any ancestral sequence. Right: alignment between <bold>A</bold> and <bold>B</bold>. Dashed lines indicate: duplication (vertical orange), deletion (vertical teal), and spontaneous generation (horizontal red).</p></caption>
+<graphic xlink:href="175943_fig1.tif"/>
+</fig>
+<p>The key observation is that it&#x2019;s fundamentally easier to compare a derived sequence to an ancestral sequence, e.g. <bold>B</bold> to <bold>A</bold>. This is because <italic>every</italic> part of the derived sequence (apart from spontaneously-generated parts) is descended from a <italic>unique</italic> part of the ancestral sequence(s). Thus, a reasonable approach is to seek an optimal division of <bold>B</bold> into parts, where each part is aligned to a most-similar part of <bold>A</bold>. It may be objected that we rarely have an ancestral sequence, but this can be worked around using outgroups (see below).</p>
+</sec>
+<sec id="s3">
+<title>Classic probability-based alignment</title>
+<p>The classic approach to sequence alignment, which ignores rearrangement, is based on probabilities [<xref rid="c20" ref-type="bibr">20</xref>].</p>
+<p>First, we must determine the probabilities of each kind of substitution (e.g. c&#x2192;t), and insertion and deletion probabilities, for a specific kind of sequence comparison. Four examples are shown in <xref ref-type="table" rid="tbl1">Table 1</xref>.</p>
+<table-wrap id="tbl1" orientation="portrait" position="float">
+<label>Table 1:</label>
+<caption><p>Probabilities of substitution, deletion, and insertion</p></caption>
+<graphic xlink:href="175943_tbl1.tif"/>
+</table-wrap>
+<p>Then, we can align sequences <italic>while considering these probabilities</italic>: in other words, prefer alignments with higher probability [<xref rid="c20" ref-type="bibr">20</xref>]. It stands to reason that this approach will tend to produce more accurate alignments (than alignment by ad hoc criteria not based on the rates of substitution, insertion and deletion).</p>
+</sec>
+<sec id="s4">
+<title>Probability-based alignment with rearrangements</title>
+<p>Thus, we would like to find an optimal division of a derived sequence into parts, and optimal alignment of each part to ancestral sequence(s) based on probabilities of substitution, insertion and deletion. Fortunately, there is an algorithm to do exactly this: the Repeated Matches Algorithm (in section 2.3 of [<xref rid="c20" ref-type="bibr">20</xref>]). This algorithm seems to do more work than classic alignment (because it finds an optimal segmentation <italic>and</italic> alignment), but its computational cost is not significantly greater [<xref rid="c20" ref-type="bibr">20</xref>]. It is too slow for human-genome-scale data, so fast heuristic approximations are needed. One such heuristic is <monospace>last-split</monospace> [<xref rid="c22" ref-type="bibr">22</xref>].</p>
+</sec>
+<sec id="s5">
+<title>Ambiguity and alignment probabilities</title>
+<p>Alignments have varying degrees of ambiguity. For example, suppose that our ancestral sequence has several identical copies of a retrotransposon, one of which has been retrotransposed (i.e. duplicated and inserted at a random location) in the derived sequence. While it is true that this insertion descends from a unique part of the ancestral sequence, this unique ancestral part is unknowable.</p>
+<p>By using the Repeated Matches Algorithm&#x2019;s probabilistic interpretation, we can quantify such ambiguity [<xref rid="c22" ref-type="bibr">22</xref>]. In the above retrotransposon example, the algorithm would align the insertion to an arbitrarily-chosen copy in the ancestral sequence, and annotate these bases with low correct-alignment probabilities (high &#x201C;mismap&#x201D; probabilities). This is useful, and the best that can be done.</p>
+</sec>
+<sec id="s6">
+<title>Results</title>
+<p>We studied two datasets of long DNA reads, from the same human cell line (NA12878). The MinION (R9.4) dataset (14 million reads, 90 billion bases) is from [<xref rid="c23" ref-type="bibr">23</xref>], and the PacBio (P5-C3) dataset (30 million reads, 197 billion bases) is from [<xref rid="c15" ref-type="bibr">15</xref>]. Note that the PacBio reads are a few years older, so this may not be a fair comparison of the technologies as they are now.</p>
+<sec id="s6a">
+<title>Sequencing error rates</title>
+<p>The rates of substitution, insertion, and deletion relative to a reference human genome (hg38) were estimated with <monospace>last-train</monospace> [<xref rid="c24" ref-type="bibr">24</xref>]. These rates include both sequencing errors and real genome differences, but greatly exceed the well-established rates of real difference, so are mostly error (<xref ref-type="table" rid="tbl1">Table 1</xref>).</p>
+<p>Both R9.4 and P5-C3 have more indel than substitution errors. R9.4 has more deletions (3.9<italic>&#x00D7;</italic>) than insertions. P5-C3 has more insertions (4.3<italic>&#x00D7;</italic>) than R9.4, but they tend to be shorter. It has fewer deletions (0.7<italic>&#x00D7;</italic>), also shorter.</p>
+<p>A preliminary result for R9.4 (not shown) had an almost-symmetric substitution matrix, therefore the training was redone assuming a symmetric matrix (<xref ref-type="table" rid="tbl1">Table 1</xref>). P5-C3 lacks this symmetry. R9.4 has higher rates of transition errors, especially <monospace>a</monospace>&#x2194;<monospace>g</monospace>.</p>
+<p>We also estimated the rates of substitution, deletion and insertion for chimp and gorilla DNA versus human (in order to make outgroup alignments). Compared to the long-read sequencing errors, there are much fewer insertions and deletions, but they tend to be longer. The rates of transition (<monospace>a</monospace>&#x2194; <monospace>g</monospace> and <monospace>c</monospace>&#x2194; <monospace>t</monospace>) are higher than those of P5-C3, but lower than those of R9.4. The transversion rates are mostly lower than those of the long reads.</p>
+</sec>
+<sec id="s6b">
+<title>Rearrangement-finding steps</title>
+<p>The two datasets were analyzed <italic>separately</italic>, by these steps:</p>
+<list list-type="order">
+<list-item><p>The DNA reads were aligned to the reference human genome with <monospace>last-split</monospace>.</p></list-item>
+<list-item><p>In each read separately, &#x201C;local&#x201D; rearrangements were identified, i.e. intrachromosomal rearrangements encompassed by one read.</p></list-item>
+<list-item><p>Overlapping rearrangements (from multiple reads) were clustered into &#x201C;rearranged regions&#x201D;.</p></list-item>
+<list-item><p>Each rearranged region was discarded if it was not covered by an unbroken alignment of chimp or gorilla DNA to the reference human genome. This aims to get rearrangements where the reference human genome&#x2019;s arrangement is ancestral. (It could fail to do so, if the derived arrangement was present in the common ancestor of these species.)</p></list-item>
+</list>
+</sec>
+<sec id="s6c">
+<title>Orphan rearrangements</title>
+<p>Because each dataset has many-fold coverage of the genome, we expect each rearrangement to be covered by multiple DNA reads. Surprisingly, however, there are many orphan rearrangements appearing in just one read.</p>
+<p>In the R9.4 dataset, 33 695 rearranged regions were found, of which 31 600 have just one rearranged read. Tandem duplications (TDs) are frequent: 29 339 of the orphans, and 1169 of the non-orphans, are tandem duplications. A (pseudo)random sample of TD and non-TD orphans is shown in <xref ref-type="fig" rid="fig2">Fig. 2</xref>. The non-TD orphans often have a zigzag pattern (implying triplication), which is not seen in the final set of confident rearrangements.</p>
+<fig id="fig2" position="float" fig-type="figure">
+<label>Figure 2:</label>
+<caption><p>Orphan rearrangements. <bold>A</bold>&#x2013;<bold>D</bold>: R9.4 tandem duplications (TDs). <bold>E</bold>&#x2013;<bold>H</bold>: R9.4 non-TD rearrangements. <bold>I</bold>&#x2013;<bold>L</bold>: P5-C3 tandem duplications. <bold>M</bold>&#x2013;<bold>P</bold>: P5-C3 non-TD rearrangements. Diagonal lines indicate alignments between a segment of a DNA read (vertical), and a segment of the reference human genome (horizontal). Red lines indicate same-strand alignments; blue lines indicate opposite-strand alignments. The vertical stripes indicate features in the reference genome; pink: forward-strand transposable element, blue: reverse-strand transposable element, purple: low-complexity or tandem repeat, green: exon.</p></caption>
+<graphic xlink:href="175943_fig2.tif"/>
+</fig>
+<p>In the P5-C3 dataset, 196 527 rearranged regions were found, of which 183 653 have just one rearranged read. Tandem duplications are again frequent: 154 487 orphans (and 3143 non-orphans) are TDs. A sample of these orphans is also shown in <xref ref-type="fig" rid="fig2">Fig. 2</xref>. Each TD orphan has a very small duplication (compared to R9.4), flanking an unaligned part of the read. The non-TD orphans often have a bizarre fountain-like appearance (<xref ref-type="fig" rid="fig2">Fig. 2</xref> M,O), with interspersed fragments from opposite strands.</p>
+<p>A plausible explanation of these orphan rearrangements is that they are artifacts of the DNA sequencing process.</p>
+</sec>
+<sec id="s6d">
+<title>Supported rearrangements</title>
+<p>Non-orphan rearrangements were analyzed further. Most non-orphans are tandem duplications and/or inside tandem repeats: the latter is not surprising, because tandem repeats have high rates of tandem duplication and gene conversion [<xref rid="c25" ref-type="bibr">25</xref>]. To avoid manual inspection of numerous similar rearrangements, we discarded tandem duplications (but not triplications etc.), and rearranged regions <italic>&#x003E;</italic> 50&#x0025; covered by tandem repeats.</p>
+<p>For the R9.4 dataset, this left 164 rearranged regions, which were manually inspected (Supplementary Results). A few were judged unclear or dubious (<xref ref-type="table" rid="tbl2">Table 2</xref>), usually due to doubt that the reference human genome&#x2019;s arrangement is ancestral. (Gaps <italic>&#x2264;</italic> 50 bp were allowed in the ape-human alignments, and sometimes these gaps coincided suspiciously with small rearrangements.)</p>
+<p>For the P5-C3 dataset, it is harder to separate plausible from dubious rearrangements. There are more dubious rearrangements, and the fountain-like ones are especially troublesome, because they are large (e.g. 10 kb) and often overlap other rearrangements. We therefore applied a stricter criterion, retaining only rearranged regions that have at least four reads with non-TD rearrangements. This left 121 rearranged regions (Supplementary Results), of which 48 were judged unclear or dubious (<xref ref-type="table" rid="tbl2">Table 2</xref>), usually because they have multiple overlapping fountain-like rearrangements.</p>
+<table-wrap id="tbl2" orientation="portrait" position="float">
+<label>Table 2:</label>
+<caption><p>Number of rearrangements of each type</p></caption>
+<graphic xlink:href="175943_tbl2.tif"/>
+</table-wrap>
+<p>Ultimately, this semi-manual analysis produced 166 local rearrangements judged to be clear and reliable (<xref ref-type="table" rid="tbl2">Table 2</xref>). One argument for their reliability is that each case has more than one read with the <italic>same</italic> rearrangement (Supplementary Results). An example is shown in <xref ref-type="fig" rid="fig3">Fig. 3A</xref>: this shows two reads, one from each DNA strand, with the same tandem heptuplication. In contrast, there are many cases where fountain-like rearrangements overlap each other, but they are different (e.g. Fig. S250, Fig. S274).</p>
+<fig id="fig3" position="float" fig-type="figure">
+<label>Figure 3:</label>
+<caption><p>Examples of tandem multiplication. Please see the description of <xref ref-type="fig" rid="fig2">Fig. 2</xref>. Here, each of <bold>A</bold>, <bold>B</bold> and <bold>C</bold> shows two R9.4 DNA reads, one above the other.</p></caption>
+<graphic xlink:href="175943_fig3.tif"/>
+</fig>
+<p>Another argument for the reality of these rearrangements is that 60 of them are found by both R9.4 and P5-C3, independent sequencing technologies. In fact, the P5-C3 rearrangements are mostly a subset of the R9.4 rearrangements, suggesting that with R9.4 we find almost all local rearrangements present in this genome. The main exception is the tandem multiplication category, where P5-C3 has 12 rearrangements not found in R9.4 (<xref ref-type="table" rid="tbl2">Table 2</xref>). This is related to our removal of rearrangements in tandem repeats: most of the 12 would be in tandem repeats, except for one or two reads with dubious alignments that enlarge the rearranged region (e.g. Fig. S184). On the other hand, the reason for finding only a subset of the rearrangements in P5-C3 is (at least partly) the stricter criterion used to discard dubious rearrangements.</p>
+</sec>
+<sec id="s6e">
+<title>Zygosity</title>
+<p>A further argument for the reality of these rearrangements is from zygosity. Since the DNA reads are from diploid cells (with two copies of each chromosome), if a rearrangement is real, it should be either homozygous (in both copies of the chromosome), or heterozygous (in just one copy). By examining all the DNA reads that align to a rearranged region, we can judge its zygosity.</p>
+<p>Many (but not all) of the rearranged regions have a clear zygosity. For example, the tandem multiplication in <xref ref-type="fig" rid="fig3">Fig. 3A</xref> is heterozygous: about half the R9.4 DNA reads align straight across this region without rearrangement (Fig. S165). This is confirmed by P5-C3 reads (Fig. S166). In contrast, <xref ref-type="fig" rid="fig3">Fig. 3B</xref> shows two different rearrangements in the same region, implying that both chromosomes are rearranged, so there should be no unrearranged DNA reads here. Indeed, there are none (Fig. S169). Some homozygous examples are: <xref ref-type="fig" rid="fig4">Fig. 4H</xref> (Fig. S93), <xref ref-type="fig" rid="fig4">Fig. 4L</xref> (Fig. S106), <xref ref-type="fig" rid="fig4">Fig. 4N</xref> (Fig. S121), and <xref ref-type="fig" rid="fig4">Fig. 4P</xref> (Fig. S141). Some heterozygous examples are: <xref ref-type="fig" rid="fig3">Fig. 3C</xref> (Fig. S187), <xref ref-type="fig" rid="fig4">Fig. 4A</xref> (Fig. S2), <xref ref-type="fig" rid="fig4">Fig. 4B</xref> (Fig. S8), and <xref ref-type="fig" rid="fig4">Fig. 4J</xref> (Fig. S117).</p>
+<fig id="fig4" position="float" fig-type="figure">
+<label>Figure 4:</label>
+<caption><p>Examples of recurring rearrangement patterns. Diagonal lines indicate alignments between a segment of a DNA read (vertical), and a segment of the reference human genome (horizontal). Red lines indicate same-strand alignments; blue lines indicate opposite-strand alignments. The vertical stripes indicate features in the reference genome; pink: forward-strand transposable element, blue: reverse-strand transposable element, purple: low-complexity or tandem repeat, green: exon, dark green: protein-coding sequence. Some of the alignments (diagonal lines) are tiny: it may help to view this on a screen and zoom in.</p></caption>
+<graphic xlink:href="175943_fig4.tif"/>
+</fig>
+<p>In some cases the zygosity is less clear, due to imperfect and ambiguous alignments.</p>
+</sec>
+<sec id="s6f">
+<title>Recurring patterns of rearrangement</title>
+<p>Many of the rearrangements strikingly resemble each other, i.e., there are recurring rearrangement motifs (<xref ref-type="table" rid="tbl2">Table 2</xref>). Some of these motifs (generally, the simpler ones) match complex-variant classes from the limited-resolution study of Collins et al. [<xref rid="c3" ref-type="bibr">3</xref>].</p>
+</sec>
+<sec id="s6g">
+<title>Tandem multiplication</title>
+<p>The most frequent type of rearrangement is tandem multiplication (<xref ref-type="table" rid="tbl2">Table 2</xref>). The degree of multiplication varies greatly, e.g. duplication (most common), heptuplication (<xref ref-type="fig" rid="fig3">Fig. 3A</xref>), and more (<xref ref-type="fig" rid="fig3">Fig. 3</xref> B&#x2013;C). The degree of multiplication is sometimes unclear, especially in tandem repeats: this is presumably due to ambiguity in alignment of tandemly-repeating sequences. The degree is often heterozygous, e.g. <xref ref-type="fig" rid="fig3">Fig. 3B</xref> shows a smaller allele with <italic>&#x223C;</italic>14-fold multiplication and a larger allele with <italic>&#x223C;</italic>22-fold multiplication.</p>
+<p>The tandem multiplication in <xref ref-type="fig" rid="fig3">Fig. 3B</xref> is immediately upstream of the transcription start site of LINC01596 (long intergenic non-protein coding RNA 1596), so is likely to have a profound effect on the expression of this transcript.</p>
+<p><xref ref-type="fig" rid="fig3">Fig. 3C</xref> illustrates a problem that occurs with all types of rearrangement, but especially tandem multiplications. While the lower DNA read shows 12-fold tandem multiplication, the upper read has two missing fragments: these two parts of the read are unaligned. A plausible explanation is that the alignment method simply failed to align these fragments, perhaps because of sequencing errors. Such missing fragments can often be rescued by re-aligning the DNA read with more slow- and-sensitive heuristics.</p>
+<p>More than half of the tandem multiplications locate near telomeres (Fig. S1), regions known to be rearrangement hot spots [<xref rid="c12" ref-type="bibr">12</xref>].</p>
+</sec>
+<sec id="s6h">
+<title>Non-tandem duplication</title>
+<p>Another frequent pattern is non-tandem, but localized, duplication (<xref ref-type="table" rid="tbl2">Table 2</xref>). The duplicated segment can be inserted in its original orientation (<xref ref-type="fig" rid="fig4">Fig. 4</xref> A&#x2013;C), or in the opposite orientation (<xref ref-type="fig" rid="fig4">Fig. 4D</xref>). These rearrangement patterns were reported previously [<xref rid="c15" ref-type="bibr">15</xref>].</p>
+<p>There are two cases of double non-tandem duplication (<xref ref-type="fig" rid="fig4">Fig. 4</xref> E&#x2013;F). In both cases, two non-adjacent segments have been duplicated, and inserted adjacent to each other roughly half-way between the duplication sources.</p>
+</sec>
+<sec id="s6i">
+<title>Inverted tandem duplication</title>
+<p>Another recurring pattern is inverted tandem duplication (<xref ref-type="fig" rid="fig4">Fig. 4G</xref>). This superficially resembles the zigzag pattern of orphan rearrangements (<xref ref-type="fig" rid="fig2">Fig. 2</xref> F&#x2013;H), but is duplication rather than triplication.</p>
+<p>There are some near-tandem inverted duplications (e.g. Fig. S63), so perhaps there is no sharp distinction between non-tandem opposite-orientation duplications (<xref ref-type="fig" rid="fig4">Fig. 4D</xref>) and the present category.</p>
+</sec>
+<sec id="s6j">
+<title>Inversion</title>
+<p>Inversions can occur without deletion (<xref ref-type="fig" rid="fig4">Fig. 4</xref> H&#x2013;I), but more often occur next to (<xref ref-type="fig" rid="fig4">Fig. 4</xref> J&#x2013;L) or in/between (<xref ref-type="fig" rid="fig4">Fig. 4</xref> M&#x2013;N) deletions. This fits with previous reports that inversions are often flanked by gaps [<xref rid="c26" ref-type="bibr">26</xref>, <xref rid="c27" ref-type="bibr">27</xref>, <xref rid="c28" ref-type="bibr">28</xref>].</p>
+<p>A rearrangement motif can occur at different scales. For example, each of <xref ref-type="fig" rid="fig4">Fig. 4</xref> J&#x2013;L shows a similar-looking inversion next to a larger deletion, but they span 900 bp, 4 kb, and 40 kb.</p>
+<p>The example in <xref ref-type="fig" rid="fig4">Fig. 4N</xref> deletes the second-last protein-coding exon of SPINK14 (serine peptidase inhibitor, Kazal type 14). Examination of all reads aligned here (Fig. S121) indicates that this rearrangement is homozygous.</p>
+</sec>
+<sec id="s6k">
+<title>Non-tandem duplication with deletion</title>
+<p>Another recurring pattern is non-tandem (but localized) duplication, combined with deletion at the duplication target site. Here too, the duplicated segment can be inserted in its original orientation (<xref ref-type="fig" rid="fig4">Fig. 4O</xref>), or in the opposite orientation (<xref ref-type="fig" rid="fig4">Fig. 4P</xref>).</p>
+</sec>
+<sec id="s6l">
+<title>Localized shattering</title>
+<p>A more complex rearrangement motif is &#x201C;localized shattering&#x201D; (<xref ref-type="fig" rid="fig4">Fig. 4</xref> Q&#x2013;R). This is so named because it looks like the ancestral sequence was shattered into multiple fragments, of which some were lost, and the others rejoined in random order and orientation. Accordingly, this motif exhibits deletion and repositioning but not duplication. Another diagnostic feature is that some of the rearranged fragments come from adjacent parts of the ancestral sequence. If the fragments came from randomly and independently chosen parts of the ancestral sequence, it is unlikely that they would be adjacent. Shattering naturally explains this adjacency.</p>
+<p>All of these diagnostic features are also present in the inversion-next-to-deletion pattern, which might thus be regarded as a special case of localized shattering.</p>
+</sec>
+<sec id="s6m">
+<title>Conversion</title>
+<p>Another well-known pattern of DNA sequence change is gene conversion, where one sequence tract is replaced by a duplicate of a similar tract (<xref ref-type="fig" rid="fig4">Fig. 4</xref> S&#x2013;T).</p>
+<p>The example in <xref ref-type="fig" rid="fig4">Fig. 4T</xref> involves protein-coding genes. The three green stripes on the left indicate the three exons of HBG1 (hemoglobin subunit gamma 1), and those on the right indicate HBG2 (hemoglobin subunit gamma 2). Here, the first two exons of HBG1 have been replaced by the equivalent exons of HBG2. Because HBG1 and HBG2 are very similar, this changes just one amino acid: a threonine is converted to an isoleucine. This substitution is present in dbSNP (rs1061234).</p>
+<p>At the DNA level, the segments of HBG1 and HBG2 that participate in this conversion differ by just one length-4 indel and a dozen substitutions. (The exact number of substitutions depends on the exact endpoints of the conversion, which are highly ambiguous.) Thus, these DNA reads could all-too-easily be aligned to the HBG locus co-linearly, without rearrangement. This example showcases the power of probability-based alignment, which calculates that the rearranged alignment is much more probable. The most informative alignment part (of one read) is shown in <xref ref-type="fig" rid="fig5">Fig. 5</xref>: a co-linear alignment would align this part of the read to HBG1.</p>
+<fig id="fig5" position="float" fig-type="figure">
+<label>Figure 5:</label>
+<caption><p>A segment of a DNA read aligned to HBG1 and HBG2. It is likely that this part of the read is paralogous to HBG1, and should rather be aligned to HBG2.</p></caption>
+<graphic xlink:href="175943_fig5.tif"/>
+</fig>
+</sec>
+<sec id="s6n">
+<title>Unique rearrangements</title>
+<p>Some rearrangements were judged to be unique, and not follow any recurring pattern. The eight cases found in the R9.4 dataset are described here.</p>
+</sec>
+<sec id="s6o">
+<title>Inverted tandem duplication with deletion</title>
+<p><xref ref-type="fig" rid="fig6">Fig. 6A</xref> shows an inverted tandem duplication with adjacent deletion. The duplication and deletion have roughly the same size, suggesting gene conversion. However, the duplicated and deleted sequences lack similarity, which argues against conversion.</p>
+<fig id="fig6" position="float" fig-type="figure">
+<label>Figure 6:</label>
+<caption><p>Unique rearrangements. Please see the description of <xref ref-type="fig" rid="fig4">Fig. 4</xref>.</p></caption>
+<graphic xlink:href="175943_fig6.tif"/>
+</fig>
+</sec>
+<sec id="s6p">
+<title>Non-tandem duplication next to deletion</title>
+<p><xref ref-type="fig" rid="fig6">Fig. 6B</xref> shows a non-tandem duplication, combined with a deletion adjacent to the duplication <italic>source</italic>.</p>
+</sec>
+<sec id="s6q">
+<title>Non-tandem duplication with Alu deletion</title>
+<p><xref ref-type="fig" rid="fig6">Fig. 6C</xref> shows a non-tandem duplication, and near the duplication target site is a precise (or near-precise) deletion of an AluY element. Perhaps this deletion occured separately and independently of the duplication. Precise deletion of transposable elements is unusual [<xref rid="c29" ref-type="bibr">29</xref>]: maybe the reference human genome&#x2019;s condition is not ancestral, even though it is shared by chimp and gorilla (Fig. S157).</p>
+</sec>
+<sec id="s6r">
+<title>Inversion with tandem repeat expansion</title>
+<p><xref ref-type="fig" rid="fig6">Fig. 6D</xref> shows an inversion that overlaps a period-45 tandem repeat (purple stripe). The tandemly repeated region has been partly duplicated. Since tandem repeats frequently expand, perhaps this inversion and expansion occurred independently.</p>
+</sec>
+<sec id="s6s">
+<title>Inversion with deletion and duplication</title>
+<p><xref ref-type="fig" rid="fig6">Fig. 6E</xref> shows a hard-to-classify rearrangement involving inversion with duplication and deletion. The inverted region overlaps two oppositely-oriented Alu elements, suggesting that homologous recombination between these Alus may have caused this inversion. The duplication and deletion superficially resemble gene conversion, a typical consequence of homologous recombination. However, the duplicated and deleted regions are dissimilar and of different lengths (the deletion is <italic>&#x223C;</italic>600 bp and the duplicated region is <italic>&#x223C;</italic>930 bp), which argues against conversion.</p>
+</sec>
+<sec id="s6t">
+<title>Multiple non-tandem duplication with conversion</title>
+<p><xref ref-type="fig" rid="fig6">Fig. 6F</xref> shows non-tandem duplication, with three duplicated fragments. The genomic sources of the two left-hand fragments are separated by 116 bp, and the right-hand fragment&#x2019;s source is 114 bp. Moreover, the left-hand separation and right-hand fragment are in equivalent regions of Alu elements. This correspondence between the left-hand separation and right-hand fragment is unlikely to be a coincidence, and suggests that conversion contributed to this complex rearrangement.</p>
+</sec>
+<sec id="s6u">
+<title>Heterozygous adjacent tandem duplications</title>
+<p><xref ref-type="fig" rid="fig6">Fig. 6G</xref> shows two (heterozygous) rearrangements (relative to the reference genome) at the same location, in the 3&#x2019;UTR of AHRR (aryl-hydrocarbon receptor repressor). One is a tandem duplication, the other is two adjacent tandem duplications: the latter pattern is unique in this study.</p>
+</sec>
+<sec id="s6v">
+<title>Tandem duplication next to heterozygous deletion</title>
+<p><xref ref-type="fig" rid="fig6">Fig. 6H</xref> shows two (heterozygous) rearrangements at the same location, within centromeric alpha satellite DNA. It appears that both rearrangements share the same tandem duplication, but one has an adjacent deletion.</p>
+</sec>
+</sec>
+</sec>
+<sec id="s7">
+<title>Repeat associations</title>
+<p>Many of the rearrangements are strikingly associated with repeats. Firstly, tandem multiplications often overlap tandem repeats (e.g. <xref ref-type="fig" rid="fig3">Fig. 3B</xref>), as expected.</p>
+<p>Secondly, some inversions and conversions are attributable to homologous recombination between repeats, also as expected. <xref ref-type="fig" rid="fig4">Fig. 4H</xref> shows an inversion between oppositely-oriented L1PA7 LINEs. <xref ref-type="fig" rid="fig4">Fig. 4S</xref> shows conversion between L1PA3 LINEs. In <xref ref-type="fig" rid="fig4">Fig. 4J</xref>, the inverted segment is near-precisely flanked by oppositely-oriented AluSx SINEs, though this does not explain the deletion.</p>
+<p>Thirdly, the target sites of some non-tandem duplications coincide with simple repeats (<xref ref-type="fig" rid="fig4">Fig. 4</xref> C&#x2013;E). An explanation may lie in the fact that simple repeats can be fragile [<xref rid="c25" ref-type="bibr">25</xref>].</p>
+<p>Fourthly, rearrangement edges often coincide with edges of transposon fragments. In <xref ref-type="fig" rid="fig4">Fig. 4G</xref>, the duplication&#x2019;s right end coincides with the 3&#x2019;-end of an L1 LINE fragment (that lacks the 3&#x2019;-most 5729 bases of a full-length L1). In <xref ref-type="fig" rid="fig4">Fig. 4N</xref>, the rightmost deletion edge is <italic>&#x223C;</italic>6 bp downstream of the 5&#x2019;-end of a (5&#x2019;-truncated) MIR. The inverted fragment&#x2019;s right edge is <italic>&#x223C;</italic>20 bp downstream of the 3&#x2019;-end of a (3&#x2019;-truncated) MamSINE1. In <xref ref-type="fig" rid="fig4">Fig. 4L</xref>, the deletion&#x2019;s left edge is <italic>&#x223C;</italic>4 bp upstream of the 3&#x2019;-end of a MIR (that lacks the 3&#x2019;-most 126 bp of a full-length MIR). In <xref ref-type="fig" rid="fig4">Fig. 4M</xref>, the leftmost deletion edge is <italic>&#x223C;</italic>3 bp upstream of the 5&#x2019;-end of an L1 (that lacks the first 6216 bp of a full-length L1). The rightmost edge is <italic>&#x223C;</italic>30 bp upstream of the 5&#x2019;-end of an L2 (that lacks the first 3303 bp of a full-length L2). There are similar coincidences in <xref ref-type="fig" rid="fig4">Fig. 4</xref> E,O,R and <xref ref-type="fig" rid="fig6">Fig. 6D</xref>.</p>
+<p>Some tandem multiplications also coincide with edges of transposon fragments. The multiplication in <xref ref-type="fig" rid="fig3">Fig. 3A</xref> is next to the 3&#x2019;-end of a (3&#x2019;-truncated) MLT1H2 LTR. The multiplication in <xref ref-type="fig" rid="fig3">Fig. 3C</xref> sits neatly between a MER103C transposon (left) and an L2 LINE (right).</p>
+<p>The duplication source in <xref ref-type="fig" rid="fig4">Fig. 4C</xref> near-perfectly overlaps an MLT1B LTR, suggesting retrotransposition of this element. This LTR has many mutations relative to the MLT1B consensus sequence, which enables unambiguous alignment, but suggests that it has lost retrotranspositional activity.</p>
+</sec>
+<sec id="s8">
+<title>Retrogene reduplication</title>
+<p>The non-tandem duplication in <xref ref-type="fig" rid="fig4">Fig. 4B</xref> perhaps warrants further description. The duplication source is in a white region flanked by blue stripes. This white region is a retrotransposed copy of RPL23A (ribosomal protein L23a) [<xref rid="c30" ref-type="bibr">30</xref>], which was inserted in a Charlie5 transposon (blue stripes). Thus, the rearrangement in <xref ref-type="fig" rid="fig4">Fig. 4B</xref> is a reduplication of most of this retrogene.</p>
+<p>There are many retrotransposed RPL23A copies in the genome [<xref rid="c30" ref-type="bibr">30</xref>], so we may wonder if this alignment is correct and unambiguous. This retrogene (the white region in <xref ref-type="fig" rid="fig4">Fig. 4B</xref>) has 90.2&#x0025; identity to its parent mRNA [<xref rid="c30" ref-type="bibr">30</xref>]. The inserted part of the DNA read in <xref ref-type="fig" rid="fig4">Fig. 4B</xref> aligns here with 192 matches, 15 mismatches, and 64 gaps. This alignment has much higher probability than the second-best hit (187 matches, 20 mismatches, 82 gaps), to a retro-RPL23A on chromosome 19 with 97.7&#x0025; identity to the parent mRNA. The insertion aligns to the parent mRNA with 186 matches, 21 mismatches, and 85 gaps, suggesting that it is not a direct retrotransposition of the parent gene.</p>
+</sec>
+<sec id="s9">
+<title>Rearrangement lengths</title>
+<p>The rearrangement lengths (span in ancestral genome) vary between 50 and 20 000 bases (<xref ref-type="fig" rid="fig7">Fig. 7</xref>). The upper bound is limited by the read lengths. The lower bound presumably reflects the difficulty of aligning short, error-prone sequence fragments: shorter rearrangements exist [<xref rid="c28" ref-type="bibr">28</xref>]. Since the figure shows <italic>ancestral</italic> lengths, it is not surprising that tandem multiplications tend to be shorter, and rearrangements involving deletion tend to be longer. The conversions are longer-range than most of the other rearrangements (but there are just four of them).</p>
+<fig id="fig7" position="float" fig-type="figure">
+<label>Figure 7:</label>
+<caption><p>Lengths of rearrangements in the R9.4 dataset.</p></caption>
+<graphic xlink:href="175943_fig7.tif"/>
+</fig>
+</sec>
+<sec id="s10">
+<title>Comparison to previously-found inversions</title>
+<p>The P5-C3 reads are from a previous study [<xref rid="c15" ref-type="bibr">15</xref>], which published a table of 40 inversions. Fourteen of them match our rearrangements: 2<italic>&#x00D7;</italic> inversion without deletion, 6<italic>&#x00D7;</italic> inversion next to deletion, 3<italic>&#x00D7;</italic> inversion in deletion, 2<italic>&#x00D7;</italic> unique (<xref ref-type="fig" rid="fig6">Fig. 6</xref> D&#x2013;E), and 1<italic>&#x00D7;</italic> &#x201C;dubious&#x201D; (reference human genome not ancestral). So only a minority of each inversion catalog is common to both.</p>
+<p>Seventeen of our inversions were not found in the previous study. The reason is unclear; however, among the 17 are our six longest (<italic>&#x003E;</italic>8 kb) and three shortest (<italic>&#x003C;</italic>200 bp) inversions.</p>
+<p>We miss 26 of the previous inversions, for clear reasons. In 23 cases, the reference human genome lacks an unbroken alignment to chimp or gorilla, thus failing our ancestrality criterion. One other case could not be transferred between genome versions. (The previous study used an older reference human genome.) The remaining two cases are not &#x201C;local&#x201D; rearrangements. One of them (in chromosome 1q25) is basically an inversion, but a fragment of the DNA read next to the inversion aligns to a distal location. The other (in chromosome 9q34) does not look like an inversion: it seems to be an interchromosomal rearrangement involving chromosome 22.</p>
+<p>Since we miss most of the previously-found inversions due to our ancestrality requirement, the reader may wonder whether this requirement is too strict. For inversions without deletion (<xref ref-type="fig" rid="fig4">Fig. 4</xref> H&#x2013;I), it is indeed too strict: the alignments reliably indicate such inversions regardless of whether the reference genome&#x2019;s arrangement is ancestral. For inversions with deletion (<xref ref-type="fig" rid="fig4">Fig. 4</xref> J&#x2013;N), however, ancestrality is important. Suppose the reference genome has an inversion with deletion, relative to the DNA reads. The regions of DNA reads that have been deleted in the genome should be unaligned, but if any part of the deleted sequence has a sufficiently-similar paralog anywhere else in the genome, the reads will be wrongly aligned to this paralog. Thus, while the ancestrality requirement could be relaxed for some types of rearrangement, in general it is necessary.</p>
+</sec>
+<sec id="s11">
+<title>Comparison to the Database of Genomic Variants</title>
+<p>Finally, we compared the R9.4 rearrangements to structural variants in the Database of Genomic Variants (DGV release 2016-08-31) [<xref rid="c18" ref-type="bibr">18</xref>]. The boundaries of both our rearranged regions and DGV variants are not necessarily precise, so we sought overlaps. About 100 R9.4 rearranged regions (65&#x0025;) roughly coincide with DGV variants (<xref ref-type="fig" rid="fig8">Fig. 8</xref>). By this criterion, DGV lacks most of our tandem multiplications (30/42) and inversions-without-deletion (6/8).</p>
+<fig id="fig8" position="float" fig-type="figure">
+<label>Figure 8:</label>
+<caption><p>Number of R9.4 rearrangements that overlap variants in DGV.</p></caption>
+<graphic xlink:href="175943_fig8.tif"/>
+</fig>
+<p>Many R9.4 rearranged regions coincide near-exactly with DGV variants (<xref ref-type="fig" rid="fig8">Fig. 8</xref>), but the descriptions often differ. For instance, the double duplication in <xref ref-type="fig" rid="fig4">Fig. 4F</xref> coincides (intersection over union = 0.986) with variant esv3324, a &#x201C;CNV loss&#x201D;. This variant was found from short DNA reads [<xref rid="c31" ref-type="bibr">31</xref>]: it looks as though they correctly found the adjacency of the two duplicated fragments, but incorrectly interpreted this as deletion of the interval between the two duplication sources. This illustrates the advantage of longer reads, which reveal the whole rearrangement.</p>
+<p>Diverse R9.4 rearrangements coincide with DGV &#x201C;inversions&#x201D;, including <xref ref-type="fig" rid="fig4">Fig. 4D</xref> (IoU 0.999), <xref ref-type="fig" rid="fig4">Fig. 4E</xref> (IoU 0.996), <xref ref-type="fig" rid="fig4">Fig. 4L</xref> (IoU 0.999), and <xref ref-type="fig" rid="fig6">Fig. 6F</xref> (IoU 0.99). These do all involve inverted fragments, but to describe e.g. <xref ref-type="fig" rid="fig6">Fig. 6F</xref> as &#x201C;inversion&#x201D; is at best incomplete and misleading. Short reads can show that neighboring parts of a sample genome map to opposite strands of a reference genome, but this is a feature of diverse types of rearrangement.</p>
+<p>Further examples include <xref ref-type="fig" rid="fig4">Fig. 4M</xref>, which coincides (IoU 0.995) with a &#x201C;CNV loss&#x201D;, a correct but incomplete description. The conversions in <xref ref-type="fig" rid="fig4">Fig. 4S</xref> (IoU 0.938) and <xref ref-type="fig" rid="fig4">Fig. 4T</xref> (IoU 0.956) coincide with &#x201C;CNV deletions&#x201D;. <xref ref-type="fig" rid="fig4">Fig. 4B</xref> (IoU 0.981) and <xref ref-type="fig" rid="fig6">Fig. 6B</xref> (IoU 0.9) coincide with &#x201C;tandem duplications&#x201D;. The localized shattering in <xref ref-type="fig" rid="fig4">Fig. 4Q</xref> coincides (IoU 0.943) with a &#x201C;CNV gain&#x002B;loss&#x201D;, which is consistent but vague.</p>
+<p>In summary, our long read analysis clarifies previously-reported variants.</p>
+</sec>
+<sec id="s12">
+<title>Discussion</title>
+<sec id="s12a">
+<title>Long DNA reads have many dubious rearrangements</title>
+<p>Both datasets (R9.4 and P5-C3) have many orphan rearrangements, that occur in just one read and are not supported by other reads. A plausible explanation is that they are artifacts of the sequencing process. For R9.4, we can distinguish plausible from dubious rearrangements provided we have enough sequencing coverage that real rearrangements are expected to be represented in more than one read. For P5-C3, it was harder to distinguish plausible from dubious rearrangements, due especially to the dubious fountain-like rearrangements, which are large and often overlap other rearrangements.</p>
+<p>Some, but not all, orphan rearrangements have characteristic patterns (e.g. zigzag, fountain-like) not seen in the supported rearrangements. So it may be possible to automatically recognize and discard them. This could be a moving target, however, if artifact patterns change with different versions of sequencing technology.</p>
+<p>Another approach would be to automatically recognize if more than one DNA read has the same rearrangement, not merely overlapping rearrangements. This is not trivial, because two reads with the same rearrangement can have non-identical alignments due to sequencing error (e.g. <xref ref-type="fig" rid="fig3">Fig. 3C</xref>).</p>
+</sec>
+<sec id="s12b">
+<title>Rearrangement patterns</title>
+<p>Nearly all the supported rearrangements belong to recurring patterns/motifs. One pattern can manifest at a wide range of scales, e.g. hundreds of bp to tens of kb (<xref ref-type="fig" rid="fig4">Fig. 4</xref> J&#x2013;L).</p>
+<p>The most common type of local rearrangement is tandem multiplication (especially duplication). This is very common in tandem repeats, as expected.</p>
+<p>Simple patterns are more frequent than complex patterns. Non-tandem duplications are the second-most frequent pattern, and are simple in that they have a low number of rearranged fragments. Tandem multiplications often have a high number of rearranged fragments, but are simple in that they consist of one rearrangement repeated multiple times.</p>
+<p>More complex patterns, however, are present, e.g. double duplication (<xref ref-type="fig" rid="fig4">Fig. 4</xref> E&#x2013; F), localized shattering (<xref ref-type="fig" rid="fig4">Fig. 4</xref> Q&#x2013;R), and a fascinating unique rearrangement (<xref ref-type="fig" rid="fig6">Fig. 6F</xref>). Analysis of other genomes will surely reveal more and more of these, enabling general statements about them. We have established here that such complex rearrangements can be detected in long DNA reads.</p>
+<p>Gene conversions were also identified: although this is a classically-known phenomenon, it has surely been under-reported in high-throughput sequencing studies, due to the ambiguity in aligning these sequences. Probability-based alignment is especially promising for resolving this kind of ambiguity.</p>
+<p>Some patterns that might be expected do not occur. In particular, there are no cases of translocation (movement of a DNA fragment), without deletion or duplication.</p>
+<p>None of the supported rearrangements have large unaligned &#x201C;insertions&#x201D; in the DNA reads (apart from cases like <xref ref-type="fig" rid="fig3">Fig 3C</xref>, which are likely alignment failures rather than true insertions). This fits the hypothesis that most sequence is descended from ancestral sequence, not spontaneously generated; it also supports the reality of these rearrangements. Thus the term &#x201C;insertion&#x201D; is potentially misleading: it is not symmetric with &#x201C;deletion&#x201D;, and is usually duplication (or deletion in the reference). On the other hand, orphan rearrangements often have unaligned parts of the reads (<xref ref-type="fig" rid="fig2">Fig. 2</xref>).</p>
+</sec>
+<sec id="s12c">
+<title>Possible rearrangement mechanisms</title>
+<p>A classic rearrangement-causing mechanism is homologous recombination. Some of the rearrangements are typical examples: conversion (<xref ref-type="fig" rid="fig4">Fig. 4</xref> S&#x2013;T) and inversion between oppositely-oriented repeats (<xref ref-type="fig" rid="fig4">Fig. 4H</xref>). Other rearrangements are harder to explain. The inversion in <xref ref-type="fig" rid="fig4">Fig. 4J</xref> lies between oppositely-oriented AluSx elements, suggesting recombination, but it is unclear how the adjacent deletion arose. The inversion in <xref ref-type="fig" rid="fig6">Fig. 6E</xref> overlaps oppositely-oriented Alus, but perhaps that is a coincidence: this inversion may be better explained by template switching during DNA replication.</p>
+<p>It has been suggested that template switching by DNA polymerase, during DNA replication, is a cause of complex rearrangements. Template switching may be triggered by a broken replication fork, in a mechanism termed MMBIR (microhomology-mediated break-induced replication) [<xref rid="c1" ref-type="bibr">1</xref>], or a stalled replication fork, in a mechanism termed FoSTeS (fork stalling and template switching) [<xref rid="c32" ref-type="bibr">32</xref>]. The suggestion is that multiple template switches can occur, producing rear-rangements with any number of duplications, deletions, and repositionings [<xref rid="c1" ref-type="bibr">1</xref>].</p>
+<p>Some of the rearrangements are best explained by shattering of DNA into fragments, which then rejoined in random order and orientation, with some fragments lost (e.g. <xref ref-type="fig" rid="fig4">Fig. 4</xref> Q&#x2013;R). The main reason to favor this explanation over template switching is that some of the rearranged fragments come from adjacent parts of the ancestral sequence: we know of no reason why template switching would exhibit this tendency. Localized shattering and rejoining can be caused by radiation, such as cosmic rays and alpha particles from radon gas [<xref rid="c33" ref-type="bibr">33</xref>, <xref rid="c34" ref-type="bibr">34</xref>, <xref rid="c35" ref-type="bibr">35</xref>, <xref rid="c36" ref-type="bibr">36</xref>].</p>
+<p>The rearrangements are often associated with repeats. In some cases, this is expected: tandem repeats have high rates of duplication and conversion, similar repeats are prone to recombination, and simple repeats can be fragile. It is less clear, however, why rearrangement edges are often close to the edges of transposon fragments. The edge of a transposon fragment is necessarily the edge of a previous rearrangement or deletion which created that fragment: so maybe these sites are fragile.</p>
+</sec>
+<sec id="s12d">
+<title>Aligning rearranged sequences</title>
+<p>Although the Repeated Matches Algorithm was described decades ago (and <monospace>last-split</monospace> has been publicly available since 2013), its suitability for elucidating rearrangements has not been recognized. This algorithm simultaneously optimizes the division of a query sequence into (any number of) parts, and the alignment of each part to reference sequences, based on probabilities of substitution, insertion, and deletion. Here, we have demonstrated that it can find intricate rearrangements in long DNA reads, and handle ambiguous situations like gene conversion.</p>
+<p>We have emphasized the importance of an ancestral reference sequence. The main problems with a non-ancestral reference are: reference-specific deletions and duplications. If there is a reference-specific deletion, the corresponding region of the query sequence should not be aligned, but if any part of it has a sufficiently similar paralog elsewhere in the reference, it will be aligned. Here, &#x201C;sufficiently&#x201D; similar is determined by the probabilities of substitution, insertion, and deletion used for alignment (<xref ref-type="table" rid="tbl1">Table 1</xref>). Thus, lower sequencing error rates would reduce this problem.</p>
+<p>Our approach cannot align fragments shorter than some minimum length (which depends on the genome size and sequencing error rates). For example, it will not align a 12 bp fragment to a human genome, because such an alignment is too insignificant to distinguish from chance matches. However, it is possible to detect inversions <italic>&#x003C;</italic> 12 bp [<xref rid="c28" ref-type="bibr">28</xref>]. The Repeated Matches Algorithm cannot do this because it assumes that rearranged fragments can be anywhere in the genome with uniform probability. Perhaps it could be modified to favor aligning nearby parts of a query sequence to nearby parts of the reference [<xref rid="c37" ref-type="bibr">37</xref>].</p>
+<p><monospace>last-split</monospace> is a useful approximation to the Repeated Matches Algorithm, but better approximations (in terms of accuracy and speed) are surely possible. One idea is to run the full Repeated Matches Algorithm on complex rearrange-ments tentatively identified by <monospace>last-split</monospace>.</p>
+</sec>
+<sec id="s12e">
+<title>Ancestral genomes are ideal reference genomes</title>
+<p>If we could reconstruct the most recent common ancestor of all extant human genomes, it would be an ideal reference for human nucleotide sequences. Almost every part of any human DNA read would be descended from a unique part of the reference. This would solve the worst problems with currently-used reference genomes.</p>
+</sec>
+<sec id="s12f">
+<title>Identifying rearrangements from alignments</title>
+<p>Although the alignment procedure can handle arbitrary rearrangements, this study only examined &#x201C;local&#x201D; rearrangements. A local rearrangement has a tightly-defined location: a start and an end coordinate in one chromosome. This property was used to: gather overlapping rearrangements in different DNA reads, check these regions&#x2019; alignments to chimp and gorilla, draw pictures of these regions, and compare them to DGV.</p>
+<p>If we consider non-local rearrangements, even the concept of a discrete rearrangement becomes unclear. Rearrangement <italic>events</italic> are discrete, but they may interact to produce a complex pattern of sequence change. For example, two overlapping inversions produce a combined rearrangement that does not resemble two distinct rearrangements. We would ideally like to infer the history of rearrangement events from the final sequence, but this is a deep problem, especially if one event can be complex (e.g. shattering).</p>
+<p>Our analysis pipeline is semi-manual: it makes pictures of rearranged regions for human interpretation. This is appropriate for exploring what kinds of (real and artifactual) rearrangements exist.</p>
+<p>It would be convenient to automatically infer one or two rearranged alleles in each region. This is not trivial, because different DNA reads that cover the same rearrangement can have different alignments (e.g. <xref ref-type="fig" rid="fig3">Fig. 3C</xref>). This problem would be reduced with lower rates of sequencing error, because the different DNA reads would align more consistently (and presumably more accurately).</p>
+<p>An alternative approach is to first perform reference-free assembly of the reads, then seek rearrangements in the assembly relative to a reference genome. It is not obvious which approach is better. Comparing unassembled reads to the reference genome is more direct: there is no question of assembly error, and we can examine the alignments of the original reads.</p>
+</sec>
+</sec>
+<sec id="s13">
+<title>Conclusions</title>
+<p>This study demonstrates an approach to find arbitrarily-complex (but localized) sequence rearrangements in long DNA reads. Its key ideas are to exploit the asymmetric relationship between ancestral and derived sequences, and the use of probabilities to resolve ambiguities due to repeats and paralogs. The long reads studied here have many dubious (likely-artifactual) rearrangements, but it is possible to discriminate them from likely-real rearrangements. Almost all the real rearrangements belong to recurring motifs. Although simpler rearrangements are more common, complex and intricate rearrangements can be found: including localized shattering, which resembles radiation damage. Such rearrangements may be powerful homoplasy-free phylogenetic markers. It will be fascinating to survey many more genomes, from healthy and diseased cells, in a variety of organisms.</p>
+</sec>
+<sec id="s14">
+<title>Methods</title>
+<sec id="s14a">
+<title>Outgroup alignments</title>
+<p>The reference human genome was aligned to genomes of chimp [<xref rid="c38" ref-type="bibr">38</xref>] and gorilla [<xref rid="c39" ref-type="bibr">39</xref>]. The precise methods, and resulting alignments, are available at <ext-link ext-link-type="uri" xlink:href="https://github.com/mcfrith/last-genome-alignments">https://github.com/mcfrith/last-genome-alignments</ext-link>. For the present study, the human-chimp and human-gorilla alignments were concatenated into one file:</p>
+<p><monospace>cat hg38-panTro5.tab hg38-gorGor5.tab &#x003E; apes.tab</monospace></p>
+</sec>
+<sec id="s14b">
+<title>DNA read data</title>
+<p>The R9.4 reads were downloaded as 38 fastq files of the rel3 release at <ext-link ext-link-type="uri" xlink:href="https://github.com/nanopore-wgs-consortium/NA12878">https://github.com/nanopore-wgs-consortium/NA12878</ext-link>, and then converted to fasta format. The P5-C3 reads (accession number SRX627421) are provided as 26 SRR files, each of which was obtained like this:</p>
+<preformat preformat-type="dialog">
+fastq-dump --fasta --split-spot --skip-technical -I --gzip SRR1947646
+</preformat>
+</sec>
+<sec id="s14c">
+<title>Alignment of DNA reads to the reference genome</title>
+<p>First, an &#x201C;index&#x201D; of the reference human genome was created (and named <monospace>hdb</monospace>):</p>
+<preformat preformat-type="dialog">
+lastdb -P8 -uNEAR -R01 hdb hg38_no_alt_analysis_set.fa
+</preformat>
+<p>Then, the rates of substitution, insertion, and deletion were estimated:</p>
+<preformat preformat-type="dialog">
+last-train -P8 hdb reads.fa &#x003E; train.out
+</preformat>
+<p>This was done separately for each of the 38 R9.4 files: the results did not vary unduly. Likewise for the 26 P5-C3 files. Because the R9.4 substitution matrices were nearly symmetric, the training was redone assuming a symmetric matrix:</p>
+<preformat preformat-type="dialog">
+last-train -P8 --matsym hdb reads.fa &#x003E; train.out
+</preformat>
+<p>The result for one R9.4 file (<monospace>3843483077-FAB42476</monospace>) was deemed representative, and used for all subsequent R9.4 alignments. Likewise, the result for <monospace>SRR1950284</monospace> was used for all subsequent P5-C3 alignments. The reads were aligned to the genome like this:</p>
+<preformat preformat-type="dialog">
+lastal -P8 -p train.out hdb reads.fa | last-split -m1 &#x003E; alns.maf
+</preformat>
+</sec>
+<sec id="s14d">
+<title>Finding rearrangements</title>
+<p>The software for finding and drawing local rearrangements is available at: <ext-link ext-link-type="uri" xlink:href="https://github.com/mcfrith/local-rearrangements">https://github.com/mcfrith/local-rearrangements</ext-link>. The two datasets, R9.4 and P5-C3, were analyzed separately in this and all following steps. Local rearrangements were found like this:</p>
+<preformat preformat-type="dialog">
+local-rearrangements --outgroup apes.tab --min-complex=0 alns.maf &#x003E; r1.maf
+</preformat>
+<p>The <monospace>--min-complex=0</monospace> option makes it keep tandem duplications (which are discarded by default).</p>
+</sec>
+<sec id="s14e">
+<title>Re-aligning</title>
+<p>Non-orphan rearrangements were re-aligned to the genome more slowly- and-sensitively, in order to find missing alignment parts such as those in <xref ref-type="fig" rid="fig3">Fig. 3C</xref>. For R9.4, all reads (whether rearranged or not) that align near rearranged regions were extracted:</p>
+<preformat preformat-type="dialog">
+local-rearrangements --rearrangements r1.maf --min-queries=2 alns.maf &#x003E; r2.maf
+</preformat>
+<p>The <monospace>--min-queries=2</monospace> option makes it only use rearranged regions that have at least 2 rearranged reads. For P5-C3, a stricter criterion was necessary to avoid an excessive number of dubious rearrangements:</p>
+<preformat preformat-type="dialog">
+local-rearrangements --rearrangements r1.maf --min-complex=3 alns.maf &#x003E; r2.maf
+</preformat>
+<p>This only uses rearranged regions that have at least 3 reads with non-TD rearrangements. The extracted reads were aligned to the genome slowly- and-sensitively, then rearrangements were found:</p>
+<preformat preformat-type="dialog">
+fasta-from-maf r2.maf reads.fa &#x003E; r2.fa
+lastal -P8 -p train.out -m50 -d90 hdb r2.fa | last-split -m1 &#x003E; slow.maf local-rearrangements --outgroup apes.tab --min-complex=0 slow.maf &#x003E; out1.maf
+</preformat>
+<p>Finally, the alignments of all reads at rearranged loci were extracted like this for R9.4:</p>
+<preformat preformat-type="dialog">
+local-rearrangements --rearrangements out1.maf --min-complex=2 slow.maf &#x003E; out2.maf
+</preformat>
+<p>and like this for P5-C3:</p>
+<preformat preformat-type="dialog">
+local-rearrangements --rearrangements out1.maf --min-complex=4 slow.maf &#x003E; out2.maf
+</preformat>
+</sec>
+<sec id="s14f">
+<title>Definition of local rearrangements</title>
+<p>The definition of &#x201C;local&#x201D; rearrangement used in this study is ad hoc, but empirically useful. The starting point is an alignment of one DNA read to a genome, which comprises one or more non-overlapping segments of the read in separate alignments. Local rearrangements are reported only if:</p>
+<list list-type="bullet">
+<list-item><p>All segments align to the same chromosome.</p></list-item>
+<list-item><p>The first and last segments (ordered by 5&#x2019;-to-3&#x2019; position in the read) align to the same strand of the chromosome: call this the &#x201C;main&#x201D; strand.</p></list-item>
+<list-item><p>The first segment&#x2019;s start coordinate (in the main strand) is <italic>&#x003C;</italic> (i.e. more 5&#x2019; than) all other parts of this read&#x2019;s alignment.</p></list-item>
+<list-item><p>The last segment&#x2019;s end coordinate (in the main strand) is <italic>&#x003E;</italic> (i.e. more 3&#x2019; than) all other parts of this read&#x2019;s alignment.</p></list-item>
+<list-item><p>The distance between the first segment&#x2019;s start coordinate and the last segment&#x2019;s end coordinate is not excessive. Specifically, <italic>&#x2264;</italic> twice the sum of all segments&#x2019; genomic spans.</p></list-item>
+</list>
+<p>Next, consider the segments in order of their 5&#x2019;-to-3&#x2019; position in the read. A segment is called &#x201C;delimiting&#x201D; if:</p>
+<list list-type="bullet">
+<list-item><p>It aligns to the main strand.</p></list-item>
+<list-item><p>max(end coordinates of all preceding segments, start coordinate of this segment) <italic>&#x003C;</italic> min(start coordinates of all following segments, end coordinate of this segment).</p></list-item>
+</list>
+<p>If there are two neighboring delimiting segments, which overlap in the genome, then they delimit a tandem duplication (TD). If there are two delimiting segments separated by non-delimiting segments, then they delimit a complex (non-TD) rearrangement.</p>
+</sec>
+<sec id="s14g">
+<title>Joining nearby rearrangements</title>
+<p>The preceding method may identify separate rearrangements that are very near each other. If they are very near, it is more intuitive to consider them as one (non-TD) rearrangement. Thus, rearrangements (in one DNA read) are joined if the genomic span of their union is <italic>&#x2265;</italic> twice their genomic separation.</p>
+<p>This joining criterion is based on no theory whatsoever, but empirically it fits human intuition. For example, an early version joined rearrangements more aggressively, but the human intuition on viewing these figures was that they are separate, wrongly-joined rearrangements.</p>
+</sec>
+</sec>
+<sec id="s15">
+<title>Genome annotations</title>
+<p>These files were obtained from the UCSC genome database [<xref rid="c40" ref-type="bibr">40</xref>]. Annotations of the <monospace>hg38</monospace> human genome were taken from its <monospace>refFlat.txt</monospace> [<xref rid="c41" ref-type="bibr">41</xref>], <monospace>rmsk.txt</monospace> [<xref rid="c42" ref-type="bibr">42</xref>], and <monospace>simpleRepeat.txt</monospace> [<xref rid="c43" ref-type="bibr">43</xref>] files. Unsequenced gaps in the <monospace>panTro5</monospace> chimp genome were taken from its <monospace>gap.txt</monospace> file. (The <monospace>gorGor5</monospace> gorilla genome consists of contigs without unsequenced gaps.)</p>
+<p>As mentioned above, we discarded rearranged regions <italic>&#x003E;</italic> 50&#x0025; covered by tandem repeats: specifically, tandem repeats with period <italic>&#x2264;</italic> 100 from <monospace>simpleRepeat.txt</monospace>.</p>
+<p>In the figures, the purple stripes are the union of: repeats with period <italic>&#x2264;</italic> 100 from <monospace>simpleRepeat.txt</monospace>, and features of type &#x201C;Low complexity&#x201D; or &#x201C;Simple repeat&#x201D; from <monospace>rmsk.txt</monospace>. The pink and blue stripes are all other features from <monospace>rmsk.txt</monospace>.</p>
+</sec>
+<sec id="s16">
+<title>Previously-found inversions</title>
+<p>The locations (in the <monospace>hg19</monospace> human genome) of 40 inversions were taken from Supplementary Table 6 of [<xref rid="c15" ref-type="bibr">15</xref>]. They were transferred to <monospace>hg38</monospace>:</p>
+<p><monospace>liftOver oldFile hg19ToHg38.over.chain newFile unMapped</monospace></p>
+<p>This transfer failed for one case out of 40.</p>
+</sec>
+<sec id="s17">
+<title>Funding</title>
+<p>This work was supported by KAKENHI Grant Number 26700030.</p>
+</sec>
+<sec id="s18">
+<title>Authors&#x2019; contributions</title>
+<p>MCF developed and applied the rearrangement-finding pipeline. SK analyzed the rearrangements. MCF and SK wrote the manuscript. All authors read and approved the final manuscript.</p>
+</sec>
+</body>
+<back>
+<ack>
+<title>Acknowledgements</title>
+<p>We thank Risa Kawaguchi for suggestions on displaying rearrangements, and Anish Shrestha for comments on the manuscript.</p>
+</ack>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>[1]</label><mixed-citation publication-type="journal"><string-name><surname>Hastings</surname> <given-names>PJ</given-names></string-name>, <string-name><surname>Lupski</surname> <given-names>JR</given-names></string-name>, <string-name><surname>Rosenberg</surname> <given-names>SM</given-names></string-name>, <string-name><surname>Ira</surname> <given-names>G</given-names></string-name>. <article-title>Mechanisms of change in gene copy number</article-title>. <source>Nat Rev Genet</source>. <year>2009</year> <month>Aug</month>;<volume>10</volume>(<issue>8</issue>):<fpage>551</fpage>&#x2013;<lpage>564</lpage>.</mixed-citation></ref>
+<ref id="c2"><label>[2]</label><mixed-citation publication-type="journal"><string-name><surname>Zhang</surname> <given-names>CZ</given-names></string-name>, <string-name><surname>Leibowitz</surname> <given-names>ML</given-names></string-name>, <string-name><surname>Pellman</surname> <given-names>D</given-names></string-name>. <article-title>Chromothripsis and beyond: rapid genome evolution from complex chromosomal rearrangements</article-title>. <source>Genes Dev</source>. <year>2013</year> <month>Dec</month>;<volume>27</volume>(<issue>23</issue>):<fpage>2513</fpage>&#x2013;<lpage>2530</lpage>.</mixed-citation></ref>
+<ref id="c3"><label>[3]</label><mixed-citation publication-type="journal"><string-name><surname>Collins</surname> <given-names>RL</given-names></string-name>, <string-name><surname>Brand</surname> <given-names>H</given-names></string-name>, <string-name><surname>Redin</surname> <given-names>CE</given-names></string-name>, <string-name><surname>Hanscom</surname> <given-names>C</given-names></string-name>, <string-name><surname>Antolik</surname> <given-names>C</given-names></string-name>, <string-name><surname>Stone</surname> <given-names>MR</given-names></string-name>, <etal>et al</etal> <article-title>Defining the diverse spectrum of inversions, complex structural variation, and chromothripsis in the morbid human genome</article-title>. <source>Genome Biol</source>. <year>2017</year> <month>Mar</month>;<volume>18</volume>(<issue>1</issue>):<fpage>36</fpage>.</mixed-citation></ref>
+<ref id="c4"><label>[4]</label><mixed-citation publication-type="journal"><string-name><surname>Zwaigenbaum</surname> <given-names>L</given-names></string-name>, <string-name><surname>Sonnenberg</surname> <given-names>LK</given-names></string-name>, <string-name><surname>Heshka</surname> <given-names>T</given-names></string-name>, <string-name><surname>Eastwood</surname> <given-names>S</given-names></string-name>, <string-name><surname>Xu</surname> <given-names>J</given-names></string-name>. <article-title>A girl with pervasive developmental disorder and complex chromosome rearrangement involving 8p and 10p</article-title>. <source>J Autism Dev Disord</source>. <year>2005</year> <month>Jun</month>;<volume>35</volume>(<issue>3</issue>):<fpage>393</fpage>&#x2013;<lpage>399</lpage>.</mixed-citation></ref>
+<ref id="c5"><label>[5]</label><mixed-citation publication-type="journal"><string-name><surname>Tzschach</surname> <given-names>A</given-names></string-name>, <string-name><surname>Hoffmann</surname> <given-names>K</given-names></string-name>, <string-name><surname>Hoeltzenbein</surname> <given-names>M</given-names></string-name>, <string-name><surname>Bache</surname> <given-names>I</given-names></string-name>, <string-name><surname>Tommerup</surname> <given-names>N</given-names></string-name>, <string-name><surname>Bommer</surname> <given-names>C</given-names></string-name>, <etal>et al</etal> <article-title>Molecular characterization of a balanced chromosome translocation in psoriasis vulgaris</article-title>. <source>Clin Genet</source>. <year>2006</year> <month>Feb</month>;<volume>69</volume>(<issue>2</issue>):<fpage>189</fpage>&#x2013;<lpage>193</lpage>.</mixed-citation></ref>
+<ref id="c6"><label>[6]</label><mixed-citation publication-type="journal"><string-name><surname>Greer</surname> <given-names>SU</given-names></string-name>, <string-name><surname>Nadauld</surname> <given-names>LD</given-names></string-name>, <string-name><surname>Lau</surname> <given-names>BT</given-names></string-name>, <string-name><surname>Chen</surname> <given-names>J</given-names></string-name>, <string-name><surname>Wood-Bouwens</surname> <given-names>C</given-names></string-name>, <string-name><surname>Ford</surname> <given-names>JM</given-names></string-name>, <etal>et al</etal> <article-title>Linked read sequencing resolves complex genomic rearrangements in gastric cancer metastases</article-title>. <source>Genome Med</source>. <year>2017</year> <month>Jun</month>;<volume>9</volume>(<issue>1</issue>):<fpage>57</fpage>.</mixed-citation></ref>
+<ref id="c7"><label>[7]</label><mixed-citation publication-type="journal"><string-name><surname>Stephens</surname> <given-names>PJ</given-names></string-name>, <string-name><surname>McBride</surname> <given-names>DJ</given-names></string-name>, <string-name><surname>Lin</surname> <given-names>ML</given-names></string-name>, <string-name><surname>Varela</surname> <given-names>I</given-names></string-name>, <string-name><surname>Pleasance</surname> <given-names>ED</given-names></string-name>, <string-name><surname>Simpson</surname> <given-names>JT</given-names></string-name>, <etal>et al</etal> <article-title>Complex landscapes of somatic rearrangement in human breast cancer genomes</article-title>. <source>Nature</source>. <year>2009</year> <month>Dec</month>;<volume>462</volume>(<issue>7276</issue>):<fpage>1005</fpage>&#x2013;<lpage>1010</lpage>.</mixed-citation></ref>
+<ref id="c8"><label>[8]</label><mixed-citation publication-type="journal"><string-name><surname>Feuk</surname> <given-names>L</given-names></string-name>, <string-name><surname>Carson</surname> <given-names>AR</given-names></string-name>, <string-name><surname>Scherer</surname> <given-names>SW</given-names></string-name>. <article-title>Structural variation in the human genome</article-title>. <source>Nat Rev Genet</source>. <year>2006</year> <month>Feb</month>;<volume>7</volume>(<issue>2</issue>):<fpage>85</fpage>&#x2013;<lpage>97</lpage>.</mixed-citation></ref>
+<ref id="c9"><label>[9]</label><mixed-citation publication-type="journal"><string-name><surname>Sudmant</surname> <given-names>PH</given-names></string-name>, <string-name><surname>Rausch</surname> <given-names>T</given-names></string-name>, <string-name><surname>Gardner</surname> <given-names>EJ</given-names></string-name>, <string-name><surname>Handsaker</surname> <given-names>RE</given-names></string-name>, <string-name><surname>Abyzov</surname> <given-names>A</given-names></string-name>, <string-name><surname>Huddle-ston</surname> <given-names>J</given-names></string-name>, <etal>et al</etal> <article-title>An integrated map of structural variation in 2,504 human genomes</article-title>. <source>Nature</source>. <year>2015</year> <month>Oct</month>;<volume>526</volume>(<issue>7571</issue>):<fpage>75</fpage>&#x2013;<lpage>81</lpage>.</mixed-citation></ref>
+<ref id="c10"><label>[10]</label><mixed-citation publication-type="journal"><string-name><surname>Hehir-Kwa</surname> <given-names>JY</given-names></string-name>, <string-name><surname>Marschall</surname> <given-names>T</given-names></string-name>, <string-name><surname>Kloosterman</surname> <given-names>WP</given-names></string-name>, <string-name><surname>Francioli</surname> <given-names>LC</given-names></string-name>, <string-name><surname>Baaijens</surname> <given-names>JA</given-names></string-name>, <string-name><surname>Dijkstra</surname> <given-names>LJ</given-names></string-name>, <etal>et al</etal> <article-title>A high-quality human reference panel reveals the complexity and distribution of genomic structural variants</article-title>. <source>Nat Commun</source>. <year>2016</year> <month>Oct</month>;<volume>7:12989</volume>.</mixed-citation></ref>
+<ref id="c11"><label>[11]</label><mixed-citation publication-type="journal"><string-name><surname>Treangen</surname> <given-names>TJ</given-names></string-name>, <string-name><surname>Salzberg</surname> <given-names>SL</given-names></string-name>. <article-title>Repetitive DNA and next-generation sequencing: computational challenges and solutions</article-title>. <source>Nat Rev Genet</source>. <year>2011</year> <month>Nov</month>;<volume>13</volume>(<issue>1</issue>):<fpage>36</fpage>&#x2013;<lpage>46</lpage>.</mixed-citation></ref>
+<ref id="c12"><label>[12]</label><mixed-citation publication-type="journal"><string-name><surname>Linardopoulou</surname> <given-names>EV</given-names></string-name>, <string-name><surname>Williams</surname> <given-names>EM</given-names></string-name>, <string-name><surname>Fan</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Friedman</surname> <given-names>C</given-names></string-name>, <string-name><surname>Young</surname> <given-names>JM</given-names></string-name>, <string-name><surname>Trask</surname> <given-names>BJ</given-names></string-name>. <article-title>Human subtelomeres are hot spots of interchromosomal recombination and segmental duplication</article-title>. <source>Nature</source>. <year>2005</year> <month>Sep</month>;<volume>437</volume>(<issue>7055</issue>):<fpage>94</fpage>&#x2013;<lpage>100</lpage>.</mixed-citation></ref>
+<ref id="c13"><label>[13]</label><mixed-citation publication-type="journal"><string-name><surname>Chaisson</surname> <given-names>MJ</given-names></string-name>, <string-name><surname>Huddleston</surname> <given-names>J</given-names></string-name>, <string-name><surname>Dennis</surname> <given-names>MY</given-names></string-name>, <string-name><surname>Sudmant</surname> <given-names>PH</given-names></string-name>, <string-name><surname>Malig</surname> <given-names>M</given-names></string-name>, <string-name><surname>Hormozdiari</surname> <given-names>F</given-names></string-name>, <etal>et al</etal> <article-title>Resolving the complexity of the human genome using single-molecule sequencing</article-title>. <source>Nature</source>. <year>2015</year> <month>Jan</month>;<volume>517</volume>(<issue>7536</issue>):<fpage>608</fpage>&#x2013;<lpage>611</lpage>.</mixed-citation></ref>
+<ref id="c14"><label>[14]</label><mixed-citation publication-type="other"><string-name><surname>Merker</surname> <given-names>JD</given-names></string-name>, <string-name><surname>Wenger</surname> <given-names>AM</given-names></string-name>, <string-name><surname>Sneddon</surname> <given-names>T</given-names></string-name>, <string-name><surname>Grove</surname> <given-names>M</given-names></string-name>, <string-name><surname>Zappala</surname> <given-names>Z</given-names></string-name>, <string-name><surname>Fresard</surname> <given-names>L</given-names></string-name>, <etal>et al</etal> <article-title>Long-read genome sequencing identifies causal structural variation in a Mendelian disease</article-title>. <source>Genet Med</source>. <year>2017</year> <month>Jun</month>.</mixed-citation></ref>
+<ref id="c15"><label>[15]</label><mixed-citation publication-type="journal"><string-name><surname>Pendleton</surname> <given-names>M</given-names></string-name>, <string-name><surname>Sebra</surname> <given-names>R</given-names></string-name>, <string-name><surname>Pang</surname> <given-names>AW</given-names></string-name>, <string-name><surname>Ummat</surname> <given-names>A</given-names></string-name>, <string-name><surname>Franzen</surname> <given-names>O</given-names></string-name>, <string-name><surname>Rausch</surname> <given-names>T</given-names></string-name>, <etal>et al</etal> <article-title>Assembly and diploid architecture of an individual human genome via single-molecule technologies</article-title>. <source>Nat Methods</source>. <year>2015</year> <month>Aug</month>;<volume>12</volume>(<issue>8</issue>):<fpage>780</fpage>&#x2013;<lpage>786</lpage>.</mixed-citation></ref>
+<ref id="c16"><label>[16]</label><mixed-citation publication-type="journal"><string-name><surname>Ritz</surname> <given-names>A</given-names></string-name>, <string-name><surname>Bashir</surname> <given-names>A</given-names></string-name>, <string-name><surname>Sindi</surname> <given-names>S</given-names></string-name>, <string-name><surname>Hsu</surname> <given-names>D</given-names></string-name>, <string-name><surname>Hajirasouliha</surname> <given-names>I</given-names></string-name>, <string-name><surname>Raphael</surname> <given-names>BJ</given-names></string-name>. <article-title>Characterization of structural variants with single molecule and hybrid sequencing approaches</article-title>. <source>Bioinformatics</source>. <year>2014</year> <month>Dec</month>;<volume>30</volume>(<issue>24</issue>):<fpage>3458</fpage>&#x2013;<lpage>3466</lpage>.</mixed-citation></ref>
+<ref id="c17"><label>[17]</label><mixed-citation publication-type="journal"><string-name><surname>English</surname> <given-names>AC</given-names></string-name>, <string-name><surname>Salerno</surname> <given-names>WJ</given-names></string-name>, <string-name><surname>Reid</surname> <given-names>JG</given-names></string-name>. <article-title>PBHoney: identifying genomic variants via long-read discordance and interrupted mapping</article-title>. <source>BMC Bioinformatics</source>. <year>2014</year> <month>Jun</month>;<volume>15:180</volume>.</mixed-citation></ref>
+<ref id="c18"><label>[18]</label><mixed-citation publication-type="journal"><string-name><surname>MacDonald</surname> <given-names>JR</given-names></string-name>, <string-name><surname>Ziman</surname> <given-names>R</given-names></string-name>, <string-name><surname>Yuen</surname> <given-names>RK</given-names></string-name>, <string-name><surname>Feuk</surname> <given-names>L</given-names></string-name>, <string-name><surname>Scherer</surname> <given-names>SW</given-names></string-name>. <article-title>The Database of Genomic Variants: a curated collection of structural variation in the human genome</article-title>. <source>Nucleic Acids Res</source>. <year>2014</year> <month>Jan</month>;<volume>42</volume>(<issue>Database issue</issue>):<fpage>D986</fpage>&#x2013;<lpage>992</lpage>.</mixed-citation></ref>
+<ref id="c19"><label>[19]</label><mixed-citation publication-type="journal"><string-name><surname>Martinez-Fundichely</surname> <given-names>A</given-names></string-name>, <string-name><surname>Casillas</surname> <given-names>S</given-names></string-name>, <string-name><surname>Egea</surname> <given-names>R</given-names></string-name>, <string-name><surname>Ramia</surname> <given-names>M</given-names></string-name>, <string-name><surname>Barbadilla</surname> <given-names>A</given-names></string-name>, <string-name><surname>Pantano</surname> <given-names>L</given-names></string-name>, <etal>et al</etal> <article-title>InvFEST, a database integrating information of polymorphic inversions in the human genome</article-title>. <source>Nucleic Acids Res</source>. <year>2014</year> <month>Jan</month>;<volume>42</volume>(<issue>Database issue</issue>):<fpage>D1027</fpage>&#x2013;<lpage>1032</lpage>.</mixed-citation></ref>
+<ref id="c20"><label>[20]</label><mixed-citation publication-type="book"><string-name><surname>Durbin</surname> <given-names>R</given-names></string-name>, <string-name><surname>Eddy</surname> <given-names>SR</given-names></string-name>, <string-name><surname>Krogh</surname> <given-names>A</given-names></string-name>, <string-name><surname>Mitchison</surname> <given-names>G.</given-names></string-name> <source>Biological sequence analysis: probabilistic models of proteins and nucleic acids</source>. <publisher-name>Cambridge University Press</publisher-name>; <year>1998</year>.</mixed-citation></ref>
+<ref id="c21"><label>[21]</label><mixed-citation publication-type="website"><string-name><surname>Sedlazeck</surname> <given-names>FJ</given-names></string-name>, <string-name><surname>Rescheneder</surname> <given-names>P</given-names></string-name>, <string-name><surname>Smolka</surname> <given-names>M</given-names></string-name>, <string-name><surname>Fang</surname> <given-names>H</given-names></string-name>, <string-name><surname>Nattestad</surname> <given-names>M</given-names></string-name>, <string-name><surname>von Haeseler</surname> <given-names>A</given-names></string-name>, <etal>et al</etal> <article-title>Accurate detection of complex structural variations using single molecule sequencing. bioRxiv</article-title>. <year>2017</year>;Available from: <ext-link ext-link-type="uri" xlink:href="http://www.biorxiv.org/content/early/2017/07/28/169557">http://www.biorxiv.org/content/early/2017/07/28/169557</ext-link>.</mixed-citation></ref>
+<ref id="c22"><label>[22]</label><mixed-citation publication-type="journal"><string-name><surname>Frith</surname> <given-names>MC</given-names></string-name>, <string-name><surname>Kawaguchi</surname> <given-names>R</given-names></string-name>. <article-title>Split-alignment of genomes finds orthologies more accurately</article-title>. <source>Genome Biol</source>. <year>2015</year> <month>May</month>;<volume>16</volume>:<fpage>106</fpage>.</mixed-citation></ref>
+<ref id="c23"><label>[23]</label><mixed-citation publication-type="journal"><string-name><surname>Jain</surname> <given-names>M</given-names></string-name>, <string-name><surname>Koren</surname> <given-names>S</given-names></string-name>, <string-name><surname>Quick</surname> <given-names>J</given-names></string-name>, <string-name><surname>Rand</surname> <given-names>AC</given-names></string-name>, <string-name><surname>Sasani</surname> <given-names>TA</given-names></string-name>, <string-name><surname>Tyson</surname> <given-names>JR</given-names></string-name>, <etal>et al</etal> <article-title>Nanopore sequencing and assembly of a human genome with ultra-long reads</article-title>. <source>bioRxiv</source>. <year>2017;Available from</year>: <ext-link ext-link-type="uri" xlink:href="http://www.biorxiv.org/content/early/2017/04/20/128835">http://www.biorxiv.org/content/early/2017/04/20/128835</ext-link>.</mixed-citation></ref>
+<ref id="c24"><label>[24]</label><mixed-citation publication-type="journal"><string-name><surname>Hamada</surname> <given-names>M</given-names></string-name>, <string-name><surname>Ono</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Asai</surname> <given-names>K</given-names></string-name>, <string-name><surname>Frith</surname> <given-names>MC</given-names></string-name>. <article-title>Training alignment parameters for arbitrary sequencers with LAST-TRAIN</article-title>. <source>Bioinformatics</source>. <year>2017</year> <month>Mar</month>;<volume>33</volume>(<issue>6</issue>):<fpage>926</fpage>&#x2013;<lpage>928</lpage>.</mixed-citation></ref>
+<ref id="c25"><label>[25]</label><mixed-citation publication-type="journal"><string-name><surname>Richard</surname> <given-names>GF</given-names></string-name>, <string-name><surname>Kerrest</surname> <given-names>A</given-names></string-name>, <string-name><surname>Dujon</surname> <given-names>B</given-names></string-name>. <article-title>Comparative genomics and molecular dynamics of DNA repeats in eukaryotes</article-title>. <source>Microbiol Mol Biol Rev</source>. <year>2008</year> <month>Dec</month>;<volume>72</volume>(<issue>4</issue>):<fpage>686</fpage>&#x2013;<lpage>727</lpage>.</mixed-citation></ref>
+<ref id="c26"><label>[26]</label><mixed-citation publication-type="journal"><string-name><surname>Chaisson</surname> <given-names>MJ</given-names></string-name>, <string-name><surname>Raphael</surname> <given-names>BJ</given-names></string-name>, <string-name><surname>Pevzner</surname> <given-names>PA</given-names></string-name>. <article-title>Microinversions in mammalian evolution</article-title>. <source>Proc Natl Acad Sci USA</source>. <year>2006</year> <month>Dec</month>;<volume>103</volume>(<issue>52</issue>):<fpage>19824</fpage>&#x2013;<lpage>19829</lpage>.</mixed-citation></ref>
+<ref id="c27"><label>[27]</label><mixed-citation publication-type="journal"><string-name><surname>Kolb</surname> <given-names>J</given-names></string-name>, <string-name><surname>Chuzhanova</surname> <given-names>NA</given-names></string-name>, <string-name><surname>Hogel</surname> <given-names>J</given-names></string-name>, <string-name><surname>Vasquez</surname> <given-names>KM</given-names></string-name>, <string-name><surname>Cooper</surname> <given-names>DN</given-names></string-name>, <string-name><surname>Bacolla</surname> <given-names>A</given-names></string-name>, <etal>et al</etal> <article-title>Cruciform-forming inverted repeats appear to have mediated many of the microinversions that distinguish the human and chimpanzee genomes</article-title>. <source>Chromosome Res</source>. <year>2009</year>;<volume>17</volume>(<issue>4</issue>):<fpage>469</fpage>&#x2013;<lpage>483</lpage>.</mixed-citation></ref>
+<ref id="c28"><label>[28]</label><mixed-citation publication-type="journal"><string-name><surname>Hou</surname> <given-names>M</given-names></string-name>, <string-name><surname>Yao</surname> <given-names>P</given-names></string-name>, <string-name><surname>Antonou</surname> <given-names>A</given-names></string-name>, <string-name><surname>Johns</surname> <given-names>MA</given-names></string-name>. <article-title>Pico-inplace-inversions between human and chimpanzee</article-title>. <source>Bioinformatics</source>. <year>2011</year> <month>Dec</month>;<volume>27</volume>(<issue>23</issue>):<fpage>3266</fpage>&#x2013;<lpage>3275</lpage>.</mixed-citation></ref>
+<ref id="c29"><label>[29]</label><mixed-citation publication-type="journal"><string-name><surname>Ray</surname> <given-names>DA</given-names></string-name>, <string-name><surname>Xing</surname> <given-names>J</given-names></string-name>, <string-name><surname>Salem</surname> <given-names>AH</given-names></string-name>, <string-name><surname>Batzer</surname> <given-names>MA</given-names></string-name>. <article-title>SINEs of a nearly perfect character</article-title>. <source>Syst Biol</source>. <year>2006</year> <month>Dec</month>;<volume>55</volume>(<issue>6</issue>):<fpage>928</fpage>&#x2013;<lpage>935</lpage>.</mixed-citation></ref>
+<ref id="c30"><label>[30]</label><mixed-citation publication-type="journal"><string-name><surname>Baertsch</surname> <given-names>R</given-names></string-name>, <string-name><surname>Diekhans</surname> <given-names>M</given-names></string-name>, <string-name><surname>Kent</surname> <given-names>WJ</given-names></string-name>, <string-name><surname>Haussler</surname> <given-names>D</given-names></string-name>, <string-name><surname>Brosius</surname> <given-names>J</given-names></string-name>. <article-title>Retrocopy contributions to the evolution of the human genome</article-title>. <source>BMC Genomics</source>. <year>2008</year> <month>Oct</month>;<volume>9</volume>:<fpage>466</fpage>.</mixed-citation></ref>
+<ref id="c31"><label>[31]</label><mixed-citation publication-type="journal"><string-name><surname>Wang</surname> <given-names>J</given-names></string-name>, <string-name><surname>Wang</surname> <given-names>W</given-names></string-name>, <string-name><surname>Li</surname> <given-names>R</given-names></string-name>, <string-name><surname>Li</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Tian</surname> <given-names>G</given-names></string-name>, <string-name><surname>Goodman</surname> <given-names>L</given-names></string-name>, <etal>et al</etal> <article-title>The diploid genome sequence of an Asian individual</article-title>. <source>Nature</source>. <year>2008</year> <month>Nov</month>;<volume>456</volume>(<issue>7218</issue>):<fpage>60</fpage>&#x2013;<lpage>65</lpage>.</mixed-citation></ref>
+<ref id="c32"><label>[32]</label><mixed-citation publication-type="journal"><string-name><surname>Lee</surname> <given-names>JA</given-names></string-name>, <string-name><surname>Carvalho</surname> <given-names>CM</given-names></string-name>, <string-name><surname>Lupski</surname> <given-names>JR</given-names></string-name>. <article-title>A DNA replication mechanism for generating nonrecurrent rearrangements associated with genomic disorders</article-title>. <source>Cell</source>. <year>2007</year> <month>Dec</month>;<volume>131</volume>(<issue>7</issue>):<fpage>1235</fpage>&#x2013;<lpage>1247</lpage>.</mixed-citation></ref>
+<ref id="c33"><label>[33]</label><mixed-citation publication-type="journal"><string-name><surname>Moore</surname> <given-names>S</given-names></string-name>, <string-name><surname>Stanley</surname> <given-names>FK</given-names></string-name>, <string-name><surname>Goodarzi</surname> <given-names>AA</given-names></string-name>. <article-title>The repair of environmentally relevant DNA double strand breaks caused by high linear energy transfer irradiation&#x2013;no simple task</article-title>. <source>DNA Repair (Amst)</source>. <year>2014</year> <month>May</month>;<volume>17</volume>:<fpage>64</fpage>&#x2013;<lpage>73</lpage>.</mixed-citation></ref>
+<ref id="c34"><label>[34]</label><mixed-citation publication-type="journal"><string-name><surname>Holley</surname> <given-names>WR</given-names></string-name>, <string-name><surname>Chatterjee</surname> <given-names>A</given-names></string-name>. <article-title>Clusters of DNA induced by ionizing radiation: formation of short DNA fragments. I. Theoretical modeling</article-title>. <source>Radiat Res</source>. <year>1996</year> <month>Feb</month>;<volume>145</volume>(<issue>2</issue>):<fpage>188</fpage>&#x2013;<lpage>199</lpage>.</mixed-citation></ref>
+<ref id="c35"><label>[35]</label><mixed-citation publication-type="journal"><string-name><surname>Rydberg</surname> <given-names>B</given-names></string-name>. <article-title>Clusters of DNA damage induced by ionizing radiation: formation of short DNA fragments. II. Experimental detection</article-title>. <source>Radiat Res</source>. <year>1996</year> <month>Feb</month>;<volume>145</volume>(<issue>2</issue>):<fpage>200</fpage>&#x2013;<lpage>209</lpage>.</mixed-citation></ref>
+<ref id="c36"><label>[36]</label><mixed-citation publication-type="journal"><string-name><surname>Rothkamm</surname> <given-names>K</given-names></string-name>, <string-name><surname>Kuhne</surname> <given-names>M</given-names></string-name>, <string-name><surname>Jeggo</surname> <given-names>PA</given-names></string-name>, <string-name><surname>Lobrich</surname> <given-names>M</given-names></string-name>. <article-title>Radiation-induced genomic rearrangements formed by nonhomologous end-joining of DNA double-strand breaks</article-title>. <source>Cancer Res</source>. <year>2001</year> <month>May</month>;<volume>61</volume>(<issue>10</issue>):<fpage>3886</fpage>&#x2013;<lpage>3893</lpage>.</mixed-citation></ref>
+<ref id="c37"><label>[37]</label><mixed-citation publication-type="journal"><string-name><surname>Faust</surname> <given-names>GG</given-names></string-name>, <string-name><surname>Hall</surname> <given-names>IM</given-names></string-name>. <article-title>YAHA: fast and flexible long-read alignment with optimal breakpoint detection</article-title>. <source>Bioinformatics</source>. <year>2012</year> <month>Oct</month>;<volume>28</volume>(<issue>19</issue>):<fpage>2417</fpage>&#x2013;<lpage>2424</lpage>.</mixed-citation></ref>
+<ref id="c38"><label>[38]</label><mixed-citation publication-type="journal"><collab>The Chimpanzee Sequencing and Analysis Consortium</collab>. <article-title>Initial sequence of the chimpanzee genome and comparison with the human genome</article-title>. <source>Nature</source>. <year>2005</year> <month>Sep</month>;<volume>437</volume>(<issue>7055</issue>):<fpage>69</fpage>&#x2013;<lpage>87</lpage>.</mixed-citation></ref>
+<ref id="c39"><label>[39]</label><mixed-citation publication-type="journal"><string-name><surname>Gordon</surname> <given-names>D</given-names></string-name>, <string-name><surname>Huddleston</surname> <given-names>J</given-names></string-name>, <string-name><surname>Chaisson</surname> <given-names>MJ</given-names></string-name>, <string-name><surname>Hill</surname> <given-names>CM</given-names></string-name>, <string-name><surname>Kronenberg</surname> <given-names>ZN</given-names></string-name>, <string-name><surname>Munson</surname> <given-names>KM</given-names></string-name>, <etal>et al</etal> <article-title>Long-read sequence assembly of the gorilla genome</article-title>. <source>Science</source>. <year>2016</year> <month>Apr</month>;<volume>352</volume>(<issue>6281</issue>):<fpage>aae0344</fpage>.</mixed-citation></ref>
+<ref id="c40"><label>[40]</label><mixed-citation publication-type="journal"><string-name><surname>Rosenbloom</surname> <given-names>KR</given-names></string-name>, <string-name><surname>Armstrong</surname> <given-names>J</given-names></string-name>, <string-name><surname>Barber</surname> <given-names>GP</given-names></string-name>, <string-name><surname>Casper</surname> <given-names>J</given-names></string-name>, <string-name><surname>Clawson</surname> <given-names>H</given-names></string-name>, <string-name><surname>Diekhans</surname> <given-names>M</given-names></string-name>, <etal>et al</etal> <article-title>The UCSC Genome Browser database: 2015 update</article-title>. <source>Nucleic Acids Res</source>. <year>2015</year> <month>Jan</month>;<volume>43</volume>(<issue>Database issue</issue>):<fpage>D670</fpage>&#x2013;<lpage>681</lpage>.</mixed-citation></ref>
+<ref id="c41"><label>[41]</label><mixed-citation publication-type="journal"><string-name><surname>Pruitt</surname> <given-names>KD</given-names></string-name>, <string-name><surname>Brown</surname> <given-names>GR</given-names></string-name>, <string-name><surname>Hiatt</surname> <given-names>SM</given-names></string-name>, <string-name><surname>Thibaud-Nissen</surname> <given-names>F</given-names></string-name>, <string-name><surname>Astashyn</surname> <given-names>A</given-names></string-name>, <string-name><surname>Ermolaeva</surname> <given-names>O</given-names></string-name>, <etal>et al</etal> <article-title>RefSeq: an update on mammalian reference sequences</article-title>. <source>Nucleic Acids Res</source>. <year>2014</year> <month>Jan</month>;<volume>42</volume>(<issue>Database issue</issue>):<fpage>D756</fpage>&#x2013;<lpage>763</lpage>.</mixed-citation></ref>
+<ref id="c42"><label>[42]</label><mixed-citation publication-type="journal"><string-name><surname>Jurka</surname> <given-names>J</given-names></string-name>. <article-title>Repbase update: a database and an electronic journal of repetitive elements</article-title>. <source>Trends Genet</source>. <year>2000</year> <month>Sep</month>;<volume>16</volume>(<issue>9</issue>):<fpage>418</fpage>&#x2013;<lpage>420</lpage>.</mixed-citation></ref>
+<ref id="c43"><label>[43]</label><mixed-citation publication-type="journal"><string-name><surname>Benson</surname> <given-names>G</given-names></string-name>. <article-title>Tandem repeats finder: a program to analyze DNA sequences</article-title>. <source>Nucleic Acids Res</source>. <year>1999</year> <month>Jan</month>;<volume>27</volume>(<issue>2</issue>):<fpage>573</fpage>&#x2013;<lpage>580</lpage>.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

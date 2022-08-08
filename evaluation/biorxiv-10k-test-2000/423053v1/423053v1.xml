@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/423053</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Genomics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Short exon prediction based on multiscale products of a genomic-inspired multiscale bilateral filtering</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<name><surname>Zhang</surname><given-names>Xiaolei</given-names></name>
+</contrib>
+<contrib contrib-type="author" corresp="yes">
+<name><surname>Pan</surname><given-names>Weijun</given-names></name>
+<xref ref-type="corresp" rid="cor1">&#x002A;</xref>
+</contrib>
+<aff><institution>College of Air Traffic Management, Civil Aviation Flight University of China</institution>, Guanghan, P.R. <country>China</country></aff>
+</contrib-group>
+<author-notes>
+<corresp id="cor1"><label>&#x002A;</label>Corresponding author Email: <email>panatc@sina.com</email></corresp>
+</author-notes>
+<pub-date pub-type="epub">
+<year>2018</year>
+</pub-date>
+<elocation-id>423053</elocation-id>
+<history>
+<date date-type="received">
+<day>20</day>
+<month>9</month>
+<year>2018</year>
+</date>
+<date date-type="rev-recd">
+<day>20</day>
+<month>9</month>
+<year>2018</year>
+</date>
+<date date-type="accepted">
+<day>20</day>
+<month>9</month>
+<year>2018</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2018, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2018</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="423053.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>ABSTRACT</title>
+<p>Multiscale signal processing techniques such as wavelet filtering have proved to be particularly successful in predicting exon sequences. Traditional wavelet predictor is domain filtering, and enforces exon features by weighting nucleotide values with coefficients. Such a measure performs linear filtering and is not suitable for preserving the short coding exons and the exon-intron boundaries. This paper describes a short exon prediction framework that is capable of non-linearly processing DNA sequences while achieving high prediction rates. There are two key contributions. The first is the introduction of a genomic-inspired multiscale bilateral filtering (MSBF) which exploits both weighting coefficients in the spatial domain and nucleotide similarity in the range. Similarly to wavelet transform, the MSBF is also defined as a weighted sum of nucleotides. The difference is that the MSBF takes into account the variation of nucleotides at a specific codon position. The second contribution is the exploitation of inter-scale correlation in MSBF domain to find the inter-scale dependency on the differences between the exon signal and the background noise. This favourite property is used to sharp the important structures while weakening noise. Three benchmark data sets have been used in the evaluation of considered methods. By comparison with two existing techniques, the prediction results demonstrate that: the proposed method reveals at least improvement of 50.5&#x0025;, 36.7&#x0025;, 12.8&#x0025;, 17.8&#x0025;, 17.7&#x0025;, 11.5&#x0025; and 12.2&#x0025; on the exons length of 1-49, 50-74, 75-99, 100-124, 125-149, 150-174 and 175-199, respectively. The MSBF of its nonlinear nature is good at energy compaction, which makes it capable of locating the sharp variations around short exons. The direct scale multiplication of coefficients at several adjacent scales obviously enhanced exon features while the noise contents were suppressed. We show that the non-linear nature and correlation-based property achieved in proposed predictor is greater than that for traditional filtering, which leads to better exon prediction performance. There are some possible applications of this predictor. Its good localization and protection of sharp variations will make the predictor be suitable to perform fault diagnosis of aero-engine.</p>
+</abstract>
+<counts>
+<page-count count="26"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<label>1</label>
+<title>Introduction</title>
+<p>Recent advancement in high-throughput analysis, such as next-generation sequencing, has resulted in the development of computational techniques for the rapid prediction of exons in DNA sequences. Although great progress has been made in the development of exon prediction algorithms, the challenge of determining the lengths and locations of short exons (&#x003C;200 base pair (bp)) urgently needs to be solved [<xref rid="c1" ref-type="bibr">1</xref>-<xref rid="c3" ref-type="bibr">3</xref>]. The main difficulty in predicting short exons is that the intrinsic properties, such as codon biases, are harder to determine [<xref rid="c3" ref-type="bibr">3</xref>,<xref rid="c4" ref-type="bibr">4</xref>]. In another work [<xref rid="c5" ref-type="bibr">5</xref>], we have briefly outlined the intrinsic advantages and limitations of the existing methods for predicting short exons. In this paper, we focus on the development of a spectral analysis technique for finding short exons in eukaryotic DNA sequences, as described below.</p>
+<p>The discrete nature of DNA information has been driving a surging interest in the application of the principles of spectral analysis to develop efficient exon-prediction techniques. Spectral analysis techniques are attractive because they are easy to implement, entail reduced computational complexity, and mostly do not require any training of the genomic data [<xref rid="c6" ref-type="bibr">6</xref>-<xref rid="c8" ref-type="bibr">8</xref>]. In the spectral analysis of DNA sequences, the three-base periodicity (TBP) exhibited by exons is a good discriminator of coding potential. The determination of TBP due to codon usage bias is built upon the phenomenon that exon regions have a prominent power spectrum peak at frequency <italic>f</italic> &#x003D; 1/3 [<xref rid="c6" ref-type="bibr">6</xref>,<xref rid="c7" ref-type="bibr">7</xref>]. Numerous advanced exon-finding algorithms have been developed by tracking the strength of TBP along a DNA sequence [<xref rid="c3" ref-type="bibr">3</xref>-<xref rid="c19" ref-type="bibr">19</xref>]. Such methodologies have a strong mathematical basis, including Fourier transform measures [<xref rid="c6" ref-type="bibr">6</xref>, <xref rid="c9" ref-type="bibr">9</xref>-<xref rid="c10" ref-type="bibr">10</xref>], digital-filter-based methods [<xref rid="c8" ref-type="bibr">8</xref>,<xref rid="c11" ref-type="bibr">11</xref>], wavelet-based techniques [<xref rid="c3" ref-type="bibr">3</xref>,<xref rid="c5" ref-type="bibr">5</xref>,<xref rid="c12" ref-type="bibr">12</xref>-<xref rid="c16" ref-type="bibr">16</xref>] and other analysis tools [<xref rid="c7" ref-type="bibr">7</xref>]. Wavelets have proved highly successful in the manipulation and analysis of biomedical signals [<xref rid="c20" ref-type="bibr">20</xref>-<xref rid="c26" ref-type="bibr">26</xref>]. Among exon-finding methods, wavelet-based techniques are said to be distinctive. The examination of local variations in scale of the multiscale transform data of the sequence makes the wavelet predictor more powerful. Traditionally, the base idea of wavelet predictor, such as the modified Gabor-wavelet transform [<xref rid="c12" ref-type="bibr">12</xref>] and the wide-range wavelet window (WRWW) [<xref rid="c16" ref-type="bibr">16</xref>], is to computes a weighted sum of nucleotide values over a large neighbourhood at different scales. Although wavelet-based methods yield good predictions, they do not perform well in preserving the short exons and the exon-intron boundaries due to their linear nature.</p>
+<p>Our intuition is that nucleotides in the codon position <italic>p</italic> (<italic>p</italic> &#x003D; 1, 2, 3) are close to each other not only if they occupy nearby spatial locations but also if they have some similarity at the reading frame <italic>p</italic>. For this purpose, we propose a genomic-inspired multiscale bilateral filtering (MSBF) that can incorporate domain and similarity by means of multiplication. Like traditional wavelet predictor, a domain filtering named B-spline wavelet transform is designed to extract TBP by weighing nucleotide values with complex coefficients. Similarly, we define range filtering, which measures similarity by counting the sum of difference for variable sequence coverage. Another object of this paper is to investigate the inter-scale correlation information in MSBF domain and its application to short exon prediction. We formulate the problem of investigating the correlated features in terms of the differences between exon and intron coefficients at two adjacent scales. We pursue this investigation which results from the HMR195 dataset by calculating the Jensen-Shannon divergence and the histogram distributions. Experimental results demonstrate that through MSBF and multiscale products, detection accuracy can be significantly improved with only a small loss in the prediction of short exons. The proposed technique, termed multiscale products in MSBF domain (MP-MSBF), is more effective than locating exons directly from the linear filtering data, leading to superior exon prediction results.</p>
+</sec>
+<sec id="s2">
+<label>2</label>
+<title>Methodology</title>
+<sec id="s2a">
+<label>2.1</label>
+<title>Numerical representation of a DNA sequence</title>
+<p>The representation of DNA character strings into numerical sequences is the first step in DNA spectral analysis. In this paper, the paired-numerical representation [<xref rid="c6" ref-type="bibr">6</xref>] is introduced to map DNA characters (i.e., A, C, G, and T) into numeric values. A particular advantage of this representation is that it exploits the structural differences between exon and intron regions to facilitate the TBP extraction, in addition to reducing complexity. <xref ref-type="disp-formula" rid="eqn1">Eq (1)</xref> provides an example of this representation scheme for the short DNA fragment <italic>&#x2026;CTGCAGTGGT&#x2026;</italic>:
+<disp-formula id="eqn1">
+<alternatives><graphic xlink:href="423053_eqn1.gif"/></alternatives>
+</disp-formula></p>
+</sec>
+<sec id="s2b">
+<label>2.2</label>
+<title>Multiscale bilateral filtering (MSBF)</title>
+<p>To introduce the MSBF, we first describe in Section A the domain filtering called B-spline wavelet transform (BSWT). This wavelet function exhibits a higher degree of freedom for curve design, which can be adapted to analyse complex genome. In the next section, we first define a continuous representation of the average magnitude difference function (AMDF) inspired by [<xref rid="c6" ref-type="bibr">6</xref>], and a range filtering built with AMDF is designed to find certain information about nucleotide similarity in a specific codon position. Finally, the proposed MSBF is suggested for differentiating between intron noise and meaningful data.</p>
+<sec id="s2b1">
+<label>A</label>
+<title>Domain filtering</title>
+<p>In this work, wavelet functions given by B-spline windows are formulated. The B-spline window <italic>&#x03B2;</italic><sub><italic>m</italic></sub> (<italic>t</italic>) of order <italic>m</italic>, which is time-limited in [-<italic>T</italic>/2, <italic>T</italic>/2], is built as follows [<xref rid="c27" ref-type="bibr">27</xref>]:
+<disp-formula id="eqn2">
+<alternatives><graphic xlink:href="423053_eqn2.gif"/></alternatives>
+</disp-formula></p>
+<p>Where
+<disp-formula id="eqn3">
+<alternatives><graphic xlink:href="423053_eqn3.gif"/></alternatives>
+</disp-formula></p>
+<p><xref rid="fig1" ref-type="fig">Fig. 1(A)</xref> plots <italic>&#x03B2;</italic><sub><italic>m</italic></sub> (<italic>t</italic>) following <xref rid="eqn2" ref-type="disp-formula">Eqs (2)</xref> and <xref rid="eqn3" ref-type="disp-formula">(3)</xref>.</p>
+<fig id="fig1" position="float" fig-type="figure">
+<label>Fig. 1.</label>
+<caption><title>Examples of B-spline windows, and B-spline wavelet function (order 6) with two different scales in the time and frequency domains.</title>
+<p>(A) Examples of B-spline windows; (B) Magnitude response of B-spline wavelet function in the time domain; (C) Frequency response of B-spline wavelet function.</p></caption>
+<graphic xlink:href="423053_fig1.tif"/>
+</fig>
+<p>To fully analyse the DNA sequences characterized by a specific periodicity, the task here is to extract the TBP at different scales while keeping the analysis frequency constant. From <xref rid="eqn2" ref-type="disp-formula">Eqs (2)</xref> and <xref rid="eqn3" ref-type="disp-formula">(3)</xref>, our proposed wavelet function of length <italic>L</italic> is defined as
+<disp-formula id="eqn4">
+<alternatives><graphic xlink:href="423053_eqn4.gif"/></alternatives>
+</disp-formula>
+where <italic>i</italic><sup>2</sup> &#x003D; &#x2212;1, <italic>&#x03C9;</italic><sub>0</sub> &#x003D; <italic>L/</italic>3 denotes the basic frequency, and <italic>&#x03B2;</italic><sub><italic>m</italic></sub> (<italic>t, b, a</italic>) are families generated from the base functions <italic>&#x03B2;</italic><sub><italic>m</italic></sub> (<italic>t</italic>) by dilations and translations, i.e.,
+<disp-formula id="eqn5">
+<alternatives><graphic xlink:href="423053_eqn5.gif"/></alternatives>
+</disp-formula></p>
+<p><xref rid="fig1" ref-type="fig">Fig. 1(B)</xref> and <xref rid="fig1" ref-type="fig">Fig. 1(C)</xref> illustrate our B-spline wavelet with two different scales in the time and frequency domains. The proposed BSWT of a signal <italic>u</italic> is given by
+<disp-formula id="eqn6">
+<alternatives><graphic xlink:href="423053_eqn6.gif"/></alternatives>
+</disp-formula></p>
+<p>In the case of BSWT, the length of the wavelet function is 2400, and the scale parameter is set to 20 exponentially separated values between1 60 and1 6 for an input sequence. For practical purposes, the order of the B-spline function <italic>&#x03B2;</italic><sub><italic>m</italic></sub> (<italic>t</italic>) is truncated to 6.</p>
+</sec>
+<sec id="s2b2">
+<label>B</label>
+<title>Range filtering</title>
+<p>Before continuing to the proposed MSBF, we first use the AMDF to design a range filtering for measuring nucleotide similarity in a specific codon position. A continuous representation of AMDF for a signal <italic>u</italic>, as a function of the grid spacing 3, is defined as
+<disp-formula id="eqn7">
+<alternatives><graphic xlink:href="423053_eqn7.gif"/></alternatives>
+</disp-formula>
+where <italic>L</italic> is equal to the window length of BSWT. Before applying <italic>AMDF</italic> to a DNA sequence, the authors in [<xref rid="c6" ref-type="bibr">6</xref>] suggest passing it first through a second-order resonant filter centered at frequency 2<italic>&#x03C0;/</italic> 3 [<xref rid="c11" ref-type="bibr">11</xref>].</p>
+<p>For efficient implementation, a multiscale and sliding window will move along the filtered sequence to compute AMDF for the whole sequence. The expression given in <xref ref-type="disp-formula" rid="eqn4">Eq (4)</xref> is then used to calculate the window:
+<disp-formula id="eqn8">
+<alternatives><graphic xlink:href="423053_eqn8.gif"/></alternatives>
+</disp-formula></p>
+<p>In other words, the window<italic>&#x03C6;</italic><sub>AMDF</sub> (<italic>t, b, a</italic>) is the magnitude response of <italic>&#x03C6;</italic><sub><italic>&#x03B2;</italic></sub>(<italic>t, b, a</italic>) in time domain. From <xref rid="eqn7" ref-type="disp-formula">Eqs (7)</xref> and <xref rid="eqn8" ref-type="disp-formula">(8)</xref>, the proposed range filtering for a signal <italic>u</italic> can be formulated as follows:
+<disp-formula id="eqn9">
+<alternatives><graphic xlink:href="423053_eqn9.gif"/></alternatives>
+</disp-formula></p>
+<p>Finally, the expressions given in <xref rid="eqn6" ref-type="disp-formula">Eqs (6)</xref> and <xref rid="eqn9" ref-type="disp-formula">(9)</xref> are used to design our proposed MSBF having the non-linear property:
+<disp-formula id="eqn10">
+<alternatives><graphic xlink:href="423053_eqn10.gif"/></alternatives>
+</disp-formula></p>
+<p>Given a DNA sequence of length <italic>N</italic>, the projection of the MSBF coefficients onto the position axis is defined as a function of <italic>b</italic> (<italic>b</italic> &#x003D; 0,1,?, <italic>N</italic> &#x2212;1).</p>
+</sec>
+</sec>
+<sec id="s2c">
+<label>2.3</label>
+<title>Multiscale products</title>
+<p>Several exon-finding techniques take advantage of traditional wavelet transform to filter short exons with small scales and long exons with large scales. This approach implies that they do not exploit the dependencies between adjacent scales. To explore the MSBF inter-scale correlations we multiply the adjacent MSBF subbands to distinguish intron noise from meaningful data while preserving the sharp variations of short exons. The core idea behind the multiscale products method is based on our research (see <bold><xref rid="s3d" ref-type="sec">Section 3.4</xref></bold>): namely, for DNA sequences represented by MSBF, the multiscale transform coefficients related to intron noise are less correlated across scales than are the coefficients associated with exon signals.</p>
+<p>Let <italic>U</italic> (<italic>a</italic><sub><italic>j</italic></sub>, <italic>b</italic>) be the MSBF of a signal <italic>u</italic> at the scale <italic>a</italic> <sub><italic>j</italic></sub> (<italic>j</italic> &#x003D; 1, 2,&#x2026; <italic>J</italic>) and the position <italic>b</italic>. The multiscale products (or inter-scale correlation) <italic>MP</italic>(<italic>a</italic><sub><italic>j</italic></sub>, <italic>b</italic>) of the MSBF contents at two adjacent scales is defined as
+<disp-formula id="eqn11">
+<alternatives><graphic xlink:href="423053_eqn11.gif"/></alternatives>
+</disp-formula></p>
+<p>With the observation of experimental results, we can imagine that multiplying the MSBF at adjacent scales would amplify exon structures and dilute noise (see <xref rid="s3" ref-type="sec">Section 3</xref>).</p>
+</sec>
+<sec id="s2d">
+<label>2.4</label>
+<title>Procedure of MP-MSBF predictor</title>
+<p>Our MP-MSBF method for exon prediction is described briefly in <xref rid="tbl1" ref-type="table">Table 1</xref>. The input DNA sequence of length <italic>N</italic> is referred to as <italic>u</italic>.</p>
+<table-wrap id="tbl1" orientation="portrait" position="float">
+<label>Table 1.</label>
+<caption><p>Exon predictor algorithm using the MP-MSBF technique.</p></caption>
+<graphic xlink:href="423053_tbl1.tif"/>
+</table-wrap>
+</sec>
+</sec>
+<sec id="s3">
+<label>3</label>
+<title>Results and discussion</title>
+<sec id="s3a">
+<label>3.1</label>
+<title>Data resources</title>
+<p>To evaluate and compare the performance of the proposed MP-MSBF with that of other methods, the two benchmark data sets BG570 [<xref rid="c28" ref-type="bibr">28</xref>] and HMR195 [<xref rid="c29" ref-type="bibr">29</xref>] have been considered. Furthermore, we conduct an additional classification experiment using 29 sequences of the ENm001 and ENm004 data sets (part of EGASP) [<xref rid="c30" ref-type="bibr">30</xref>] (see <bold>S1 File</bold> for detailed information on these sequences). <xref rid="tbl2" ref-type="table">Table 2</xref> summarizes the features of the considered data sets.</p>
+<table-wrap id="tbl2" orientation="portrait" position="float">
+<label>Table 2.</label>
+<caption><p>Statistics of the test data sets.</p></caption>
+<graphic xlink:href="423053_tbl2.tif"/>
+</table-wrap>
+</sec>
+<sec id="s3b">
+<label>3.2</label>
+<title>General setting</title>
+<p>In this section, we first conduct an experiment to establish a comprehensive analysis of the inter-scale correlation of the differences between exon and intron coefficients. Next, we present experiments in exon prediction using the proposed method. For comparison, MP-MSBF presents comparable performance to that of two popular existing methods: fast Fourier transform plus empirical mode decomposition (FFTEMD) [<xref rid="c9" ref-type="bibr">9</xref>] and WRWW [<xref rid="c16" ref-type="bibr">16</xref>]. To evaluate the general performances of these measures, the TBP data for each DNA sequence considered have been normalized to [0,1].</p>
+</sec>
+<sec id="s3c">
+<label>3.3</label>
+<title>Evaluation metrics</title>
+<p>To investigate the inter-scale correlation of the differences between exon and intron sequences, the distance criterion of Jensen-Shannon (JS) divergence [<xref rid="c31" ref-type="bibr">31</xref>] is adopted. In probability theory and statistics, the JS divergence is a method of measuring the similarity between two probability distributions. The JS divergence is a convenient divergence measure for our purpose because it is symmetric and bounded between 0 and 1. The distance between two probability vectors <bold><italic>P</italic></bold> and <bold><italic>Q</italic></bold> in terms of the JS divergence is defined as
+<disp-formula id="eqn12">
+<alternatives><graphic xlink:href="423053_eqn12.gif"/></alternatives>
+</disp-formula></p>
+<p>Where <bold><italic>M</italic></bold> &#x003D; (<bold><italic>P</italic></bold> &#x002B; <bold><italic>Q</italic></bold>) 2 and <italic>KL</italic> is the Kullback-Leibler divergence,
+<disp-formula id="eqn13">
+<alternatives><graphic xlink:href="423053_eqn13.gif"/></alternatives>
+</disp-formula></p>
+<p>With a set of results obtained by running a predictor on a test data set, the true positive (TP), true negative (TN), false negative (FN) and false positive (FP) counts can be determined. Using these counts, the performances of various methods in handling exons of different lengths are measured in terms of the approximate correlation (AC) [<xref rid="c28" ref-type="bibr">28</xref>]
+<disp-formula id="eqn14">
+<alternatives><graphic xlink:href="423053_eqn14.gif"/></alternatives>
+</disp-formula></p>
+<p>To evaluate the general performance of the method under consideration, the receiver operating characteristic (ROC) curve [<xref rid="c32" ref-type="bibr">32</xref>] is used to explore the effects on <italic>sensitivity</italic> and <italic>specificity</italic>. The sensitivity and specificity are given by
+<disp-formula id="eqn15">
+<alternatives><graphic xlink:href="423053_eqn15.gif"/></alternatives>
+</disp-formula>
+<disp-formula id="eqn16">
+<alternatives><graphic xlink:href="423053_eqn16.gif"/></alternatives>
+</disp-formula></p>
+<p>The area under an ROC curve (AUC) can be used as an indicator of prediction performance.</p>
+</sec>
+<sec id="s3d">
+<label>3.4</label>
+<title>Inter-scale correlation analysis</title>
+<p>The coefficients of the input DNA sequences obtained from the multiresolution decomposition include exon-structure information together with intron noise. The general purpose of inter-scale correlation analysis is to investigate the dependency information on the differences between exon and intron coefficients. We apply the schemes proposed in this paper to analyse the correlation for a large number of exon and intron regions.</p>
+<p><xref rid="fig2" ref-type="fig">Fig. 2</xref> shows the prediction plots of the sequence HUMDZA2G of <italic>Homo sapiens</italic> (GenBank accession number D14034) using MSBF and its inter-scale correlation (or multiscale products) at different scales. The sequence HUMDZA2G contains four exons at positions 5322-5388, 9329-9589, 12907-13182 and 14052-14335. The peaks corresponding to the exon regions of the original data appear much stronger in <xref rid="fig2" ref-type="fig">Fig. 2(B)</xref> than in <xref rid="fig2" ref-type="fig">Fig. 2(A)</xref>. The results demonstrate that inter-scale correlation can suppress intron noise while retaining more exon details. <xref rid="fig3" ref-type="fig">Fig. 3</xref> compares the prediction results of the sequence HUMDZA2G using the tested methods. Our MP-MSBF algorithm identified the localized peaks better and located the short coding sequence (exon 1) more accurately.</p>
+<fig id="fig2" position="float" fig-type="figure">
+<label>Fig. 2.</label>
+<caption><title>Prediction plots for sequence HUMDZA2G at different scales.</title>
+<p>The abscissa axes of all the plots represent the relative base positions, and the actual locations of the exons are marked with red horizontal lines. Part (A) shows the MSBF result; and (B) shows the result of inter-scale correlation.</p></caption>
+<graphic xlink:href="423053_fig2.tif"/>
+</fig>
+<fig id="fig3" position="float" fig-type="figure">
+<label>Fig. 3.</label>
+<caption><title>Prediction results for the sequence HUMDZA2G using the considered methods.</title>
+<p>The abscissa axes of all the plots represent the relative base positions, and the actual locations of the exons are marked with rectangles in red dashed lines.</p></caption>
+<graphic xlink:href="423053_fig3.tif"/>
+</fig>
+<p>Herein, the JS divergences are employed to investigate whether the coefficients related to introns are less correlated across scales than the coefficients associated with exons. This distance criterion has been applied in genome comparison [<xref rid="c33" ref-type="bibr">33</xref>], bioinformatics [<xref rid="c34" ref-type="bibr">34</xref>] and protein surface comparison [<xref rid="c35" ref-type="bibr">35</xref>]. <xref rid="tbl3" ref-type="table">Table 3</xref> summarizes the JS divergences of the MSBF coefficients between two adjacent scales, <italic>a</italic><sub><italic>j, j</italic> &#x002B;1</sub> (<italic>j</italic> &#x003D; 1, 2,&#x2026;, 9), for the exon and intron nucleotides of the HMR195 data set. The results of <xref rid="tbl3" ref-type="table">Table 3</xref> reveal that the JS divergences of exons are smaller than those of introns at consecutive scales, while there is a difference of one order of magnitude between the exon and intron regions at the last eight consecutive scales. This property can assist in discriminating short exon features from introns in the multiscale transform domain.</p>
+<table-wrap id="tbl3" orientation="portrait" position="float">
+<label>Table 3.</label>
+<caption><p>JS divergence of MSBF coefficients between two adjacent scales.</p></caption>
+<graphic xlink:href="423053_tbl3.tif"/>
+</table-wrap>
+<p>To further justify our assumption, histograms with fitted distributions are calculated for the exon and intron nucleotides of HMR195 at different scales. <xref rid="fig4" ref-type="fig">Fig. 4</xref> and <xref rid="fig5" ref-type="fig">Fig. 5</xref> give the distributions of exon and intron nucleotides using the MSBF and inter-scale correlation, respectively. This result indicates that the most relevant exon information represented by the correlation at each scale is captured by large-valued coefficients, whereas the intron information is captured by a large number of small-valued coefficients. <xref rid="fig6" ref-type="fig">Fig. 6</xref> clearly illustrates that the distance between the exon and intron curves obtained from inter-scale correlation is greater than that obtained from MSBF. In other words, the MSBF coefficients of the exon sequences have a strong correlation on various decomposition scales, whereas the MSBF coefficients of noise are weakly correlated. These plots justify our assumption.</p>
+<fig id="fig4" position="float" fig-type="figure">
+<label>Fig. 4.</label>
+<caption><title>Histogram distributions at different scales for MSBF applied to HMR195.</title>
+<p>For all the plots, blue lines represent exons, red lines indicate introns, the abscissa axes represent the magnitude values, and the ordinate axes represent the number of MSBF coefficients.</p></caption>
+<graphic xlink:href="423053_fig4.tif"/>
+</fig>
+<fig id="fig5" position="float" fig-type="figure">
+<label>Fig. 5.</label>
+<caption><title>Histogram distributions at different scales for inter-scale correlation applied to HMR195.</title><p>&#x2021; See <xref rid="fig4" ref-type="fig">Fig. 4</xref> for legend.</p></caption>
+<graphic xlink:href="423053_fig5.tif"/>
+</fig>
+<fig id="fig6" position="float" fig-type="figure">
+<label>Fig. 6.</label>
+<caption><title>Mean values of histogram distributions at different scales for MSBF and inter-scale correlation applied to HMR195.</title></caption>
+<graphic xlink:href="423053_fig6.tif"/>
+</fig>
+<p>&#x2020; See <xref rid="fig4" ref-type="fig">Fig. 4</xref> for legend.</p>
+</sec>
+<sec id="s3e">
+<label>3.5</label>
+<title>Performance evaluation on benchmark data sets</title>
+<p>Exons have significant functional constraints, and their length plays an important role in splice site selection. Rogic&#x2019;s evaluation work [<xref rid="c29" ref-type="bibr">29</xref>] stated, &#x201C;<italic>These constraints have shaped the exon length distribution quite differently from geometric distribution. The length distribution depends on the exon type</italic>.&#x201D; In our analysis, we grouped exons into eight ranges of exon lengths, namely, (0,50), [50,75), [75,100), [100,125), [125,150), [150,175), [175,200), [200,300) and [300,300&#x002B;). The exons within the range (0,200) are considered small [<xref rid="c2" ref-type="bibr">2</xref>]. The best accuracies achieved by the tested methods are calculated in terms of the AC values for each group of exons. <xref rid="fig7" ref-type="fig">Fig. 7(A)</xref> and <xref rid="fig7" ref-type="fig">Fig. 7(B)</xref> depict the experimental results obtained from various methods using the BG570 and HMR195 data sets, respectively. The results show that the MP-MSBF outperforms the other tested methods in these nine ranges of exon lengths. Similar results obtained with the sequences in the ENm001 and ENm004 data sets are shown in <xref rid="fig7" ref-type="fig">Fig. 7(C)</xref>. The MP-MSBF exhibits good accuracies in these nine ranges and presents results close to those of WRWW in the ranges [50,75), [100,125) and [200,300), while it slightly exceeds the performance of other methods in the other ranges. <xref rid="fig7" ref-type="fig">Fig. 7</xref> shows that all methods tend to have low accuracy in predicting exons shorter than 50. A possible explanation for this phenomenon is that this type of exon is too short to be efficiently spliced in vivo without special splicing activation sequences [<xref rid="c36" ref-type="bibr">36</xref>]. For almost all the methods, the accuracies slowly rise with the length of annotated exons between 75 and 200 nucleotides.</p>
+<fig id="fig7" position="float" fig-type="figure">
+<label>Fig. 7.</label>
+<caption><title>Plots of AC for considered data sets with various methods applied to exons in nine length ranges.</title>
+<p>For all the plots, the ordinate axes denote the ranges of exon lengths.</p></caption>
+<graphic xlink:href="423053_fig7.tif"/>
+</fig>
+<p><xref rid="tbl4" ref-type="table">Table 4</xref> summaries the performances of various methods for short exons (&#x003C;200) using the BG570, HMR195, ENm001 and ENm004 data sets. By comparison with the FFTEMD and WRWW methods, the prediction results show that: our MP-MSBF exhibits at least improvement of 50.5&#x0025;, 36.7&#x0025;, 12.8&#x0025;, 17.8&#x0025;, 17.7&#x0025;, 11.5&#x0025; and 12.2&#x0025; on the exons of the ranges (0,50), [50,75), [75,100), [100,125), [125,150), [150,175) and [175,200), respectively.</p>
+<table-wrap id="tbl4" orientation="portrait" position="float">
+<label>Table 4.</label>
+<caption><p>Best performances obtained from considered methods for short exons using the BG570, HMR195, ENm001 and ENm004 data sets.</p></caption>
+<graphic xlink:href="423053_tbl4.tif"/>
+</table-wrap>
+<p>An additional classification experiment on all sequences of considered data sets is designed to assess the general performance of our proposed technique and other methods. <xref rid="fig8" ref-type="fig">Fig. 8</xref> presents the ROC curves obtained from the different methods tested in this experiment. The MP-MSBF method has higher prediction accuracy than its counterparts. Our MP-MSBF method consistently exhibits higher prediction accuracy than its counterparts for exons that are either relatively short or long in length.</p>
+<fig id="fig8" position="float" fig-type="figure">
+<label>Fig. 8.</label>
+<caption><title>ROC plots of tested methods using the BG570, HMR195, ENm001 and ENm004 data sets.</title></caption>
+<graphic xlink:href="423053_fig8.tif"/>
+</fig>
+</sec>
+<sec id="s3f">
+<label>3.6</label>
+<title>Summary</title>
+<p>In this work, we have introduced a new, robust and efficient method to predict exons in eukaryotes. Unlike some prediction techniques that detect exons directly by linear filtering, the proposed scheme incorporates a genomic-inspired multiscale bilateral filtering and its inter-scale dependencies and then applies these features to better differentiate exon structures from background noise. The first key concept of our method is its nonlinear nature, which exploits geometric distance in the spatial domain and nucleotide similarity in the range. The second is that this technique compacts the energy of the exons into coefficients with large amplitudes and spreads the energy of the introns over a large number of coefficients with small amplitudes. This phenomenon has led to improved results with respect to short exon preservation and noise suppression. The proposed MP-MSBF method requires neither prior information nor training models for exon prediction, and so it can be applied to analyse unknown and novel genomes. Although not good for exons shorter than 50, the results obtained from our method are acceptable.</p>
+</sec>
+</sec>
+<sec id="s4">
+<label>4</label>
+<title>Conclusion</title>
+<p>Exons encode the biochemical processes and information involved in the pathway from DNA to proteins. In genomic sequence analysis, exon prediction based on the annotated sequences in the online databases is an important problem. For exon prediction, extracting the relevant features of short coding sequences is a major task because the subtle features of short exons are obscured by the strong presence of background noise. In practice, spectral analysis is an important tool for the discovery of interesting patterns and structures in short exon data. In this paper, we present a new exon-finding spectral analysis method that overcomes some of the shortcomings of current predicting techniques. The MP-MSBF predictor takes advantage of the nonlinear filtering and the dependency information between scales, which makes it capable of short exon prediction. We see some possible applications of this predictor. The correlation-based property and nonlinear nature of this technique allow the selection of a characteristic frequency from surrounding noise and thereby makes it possible to offer good localization and protection of sharp variations for locating hot spots in proteins and performing fault diagnosis of aero-engine.</p>
+</sec>
+<sec id="s5">
+<title>Supporting information</title>
+<p><bold>S1 File. Sequences of the ENm001 and ENm004 data sets used for the analyses presented in this paper.</bold> Detailed information on these sequences. (ZIP)</p>
+</sec>
+</body>
+<back>
+<ack>
+<title>Acknowledgments</title>
+<p>This work was sponsored by the National Natural Science Foundation of China (Grant No. U1733203).</p>
+</ack>
+<sec id="s6">
+<title>Author contributions</title>
+<p><bold>Conceptualization:</bold> XLZ.</p>
+<p><bold>Data curation:</bold> XLZ.</p>
+<p><bold>Formal analysis:</bold> XLZ.</p>
+<p><bold>Funding acquisition:</bold> WJP.</p>
+<p><bold>Investigation:</bold> XLZ WJP.</p>
+<p><bold>Methodology:</bold> XLZ.</p>
+<p><bold>Project administration:</bold> XLZ WJP.</p>
+<p><bold>Resources:</bold> XLZ WJP.</p>
+<p><bold>Software:</bold> XLZ.</p>
+<p><bold>Supervision:</bold> XLZ WJP.</p>
+<p><bold>Validation:</bold> XLZ WJP.</p>
+<p><bold>Visualization:</bold> XLZ.</p>
+<p><bold>Writing - original draft:</bold> XLZ.</p>
+<p><bold>Writing - review &#x0026; editing:</bold> WJP.</p>
+</sec>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>1.</label><mixed-citation publication-type="journal"><string-name><surname>Wu</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Liew</surname> <given-names>AW-C</given-names></string-name>, <string-name><surname>Yan</surname> <given-names>H</given-names></string-name>, <string-name><surname>Yang</surname> <given-names>M.</given-names></string-name> <article-title>Classification of short human exons and introns based on statistical features</article-title>. <source>Phys Rev E</source>. <year>2003</year>;<volume>67</volume>(<issue>6</issue>):<fpage>061916</fpage>.</mixed-citation></ref>
+<ref id="c2"><label>2.</label><mixed-citation publication-type="journal"><string-name><surname>Saeys</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Rouz&#x00E9;</surname> <given-names>P</given-names></string-name>, <string-name><surname>Van de Peer</surname> <given-names>Y.</given-names></string-name> <article-title>In search of the small ones: improved prediction of short exons in vertebrates, plants, fungi and protists</article-title>. <source>Bioinformatics</source>. <year>2007</year>;<volume>23</volume>(<issue>4</issue>):<fpage>414</fpage>&#x2013;<lpage>20</lpage>.</mixed-citation></ref>
+<ref id="c3"><label>3.</label><mixed-citation publication-type="journal"><string-name><surname>Jiang</surname> <given-names>R</given-names></string-name>, <string-name><surname>Yan</surname> <given-names>H.</given-names></string-name> <article-title>Studies of spectral properties of short genes using the wavelet subspace Hilbert&#x2013;Huang transform (WSHHT)</article-title>. <source>Physica A: Statistical Mechanics and its Applications</source>. <year>2008</year>;<volume>387</volume>(<issue>16</issue>):<fpage>4223</fpage>&#x2013;<lpage>47</lpage>.</mixed-citation></ref>
+<ref id="c4"><label>4.</label><mixed-citation publication-type="journal"><string-name><surname>Jiang</surname> <given-names>R</given-names></string-name>, <string-name><surname>Yan</surname> <given-names>H.</given-names></string-name> <article-title>Segmentation of short human exons based on spectral features of double curves</article-title>. <source>Int J Data Min Bioinform</source>. <year>2008</year>;<volume>2</volume>(<issue>1</issue>):<fpage>15</fpage>&#x2013;<lpage>35</lpage>.</mixed-citation></ref>
+<ref id="c5"><label>5.</label><mixed-citation publication-type="journal"><string-name><surname>Zhang</surname> <given-names>X</given-names></string-name>, <string-name><surname>Shen</surname> <given-names>Z</given-names></string-name>, <string-name><surname>Zhang</surname> <given-names>G</given-names></string-name>, <string-name><surname>Shen</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Chen</surname> <given-names>M</given-names></string-name>, <string-name><surname>Zhao</surname> <given-names>J</given-names></string-name>, <etal>et al.</etal> <article-title>Short Exon Detection via Wavelet Transform Modulus Maxima</article-title>. <source>PLoS One</source>. <year>2016</year>;<volume>11</volume>(<issue>9</issue>):<fpage>e0163088</fpage>.</mixed-citation></ref>
+<ref id="c6"><label>6.</label><mixed-citation publication-type="journal"><string-name><surname>Akhtar</surname> <given-names>M</given-names></string-name>, <string-name><surname>Epps</surname> <given-names>J</given-names></string-name>, <string-name><surname>Ambikairajah</surname> <given-names>E.</given-names></string-name> <article-title>Signal processing in sequence analysis: advances in eukaryotic gene prediction</article-title>. <source>IEEE J Sel Top Signal Process</source>. <year>2008</year>;<volume>2</volume>(<issue>3</issue>):<fpage>310</fpage>&#x2013;<lpage>21</lpage>.</mixed-citation></ref>
+<ref id="c7"><label>7.</label><mixed-citation publication-type="journal"><string-name><surname>Marhon</surname> <given-names>SA</given-names></string-name>, <string-name><surname>Kremer</surname> <given-names>SC</given-names></string-name>. <article-title>Gene prediction based on DNA spectral analysis: a literature review</article-title>. <source>J Comput Biol</source>. <year>2011</year>;<volume>18</volume>(<issue>4</issue>):<fpage>639</fpage>&#x2013;<lpage>76</lpage>.</mixed-citation></ref>
+<ref id="c8"><label>8.</label><mixed-citation publication-type="journal"><string-name><surname>Ramachandran</surname> <given-names>P</given-names></string-name>, <string-name><surname>Lu</surname> <given-names>WS</given-names></string-name>, <string-name><surname>Antoniou</surname> <given-names>A.</given-names></string-name> <article-title>Filter-based methodology for the location of hot spots in proteins and exons in DNA</article-title>. <source>IEEE Trans Biomed Eng</source>. <year>2012</year>;<volume>59</volume>(<issue>6</issue>):<fpage>1598</fpage>&#x2013;<lpage>609</lpage>.</mixed-citation></ref>
+<ref id="c9"><label>9.</label><mixed-citation publication-type="journal"><string-name><surname>Zhang</surname> <given-names>W-F</given-names></string-name>, <string-name><surname>Yan</surname> <given-names>H.</given-names></string-name> <article-title>Exon prediction using empirical mode decomposition and Fourier transform of structural profiles of DNA sequences</article-title>. <source>Pattern Recogn</source>. <year>2012</year>;<volume>45</volume>(<issue>3</issue>):<fpage>947</fpage>&#x2013;<lpage>55</lpage>.</mixed-citation></ref>
+<ref id="c10"><label>10.</label><mixed-citation publication-type="journal"><string-name><surname>Saberkari</surname> <given-names>H</given-names></string-name>, <string-name><surname>Shamsi</surname> <given-names>M</given-names></string-name>, <string-name><surname>Heravi</surname> <given-names>H</given-names></string-name>, <string-name><surname>Sedaaghi</surname> <given-names>MH</given-names></string-name>. <article-title>A fast algorithm for exonic regions prediction in DNA sequences</article-title>. <source>J Med Signals Sens</source>. <year>2013</year>;<volume>3</volume>(<issue>3</issue>):<fpage>139</fpage>&#x2013;<lpage>49</lpage>.</mixed-citation></ref>
+<ref id="c11"><label>11.</label><mixed-citation publication-type="journal"><string-name><surname>Vaidyanathan</surname> <given-names>P</given-names></string-name>, <string-name><surname>Yoon</surname> <given-names>B-J.</given-names></string-name> <article-title>The role of signal-processing concepts in genomics and proteomics</article-title>. <source>J Franklin Inst</source>. <year>2004</year>;<volume>341</volume>(<issue>1</issue>):<fpage>111</fpage>&#x2013;<lpage>35</lpage>.</mixed-citation></ref>
+<ref id="c12"><label>12.</label><mixed-citation publication-type="journal"><string-name><surname>Mena-Chalco</surname> <given-names>JP</given-names></string-name>, <string-name><surname>Carrer</surname> <given-names>H</given-names></string-name>, <string-name><surname>Zana</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Cesar</surname> <suffix>Jr</suffix> <given-names>RM</given-names></string-name>. <article-title>Identification of protein coding regions using the modified Gabor-wavelet transform</article-title>. <source>IEEE/ACM Trans Comput Biol Bioinform</source>. <year>2008</year>;<volume>5</volume>(<issue>2</issue>):<fpage>198</fpage>&#x2013;<lpage>207</lpage>.</mixed-citation></ref>
+<ref id="c13"><label>13.</label><mixed-citation publication-type="journal"><string-name><surname>Shakya</surname> <given-names>DK</given-names></string-name>, <string-name><surname>Saxena</surname> <given-names>R</given-names></string-name>, <string-name><surname>Sharma</surname> <given-names>SN</given-names></string-name>. <article-title>An adaptive window length strategy for eukaryotic CDS prediction</article-title>. <source>IEEE/ACM Trans Comput Biol Bioinform</source>. <year>2013</year>;<volume>10</volume>(<issue>5</issue>):<fpage>1241</fpage>&#x2013;<lpage>52</lpage>.</mixed-citation></ref>
+<ref id="c14"><label>14.</label><mixed-citation publication-type="book"><person-group person-group-type="editor"><string-name><surname>Zhang</surname> <given-names>X</given-names></string-name>, <string-name><surname>Zhao</surname> <given-names>J</given-names></string-name>, <string-name><surname>Xu</surname> <given-names>W</given-names></string-name></person-group>, editors. <chapter-title>Identification of eukaryotic exons using empirical mode decomposition and modified Gabor-wavelet transform</chapter-title>. <source>Proceedings of the 33rd Chinese Control Conference</source>; <year>2014</year> <month>July</month> 28-30; <publisher-loc>Nanjing, China</publisher-loc>. <publisher-name>IEEE Institute of Electrical and Electronics Engineers Inc</publisher-name>; 2014.</mixed-citation></ref>
+<ref id="c15"><label>15.</label><mixed-citation publication-type="journal"><string-name><surname>Zhao</surname> <given-names>J</given-names></string-name>, <string-name><surname>Zhang</surname> <given-names>X</given-names></string-name>, <string-name><surname>Xu</surname> <given-names>W.</given-names></string-name> <article-title>Prediction of Eukaryotic Exons via the Singularity Detection Algorithm</article-title>. <source>Curr Bioinform</source>. <year>2014</year>;<volume>9</volume>(<issue>4</issue>):<fpage>389</fpage>&#x2013;<lpage>401</lpage>.</mixed-citation></ref>
+<ref id="c16"><label>16.</label><mixed-citation publication-type="journal"><string-name><surname>Marhon</surname> <given-names>S</given-names></string-name>, <string-name><surname>Kremer</surname> <given-names>S.</given-names></string-name> <article-title>Prediction of protein coding regions using a wide-range wavelet window method</article-title>. <source>IEEE/ACM Trans Comput Biol Bioinform</source>. <year>2016</year>;<volume>13</volume>(<issue>4</issue>):<fpage>742</fpage>&#x2013;<lpage>53</lpage>.</mixed-citation></ref>
+<ref id="c17"><label>17.</label><mixed-citation publication-type="journal"><string-name><surname>Ahmad</surname> <given-names>M</given-names></string-name>, <string-name><surname>Jung</surname> <given-names>LT</given-names></string-name>, <string-name><surname>Bhuiyan</surname> <given-names>AA</given-names></string-name>. <article-title>A biological inspired fuzzy adaptive window median filter (FAWMF) for enhancing DNA signal processing</article-title>. <source>Comput Meth Prog Bio</source>. <year>2017</year>;<volume>149</volume>:<fpage>11</fpage>&#x2013;<lpage>7</lpage>.</mixed-citation></ref>
+<ref id="c18"><label>18.</label><mixed-citation publication-type="book"><string-name><surname>Zhang</surname> <given-names>G</given-names></string-name>, <string-name><surname>Zhang</surname> <given-names>X</given-names></string-name>, <string-name><surname>Pan</surname> <given-names>G</given-names></string-name>, <string-name><surname>Yu</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Chen</surname> <given-names>Y.</given-names></string-name> <chapter-title>Improved prediction of short exons via multiscale products</chapter-title>. <source>2017 10th International Congress on Image and Signal Processing, BioMedical Engineering and Informatics (CISP-BMEI)</source>; <year>2017</year> <month>Oct</month> 14-16; <publisher-loc>Shanghai, China</publisher-loc>. <publisher-name>IEEE Institute of Electrical and Electronics Engineers Inc</publisher-name>; 2017.</mixed-citation></ref>
+<ref id="c19"><label>19.</label><mixed-citation publication-type="journal"><string-name><surname>Zhang</surname> <given-names>X</given-names></string-name>, <string-name><surname>Zhang</surname> <given-names>G</given-names></string-name>, <string-name><surname>Yu</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Pan</surname> <given-names>G</given-names></string-name>, <string-name><surname>Deng</surname> <given-names>H</given-names></string-name>, <string-name><surname>Shi</surname> <given-names>X</given-names></string-name>, <string-name><surname>Jiao</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Wu</surname> <given-names>R</given-names></string-name>, <string-name><surname>Chen</surname> <given-names>Y.</given-names></string-name> <article-title>Multiscale Products in B-spline Wavelet Domain: A New Method for Short Exon Detection</article-title>. <source>Curr Bioinform</source>. <year>2018</year>;<volume>13</volume>(<issue>5</issue>): <fpage>553</fpage>&#x2013;<lpage>563</lpage>.</mixed-citation></ref>
+<ref id="c20"><label>20.</label><mixed-citation publication-type="journal"><string-name><surname>Arneodo</surname> <given-names>A</given-names></string-name>, <string-name><surname>Vaillant</surname> <given-names>C</given-names></string-name>, <string-name><surname>Audit</surname> <given-names>B</given-names></string-name>, <string-name><surname>Argoul</surname> <given-names>F</given-names></string-name>, <string-name><surname>D&#x2019;Aubenton-Carafa</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Thermes</surname> <given-names>C.</given-names></string-name> <article-title>Multi-scale coding of genomic information: From DNA sequence to genome structure and function</article-title>. <source>Phys Rep</source>. <year>2011</year>;<volume>498</volume>(<issue>2</issue>):<fpage>45</fpage>&#x2013;<lpage>188</lpage>.</mixed-citation></ref>
+<ref id="c21"><label>21.</label><mixed-citation publication-type="journal"><string-name><surname>Audit</surname> <given-names>B</given-names></string-name>, <string-name><surname>Baker</surname> <given-names>A</given-names></string-name>, <string-name><surname>Chen</surname> <given-names>CL</given-names></string-name>, <string-name><surname>Rappailles</surname> <given-names>A</given-names></string-name>, <string-name><surname>Guilbaud</surname> <given-names>G</given-names></string-name>, <string-name><surname>Julienne</surname> <given-names>H</given-names></string-name>, <string-name><surname>Goldar</surname> <given-names>A</given-names></string-name>, <string-name><surname>D&#x2019;Aubenton-Carafa</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Hyrien</surname> <given-names>O</given-names></string-name>, <string-name><surname>Thermes</surname> <given-names>C</given-names></string-name>, <string-name><surname>Arneodo</surname> <given-names>A.</given-names></string-name> <article-title>Multiscale analysis of genome-wide replication timing profiles using a wavelet-based signal-processing algorithm</article-title>. <source>Nat Protoc</source>. <year>2013</year>;<volume>8</volume>(<issue>1</issue>):<fpage>98</fpage>&#x2013;<lpage>110</lpage>.</mixed-citation></ref>
+<ref id="c22"><label>22.</label><mixed-citation publication-type="journal"><string-name><surname>Butler</surname> <given-names>W E.</given-names></string-name> <article-title>Wavelet brain angiography suggests arteriovenous pulse wave phase locking</article-title>. <source>PLoS One</source>. <year>2017</year>;<volume>12</volume>(<issue>11</issue>):<fpage>e0187014</fpage>.</mixed-citation></ref>
+<ref id="c23"><label>23.</label><mixed-citation publication-type="journal"><string-name><surname>Chen</surname> <given-names>D</given-names></string-name>, <string-name><surname>Wan</surname> <given-names>S</given-names></string-name>, <string-name><surname>Xiang</surname> <given-names>J</given-names></string-name>, <etal>et al.</etal> <article-title>A high-performance seizure detection algorithm based on Discrete Wavelet Transform (DWT) and EEG</article-title>. <source>PLoS One</source>. <year>2017</year>;<volume>12</volume>(<issue>3</issue>):<fpage>e0173138</fpage>.</mixed-citation></ref>
+<ref id="c24"><label>24.</label><mixed-citation publication-type="journal"><string-name><given-names>S.</given-names> <surname>Rajagopal</surname></string-name>, <string-name><given-names>I.</given-names> <surname>Tharcismariapushpam</surname></string-name>, <article-title>Improved Algorithm for the Location of CPG Islands in Genomic Sequences Using Discrete Wavelet Transforms</article-title>, <source>Curr Bioinform</source>. <volume>12</volume> (<issue>9</issue>) (<year>2017</year>) <fpage>57</fpage>&#x2013;<lpage>65</lpage>.</mixed-citation></ref>
+<ref id="c25"><label>25.</label><mixed-citation publication-type="journal"><string-name><surname>Toplak</surname> <given-names>T</given-names></string-name>, <string-name><surname>Palmieri</surname> <given-names>B</given-names></string-name>, <string-name><surname>Juanes-Garc&#x00ED;a</surname> <given-names>A</given-names></string-name>, <etal>et al.</etal> <article-title>Wavelet Imaging on Multiple Scales (WIMS) reveals focal adhesion distributions, dynamics and coupling between actomyosin bundle stability</article-title>. <source>PLoS One</source>. <year>2017</year>;<volume>12</volume>(<issue>10</issue>):<fpage>e0186058</fpage>.</mixed-citation></ref>
+<ref id="c26"><label>26.</label><mixed-citation publication-type="journal"><string-name><surname>Wang</surname> <given-names>XH</given-names></string-name>, <string-name><surname>Jiao</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Li</surname> <given-names>L.</given-names></string-name> <article-title>Mapping individual voxel-wise morphological connectivity using wavelet transform of voxel-based morphology</article-title>. <source>PLoS One</source>. <year>2018</year>;<volume>13</volume>(<issue>7</issue>):<fpage>e0201243</fpage>.</mixed-citation></ref>
+<ref id="c27"><label>27.</label><mixed-citation publication-type="journal"><string-name><surname>Toraichi</surname> <given-names>K</given-names></string-name>, <string-name><surname>Kamada</surname> <given-names>M</given-names></string-name>, <string-name><surname>Itahashi</surname> <given-names>S</given-names></string-name>, <string-name><surname>Mori</surname> <given-names>R.</given-names></string-name> <article-title>Window functions represented by B-spline functions</article-title>. <source>IEEE Transactions on Acoustics, Speech, and Signal Processing</source>. <year>1989</year>;<volume>37</volume>(<issue>1</issue>):<fpage>145</fpage>&#x2013;<lpage>7</lpage>.</mixed-citation></ref>
+<ref id="c28"><label>28.</label><mixed-citation publication-type="journal"><string-name><surname>Burset</surname> <given-names>M</given-names></string-name>, <string-name><surname>Guig&#x00F3;</surname> <given-names>R.</given-names></string-name> <article-title>Evaluation of gene structure prediction programs</article-title>. <source>Genomics</source>. <year>1996</year>;<volume>34</volume>(<issue>3</issue>):<fpage>353</fpage>&#x2013;<lpage>67</lpage>.</mixed-citation></ref>
+<ref id="c29"><label>29.</label><mixed-citation publication-type="journal"><string-name><surname>Rogic</surname> <given-names>S</given-names></string-name>, <string-name><surname>Mackworth</surname> <given-names>AK</given-names></string-name>, <string-name><surname>Ouellette</surname> <given-names>FB</given-names></string-name>. <article-title>Evaluation of gene-finding programs on mammalian sequences</article-title>. <source>Genome Res</source>. <year>2001</year>;<volume>11</volume>(<issue>5</issue>):<fpage>817</fpage>&#x2013;<lpage>32</lpage>.</mixed-citation></ref>
+<ref id="c30"><label>30.</label><mixed-citation publication-type="journal"><string-name><surname>Guig&#x00F3;</surname> <given-names>R</given-names></string-name>, <string-name><surname>Flicek</surname> <given-names>P</given-names></string-name>, <string-name><surname>Abril</surname> <given-names>JF</given-names></string-name>, <string-name><surname>Reymond</surname> <given-names>A</given-names></string-name>, <string-name><surname>Lagarde</surname> <given-names>J</given-names></string-name>, <string-name><surname>Denoeud</surname> <given-names>F</given-names></string-name>, <etal>et al.</etal> <article-title>EGASP: the human ENCODE Genome Annotation Assessment Project</article-title>. <source>Genome Biol</source>. <year>2006</year>;<volume>7</volume> Suppl <issue>1</issue>:<fpage>S2.1</fpage>&#x2013;<lpage>31</lpage>.</mixed-citation></ref>
+<ref id="c31"><label>31.</label><mixed-citation publication-type="journal"><string-name><surname>Lin</surname> <given-names>J.</given-names></string-name> <article-title>Divergence measures based on the Shannon entropy</article-title>. <source>IEEE Trans Inform Theory</source>. <year>1991</year>;<volume>37</volume>(<issue>1</issue>):<fpage>145</fpage>&#x2013;<lpage>51</lpage>.</mixed-citation></ref>
+<ref id="c32"><label>32.</label><mixed-citation publication-type="journal"><string-name><surname>Pencina</surname> <given-names>M</given-names></string-name>, <string-name><surname>D&#x2019;Agostino</surname> <prefix>Sr</prefix> <given-names>R</given-names></string-name>, <string-name><surname>D&#x2019;Agostino</surname> <suffix>Jr</suffix> <given-names>R</given-names></string-name>, <string-name><surname>Vasan</surname> <given-names>R.</given-names></string-name> <article-title>Evaluating the added predictive ability of a new marker: From area under the ROC curve to reclassification and beyond</article-title>. <source>Stat Med</source>. <year>2008</year>;<volume>27</volume>(<issue>2</issue>):<fpage>157</fpage>&#x2013;<lpage>72</lpage>.</mixed-citation></ref>
+<ref id="c33"><label>33.</label><mixed-citation publication-type="journal"><string-name><surname>Sims</surname> <given-names>GE</given-names></string-name>, <string-name><surname>Jun</surname> <given-names>SR</given-names></string-name>, <string-name><surname>Wu</surname> <given-names>GA</given-names></string-name>, <string-name><surname>Kim</surname> <given-names>SH</given-names></string-name>. <article-title>Alignment-free genome comparison with feature frequency profiles (FFP) and optimal resolutions</article-title>. <source>Proc Natl Acad Sci U S A</source>. <year>2009</year>;<volume>106</volume>(<issue>8</issue>):<fpage>2677</fpage>&#x2013;<lpage>82</lpage>.</mixed-citation></ref>
+<ref id="c34"><label>34.</label><mixed-citation publication-type="journal"><string-name><surname>Itzkovitz</surname> <given-names>S</given-names></string-name>, <string-name><surname>Hodis</surname> <given-names>E</given-names></string-name>, <string-name><surname>Segal</surname> <given-names>E.</given-names></string-name> <article-title>Overlapping codes within protein-coding sequences</article-title>. <source>Genome Res</source>. <year>2010</year>;<volume>20</volume>(<issue>11</issue>):<fpage>1582</fpage>&#x2013;<lpage>9</lpage>.</mixed-citation></ref>
+<ref id="c35"><label>35.</label><mixed-citation publication-type="journal"><string-name><surname>Ofran</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Rost</surname> <given-names>B.</given-names></string-name> <article-title>Analysing six types of protein-protein interfaces</article-title>. <source>J Mol Biol</source>. <year>2003</year>;<volume>325</volume>(<issue>2</issue>):<fpage>377</fpage>&#x2013;<lpage>87</lpage>.</mixed-citation></ref>
+<ref id="c36"><label>36.</label><mixed-citation publication-type="journal"><string-name><surname>Dominski</surname> <given-names>Z</given-names></string-name>, <string-name><surname>Kole</surname> <given-names>R.</given-names></string-name> <article-title>Selection of splice sites in pre-mRNAs with short internal exons</article-title>. <source>Mol Cell Biol</source>. <year>1991</year>;<volume>11</volume>(<issue>12</issue>):<fpage>6075</fpage>&#x2013;<lpage>83</lpage>.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

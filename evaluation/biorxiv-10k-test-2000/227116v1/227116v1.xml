@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/227116</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Epidemiology</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Optimal Vaccination of a General Population Network via Genetic Algorithms</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author" corresp="yes">
+<name><surname>Sanders</surname><given-names>Lloyd</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="corresp" rid="cor1">&#x2709;</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>Chair of Computational Social Science</institution>, ETH, Z&#x00FC;rich, <country>Switzerland</country></aff>
+</contrib-group>
+<author-notes>
+<corresp id="cor1"><bold>Correspondence: <italic><email>l.sanders@ethz.ch</email></italic></bold></corresp>
+</author-notes>
+<pub-date pub-type="epub"><year>2017</year></pub-date>
+<elocation-id>227116</elocation-id>
+<history>
+<date date-type="received">
+<day>30</day>
+<month>11</month>
+<year>2017</year>
+</date>
+<date date-type="rev-recd">
+<day>30</day>
+<month>11</month>
+<year>2017</year>
+</date>
+<date date-type="accepted">
+<day>30</day>
+<month>11</month>
+<year>2017</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2017, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2017</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="227116.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<p>Herein we extend the work from Patel et al. (<xref ref-type="bibr" rid="c1">1</xref>) to find the approximate, optimal distribution of vaccinations of a virus spreading on a network with the use of Genetic Algorithms (GAs). We couch our investigation in an online social network, a Facebook graph of &#x007E;4000 nodes. Within this framework we investigate the performance of an optimized vaccine distribution scheme to that of a random distribution benchmark, and show the algorithm is superior to this benchmark as all vaccine coverage values.</p>
+</abstract>
+<kwd-group kwd-group-type="author">
+<kwd>Vaccine</kwd>
+<kwd>Genetic Algorithm</kwd>
+<kwd>Network</kwd>
+<kwd>Optimization</kwd>
+<kwd>Epidemiology</kwd>
+<kwd>SIR</kwd>
+</kwd-group>
+<counts>
+<page-count count="4"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1"><title>Introduction</title>
+<p>The role of vaccination in public health can hardly be understated. The reduction in rates of Polio and Measeles are a direct result of the preventative effectiveness of vaccines. The ability of such profilatics to save lives, and to a lesser extent reduce the financial burden on a society is therefore of great importance to the scientific community. Namely to understand the effect of vaccines on disease dynamics.</p>
+<p>The topic of vaccination is a large and complex field (<xref ref-type="bibr" rid="c2">2</xref>). There has been a fair amount of work done on the optimal method to vaccinate a population under various schemes. For the case of mean-field models, these schemes seek the best distribution over time, and generally with respect to some cost of the vaccine. Under these deterministic models one can employ methods from Optimal Control to find analytical solutions to the problem (<xref ref-type="bibr" rid="c3">3</xref>-<xref ref-type="bibr" rid="c5">5</xref>); for example a two-strain Tuberculosis model (<xref ref-type="bibr" rid="c6">6</xref>). This forward and back optimization is computationally, highly effective. But the lack of flexibility of the methodology works against it.</p>
+<p>Mathematical Epidemiology has increasingly turned to modeling of spreading processes on complex networks (<xref ref-type="bibr" rid="c7">7</xref>) as they inherently relax some of the harder assumptions of mean-field models by providing a contact structure. With this added complexity, comes rich, realistic dynamics (<xref ref-type="fig" rid="fig1">Fig. 1</xref>), but the models move further from analytical tractability. Although, some aspects of epidemics on networks can be characterized analytically, such as the critical translatability needed to infect a sizable fraction of the network (akin to the basic reproduction number), and spreading rates; given the degree distribution of the graph and the disease parameters (<xref ref-type="bibr" rid="c2">2</xref>). As these models grow in sophistication, so do the vaccination schema.</p>
+<fig id="fig1" position="float" orientation="portrait" fig-type="figure"><label>Fig. 1.</label>
+<caption><p>Here we model simple SIR contagion, <xref ref-type="disp-formula" rid="eqn1">Eq. (1)</xref>, on the Facebook network (<xref ref-type="fig" rid="fig2">Fig. 2</xref>). We simulate 500 outbreaks (with random starting locations &#x2013; a single node infected each time) shown individually as the grey lines, whose mean is given by the red. Recovery time is modeled after Influenza, of six days (<italic>&#x03B3;</italic> &#x003D; 1/6), whereas, <italic>R</italic><sub>0</sub> &#x003D; 2.5, so we set <italic>&#x03B2;</italic> &#x003D; <italic>&#x03B3;</italic> &#x00B7; <italic>R</italic><sub>0</sub> &#x2248; 0.42.</p></caption>
+<graphic xlink:href="227116_fig1.tif"/>
+</fig>
+<p>Vaccination schema on networks can readily adopt the frame work of Statistical Physics and map it to a site percolation problem &#x2013; hence some characterization mentioned above is possible. Given this thread of thinking, some schema hope to increase the percolation threshold (by removing nodes &#x2013; vaccination) and by extension reduce out the spread of the virus. Alternately, many schemes are based on heuristic models, that are characterized by node measures of the network, such as degree correlations, or differing types of centrality measures, such as: betweeness, eigenvector, random-walk, closeness (<xref ref-type="bibr" rid="c2">2</xref>, <xref ref-type="bibr" rid="c8">8</xref>). All of these methods assume global knowledge of the networks, which in reality is not often available. There has been work on vaccination methods on networks, with only local properties, such as acquaintance vaccination (<xref ref-type="bibr" rid="c2">2</xref>). Finally there are other more specific targeting schemes such as ring vaccination (<xref ref-type="bibr" rid="c9">9</xref>).</p>
+<p>Although this subfield is well populated, we believe there is need for method to find an (approximation) to the optimal solution, for use in the field, and also to benchmark these heuristic measures mentioned. We therefore look to the work of Patel et al. (<xref ref-type="bibr" rid="c1">1</xref>), to extend their work to networks.</p>
+<p>Patel et al. devised a scheme to deliver the optimal amount of vaccinations to each age group in their age-stratified, metapopulation Influenza model. They considered two numerical optimization schemes to benchmark against a random distribution of vaccines; namely Genetic Algorithms and Random Hill Climbing with mutation. The former, was found to be optimal, and hence the focus of this study. Genetic Algorithms, succinctly describe by Hamblin (<xref ref-type="bibr" rid="c10">10</xref>), &#x201C;&#x2026;<italic>are a heuristic global optimization technique mimicking the action of natural selection to solve hard optimization problems</italic>&#x2026;&#x201D; The work of Patel and co. was novel, but given the nature of their model, lacked generality to a network contact structure, as opposed to a metapopulation model. It is here where our work sits. We expound upon their model to that of a general contact structure network, at the same time bring parsimony to certain aspect of the algorithm, to create a general, flexible method to find an optimal strategy for vaccination on general networks.</p>
+</sec>
+<sec id="s2"><title>Spreading and Vaccination</title>
+<p>For our work, we analyze a simple contagion model; we use the SIR model as our basis, for its generality with respect to mimicking many viral traits. We adapt the model to a network, where each node on a network, is a person. We assume that people can be infected by infected nearest neighbors with a probability
+<disp-formula id="eqn1"><alternatives><graphic xlink:href="227116_eqn1.gif"/></alternatives></disp-formula>
+where <italic>&#x03B7;</italic> is the number of infected nearest neighbors, and <italic>&#x03B2;</italic> is the probability that one infected neighbor with infect another neighbor in a given timestep <italic>dt</italic>. Nodes recover with a probability, <italic>&#x03B3;</italic>, in a given timestep <italic>dt</italic>. These surprisingly rich dynamics are shown in <xref ref-type="fig" rid="fig1">Fig. 1</xref>.</p>
+<p>In our model, nodes which are initially Susceptible can be vaccinated. That is, vaccination has the role of shifting the health state from Susceptible, to Recovered, and is assumed to be 100&#x0025; effective. Immunity is considered lifelong.</p>
+<sec id="s2a"><title>Optimization Scheme</title>
+<p>For the optimization scheme, we follow the ethos laid out by Patel and co. (<xref ref-type="bibr" rid="c1">1</xref>), for which we will briefly go over here, with an adjustment appropriate for networks. In their work, their spreading model consists of an age stratified, metapopulation model. Here we remove the stratification (such that all nodes are homogeneous), but increase the contact structure to a network of <italic>N</italic> nodes (people). We suppose that we have <italic>n<sub>v</sub></italic> vaccines available (one per person) at the beginning of the simulation (sans infection) for which we can distribute. Here, we conduct the model as follows.</p>
+<p>Construct <italic>m</italic> individuals, conceptually thought of as vaccination strategies, which are vectors of genes, where each vector is the genome of the individual (in the nomenclature of GAs). Each index of an individual maps to a distinct node on the network. The elemental value on that index, referred to as the gene, or locus, can be 0 or 1, denoting that the node for which it maps to is either non-vaccinated or vaccinated, respectively.<sup><xref ref-type="fn" rid="fn1">1</xref></sup> For each individual, the simulation of a virus spreading on the network is run through <italic>e<sub>n</sub></italic> times (ensemble size) (the outbreak starting at a random node for each new outbreak). The number of recovered nodes (excluding those initially vaccinated) are summed to give the total total number of nodes affected by the disease. The lower this number, the higher the so-called fitness of the individual. We encode this mathematically as,
+<disp-formula id="eqn2"><alternatives><graphic xlink:href="227116_eqn2.gif"/></alternatives></disp-formula>
+where <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="227116_inline1.gif"/></alternatives></inline-formula> denotes the final number of recovered at the end of simulation <italic>j</italic> in the ensemble set <italic>e<sub>n</sub></italic>. The negative captures maximizing the mean fitness <italic>f<sub>i</sub></italic>, of the <italic>i</italic><sup>th</sup> individual. Note: Simulations are conducted until no infected nodes are left. For each individual, the mean fitness is found for a given generation. The whole procedure is iterated over many generations, <italic>g</italic>. Between each generation, genetic information exchange occurs between individuals. Following Patel&#x2019;s work, we use both Tournament selection (below) and elitist selection: select the top fittest half of the individuals to be immediately passed to the next generation. Tournament selection is used to construct the remaining individuals such that the total number of individuals per generation remains constant. The tournaments are as follows.</p>
+</sec>
+<sec id="s2b"><title>Mating Schema and Tournaments</title>
+<p>To construct the remaining individuals to pass onto the next generations, firstly, select a pool of 10 individuals without replacement from the whole set. From these find the one with the highest average fitness: the paternal individual. Construct another tournament from the current pool of individuals sans the paternal individual, of the same size. Select the one with the highest fitness: the maternal individual.</p>
+<p>From here we mate the two via crossover breeding. The mixing of gene states (0 or 1) is not necessarily 50/50. We designate this as the crossbreeding factor, <italic>c<sub>B</sub></italic> (&#x2264; 1).</p>
+<p>In this situation, to construct the offspring individual from the paternal and maternal, we consider each gene index (the vector index) in sequence. With a <italic>c<sub>B</sub></italic> probability we select the gene from the paternal, otherwise we select it from the maternal individual. Once all genes have been chosen, we need to balance the number of vaccines issued in the offspring individual; namely it may have greater or less than the total number of vaccines required, <italic>v<sub>n</sub></italic>. If there are a greater number of vaccines issued to the offspring, we collect all indexes which have a value equal to unity. Without replacement, we select, at random, the same number of genes as the excess number of vaccines issued. Those genes are therefore set to 0. In the case too few vaccines are issued, we collect all null genes. Without replacement, we select, at random the same number of genes as needed to make up the total number of vaccines issued per individual. We set those genes selected to unity. This final adjustment on the offspring individual serves as a mutation step in the creation process. We here depart from the original authors&#x2019; scheme due to the differing nature of our model and also, in seeking a more parsimonious algorithm.</p>
+</sec>
+<sec id="s2c"><title>Convergence</title>
+<p>We set the convergence of the algorithm in a similar fashion to before: if the top mean fitness of an individual has not changed after <italic>c</italic> generations, or we have exceeded <italic>g</italic> generations of computation, we assume convergence of the algorithm.</p>
+</sec>
+<sec id="s2d"><title>Random Vaccination</title>
+<p>To benchmark our work, we measure the approximate optimal vaccination scheme against a random distribution of vaccines over the network, irrespective of the nodal hierarchy. Again, we run the random distribution over an ensemble of simulations, and take the mean fitness to represent the benchmark vaccination proficiency level.</p>
+</sec>
+</sec>
+<sec id="s3"><title>Results</title>
+<sec id="s3a"><title>Model Initialization and Parameters</title>
+<p>To investigate the performance of our methodology we require a representative real-world contact network. We have thus chosen to analyze a Facebook network provided by SNAP (<xref ref-type="bibr" rid="c11">11</xref>). This network is undirected, with 4039 nodes, 88234 edges, with a diameter of 8 &#x2013; a size which is not trivial, but still computationally tractable. This network was investigated in (<xref ref-type="bibr" rid="c12">12</xref>) and displayed in <xref ref-type="fig" rid="fig2">Fig. 2</xref>.<sup><xref ref-type="fn" rid="fn2">2</xref></sup></p>
+<fig id="fig2" position="float" orientation="portrait" fig-type="figure"><label>Fig. 2.</label>
+<caption><p>We base our calculations on an anonymised Facebook network provided by SNAP (<xref ref-type="bibr" rid="c11">11</xref>). The network has 4039 nodes, 88234 edges, with a diameter of 8. Illustrated by Gephi(<xref ref-type="bibr" rid="c13">13</xref>).</p></caption>
+<graphic xlink:href="227116_fig2.tif"/>
+</fig>
+<p>To compare the GA vaccination scheme to the random benchmark scheme, we consider the same network structure for each case.<sup><xref ref-type="fn" rid="fn3">3</xref></sup> During the simulations, the viral parameters, and simulation parameters are held constant. Namely, we set <italic>&#x03B3;</italic> &#x003D; 1/6, and <italic>&#x03B3;</italic> &#x003D; <italic>&#x03B2;</italic> &#x00B7; 2.5. All simulations are initially infected a single node that varies randomly for each simulation, but this variation is accounted for by running the simulation many times (the ensemble size). We consider a range of vaccine coverage rates [5&#x2013;90 &#x0025;], and run the simulations on the network, such that for the given spreading process, the simulation is run until there are no more infected nodes on the network.</p>
+<p>For the GA, we use 50 individuals, The initial (random) individuals for the GA are chosen prior to infecting the network for any simulation. The network is immunized before selecting the infected node. The top 25 fittest individuals are passed to each new generation. The remaining 25 are created via a tournament scheme composed of 10 individuals. We select our crossover breeding percentage to be 80&#x0025;, as Patel et al. We conduct the GA over 20 generations, or the algorithm converges if the top fitness remains the same for 4 generations.</p>
+<p>The parameters for our simulations are found in <xref ref-type="table" rid="tbl1">Table 1</xref>.</p>
+<table-wrap id="tbl1" orientation="portrait" position="float"><label>Table 1.</label>
+<caption><p>The parameters used to define the virus, and the vaccination are contained in top of the table. The bottom of the table is reserved for parameters of the GA.</p></caption>
+<graphic xlink:href="227116_tbl1.tif"/>
+</table-wrap>
+</sec>
+<sec id="s3b"><title>Vaccination Scheme Performances</title>
+<p>Throughout the combination of all these parameter tuples, we show the the mean fitness between the GA and the random benchmark (including no vaccination scheme at all), in <xref ref-type="fig" rid="fig3">Fig. 3</xref>.</p>
+<fig id="fig3" position="float" orientation="portrait" fig-type="figure"><label>Fig. 3.</label>
+<caption><p>We show the performance of the GA approach (&#x2018;GA.&#x2019;, red) against a random vaccine strategy (&#x2018;Rand.&#x2019; in black). We also include no vaccination (&#x2018;Sans&#x2019; Black dot-dashed line). Simulations are conducted on the network shown in <xref ref-type="fig" rid="fig2">Fig. 2</xref> for a simple contagion process [<italic>&#x03B2;</italic> &#x003D; 1/6, <italic>&#x03B3;</italic> &#x003D; <italic>&#x03B2;</italic> &#x00B7; 2.5, <xref ref-type="disp-formula" rid="eqn1">Eq. (1)</xref>]. On the y-axis we show the average number of people infected (and then recovered) from the virus, less the number of vaccines issued for each simulation. As expected, the mean infected of the disease drops linearly with a random strategy. But we see a marked difference in the effectiveness of the GA scheme. The algorithm is able to seek a far more optimal arrangement at all vaccine coverage values. The remaining parameters are housed in <xref ref-type="table" rid="tbl1">Table 1</xref>.</p></caption>
+<graphic xlink:href="227116_fig3.tif"/>
+</fig>
+<p>We see in <xref ref-type="fig" rid="fig3">Fig. 3</xref> that the GA approach is superior to the random strategy at every vaccination level. The random strategy is approximately linear in its effectiveness, whereas, the GA response could likely be described as quadratic. In comparison: To ensure that half of the population is safe from the virus, the random strategy on average requires 40&#x0025; coverage rate, whereas the GA strategy requires 15&#x0025; coverage &#x2013; an extremely efficient response.</p>
+</sec>
+</sec>
+<sec id="s4"><title>Discussion and Conclusion</title>
+<p>We have extended the work by Patel et al. (<xref ref-type="bibr" rid="c1">1</xref>) to consider a general network structure with a simple spreading process upon it, <xref ref-type="disp-formula" rid="eqn1">Eq. (1)</xref>. We have shown, via <xref ref-type="fig" rid="fig3">Fig. 3</xref>, that our Genetic Algorithm scheme was able to find an approximate, optimal vaccination strategy, for the network considered in <xref ref-type="fig" rid="fig2">Fig. 2</xref>, that consistently beats the benchmark, random scheme, for any value of vaccine coverage. Through this we show the value of this meta-heuristic approach: With the advent of cheap computational power, one can find the optimal vaccination scheme for highly dimensional, complex models. The flexibility of this model, coupled with its simplicity, is its strength.</p>
+<sec id="s4a"><title>Future Work</title>
+<p>As this work is a preliminary use-case investigation, there is much to do in terms of future work with respect to this framework. Simply, one could test the sensitivity of the results with respect to viral parameters, and also, obviously with respect to network structure. It could be, that the GA is more efficacious with respect to some structure classes of networks that others. If this is then the case, benchmarking this algorithms against other meta-heuristic optimization algorithms, such as Simulated Annealing (<xref ref-type="bibr" rid="c15">15</xref>), would be beneficial.</p>
+<p>As this method is effectively rather simple, the cost of computation is non-trivial. One could investigate the computational cost of convergence, with respect to the algorithmic parameters, namely: tournament size, individual size, etc. Finally: It will be interesting to see how the methodology can be adapted to other optimization problems on networks, such as managing disaster spreading via external resources (<xref ref-type="bibr" rid="c8">8</xref>), or in situations of complex contagion, such as advertising and opinion spreading [which would likely be reflected through changes to the fitness/cost function, <xref ref-type="disp-formula" rid="eqn2">Eq. (2)</xref>].</p>
+</sec>
+<sec id="s4b"><title>Heuristic strategies inspired by GAs</title>
+<p>We believe that the GA scheme offers more than simply a method to find the optimal solution to the vaccination problem on networks: It can be used to inspire other heuristic strategies of vaccination. Namely, when conducting simulations, we believe there will likely be certain nodes of greater importance to minimizing spread through their own vaccination. It is therefore likely, that over a range of coverage values, these nodes are picked out via the algorithm more than others &#x2013; essentially weighting their importance more. Comparing the likelihood of vaccination for a given coverage as a function of nodal degree (or any other node measure on a network) could then inspire, or help validate some of the heuristic schemes mentioned in the Introduction, which are based on these nodel properties &#x2013; like node degree.</p>
+</sec>
+<sec id="s4c"><title>Machine Learning based on GA feature sets</title>
+<p>Looking further ahead: The GA can also be used as a basis to create a training set for Machine Learning algorithms with respect to vaccination schemes. One could pose the question: Can we teach an algorithm, given a snapshot of a susceptible network, the viral parameters, and the vaccine coverage, the likely best nodes to vaccinate? We believe, the GA framework elucidated here, could be up to the task. Let us outline a possible avenue of investigation.</p>
+<p>One could generate many different synthetic networks (be they small world, lattice, random, or scale-free), along side real network datasets, to run large ensembles of outbreaks with differing viral parameters. In each case, we could use the GA to find the approximate optimal solution given the appropriate cost function.</p>
+<p>Once the vaccination scheme is found, a feature set could be developed, where the viral parameters, network, network statistics, degree distributions and vaccine coverage are included. The output could be the proportion of vaccines given to each nodal degree in the network degree distribution. This would then constitute as a data point in a training set. Given a large enough training set, and using the appropriate machine learning algorithms, one could then train the algorithm to give out the vaccination scheme, given the inputs above. In so doing, one would have developed a machine learning algorithm to vaccinate populations, given a snapshot of the network.</p>
+</sec>
+</sec>
+</body>
+<back>
+<ack><title>ACKNOWLEDGEMENTS</title>
+<p>This work was partially funded by the European Community&#x2019;s H2020 Program under the funding scheme &#x201C;FETPROACT-1-2014: Global Systems Science (GSS)&#x201D;, grant agreement 641191 &#x201C;CIMPLEX: Bringing CItizens, Models and Data together in Participatory, Interactive SociaL EXploratories&#x201D; (<ext-link ext-link-type="uri" xlink:href="http://www.cimplex-project.eu">http://www.cimplex-project.eu</ext-link>).</p>
+</ack>
+<ref-list><title>Bibliography</title>
+<ref id="c1"><label>1.</label><mixed-citation publication-type="journal"><string-name><given-names>Rajan</given-names> <surname>Patel</surname></string-name>, <string-name><given-names>Ira M</given-names> <surname>Longini</surname></string-name>, and <string-name><given-names>M</given-names> <surname>Elizabeth Halloran</surname></string-name>. <article-title>Finding optimal vaccination strategies for pandemic influenza using genetic algorithms</article-title>. <source>Journal of theoretical biology</source>, <volume>234</volume>(<issue>2</issue>): <fpage>201</fpage>&#x2013;<lpage>212</lpage>, <year>2005</year>.</mixed-citation></ref>
+<ref id="c2"><label>2.</label><mixed-citation publication-type="journal"><string-name><given-names>Zhen</given-names> <surname>Wang</surname></string-name>, <string-name><given-names>Chris T</given-names> <surname>Bauch</surname></string-name>, <string-name><given-names>Samit</given-names> <surname>Bhattacharyya</surname></string-name>, <string-name><given-names>Alberto</given-names> <surname>d&#x2019;Onofrio</surname></string-name>, <string-name><given-names>Piero</given-names> <surname>Manfredi</surname></string-name>, <string-name><given-names>Matja&#x017E;</given-names> <surname>Perc</surname></string-name>, <string-name><given-names>Nicola</given-names> <surname>Perra</surname></string-name>, <string-name><given-names>Marcel</given-names> <surname>Salath&#x00E9;</surname></string-name>, and <string-name><given-names>Dawei</given-names> <surname>Zhao</surname></string-name>. <article-title>Statistical physics of vaccination</article-title>. <source>Physics Reports</source>, <volume>664</volume>:<fpage>1</fpage>&#x2013;<lpage>113</lpage>, <year>2016</year>.</mixed-citation></ref>
+<ref id="c3"><label>3.</label><mixed-citation publication-type="book"><string-name><given-names>Maia</given-names> <surname>Martcheva</surname></string-name>. <source>Introduction to Mathematical Epidemiology</source>, volume <volume>61</volume>. <publisher-name>Springer</publisher-name>, <year>2015</year>.</mixed-citation></ref>
+<ref id="c4"><label>4.</label><mixed-citation publication-type="journal"><string-name><given-names>Oluwaseun</given-names> <surname>Sharomi</surname></string-name> and <string-name><given-names>Tufail</given-names> <surname>Malik</surname></string-name>. <article-title>Optimal control in epidemiology</article-title>. <source>Annals of Operations Research</source>, <volume>251</volume>(<issue>1&#x2013;2</issue>):<fpage>55</fpage>&#x2013;<lpage>71</lpage>, <year>2017</year>.</mixed-citation></ref>
+<ref id="c5"><label>5.</label><mixed-citation publication-type="journal"><string-name><given-names>Rachael Miller</given-names> <surname>Neilan</surname></string-name> and <string-name><given-names>Suzanne</given-names> <surname>Lenhart</surname></string-name>. <article-title>An introduction to optimal control with an application in disease modeling</article-title>. In <source>Modeling Paradigms and Analysis of Disease Trasmission Models</source>, pages <fpage>67</fpage>&#x2013;<lpage>82</lpage>, <year>2010</year>.</mixed-citation></ref>
+<ref id="c6"><label>6.</label><mixed-citation publication-type="journal"><string-name><given-names>E</given-names> <surname>Jung</surname></string-name>, <string-name><given-names>Suzanne</given-names> <surname>Lenhart</surname></string-name>, and <string-name><given-names>Z</given-names> <surname>Feng</surname></string-name>. <article-title>Optimal control of treatments in a two-strain tuberculosis model</article-title>. <source>Discrete and Continuous Dynamical Systems Series B</source>, <volume>2</volume>(<issue>4</issue>):<fpage>473</fpage>&#x2013;<lpage>482</lpage>, <year>2002</year>.</mixed-citation></ref>
+<ref id="c7"><label>7.</label><mixed-citation publication-type="journal"><string-name><given-names>Romualdo</given-names> <surname>Pastor-Satorras</surname></string-name>, <string-name><given-names>Claudio</given-names> <surname>Castellano</surname></string-name>, <string-name><given-names>Piet Van</given-names> <surname>Mieghem</surname></string-name>, and <string-name><given-names>Alessandro</given-names> <surname>Vespignani</surname></string-name>. <article-title>Epidemic processes in complex networks</article-title>. <source>Reviews of modern physics</source>, <volume>87</volume>(<issue>3</issue>):<fpage>925</fpage>, <year>2015</year>.</mixed-citation></ref>
+<ref id="c8"><label>8.</label><mixed-citation publication-type="journal"><string-name><given-names>Lubos</given-names> <surname>Buzna</surname></string-name>, <string-name><given-names>Karsten</given-names> <surname>Peters</surname></string-name>, <string-name><given-names>Hendrik</given-names> <surname>Ammoser</surname></string-name>, <string-name><given-names>Christian</given-names> <surname>K&#x00FC;hnert</surname></string-name>, and <string-name><given-names>Dirk</given-names> <surname>Helbing</surname></string-name>. <article-title>Efficient response to cascading disaster spreading</article-title>. <source>Physical Review E</source>, <volume>75</volume>(<issue>5</issue>):<fpage>056107</fpage>, <year>2007</year>.</mixed-citation></ref>
+<ref id="c9"><label>9.</label><mixed-citation publication-type="journal"><string-name><given-names>David</given-names> <surname>Greenhalgh</surname></string-name>. <article-title>Optimal control of an epidemic by ring vaccination</article-title>. <source>Stochastic Models</source>, <volume>2</volume>(<issue>3</issue>):<fpage>339</fpage>&#x2013;<lpage>363</lpage>, <year>1986</year>.</mixed-citation></ref>
+<ref id="c10"><label>10.</label><mixed-citation publication-type="journal"><string-name><given-names>Steven</given-names> <surname>Hamblin</surname></string-name>. <article-title>On the practical usage of genetic algorithms in ecology and evolution</article-title>. <source>Methods in Ecology and Evolution</source>, <volume>4</volume>(<issue>2</issue>):<fpage>184</fpage>&#x2013;<lpage>194</lpage>, <year>2013</year>.</mixed-citation></ref>
+<ref id="c11"><label>11.</label><mixed-citation publication-type="website"><string-name><given-names>Jure</given-names> <surname>Leskovec</surname></string-name> and <string-name><given-names>Andrej</given-names> <surname>Krevl</surname></string-name>. <source>SNAP Datasets: Stanford large network dataset collection.</source> <ext-link ext-link-type="uri" xlink:href="http://snap.stanford.edu/data">http://snap.stanford.edu/data</ext-link>, June <year>2014</year>.</mixed-citation></ref>
+<ref id="c12"><label>12.</label><mixed-citation publication-type="journal"><string-name><given-names>Jure</given-names> <surname>Leskovec</surname></string-name> and <string-name><given-names>Julian J</given-names> <surname>Mcauley</surname></string-name>. <article-title>Learning to discover social circles in ego networks</article-title>. In <source>Advances in neural information processing systems</source>, pages <fpage>539</fpage>&#x2013;<lpage>547</lpage>, <year>2012</year>.</mixed-citation></ref>
+<ref id="c13"><label>13.</label><mixed-citation publication-type="journal"><string-name><given-names>Mathieu</given-names> <surname>Bastian</surname></string-name>, <string-name><given-names>Sebastien</given-names> <surname>Heymann</surname></string-name>, <string-name><given-names>Mathieu</given-names> <surname>Jacomy</surname></string-name>, <etal>et al.</etal> <article-title>Gephi: an open source software for exploring and manipulating networks</article-title>. <source>Icwsm</source>, <volume>8</volume>:<fpage>361</fpage>&#x2013;<lpage>362</lpage>, <year>2009</year>.</mixed-citation></ref>
+<ref id="c14"><label>14.</label><mixed-citation publication-type="confproc"><string-name><given-names>Aric A.</given-names> <surname>Hagberg</surname></string-name>, <string-name><given-names>Daniel A.</given-names> <surname>Schult</surname></string-name>, and <string-name><given-names>Pieter J.</given-names> <surname>Swart</surname></string-name>. <article-title>Exploring network structure, dynamics, and function using NetworkX</article-title>. In <conf-name>Proceedings of the 7th Python in Science Conference (SciPy2008)</conf-name>, pages <fpage>11</fpage>&#x2013;<lpage>15</lpage>, <conf-loc>Pasadena, CA USA</conf-loc>, <conf-date>August 2008</conf-date>.</mixed-citation></ref>
+<ref id="c15"><label>15.</label><mixed-citation publication-type="book"><string-name><given-names>William H</given-names> <surname>Press</surname></string-name>. <source>Numerical recipes 3rd edition: The art of scientific computing.</source> <publisher-name>Cambridge university press</publisher-name>, <year>2007</year>.</mixed-citation></ref>
+</ref-list>
+<fn-group>
+<fn id="fn1"><label>1</label><p>We assume the efficacy of the vaccines to be 100&#x0025;.</p></fn>
+<fn id="fn2"><label>2</label><p>This network was constructed and anonymized from all users participating in a Facebook application. See (<xref ref-type="bibr" rid="c12">12</xref>) for more details.</p></fn>
+<fn id="fn3"><label>3</label><p>The network is constructed from the python package NetworkX (<xref ref-type="bibr" rid="c14">14</xref>).</p></fn>
+</fn-group>
+</back>
+</article>

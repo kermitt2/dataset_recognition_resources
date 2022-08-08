@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/316273</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Seed Selection Strategies for Overlap Detection</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<name>
+<surname>Teutenberg</surname>
+<given-names>Jonathan</given-names>
+</name>
+</contrib></contrib-group>
+<author-notes><fn id="n1"><p><email>jono.teutenberg@gmail.com</email>
+</p></fn></author-notes>
+<pub-date pub-type="epub">
+<year>2018</year>
+</pub-date>
+<elocation-id>316273</elocation-id>
+<history>
+<date date-type="received">
+<day>07</day>
+<month>5</month>
+<year>2018</year>
+</date>
+<date date-type="rev-recd">
+<day>07</day>
+<month>5</month>
+<year>2018</year>
+</date>
+<date date-type="accepted">
+<day>08</day>
+<month>5</month>
+<year>2018</year>
+</date>
+</history><permissions><copyright-statement>&#x00A9; 2018, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2018</copyright-year><license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license></permissions><self-uri xlink:href="316273.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>The current state-of-the-art assemblers of long, error-prone reads rely on detecting all-vs-all overlaps within the set of reads with overlaps represented by a sparse selection of short subsequences or &#x201C;seeds&#x201D;. Though the quality of selection of these seeds can impact both accuracy and speed of overlap detection, existing algorithms do little more than ignore over-represented seeds. Here we propose several more informed seed selection strategies to improve precision and recall of overlaps. These strategies are evaluated against real long-read data sets with a range of fixed seed sizes. We show that these strategies substantially improve the utility of individual seeds over uninformed selection.</p>
+</abstract>
+<counts>
+<page-count count="12"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<label>1</label>
+<title>Background</title>
+<p>Recent advances in sequencing technologies such as those of Pacific Biosciences and Oxford Nanopore Technologies have enabled the generation of reads that are orders of magnitude longer but also more error-prone than those produced by high quality short read technologies. These long reads &#x2013; potentially up to two million bases in length &#x2013; are currently best assembled by detecting overlaps between read pairs[<xref ref-type="bibr" rid="c3">3</xref>, <xref ref-type="bibr" rid="c4">4</xref>]. Example algorithms for overlap detection include MHAP[<xref ref-type="bibr" rid="c1">1</xref>] (as used by the Canu assembler), minimap2[<xref ref-type="bibr" rid="c8">8</xref>] (as used by the mini-asm assembler[<xref ref-type="bibr" rid="c7">7</xref>]), the TULIP assembler[<xref ref-type="bibr" rid="c5">5</xref>], and BLAT[<xref ref-type="bibr" rid="c6">6</xref>].</p>
+<p>A common feature of these overlap detection implementations is the representation of reads as a sparse collection of short subsequences or <italic>seeds</italic>. Overlap detection is then performed as an all-vs-all comparison amongst these collections, based on exact matches of seeds. The selection of the seeds used to represent a read should be sparse (so as to reduce computational complexity), shared by a maximal number of other overlapping reads (to increase true positives), and shared by a minimal number of non-overlapping reads (to decrease false positives).</p>
+<p>Sparsity may be ensured either by selecting non-overlapping seeds at defined intervals (e.g. BLAT), by selecting a &#x2018;minimal value&#x2019; seed within a given window (e.g. minimap2), or by selecting a fixed number of seeds that each minimise their own value function (e.g. MHAP). While all of these perform some form of seed selection, alternatives do exist. For example DALIGNER [<xref ref-type="bibr" rid="c9">9</xref>] maintains all seeds of a given length though when comparing a pair of reads it makes use of only the intersection of their collections of seeds.</p>
+<p>In addition to sparsity, these algorithms also aim to minimise the number of overlaps in which their seeds appear, typically by increasing the seed length <italic>k</italic> and ignoring seeds that appear in the data with unusually high frequency.</p>
+<p>The third criteria &#x2013; maximising the number of overlapping reads containing a seed &#x2013; is ignored by these algorithms. For example, minimap2 uses a lexicographic ordering for the hash function to determine the best &#x2018;minimal&#x2019; local seed; MHAP uses a different random hash function for selecting each seed; and BLAT makes an arbitrary selection of equally spaced seeds.</p>
+<p>One simple method to increase the proportion of overlapping reads containing a seed is to reduce <italic>k</italic>, though this becomes a trade-off with minimising its presence in non-overlapping reads. Perhaps the closest existing approach to addressing this is TULIP which selects seeds from contigs generated by highly accurate short reads[<xref ref-type="bibr" rid="c5">5</xref>]. These kinds of accurate seeds have been shown to greatly improve the resulting assemblies[<xref ref-type="bibr" rid="c2">2</xref>].</p>
+<p>Selection from accurate short read data is a binary filter only - doesn&#x2019;t rank seeds. Anything eliminated is guaranteed false positive which is nice. Better for larger k as fewer errors conflate with good seeds.</p>
+<p>In this paper we consider alternative methods for ranking seeds that are expected to improve the recall of overlapping reads in comparison to the lexicographic ordering used currently.</p>
+</sec>
+<sec id="s2">
+<label>2</label>
+<title>Selection strategies</title>
+<p>The term <italic>selection strategy</italic> is used here to describe a mapping
+<disp-formula><alternatives><graphic xlink:href="316273_ueqn1.gif"/></alternatives></disp-formula>from the set of all possible subsequences length <italic>k</italic> (over, for example, an alphabet &#x03A3; of four nucleotide bases) to a value. During seed selection, an algorithm is then expected to use this strategy to compare k-mers, selecting that which maps to the maximal <italic>&#x03D5;</italic> value when all other criteria of the algorithm are met.</p>
+<p>A k-mer <italic>u</italic> is said to be <italic>correct</italic> in a read <italic>s</italic> (or its collection of k-mers <italic>S</italic>, that we shall use interchangeably below) when its bases match those at the same position in the sequence being read, written <italic>c</italic>(<italic>u, s</italic>). Otherwise it is <italic>incorrect</italic>.</p>
+<p>An <italic>overlap</italic> at k-mer <italic>u</italic> in a read <italic>s</italic><sub>0</sub> is a set of reads that contain a k-mer at the same position in the sequence they have been read from. When an overlap detection algorithm must choose between two nearby k-mers <italic>a</italic> and <italic>b</italic>, we wish to select the one that is expected to appear in the greatest number of other sequences in the overlap <italic>O</italic>. Our aim is therefore to find a strategy for which
+<disp-formula><alternatives><graphic xlink:href="316273_ueqn2.gif"/></alternatives></disp-formula> with <italic>X<sub>u</sub></italic> the random variable describing the number &#x007C;&#x007B;<italic>S<sub>i</sub></italic>&#x007C;<italic>u</italic> &#x220A; <italic>S<sub>i</sub></italic> &#x2200; <italic>S<sub>i</sub></italic> &#x220A;<italic>O</italic>&#x007D;&#x007C; of sequences containing the seed <italic>u</italic>. As seed presense is a binary value we have <italic>E</italic>[<italic>X<sub>u</sub></italic>] &#x003D; <italic>np</italic> where <italic>p</italic> is probability of <italic>u</italic> being in a k-mer collection <italic>S<sub>i</sub></italic>, which we shall write <italic>p<sub>u</sub></italic>. As <italic>n</italic> is fixed for all seeds in the overlap, it can be divided out and we now require that</p>
+<disp-formula><alternatives><graphic xlink:href="316273_ueqn3.gif"/></alternatives></disp-formula><p>That is, given k-mers <italic>a</italic> and <italic>b</italic> in a sequence, if the selection strategy prefers <italic>a</italic>, then <italic>a</italic> is more likely to be in an overlapping sequence than <italic>b</italic>.</p>
+<p>Note that in two overlapping sequences (i.e. that share a reference sequence), a k-mer <italic>a</italic> found in both is either correct in both or incorrect in both. So we have
+<disp-formula><alternatives><graphic xlink:href="316273_ueqn4.gif"/></alternatives></disp-formula> where <italic>S</italic><sub>1</sub> is any sequence in <italic>O</italic>. However, given a relatively low error rate and errors distributed amongst many possible incorrect k-mers, the probability of <italic>a</italic> being incorrect in both is insignificant in comparison to it being correct in both, therefore
+<disp-formula id="eqn1"><alternatives><graphic xlink:href="316273_eqn1.gif"/></alternatives></disp-formula> where the probability of being correct <italic>P</italic> (<italic>c</italic>(<italic>a, S</italic><sub>1</sub>)) is the same for all <italic>S<sub>i</sub></italic> &#x220A; <italic>O</italic>.</p>
+<p>Later we will consider alternatives, but for our initial seed selection strategies we assume that a k-mers likelihood of being correct is dependent only on its base content i.e. it is independent of the context or read it is found in. Thus <italic>P</italic>(<italic>c</italic>(<italic>a, S<sub>i</sub></italic>)) is a constant <italic>P</italic>(<italic>c</italic>(<italic>a</italic>)) for all <italic>S<sub>i</sub></italic> containing <italic>a</italic>, and in addition <italic>P</italic>(<italic>c</italic>(<italic>a, S</italic><sub>0</sub>) shares the same probability. Therefore,
+<disp-formula><alternatives><graphic xlink:href="316273_ueqn5.gif"/></alternatives></disp-formula>This assumption means an ideal selection strategy <italic>&#x03D5;</italic> is one that maintains the same ordering of k-mers as their probability of being correct in the sequences in which they appear.</p>
+<sec id="s2a">
+<label>2.1</label>
+<title>Quality scores</title>
+<p>An obvious source of information on the probability that a potential seed is correct is the quality score provided by the base-caller that generated the read. In terms of the quality of a seed, we take the quality value assigned to the centre base (i.e. at offset <italic>k/</italic>2 from the seed&#x2019;s position in the read). Other reasonable alternatives are to use the minimum quality within the seed, or perhaps the mean quality value.</p>
+<p>As a strategy we define <italic>&#x03D5;<sub>q</sub></italic>(<italic>a</italic>) to be the mean quality value of all instances of <italic>a</italic> over all reads in the input data.</p>
+<p>We also note that alternative uses for the quality scores during seed selection exist, depending on the nature of the overlap detection task. For example, given an algorithm that compares a small set of &#x2018;query&#x2019; reads against a larger set of &#x2018;index&#x2019; reads. This involves a different set of assumptions to use with <xref ref-type="disp-formula" rid="eqn1">Equation 1</xref> which we will discuss as an alternative seed selection procedure at the end of this section.</p>
+</sec>
+<sec id="s2b">
+<label>2.2</label>
+<title>Reverse-complement to forward frequency</title>
+<p>Not all base-callers provide quality scores. In such cases the selection strategy must be determined using only seed frequency information.</p>
+<p>If a sequencing technology or base-caller generates errors that are biased by the base content or context, this may be sufficient to create an improved selection strategy. Assuming that forward and reverse-complement reads of a given subsequence appear in equal proportions in the data, the ratio of the frequency of correct reads of the seed to the frequency of correct reads of its reverse complement should be 1:1. However if the type of errors are biased by base content then any given erroneous version of the seed should appear at different frequences from its reverse-complement. These unbalanced k-mers can then be assigned lower values, though this does rely on the bias in the errors to be greater than the difference in overall accuracy between the correct forward and reverse k-mers.</p>
+<p>Of course, a seed containing an error may be equivalent to another seed that exists elsewhere in the data. This is a particular problem with low <italic>k</italic>, so we expect the ratio of forward to reverse-complement frequencies to become more useful as seeds increase in length. Algorithms that make use of this could also enforce constraints on the selected seeds to ensure dissimilarity, for example keeping a minimal edit distance between all pairs.</p>
+<p>The strategy we use here calculates the balance between forward and reverse-complement as
+<disp-formula><alternatives><graphic xlink:href="316273_ueqn6.gif"/></alternatives></disp-formula>where <italic>f</italic>(<italic>x</italic>) is the frequency of subsequence <italic>x</italic> in the data, <italic>x&#x0305;</italic> is the complement of <italic>x</italic> and <italic>rev</italic>(<italic>x</italic>) its reverse.</p>
+</sec>
+<sec id="s2c">
+<label>2.3</label>
+<title>Learning from external data</title>
+<p>Another alternative to using a base-caller&#x2019;s estimate of the probability of errors is to directly calculate the probability for each seed from existing data mapped to a known reference. A simple strategy <italic>&#x03D5;<sub>t</sub></italic>(<italic>a</italic>) is to use the proportion of these training reads&#x2019; subsequences that correctly map to a subsequence <italic>a</italic> in the reference. More sophisticated strategies could extend the domain of <italic>&#x03D5;</italic> to include context around <italic>a</italic> in addition to its content alone.</p>
+<p>In the evaluation section we shall test both training data drawn from the same contexts and drawn from data mapped to an entirely different genome from the input to simulate both selection strategies.</p>
+</sec>
+<sec id="s2d">
+<label>2.4</label>
+<title>Local quality scores</title>
+<p>Here we return to <xref ref-type="disp-formula" rid="eqn1">Equation 1</xref> where we assumed <italic>P</italic>(<italic>c</italic>(<italic>a, S</italic><sub>0</sub>)) &#x003D; <italic>P</italic>(<italic>c</italic>(<italic>a, S</italic><sub>1</sub>)). Instead we can use the local quality score information to make a better estimate of <italic>P</italic>(<italic>c</italic>(<italic>a, S</italic><sub>0</sub>)), but continue to use the global mean quality for the probability of being correct in other sequences:
+<disp-formula><alternatives><graphic xlink:href="316273_ueqn7.gif"/></alternatives></disp-formula>Thus the selection strategy is now dependent on the read <italic>S</italic><sub>0</sub> containing the potential seeds as well as the k-mer contents. In this paper we base selection on the product of the local quality score (at base offset by <italic>k/</italic>2 in <italic>S</italic><sub>0</sub>) and the global quality score for the k-mer as described in <xref ref-type="sec" rid="s2a">Section 2.1</xref>. We will also consider using <italic>&#x03D5;<sub>t</sub></italic> and <italic>&#x03D5;<sub>r</sub></italic> in place of the global mean quality values.</p>
+</sec>
+</sec>
+<sec id="s3">
+<label>3</label>
+<title>Experimental setup</title>
+<p>We determined per-seed values over all k-mers for the three selection strategies defined in the previous section, in addition to a lexicographic ordering to be used as a baseline. Values were calculated for <italic>k</italic> from 10 to 16.</p>
+<p>Ground truth was determined by aligning reads to the reference using minialign[<xref ref-type="bibr" rid="c10">10</xref>] version 0.5.3. K-mers from reads that were contained in a &#x2018;match&#x2019; alignment to the reference and contained no mis-matches were considered correct. All other k-mers in reads were considered incorrect. The fraction of correct instances for each k-mer were used as the &#x2018;true&#x2019; or ideal selection strategy <italic>&#x03D5;<sub>truth</sub></italic>. K-mers that do not appear in any reads were assigned value 0.</p>
+<sec id="s3a">
+<label>3.1</label>
+<title>Data</title>
+<p>The input data used was a 60x coverage of E.Coli sequenced from an Oxford Nanopore MinION R9.4 and base-called with the albacore base-caller which provides quality scores. For training data with seeds in a similar context we used 200x coverage (900MB) of E.Coli from an Oxford Nanopore MinION R9.2 released by the Loman Labs, University of Birmingham<sup><xref ref-type="fn" rid="fn1">1</xref></sup>. For training data with unrelated seed context we used 30x coverage (1.9GB) of human chromosome 20 released by Oxford Nanopore Technologies<sup><xref ref-type="fn" rid="fn2">2</xref></sup>.</p>
+</sec>
+<sec id="s3b">
+<label>3.2</label>
+<title>Evaluating selection strategies</title>
+<p>To evaluate the quality of a selection strategy <italic>&#x03D5;</italic> we compare the ranks of <italic>&#x03D5;</italic>(<italic>a</italic>) to <italic>&#x03D5;<sub>truth</sub></italic>(<italic>a</italic>) for all k-mers <italic>a</italic> &#x2208; &#x03A3;<sup><italic>k</italic></sup> that appear at least 3 times in the input data. The relationship is visualised as a heatmap with <italic>&#x03D5;<sub>truth</sub></italic> ranks on the y axis. Each row was normalised before plotting as there are disparities in the number of k-mers at each rank, particularly those with rank 0. In addition to the heatmap, the correlation coefficient of the ranks is calculated with higher values indicating a closer ordering of potential seeds to the ideal selection strategy.</p>
+<p>We also consider the effect of seed filtering as in [<xref ref-type="bibr" rid="c2">2</xref>]. This is achieved by repeating the above procedure, but treating any k-mers not present in the reference as though they were not present in any reads. This is the best-case for seed filtering where all short reads are 100&#x0025; accurate. In terms of the heatmaps, this just removes most data points from the bottom (rank 0) row. For the evaluation we therefore consider the effect the filtering has on the correlation of the remaining k-mers.</p>
+</sec>
+<sec id="s3c">
+<label>3.3</label>
+<title>Evaluating local quality scores</title>
+<p>Finally, we evaluate a local quality score metric for seed selection as described in <xref ref-type="sec" rid="s2d">Section 2.4</xref>. This is not a selection strategy, requires a specific (query-based) implementation, and therefore cannot be evaluated as correlation between ranks. For the ground truth we used all (top 1000) mappings found by minimap2 [<bold>?</bold>] to the E.Coli reference. The true overlap set at any given reference position is the set of all sequences with at least one mapping that spans that position.</p>
+<p>We compared the utility of various seed selections at the task of finding all overlap sets based on a limited set of query sequences. The queries are taken from the first and last kilobase of each read, or whole reads if their length is below 2 kilobases. Query sequences were selected in batches and were used to select a global set of seeds, ensuring each query contains a minimum number of non-overlapping seeds and with the highest values present. Both query and index sequences are represented by all selected seeds (i.e. without additional sparcity constraints). Overlaps are then detected when the sets of seeds contain at least 3 matches that can be correctly ordered and are in approximately equal spacing. This is a fairly generic seed-based overlap detection algorithm with source code is available at <ext-link ext-link-type="uri" xlink:href="https://github.com/jteutenberg/downpore">https://github.com/jteutenberg/downpore</ext-link> if further details are required.</p>
+<p>Under the assumption that these queries will be used for downstream assembly or consensus, the evaluation compares precision and recall of high quality overlap sets. We take a &#x2018;high quality&#x2019; overlap set to be one in which at least 90&#x0025; of all sequences matched by its query map to a single shared reference position. The overlap detection parameters were set to what were felt to be reasonable values at each <italic>k</italic> from 10 to 14 with the number of minimum seeds per query increasing from 15 to 45 over this range.</p>
+</sec>
+</sec>
+<sec id="s4">
+<label>4</label>
+<title>Results</title>
+<p><xref ref-type="fig" rid="fig1">Figure 1</xref> shows the relationship between the true k-mer accuracy in the input data and that estimated by various selection strategies over a small selection of <italic>k</italic> values. A perfect correlation would appear as a dark diagonal line from lower left to upper right, showing that the selection strategy ranked k-mers in the same order as their actual rate of correctness in the data.</p>
+<fig id="fig1" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 1:</label>
+<caption>
+<p>Examples of k-mer accuracy against (a) lexicographic ranks, (b) reverse-complement balance ranks, (c) base-caller quality score ranks, (d) same-genome trained accuracy ranks and (e) other-genome trained accuracy ranks for E.Coli data.</p>
+</caption>
+<graphic xlink:href="316273_fig1.tif"/>
+</fig>
+<p>The top row (a) shows the lexicographic ordering. Some patterns do ex-ist as k-mers containing the same motif on their left-hand side are nearby in the heatmap. These patterns suggests that k-mer quality is at least partially dependent on their subsequences, which in turn implies that global, per-k-mer measures of quality are useful for estimating the quality of any given subsequence.</p>
+<p>The visually striking bands occur where many k-mers have small sample size in the data. This leads to ranks at fractions of the sample size containing many k-mers. For example, when only 3 examples of a k-mer exist in the data, its frequency (on the y axis) can only be at 0, <inline-formula><alternatives><inline-graphic xlink:href="316273_inline1.gif"/></alternatives></inline-formula>, <inline-formula><alternatives><inline-graphic xlink:href="316273_inline2.gif"/></alternatives></inline-formula> or 1. This situation occursmore frequently as <italic>k</italic> increases.</p>
+<p>The second row (b) shows the rank associated with <italic>&#x03D5;<sub>r</sub></italic> &#x2013; the ratio of frequency of each k-mer with its reverse-complement &#x2013; with high ranks assigned to k-mers with balanced frequencies. While we expected this metric to become more informative as <italic>k</italic> increases and fewer single-base modifications overlap other correct k-mers. However, it appears that past <italic>k</italic> &#x003D; 12 the low sample sizes lead to sensitive ratios between the frequency of k-mers and their reverse-complements and any useful correlation is lost. At <italic>k</italic> &#x003D; 12 we see that a large number of low ranks of the ratios are assigned to few k-mers, and that most k-mers appear balanced irrespective of their actual accuracy.</p>
+<p>Three further comparisons (c) - (e) were made that rely on additional data: quality scores from the base-caller; known k-mer accuracies from other data on the same genome; and known k-mer accuracies from a different genome.</p>
+<p>Both the quality scores and the k-mers from the same genome show a linear correlation for all <italic>k</italic> tested. The quality score heatmaps show an increased concentration of k-mers above the diagonal &#x2013; a population in which k-mer ranks have been underestimated.</p>
+<p>Using data from the human chromosome 20 appears to have two populations of k-mers: those that correlate with true k-mer ranks (only visible when <italic>k</italic> &#x003D; 10); and those assigned low ranks independent of their true rank. It is understandable that as <italic>k</italic> increases the number of k-mers shared between the different genomes will reduce, with the left-most column representing k-mers that do not appear in the training reference but do appear in the input data&#x2019;s reference.</p>
+<p><xref ref-type="fig" rid="fig2">Figure 2</xref> gives the correlation coefficient between the ranks of all selection strategeies, the lower <italic>k</italic> values of which correspond to those shown in <xref ref-type="fig" rid="fig1">Figure 1</xref>. As expected, the lexicographic ordering is uncorrelated at all <italic>k</italic> and the ranks taken from human chromosome 20 are no better for <italic>k &#x003E;</italic> 10.</p>
+<fig id="fig2" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 2:</label>
+<caption>
+<p>Correlation coefficients for the E.Coli seed metrics to accuracy data for <italic>k</italic> up to 16, including data shown in <xref ref-type="fig" rid="fig1">Figure 1</xref>.</p>
+</caption>
+<graphic xlink:href="316273_fig2.tif"/>
+</fig>
+<p>Of the remainder, using data trained on the same genome so the k-mers appear in the same contexts is the best of these selection strategies. However, the more accessible strategies based on mean quality scores and the reverse-complement ot forward ratio also provide reasonable correlation with the best ordering of k-mers.</p>
+<sec id="s4a">
+<label>4.1</label>
+<title>Combining with accurate seeds</title>
+<p><xref ref-type="fig" rid="fig3">Figure 3</xref> repeats the experiment shown in <xref ref-type="fig" rid="fig2">Figure 2</xref> but ignoring all seeds not present in the reference. It has been shown that removing known irrelevant seeds improves overlap detection [<xref ref-type="bibr" rid="c2">2</xref>], we wish to determine whether our proposed selection strategies can estimate the accuracy of the remaining k-mers.</p>
+<fig id="fig3" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 3:</label>
+<caption>
+<p>Correlation coefficients for the data in Table 1, restricted to k-mers present in the reference.</p>
+</caption>
+<graphic xlink:href="316273_fig3.tif"/>
+</fig>
+<p>The two low-correlation strategies were unchanged. The mean quality scores were also correlated to the same extent on the filtered set of k-mers, so this strategy continues to provide useful information beyond just indicating k-mers that are always incorrect.</p>
+<p>The values trained on other E.Coli data become less relevant as <italic>k</italic> increases. This indicates that there is substantial overlap between the information provided by the training data and the filtering process.</p>
+<p>Finally, an interesting increase in correlation between <italic>&#x03D5;<sub>r</sub></italic> for <italic>k</italic> below 14 was seen. In terms of the heatmaps in <xref ref-type="fig" rid="fig1">Figure 1</xref> the filtering removes most of the bottom row (k-mers with no correct instances in the reads), including the large number of k-mers at the origin. Particularly in the <italic>k</italic> &#x003D; 10 figure there appears to be more k-mers present at higher ranks than lower, thus once the values at the origin are removed a better linear relationship shifted to the right may be found. By <italic>k</italic> &#x003D; 14, visually this is no longer apparent which fits with the return to similar correlation of about 0.3.</p>
+</sec>
+<sec id="s4b">
+<label>4.2</label>
+<title>Effect on overlap detection</title>
+<p>The results of determining overlap sets from batched 1kB queries is shown in <xref ref-type="fig" rid="fig4">Figure 4</xref>. The parameters used appear to be more suited to the low <italic>k</italic> values with both precision and recall dropping off rapidly as it increases. The <italic>k</italic> &#x003D; 14 values are not shown for readability, but the same trend seen in the figure continues.</p>
+<fig id="fig4" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 4:</label>
+<caption>
+<p>Effect of seed selection on overlap set quality at various <italic>k</italic>, as (a) recall: number of overlaps (in thousands) found with at least 90&#x0025; component sequences correctly identified and (b) precision: percentage of all overlap sets with at least 90&#x0025; component sequences correctly identified.</p>
+</caption>
+<graphic xlink:href="316273_fig4.tif"/>
+</fig>
+<p>Firstly, the inclusion of local quality scores always improves both precision and recall of an existing selection strategy. This includes the best-performing strategy based on k-mer accuracies taken from the same E.Coli source.</p>
+<p>Secondly, asside from the mean quality scores <italic>&#x03D5;<sub>q</sub></italic> at <italic>k</italic> &#x003D; 10 (which performed unusually poorly), the ordering of selection strategies was unchanged over <italic>k</italic>. In addition, the ordering of selection strategy by recall is the same as by precision&#x2013; so we have strictly better selection strategies for this task.</p>
+<p>Finally, using local quality values alone actually performs better than combining with global measures <italic>&#x03D5;<sub>r</sub></italic> or <italic>&#x03D5;<sub>q</sub></italic>. This is unexpected given that we have shown these global measures do correlate with the expected correctness of a seed in other sequences.</p>
+<p>Overall, replacing a lexicographic ordering with a strategy that includes local quality scores improved recall by 10-15&#x0025; while marginally increasing precision.</p>
+</sec>
+</sec>
+<sec id="s5">
+<label>5</label>
+<title>Conclusion</title>
+<p>We have shown that uninformed lexicographic ordering of k-mers can be improved on using simple per k-mer metrics. Examples that produce k-mer rankings that correlate with their probability of being correct in reads have been been presented based on k-mer frequency alone (e.g. a reverse-complement to forward ratio); based on base-callers&#x2019; quality scores; or based on external training data. During overlap detection there is no excuse for comparing potential seeds based on their lexicographic order.</p>
+<p>We have also provided an improved seed selection scheme for applications that determine overlaps based on a small query set. Using a base-caller&#x2019;s quality scores on the specific position of a potential seed in a query further improves on the global per k-mer metrics. In addition, all seed selection strategies here have been shown to improve an example overlap detection algorithm in line with their correlation to k-mer correctness.</p>
+<p>From those strategies considered in this paper we recommend the replacement of lexicographic ordering by mean quality scores per k-mer. This correlates well with the likelihood of a seed being shared by overlapping sequences, is easily obtained, and is stable across a range of <italic>k</italic> values. For those applications that permit it, the local quality score of a query seed should always be combined with this value.</p>
+</sec>
+</body>
+<back>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>1</label><mixed-citation publication-type="journal"><string-name><given-names>Konstantin</given-names> <surname>Berlin</surname></string-name>, <string-name><given-names>Sergey</given-names> <surname>Koren</surname></string-name>, <string-name><given-names>Chen-Shan</given-names> <surname>Chin</surname></string-name>, <string-name><given-names>James P</given-names> <surname>Drake</surname></string-name>, <string-name><given-names>Jane M</given-names> <surname>Landolin</surname></string-name>, and <string-name><given-names>Phillippy Adam M</given-names> <surname>Phillippy</surname></string-name>. <article-title>Assembling large genomes with single-molecule sequencing and locality-sensitive hashing</article-title>. <source>Nature Biotechnology</source>, <fpage>33</fpage>, <year>2015</year>.</mixed-citation></ref>
+<ref id="c2"><label>2</label><mixed-citation publication-type="journal"><string-name><given-names>Antonio Bernardo</given-names> <surname>Carvalho</surname></string-name>, <string-name><given-names>Eduardo G.</given-names> <surname>Dupim</surname></string-name>, and <string-name><given-names>Gabriel</given-names> <surname>Goldstein</surname></string-name>. <article-title>Improved assembly of noisy long reads by k-mer validation</article-title>. <source>Genome Research</source>, pages <fpage>1710</fpage>&#x2013;<lpage>1720</lpage>, <year>2016</year>.</mixed-citation></ref>
+<ref id="c3"><label>3</label><mixed-citation publication-type="journal"><string-name><given-names>Yesesri</given-names> <surname>Cherukuri</surname></string-name> and <string-name><given-names>Sarath Chandra</given-names> <surname>Janga</surname></string-name>. <article-title>Benchmarking of de novo assembly algorithms for nanopore data reveals optimal performance of olc approaches</article-title>. <source>BMC Genomics</source>, <volume>17</volume>(<issue>7</issue>):<fpage>507</fpage>, <year>2016</year>.</mixed-citation></ref>
+<ref id="c4"><label>4</label><mixed-citation publication-type="journal"><string-name><given-names>Justin</given-names> <surname>Chu</surname></string-name>, <string-name><given-names>Hamid</given-names> <surname>Mohamadi</surname></string-name>, <string-name><given-names>Ren L</given-names> <surname>Warren</surname></string-name>, <string-name><given-names>Chen</given-names> <surname>Yang</surname></string-name>, and <string-name><given-names>Inanc</given-names> <surname>Birol</surname></string-name>. <article-title>Innovations and challenges in detecting long read overlaps: an evaluation of the state-of-the-art</article-title>. <source>Bioinformatics</source>, <volume>33</volume>:<fpage>1261</fpage>&#x2013;<lpage>1270</lpage>, <year>2017</year>.</mixed-citation></ref>
+<ref id="c5"><label>5</label><mixed-citation publication-type="journal"><string-name><given-names>Hans J.</given-names> <surname>Jansen</surname></string-name>, <string-name><given-names>Michael</given-names> <surname>Liem</surname></string-name> <string-name><given-names>Suzanne A.</given-names> <surname>Jong-Raadsen</surname></string-name>, <string-name><given-names>Sylvie</given-names> <surname>Dufour</surname></string-name>, <string-name><given-names>Finn-Arne</given-names> <surname>Weltzien</surname></string-name>, <string-name><given-names>William</given-names> <surname>Swinkels</surname></string-name>, <string-name><given-names>Alex</given-names> <surname>Koelewijn</surname></string-name>, <string-name><given-names>Arjan P.</given-names> <surname>Palstra</surname></string-name>, <string-name><given-names>Bernd</given-names> <surname>Pelster</surname></string-name>, <string-name><given-names>Herman P.</given-names> <surname>Spaink</surname></string-name>, <string-name><given-names>Guido E.</given-names> <surname>Van den Thillart</surname></string-name>, <string-name><given-names>Ron P.</given-names> <surname>Dirks</surname></string-name>, and <string-name><given-names>Christiaan V.</given-names> <surname>Henkel</surname></string-name>. <article-title>Rapid de novo assembly of the european eel genome from nanopore sequencing reads</article-title>. <source>bioRxiv</source>, <year>2017</year>.</mixed-citation></ref>
+<ref id="c6"><label>6</label><mixed-citation publication-type="journal"><string-name><given-names>W.</given-names> <surname>James Kent</surname></string-name>. <article-title>Blatthe blast-like alignment tool</article-title>. <source>Genome Research</source>, <volume>12</volume>.<issue>4</issue>:<fpage>656</fpage>&#x2013;<lpage>664</lpage>, <year>2002</year>.</mixed-citation></ref>
+<ref id="c7"><label>7</label><mixed-citation publication-type="journal"><string-name><given-names>Heng</given-names> <surname>Li</surname></string-name>. <article-title>Minimap and miniasm: fast mapping and de novo assembly for noisy long sequences</article-title>. <source>Bioinformatics</source>, <volume>32</volume>(<issue>14</issue>):<fpage>2103</fpage>&#x2013;<lpage>2110</lpage>, <year>2016</year>.</mixed-citation></ref>
+<ref id="c8"><label>8</label><mixed-citation publication-type="journal"><string-name><given-names>Heng</given-names> <surname>Li</surname></string-name>. <article-title>Minimap2: pairwise alignment for nucleotide sequences</article-title>. <source>ArXiv e-prints</source>, <year>2017</year>.</mixed-citation></ref>
+<ref id="c9"><label>9</label><mixed-citation publication-type="journal"><string-name><given-names>Gene</given-names> <surname>Myers</surname></string-name>. <article-title>Efficient local alignment discovery amongst noisy long reads</article-title>.<source>Algorithms in Bioinformatics</source>, <fpage>8701</fpage>, <year>2014</year>.</mixed-citation></ref>
+<ref id="c10"><label>10</label><mixed-citation publication-type="website"><string-name><given-names>Hajime</given-names> <surname>Suzuki</surname></string-name>. <article-title>minialign</article-title>. <ext-link ext-link-type="uri" xlink:href="https://github.com/ocxtal/minialign/">https://github.com/ocxtal/minialign/</ext-link>, <year>2018</year>.</mixed-citation></ref>
+</ref-list>
+<fn-group>
+<fn id="fn1">
+<label>1</label><p><ext-link ext-link-type="uri" xlink:href="https://s3.climb.ac.uk/nanopore/E_coli_K12_1D_R9.2_SpotON_2.pass.fasta">https://s3.climb.ac.uk/nanopore/E_coli_K12_1D_R9.2_SpotON_2.pass.fasta</ext-link></p>
+</fn>
+<fn id="fn2">
+<label>2</label><p><ext-link ext-link-type="uri" xlink:href="https://github.com/nanoporetech/ONT-HG1/blob/master/CONTENTS.md">https://github.com/nanoporetech/ONT-HG1/blob/master/CONTENTS.md</ext-link></p>
+</fn>
+</fn-group>
+</back>
+</article>

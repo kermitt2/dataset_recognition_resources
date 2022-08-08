@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/050567</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Systems Biology</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Predicting Drug Synergy and Antagonism from Genetic Interaction Neighborhoods</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<name><surname>Young</surname> <given-names>Jonathan H.</given-names></name>
+</contrib>
+<contrib contrib-type="author" corresp="yes">
+<name><surname>Marcotte</surname> <given-names>Edward M.</given-names></name>
+<xref ref-type="corresp" rid="cor1">&#x002A;</xref>
+</contrib>
+<aff><institution>Institute for Computational Engineering and Sciences</institution>, Center for Systems and Synthetic Biology, The University of Texas at Austin, Austin, Texas, <country>USA</country></aff>
+<aff><institution>Center for Systems and Synthetic Biology</institution>, Institute for Cellular and Molecular Biology, Department of Molecular Biosciences, The University of Texas at Austin, Austin, Texas, <country>USA</country></aff>
+</contrib-group>
+<author-notes>
+<corresp id="cor1"><label>&#x002A;</label>To whom correspondence should be addressed: <email>marcotte@icmb.utexas.edu</email></corresp>
+</author-notes>
+<pub-date pub-type="epub">
+<year>2016</year>
+</pub-date>
+<elocation-id>050567</elocation-id>
+<history>
+<date date-type="received">
+<day>27</day>
+<month>4</month>
+<year>2016</year>
+</date>
+<date date-type="accepted">
+<day>27</day>
+<month>4</month>
+<year>2016</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2016, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2016</copyright-year><license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license></permissions>
+<self-uri xlink:href="050567.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>Although drug combinations have proven efficacious in a variety of diseases, the design of such regimens often involves extensive experimental screening due to the myriad choice of drugs and doses. To address these challenges, we utilize the budding yeast Saccharomyces cerevisiae as a model organism to evaluate whether drug synergy or antagonism is mediated through genetic interactions between their target genes. Specifically, we hypothesize that if the inhibition targets of one chemical compound are in close proximity to those of a second compound in a genetic interaction network, then the compound pair will exhibit synergy or antagonism. Graph metrics are employed to make precise the notion of proximity in a network. Knowledge of genetic interactions and small-molecule targets are compiled through literature sources and curated databases, with predictions validated according to experimentally determined gold standards. Finally, we test whether genetic interactions propagate through networks according to a &#x201C;guilt-by-association&#x201D; framework. Our results suggest that close proximity between the target genes of one drug and those of another drug does not strongly predict synergy or antagonism. In addition, we find that the extent to which the growth of a double gene mutant deviates from expectation is moderately anti-correlated with their distance in a genetic interaction network.</p>
+</abstract>
+<kwd-group kwd-group-type="author">
+<title>Keywords</title>
+<kwd>Drug interactions</kwd>
+<kwd>Synergy</kwd>
+<kwd>Antagonism</kwd>
+<kwd>Yeast</kwd>
+</kwd-group>
+<counts>
+<page-count count="13"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<title>Introduction</title>
+<p>Drug combinations have an established history in treating disease, dating to the MOPP regimen for Hodgkin&#x2019;s lymphoma in the 1960s to highly active antiretroviral therapy (HAART) for HIV in the 1990s [<xref ref-type="bibr" rid="c6">Hammer et al., 1997</xref>, <xref ref-type="bibr" rid="c5">DeVita and Chu, 2008</xref>]. In combating antibiotic resistance, combina&#x00AD;tion regimens have proven effective and are actively under continued development [<xref ref-type="bibr" rid="c16">Worthington and Melander, 2013</xref>]. Yet in designing combination therapies, it is not immediately clear which drugs and doses to group together; there are simply a myriad of possible choices and the combinato&#x00AD;rial space quickly grows unwieldy. As a result, any computational technique to either guide readily testable candidates or reliably predict the effect of drug combinations would be desirable. In this study, using the budding yeast <italic>Saccharomyces cerevisiae</italic> as a test platform, we determine whether the effect of drug pairs can be predicted from genetic interactions between their target genes.</p>
+<p>The effect of a drug combination can be classified as synergistic, antagonistic, or additive. Two drugs are synergistic if they cause a significantly greater growth defect than expected, based on the effect of each drug individually. Antagonism is similar, although the effect is far more pronounced growth than expected. Drug additivity implies that no interaction exists between the agents, and the resulting phenotype is the sum of each drug&#x2019;s individual effect. There is more than one choice of a null model that defines the &#x201C;expected effect&#x201D; - commonly used models include Loewe additivity and Bliss independence [<xref ref-type="bibr" rid="c10">Loewe, 1953</xref>, <xref ref-type="bibr" rid="c1">Bliss, 1939</xref>, <xref ref-type="bibr" rid="c17">Yeh et al., 2009</xref>].</p>
+<p>Previous studies to uncover genetic interactions as a mechanism underlying drug combi&#x00AD;nations have involved exhaustive screening of a number of small-molecule chemical compounds. An examination of 200 compound pairs administered in <italic>Saccharomyces cerevisiae</italic> found 38 of them to be synergistic, but genetic interactions were determined to be responsible for only 14 of those 38 [<xref ref-type="bibr" rid="c3">Cokol et al., 2011</xref>]. Another study screened all possible pairs of 128 compounds from a chemically diverse library to experimentally deduce synergy and antagonism, thereby establishing a validation set. Moreover, a model based directly on chemical-genetic and genetic interactions had low predictive power for synergy or antagonism, but combining naive Bayes and random forests trained on additional features led to successful predictions [<xref ref-type="bibr" rid="c15">Wildenhain et al., 2015</xref>].</p>
+<p>We hypothesized that the proximity in a genetic interaction network between one drug&#x2019;s target genes and another drug&#x2019;s targets controls the degree to which the drug pair is synergistic or antagonistic. In particular, rather than considering only direct interactions between genes, our approach factored in whether a gene is within a neighborhood of (though not necessarily adjacent to) some other gene in the network. We leveraged knowledge of known small-molecule inhibition targets in <italic>S. cerevisiae</italic> from the Search Tool for Interactions of Chemicals (STITCH) database [<xref ref-type="bibr" rid="c9">Kuhn et al., 2013</xref>] and experimentally determined negative and positive genetic interactions [<xref ref-type="bibr" rid="c4">Costanzo et al., 2010</xref>]. Finally, predictions of synergy or antagonism were validated against gold standards assembled from the literature.</p>
+</sec>
+<sec id="s2">
+<title>Methods</title>
+<sec id="s2a">
+<title>Negative and positive genetic interaction network</title>
+<p>Negative and positive genetic interactions were compiled from a high-throughput yeast synthetic genetic array (SGA) screening dataset [<xref ref-type="bibr" rid="c4">Costanzo et al., 2010</xref>]. The intermediate cutoff for the genetic interaction score <italic>&#x220A;</italic> was chosen as the threshold for interacting versus non-interacting gene pairs. For the purposes of data processing, the suffixes &#x201C;_tsq&#x201D; and &#x201C;_damp&#x201D; were removed from gene symbols. Both unweighted and weighted versions of each of the negative and positive genetic interaction networks were assembled. Nodes in the networks correspond to genes and two genes are connected by an edge if they interact according to the intermediate cutoff <italic>&#x220A;</italic>. Because a larger magnitude of <italic>&#x220A;</italic> indicated stronger genetic interaction, in the weighted networks the edge weights were assigned by reversing the <italic>&#x220A;</italic> values. For instance, the strongest genetically interacting pair was assigned an edge weight with the smallest <italic>&#x220A;</italic> instead. All edge weights were set to be non-negative.</p>
+</sec>
+<sec id="s2b">
+<title>Chemical compound targets and gold standards for synergy and antagonism</title>
+<p>Two literature sources were used as the gold standard to validate chemical synergy and antagonism predictions [<xref ref-type="bibr" rid="c3">Cokol et al., 2011</xref>, <xref ref-type="bibr" rid="c15">Wildenhain et al., 2015</xref>]. The inhibition targets in <italic>S. cerevisiae</italic> of chemical compounds identified by CID were assembled from STITCH version 4 [<xref ref-type="bibr" rid="c9">Kuhn et al., 2013</xref>]. Only chemical names were available from the Cokol et al. dataset; these were converted to CIDs with PubChemPy <ext-link ext-link-type="uri" xlink:href="https://pypi.python.org/pypi/PubChemPy">https://pypi.python.org/pypi/PubChemPy</ext-link>. SMILES strings from the Wildenhain et al. dataset were also converted to CIDs. Prediction performance was assessed with receiver operating characteristic (ROC) analysis as implemented in scikit-learn [Pedregosa etal.,2011].</p>
+</sec>
+<sec id="s2c">
+<title>Distances in networks</title>
+<p>Distances between all pairs of nodes in unweighted and weighted versions of both the negative and positive genetic network were computed using Dijkstra&#x2019;s algorithm as implemented in NetworkX [<xref ref-type="bibr" rid="c13">Schult and Swart, 2008</xref>]. The distance between two sets <italic>A</italic> and <italic>B</italic> of nodes in an unweighted network was calculated using the earth mover&#x2019;s metric (EMD) [<xref ref-type="bibr" rid="c12">Rubner et al, 2000</xref>]. Here in the 1-dimensional special case, the EMD reduces to differences between cumulative distribution functions [<xref ref-type="bibr" rid="c2">Cohen, 1999</xref>]. For the purpose of measuring the distance between two sets of nodes, EMD(<italic>A</italic>, <italic>B</italic>) &#x003D; &#x03A3;<sub><italic>i&#x220A;</italic>No</sub> <bold>&#x007C;</bold> <italic>F</italic><sub><italic>X</italic><sub>ref</sub></sub>(<italic>i</italic>) &#x2013; <italic>F<sub>X</sub></italic>(<italic>i</italic>) &#x007C;, where <italic>F</italic><sub><italic>X</italic><sub>ref</sub></sub> and <italic>F<sub>X</sub></italic> are the cumulative distribution functions (CDFs) of a reference distribution <italic>X</italic><sub>ref</sub> and a random variable <italic>X</italic>. The reference distribution is intended to represent the scenario where every node in <italic>A</italic> is adjacent to some node of <italic>B</italic>. In an unweighted network, the reference probability mass function (pmf) of <italic>F</italic><sub><italic>X</italic><sub>ref</sub></sub> is defined as
+<disp-formula id="eqn1">
+<alternatives>
+<graphic xlink:href="050567_ueqn1.gif"/>
+</alternatives>
+</disp-formula>
+and the pmf for <italic>X</italic> is constructed from the frequencies of all possible node pair distances between <italic>A</italic> and <italic>B</italic> as found from Dijkstra&#x2019;s algorithm.</p>
+<p>In a weighted network, we have
+<disp-formula id="eqn2">
+<alternatives>
+<graphic xlink:href="050567_ueqn2.gif"/>
+</alternatives>
+</disp-formula>
+where by choosing <italic>x</italic><sub>0</sub> to be the minimum edge weight <italic>P</italic>(<italic>X</italic><sub>ref</sub> &#x003D; <italic>x</italic><sub>0</sub>) &#x003D; 1 and 0 elsewhere, and <italic>P</italic>(<italic>X</italic>) is non-zero only for the node pair distances <italic>x</italic><sub>1</sub>, <italic>x</italic><sub>2</sub>,&#x2026; with <italic>x</italic><sub>0</sub> &#x003C; <italic>x</italic><sub>1</sub> &#x003C; <italic>x</italic><sub>2</sub> &#x003C; &#x00B7;&#x00B7;&#x00B7;.</p>
+</sec>
+<sec id="s2d" sec-type="data_availability">
+<title>Software availability</title>
+<p>Computational analyses were performed with Python version 3.4; scripts and Jupyter notebooks are available under the BSD license at <monospace><ext-link ext-link-type="uri" xlink:href="https://bitbucket.org/youngjh/yeast_chem_synergy">https://bitbucket.org/youngjh/yeast_chem_synergy</ext-link></monospace>. All plots were created with Matplotlib and Seaborn [<xref ref-type="bibr" rid="c7">Hunter et al., 2007</xref>].</p>
+</sec>
+</sec>
+<sec id="s3">
+<title>Results</title>
+<sec id="s3a">
+<title>Close proximity between drug target genes in the genetic interaction network does not strongly predict synergy or antagonism</title>
+<p>We hypothesized that if two chemical compounds are synergistic, then the inhibition target genes of one compound would be close to those of the second compound in a negative genetic interaction network. Similarly, antagonistic compound pairs would have their respective targets near one another in a positive genetic network. Proximity between target genes were assessed in both unweighted and weighted genetic interaction networks. An experimental screen in <italic>S. cerevisiae</italic> provided the gold standard benchmark for testing the synergy hypothesis [<xref ref-type="bibr" rid="c15">Wildenhain et al., 2015</xref>]. In this dataset, all possible pairs of 128 chemical compounds were screened, but only 7 compounds had inhibition target genes found in both the negative genetic network and the Search Tool for Interactions of Chemicals (STITCH) database. Thus, there were 21 possible pairs available for validation, three of which exhibited synergy from the screening results. None of the antagonistic compounds in this dataset contained targets listed in STITCH. As shown in <xref ref-type="table" rid="tbl1">Table 1</xref>, close proximity of the target genes were only weakly predictive of synergy, according to the area under the curve (AUC) from the receiver operating characteristic (ROC) analysis. The AUC from the unweighted network was reasonably consistent with that from the weighted network.</p>
+<table-wrap id="tbl1" orientation="portrait" position="float">
+<label>Table 1</label>
+<caption><p>Chemical compound pairs were scored and ranked for synergy or antagonism by the distance between their inhibition targets in a genetic interaction network. The predictions were validated through receiver operating characteristic (ROC) analysis with true interactions labeled according to gold standards for synergy and antagonism. In the synergy case, target gene proximity is only marginally more predictive than random for chemical synergy or antagonism.</p></caption>
+<graphic xlink:href="050567_tbl1.tif"/>
+</table-wrap>
+<p>For the antagonism case, the gold standard was constructed from another experimental screen [<xref ref-type="bibr" rid="c3">Cokol et al., 2011</xref>]. Of the 200 pairs screened from 33 compounds, only 10 pairs had compounds whose inhibition targets were both listed in STITCH and in the positive genetic network. Of these 10, 8 were experimentally determined to show antagonism. None of the synergistic compounds in this dataset contained targets listed in STITCH. No evidence was found to suggest that close proximity of target genes was predictive of antagonism (<xref ref-type="table" rid="tbl1">Table 1</xref>). In fact, the results suggest that the farther apart one set of target inhibition genes is from those of a second compound in the positive genetic network, the more likely the compound pairs are to be antagonistic. Strikingly, in contrast to the synergy case above, the AUC value from the unweighted network was quite far apart from that of the weighted network.</p>
+</sec>
+<sec id="s3b">
+<title>Genetic interaction strength is moderately correlated with network distance</title>
+<p>One assumption underlying our hypothesis was that any two genes that were not adjacent in the genetic interaction network but within a sufficiently small neighborhood of one another would still express some degree of interaction. Conversely, if the genes were located very far apart, they would essentially not interact at all. To examine the validity of this assumption, we sought to determine the correlation, if any, between a gene pair&#x2019;s distance in the network and its corresponding strength of genetic interaction. The interaction strength was simply the magnitude of the genetic interaction score &#x007C;<italic>&#x220A;</italic>&#x007C; from the raw results of the synthetic genetic array (SGA) screening [<xref ref-type="bibr" rid="c4">Costanzo et al., 2010</xref>]. The network distance of a gene pair was once again the distance computed from Dijkstra&#x2019;s algorithm as described above, such that smaller distances implied stronger interaction and consequently larger &#x007C;<italic>&#x220A;</italic>&#x007C;. Therefore, we expected to observe negative correlations for both negative and positive genetic. As shown in <xref ref-type="fig" rid="fig1">Figure 1</xref>, indeed the Spearman&#x2019;s rank correlation correlation is in fact moderately negative and statistically significant.</p>
+<fig id="fig1" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 1</label>
+<caption><p>The magnitude of the genetic interaction score <italic>&#x220A;</italic> is moderately anti-correlated with gene network distance. Thus, the greater the growth deviation from expectation of a double mutant, the closer the two genes are in the genetic interaction network.</p></caption>
+<graphic xlink:href="050567_fig1.tif"/>
+</fig>
+</sec>
+</sec>
+<sec id="s4">
+<title>Discussion</title>
+<p>Our results suggest that there is no evidence to support the claim that synergy or antagonism arises when the target genes of one chemical compound are close in a genetic interaction network to those of another compound. We confirmed previous results that such drug interactions are not directly mediated through genetic interactions [<xref ref-type="bibr" rid="c3">Cokol et al., 2011</xref>, <xref ref-type="bibr" rid="c15">Wildenhain et al., 2015</xref>], and also showed that neighborhoods of genetic interactions are neither a contributing factor as well. In the process, we presented an application of distance measures satisfying the mathematical definition of a metric to quantify proximity between sets of nodes in gene networks. Prediction performance was measured through AUC due to its robustness to unbalanced data in positive versus negative class labels [<xref ref-type="bibr" rid="c8">Jeni et al., 2013</xref>].</p>
+<p>It is particularly notable that the gold standard for synergy produced results different than those from the antagonism gold standard. One potential contributing factor is that the benchmark derived from Cokol et al. used the Loewe additivity model [<xref ref-type="bibr" rid="c10">Loewe, 1953</xref>, <xref ref-type="bibr" rid="c14">Tallarida, 2006</xref>] to determine synergy and antagonism, while Wildenhain et al. instead utilized Bliss independence [<xref ref-type="bibr" rid="c1">Bliss, 1939</xref>]. The Bliss theory is closer to the multiplicative fitness model employed in calling negative and positive genetic interactions, which was defined as <italic>&#x220A;<sub>ij</sub></italic> &#x003D; <italic>f<sub>ij</sub></italic> &#x2013; <italic>f<sub>i</sub> f<sub>j</sub></italic> with <italic>f<sub>ij</sub></italic> equal to the double mutant fitness and <italic>f<sub>i</sub></italic>, <italic>f<sub>j</sub></italic> as the single mutant fitness scores [<xref ref-type="bibr" rid="c4">Costanzo et al., 2010</xref>].</p>
+<p>The moderate correlation between genetic interaction strength and network distance goes some way towards supporting the results from the synergy gold standard, where AUCs of 0.57 and 0.61 were attained. In any case, the weak correlation implies that genetic interactions cannot be reliably identified through &#x201C;guilt-by-assocation&#x201D; in the network. It should be noted that both datasets used to benchmark prediction performance were highly imbalanced, thus reflecting the need for even more data on which chemical compounds are synergistic or antagonistic, and which genes are inhibited by the compounds of interest. Yet despite the relatively limited data available to construct gold standards, our results and those of others indicate that a more nuanced mechanism beyond genetic interactions of target genes is responsible for explaining effects of chemical compound interactions.</p>
+</sec>
+</body>
+<back>
+<sec>
+<title>Funding</title>
+<p>E.M.M. acknowledges funding from the National Institutes of Health, the National Science Foun&#x00AD;dation, the Cancer Prevention and Research Institute of Texas, and the Welch Foundation (F1515). <italic>Conflict of interest</italic>: none declared.</p>
+</sec>
+<ref-list>
+<title>References</title>
+<ref id="c1"><mixed-citation publication-type="journal"><string-name><given-names>CI</given-names> <surname>Bliss</surname></string-name>. <article-title>The toxicity of poisons applied jointly</article-title>. <source>Annals of Applied Biology</source>, <volume>26</volume>(<issue>3</issue>):<fpage>585</fpage>&#x2013;<lpage>615</lpage>, <year>1939</year>.</mixed-citation></ref>
+<ref id="c2"><mixed-citation publication-type="thesis"><string-name><given-names>Scott</given-names> <surname>Cohen</surname></string-name>. <article-title>Finding color and shape patterns in images</article-title>. PhD thesis, <publisher-name>Stanford University</publisher-name>, <year>1999</year>.</mixed-citation></ref>
+<ref id="c3"><mixed-citation publication-type="journal"><string-name><given-names>Murat</given-names> <surname>Cokol</surname></string-name>, <string-name><surname>Hon Nian</surname> <given-names>Chua</given-names></string-name>, <string-name><given-names>Murat</given-names> <surname>Tasan</surname></string-name>, <string-name><given-names>Beste</given-names> <surname>Mutlu</surname></string-name>, <string-name><surname>Zohar</surname> <given-names>B Weinstein</given-names></string-name>, <string-name><given-names>Yo</given-names> <surname>Suzuki</surname></string-name>, <string-name><given-names>Mehmet E</given-names> <surname>Nergiz</surname></string-name>, <string-name><given-names>Michael</given-names> <surname>Costanzo</surname></string-name>, <string-name><given-names>Anastasia</given-names> <surname>Baryshnikova</surname></string-name>, <string-name><given-names>Guri</given-names> <surname>Giaever</surname></string-name>, <etal>et al.</etal> <article-title>Systematic exploration of synergistic drug pairs</article-title>. <source>Molecular Systems Biology</source>, <volume>7</volume>(<issue>1</issue>):<fpage>544</fpage>, <year>2011</year>.</mixed-citation></ref>
+<ref id="c4"><mixed-citation publication-type="journal"><string-name><given-names>Michael</given-names> <surname>Costanzo</surname></string-name>, <string-name><given-names>Anastasia</given-names> <surname>Baryshnikova</surname></string-name>, <string-name><given-names>Jeremy</given-names> <surname>Bellay</surname></string-name>, <string-name><given-names>Yungil</given-names> <surname>Kim</surname></string-name>, <string-name><given-names>Eric D</given-names> <surname>Spear</surname></string-name>, <string-name><given-names>Carolyn S</given-names> <surname>Sevier</surname></string-name>, <string-name><given-names>Huiming</given-names> <surname>Ding</surname></string-name>, <string-name><given-names>Judice LY</given-names> <surname>Koh</surname></string-name>, <string-name><given-names>Kiana</given-names> <surname>Toufighi</surname></string-name>, <string-name><given-names>Sara</given-names> <surname>Mostafavi</surname></string-name>, <etal>et al.</etal> <article-title>The genetic landscape of a cell</article-title>. <source>Science</source>, <volume>327</volume>(<issue>5964</issue>):<fpage>425</fpage>&#x2013;<lpage>431</lpage>, <year>2010</year>.</mixed-citation></ref>
+<ref id="c5"><mixed-citation publication-type="journal"><string-name><given-names>Vincent T</given-names> <surname>DeVita</surname></string-name> and <string-name><given-names>Edward</given-names> <surname>Chu</surname></string-name>. <article-title>A history of cancer chemotherapy</article-title>. <source>Cancer Research</source>, <volume>68</volume>(<issue>21</issue>): <fpage>8643</fpage>&#x2013;<lpage>8653</lpage>, <year>2008</year>.</mixed-citation></ref>
+<ref id="c6"><mixed-citation publication-type="journal"><string-name><given-names>Scott M</given-names> <surname>Hammer</surname></string-name>, <string-name><given-names>Kathleen E</given-names> <surname>Squires</surname></string-name>, <string-name><surname>Michael</surname> <given-names>D Hughes</given-names></string-name>, <string-name><given-names>Janet M</given-names> <surname>Grimes</surname></string-name>, <string-name><surname>Lisa</surname> <given-names>M Demeter</given-names></string-name>, <string-name><given-names>Judith S</given-names> <surname>Currier</surname></string-name>, <string-name><surname>Joseph</surname> <given-names>J Eron</given-names> <suffix>Jr</suffix></string-name>, <string-name><given-names>Judith E</given-names> <surname>Feinberg</surname></string-name>, <string-name><surname>Henry</surname> <given-names>H Balfour</given-names> <suffix>Jr</suffix></string-name>, <string-name><given-names>Lawrence R</given-names> <surname>Deyton</surname></string-name>, <etal>et al.</etal> <article-title>A controlled trial of two nucleoside analogues plus indinavir in persons with human immunodeficiency virus infection and cd4 cell counts of 200 per cubic millimeter or less</article-title>. <source>New England Journal of Medicine</source>, <volume>337</volume>(<issue>11</issue>):<fpage>725</fpage>&#x2013;<lpage>733</lpage>, <year>1997</year>.</mixed-citation></ref>
+<ref id="c7"><mixed-citation publication-type="journal"><string-name><given-names>John D</given-names> <surname>Hunter</surname></string-name> <etal>et al.</etal> <article-title>Matplotlib: A2d graphics environment</article-title>. <source>Computing in Science and Engineering</source>, <volume>9</volume>(<issue>3</issue>):<fpage>90</fpage>&#x2013;<lpage>95</lpage>, <year>2007</year>.</mixed-citation></ref>
+<ref id="c8"><mixed-citation publication-type="journal"><string-name><surname>L&#x00E1;szl&#x00F3;</surname> <given-names>A Jeni</given-names></string-name>, <string-name><given-names>Jeffrey F</given-names> <surname>Cohn</surname></string-name>, and <string-name><surname>Fernando</surname> <given-names>De La Torre</given-names></string-name>. <article-title>Facing imbalanced data&#x2013;recommendations for the use of performance metrics</article-title>. <source>In Affective Computing and Intelligent Interaction (ACII), 2013 Humaine Association Conference on</source>, pages <fpage>245</fpage>&#x2013;<lpage>251</lpage>. IEEE, <year>2013</year>.</mixed-citation></ref>
+<ref id="c9"><mixed-citation publication-type="journal"><string-name><given-names>Michael</given-names> <surname>Kuhn</surname></string-name>, <string-name><given-names>Damian</given-names> <surname>Szklarczyk</surname></string-name>, <string-name><surname>Sune</surname> <given-names>Pletscher-Frankild</given-names></string-name>, <string-name><given-names>Thomas H</given-names> <surname>Blicher</surname></string-name>, <string-name><surname>Christian</surname> <given-names>von Mering</given-names></string-name>, <string-name><given-names>Lars J</given-names> <surname>Jensen</surname></string-name>, and <string-name><given-names>Peer</given-names> <surname>Bork</surname></string-name>. <article-title>Stitch 4: integration of protein-chemical interactions with user data</article-title>. <source>Nucleic Acids Research</source>, page <fpage>gkt1207</fpage>, <year>2013</year>.</mixed-citation></ref>
+<ref id="c10"><mixed-citation publication-type="journal"><string-name><given-names>S</given-names> <surname>Loewe</surname></string-name>. <article-title>The problem of synergism and antagonism of combined drugs</article-title>. <source>Arzneimittel-Forschung</source>, <volume>3</volume>(<issue>6</issue>):<fpage>285</fpage>, <year>1953</year>.</mixed-citation></ref>
+<ref id="c11"><mixed-citation publication-type="journal"><string-name><given-names>Fabian</given-names> <surname>Pedregosa</surname></string-name>, <string-name><surname>Ga&#x00EB;l</surname> <given-names>Varoquaux</given-names></string-name>, <string-name><given-names>Alexandre</given-names> <surname>Gramfort</surname></string-name>, <string-name><given-names>Vincent</given-names> <surname>Michel</surname></string-name>, <string-name><given-names>Bertrand</given-names> <surname>Thirion</surname></string-name>, <string-name><given-names>Olivier</given-names> <surname>Grisel</surname></string-name>, <string-name><given-names>Mathieu</given-names> <surname>Blondel</surname></string-name>, <string-name><given-names>Peter</given-names> <surname>Prettenhofer</surname></string-name>, <string-name><given-names>Ron</given-names> <surname>Weiss</surname></string-name>, <string-name><given-names>Vincent</given-names> <surname>Dubourg</surname></string-name>, <etal>et al.</etal> <article-title>Scikit-learn: Machine learning in python</article-title>. <source>The Journal of Machine Learning Research</source>, <volume>12</volume>:<fpage>2825</fpage>-<lpage>2830</lpage>, <year>2011</year>.</mixed-citation></ref>
+<ref id="c12"><mixed-citation publication-type="journal"><string-name><given-names>Yossi</given-names> <surname>Rubner</surname></string-name>, <string-name><given-names>Carlo</given-names> <surname>Tomasi</surname></string-name>, and <string-name><surname>Leonidas</surname> <given-names>J Guibas</given-names></string-name>. <article-title>The earth mover&#x2019;s distance as a metric for image retrieval</article-title>. <source>International Journal of Computer Vision</source>, <volume>40</volume>(<issue>2</issue>):<fpage>99</fpage>&#x2013;<lpage>121</lpage>, <year>2000</year>.</mixed-citation></ref>
+<ref id="c13"><mixed-citation publication-type="journal"><string-name><given-names>Daniel A</given-names> <surname>Schult</surname></string-name> and <string-name><given-names>P</given-names> <surname>Swart</surname></string-name>. <article-title>Exploring network structure, dynamics, and function using networkx</article-title>. <source>In Proceedings of the 7th Python in Science Conferences (SciPy 2008)</source>, <volume>volume 2008</volume>, pages <fpage>11</fpage>&#x2013;<lpage>16</lpage>, <year>2008</year>.</mixed-citation></ref>
+<ref id="c14"><mixed-citation publication-type="journal"><string-name><surname>Ronald</surname> <given-names>J Tallarida</given-names></string-name>. <article-title>An overview of drug combination analysis with isobolograms</article-title>. <source>Journal of Pharmacology and Experimental Therapeutics</source>, <volume>319</volume>(<issue>1</issue>):<fpage>1</fpage>&#x2013;<lpage>7</lpage>, <year>2006</year>.</mixed-citation></ref>
+<ref id="c15"><mixed-citation publication-type="journal"><string-name><given-names>Jan</given-names> <surname>Wildenhain</surname></string-name>, <string-name><given-names>Michaela</given-names> <surname>Spitzer</surname></string-name>, <string-name><given-names>Sonam</given-names> <surname>Dolma</surname></string-name>, <string-name><given-names>Nick</given-names> <surname>Jarvik</surname></string-name>, <string-name><given-names>Rachel</given-names> <surname>White</surname></string-name>, <string-name><given-names>Marcia</given-names> <surname>Roy</surname></string-name>, <string-name><given-names>Emma</given-names> <surname>Griffiths</surname></string-name>, <string-name><given-names>David S</given-names> <surname>Bellows</surname></string-name>, <string-name><surname>Gerard</surname> <given-names>D Wright</given-names></string-name>, and <string-name><given-names>Mike</given-names> <surname>Tyers</surname></string-name>. <article-title>Prediction of synergism from chemical-genetic interactions by machine learning</article-title>. <source>Cell Systems</source>, <volume>1</volume>(<issue>6</issue>):<fpage>383</fpage>&#x2013;<lpage>395</lpage>, <year>2015</year>.</mixed-citation></ref>
+<ref id="c16"><mixed-citation publication-type="journal"><string-name><given-names>Roberta J</given-names> <surname>Worthington</surname></string-name> and <string-name><given-names>Christian</given-names> <surname>Melander</surname></string-name>. <article-title>Combination approaches to combat multidrug-re-sistant bacteria</article-title>. <source>Trends in Biotechnology</source>, <volume>31</volume>(<issue>3</issue>):<fpage>177</fpage>&#x2013;<lpage>184</lpage>, <year>2013</year>.</mixed-citation></ref>
+<ref id="c17"><mixed-citation publication-type="journal"><string-name><given-names>Pamela J</given-names> <surname>Yeh</surname></string-name>, <string-name><given-names>Matthew J</given-names> <surname>Hegreness</surname></string-name>, <string-name><surname>Aviva</surname> <given-names>Presser Aiden</given-names></string-name>, and <string-name><given-names>Roy</given-names> <surname>Kishony</surname></string-name>. <article-title>Drug interactions and the evolution of antibiotic resistance</article-title>. <source>Nature Reviews Microbiology</source>, <volume>7</volume>(<issue>6</issue>):<fpage>460</fpage>&#x2013;<lpage>466</lpage>, <year>2009</year>.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

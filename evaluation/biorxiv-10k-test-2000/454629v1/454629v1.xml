@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/454629</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Gene detection models outperform gene expression for large-scale scRNA-seq analysis</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<name>
+<surname>Li</surname>
+<given-names>Ruoxin</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<contrib contrib-type="author" corresp="yes">
+<name>
+<surname>Quon</surname>
+<given-names>Gerald</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="aff" rid="a2">2</xref>
+<xref ref-type="aff" rid="a3">3</xref>
+<xref ref-type="corresp" rid="cor1">&#x002A;</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>Graduate Group in Biostatistics</institution></aff>
+<aff id="a2"><label>2</label><institution>Genome Center</institution></aff>
+<aff id="a3"><label>3</label><institution>Department of Molecular and Cellular Biology, University of California</institution>, Davis, Davis, CA</aff>
+</contrib-group>
+<author-notes>
+<corresp id="cor1"><label>&#x002A;</label>To whom correspondence should be addressed: <email>gquon@ucdavis.edu</email></corresp>
+</author-notes>
+<pub-date pub-type="epub">
+<year>2018</year>
+</pub-date>
+<elocation-id>454629</elocation-id>
+<history>
+<date date-type="received">
+<day>26</day>
+<month>10</month>
+<year>2018</year>
+</date>
+<date date-type="rev-recd">
+<day>26</day>
+<month>10</month>
+<year>2018</year>
+</date>
+<date date-type="accepted">
+<day>26</day>
+<month>10</month>
+<year>2018</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2018, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2018</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="454629.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>The number of cells to be sequenced is one of the most important considerations in single cell RNA experiment design, and we find that experiments designed to maximize the number of sequenced cells tends to also increase the measurement noise within individual cells. This noise is detrimental to the performance of downstream scRNA-seq analysis tools, but can be mitigated by ignoring precise expression measurements and focusing on the detection of a gene. This observation that throwing away data can increase signal is observed across multiple capture technologies, can be addressed using as little as one line of code, and results in execution times that are up to three orders of magnitude faster, therefore making this observation important as newer capture technologies continue to drive the number of sequenced cells higher.</p>
+</abstract>
+<counts>
+<page-count count="12"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<title>Main text</title>
+<p>Single cell RNA sequencing (scRNA-seq) is rapidly being adopted due to the diverse problems in gene regulation that can now be more easily addressed. These include the identification of novel cell types, trajectory inference for analysis of continuous processes such as differentiation, and analysis of transcriptional heterogeneity within populations of cells<sup><xref ref-type="bibr" rid="c1">1</xref></sup>. The power of scRNA-seq analysis comes from the number of cells that are sequenced, as higher cell counts enable identification and characterization of transcriptional heterogeneity with more certainty. As a result, newer technologies keep pushing the boundaries of throughput capabilities: those based on 3&#x2019; tagging and unique molecular identifiers (UMI) have now been used to generate datasets totaling over one million cells<sup><xref ref-type="bibr" rid="c2">2</xref></sup>.</p>
+<p>While capture technologies are widely acknowledged to produce scRNA-seq data with systematically different characteristics<sup><xref ref-type="bibr" rid="c3">3</xref></sup>, analysis tools for scRNA-seq are largely agnostic to the underlying capture technology. We have observed that globally, more recent studies tend to sequence more cells, but at the expense of the gene detection rate (<bold><xref ref-type="fig" rid="fig1">Fig. 1a</xref>, Supplementary Table 1</bold>) and per-cell library size. Gene detection rate (GDR) is the per-cell average fraction of genes for which at least one read (or UMI) has been mapped to it, and per-cell library size is the average total number of reads (or UMI) that map to a cell. Clearly, when the GDR or per-cell library size fall too low, downstream analysis tools that explicitly model the counts of molecules mapping to each gene (relative expression) will be confounded by the noisy measurements and perform poorly at their respective tasks.</p>
+<fig id="fig1" position="float" fig-type="figure">
+<label>Figure 1:</label>
+<caption><title>Binary Factor Analysis (BFA) outperforms other approaches when cell counts are high and transcriptional measurements are noisy.</title><p>(<bold>a</bold>) Gene detection rate as a function of the number of cells sequenced in the study, across 36 diverse datasets (see <bold>Supplementary Table 1</bold>). Datasets are colored by date of publication. (<bold>b</bold>) Cross-validation performance of cell type predictors trained on scRNA-seq data that has been reduced in dimensionality, as a function of the number of dimensions specified. Datasets from left to right, top to bottom: dendritic, MGE, HSCs, mouse intestinal, CD4-CTL/CD4&#x002B; memory T, pancreatic, H7-ESC, mESCs and LPS (see <bold>Supplementary Table 2</bold>). Group I datasets are those in which BFA is a top performer, Group II datasets are those where BFA performs poorly relative to other methods. (<bold>c</bold>) Mean-dispersion trends estimated for each of the datasets from (a). Datasets are colored by their corresponding group. (<bold>d</bold>) The gene detection rate as a function of the number of cells from each dataset in (b).</p></caption>
+<graphic xlink:href="454629_fig1.tif"/>
+</fig>
+<p>We hypothesized that we can mitigate the noise associated with low GDR by designing analysis tools that only model the gene detection pattern. That is, we propose to transform scRNA-seq data such that we only measure whether at least one molecule has mapped to a gene in a cell, instead of counting how many molecules mapped to a gene. Here we focus on the effects of such a transformation specifically on the task of dimensionality reduction of scRNA-seq data, as it is a nearly ubiquitous first step in data analysis<sup><xref ref-type="bibr" rid="c4">4</xref>,<xref ref-type="bibr" rid="c5">5</xref>,<xref ref-type="bibr" rid="c6">6</xref></sup> and many analysis tools have been developed to address it<sup><xref ref-type="bibr" rid="c7">7</xref>,<xref ref-type="bibr" rid="c8">8</xref>,<xref ref-type="bibr" rid="c9">9</xref>,<xref ref-type="bibr" rid="c10">10</xref></sup>.</p>
+<p>To test our hypothesis, we designed Binary Factor Analysis (BFA), a scRNA-seq dimensionality reduction tool that only models gene detection, and benchmarked it against three other approaches that model gene counts: PCA, ZINB-WaVE<sup><xref ref-type="bibr" rid="c8">8</xref></sup> and scImpute<sup><xref ref-type="bibr" rid="c11">11</xref></sup>. We benchmark these methods by using their low dimensional embeddings to predict cell type labels in a supervised setting. We identified nine datasets for which cell types were established experimentally without any computational inference (<bold>Supplementary Table 2</bold>), in contrast to other published datasets in which computational techniques were used in the pipeline to label cells.</p>
+<p>Of the nine datasets we tested, BFA was a top performer in six of them (Group I) and performed poorly in the remaining three (Group II) (<bold><xref ref-type="fig" rid="fig1">Fig. 1b</xref></bold>). The difference in performance of BFA and ZINB-WaVE is particularly striking because the ZINB-WaVE model has two components: one that models gene detection, and the other that models gene counts. The model structure and parameter learning algorithm of BFA is designed to match the gene detection component of ZINB-WaVE as closely as possible, making the difference in their performance primarily due to whether gene counts (ZINB-WaVE) or gene detection patterns (BFA) are modeled.</p>
+<p>BFA outperforms ZINB-WaVE when the GDR is low, which occurs when the number of cells sequenced is large (<bold><xref ref-type="fig" rid="fig1">Fig. 1c</xref></bold>). We found that ZINB-WaVE and other methods are less robust in this regime because lower GDR is correlated with increased dispersion (noise) of gene expression (<bold><xref ref-type="fig" rid="fig1">Fig. 1d</xref></bold>), therefore forcing gene count models and their low dimensional embeddings to explain more outliers in the data. Some gene counting models even share variance parameters across genes<sup><xref ref-type="bibr" rid="c8">8</xref>,<xref ref-type="bibr" rid="c12">12</xref></sup>, making them even more susceptible to noise generated from low GDR. The gene detection pattern is more robust to outliers in the counting data because genes that are expressed at low levels are treated equally as genes that are expressed highly. Notably, BFA performs much more poorly when the GDR reaches close to 100&#x0025;, since in this situation every gene is detected in every cell, so there is no variance across cells for BFA&#x2019;s embedding spaces to capture.</p>
+<p>Modeling gene detection makes scRNA-seq analysis robust to other forms of noise besides GDR, such as inclusion of cells of lower quality. <bold><xref ref-type="fig" rid="fig2">Figure 2a</xref></bold> illustrates the 2D embedding of stimulated dendritic cells<sup><xref ref-type="bibr" rid="c13">13</xref></sup>, while <bold>Supplementary Figures 1-3</bold> illustrate other datasets included in this study. What is exceptional about the dendritic cell dataset is that the raw data has a large number of cells that map many reads to the mitochondrial genes (<bold>Supplementary Fig. 4</bold>). Many reads mapping to mitochondrial genes is an indication of cell death<sup><xref ref-type="bibr" rid="c14">14</xref></sup>, and these cells are typically discarded for downstream analysis, as they were for <bold><xref ref-type="fig" rid="fig1">Figures 1b</xref></bold> and <bold><xref ref-type="fig" rid="fig2">2a</xref></bold>. When we include those cells back in the analysis, we found that mitochondrial content drives the embedding of counting based methods much more than BFA, leading to a decrease in ability to group cells of the same type (<bold>Supplementary Fig. 5</bold>). BFA is more robust to this technical artifact again because high counts of specific genes are treated equally with low counts of other genes.</p>
+<fig id="fig2" position="float" fig-type="figure">
+<label>Figure 2:</label>
+<caption><title>BFA embeddings recover cell type markers more efficiently.</title><p>(<bold>a</bold>) 2D tSNE visualization of 10-dimensional embeddings generated by the four methods on the dendritic dataset. Cells are colored according to their corresponding cell types and states. (<bold>b</bold>) Comparison of the methods in terms of how enriched the inferred dimensions are with respect to the known cell type markers, as measured by AUROC (area under the curve). ZINB-WaVE is represented twice, once for the latent dimensions inferred by their gene detection pattern (ZINB-WaVE<sub>dropout</sub>), and the other are the latent dimensions inferred from the gene counts (ZINB-WaVE<sub>expr</sub>). (<bold>c</bold>) Execution time of BFA versus ZINB-WaVE on differently-sized subsets of cells subsampled from the 1.3 million scRNA-seq dataset generated from 10x Genomics.</p></caption>
+<graphic xlink:href="454629_fig2.tif"/>
+</fig>
+<p>We hypothesized that the embedding spaces learned from gene detection patterns capture cell type-specific markers more readily than the embedding spaces learned from gene counts. To validate our hypothesis, we focused on two datasets, hematopoietic stem cells and dendritic cells, where the marker genes for those cell surface markers are well-studied and we could identify 23 and 60 markers respectively from the literature (<bold>Supplementary Tables 3, 4</bold>). <bold><xref ref-type="fig" rid="fig2">Figure 2b</xref></bold> demonstrates that for both datasets, the embeddings of BFA are driven by cell type markers more than the other tested methods, despite the fact that the cell type markers are not used when calculating the embeddings. For BFA, genes that are expressed to some extent in all cells are ignored because they do not vary in their gene detection pattern across cells (the gene is detected in all cells), so intuitively BFA tends to select genes in its embeddings that must be turned completely off in at least some subset of cells, such as cell type markers. Because ZINB-WaVE has a gene detection and gene count component, we compared the performance of each component individually with respect to cell type marker identification. In ZINB-WaVE&#x2019;s model, the gene detection pattern is statistically inferred to account for noise in the gene counts, as opposed to BFA, which treats undetected genes as true observations. <bold><xref ref-type="fig" rid="fig2">Figure 2b</xref></bold> illustrates that BFA outperforms the gene detection pattern component of ZINB-WaVE, suggesting it is difficult to infer a more meaningful gene detection pattern.</p>
+<p>With newer datasets occasionally exceeding one million cells, computational efficiency of scRNA-seq analyses becomes challenging as ideally these tools can be run on local machines. We found that ZINB-WaVE requires a median of 9-fold more execution time (<bold><xref ref-type="fig" rid="fig2">Fig. 2c</xref></bold>), and in the largest experiment with 500k cells, ZINB-WaVE did not finish running within two weeks. The difference in execution time between BFA and ZINB-WaVE is due primarily to the additional burden of modeling gene counts because the BFA model structure and parameter learning algorithm was designed to match the gene detection pattern component of ZINB-WaVE as closely as possible.</p>
+<p>Remarkably, modeling gene detection patterns instead of gene counts can be performed with as little as one line of code in R. In our study thus far, we implemented BFA using a model appropriate for analyzing gene detection patterns, and show it is faster and often more accurate than a corresponding model that also uses gene count information. However, PCA is still used most often because of both its speed and its implementation in frequently-cited pipelines such as Seurat<sup><xref ref-type="bibr" rid="c15">15</xref></sup>. We have found that simply transforming the gene counts into gene detection patterns as a preprocessing step before use of PCA provides immediate benefits over standard PCA with respect to cell type identification (<bold>Supplementary Fig. 6</bold>) and only requires users to execute one line of R code to perform the transformation. While this so-called Binary PCA approach is not as accurate as BFA, it requires far less execution time than BFA (<bold>Supplementary Fig. 7</bold>) and it does not require installation of new software packages for users. For instance, for 100,000 cells, Binary PCA only requires approximately two minutes of execution time, compared to more than a day for ZINB-WaVE.</p>
+<p>Our contribution has several important implications for the field. First, we demonstrate that modeling the gene detection pattern is a strategy to mitigate the high dispersion associated with high cell count data, while maintaining our ability to distinguish cell types. This strategy is not tied to a specific model structure; the performance improvements in BFA compared to ZINB-WaVE, and Binary PCA compared to PCA, demonstrate our results hold across model structures and loss functions. This modification makes sense only when the GDR is below a threshold of 0.9 in our experiments. Second, the success of modeling gene detection patterns shapes our understanding of &#x201C;dropout&#x201D;. In previous scRNA-seq studies<sup><xref ref-type="bibr" rid="c16">16</xref>,<xref ref-type="bibr" rid="c17">17</xref>,<xref ref-type="bibr" rid="c11">11</xref></sup> the gene detection pattern is understood as a mixture of genes truly turned off and genes not detected due to technical artifacts<sup><xref ref-type="bibr" rid="c16">16</xref></sup>. The underlying assumption of the mixture model is that a significant proportion of undetected genes is due to technical factors, and they therefore try to distinguish biological versus technical occurrences of undetected genes. BFA&#x2019;s assumption that all zeroes are biological, and its corresponding superior performance when cell counts are high, suggests enough zeroes are true signal that mixture modeling is unhelpful. We therefore propose modeling scRNA-seq datasets by their gene detection pattern as a novel approach to address challenges in scRNA-seq datasets with higher cell counts.</p>
+</sec>
+</body>
+<back>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>1.</label><mixed-citation publication-type="journal"><string-name><surname>Hwang</surname>, <given-names>B.</given-names></string-name>, <string-name><surname>Lee</surname>, <given-names>J. H.</given-names></string-name> &#x0026; <string-name><surname>Bang</surname>, <given-names>D.</given-names></string-name> <article-title>Single-cell RNA sequencing technologies and bioinformatics pipelines</article-title>. <source>Exp. Mol. Med</source>. <volume>50</volume>, <fpage>96</fpage> (<year>2018</year>).</mixed-citation></ref>
+<ref id="c2"><label>2.</label><mixed-citation publication-type="journal"><string-name><surname>Zheng</surname>, <given-names>G. X. Y.</given-names></string-name> <etal>et al.</etal> <article-title>Massively parallel digital transcriptional profiling of single cells</article-title>. <source>Nat. Commun</source>. <volume>8</volume>, <fpage>14049</fpage> (<year>2017</year>).</mixed-citation></ref>
+<ref id="c3"><label>3.</label><mixed-citation publication-type="journal"><string-name><surname>Ziegenhain</surname>, <given-names>C.</given-names></string-name> <etal>et al.</etal> <article-title>Comparative Analysis of Single-Cell RNA Sequencing Methods</article-title>. <source>Mol. Cell</source> <volume>65</volume>, <fpage>631</fpage>&#x2013;<lpage>643.e4</lpage> (<year>2017</year>).</mixed-citation></ref>
+<ref id="c4"><label>4.</label><mixed-citation publication-type="journal"><string-name><surname>Trapnell</surname>, <given-names>C.</given-names></string-name> <etal>et al.</etal> <article-title>The dynamics and regulators of cell fate decisions are revealed by pseudotemporal ordering of single cells</article-title>. <source>Nat. Biotechnol</source>. <volume>32</volume>, <fpage>381</fpage>&#x2013;<lpage>386</lpage> (<year>2014</year>).</mixed-citation></ref>
+<ref id="c5"><label>5.</label><mixed-citation publication-type="journal"><string-name><surname>Haghverdi</surname>, <given-names>L.</given-names></string-name>, <string-name><surname>Buettner</surname>, <given-names>F.</given-names></string-name> &#x0026; <string-name><surname>Theis</surname>, <given-names>F. J.</given-names></string-name> <article-title>Diffusion maps for high-dimensional single-cell analysis of differentiation data</article-title>. <source>Bioinforma. Oxf. Engl</source>. <volume>31</volume>, <fpage>2989</fpage>&#x2013;<lpage>2998</lpage> (<year>2015</year>).</mixed-citation></ref>
+<ref id="c6"><label>6.</label><mixed-citation publication-type="other"><string-name><surname>Giecold</surname>, <given-names>G.</given-names></string-name>, <string-name><surname>Marco</surname>, <given-names>E.</given-names></string-name>, <string-name><surname>Garcia</surname>, <given-names>S. P.</given-names></string-name>, <string-name><surname>Trippa</surname>, <given-names>L.</given-names></string-name> &#x0026; <string-name><surname>Yuan</surname>, <given-names>G.-C.</given-names></string-name> <article-title>Robust lineage reconstruction from high-dimensional single-cell data</article-title>. <source>Nucleic Acids Res</source>. <fpage>gkw452</fpage> (<year>2016</year>). doi:<pub-id pub-id-type="doi">10.1093/nar/gkw452</pub-id></mixed-citation></ref>
+<ref id="c7"><label>7.</label><mixed-citation publication-type="journal"><string-name><surname>Pierson</surname>, <given-names>E.</given-names></string-name> &#x0026; <string-name><surname>Yau</surname>, <given-names>C.</given-names></string-name> <article-title>ZIFA: Dimensionality reduction for zero-inflated single-cell gene expression analysis</article-title>. <source>Genome Biol</source>. <volume>16</volume>, <fpage>241</fpage> (<year>2015</year>).</mixed-citation></ref>
+<ref id="c8"><label>8.</label><mixed-citation publication-type="website"><article-title>A general and flexible method for signal extraction from single-cell RNA-seq data</article-title> | <source>Nature Communications</source>. Available at: <ext-link ext-link-type="uri" xlink:href="https://www.nature.com/articles/s41467-017-02554-5#Abs1">https://www.nature.com/articles/s41467-017-02554-5#Abs1</ext-link>. (Accessed: <date-in-citation content-type="access-date">2nd October 2018</date-in-citation>)</mixed-citation></ref>
+<ref id="c9"><label>9.</label><mixed-citation publication-type="journal"><string-name><surname>Wang</surname>, <given-names>B.</given-names></string-name>, <string-name><surname>Zhu</surname>, <given-names>J.</given-names></string-name>, <string-name><surname>Pierson</surname>, <given-names>E.</given-names></string-name>, <string-name><surname>Ramazzotti</surname>, <given-names>D.</given-names></string-name> &#x0026; <string-name><surname>Batzoglou</surname>, <given-names>S.</given-names></string-name> <article-title>Visualization and analysis of single-cell RNA-seq data by kernel-based similarity learning</article-title>. <source>Nat. Methods</source> <volume>14</volume>, <fpage>414</fpage>&#x2013;<lpage>416</lpage> (<year>2017</year>).</mixed-citation></ref>
+<ref id="c10"><label>10.</label><mixed-citation publication-type="journal"><string-name><surname>Ding</surname>, <given-names>J.</given-names></string-name>, <string-name><surname>Condon</surname>, <given-names>A.</given-names></string-name> &#x0026; <string-name><surname>Shah</surname>, <given-names>S. P.</given-names></string-name> <article-title>Interpretable dimensionality reduction of single cell transcriptome data with deep generative models</article-title>. <source>Nat. Commun</source>. <volume>9</volume>, <fpage>2002</fpage> (<year>2018</year>).</mixed-citation></ref>
+<ref id="c11"><label>11.</label><mixed-citation publication-type="journal"><string-name><surname>Li</surname>, <given-names>W. V.</given-names></string-name> &#x0026; <string-name><surname>Li</surname>, <given-names>J. J.</given-names></string-name> <article-title>An accurate and robust imputation method scImpute for single-cell RNA-seq data</article-title>. <source>Nat. Commun</source>. <volume>9</volume>, <fpage>997</fpage> (<year>2018</year>).</mixed-citation></ref>
+<ref id="c12"><label>12.</label><mixed-citation publication-type="journal"><string-name><surname>Finak</surname>, <given-names>G.</given-names></string-name> <etal>et al.</etal> <article-title>MAST: a flexible statistical framework for assessing transcriptional changes and characterizing heterogeneity in single-cell RNA sequencing data</article-title>. <source>Genome Biol</source>. <volume>16</volume>, <fpage>278</fpage> (<year>2015</year>).</mixed-citation></ref>
+<ref id="c13"><label>13.</label><mixed-citation publication-type="journal"><string-name><surname>Shalek</surname>, <given-names>A. K.</given-names></string-name> <etal>et al.</etal> <article-title>Single-cell RNA-seq reveals dynamic paracrine control of cellular variation</article-title>. <source>Nature</source> <volume>510</volume>, <fpage>363</fpage>&#x2013;<lpage>369</lpage> (<year>2014</year>).</mixed-citation></ref>
+<ref id="c14"><label>14.</label><mixed-citation publication-type="journal"><string-name><surname>Tait</surname>, <given-names>S. W. G.</given-names></string-name> &#x0026; <string-name><surname>Green</surname>, <given-names>D. R.</given-names></string-name> <article-title>Mitochondrial Regulation of Cell Death</article-title>. <source>Cold Spring Harb. Perspect. Biol</source>. <volume>5</volume>, (<year>2013</year>).</mixed-citation></ref>
+<ref id="c15"><label>15.</label><mixed-citation publication-type="website"><article-title>Spatial reconstruction of single-cell gene expression data</article-title> | <source>Nature Biotechnology</source>. Available at: <ext-link ext-link-type="uri" xlink:href="https://www.nature.com/articles/nbt.3192">https://www.nature.com/articles/nbt.3192</ext-link>. (Accessed: <date-in-citation content-type="access-date">23rd October 2018</date-in-citation>)</mixed-citation></ref>
+<ref id="c16"><label>16.</label><mixed-citation publication-type="journal"><string-name><surname>Kharchenko</surname>, <given-names>P. V.</given-names></string-name>, <string-name><surname>Silberstein</surname>, <given-names>L.</given-names></string-name> &#x0026; <string-name><surname>Scadden</surname>, <given-names>D. T.</given-names></string-name> <article-title>Bayesian approach to single-cell differential expression analysis</article-title>. <source>Nat. Methods</source> <volume>11</volume>, <fpage>740</fpage>&#x2013;<lpage>742</lpage> (<year>2014</year>).</mixed-citation></ref>
+<ref id="c17"><label>17.</label><mixed-citation publication-type="journal"><string-name><surname>Kim</surname>, <given-names>J. K.</given-names></string-name> <etal>et al.</etal> <article-title>Characterizing noise structure in single-cell RNA-seq distinguishes genuine from technical stochastic allelic expression</article-title>. <source>Nat. Commun</source>. <volume>6</volume>, <fpage>8687</fpage> (<year>2015</year>).</mixed-citation></ref>
+<ref id="c18"><label>18.</label><mixed-citation publication-type="journal"><string-name><surname>van der Maaten</surname>, <given-names>L.</given-names></string-name> &#x0026; <string-name><surname>Hinton</surname>, <given-names>G.</given-names></string-name> <article-title>Visualizing Data using t-SNE</article-title>. <source>J. Mach. Learn. Res</source>. <volume>9</volume>, <fpage>2579</fpage>&#x2013;<lpage>2605</lpage> (<year>2008</year>).</mixed-citation></ref>
+</ref-list>
+<sec id="s2">
+<title>Online Methods</title>
+<sec id="s2a">
+<title>BFA model</title>
+<p>Our Binary Factor Analysis (BFA) model is adapted from a generalized linear model framework, and is therefore capable of adjusting for batch effects and other nuisance cell level covariates. The workflow is shown in <bold>Supplementary Figure 8</bold>. Let <italic>B</italic><sub><italic>ij</italic></sub> refer to the gene detection pattern observed for cell <italic>i</italic> and gene <italic>j</italic>, whe<italic>re B</italic><sub><italic>ij</italic></sub> &#x003D; 1 when the gene is expressed and at least one read (or UMI) maps to gene <italic>j</italic> in cell <italic>i</italic>, otherwise <italic>B</italic><sub><italic>ij</italic></sub> &#x003D; 0. Let <italic>N</italic> represent the number of cells in the dataset, <italic>G</italic> the number of genes measured, and <italic>K</italic> the number of latent dimensions to infer. BFA is defined by the following model:
+<disp-formula>
+<alternatives><graphic xlink:href="454629_ueqn1.gif"/></alternatives>
+</disp-formula>
+</p>
+<p>Here, <italic>X</italic> is an <italic>N</italic> by <italic>C</italic> cell-level covariate matrix that corrects for nuisance factors such as batch effect. <italic>X</italic><sub><italic>i</italic></sub> refers to the <italic>i</italic><sup><italic>th</italic></sup> row of <italic>X</italic>. Let <italic>&#x03B2;</italic> be the <italic>C</italic> by <italic>G</italic> coefficient matrix, and <italic>&#x03B2;</italic><sub><italic>j</italic></sub> the <italic>j</italic><sup><italic>th</italic></sup> column of <italic>&#x03B2;</italic>. <italic>Z</italic> is an <italic>N</italic> by <italic>K</italic> low dimensional embedding matrix, <italic>A</italic> is a <italic>K</italic> by G compressed feature matrix. <italic>Z</italic><sub><italic>i</italic></sub> and <italic>A</italic><sub><italic>j</italic></sub> are the <italic>i</italic><sup><italic>th</italic></sup> row and <italic>j</italic><sup><italic>th</italic></sup> column of <italic>Z</italic> and <italic>A</italic>, respectively. Moreover, <italic>O</italic><sub><italic>j</italic></sub> and <italic>U</italic><sub><italic>i</italic></sub> stands for the <italic>j</italic><sup><italic>th</italic></sup> gene level intercept and <italic>i</italic><sup><italic>th</italic></sup> cell level intercept, respectively. <italic>O</italic> is therefore a vector of length <italic>G</italic>, and <italic>U</italic> is a vector of length <italic>N</italic>.</p>
+<p>We train the BFA model by optimizing the following likelihood function:
+<disp-formula>
+<alternatives><graphic xlink:href="454629_ueqn2.gif"/></alternatives>
+</disp-formula>
+</p>
+<p>Here &#x03F5;<sub>1</sub>, <italic>&#x03F5;</italic><sub>2</sub> and &#x03F5;<sub>3</sub> are tunable parameters for controlling regularization of the model parameters, where <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="454629_inline1.gif"/></alternatives></inline-formula>, and <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="454629_inline2.gif"/></alternatives></inline-formula>, here &#x03F5;<sub>0</sub> &#x003D; {<italic>N, G</italic>}. The optimization is carried out using conjugate gradient descent. After completing optimization, we orthogonalize <italic>Z</italic> and <italic>A</italic> as was done in ZINB-WaVE<sup><xref ref-type="bibr" rid="c8">8</xref></sup>.</p>
+</sec>
+<sec id="s2b">
+<title>Selection of representative datasets to measure gene detection</title>
+<p>We obtained a total of 36 scRNA-seq datasets from which we calculated gene detection rates as a function of the number of cells in each dataset (<xref ref-type="fig" rid="fig1">Figure 1a</xref>). We obtained these datasets from two sources, the conquer database and the Gene Expression Omnibus (GEO). For GEO, we used the search term &#x201C;((&#x2018;single cell rna-seq&#x2019; OR &#x2018;single cell transcriptomic&#x2019; OR &#x2018;10X&#x2019; OR &#x2018;single cell transcriptome&#x2019;) AND Expression profiling by high throughput sequencing[DataSet Type]) AND (Homo sapiens[Organism] OR Mus musculus[Organism])&#x201D;, sorted all datasets by size, then selected a similar number of datasets from both the top and bottom of the list.</p>
+</sec>
+<sec id="s2c">
+<title>Evaluation of dimensionality reduction methods</title>
+<p>We evaluated each dimensionality reduction method based on how well their low dimensional embeddings could discriminate different cell types. For each dataset tested, we first performed dimensionality reduction on the entire dataset for a fixed number of dimensions, to obtain an embedding matrix representing each cell in <italic>K</italic> dimensions. We then performed 5-fold cross validation by repeatedly splitting the embedding dataset into training sets and testing sets, training a non-regularized multi-level logistic classifier on the training dataset using the <italic>a priori</italic> known cell type labels, then used the model to predict cell type labels for the test dataset. For every prediction, using the known cell type labels, we computed a confusion matrix and the corresponding Matthews&#x2019; correlation coefficient as a measure of classification accuracy:
+<disp-formula>
+<alternatives><graphic xlink:href="454629_ueqn3.gif"/></alternatives>
+</disp-formula>
+</p>
+</sec>
+<sec id="s2d">
+<title>Quality control</title>
+<p>For each dataset tested, we performed a standardized quality control process. We first remove cells where mitochondrial genes accounted for over 50&#x0025; of the total read count. Then we filtered out genes that are expressed in fewer than 1&#x0025; of cells, and removed cells with library size (total read or UMI count) less than one eighth quantile of all cell library sizes.</p>
+</sec>
+<sec id="s2e">
+<title>Normalization</title>
+<p>For each method, we also normalized cells to control for differences in library size. For PCA, we normalize the count by <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="454629_inline3.gif"/></alternatives></inline-formula>, where <italic>x</italic><sub><italic>ij</italic></sub> is the normalized gene count for cell <italic>i</italic> and gene <italic>j</italic>, <italic>j</italic><sub><italic>ij</italic></sub> is the original gene count for cell <italic>i</italic> and gene <italic>j</italic>, and <italic>c</italic><sub><italic>i</italic></sub> is library size for cell <italic>i</italic>. ZINB-WaVE directly accounts for library size by their cell-wise intercept<sup><xref ref-type="bibr" rid="c8">8</xref></sup>. For scImpute, we use the total number of read counts in the imputed space as their corresponding library size and normalize in the same way as PCA. For BFA, we input library size as a cell covariate to allow it to decide whether to use library size to explain the gene detection pattern.</p>
+</sec>
+<sec id="s2f">
+<title>Gene selection</title>
+<p>For all datasets, we subset the genes to the 2,000 most variant genes before dimensionality reduction, a common step<sup><xref ref-type="bibr" rid="c15">15</xref></sup>. Note that the gene detection rate of each dataset calculated in <bold><xref ref-type="fig" rid="fig1">Figure 1</xref></bold> is based on these 2,000 most variant genes. To be consistent across all datasets, we calculate the gene-wise variance in the gene count space. For the 68k PBMC dataset, we only selected the top 1,000 most varying genes for computational speed.</p>
+</sec>
+<sec id="s2g">
+<title>Batch effect correction</title>
+<p>For both ZINB-WaVE and BFA, we model the batch effect as cell-level covariates and regress them out within the model structure. Since PCA does not offer a framework to regress out nuisance factors, we first regress batch effect as cell-level covariates directly from the normalized values <italic>x</italic><sub><italic>ij</italic></sub> using a linear model. Then we apply PCA on the residual matrix and obtain the corresponding factor scores and factor loading matrix. For Binary PCA and scImpute, we also regress out batch effect from the binary entries and imputed values respectively, then use the residual matrix in the same way as for PCA.</p>
+</sec>
+<sec id="s2h">
+<title>Identification of marker genes</title>
+<p>We evaluated the extent to which the inferred dimensions for each method recovers known marker genes (<bold><xref ref-type="fig" rid="fig2">Fig. 2b</xref>)</bold>. For every method, we first obtained the <italic>K</italic> by <italic>G</italic> factor loading matrix indicating which genes are contributing to each of the <italic>K</italic> factors. Then for every loading matrix and given number of factors, we rank the absolute value of each gene in each factor and calculate the AUROC (area under the receiver-operator curve) to measure the extent to which the known marker genes contribute more to a factor than expected by chance.</p>
+<p>Note that ZINB-WaVE has two feature matrices corresponding to the gene detection and gene count components, respectively, and therefore appears twice in <bold><xref ref-type="fig" rid="fig2">Figure 2b</xref></bold>. In ZINB-WaVE, <italic>&#x03C0;</italic><sub><italic>ij</italic></sub> models whether a gene been detected or not, and <italic>&#x03BC;</italic><sub><italic>ij</italic></sub> models the mean for the read counts under negative binomial distribution.
+<disp-formula>
+<alternatives><graphic xlink:href="454629_ueqn4.gif"/></alternatives>
+</disp-formula>
+</p>
+<p>The feature matrix <italic>&#x03B1;<sub>&#x03C0;</sub></italic> that models the gene detection component (<italic>&#x03C0;</italic>) is denoted <italic>ZINB-WaVE</italic><sub>dropout</sub> and the feature matrix <italic>&#x03B1;</italic><sub>&#x03BC;</sub> that model gene counts (<italic>&#x03BC;</italic>) is denoted <italic>ZINB</italic>-<italic>WaVE</italic><sub>mean</sub>.</p>
+</sec>
+<sec id="s2i">
+<title>Visualization</title>
+<p>After we obtain the factor score matrix from every method, we use the t-distributed stochastic embedding<sup><xref ref-type="bibr" rid="c18">18</xref></sup> method to project it on 2 dimensions for visualization as a scatterplot. In <bold><xref ref-type="fig" rid="fig2">Figure 2a</xref></bold>, the number of factors used as input to tSNE in each visualization is 10.</p>
+</sec>
+<sec id="s2j">
+<title>Timing experiments</title>
+<p>In the timing experiment of <bold><xref ref-type="fig" rid="fig2">Figure 2c</xref></bold>, we randomly subsample 1k, 5k, 10k, 50k, 100k, and 500k cells from the 1.3 Million 10x dataset of Brain Cells from E18 Mice and record the single-core execution time (in seconds) of both ZINB-WaVE and BFA on the same machine. ZINB-WaVE did not complete the experiment with 500k cells, so we only present our comparison up to 100k cells. Due to the nonconvex nature of ZINBWAVE&#x2019;s objective function and different optimization scheme, we cannot strictly match the convergence criterion of ZINB-WaVE to BFA. Therefore, we use the same number of iterations for each method that was used to generate the results in <bold><xref ref-type="fig" rid="fig1">Figure 1b</xref></bold>.</p>
+</sec>
+</sec>
+<ack>
+<title>Acknowledgements</title>
+<p>Funding for this work was provided by the Chan Zuckerberg Initiative DAF and Silicon Valley Community Foundation Grant #182633.</p>
+</ack>
+<sec id="s3">
+<title>Author contributions</title>
+<p>R.L. and G.Q. conceptualized the study, analyzed data and wrote the manuscript. R.L. performed all experiments.</p>
+</sec>
+</back>
+</article>

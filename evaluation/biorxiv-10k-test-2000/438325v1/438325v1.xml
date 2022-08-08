@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/438325</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Genomics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Differentiating Genomic SNPs Using Allele Depth and Predicted Genotype</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author" corresp="yes">
+<name>
+<surname>Hasan</surname>
+<given-names>Saam</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="aff" rid="a2">2</xref>
+<xref ref-type="corresp" rid="cor1">&#x002A;</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>Department of Biochemistry and Microbiology, North South University</institution>, Dhaka, <country>Bangladesh</country></aff>
+<aff id="a2"><label>2</label><institution>NSU Genome Research Institute, North South University</institution>, Dhaka, <country>Bangladesh</country></aff>
+<aff id="a3"><label>3</label><institution>Department of Public Health, North South University</institution>, Dhaka, <country>Bangladesh</country></aff>
+</contrib-group>
+<author-notes>
+<corresp id="cor1"><label>&#x002A;</label>Corresponding author: Saam Hasan, Mailing address: Plot 15, Block B, Bashundhara, Dhaka 1229, Bangladesh, Mobile phone: &#x002B;88-01715596258, E-mail: <email>saamhasan55@outlook.com</email></corresp>
+</author-notes>
+<pub-date pub-type="epub">
+<year>2018</year>
+</pub-date>
+<elocation-id>438325</elocation-id>
+<history>
+<date date-type="received">
+<day>08</day>
+<month>10</month>
+<year>2018</year>
+</date>
+<date date-type="rev-recd">
+<day>08</day>
+<month>10</month>
+<year>2018</year>
+</date>
+<date date-type="accepted">
+<day>13</day>
+<month>10</month>
+<year>2018</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2018, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2018</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="438325.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>Differentiating between genomic SNPs and other types of single nucleotide variants becomes a key issue in research aimed at studying the importance of these variants of a particular type in biological processes. Here we present an R based method for differentiating between genomic single nucleotide polymorphisms (SNPs) and RNA editing sites. We use data from an earlier study of ours and target only the known dbsnp SNPs that we found in our study. Our method involves calculating the ratio of allele depth for ref and alt alleles and comparing that to the predicted genotype. We use the concept that editing levels should be different for each allele and thus should not reflect the ratio predicted by the genotype. The study yielded an accuracy rate ranging from 86 to over 90 percent at successfully predicted dbsnp entries as SNPs. Albeit this is in the absence of known RNA editing site vcf data to compare as a reference.</p>
+</abstract>
+<counts>
+<page-count count="10"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<title>Introduction</title>
+<p>Computational techniques for the analysis of next generation sequencing data has revolutionized the way biological data can be interpreted and used. Techniques have been developed for all kinds of uses with all categories of biological data such as genome sequences, transcriptome sequences, metagenomics, proteomics, metabolomics, etc. RNA data has occupied a special significance to research interests due to RNA&#x2019;s central role in gene expression and protein translation as well as a host of regulatory purposes such as micro RNAs and other processes such as RNA editing (<xref ref-type="bibr" rid="c2">2</xref>). The development of tools for the analysis of RNA sequence data has been rapid and led to the availability of a host of toolkits for analysis, validation and interpretation of RNA sequences. However one major challenge has been to differentiate sequence changes in RNA that occurred post transcriptionally from those occurred at the genomic level. In most cases both DNA and RNA sequences for the subject of the study are used to differentiate such changes. Although tools have been developed that can do so from RNA sequence data alone.</p>
+<p>Here we define an R based method for differentiating between genomic single nucleotide variants (SNPs) from other kinds of changes (most RNA editing sites). Our method relies on information about genotype and allele count available in a variant call format (vcf) file which is the most common and accepted means of representing single nucleotide variant data (<xref ref-type="bibr" rid="c3">3</xref>). The tool is designed to work with vcf version 4.2 but should work with other versions as well subject to a few tweaks to the code. It uses the predicted genotype in the vcf and compares it to the actual number of alleles observed for the reference and alternate nucleotides at each variant call position. As explained by Zhang and Xiao the major difference between RNA editing sites and genomic SNPs are variable editing levels for the two alleles of each variant. The two alleles are most likely to be edited differentially and hence the ratio of observed alleles should not reflect the ratio predicted by the genotype (<xref ref-type="bibr" rid="c4">4</xref>). We use this method for heterozygous variants only. Homozygous variants are normally better accepted as non-Genomic SNPs (<xref ref-type="bibr" rid="c5">5</xref>). Here we apply this method to data from a study whose pre-print version we published earlier this year (<xref ref-type="bibr" rid="c6">6</xref>). Out of that data, we only applied this for the known genomic SNPs found in our variant calls and not our identified novel sites (as the latter remain unverified still). We predicted the nature of each variant in our vcf files and then focussed on the dbsnp (<xref ref-type="bibr" rid="c8">8</xref>) variants present there in order to ascertain the power of the method for correctly calling SNPs.</p>
+</sec>
+<sec id="s2">
+<title>Methods</title>
+<p>Vcf files contain information regarding a predicted genotype at each variant call position (the GT field in the Genotype column). Variant callers such haplotypeCaller and UnifiedGenotyper from GATK use their algorithms to calculate the most likely genotype at each locus. The AD field then states the depth for each allele. The latter refers to the number of reads that harboured that particular variant (shown separately for ref and alt alleles) (<xref ref-type="bibr" rid="c3">3</xref>). Our R based method first parses the vcf file using the bedr package available on R (<xref ref-type="bibr" rid="c10">10</xref>). Then it uses the stringr package to split the genotype fields so that can be easily manipulated (<xref ref-type="bibr" rid="c9">9</xref>). Afterwards we create two separate fields for the ref alt read depth ratio and then the type of variant. The ref alt read depth ratio is simply obtained by dividing the read depth for ref by the read depth for alt. We then focus on the heterozygous variants only as the target of our study as previously explained. As explained by the Zhang and Xiao, this ratio should not agree with the predicted genotype (<xref ref-type="bibr" rid="c4">4</xref>). For heterozygous calls (0/1), we selected a cut off 2 and 0.5 beyond which we considered the ratios as deviating from the genotype. The former for when the ref allele read depth &#x003E; alt allele read depth and the latter for when the condition is reversed. For homozygous calls, we simply took the presence of any ref alleles as deviation from the ratio predicted by genotype (i.e. ref alt read depth ratio &#x003E; 0). Reads with alt allele depth 0 (uninformative reads) were discarded from consideration. Finally, homozygous variants with ref alt ratio greater than zero were counted as RNA editing sites and the rest as SNPs. Heterozygous variants with ref alt ratio greater than 2 (for ref read depth &#x003E; alt read depth) or less than 0.5 (for ref read depth &#x003C; alt read depth) were counted as editing sites and the rest as SNPs. We applied this method to seven datasets from a previous research whose pre-print version we published earlier this year. As the new variants identified are not yet verified, we focussed only on the known variants in these datasets and calculated the ability of this method to correctly call them as SNPs. The five datasets were from a study conducted by <italic>Labonte et al</italic> in 2017 on the effect of sex specific transcriptional regulators in Major Depressive Disorder (MDD) (<xref ref-type="bibr" rid="c7">7</xref>). In order to identify potential RNA editing sites unique to the individuals with MDD, we had applied a variant calling pipeline to seven of these datasets (<xref ref-type="bibr" rid="c6">6</xref>).</p>
+</sec>
+<sec id="s3">
+<title>Results</title>
+<p><xref ref-type="table" rid="tbl1">Table 1</xref> lists the total number of dbsnp variants present in the datasets and how many of them were called correctly by our method. The percentage of correct calls for dbsnp entries as SNPs ranged from 86 to over 90&#x0025;. For each of the datasets labelled Runs 1, 3, 4, 5, 6, 12 and 13, the percentage of dbsnp variants correctly called as SNPs were 86.4, 88.9, 90.1, 86.2, 87.7, 87.7, 86.9 respectively. <xref ref-type="fig" rid="fig1a">Figure 1a</xref> to <xref ref-type="fig" rid="fig1g">1g</xref> shows the proportion of dbsnp entries that were correctly detected. In the figures, undetected refers to the small outer portion of the Venn diagram and the number states how many dbsnp entries were undetected as SNPs. The majority of non dbsnp entries were also called as SNPs. The remaining variant calls were either uninformative or called as editing sites based on the rationale described in methods. Most of the SNP calls were homozygous variants with only the alt allele being observed.</p>
+<table-wrap id="tbl1" orientation="portrait" position="float">
+<label>Table 1:</label>
+<caption>
+<title>Percentage of dbnsps in each dataset called correctly</title>
+</caption>
+<graphic xlink:href="438325_tbl1.tif"/>
+</table-wrap>
+<fig id="fig1a" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 1a:</label>
+<caption>
+<title>Correct and incorrect calls for Run1</title>
+</caption>
+<graphic xlink:href="438325_fig1a.tif"/>
+</fig>
+<fig id="fig1b" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 1b:</label>
+<caption>
+<title>Correct and incorrect calls for Run3</title>
+</caption>
+<graphic xlink:href="438325_fig1b.tif"/>
+</fig>
+<fig id="fig1c" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 1c:</label>
+<caption>
+<p>Correct and incorrect calls for Run4</p>
+</caption>
+<graphic xlink:href="438325_fig1c.tif"/>
+</fig>
+<fig id="fig1d" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 1d:</label>
+<caption>
+<p>Correct and incorrect calls for Run5</p>
+</caption>
+<graphic xlink:href="438325_fig1d.tif"/>
+</fig>
+<fig id="fig1e" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 1e:</label>
+<caption>
+<p>Correct and incorrect calls for Run6</p>
+</caption>
+<graphic xlink:href="438325_fig1e.tif"/>
+</fig>
+<fig id="fig1f" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 12:</label>
+<caption>
+<p>Correct and incorrect calls for Run12</p>
+</caption>
+<graphic xlink:href="438325_fig1f.tif"/>
+</fig>
+<fig id="fig1g" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 1g:</label>
+<caption>
+<p>Correct and incorrect calls for Run13</p>
+</caption>
+<graphic xlink:href="438325_fig1g.tif"/>
+</fig>
+</sec>
+<sec id="s4">
+<title>Discussion</title>
+<p>Discriminating between types of single nucleotide variants often represents a key issue when working with such data while investigating a particular type of variant. Here we described a method for doing so using allele depth and predicted genotype. Although this is still at a rudimentary stage and not fully proven in the absence of a reference RNA editing site vcf to test on, the preliminary results at predicting dbsnps are positive. The majority of variants in the datasets were homozygous and thus not taken into consideration for our analysis. In addition to this, other information may also be taken into consideration for discriminating between variants. We compared one of our datasets (run 4) with those known RNA editing sites and did obtain a handful of common sites (25 in total). Although in too small a number for any meaningful deduction to be made, we did find a difference in the BaseQRankSum parameter between the editing sites and most dbsnps. This parameter which is the allele specific Z score value from Wilcoxon rank sum test of each Alt Vs. Ref base qualities, was failed by a large number of the dbsnps while most of our very small number of known editing sites passed it. The availability of large RNA editing site datasets in vcf format would enable this and other possible differentiating features to be evaluated. This method may have applications in research where either type of variant is desired. In particular if its efficiency at differentiating genomic SNPs from other types of RNA or post transcriptional variants can be established, this can be used in research where either genomic SNPs or the RNA derived variants are the object of study.</p>
+</sec>
+</body>
+<back>
+<sec id="s5">
+<title>Availabiliy</title>
+<p>The script and a sample dataset are available at this github repository: <ext-link ext-link-type="uri" xlink:href="https://github.com/SaamH94/Variant-Predictor">https://github.com/SaamH94/Variant-Predictor</ext-link></p>
+</sec>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>1.</label><mixed-citation publication-type="journal"><string-name><surname>Wadapurkar</surname> <given-names>R</given-names></string-name>, <string-name><surname>Vyas</surname> <given-names>R</given-names></string-name>. <article-title>Computational analysis of next generation sequencing data and its applications in clinical oncology</article-title>. <source>Informatics in Medicine Unlocked</source>. <year>2018</year>;<volume>11</volume>:<fpage>75</fpage>&#x2013;<lpage>82</lpage>.</mixed-citation></ref>
+<ref id="c2"><label>2.</label><mixed-citation publication-type="journal"><string-name><surname>Maydanovych</surname> <given-names>O</given-names></string-name>, <string-name><surname>Beal</surname> <given-names>P</given-names></string-name>. <article-title>Breaking the Central Dogma by RNA Editing</article-title>. <source>ChemInform</source>. <year>2006</year>;<volume>37</volume>(<issue>44</issue>).</mixed-citation></ref>
+<ref id="c3"><label>3.</label><mixed-citation publication-type="journal"><string-name><surname>DePristo</surname> <given-names>M</given-names></string-name>, <string-name><surname>Banks</surname> <given-names>E</given-names></string-name>, <string-name><surname>Poplin</surname> <given-names>R</given-names></string-name>, <string-name><surname>Garimella</surname> <given-names>K</given-names></string-name>, <string-name><surname>Maguire</surname> <given-names>J</given-names></string-name>, <string-name><surname>Hartl</surname> <given-names>C</given-names></string-name> <etal>et al.</etal> <article-title>A framework for variation discovery and genotyping using next-generation DNA sequencing data</article-title>. <source>Nature Genetics</source>. <year>2011</year>;<volume>43</volume>(<issue>5</issue>):<fpage>491</fpage>&#x2013;<lpage>498</lpage>.</mixed-citation></ref>
+<ref id="c4"><label>4.</label><mixed-citation publication-type="journal"><string-name><surname>Zhang</surname> <given-names>Q</given-names></string-name>, <string-name><surname>Xiao</surname> <given-names>X</given-names></string-name>. <article-title>Genome sequence&#x2013;independent identification of RNA editing sites</article-title>. <source>Nature Methods</source>. <year>2015</year>;<volume>12</volume>(<issue>4</issue>):<fpage>347</fpage>&#x2013;<lpage>350</lpage>.</mixed-citation></ref>
+<ref id="c5"><label>5.</label><mixed-citation publication-type="journal"><string-name><surname>Ramaswami</surname> <given-names>G</given-names></string-name>, <string-name><surname>Lin</surname> <given-names>W</given-names></string-name>, <string-name><surname>Piskol</surname> <given-names>R</given-names></string-name>, <string-name><surname>Tan</surname> <given-names>M</given-names></string-name>, <string-name><surname>Davis</surname> <given-names>C</given-names></string-name>, <string-name><surname>Li</surname> <given-names>J</given-names></string-name>. <article-title>Accurate identification of human Alu and non-Alu RNA editing sites</article-title>. <source>Nature Methods</source>. <year>2012</year>;<volume>9</volume>(<issue>6</issue>):<fpage>579</fpage>&#x2013;<lpage>581</lpage>.</mixed-citation></ref>
+<ref id="c6"><label>6.</label><mixed-citation publication-type="other"><string-name><surname>Hasan</surname> <given-names>S</given-names></string-name>, <string-name><surname>Robbani</surname> <given-names>S</given-names></string-name>, <string-name><surname>Afroze</surname> <given-names>T</given-names></string-name>, <string-name><surname>Ahsan</surname> <given-names>G</given-names></string-name>, <string-name><surname>Hossain</surname> <given-names>M</given-names></string-name>. <article-title>Identifying Changes in RNA Editome Unique to Major Depressive Disorder</article-title>. <year>2018</year>;.</mixed-citation></ref>
+<ref id="c7"><label>7.</label><mixed-citation publication-type="journal"><string-name><surname>Labont&#x00E9;</surname> <given-names>B</given-names></string-name>, <string-name><surname>Engmann</surname> <given-names>O</given-names></string-name>, <string-name><surname>Purushothaman</surname> <given-names>I</given-names></string-name>, <string-name><surname>Menard</surname> <given-names>C</given-names></string-name>, <string-name><surname>Wang</surname> <given-names>J</given-names></string-name>, <string-name><surname>Tan</surname> <given-names>C</given-names></string-name> <etal>et al.</etal> <article-title>Sex-specific transcriptional signatures in human depression</article-title>. <source>Nature Medicine</source>. <year>2017</year>;<volume>23</volume>(<issue>9</issue>):<fpage>1102</fpage>&#x2013;<lpage>1111</lpage>.</mixed-citation></ref>
+<ref id="c8"><label>8.</label><mixed-citation publication-type="journal"><string-name><surname>Smigielski</surname> <given-names>E</given-names></string-name>. <article-title>dbSNP: a database of single nucleotide polymorphisms</article-title>. <source>Nucleic Acids Research</source>. <year>2000</year>;<volume>28</volume>(<issue>1</issue>):<fpage>352</fpage>&#x2013;<lpage>355</lpage>.</mixed-citation></ref>
+<ref id="c9"><label>9.</label><mixed-citation publication-type="website"><string-name><surname>Wickham</surname> <given-names>H</given-names></string-name> (<year>2018</year>). <article-title>stringr: Simple, Consistent Wrappers for Common String Operations</article-title>. <source>R package version 1.3.1</source>. <ext-link ext-link-type="uri" xlink:href="htps://CRAN.R-project.org/package&#x003D;stringr">htps://CRAN.R-project.org/package&#x003D;stringr</ext-link></mixed-citation></ref>
+<ref id="c10"><label>10.</label><mixed-citation publication-type="website"><string-name><surname>Waggott</surname> <given-names>D</given-names></string-name>, <string-name><surname>Haider</surname> <given-names>S</given-names></string-name>, <string-name><surname>Paul</surname> <given-names>C</given-names></string-name>. Boutros(<year>2017</year>). <article-title>bedr: Genomic Region Processing using Tools Such as &#x2018;BEDTools&#x2019;, &#x2018;BEDOPS&#x2019;, &#x2018;TABIX&#x2019;</article-title>. <source>R package version 1.0.4</source>. <ext-link ext-link-type="uri" xlink:href="https://CRAN.R-project.org/package&#x003D;bedr">https://CRAN.R-project.org/package&#x003D;bedr</ext-link>.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/026005</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Biochemistry</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>A Novel Method and Simple On-line Tool for Maximum Likelihood Calibration of Immunoblots and other Measurements that are Quantified in Batches</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author" corresp="yes">
+<name>
+<surname>Andrews</surname>
+<given-names>Steven S.</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="aff" rid="a2">2</xref>
+<xref ref-type="corresp" rid="cor1">&#x002A;</xref>
+</contrib>
+<contrib contrib-type="author">
+<name>
+<surname>Rutherford</surname>
+<given-names>Suzannah</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>Basic Sciences Division, Fred Hutchinson Cancer Research Center</institution>, Seattle, WA, <country>USA</country></aff>
+<aff id="a2"><label>2</label><institution>Department of Physics, Seattle University</institution>, Seattle, WA, <country>USA</country></aff>
+</contrib-group>
+<author-notes>
+<corresp id="cor1"><label>&#x002A;</label>Corresponding author. E-mail: <email>steven.s.andrews@gmail.com</email></corresp>
+</author-notes>
+<pub-date pub-type="epub">
+<year>2015</year>
+</pub-date>
+<elocation-id>026005</elocation-id>
+<history>
+<date date-type="received">
+<day>02</day>
+<month>9</month>
+<year>2015</year>
+</date>
+<date date-type="accepted">
+<day>02</day>
+<month>9</month>
+<year>2015</year>
+</date>
+</history>
+<permissions><copyright-statement>&#x00A9; 2015, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2015</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="026005.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>Experimental measurements require calibration to transform measured signals into physically meaningful values. The conventional approach has two steps: the experimenter deduces a conversion function using measurements on standards and then calibrates (or normalizes) measurements on unknown samples with this function. The deduction of the conversion function from only the standard measurements causes the results to be quite sensitive to experimental noise. It also implies that any data collected without reliable standards must be discarded. Here we show that a new &#x201C;1-step calibration method&#x201D; reduces these problems for the common situation in which samples are measured in batches, where a batch could be an immunoblot (Western blot), an enzyme-linked immunosorbent assay (ELISA), a sequence of spectra, or a microarray, provided that some sample measurements are replicated across multiple batches. The 1-step method computes all calibration results iteratively from all measurements. It returns the most probable values for the sample compositions under the assumptions of a statistical model, making them the maximum likelihood predictors. It is less sensitive to measurement error on standards and enables use of some batches that do not include standards. In direct comparison of both real and simulated immunoblot data, the 1-step method consistently exhibited smaller errors than the conventional &#x201C;2-step&#x201D; method. These results suggest that the 1-step method is likely to be most useful for cases where experimenters want to analyze existing data that are missing some standard measurements and where experimenters want to extract the best results possible from their data. Simple open source software for both methods is available for download or on-line use.</p>
+<sec>
+<title>Author Summary</title>
+<p>Most quantitative measurements do not return the physical quantities that are of interest, but some instrument-specific response value instead. These measurements are then converted to physical quantities through a conversion function, which the experimenter deduces from instrument responses for one or more standard samples of known composition. This is called calibration or normalization. For example, we recently performed quantitative immunoblotting on a large number of samples, each replicated on multiple blots, and then calibrated the measurements to yield protein concentrations relative to those in a standard sample. We found that the conventional calibration approach of treating the samples in each blot independently of the samples in other blots produced inaccurate results because this approach is completely dependent on the standard measurements, which were sometimes missing or erroneous in our data. Thus, we developed a new calibration approach in which we fit a statistical model to the entire data set simultaneously. This method, which applies to a very wide range of calibration problems, was substantially more accurate during validation tests and can be shown to return the most accurate results possible within the assumptions of the model. It is particularly useful when some standard measurements are missing from data sets or when experimenters want the best possible results.</p>
+</sec>
+</abstract>
+<counts>
+<page-count count="28"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<title>Introduction</title>
+<p>Nearly every quantitative experiment requires calibration &#x2013; the mathematical conversion of raw measurements into physically meaningful values. For example, calibration of immunoblot (Western blot) data converts the intensities of protein bands that are detectable on a blot into the concentrations of proteins that were present in the original samples. Although many scientists take calibration for granted, we show here that conventional approaches are not particularly accurate, causing them to lose some of the information that is carried by valuable measurement data. We present a novel approach that exploits all available information in the data and returns the most accurate results possible within the constraints of a statistical model.</p>
+<p>The classical solution to the linear calibration problem [<xref rid="c1" ref-type="bibr">1</xref>-<xref rid="c4" ref-type="bibr">4</xref>] is a two step process: first, during the calibration step, measurements on known samples, &#x201C;standards,&#x201D; are used to deduce a conversion function. Then, during the prediction step, the conversion function is used to convert measurements on unknown samples to physical quantities.</p>
+<p>For example, suppose a chemist uses an instrument whose response is linear in the amount of protein, chemical, or other analyte in a sample. This means that an instrument measurement, <italic>y</italic>, is related to the amount of analyte, <italic>x</italic>, according to the response function
+<disp-formula id="eqn1">
+<alternatives>
+<graphic xlink:href="026005_eqn1.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>The <italic>&#x03B1;</italic> and <italic>&#x03B2;</italic> parameters are instrument-specific sensitivity coefficients and <italic>&#x03B5;</italic> represents random measurement noise. In the calibration step, the chemist estimates the <italic>&#x03B1;</italic> and <italic>&#x03B2;</italic> sensitivity coefficients, yielding <italic>a</italic> and <italic>b</italic> respectively, by measuring several standards with known compositions and fitting the resulting data with <xref ref-type="disp-formula" rid="eqn1">eq. 1</xref> using linear regression. Substituting the regression results into <xref ref-type="disp-formula" rid="eqn1">eq. 1</xref> and solving for <italic>x</italic> yields the conversion function
+<disp-formula id="eqn2">
+<alternatives>
+<graphic xlink:href="026005_eqn2.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>In the prediction step, the chemist measures samples of unknown composition on the same instrument and inserts the measurements into <xref ref-type="disp-formula" rid="eqn2">eq. 2</xref>. This yields the sample analyte amounts.</p>
+<p>In this example, note that errors in the standard measurements lead directly to errors in the sensitivity coefficient estimates. From there, they lead to errors in the computed analyte amounts. For this reason, it is good practice to measure standards repeatedly because this reduces the effects of their errors through averaging. If different standard concentrations are used, doing so also enables the experimenter to test the instrument (or method) response linearity (e.g. see ref. [<xref rid="c5" ref-type="bibr">5</xref>]). However, this approach is limited by the constraint that each standard measurement costs time and materials. Often standard measurements replace the opportunity to measure unknown samples; for example, protein electrophoresis gels have a fixed number of lanes, so lanes that are used for standards cannot be used for unknown samples. Additionally, even though it is best to measure standards repeatedly, this doesn&#x2019;t always happen in practice. Instead, for any of many possible reasons, data sets may contain valuable measurement data but insufficient standard measurements.</p>
+<p>Calibration often needs to be performed repeatedly. For example, many experimental methods analyze samples in groups in which the sensitivity is the same for all measurements within a group but different for measurements in different groups (e.g. immunoblots and ELISA assays). Multiple calibrations are also required when one has many instruments that have different sensitivities. Additionally, most instrument sensitivities &#x201C;drift&#x201D; over time, necessitating periodic re-calibration (e.g. spectrometers and chromatographs). For convenience, we call all of these situations &#x201C;batch-analyses,&#x201D; defining a batch as any collection of measurements for which the sensitivities can be considered to be constant. By implication, each batch requires its own calibration.</p>
+<p>We show here that calibrating each batch independently of the others, which is typical, is not the best approach, but that spreading sample replicates across different batches and then performing a simultaneous analysis of the data in all batches can substantially reduce the effects of measurement noise. In brief, our approach is to fit a statistical model to all of the data in a single step, finding both the instrument sensitivities and analyte amounts that best agree with all of the measurements. In other words, we cross-calibrate each batch against every other one. We call this the 1-step method, in contrast to the conventional 2-step method. The principle advantage of the 1-step method is that it makes calibration less sensitive to individual standard measurements. This often enables the use of batches that did not include any standards and it also enables the detection of errors in standard measurements. The results of the 1-step method are the maximum likelihood predictors, meaning that they are the results that are most probable within the assumptions of a statistical model.</p>
+<p>We developed the 1-step calibration method to analyze data that we recently collected on proteins in mouse skin tumors. Our goal was to compare the relative levels of each of 7 different proteins (CypA, Hsp90, Hsp70, Hsc70, P53, Raf, and pERK) in 230 precancerous and cancerous mouse skin tumors using quantitative immunoblotting methods [<xref rid="c6" ref-type="bibr">6</xref>-<xref rid="c10" ref-type="bibr">10</xref>]. In brief, tumor extracts (replicated, pre-mixed with denaturing SDS-sample buffer, and stored at -80 C in small aliquots to maintain their integrity) were run on polyacrylamide gels (SDS-PAGE) to separate proteins by size and charge, followed by their transfer to nitrocellulose membranes. To individually probe query proteins of different molecular weights, the membranes were cut into horizontal strips bracketing size ranges determined by visible molecular weight standards that were run with each gel. Each strip, usually containing just one, or at most two query proteins of close molecular weight, was probed with the appropriate primary antibody (Spratt et al., in preparation). This was followed by incubation with secondary antibodies linked to an infrared fluorophore using the LICOR fluorescent Western blot detection system [<xref rid="c11" ref-type="bibr">11</xref>,<xref rid="c12" ref-type="bibr">12</xref>]. This method assured that signal intensity was linear within a large dynamic range (e.g. see [<xref rid="c5" ref-type="bibr">5</xref>]).</p>
+<p>Calibrating these data was challenging for several reasons. First, immunoblotting is inherently imprecise. Indeed, all of the samples in our study, including those for standards, exhibited substantial measurement error (after calibration, our average CV was 37&#x0025;). For this reason, we analyzed each sample multiple times on different blots so that we could reduce the effects of measurement noise through averaging. In total, we analyzed 230 tumor extracts on 117 immunoblots, each of which held up to 20 lanes (1510 replicated samples total, average of 6 replicates/sample). Secondly, one cannot directly compare fluorescence measurements between different blots because each blot&#x2019;s sensitivity is strongly affected by minor experimental differences [<xref rid="c9" ref-type="bibr">9</xref>]. As a result, each blot needed to be treated as its own batch, with its own batch-specific sensitivity (calibration showed that they varied 27-fold between least and most sensitive). Finally, we could not use internal standards in this investigation (see [<xref rid="c6" ref-type="bibr">6</xref>]), which in this case would be naturally expressed proteins that are expected to have nearly constant concentrations such as the products of housekeeping genes, because tumors are very heterogeneous. As a result, we had to use a separate external standard, which was then subject to independent measurement errors. We created our standard by pooling several samples together to produce a single sample that included all of our proteins of interest [<xref rid="c13" ref-type="bibr">13</xref>].</p>
+<p>Our 1-step calibration method is distinct from several other modifications to the classic calibration problem. Of particular note, Krutchkoff showed, nearly 50 years ago, that it can be better to fit the experimental results for the standard using the conversion function (<xref ref-type="disp-formula" rid="eqn2">eq. 2</xref>), rather than with the response function (<xref ref-type="disp-formula" rid="eqn1">eq. 1</xref>), which is called the inverse approach [<xref rid="c14" ref-type="bibr">14</xref>,<xref rid="c15" ref-type="bibr">15</xref>]. This led to an active debate about the relative merits of the two methods, along with the development of inverse regression methods [<xref rid="c2" ref-type="bibr">2</xref>,<xref rid="c4" ref-type="bibr">4</xref>,<xref rid="c16" ref-type="bibr">16</xref>]. From our reading of the literature, this debate appears to have largely ended by now, although without a clear winner. Other modifications to the classic calibration problem include Baysian [<xref rid="c17" ref-type="bibr">17</xref>] and non-parametric [<xref rid="c3" ref-type="bibr">3</xref>,<xref rid="c18" ref-type="bibr">18</xref>] methods. Bayesian methods are particularly helpful when the instrument is relatively insensitive to analyte variation (i.e. <italic>&#x03B2;</italic> is small) and the non-parametric methods when the measurement errors are substantially non-normally distributed. Finally, bootstrapping methods [<xref rid="c19" ref-type="bibr">19</xref>,<xref rid="c20" ref-type="bibr">20</xref>] can provide more accurate confidence intervals for the results, particularly for multivariate problems. In contrast to these developments, our 1-step approach follows the style of the classic calibration approach. It keeps the linear statistical model and the least squares fitting approaches, but simply extends them to account optimally for multiple batches. Our method builds on other analysis methods that also accounted for variability between batches [<xref rid="c21" ref-type="bibr">21</xref>-<xref rid="c23" ref-type="bibr">23</xref>] but, to the best of our knowledge, has not been described before. However, it is sufficiently straightforward that we would be surprised if some version of it has not been used previously.</p>
+</sec>
+<sec id="s2">
+<title>Results</title>
+<sec id="s2a">
+<title>Definitions and model</title>
+<p>Extending the analytical chemistry example given above, consider the situation in which one is quantifying the amount of an analyte in each of many samples, where a sample is simply some quantity of material. Assume this work is performed in batches, where a batch is a collection of measurements for which the instrument (or experimental method) sensitivity can be assumed to be constant. Additionally, assume that one or more standards are included in the analysis, where the standards already have well characterized analyte amounts. If such a standard is not available, then one simply assigns the role of the standard to one of the unknown samples and measures the other analyte amounts relative to that one. Our case followed this situation reasonably closely: the different mouse tissue extracts were our samples, the measured protein species in these samples were our analytes, the immunoblot gels were our batches, and the pooled sample served as our standard. This situation generalizes to many other calibration problems, too.</p>
+<p>Assume that the following statistical model accurately represents the experimental data:
+<disp-formula id="eqn3">
+<alternatives>
+<graphic xlink:href="026005_eqn3.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>On the left side of the equation, each <italic>y</italic><sub><italic>ijk</italic></sub> value represents a single measurement, where <italic>i</italic> is the batch number, <italic>j</italic> is the sample number, and <italic>k</italic> distinguishes between multiple measurements of a particular sample that are within a single batch. Every measurement can be assigned a unique set of <italic>i</italic>, <italic>j</italic>, and <italic>k</italic> subscripts and so can be identified in this way. However, this does not necessarily imply that every sample was measured in every batch. To the contrary, most samples are likely to have been measured only a few times total in the entire experiment, making the <italic>y</italic><sub><italic>ijk</italic></sub> values a relatively sparse dataset (e.g. we had 230 total samples but only analyzed up to 20 at a time on any given immunoblot). On the right side of the equation, <italic>&#x03B1;</italic><sub><italic>i</italic></sub> and <italic>&#x03B2;</italic><sub><italic>i</italic></sub> are batch-specific sensitivity coefficients, <italic>x</italic><sub><italic>j</italic></sub> is the amount of analyte in sample <italic>j</italic>, and <italic>&#x03B5;</italic><sub><italic>ijk</italic></sub> is the measurement error that arose in the <italic>k</italic>&#x2019;th measurement of sample <italic>j</italic> in batch <italic>i</italic>. Assume that this error is normally distributed with mean of zero and standard deviation of <italic>&#x03C3;</italic>, and that it is independent between measurements. This statistical model is very simple and builds upon conventional assumptions (including, importantly, that measurements depend linearly upon analyte amounts). It was also appropriate for our work because our immunoblot detection was linear in antigen amounts [<xref rid="c12" ref-type="bibr">12</xref>] and our tests of measurement repeatability showed reasonably independent and normally distributed errors (we found that the distribution of squared differences between repeated measurements of the same samples on the same blots was reasonably exponential, as one would anticipate for normally distributed errors). <xref ref-type="table" rid="tbl1">Table 1</xref> summarizes the nomenclature introduced here.</p>
+<table-wrap id="tbl1" orientation="portrait" position="float">
+<label>Table 1.</label>
+<caption><title>Data analysis nomenclature.</title></caption>
+<graphic xlink:href="026005_tbl1.tif"/>
+</table-wrap>
+<p>The primary data analysis goal, typically, is to estimate the analyte amounts, <italic>x</italic><sub><italic>j</italic></sub>, and their confidence intervals. Below, we also solve for the sensitivity coefficients, <italic>a</italic><sub><italic>i</italic></sub> and <italic>b</italic><sub><italic>i</italic></sub>, which can enable one to calibrate any new measurements that were not included in the original data. We also find the measurement standard deviation, <italic>&#x03C3;</italic>, which can be helpful for improving the measurement technique and for identifying any outlier data points.</p>
+</sec>
+<sec id="s2b">
+<title>The 2-step method</title>
+<p>We present the conventional 2-step calibration method, focusing on its application to samples that are measured in batches, to introduce our mathematical notation in a setting that may be familiar and to show some aspects of the method that are widely overlooked. The left side of <xref ref-type="fig" rid="fig1">Figure 1</xref> illustrates the 2-step method.</p>
+<fig id="fig1" position="float" fig-type="figure">
+<label>Figure 1.</label>
+<caption><title>Comparison of workflow for 2-step and 1-step calibration methods, illustrated for calibrating band intensities on immunoblots.</title>
+<p>A. Illustration of samples 1 (the standard) through 7, run on 5 different immunoblots with variable replication. The band intensities shown depend on the sample, blot, and experimental noise. B. Tabulated data showing assigned band intensities for each sample and blot. C. Direct comparison of the conventional 2-step calibration method (left) with the 1-step calibration method (right). D. Plots of the calibrated estimates of analyte amounts in each sample using the different methods. Error bars represent the standard error of the mean and numbers above the bars represent the number of calibrated measurements of each sample.</p></caption>
+<graphic xlink:href="026005_fig1.tif"/>
+</fig>
+<sec id="s2b1">
+<title>Tabulate data</title>
+<p>The measurements need to be tabulated, putting each sample in a separate column and each batch in a separate row. Each table site has as many entries as there are measurements for that specific sample and batch, which may be zero, one, or more than one.</p>
+</sec>
+<sec id="s2b2">
+<title>Remove batches with insufficient standards</title>
+<p>To enable calibration, each batch needs to include at least as many different standard measurements as there are unknown sensitivity coefficients (because of the linear algebra result that one needs at least <italic>n</italic> equations to solve for <italic>n</italic> unknowns). The statistical model (<xref ref-type="disp-formula" rid="eqn3">eq. 3</xref>) includes two sensitivity coefficients, <italic>&#x03B1;</italic><sub><italic>i</italic></sub> and <italic>&#x03B2;</italic><sub><italic>i</italic></sub>, so each batch generally needs to include at least two different standard measurements. On the other hand, if one assumes that measurements do not have a consistent offset, meaning that all of the <italic>&#x03B1;</italic><sub><italic>i</italic></sub> values are assumed to equal zero, then each batch only needs one standard measurement. <xref ref-type="fig" rid="fig1">Figure 1</xref> illustrates this latter situation. Our work also fit this latter situation because we corrected for background fluorescence before starting our data calibration. Any batches that do not include as many standard measurements as unknown sensitivity coefficients need to be removed from the data analysis. In the process, any samples that were only measured in these batches get removed too.</p>
+<p>Next, it is helpful to define several variables. Define <italic>N</italic><sub><italic>B</italic></sub> as the number of batches (number of rows), <italic>N</italic><sub><italic>S</italic></sub> as the number of samples (number of columns), and <italic>n</italic><sub><italic>ij</italic></sub> as the number of measurements of sample <italic>j</italic> in batch <italic>i</italic> (number of entries at site <italic>i,j</italic>).</p>
+<p>Generalizing this last definition, <italic>n</italic><sub><italic>All,j</italic></sub> is the total number of measurements of sample <italic>j</italic> (the number of entries in column <italic>j</italic>), <italic>n</italic><sub><italic>i,All</italic></sub> is the total number of measurements in batch <italic>i</italic> (the number of entries in row <italic>i</italic>), and <italic>n</italic><sub><italic>All,All</italic></sub> is the total number of measurements (the number of entries in the table). Also, define <italic>T</italic> as the list of standards; for example, there is one standard in <xref ref-type="fig" rid="fig1">Figure 1</xref>, which is sample number 1, so <italic>T</italic> = {1} in that case. Finally, <italic>n</italic><sub><italic>i,T</italic></sub> is the number of standard measurements in batch <italic>i</italic>.</p>
+</sec>
+<sec id="s2b3">
+<title>Fit sensitivity coefficients</title>
+<p>As the first step of the 2-step method (the calibration stage), a line is fit to the standard data in each batch using least-squares methods. This provides best-fit <italic>a</italic><sub><italic>i</italic></sub> and <italic>b</italic><sub><italic>i</italic></sub> values as estimates for the &#x201C;true&#x201D; <italic>&#x03B1;</italic><sub><italic>i</italic></sub> and <italic>&#x03B2;</italic><sub><italic>i</italic></sub> sensitivity coefficients. If the <italic>&#x03B1;</italic><sub><italic>i</italic></sub> sensitivities are not assumed to equal zero, then the <italic>a</italic><sub><italic>i</italic></sub> and <italic>b</italic><sub><italic>i</italic></sub> values are found using the standard results for simple linear regression [<xref rid="c24" ref-type="bibr">24</xref>],
+<disp-formula id="eqn4">
+<alternatives>
+<graphic xlink:href="026005_eqn4.gif"/>
+</alternatives>
+</disp-formula>
+<disp-formula id="eqn5">
+<alternatives>
+<graphic xlink:href="026005_eqn5.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>Angle brackets indicate averaging over the indices that are listed in their subscripts. In this case, the average is over all standards that were measured in any particular batch. For example,
+<disp-formula id="eqn6">
+<alternatives>
+<graphic xlink:href="026005_eqn6.gif"/>
+</alternatives>
+</disp-formula>
+<disp-formula id="eqn7">
+<alternatives>
+<graphic xlink:href="026005_eqn7.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>If the <italic>&#x03B1;</italic><sub><italic>i</italic></sub> sensitivities are assumed to equal zero, then all of the <italic>a</italic><sub><italic>i</italic></sub> values clearly equal zero and the <italic>b</italic><sub><italic>i</italic></sub> values simplify to
+<disp-formula id="eqn8">
+<alternatives>
+<graphic xlink:href="026005_eqn8.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>Note that an intuitively sensible, but incorrect, approach would be to compute the <italic>b</italic><sub><italic>i</italic></sub> values in the latter case by simply solving <italic>y</italic><sub><italic>ijk</italic></sub> &#x2248; <italic>b</italic><sub><italic>i</italic></sub><italic>x</italic><sub><italic>j</italic></sub> for <italic>b</italic><sub><italic>i</italic></sub> to give <italic>b</italic><sub><italic>i</italic></sub> &#x2248; <italic>y</italic><sub><italic>ijk</italic></sub>/<italic>x</italic><sub><italic>j</italic></sub> and then averaging these values to give <italic>b</italic><sub><italic>i</italic></sub> = &#x003C;<italic>y</italic><sub><italic>ijk</italic></sub>/<italic>x</italic><sub><italic>j</italic></sub>&#x003E;<sub><italic>T,k</italic></sub>. <xref ref-type="disp-formula" rid="eqn8">Eq. 8</xref> is different in that it weights each term in this average by<inline-formula><alternatives><inline-graphic xlink:href="026005_inline1.gif"/></alternatives></inline-formula>. Doing so correctly emphasizes those data points that are likely to have larger measurement values and hence lower relative errors (see the derivations in the appendix).</p>
+<sec id="s2b3a">
+<title>Compute analyte amounts</title>
+<p>In the second step of the 2-step method (the prediction stage), the amount of analyte in each unknown sample is computed by inverting the statistical model equation (<xref ref-type="disp-formula" rid="eqn3">eq. 3</xref>), while using the <italic>a</italic><sub><italic>i</italic></sub> and <italic>b</italic><sub><italic>i</italic></sub> estimates for <italic>&#x03B1;</italic><sub><italic>i</italic></sub> and <italic>&#x03B2;</italic><sub><italic>i</italic></sub>. Then, averaging results over all analyses of each sample yields the following estimate for the sample&#x2019;s analyte amount:
+<disp-formula id="eqn9">
+<alternatives>
+<graphic xlink:href="026005_eqn9.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>As in <xref ref-type="disp-formula" rid="eqn8">eq. 8</xref>, this solution is weighted to emphasize the data points that have larger measurement values and hence lower relative errors. In contrast, the intuitively sensible but incorrect approach gives the average as <italic>x</italic><sub><italic>j</italic></sub> = &#x003C;(<italic>y</italic><sub><italic>ijk</italic></sub>&#x2013;<italic>a</italic><sub><italic>i</italic></sub>)/<italic>b</italic><sub><italic>i</italic></sub>&#x003E;<sub><italic>ik</italic></sub>, but this over-emphasizes data points that are likely to have large errors and under-emphasizes those that are likely to have small errors.</p>
+</sec>
+</sec>
+<sec id="s2b4">
+<title>(4) Compute standard deviations and standard errors</title>
+<p>Our statistical model assumes that measurements have normally distributed errors. To estimate the standard deviation of those errors, we compute the root mean square (rms) average deviation of the actual measurements, <italic>y</italic><sub><italic>ijk</italic></sub>, away from where we would have expected them, <italic>a</italic><sub><italic>i</italic></sub>&#x002B;<italic>b</italic><sub><italic>i</italic></sub><italic>x</italic><sub><italic>j</italic></sub>,
+<disp-formula id="eqn10">
+<alternatives>
+<graphic xlink:href="026005_eqn10.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>The denominator represents the number of degrees of freedom, which is one for each of the <italic>n</italic><sub><italic>All,All</italic></sub> data points, minus the number of fit coefficients. There are 2<italic>N</italic><sub><italic>B</italic></sub>&#x002B;<italic>N</italic><sub><italic>S</italic></sub> fit coefficients if the <italic>&#x03B1;</italic><sub><italic>i</italic></sub> values are not assumed to equal zero (for the <italic>a</italic><sub><italic>i</italic></sub>, <italic>b</italic><sub><italic>i</italic></sub>, and <italic>x</italic><sub><italic>j</italic></sub> values), as shown in <xref ref-type="disp-formula" rid="eqn10">eq. 10</xref>, and <italic>N</italic><sub><italic>B</italic></sub>&#x002B;<italic>N</italic><sub><italic>S</italic></sub> if the <italic>&#x03B1;</italic><sub><italic>i</italic></sub> values are assumed to equal 0. Because we assumed Gaussian distributed noise, about 68&#x0025; of the measurements should be within one standard deviation of their expected values and about 95&#x0025; within two standard deviations. Measurements that are many standard deviations away from their expected values are outliers, which may warrant further inspection and possible removal.</p>
+<p>Importantly though, if the minimum number of standards were measured in each batch, which is typical, then it is impossible to determine if any of them are outliers because the sensitivity parameters were computed directly from their measurements.</p>
+<p>Separate standard deviations represent the variability in the different analyte amount estimates, which came from <xref ref-type="disp-formula" rid="eqn9">eq. 9</xref>. These estimates are weighted means, so their variabilities are computed as weighted standard deviations, for which the general equation is [<xref rid="c25" ref-type="bibr">25</xref>]
+<disp-formula id="eqn11">
+<alternatives>
+<graphic xlink:href="026005_eqn11.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>Here, <italic>z</italic><sub><italic>i</italic></sub> represent the data, <italic>w</italic><sub><italic>i</italic></sub> represent the weights, <italic>z</italic> is the sample mean, <italic>n</italic> is the number of data points, and <italic>d</italic> is the number of degrees of freedom. Applying this to the sample analyte amounts and simplifying gives
+<disp-formula id="eqn12">
+<alternatives>
+<graphic xlink:href="026005_eqn12.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>The number of degrees of freedom is <italic>n</italic><sub><italic>All,j</italic></sub>-1 because there are <italic>n</italic><sub><italic>All,j</italic></sub> terms in the sum but the <italic>x</italic><sub><italic>j</italic></sub> value was constrained through <xref ref-type="disp-formula" rid="eqn9">eq. 9</xref>.</p>
+<p>The standard errors of the means reflect the accuracy with which the <italic>x</italic><sub><italic>j</italic></sub> values are likely to represent the true analyte amounts. As usual, they are computed by dividing the standard deviations by the square root of the number of measurements being considered [<xref rid="c25" ref-type="bibr">25</xref>]. However, doing so yields a lower bound for the standard error because the standard deviations were computed while assuming that the <italic>a</italic><sub><italic>i</italic></sub> and <italic>b</italic><sub><italic>i</italic></sub> values equaled their true values and that the <italic>x</italic><sub><italic>j</italic></sub> value was the only one that needed to be fit to the data. However, all three of these are estimates, which increases the uncertainty for the analyte amounts. Thus, the standard errors are
+<disp-formula id="eqn13">
+<alternatives>
+<graphic xlink:href="026005_eqn13.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>The interpretation is that the difference between each computed <italic>x</italic><sub><italic>j</italic></sub> value and the true analyte amount for the sample is likely to be a Gaussian distributed random variable with standard deviation equal to <italic>SE</italic><sub><italic>j</italic></sub>. This result does not apply to the standards because their analyte amounts are assumed to be known.</p>
+</sec>
+</sec>
+</sec>
+<sec id="s2c">
+<title>1-step method</title>
+<p>The 1-step method parallels the 2-step method very closely.</p>
+<list list-type="order">
+<list-item><p><italic>Tabulate data.</italic> The 1-step method uses the same data table as the 2-step method.</p></list-item>
+<list-item><p><italic>Remove orphan measurements.</italic> The 1-step method relies on standards less than the 2-step method does, but still requires that each measurement can be related to the standard measurements in some way. More precisely, each batch needs at least as many independent &#x201C;connections&#x201D; to standard measurements as there are sensitivity coefficients; a batch is connected to a standard if (<italic>i</italic>) it includes a measurement of that standard or (<italic>ii</italic>) it shares a sample with some other batch that is connected to that standard. We call measurements that cannot be connected to enough standard measurements orphans. These orphan measurements need to be removed from the data analysis, along with the samples and batches to which they belong. The 1-step method uses the same definitions for the <italic>N</italic><sub><italic>B</italic></sub>, <italic>N</italic><sub><italic>S</italic></sub>, <italic>n</italic><sub><italic>i,j</italic></sub>, <italic>T</italic>, and other variables as the 2-step method.</p></list-item>
+<list-item><p><italic>Iteratively fit sensitivities and analyte amounts.</italic> The single step of the 1-step method is to simultaneously fit the <italic>a</italic><sub><italic>i</italic></sub>, <italic>b</italic><sub><italic>i</italic></sub>, and <italic>x</italic><sub><italic>j</italic></sub> values to the data while assuming the statistical model given in <xref ref-type="disp-formula" rid="eqn3">eq. 3</xref>. This can be accomplished in many ways, including with deterministic and stochastic minimization algorithms [<xref rid="c24" ref-type="bibr">24</xref>]. However, we found that computing the sensitivities and analyte amounts iteratively, using equations derived in the appendix, was particularly simple and efficient. In this method, one first guesses all of the sensitivities. An adequate approach is simply to set all of them to 1 initially, but we found that results converged faster when we guessed as many as possible using <xref ref-type="disp-formula" rid="eqn4">eqs. 4</xref>, <xref ref-type="disp-formula" rid="eqn5">5</xref>, and <xref ref-type="disp-formula" rid="eqn8">8</xref> from the 2-step method and then set the rest to their means. Next, the unknown analyte amounts are computed from
+<disp-formula id="eqn14">
+<alternatives>
+<graphic xlink:href="026005_eqn14.gif"/>
+</alternatives>
+</disp-formula>
+which is identical to <xref ref-type="disp-formula" rid="eqn9">eq. 9</xref>. Then, the sensitivities are computed from
+<disp-formula id="eqn15">
+<alternatives>
+<graphic xlink:href="026005_eqn15.gif"/>
+</alternatives>
+</disp-formula>
+<disp-formula id="eqn16">
+<alternatives>
+<graphic xlink:href="026005_eqn16.gif"/>
+</alternatives>
+</disp-formula>
+if the <italic>&#x03B1;</italic><sub><italic>i</italic></sub> values are not assumed to equal zero, and
+<disp-formula id="eqn17">
+<alternatives>
+<graphic xlink:href="026005_eqn17.gif"/>
+</alternatives>
+</disp-formula>
+if they are. These equations only differ from <xref ref-type="disp-formula" rid="eqn4">eqs. 4</xref>, <xref ref-type="disp-formula" rid="eqn5">5</xref>, and <xref ref-type="disp-formula" rid="eqn8">8</xref> in that they include averages over all measurements in a batch rather than just the standard measurements. Iterating over <xref ref-type="disp-formula" rid="eqn14">eqs. 14</xref> to <xref ref-type="disp-formula" rid="eqn17">17</xref> leads to the best-fit values for the analyte amounts and sensitivities. We continued until all sensitivity parameter and analyte amount estimates changed by less than 1 part in 10<sup>5</sup> between subsequent iterations, which never took more than a few hundred iterations (340 for our immunoblot data and about 70 for most of the validation tests described below).</p></list-item>
+<list-item><p><italic>Compute standard deviations and standard errors.</italic> The standard deviation and standard error equations that are presented above in <xref ref-type="disp-formula" rid="eqn10">eqs. 10</xref> to <xref ref-type="disp-formula" rid="eqn13">13</xref> apply here as well. However, the standard deviation <italic>can</italic> be used to identify outlier standard measurements in this case, even if relatively few standard measurements were made, because these sensitivity parameters were computed from all of the measurements instead of just the standard measurements.</p></list-item>
+</list>
+</sec>
+<sec id="s2d">
+<title>Validation</title>
+<p>We validated our method by analyzing 1000 artificially generated data sets and comparing the fit results with the true parameters from which the data sets were generated. Each data set comprised 20 samples that had random analyte amounts, 20 batches that had random <italic>&#x03B1;</italic> and <italic>&#x03B2;</italic> sensitivity values, and 400 measurements that were randomly distributed in the data table. The first two samples were assigned to be standards, with fixed analyte amounts. We analyzed each data set with both the 1-step and 2-step methods. <xref ref-type="fig" rid="fig2">Figure 2A-D</xref> shows results from one of these data sets. It shows that both analysis methods were able to recover the true parameters from the data reasonably well, but the 1-step method generally led to smaller errors. There were enough standard measurements in this data set that all analyte amounts could be estimated using both methods. However, only 8 of the batch sensitivities could be estimated using the 2-step method because the others had insufficient standards and so were removed from the analysis (note the relatively few gray data points in panels C and D).</p>
+<fig id="fig2" position="float" fig-type="figure">
+<label>Figure 2.</label>
+<caption><title>Comparison of the 1-step and 2-step methods using artificial data sets.</title>
+<p>A. Sample analyte amounts for an artificial data set; see the main text for details. Here and in subsequent panels, black features represent the true analyte amounts, gray features represent results from the 2-step method, and red features represent results from the 1-step method. Error bars represent standard errors. (B-D) Comparison of computed sample analyte amounts, <italic>a</italic> sensitivity coefficients, and <italic>b</italic> sensitivity coefficients with their true values for the same artificial data set. (E-G) Histograms of errors between fit values and true values for computed sample analyte amounts, <italic>a</italic> sensitivity coefficients, and <italic>b</italic> sensitivity coefficients for 1000 artificial data sets. In all cases, the 1-step method yields more accurate data calibration. Data sets were generated with: 20 batches with Gaussian distributed <italic>&#x03B1;</italic> values with mean of 100 and standard deviation of 30, 20 samples with Gaussian distributed <italic>x</italic> and <italic>&#x03B2;</italic> values with mean of 10 and standard deviation of 3, 400 measurements distributed randomly in the data table with <italic>&#x03C3;</italic> set equal to 20, and standard analyte amounts set to 5 and 15.</p></caption>
+<graphic xlink:href="026005_fig2.tif"/>
+</fig>
+<p>We observed essentially the same results for the other artificial data sets as well. <xref ref-type="fig" rid="fig2">Figure 2E</xref> shows that the 1-step method overestimated analyte amounts by 0.2&#x0025; on average, whereas the 2-step method underestimated them by 2.6&#x0025; on average. Further tests showed that these deviations arose from the choices of standards, becoming larger when the standard analyte amounts differed more from typical sample analyte amounts. However, the 1-step method always had much smaller deviations. <xref ref-type="fig" rid="fig2">Figure 2E</xref> also shows that the 1-step method generally computed individual analyte amounts that were closer to the true values: the root mean square (rms) error for the analyte amounts was 8&#x0025; for the 1-step method and 13&#x0025; for the 2-step method. Similarly, <xref ref-type="fig" rid="fig2">Figure 2F-G</xref> show that the 1-step method computed sensitivity parameters that were closer to their true values: rms errors were 18&#x0025; and 27&#x0025; for the <italic>a</italic> sensitivity parameter and 17&#x0025; and 25&#x0025; for the <italic>b</italic> sensitivity parameter, for the two methods respectively (this comparison only includes parameters that both methods computed successfully, to make them comparable).</p>
+<p>Analysis of the results showed that these improvements arose from two factors. First, the 1-step method included more data points in the calibration due to its decreased dependence on standards (out of the 1000 data sets, none of the batches needed to be removed from the analysis in the 1-step method but 60&#x0025; of them needed to be removed for the 2-step method). As a result, the 1-step method was able to include more measurements in its averages and hence reduce the effects of measurement noise. Secondly, the 1-step computed the sensitivity parameters more accurately, even when there were sufficient standards for both methods. To investigate this latter point further, we repeated the validation procedure but altered it so that every batch included every standard. As a result, no measurements needed to be removed during either analysis. In this case, rms errors for the analyte amounts were 14&#x0025; and 16&#x0025; for the 1-step and 2-step methods, respectively, again showing smaller errors for the 1-step method.</p>
+<p>We also compared the computed standard deviations and standard errors against the true ones as a way of validating <xref ref-type="disp-formula" rid="eqn9">eqs. 9</xref> and <xref ref-type="disp-formula" rid="eqn13">13</xref>. We found good agreement. The 1-step and 2-step methods estimated the measurement standard deviation to be 17 and 21 units, respectively, while the true value was 20 units. Also, the average 1-step and 2-step standard error estimates were 76&#x0025; and 71&#x0025; of the actual deviations between the computed and true analyte amounts. These show reasonable agreement and are consistent with the inequality in <xref ref-type="disp-formula" rid="eqn13">eq. 13</xref>.</p>
+</sec>
+<sec id="s2e">
+<title>Protein immunoblot data</title>
+<p>We analyzed our experimental immunoblot data using both methods, of which a small portion of the results are shown in <xref ref-type="fig" rid="fig3">Figure 3</xref>. These data are scaled so that the standard (not shown in the figure) has an analyte amount of 1. As part of the analysis, we automatically removed all measurement results that were 4 or more standard deviations away from their expected values, which we deemed to be outliers, and then re-calibrated the remaining data until there were no more outliers. This process showed that about 1&#x0025; of our measurement results were outliers (for comparison, 0.003&#x0025; would be expected to be more than 4 standard deviations away from the mean if errors were distributed perfectly normally). After all outliers were removed, the 1-step method enabled us to use all of our measurements in the final analysis, whereas we would have needed to remove about 35&#x0025; of them with the 2-step method.</p>
+<fig id="fig3" position="float" fig-type="figure">
+<label>Figure 3.</label>
+<caption><title>Calibrated experimental immunoblot data.</title>
+<p>This figure shows calibrated analyte amounts for 40 of our 230 samples that we analyzed with immunoblots. The others were qualitatively similar. Gray bars represent results from the 2-step method, red bars represent results from the 1-step method, and error bars represent standard error values. On average, there were 3.4 calibrated measurements for each sample with the 2-step method and 4.9 for the 1-step method. Note that the 1-step method results have smaller standard errors.</p></caption>
+<graphic xlink:href="026005_fig3.tif"/>
+</fig>
+<p>Differences between the two methods were more striking with the real data than with the artificial data that we used for validation. Here, the two methods often returned substantially different analyte amount estimates. Also, the 1-step method typically returned substantially smaller standard errors for the analyte amount estimates, with a mean standard error of 20&#x0025; as compared to 31&#x0025; for the 2-step method. We are using the 1-step method results for further investigation of these data.</p>
+</sec>
+<sec id="s3">
+<title>Discussion</title>
+<p>We have described a method for calibrating data to external standards. The conventional approach to calibrating measurement data, which we call the 2-step method, is justifiably nearly ubiquitous. It is simple, intuitive, and convenient. As a result, it can be performed by hand or with spreadsheet software. Also, if there is only a single batch of data, then it is the optimal approach, returning the maximum likelihood predictors for the analyte amounts (assuming that the statistical model is correct and that the measurements are weighted properly when averaging, as shown above). However, it does not return the best possible results if there are multiple batches because it ignores information from samples that were measured in multiple batches. This makes it particularly sensitive to errors in the standard measurements, and also completely reliant on there being sufficient standards in every batch. On the other hand, our novel 1-step method uses information from samples that were measured in multiple batches. This decreases its reliance on standard samples and enables it to return more accurate results, which are the maximum likelihood predictors, now for the complete data set.</p>
+<p>A drawback of the 1-step method is that it requires an iterative computation, making it impractical to perform by hand or in a simple spreadsheet. Nevertheless, this computation is not particularly demanding. Calibrating our immunoblot data set, which comprises 5966 measurements and requires 340 iterations, takes just over 1 minute on a 2013 MacBook laptop computer. From inspection of <xref ref-type="disp-formula" rid="eqn14">eqs. 14</xref> to <xref ref-type="disp-formula" rid="eqn17">17</xref>, the computational demands scale approximately linearly with the number of measurements, implying that much larger data sets can be calibrated reasonably efficiently as well. A second drawback of the method is that it assumes that instrument or method responses increase linearly with analyte amounts (see <xref ref-type="disp-formula" rid="eqn3">eq. 3</xref>), which is often not the case. However, it is relatively straightforward to modify the 1-step method as it is presented here to specific non-linear relationships by repeating the derivations presented in the appendix, but for the desired relationship.</p>
+<p>An obvious question arises of how to best design experiments so that they yield the most accurate results, while calibrating the data with the 1-step method. Although addressing it was beyond the scope of our work, some aspects are reasonably obvious.</p>
+<p>First, we anticipate that it is best to measure standards in as many of the batches as possible because that minimizes the number of steps that need to be taken to connect unknown sample measurements with standard measurements. Also, we suspect that it is better to spread replicates of sample measurements out over multiple batches, rather than to perform them all within a single batch, because that improves the ability to cross-calibrate the different batches.</p>
+<p>Our software for calibrating data using both the 1-step and 2-step methods is written in Python, is open source, and is in the public domain (i.e. we do not reserve any intellectual property rights). It is available at <ext-link ext-link-type="uri" xlink:href="http://www.smoldyn.org/calibration.html">http://www.smoldyn.org/calibration.html</ext-link>. It can also be used at the same website as an online calibration service.</p>
+</sec>
+</body>
+<back>
+<app-group>
+<app id="app">
+<title>Appendix</title>
+<p>This appendix derives most of the equations presented above. It is shown at a relatively elementary level to make it widely accessible, so statistics textbooks (e.g. ref. [<xref rid="c25" ref-type="bibr">25</xref>]) should be consulted for more rigorous treatments.</p>
+<p>From <xref ref-type="disp-formula" rid="eqn3">eq. 3</xref>, we assume the statistical model
+<disp-formula id="eqnA1">
+<alternatives>
+<graphic xlink:href="026005_eqnA1.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>We rearrange the equation and divide both sides by <italic>&#x03C3;</italic>, the measurement error standard deviation, to yield the scaled measurement errors,
+<disp-formula id="eqnA2">
+<alternatives>
+<graphic xlink:href="026005_eqnA2.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>Because we assumed that the measurement noise is Gaussian distributed and independent between data points, the <inline-formula><alternatives><inline-graphic xlink:href="026005_inline2.gif"/></alternatives></inline-formula> values are independent normally distributed random variables with zero mean and unit standard deviation. We square both sides of this equation and sum over all data points to yield
+<disp-formula id="eqnA3">
+<alternatives>
+<graphic xlink:href="026005_eqnA3.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>The left side is a sum of squared independent normally distributed random variables, which means that it is itself a random variable and it obeys the chi-squared distribution.</p>
+<p>Looking back at <xref ref-type="disp-formula" rid="eqnA1">eq. A.1</xref>, if we knew the exact values of each <italic>&#x03B1;</italic><sub><italic>i</italic></sub>, <italic>&#x03B2;</italic><sub><italic>i</italic></sub>, and <italic>x</italic><sub><italic>j</italic></sub> but not the <italic>y</italic><sub><italic>ijk</italic></sub> values, then the assumption that the error is normally distributed with a mean value of zero would imply that the most likely value for <italic>y</italic><sub><italic>ijk</italic></sub> is the one that arises if the error equals zero. However, we actually know the <italic>y</italic><sub><italic>ijk</italic></sub> values but not the <italic>&#x03B1;</italic><sub><italic>i</italic></sub>, <italic>&#x03B2;</italic><sub><italic>i</italic></sub>, or <italic>x</italic><sub><italic>j</italic></sub> values. So, we rearrange the prior statement to claim that the most likely values of <italic>&#x03B1;</italic><sub><italic>i</italic></sub>, <italic>&#x03B2;</italic><sub><italic>i</italic></sub>, and <italic>x</italic><sub><italic>j</italic></sub>, given the known <italic>y</italic><sub><italic>ijk</italic></sub> values, are those that minimize the computed errors (<xref ref-type="disp-formula" rid="eqnA2">eq. A</xref>.2). This rearrangement is not completely legitimate but is the central ansatz of maximum likelihood estimation and is partially justified by Bayesian analysis [<xref rid="c24" ref-type="bibr">24</xref>]. Without going further into the details, we perform maximum likelihood estimation by replacing the true sensitivity coefficients, <italic>&#x03B1;</italic><sub><italic>i</italic></sub> and <italic>&#x03B2;</italic><sub><italic>i</italic></sub>, in <xref ref-type="disp-formula" rid="eqnA4">eq. A.3</xref> with the unknown <italic>a</italic><sub><italic>i</italic></sub> and <italic>b</italic><sub><italic>i</italic></sub> estimated sensitivity coefficients to yield the following &#x201C;goodness-of-fit&#x201D; function,
+<disp-formula id="eqnA4">
+<alternatives>
+<graphic xlink:href="026005_eqnA4.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>We then minimize this function with respect to each <italic>a</italic><sub><italic>i</italic></sub>, <italic>b</italic><sub><italic>i</italic></sub>, and unknown <italic>x</italic><sub><italic>j</italic></sub> parameter to find their most likely values. The parameter values that minimize the <italic>&#x03C7;</italic>2 function are called the maximum likelihood predictors because they are the most probable values, within the assumptions of the model.</p>
+<p>We find the minimum of <italic>&#x03C7;</italic>2 with respect to <italic>x</italic><sub><italic>j&#x2032;</italic></sub>, where <italic>j&#x2032;</italic> is the index of a specific unknown sample, by differentiating <italic>&#x03C7;</italic>2 with respect to <italic>x</italic><sub><italic>j&#x2032;</italic></sub> and setting the result to zero:
+<disp-formula id="ueqn1">
+<alternatives>
+<graphic xlink:href="026005_ueqn1.gif"/>
+</alternatives>
+</disp-formula>
+<disp-formula id="eqnA5">
+<alternatives>
+<graphic xlink:href="026005_eqnA5.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>Setting the result to zero, renaming <italic>j&#x2032;</italic> to <italic>j</italic>, and simplifying yields
+<disp-formula id="eqnA6">
+<alternatives>
+<graphic xlink:href="026005_eqnA6.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>This result represents one equation for each unknown sample. Minimizing <italic>&#x03C7;</italic>2 with respect to <italic>a</italic><sub><italic>i</italic></sub> and <italic>b</italic><sub><italic>i</italic></sub> are analogous, yielding
+<disp-formula id="eqnA7">
+<alternatives>
+<graphic xlink:href="026005_eqnA7.gif"/>
+</alternatives>
+</disp-formula>
+<disp-formula id="eqnA8">
+<alternatives>
+<graphic xlink:href="026005_eqnA8.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>These results represent one pair of equations for each batch. In principle, equations A.6 to A.8 can be solved for the unknown <italic>a</italic><sub><italic>i</italic></sub>, and <italic>b</italic><sub><italic>i</italic></sub>, and <italic>x</italic><sub><italic>j</italic></sub> values. However, this appears to be analytically intractable so instead we rearrange them to yield
+<disp-formula id="eqnA9">
+<alternatives>
+<graphic xlink:href="026005_eqnA9.gif"/>
+</alternatives>
+</disp-formula>
+<disp-formula id="eqnA10">
+<alternatives>
+<graphic xlink:href="026005_eqnA10.gif"/>
+</alternatives>
+</disp-formula>
+<disp-formula id="eqnA11">
+<alternatives>
+<graphic xlink:href="026005_eqnA11.gif"/>
+</alternatives>
+</disp-formula>
+If it is assumed that the <italic>&#x03B1;</italic><sub><italic>i</italic></sub> values all equal zero, then the <italic>a</italic><sub><italic>i</italic></sub> values are set to zero and the solutions for <italic>x</italic><sub><italic>j</italic></sub> and <italic>b</italic><sub><italic>i</italic></sub> get simplified to
+<disp-formula id="eqnA12">
+<alternatives>
+<graphic xlink:href="026005_eqnA12.gif"/>
+</alternatives>
+</disp-formula>
+<disp-formula id="eqnA13">
+<alternatives>
+<graphic xlink:href="026005_eqnA13.gif"/>
+</alternatives>
+</disp-formula>
+These equations cannot be computed sequentially because each equation requires knowledge of the other results. Thus, the approach taken by the 2-step method is to limit the averages in <xref ref-type="disp-formula" rid="eqnA10">eqs. A.10</xref>, <xref ref-type="disp-formula" rid="eqnA11">A.11</xref>, and <xref ref-type="disp-formula" rid="eqnA13">A.13</xref> to just those samples which have known analyte amounts, which are the standards. After this, <xref ref-type="disp-formula" rid="eqnA9">eqs. A.9</xref> or <xref ref-type="disp-formula" rid="eqnA12">A.12</xref> can be computed without problems. Alternatively, the approach taken by the 1-step method is to compute the equations iteratively, which then yields the best-fit <italic>a</italic><sub><italic>i</italic></sub>, <italic>b</italic><sub><italic>i</italic></sub> and <italic>x</italic><sub><italic>j</italic></sub> values. To convince ourselves that the iterative method leads to the correct solutions, we also minimized <italic>&#x03C7;</italic>2 using Mathematica&#x2019;s &#x201C;NMinimize&#x201D; function for a series of validation data sets. In all cases, results were identical but the iterative approach was many-fold faster.</p>
+<p>To compute the measurement standard deviation, we start with the fact that the mean of a chi-squared distribution is equal to the number of random variables that are summed. In <xref ref-type="disp-formula" rid="eqnA5">eq. A.4</xref>, the <italic>&#x03C7;</italic>2 sum includes <italic>n</italic><sub><italic>All,All</italic></sub> terms, suggesting that this would be the mean of the distribution. However, we don&#x2019;t know the true <italic>&#x03B1;</italic><sub><italic>i</italic></sub>, <italic>&#x03B2;</italic><sub><italic>i</italic></sub>, or <italic>x</italic><sub><italic>j</italic></sub> values, but only those that we fit by minimizing <italic>&#x03C7;</italic>2, which reduces the mean by 2<italic>N</italic><sub><italic>B</italic></sub>&#x002B;<italic>N</italic><sub><italic>S</italic></sub> degrees of freedom. Using the assumption that any specific data set is likely to be reasonably typical, we equate <italic>&#x03C7;</italic>2 to <italic>n</italic><sub><italic>All,All</italic></sub>&#x2013;2<italic>N</italic><sub><italic>B</italic></sub>&#x2013;<italic>N</italic><sub><italic>S</italic></sub>, yielding
+<disp-formula id="eqnA12a">
+<alternatives>
+<graphic xlink:href="026005_eqnA12a.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>Solving for the measurement standard deviation then yields
+<disp-formula id="eqnA14">
+<alternatives>
+<graphic xlink:href="026005_eqnA14.gif"/>
+</alternatives>
+</disp-formula>
+Finally, we solve for the individual sensitivity coefficient and analyte standard deviations. Both are simply weighted averages, so we use the general equations for a weighted standard deviation (main text <xref ref-type="disp-formula" rid="eqn11">eq. 11</xref>) to yield the results
+<disp-formula id="eqnA15">
+<alternatives>
+<graphic xlink:href="026005_eqnA15.gif"/>
+</alternatives>
+</disp-formula>
+<disp-formula id="eqnA16">
+<alternatives>
+<graphic xlink:href="026005_eqnA16.gif"/>
+</alternatives>
+</disp-formula>
+<disp-formula id="eqnA17">
+<alternatives>
+<graphic xlink:href="026005_eqnA17.gif"/>
+</alternatives>
+</disp-formula>
+Dividing these results by the square root of the number of data points yields estimates for the standard errors.</p>
+</app>
+</app-group>
+<ack>
+<title>Acknowledgements</title>
+<p>We thank Roger Brent for valuable discussions and critical comments on a previous version of the manuscript, along with funding that he provided for SSA. We also thank Wenying Shou and Sam Oman for helpful discussions. We are grateful for funding from several sources: NIGMS grants R01GM086615, awarded to Roger Brent and Richard Yu, and R01GM097479, awarded to Roger Brent, funded SSA; also a Scholar Award of the Damon Runyon-Walter Winchell Foundation and NIGMS grant R01GM068873 funded SR.</p>
+</ack>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>1.</label><mixed-citation publication-type="journal"><string-name><surname>Eisenhart</surname> <given-names>C</given-names></string-name> (<year>1939</year>) <article-title>The interpretation of certain regression methods and their use in biological and industrial research</article-title>. <source>The Annals of Mathematical Statistics</source> <volume>10</volume>: <fpage>162</fpage>&#x2013;<lpage>186</lpage>.</mixed-citation></ref>
+<ref id="c2"><label>2.</label><mixed-citation publication-type="journal"><string-name><surname>Chang</surname> <given-names>GA</given-names></string-name>, <string-name><surname>Kerns</surname> <given-names>GJ</given-names></string-name>, <string-name><surname>Lee</surname> <given-names>DJ</given-names></string-name>, <string-name><surname>Stanek</surname> <given-names>GL</given-names></string-name> (<year>2009</year>) <article-title>Calibration experiments for a computer vision oyster volume estimation system</article-title>. <source>J Statistics Education 17.</source></mixed-citation></ref>
+<ref id="c3"><label>3.</label><mixed-citation publication-type="journal"><string-name><surname>Miller</surname> <given-names>JN</given-names></string-name> (<year>1991</year>) <article-title>Basic statistical methods for analytical chemistry. Part 2. Calibration and regression methods</article-title>. <source>A review. Analyst</source> <volume>116</volume>: <fpage>3</fpage>&#x2013;<lpage>14</lpage>.</mixed-citation></ref>
+<ref id="c4"><label>4.</label><mixed-citation publication-type="journal"><string-name><surname>Osborne</surname> <given-names>C</given-names></string-name> (<year>1991</year>) <article-title>Statistical calibration: A review</article-title>. <source>Int Statistical Review</source> <volume>59</volume>: <fpage>309</fpage>&#x2013;<lpage>336</lpage>.</mixed-citation></ref>
+<ref id="c5"><label>5.</label><mixed-citation publication-type="journal"><string-name><surname>Thomson</surname> <given-names>TM</given-names></string-name>, <string-name><surname>Benjamin</surname> <given-names>KR</given-names></string-name>, <string-name><surname>Bush</surname> <given-names>A</given-names></string-name>, <string-name><surname>Love</surname> <given-names>T</given-names></string-name>, <string-name><surname>Pincus</surname> <given-names>D</given-names></string-name>, <etal>et al.</etal> (<year>2011</year>) <article-title>Scaffold number in yeast signaling system sets tradeoff between system output and dynamic range</article-title>. <source>Proc Natl Acad Sci USA</source> <volume>108</volume>: <fpage>20265</fpage>&#x2013;<lpage>20270</lpage>.</mixed-citation></ref>
+<ref id="c6"><label>6.</label><mixed-citation publication-type="journal"><string-name><surname>Gallagher</surname> <given-names>S</given-names></string-name>, <string-name><surname>Winston</surname> <given-names>SE</given-names></string-name>, <string-name><surname>Fuller</surname> <given-names>SA</given-names></string-name>, <string-name><surname>Hurrell</surname> <given-names>JGR</given-names></string-name> (<year>2008</year>) <article-title>Immunoblotting and immunodetection</article-title>. <source>Curr Protoc Mol Biol</source> <volume>83</volume>: <fpage>10.18.11-10.18.28</fpage>.</mixed-citation></ref>
+<ref id="c7"><label>7.</label><mixed-citation publication-type="journal"><string-name><surname>Alegria-Schaffer</surname> <given-names>A</given-names></string-name>, <string-name><surname>Lodge</surname> <given-names>A</given-names></string-name>, <string-name><surname>Vattem</surname> <given-names>K</given-names></string-name> (<year>2009</year>) <article-title>Performing and optimizing Western blots with an emphasis on chemiluminescent detection</article-title>. <source>Methods in Enzymology</source> <volume>463</volume>: <fpage>573</fpage>&#x2013;<lpage>599</lpage>.</mixed-citation></ref>
+<ref id="c8"><label>8.</label><mixed-citation publication-type="journal"><string-name><surname>Charette</surname> <given-names>SJ</given-names></string-name>, <string-name><surname>Lambert</surname> <given-names>H</given-names></string-name>, <string-name><surname>Nadeau</surname> <given-names>PJ</given-names></string-name>, <string-name><surname>Landry</surname> <given-names>J</given-names></string-name> (<year>2010</year>) <article-title>Protein quantification by chemiluminescent Western blotting: Elimination of the antibody factor by dilution series and calibration curve</article-title>. <source>J Immunological Methods</source> <volume>353</volume>: <fpage>148</fpage>&#x2013;<lpage>150</lpage>.</mixed-citation></ref>
+<ref id="c9"><label>9.</label><mixed-citation publication-type="journal"><string-name><surname>Heidebrecht</surname> <given-names>F</given-names></string-name>, <string-name><surname>Heidebrecht</surname> <given-names>A</given-names></string-name>, <string-name><surname>Schulz</surname> <given-names>I</given-names></string-name>, <string-name><surname>Behrens</surname> <given-names>S-E</given-names></string-name>, <string-name><surname>Bader</surname> <given-names>A</given-names></string-name> (<year>2009</year>) <article-title>Improved semiquantitative Western blot technique with increased quantification range</article-title>. <source>J Immunological Methods</source> <volume>345</volume>: <fpage>40</fpage>&#x2013;<lpage>48</lpage>.</mixed-citation></ref>
+<ref id="c10"><label>10.</label><mixed-citation publication-type="journal"><string-name><surname>MacPhee</surname> <given-names>DJ</given-names></string-name> (<year>2010</year>) <article-title>Methodological considerations for improving Western blot analysis</article-title>. <source>J Pharmacological and Toxicological Methods</source> <volume>61</volume>: <fpage>171</fpage>&#x2013;<lpage>177</lpage>.</mixed-citation></ref>
+<ref id="c11"><label>11.</label><mixed-citation publication-type="journal"><string-name><surname>Gingrich</surname> <given-names>JC</given-names></string-name>, <string-name><surname>Davis</surname> <given-names>DR</given-names></string-name>, <string-name><surname>Nguyen</surname> <given-names>Q</given-names></string-name> (<year>2000</year>) <article-title>Multiplex detection and quantitation of proteins on Western blots using fluorescent probes</article-title>. <source>BioTechniques</source> <volume>29</volume>: <fpage>636</fpage>&#x2013;<lpage>642</lpage>.</mixed-citation></ref>
+<ref id="c12"><label>12.</label><mixed-citation publication-type="journal"><string-name><surname>Schutz-Geschwender</surname> <given-names>A</given-names></string-name>, <string-name><surname>Zhang</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Holt</surname> <given-names>T</given-names></string-name>, <string-name><surname>McDermitt</surname> <given-names>D</given-names></string-name>, <string-name><surname>Olive</surname> <given-names>DM</given-names></string-name> (<year>2004</year>) <article-title>Quantitative, two-color Western blot detection with infrared fluorescence</article-title>. <source>LI-COR Biosciences</source>: <fpage>1</fpage>&#x2013;<lpage>7</lpage>.</mixed-citation></ref>
+<ref id="c13"><label>13.</label><mixed-citation publication-type="journal"><string-name><surname>Alban</surname> <given-names>A</given-names></string-name>, <string-name><surname>David</surname> <given-names>SO</given-names></string-name>, <string-name><surname>Bjorkesten</surname> <given-names>L</given-names></string-name>, <string-name><surname>Andersson</surname> <given-names>C</given-names></string-name>, <string-name><surname>Sloge</surname> <given-names>E</given-names></string-name>, <etal>et al.</etal> (<year>2003</year>) <article-title>A novel experimental desing for comparative two-dimensional gel analysis: two-dimensional difference gel electrophoresis incorporating a pooled internal standard</article-title>. <source>Proteomics</source> <volume>3</volume>: <fpage>36</fpage>&#x2013;<lpage>44</lpage>.</mixed-citation></ref>
+<ref id="c14"><label>14.</label><mixed-citation publication-type="journal"><string-name><surname>Krutchkoff</surname> <given-names>RG</given-names></string-name> (<year>1967</year>) <article-title>Classical and inverse regression methods of calibration</article-title>. <source>Technometrics</source> <volume>9</volume>: <fpage>425</fpage>&#x2013;<lpage>439</lpage>.</mixed-citation></ref>
+<ref id="c15"><label>15.</label><mixed-citation publication-type="journal"><string-name><surname>Krutchkoff</surname> <given-names>RG</given-names></string-name> (<year>1969</year>) <article-title>Classical and inverse regression methods of calibration in experiments</article-title>. <source>Technometrics</source> <volume>11</volume>: <fpage>605</fpage>&#x2013;<lpage>608</lpage>.</mixed-citation></ref>
+<ref id="c16"><label>16.</label><mixed-citation publication-type="journal"><string-name><surname>Shukla</surname> <given-names>GK</given-names></string-name> (<year>1972</year>) <article-title>On the problem of calibration</article-title>. <source>Technometrics</source> <volume>14</volume>: <fpage>547</fpage>&#x2013;<lpage>553</lpage>.</mixed-citation></ref>
+<ref id="c17"><label>17.</label><mixed-citation publication-type="journal"><string-name><surname>Hoadley</surname> <given-names>B</given-names></string-name> (<year>1970</year>) <article-title>A Bayesian look at inverse regression methods</article-title>. <source>J Am Stat Assn</source> <volume>65</volume>: <fpage>356</fpage>&#x2013;<lpage>369</lpage>.</mixed-citation></ref>
+<ref id="c18"><label>18.</label><mixed-citation publication-type="journal"><string-name><surname>Thiel</surname> <given-names>H</given-names></string-name> (<year>1950</year>) <article-title>A rank-invariant method of linear and polynomial regression analysis (Part 3</article-title>). <source>Proceedings of Koninalijke Nederlandse Akademie van Weinenschatpen A</source> <volume>53</volume>: <fpage>1397</fpage>&#x2013;<lpage>1412</lpage>.</mixed-citation></ref>
+<ref id="c19"><label>19.</label><mixed-citation publication-type="journal"><string-name><surname>Bonate</surname> <given-names>PL</given-names></string-name> (<year>1993</year>) <article-title>Approximate confidence intervals in calibration using the bootstrap</article-title>. <source>Anal Chem</source> <volume>65</volume>: <fpage>1367</fpage>&#x2013;<lpage>1372</lpage>.</mixed-citation></ref>
+<ref id="c20"><label>20.</label><mixed-citation publication-type="journal"><string-name><surname>Jones</surname> <given-names>G</given-names></string-name>, <string-name><surname>Wortberg</surname> <given-names>M</given-names></string-name>, <string-name><surname>Kreissig</surname> <given-names>SB</given-names></string-name>, <string-name><surname>Hammock</surname> <given-names>BD</given-names></string-name>, <string-name><surname>Rocke</surname> <given-names>DM</given-names></string-name> (<year>1996</year>) <article-title>Application of the bootstrap to calibration experiments</article-title>. <source>Anal Chem</source> <volume>68</volume>: <fpage>763</fpage>&#x2013;<lpage>770</lpage>.</mixed-citation></ref>
+<ref id="c21"><label>21.</label><mixed-citation publication-type="journal"><string-name><surname>Ideker</surname> <given-names>T</given-names></string-name>, <string-name><surname>Thorsson</surname> <given-names>V</given-names></string-name>, <string-name><surname>Siegel</surname> <given-names>AF</given-names></string-name>, <string-name><surname>Hood</surname> <given-names>LE</given-names></string-name> (<year>2000</year>) <article-title>Testing for differentiallyexpressed genes by maximum-likelihood analysis of microarray data</article-title>. <source>J Comput Biol</source> <volume>7</volume>: <fpage>805</fpage>&#x2013;<lpage>817</lpage>.</mixed-citation></ref>
+<ref id="c22"><label>22.</label><mixed-citation publication-type="journal"><string-name><surname>Liao</surname> <given-names>JJZ</given-names></string-name> (<year>2005</year>) <article-title>A linear mixed-effects calibration in qualifying experiments</article-title>. <source>J Biopharmaceutical Statistics</source> <volume>15</volume>: <fpage>3</fpage>&#x2013;<lpage>15</lpage>.</mixed-citation></ref>
+<ref id="c23"><label>23.</label><mixed-citation publication-type="journal"><string-name><surname>Whitcomb</surname> <given-names>BW</given-names></string-name>, <string-name><surname>Perkins</surname> <given-names>NJ</given-names></string-name>, <string-name><surname>Albert</surname> <given-names>PS</given-names></string-name>, <string-name><surname>Schisterman</surname> <given-names>EF</given-names></string-name> (<year>2010</year>) <article-title>Treatment of batch in the detection, calibration, and quantification of immunoassays in large-scale epidemiologic studies</article-title>. <source>Epidemiology</source> <volume>21</volume>: <fpage>S44</fpage>&#x2013;<lpage>S50</lpage>.</mixed-citation></ref>
+<ref id="c24"><label>24.</label><mixed-citation publication-type="book"><string-name><surname>Press</surname> <given-names>WH</given-names></string-name>, <string-name><surname>Flanner</surname> <given-names>BP</given-names></string-name>, <string-name><surname>Teukolsky</surname> <given-names>SA</given-names></string-name>, <string-name><surname>Vetterling</surname> <given-names>WT</given-names></string-name> (<year>1988</year>) <source>Numerical Recipes in C</source>. <publisher-loc>Cambridge</publisher-loc>: <publisher-name>Cambridge University Press</publisher-name>.</mixed-citation></ref>
+<ref id="c25"><label>25.</label><mixed-citation publication-type="book"><string-name><surname>Larsen</surname> <given-names>RJ</given-names></string-name>, <string-name><surname>Marx</surname> <given-names>ML</given-names></string-name> (<year>2012</year>) <source>An Introduction to Mathematical Statistics and Its Applications.</source> <publisher-loc>Boston</publisher-loc>: <publisher-name>Prentice Hall</publisher-name>.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

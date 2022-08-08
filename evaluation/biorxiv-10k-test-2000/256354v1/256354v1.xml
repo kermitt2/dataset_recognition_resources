@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/256354</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>DREAM-Yara: An implementation of an exact read mapper for very large databases</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author" corresp="yes">
+<name>
+<surname>Dadi</surname>
+<given-names>Temesgen Hailemariam</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="corresp" rid="cor1">&#x002A;</xref>
+</contrib>
+<contrib contrib-type="author">
+<name>
+<surname>Piro</surname>
+<given-names>Vitor C.</given-names>
+</name>
+<xref ref-type="aff" rid="a2">2</xref>
+<xref ref-type="aff" rid="a4">4</xref>
+</contrib>
+<contrib contrib-type="author">
+<name>
+<surname>Andrusch</surname>
+<given-names>Andreas</given-names>
+</name>
+<xref ref-type="aff" rid="a3">3</xref>
+</contrib>
+<contrib contrib-type="author">
+<name>
+<surname>Seiler</surname>
+<given-names>Enrico</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<contrib contrib-type="author">
+<name>
+<surname>Renard</surname>
+<given-names>Bernhard Y.</given-names>
+</name>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<contrib contrib-type="author">
+<name>
+<surname>Reinert</surname>
+<given-names>Knut</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>Algorithmic Bioinformatics, Institute for Bioinformatics, FU Berlin</institution>, Takustrasse 9, 14195 Berlin, <country>Germany</country></aff>
+<aff id="a2"><label>2</label><institution>Bioinformatics Unit (MF1), Robert Koch Institute</institution>, 13353 Berlin, <country>Germany</country></aff>
+<aff id="a3"><label>3</label><institution>Centre for Biological Threats and Special Pathogens (ZBS1), Robert Koch Institute</institution>, 13353 Berlin, <country>Germany</country></aff>
+<aff id="a4"><label>4</label><institution>CAPES Foundation, Ministry of Education of Brazil</institution>, Bras&#x00ED;lia - DF, 70040-020 <country>Brazil</country>.</aff>
+</contrib-group>
+<author-notes>
+<corresp id="cor1"><label>&#x002A;</label>To whom correspondence should be addressed.</corresp>
+</author-notes>
+<pub-date pub-type="epub">
+<year>2018</year>
+</pub-date>
+<elocation-id>256354</elocation-id>
+<history>
+<date date-type="received">
+<day>29</day>
+<month>1</month>
+<year>2018</year>
+</date>
+<date date-type="rev-recd">
+<day>29</day>
+<month>1</month>
+<year>2018</year>
+</date>
+<date date-type="accepted">
+<day>30</day>
+<month>1</month>
+<year>2018</year>
+</date>
+</history><permissions><copyright-statement>&#x00A9; 2018, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2018</copyright-year><license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license></permissions>
+<self-uri xlink:href="256354.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<sec>
+<title>Motivation</title>
+<p>Mapping-based approaches have become limited in their application to very large sets of references since computing an FM-index for very large databases (e.g. &#x003E; 10 GB) has become a bottleneck. This affects many analyses that need this index as an essential step for approximate matching of the NGS reads to reference databases. For instance, in metagenomics, the size of the reference sequences has become prohibitive to compute a single full-text index on standard machines. Even on large memory machines, computing the index takes about one day of compute time. As a result, updates of indices are rarely performed. Hence, it is desirable to distribute the indices to solve the index construction and update problem while preserving fast search times.</p>
+</sec>
+<sec>
+<title>Results</title>
+<p>To solve the index construction and update problem we propose the DREAM (Dynamic seaRchablE pArallel coMpressed index) framework in this paper and provide an implementation. The main contributions are the introduction binning directories using a novel use of Bloom filters. We combine several Bloom filters to form an <italic>interleaved</italic> Bloom filter and use this new data structure to quickly exclude reads for parts of the databases where they cannot match. This allows us to keep the databases in several indices which can be easily rebuild if parts are updated while maintaining a fast search time. The second main contribution lies in the integration of the Yara exact read mapper (<xref rid="c21" ref-type="bibr">Siragusa, 2013</xref>) in a distributed version for the DREAM framework.</p>
+</sec>
+<sec><title>Contact</title><p><email>temesgen.dadi@fu-berlin.de</email></p>
+</sec>
+<sec><title>Availability</title><p><ext-link ext-link-type="uri" xlink:href="https://gitlab.com/pirovc/dream_yara/">https://gitlab.com/pirovc/dream_yara/</ext-link></p>
+</sec>
+</abstract>
+<counts>
+<page-count count="7"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<label>1</label>
+<title>Introduction</title>
+<p>Within the last ten years modern sequencing technologies have brought a super-exponential growth of sequencing capacities. This has enabled the cheap sequencing of the genomic content of pangenomes (<xref rid="c6" ref-type="bibr">Consortium, 2018</xref>), metagenomes, or many individuals of the same species (e.g. the 100,000 genome project) that differ only slightly from each other. Yet, the small individual differences are of interest (i.e. SNPs, or small structural polymorphisms) to elucidate the cause of diseases or reconstruct evolutionary events.</p>
+<p>These data sets expose interesting characteristics. They are large, while some large fractions are highly redundant (e.g. 100,000 genome project, or storing different strains of bacteria) and hence amenable to compression techniques (e.g. <xref rid="c17" ref-type="bibr">Rahn <italic>et al.</italic> (2014)</xref>; <xref rid="c19" ref-type="bibr">Schneeberger <italic>et al.</italic> (2009)</xref>). On the other hand, compression usually makes it costly to implement the main operations on the data, namely <italic>finding approximate matches</italic> of (many) queries (approximate in the sense of edit distance).</p>
+<p>While a lot of research has focused on indexing such data sets, the resulting solutions lack, in general, the ability to easily <italic>change</italic> the underlying data sets. That means it is costly (a) to change small parts of a sequence, or (b) to add or delete complete sequences while maintaining the ability to support fast approximate string searches. For example, in metagenomics this problem becomes more and more pressing. Many metagenomics search tools (e.g. <xref rid="c12" ref-type="bibr">Hauswedell <italic>et al.</italic> (2014)</xref>; <xref rid="c16" ref-type="bibr">Piro <italic>et al.</italic> (2016)</xref>) and read mappers <xref rid="c15" ref-type="bibr">Li and Durbin (2010)</xref>; <xref rid="c21" ref-type="bibr">Siragusa (2013)</xref> use Burrows-Wheeler-Transform (BWT) based FM-indices (also often referred to as compressed suffix arrays (CSA)) <xref rid="c9" ref-type="bibr">Ferragina and Manzini (2000)</xref> which have to index about 50 to 200 gigabases. Due to constant database updates changes occur on a daily or weekly basis and thus require a newly constructed index. Recomputing a single index of this size is quite costly in terms of space and time, even if approaches of merging BWTs are used <xref rid="c1" ref-type="bibr">Bauer <italic>et al.</italic> (2011)</xref>; <xref rid="c22" ref-type="bibr">Sir&#x00E9;n (2009)</xref>. For example, it takes about one day to compute the index for the data set used in our experiments.</p>
+<p>On the other hand, the ability for fast approximate searches in such an indexiscrucial. Itisused either directly tofind all approximate occurrences of a (short) string, or parts of it in seed-and-extend approaches.</p>
+<p>In this work, we address the problem posed by relying on one large index. We propose a data structure framework which can offer <italic>various</italic> solutions for the above areas depending on some key parameters of the input set (size of input, amount of redundancy, importance of rebuilding time vs. search time). We name the framework a DREAM index (Dynamic seaRchablE pArallel coMpressed index) and describe in this work a first working implementation of it which allows to easily update the underlying database and atthe same time fast read mapping usinga standard approach.</p>
+<p>In the following, we describe the general DREAM index framework, followed by a description of our implementation which consists of three major contributions. First, a taxonomy based binning approach for a collection of database sequences (e.g. bacterial genomes), second a novel data structure for quickly distributing reads to bins for mapping that relies on a combination of Bloom filters (<xref rid="c2" ref-type="bibr">Bloom, 1970</xref>) and <italic>k</italic>-mer counting, and lastly a distributed, parallel version of the Yara read mapper (<xref rid="c21" ref-type="bibr">Siragusa, 2013</xref>).</p>
+</sec>
+<sec id="s2">
+<label>2</label>
+<title>Methods</title>
+<sec id="s2a">
+<label>2.1</label>
+<title>The DREAM index framework</title>
+<p>In <xref ref-type="fig" rid="fig1">Figure 1</xref> we describe the general DREAM index framework. On the left we show the input to our framework, namely a set of database sequences that needs to be indexed and one or more sets of sequencing reads. As pointed out above, we want to be able to add sequences to and (possibly) delete sequences from the index quickly. At the same time we want to be able to conduct approximate searches of reads in the index.</p>
+<fig id="fig1" position="float" fig-type="figure">
+<label>Fig. 1.</label>
+<caption><p>Sketch of the DREAM index framework. The red sequence piece among the green ones symbolizes that we do not require aperfect partitioning allowing us to use fast methods. The boxes on the right symbolize the potential use of different index implementations. Note that we use in this work solely FM indices.</p></caption>
+<graphic xlink:href="256354_fig1.tif"/>
+</fig>
+<p>The DREAM index itself consists of two layers for access and a collection of smaller sub-indices which will contain highly similar (sub)sequences. The <italic>dynamic operation distributor</italic> layer will determine which sub-indices need to be changed to complete the update operations and trigger the respective operations in parallel on the sub-indices. The <italic>approximate search distributor</italic> layer will determine which sub-indices need to be searched, conduct the searches in parallel, and consolidate the results. It is obvious, that this will work better, if we place relatively similar sequences (e.g. bacterial genomes of the same genus) into the same sub-index. Note that this will also benefit compression of those indices. However, we will not address compression deeper within this work.</p>
+<p>We will rather use standard FM-indices for the sub-indices since they support fast approximate queries and give a coarse-grained dynamization by simply rebuilding a sub-index if needed. For other implementations of a sub-index, different solutions for the approximate search are possible and not in the scope of this publication.</p>
+<p>For the dynamic operation and approximate search layer, we propose various solutions with interesting space/time trade-offs. The distributors are based on an application of the <italic>k</italic>-mer counting lemma and the use of <italic>k</italic>-mer dictionaries or a novel type of Bloom filters.</p>
+<p>For the following discussion we assume that we have an overall text length of <italic>T</italic>, and define the <italic>effective</italic> text length of <italic>T</italic>(<italic>k</italic>) as the number of distinct <italic>k</italic>-mers in <italic>T.</italic> Further we assume that we have divided the text into <italic>b</italic> bins in such a way, that a bin <italic>B</italic><sub><italic>i</italic></sub> contains parts of <italic>T</italic> with a small effective text length. Hence we denote the set of all <italic>k</italic>-mers in bin <italic>B</italic><sub><italic>i</italic></sub> with <italic>T</italic><sub><italic>i</italic></sub>(<italic>k</italic>).</p>
+</sec>
+<sec id="s2b">
+<label>2.2</label>
+<title>Binning sequences, dynamic updates</title>
+<p>In this work we will consider contiguous sequences in the given reference genomes as the smallest unit of sequences that can be clustered into bins. That means we will not split those sequences into smaller parts. The results we present later are based on a metagenomics data sets for which it is relatively easy to compute or obtain a taxonomic tree. For binning, we hence used clusters generated with TaxSBP (<ext-link ext-link-type="uri" xlink:href="https://github.com/pirovc/taxsbp">https://github.com/pirovc/taxsbp</ext-link>), an implementation of the approximation algorithm for the hierarchically structured bin packing problem (<xref rid="c5" ref-type="bibr">Codenotti <italic>et al</italic>, 2004</xref>) based on the NCBI Taxonomy database (<xref rid="c8" ref-type="bibr">Federhen, 2012</xref>). This clustering methodis very efficient, given that it uses the &#x201C;pre-clustered&#x201D; taxonomic tree information to generate similar sized groups of closely related sequences. Adding and removing sequences is also straightforward once their taxonomic classification is known. Note that in the absence of taxonomic information other, e.g. <italic>k</italic>-mer based, clustering methods can be used in our framework.</p>
+<p>To evaluate how well the used strategy places sequences into bins, we can use the <italic>effective bin ratio</italic> <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="256354_inline1.gif"/></alternatives></inline-formula> for each bin <italic>B</italic><sub><italic>i</italic></sub> as measure and the <italic>effective ratio</italic> <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="256354_inline2.gif"/></alternatives></inline-formula> as overall measure. Our approach will work well, if the effective ratio is near 1. In that case, the likelihood of a false positive verification is low because the bins do not share many <italic>k</italic>-mers. In 3.2 we will report on <italic>r</italic>(<italic>k</italic>) for a variety of bin numbers and values of <italic>k</italic>.</p>
+</sec>
+<sec id="s2c">
+<label>2.3</label>
+<title>Approximate search distributor</title>
+<p>For our approximate search distributor we use what we call a <italic>binning dictionary</italic> in conjunction with a well-know <italic>k</italic>-mer counting lemma. The general general idea of a binning dictionary <italic>D</italic> is that we will mark for a fixed <italic>k</italic>-mer in which bin it occurs using a bitvector. Then, when we want to search a pattern <italic>p</italic> approximately, the following well known Lemma gives a sufficient condition for the pattern to occur in a bin.</p>
+<statement><label>Lemma 1.</label>
+<p><italic>For a given k and number of errors e, there are <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="256354_inline3.gif"/></alternatives></inline-formula> -<italic>k</italic> &#x002B; 1 many k-mers in p and an approximate occurrence ofp in T has to share at least t = (k<sub>p</sub> - k &#x2022; e) k-mers</italic>.</p>
+</statement>
+<p>Hence, we can simply look up each <italic>k</italic>-mer of a pattern in <italic>D</italic>, retrieve the bitvector marking its occurrences in the bins, and update an array of counters for each bin. If the counter exceeds the threshold for the bin, the pattern will be searched approximately in the bin, otherwise not. This approach is depicted in <xref ref-type="fig" rid="fig2">Figure 2</xref>.</p>
+<fig id="fig2" position="float" fig-type="figure">
+<label>Fig. 2.</label>
+<caption><p>Binning directory using the k-mer Lemma. For each <italic>k</italic>-mer <italic>k</italic><sub><italic>i</italic></sub> generated from a pattern <italic>p</italic> we extract binning subbitvectors <italic>D</italic>(<italic>k</italic><sub><italic>i</italic></sub>) representing the bins containing <italic>k</italic>-mer <italic>k</italic><sub><italic>i</italic></sub>. For all set bits in <italic>D</italic>(<italic>k</italic><sub><italic>i</italic></sub>) we increment the counter of corresponding bin. Bins with counter greater or equal than the threshold (in this case 4) need to be validated for <italic>p</italic>.</p></caption>
+<graphic xlink:href="256354_fig2.tif"/>
+</fig>
+<p>We discuss here two variants for implementing the binning dictionary, each of which can use either a standard bitvector, or alternatively, a sparse bitvector implementation from the SDSL <xref rid="c10" ref-type="bibr">Gog <italic>et al.</italic> (2014)</xref>. While a standard bitvector of size <italic>n</italic> uses <italic>n</italic> bits, the compressed bitvector of the SDSL (<xref rid="c10" ref-type="bibr">Gog <italic>et al.</italic>, 2014</xref>) uses approximately <italic>m</italic>&#x00B7; <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="256354_inline4.gif"/></alternatives></inline-formula> bits, where <italic>m</italic> is the number of bits set, and <italic>n</italic> the length of the bitvector. Note, that while this reduces the space consumption, it increases the access time.</p>
+<p>The first alternative is to interpret the <italic>k</italic>-mers directly as addresses. Hence, this approach is only viable for moderate <italic>k</italic> (e.g. k &#x003C; 16). For the DNA alphabet, each of the 4<sup><italic>k</italic></sup> entries then points to a binning bitvector for the bins (either compressed or uncompressed). For <italic>k</italic> = 14 and <italic>b</italic> = 1024 bins, this would result in a space consumption of 4<sup>1</sup>4 &#x00B7; 1024 = 2<sup>38</sup> bits which are about 34 Gb.</p>
+<p>As a second alternative, we propose a novel idea of combining <italic>b</italic> standard Bloom filters <xref rid="c2" ref-type="bibr">Bloom (1970)</xref> in an <italic>Interleaved Bloom Filter</italic> (IBF). A Bloom filter is simply a bitvector of size <italic>n</italic> and a set of <italic>h</italic> hash functions that map a key value, in our case a <italic>k</italic>-mer, to one of the bit positions. A value is present in the Bloom filter, if all <italic>h</italic> positions return a 1. Note that a Bloom filter can give a false positive answer. However, if the Bloom filter size is large enough, the probability of a false positive answer is low. A Bloom filter of size <italic>n</italic> bits with <italic>h</italic> different hash functions and <italic>m</italic> elements inserted has a probability for giving a false positive answer of
+<disp-formula><alternatives><graphic xlink:href="256354_ueqn1.gif"/></alternatives></disp-formula></p>
+<p>For this reason we have to allocate sufficient space, such that <italic>p</italic><sub><italic>fp</italic></sub> does not become too large. Still, the problem of using a simple Bloom filter is that it does not point us to the binning bitvectors. To alleviate the problem, we propose to use <italic>b</italic> Bloom filters (one for each bin) with identical hash functions and then interleave their bitvectors. Putting it differently, this means that we replace each bit in the Bloom filter by a (sub)-bitvector of size <italic>b</italic>, where the <italic>i</italic>-th bit &#x201C;belongs&#x201D; to the Bloom filter for bin <italic>B</italic><sub><italic>i</italic></sub>. We call the resulting Bloom filter an <italic>Interleaved</italic> Bloom Filter (IBF). The IBF has a size of <italic>b &#x00B7; n</italic>. When inserting a <italic>k</italic>-mer from bin <italic>B</italic><sub><italic>i</italic></sub> into the IBF, we compute all <italic>h</italic> hash functions which point us to the position of the block where the sub-bitvectors are and then simply set the <italic>i</italic>-th bit from the respective beginnings. Hence, we effectively interleave <italic>b</italic> Bloom filters in a way that allowsustoretrieve the binning bitvectors for the<italic>h</italic> hash functions easily. When querying in which bins a <italic>k</italic>-mer is, we would retrieve the <italic>h</italic> sub-bitvectors and apply a logical AND to them which results then in the required binning bitvector indicating the membership of the <italic>k</italic>-mer in the bins. In reality, this approach has a significant advantage in query time as retrieving a (sub)-bitvector is extremely cache-friendly. As pointed out above, the binning bitvectors can be compressed if appropriate (i.e. if the vectors are sparse enough). The procedure is depicted in <xref ref-type="fig" rid="fig2">Figure 2.3</xref>.</p>
+<fig id="fig3" position="float" fig-type="figure">
+<label>Fig. 3.</label>
+<caption><p>Example of an IBF. Differently colored Bloom filters of length <italic>n</italic> for the <italic>b</italic> bins are shown in the top. The individual Bloom filters are interleaved to make an IBF of size <italic>b</italic> &#x00D7; <italic>n</italic>. In the example we retrieve 3 positions for a <italic>k</italic>-mer (ACGTACT) using 3 different hash functions. The corresponding sub bitvectors are combined with a bitwise &#x0026; giving us the needed binning bitvector.</p></caption>
+<graphic xlink:href="256354_fig3.tif"/>
+</fig>
+<p>Both approaches for binning directories share the implementation for counting. For this, we allocate a <italic>t</italic> many counters, each with <italic>b</italic> entries, where <italic>t</italic> is the number of threads used. These counters are reused as we process the reads in parallel.</p>
+</sec>
+<sec id="s2d">
+<label>2.4</label>
+<title>Estimating the number of verifications</title>
+<p>Obviously the choice of parameters has a profound effect on space requirement and speed in this approach. In the next paragraph we will discuss the effect of the choices under some simplifying assumptions.</p>
+<p>Assume we want to distribute the approximate searches for a pattern <italic>p</italic> of length <italic>l</italic> with a fixed choice of <italic>k</italic> and <italic>e</italic> using the <italic>k</italic>-mer lemma. This also fixes the threshold <italic>t</italic> and the number of <italic>k</italic>-mers in a read <italic>k</italic><sub><italic>p</italic></sub>. We can then argue as follows. It is straightforward to compute the effective bin ratios <italic>r</italic><sub><italic>i</italic></sub>(<italic>k</italic>) and we can count the number <italic>U</italic><sub><italic>i</italic></sub>(<italic>k</italic>) of unique <italic>k</italic>-mers in each bin. Hence, a bin <italic>B</italic><sub><italic>i</italic></sub> has <italic>T</italic><sub><italic>i</italic></sub>(<italic>k</italic>) - <italic>U</italic><sub><italic>i</italic></sub>(<italic>k</italic>) non-unique <italic>k</italic>-mers and hence the probability of a false positive <italic>k</italic>-mer match in bin <italic>B</italic><sub><italic>i</italic></sub> is about <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="256354_inline5.gif"/></alternatives></inline-formula> This holds in case of a <italic>k</italic>-mer directory, which gives us no false positive answers. In case of a Bloom filter, we can adjust this probability by adding <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="256354_inline6.gif"/></alternatives></inline-formula> where <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="256354_inline7.gif"/></alternatives></inline-formula> is the false positive rate for the Bloom filter of bin <italic>B</italic><sub><italic>i</italic></sub>.</p>
+<p>According to the <italic>k</italic>-mer lemma, <italic>t</italic> out of <italic>k</italic><sub><italic>p</italic></sub> many <italic>k</italic>-mers have to match and hence it holds that the probability for a false positive pattern verification in bin <italic>B</italic><sub><italic>i</italic></sub> is:
+<disp-formula><alternatives><graphic xlink:href="256354_ueqn2.gif"/></alternatives></disp-formula>
+with <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="256354_inline8.gif"/></alternatives></inline-formula> From this we can compute the overall expected number offalse positive verifications for a read as <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="256354_inline9.gif"/></alternatives></inline-formula> This will serve as a lower bound,since we assume a random distribution of the <italic>k</italic>-mers. In reality, bins will contain some repeat regions or are split if they are too big. In the result section we will report on the actual number of verifications per bin for simulated reads from an actual binning to see a) whether all reads from the bin are indeed found and b) how many false positive reads are mapped to each bin, that means reads that map within the error bounds but were simulated from another bin.</p>
+<p>Note that the value <italic>p</italic> has also an impact on the density of the bitvectors. The Bloom filter will have more bits set than the <italic>k</italic>-mer dictionary and hence the compression ratio is worse.</p>
+<p>While the IBF is only a part of the binning directory, we anticipate that the IBF will be a very useful data structure for set membership of objects in bins and will see a wide usage, especially for assessing <italic>k</italic>-mer content. When writing this paper, it was brought to our attention that Bradley et al. independently thought of a similar data structure in <xref rid="c3" ref-type="bibr">Bradley <italic>et al.</italic> (2017)</xref>, although they do not use them in conjunction with the <italic>k</italic>-mer Lemma and do not interleave them.</p>
+</sec>
+<sec id="s2e">
+<label>2.5</label>
+<title>The Yara read mapper</title>
+<p>In this section, we describe Yara (<xref rid="c21" ref-type="bibr">Siragusa, 2013</xref>), currently the state-of-the art read mapper of the SeqAn library, an exact read mapping tool that is efficient, easy to use, and produces well-defined and interpretable results. It outperforms previous exact tools like RazerS3 (<xref rid="c23" ref-type="bibr">Weese <italic>etal</italic>, 2012</xref>) by a factor of 200 in speed and even heuristic methods like Bowtie 2 (<xref rid="c14" ref-type="bibr">Langmead and Salzberg, 2012</xref>) and BWA (<xref rid="c15" ref-type="bibr">Li and Durbin, 2010</xref>) by a factor of two and three, respectively (<xref rid="c21" ref-type="bibr">Siragusa, 2013</xref>).</p>
+<p>The efficiency of the tool is due to a novel combination of known algorithmic concepts and a solid implementation based on the SeqAn library (<xref rid="c18" ref-type="bibr">Reinert <italic>etal</italic>, 2017</xref>). Yarais based on the notion of alignment strata (best&#x002B;x mode) which we advocate as an alternative to the conventional all-mapping paradigm, since stratification will always yield at least one hit (within reasonable bounds) and appears to be more practical. To explain, we define the <italic>e</italic>-stratum &#x1D54A;<sub><italic>e</italic></sub> = <italic>{(i,j,e</italic>): <italic>d</italic><sub><italic>E</italic></sub>(<italic>G</italic><sub><italic>i</italic>&#x2026;<italic>j</italic></sub>, <italic>R</italic>) = <italic>e</italic>}, which denotes the set of all mapping locations of a read <italic>R</italic> at edit distance <italic>e</italic> from the reference genome <italic>G.</italic> According to the above definition, conventional all-mapping under the edit distance defines the set&#x1D54A; = &#x1D54A;<sub>0</sub>&#x0222A;&#x1D54A;<sub>1</sub>&#x0222A;&#x2026;&#x0222A;&#x1D54A;<sub><italic>k</italic></sub> as relevant mapping locations within an <italic>absolute</italic> error threshold <italic>k</italic>. Stratified all-mapping refines this definition by considering only mapping locations up to a certain degree <italic>s</italic> from the <italic>optimal</italic> stratum. That means if the distance of any optimal mapping location for read <italic>R</italic> is <italic>o</italic> = min {<italic>e</italic> &#x2208; [0, <italic>k</italic> - <italic>s</italic>]: &#x1D54A; &#x2260; &#x00F8;}, then stratified all-mapping considers mapping locations <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="256354_inline10.gif"/></alternatives></inline-formula> within a <italic>relative</italic> suboptimality error threshold <italic>s</italic> to be relevant.</p>
+<sec id="s2e1">
+<title>Filtration by strata</title>
+<p>Yara significantly improves the runtime of stratified all-mapping over conventional all-mapping. Obviously, the most straightforward way to achieve stratified all-mapping consists of performing conventional all-mapping and subsequently filtering out any irrelevant mapping location (For instance, RazerS3 implements this method). Another na&#x00EF;ve method consists of performing up to <italic>k</italic> rounds of conventional all-mapping, using filtration schemes with thresholds incrementing from 0 to <italic>o</italic> &#x002B; <italic>s.</italic> It is easy to see that also this method performs redundant computation: the total work for any read that maps at distance greater than or equal to <italic>k</italic> corresponds to the sum of all <italic>k</italic> filtration schemes.</p>
+<p>The following stratified all-mapping method, implemented in Yara, guarantees not to perform more work than conventional all-mapping. Indeed, the key idea is to simply reduce any filtration scheme full-sensitive within distance <italic>k</italic> to be full-sensitive within distance <italic>o</italic> &#x002B; <italic>s</italic>.</p>
+</sec>
+<sec id="s2e1a">
+<title>Adaptive filtration</title>
+<p>Yara applies an adaptive filtration scheme <italic>per read</italic> because, under any fixed filtration scheme, the number of verifications per read is not uniform: within a typical human genome resequencing, most reads produce very few verifications and are easily mappable, while few other reads are problematic and often not even confidently mappable to one single location. Consequently, any fixed filtration scheme turns out to be too weak for some reads yet too strong for others, thus suboptimal in practice. An adaptive filtration scheme per read improves filtration efficiency by optimizing the ratio between filtration speed and specificity. Yara thus automatically chooses an adaptive filtration scheme per read, without requiring manual parameterization by the user. Adaptive filtration works as follows. Yara initially applies filtration with exact seeds to all reads. The tool counts the number of verifications to be performed for each read, thus decides if it is worth proceeding with the verification phase or alternatively applying a stronger filtration scheme. This decision depends on fine-tuned internal verification thresholds. Under standard Illumina setups, exact seeds provide efficient filtration for up to 70&#x2013;80&#x0025; of the reads; on the remaining reads, a filtration scheme using 1&#x2013; or 2&#x2013;approximate seeds works better. Thus, Yara starts with the quickest filtration scheme and becomes more specific whenever it pays off to do so.</p>
+</sec>
+<sec id="s2e1b">
+<title>Greedy verification</title>
+<p>Yara implementsasimple greedy strategytominimize the number of verifications necessary to find all relevant stratified mapping locations. As candidate locations can be verified in any order, Yara chooses an ordering of the seeds that minimizes the expected number of verifications. The tool first finds all seeds and ranks them by number of candidate locations produced. Then it processes all candidate locations, from the least to the most frequent seed, until it explores <italic>s</italic> strata from the first non-empty one. The verification is done by a banded version of Myers Bit-vector algorithm.</p>
+</sec>
+<sec id="s2e1c">
+<title>Paired-end protocol</title>
+<p>Paired-end and mate-pair protocols are the sequencing protocols of choice of Illumina instruments. As reads are sequenced in pairs from the two ends of the same DNA fragment, they are expected to map closely in the reference genome. The added information of anexpected DNA insert size allows to disambiguate the original location of read pairs more confidently thaninthe single-end protocol. Nonetheless, the lack of any proper pair of mapping locations signals a potential structural variation, a long indel or an inversion. In the paired-end or mate-pair workflows, Yara maps paired reads independently, exactly as in the single-end workflow, and then reports all relevant mapping locations per read.</p>
+<p>Yara is already in use by several groups, it was used for improved metagenomics classification <xref rid="c7" ref-type="bibr">Dadi <italic>et al.</italic> (2017)</xref> and was tested favorably by B?rinda et al. (<xref rid="c4" ref-type="bibr">Binda <italic>et al.</italic>, 2016</xref>). In addition it scales well using many threads. For those reasons we choose it as the first implementation within the DREAM framework and call the resulting tool DREAM-Yara.</p>
+<p>In DREAM-Yara, we load sequencing reads in batches and identify which bins contain potential mapping locations for individual reads. This is done using the binning directories. As a result, we get <italic>b</italic> different subsets out of the loaded reads representing the different bins. A read belongs to a subset <italic>R</italic><sub><italic>bi</italic></sub> if and only if it or its reverse complement or its mate pair shares enough number of k-mers with bin <italic>B</italic><sub><italic>i</italic></sub>. After that, we map each subset of reads against the index of the corresponding bin. All the mapping results from all subsets are collected, we consolidate the mapping for the whole set of reads considering the mapping qualities for each read. Finally, the mapping result is written to a single SAM/BAM file.</p>
+</sec>
+</sec>
+</sec>
+<sec id="s3">
+<label>3</label>
+<title>Evaluation</title>
+<p>In this section we report about our computational experiments using DREAM-Yara evaluating the needed update times for a realistic, metagenomics data set as well as the time to map real Illumina reads. In addition we simulated some reads form the individual bins to evaluate the sensitivity of the tool.</p>
+<p>To evaluate the DREAM-Yara database indexing and updating we use a set of Archaeal and Bacterial complete genome sequences retrieved from NCBI&#x2019;s RefSeq database (<xref rid="c11" ref-type="bibr">Haft <italic>et al.</italic>, 2017</xref>) dating from 2017-09-26. This dataset comprises 15,250 sequences representing 2,991 species, summing up to a total of 31.34 Gbp, a database size for which it takes significant time to compute a single index. An updated set from the same database was selected based on the updated <italic>Escherichia Coli</italic> sequences from 2017-12-19. This update set sums up to 0.23 Gbp with one removed sequence and 155 new sequences, thus a typical set of sequences for which we want to update our index.</p>
+<sec id="s3a">
+<label>3.1</label>
+<title>Time and memory consumption for real reads</title>
+<p>In our first evaluation the DREAM-Yara mapping was evaluated with a synthetic set of reads consisted of 64 laboratory-mixed microbial genomic DNAs. The sample provided by Shakya et al. (<xref rid="c20" ref-type="bibr">Shakya <italic>et al.</italic>, 2013</xref>) contains reads based on know organisms, providing a broad diversity among bacteria and archaea at different taxonomic levels as well as a wide range of genetic variation. One million reads were randomly selected from our 64-organism read set to evaluate mapping performance. We used a computer with 32 (Intel(R) Xeon(R) CPU E5-2650 v3 2.30GHz) processors and 130GB of memory.</p>
+<p>DREAM-Yara was compared against BWA (<xref rid="c15" ref-type="bibr">Li and Durbin, 2010</xref>) and standard Yara (<xref rid="c21" ref-type="bibr">Siragusa, 2013</xref>) each using one large index tosee how much slower DREAM-Yara would be for using a IBF binning filter and many indices. We also ran DREAM-Yara without the search distributor (called distributed Yara) to assess the time needed for a trivial distribution.</p>
+<p><xref ref-type="table" rid="tbl1">Table 1</xref> shows time and memory consumption for indexing, updating and mapping for DREAM-Yara, BWA, standard Yara and distributed Yara. DREAM-Yara outperforms the other methods in nearly all measurements. Distributed Yara (without bloom filter) has the best time in indexing and updating, but its implementation is not practical considering the high mapping time since all reads have to be mapped against all distributed indices which takes almost 10<italic>h</italic>.</p>
+<table-wrap id="tbl1" orientation="portrait" position="float">
+<label>Table 1.</label>
+<caption><p>Time and memory consumption for index building, updating and read mapping. DREAM-Yara indexing and updating time values stand for summed wall time and memory for peak memory. The values between parenthesis stand for building the FM-indices and the Bloom filter, respectively. DREAM-Yara was executed in 8 threads for indexing and updating while BWA and standard Yara do not support multi-threading. Mapping was performed before updating the index with 16 threads for all tools. Here the values between parenthesis stand for the filter time and actual mapping time. Values are rounded. N/A &#x002A;: Updating databases is Not Available and full indexing is necessary.</p></caption>
+<graphic xlink:href="256354_tbl1.tif"/>
+</table-wrap>
+<p>Indexing more than 30Gb of reference sequences took around 55 minutes with 1024 bins, while BWA required more than 19 hours and standard Yara more than 28 hours. Hence DREAM-Yara achieves a speedup of 20<italic>x</italic> and 31<italic>x</italic>, respectively. Memory consumption was lower for DREAM-Yara, using 26&#x0025; less memory (11.8Gb) when compared against BWA, where the peak memory consumption of DREAM-Yara is from the use of the binning directory and not for the indices.</p>
+<p>DREAM-Yara has also the advantage of having <italic>b</italic> many small indices which makes rebuilding indices less time-consuming. In case of changes in reference-set, we have to rebuild only the indices of the bins that the change has affected, whereas BWA and standard Yara need to rebuild the complete index for any change in the reference set. To demonstrate the advantage of this, we considered all the reference changes under the species <italic>E. Coli</italic> between 2017-09-26 and 2017-12-19. This accounted for 155 new sequences and one removed sequence which affected 42, 15 and 4 bins out of 1024, 256 and 64 bins respectively. These are a small portion of the complete set and rebuilding them took 6.5 minutes for 1024 bins, 9.7 minutes for 256 bins and 17.8 minutes for 64 bins. This is a significant improvement considering the amount of time needed if we had one big index which is about a day.</p>
+<p>When we consider the time and space requirements for mapping, DREAM-Yara needed 40&#x0025; less memory when compared against BWA and standard Yara in this task, being also faster than BWA for any bin size. Standard Yara is faster for mapping, even though with a higher memory consumption. Clustering times with TaxSBP are negligible for the evaluated data, having the only cost of reading/writing the input file into separated files for each bin.</p>
+<p>Hence, in this evaluation DREAM-Yara removes the bottleneck of index reconstruction successfully while remaining in speed and memory consumption competitive to standard read mappers and being a factor of about 130 times faster than the trivial distribution.</p>
+</sec>
+<sec id="s3b">
+<label>3.2</label>
+<title>Evaluation of distributed mapping using simulatedreads</title>
+<p>In this section we want toevaluate whether the DREAM framework affects the sensitivity of the read mapper. For this, we sampled one reference out of each bin and simulated a total of 100,000 reads from the sampled reference using the standard Illumina error profile of Mason2 (<xref rid="c13" ref-type="bibr">Holtgrewe, 2010</xref>). We then mapped the reads against the complete reference using BWA, Standard Yara, and DREAM-Yara. The mappers were set to report <italic>all</italic> alignments with up to an edit distance of 3 in order to make them comparable.</p>
+<p>A read mapper should at least map each of the simulated reads back to the bin it was simulated from. Of course, it can also map it to another bin within the error bounds, for example if our clustering split a large bin into two smaller bins. Since we know from which bin a read was simulated, we can count the number of primary (from the bin the read is from) and secondary mappings (other bins it can be aligned to) and compare it to the number of verifications allowed by our binning filter. For the binning filter to be effective for a bin, we would expect the number of verifications and the number of actually mapped reads to be close. The secondary mappings can of course occur, because our taxonomic clustering is not perfect and we do not expect the effective ratio to be 1.</p>
+<p>We start by giving the effective ratio for different <italic>k</italic> for the dataset described above and for 64, 256 and 1024 bins.</p>
+<p><xref ref-type="table" rid="tbl2">Table 2</xref> shows that the effective text ratio grows moderately with increasing number of bins, indicating that the taxonomic clustering works fairly well, albeit not perfectly. As we can see from <xref ref-type="table" rid="tbl3">Table 3</xref> the actual mapping time is growing similarly to the effective ratio for <italic>b</italic> = 64,256 and 1024. Another observation is that for <italic>k</italic> = 14, the effective ratio is quite high which excludes the use of <italic>k</italic>-mer binning directories. Instead an IBF was used for this data set. Since the update time is clearly faster for 1024 bins, wedecidedtodothe analysis with simulated reads for <italic>b</italic> = 1024 and with <italic>k</italic> = 19, since this was slightly faster than <italic>k</italic> = 20.</p>
+<table-wrap id="tbl2" orientation="portrait" position="float">
+<label>Table 2.</label>
+<caption><p>Effective ratio for 64,256 and 1024 bins and different values of <italic>k</italic> for the metagenomics data set. Values are rounded.</p></caption>
+<graphic xlink:href="256354_tbl2.tif"/>
+</table-wrap>
+<table-wrap id="tbl3" orientation="portrait" position="float">
+<label>Table 3.</label>
+<caption><p>Evaluation of BWA, Yara and. The first row shows how many of the 100K reads were mapped to the original genome by the mappers (primary alignments). The second row reflects the number of secondary alignments. The third row shows unique secondary alignments, that is the number of read/bin pairs, disregarding multiple alignments in a bin.</p></caption>
+<graphic xlink:href="256354_tbl3.tif"/>
+</table-wrap>
+<p>The results of the sensitivity evaluation are shown in <xref ref-type="table" rid="tbl3">Table 3</xref>.</p><p>Out of 100K reads, DREAM-Yara is able to map <italic>all</italic> reads back to the original bins, resulting in a sensitivity of 100&#x0025;. Standard Yara and BWA fall short of reporting 4 and 24 of those alignments, respectively. BWA also misses some of the secondary mappings. It computes about 26.1M alignments while standard Yara finds 2.8&#x0025; (&#x002B;743K) and DREAM-Yara finds 2.9&#x0025; (&#x002B;754K) more secondary alignments. We also counted the number of verifications triggered by DREAM-Yara. Our filter based on binning directories with IBF generated a total of 1,453,686 verifications out of which 81.7&#x0025; lead to at least one unique alignment (primary or secondary). This shows that the filter is highly effective. In addition, <xref ref-type="table" rid="tbl1">Table 1</xref> shows that filtering takes only &#x02248; 16&#x0025; of the overall time for mapping reads.</p>
+</sec>
+<sec id="s3c">
+<label>3.3</label>
+<title>Speed and space consumption of binning directories</title>
+<p>Binning directories use either a <italic>k</italic>-mer table for moderate <italic>k</italic> or an IBF to retrieve the binning bitvectors. The IBF has to compute <italic>h</italic> hash functions, retrieve <italic>h</italic> sub-bitvectors and compute a bitwise AND while a <italic>k</italic>-mer table can directly retrieve the binning bitvector.</p>
+<p>In both approaches we have to traverse the binning bitvector of size <italic>b</italic> and increment counters for each bit setto1. Tospeedup this crucial step we used the lzcount intrinsic operation which counts the number of leading zeros in a 64 bit word. This accelerated the bin counting step by a factor of almost 2 compared to the individual checking of each bit (data not shown). The lzcount intrinsic is part of the <italic>BMI</italic> CPU extensions and available on all modern processors. Interestingly, the AVX512 SIMD extensions offer a vectorized lzcount which will speed up this step further, once the AVX512 set is available on standard computers (Intel&#x2019;s Skylake processor already supports the instruction set). As pointed out above, we used an IBF for our analysis, since the effective ratio is too large for <italic>k</italic>-mer binning directories. Overall the filtering time for <italic>b</italic> = 1024 using IBF took a total of 14 seconds. Hence it contributes not much to the overall mapping time.</p>
+</sec>
+</sec>
+<sec id="s4">
+<label>4</label>
+<title>Discussion</title>
+<p>We hope that our work in this manuscript has an impact in various research directions. First, we think that DREAM-Yara will serve the community as a very practical, exact read mapper for Illumina reads and large data bases. Second, we think that the DREAM framework will trigger further work in this area. The most crucial point in the DREAM framework is the question whether a distribution of reads can be done fast enough in comparison to the time needed for mapping the reads to one or a handful of indices. We showed that the combination of binning directories and the <italic>k</italic>-mer lemma answers this question positively.</p>
+<p>We think it will be interesting to investigate in the future for which parameters the <italic>k</italic>-mer directory implementation and for which the IBF implementation have more advantages. For large, basically arbitrary <italic>k</italic>, we presented with the IBF avery viable way to implement binning directories. We also conducted experiments with compressed bitvectors for the binning bitvectors (data not shown) which showed that it is possible to further reduce the space consumption at the expense of run time. For example, if we would have only every 256th bit set to 1 in the used bitvectors, we can compress them by a factor of about 21 while being only 5 times slower in access. In our computational experiments the bitvectors were not sparse enough to gain a significant amount of compression.</p>
+<p>Another interesting area to extent this work will be how to bin the sequences. How many bins are optimal for a given set&#x003F; Will we benefit from allowing to further subdivide the genomic contigs&#x003F; In this work we opted for a taxonomic based clustering for being a straight forward implementation with an imprtant use case. However, a clustering based on sequence similarity would be beneficial for computing the bins in DREAM-Yara. The taxonomy classification is not purely sequence-based and by definition can have distant related groups with highly similar sequences or closed related groups with low sequence similarity. A sequence-based approach would provide a lower effective ratio, meaning that reads would be potentially mapped to fewer bins, speeding up the mapping procedure. Important to note is that the evenness of the bin sizes makesadifference for our Bloom filter implementation anditisaimportant aspect to be considered when computing the binning. This comes from the fact that the IBF has <italic>b</italic> interleaved Bloom filters of the <italic>same</italic> size. Hence the largest bin will have the highest false positive rate for a <italic>k</italic>-mer, which would result in worse filtering.</p>
+<p>Finally, it will be interesting to investigate whether other indices can take advantage of the binning. While FM-indices support fast approximate searching, they do not support the compression of similar sequences. However, the bins in the DREAM index will contain by construction very similar sequences. Hence we anticipate that compressed indices together with the IBF based search distributor will result in very practical, space efficient and fast read mappers for very large, repetitive data bases.</p>
+</sec>
+<sec id="s5">
+<label>5</label>
+<title>Conclusion</title>
+<p>In conclusion, we presented the novel DREAM framework for distributed read mapping which can support fast updates of the sub-indices as well as compression by design. We implemented within this framework DREAM-Yara, a distributed version of the Yara (<xref rid="c21" ref-type="bibr">Siragusa, 2013</xref>) read mapper. The main contribution lies in our implementation of the dynamic search distributor by using binning directories with interleaved Bloom filters together with the <italic>k</italic>-mer counting lemma and an in-memory distributed version of Yara. We showed that the resulting read mapper is very competitive in terms of speed, it is faster than BWA and only slightly slower than the original Yara, which both use one large FM-index, but more than 130 times faster than a trivial distribution. We also showed that DREAM-Yara can conduct a typical batch update for a metagenomic data set in about 6 minutes, whereas the rebuilding of the BWA or Yara index takes about a day. DREAM-Yara is part of the SeqAn library for efficient data types and algorithms.</p>
+</sec>
+</body>
+<back>
+<ack>
+<title>Acknowledgements</title>
+<p>We acknowledge Mika&#x00EB;l Salson for his ideas in defining the DREAM framework jointly with Knut Reinert.</p>
+</ack>
+<sec>
+<title>Funding</title>
+<p>This work was supported by the Coordena&#x00E7;&#x00E3;o de Aperfei&#x00E7;oamento de Pessoal de N&#x00ED;vel Superior (CAPES) - Ci&#x00EA;ncia sem Fronteiras (BEX 13472/13-5) to VCP, the InfectControl 2020 Project (TFP-TV4), and the BMG Project &#x201C;Metagenome Analysis Tool&#x201D; (2515NIK043). The authors also acknowledge the support of the de.NBI network for bioinformatics infrastructure, the Intel SeqAn IPCC and the IMPRS for Scientific Computing and Computational Biology.</p>
+</sec>
+<ref-list>
+<title>References</title>
+<ref id="c1"><mixed-citation publication-type="book"><string-name><surname>Bauer</surname>, <given-names>M. J.</given-names></string-name> <etal>et al.</etal> (<year>2011</year>). <chapter-title>Lightweight bwt construction for very large string collections</chapter-title>. <person-group>In <string-name><given-names>R.</given-names> <surname>Giancarlo</surname></string-name> and <string-name><given-names>G.</given-names> <surname>Manzini</surname></string-name>, editors</person-group>, <source>Combinatorial Pattern Matching</source>, pages <fpage>219</fpage>&#x2013;<lpage>231</lpage>, <publisher-name>Berlin, Heidelberg. Springer Berlin Heidelberg</publisher-name>.</mixed-citation></ref>
+<ref id="c2"><mixed-citation publication-type="journal"><string-name><surname>Bloom</surname>, <given-names>B. H.</given-names></string-name> (<year>1970</year>). <article-title>Space/time trade-offs in hash coding with allowable errors</article-title>. <source>Commun. ACM</source>, <volume>13</volume>(<issue>7</issue>), <fpage>422</fpage>&#x2013;<lpage>426</lpage>.</mixed-citation></ref>
+<ref id="c3"><mixed-citation publication-type="journal"><string-name><surname>Bradley</surname>, <given-names>P.</given-names></string-name> <etal>et al.</etal> (<year>2017</year>). <article-title>Real-time search of all bacterial and viral genomic data</article-title>. <source>bioRxiv</source>.</mixed-citation></ref>
+<ref id="c4"><mixed-citation publication-type="journal"><string-name><surname>Binda</surname>, <given-names>K.</given-names></string-name> <etal>et al.</etal> (<year>2016</year>). <article-title>Rnf: a general framework to evaluate ngs read mappers</article-title>. <source>Bioinformatics</source>, <volume>32</volume>(<issue>1</issue>), <fpage>136</fpage>&#x2013;<lpage>139</lpage>.</mixed-citation></ref>
+<ref id="c5"><mixed-citation publication-type="journal"><string-name><surname>Codenotti</surname>, <given-names>B.</given-names></string-name> <etal>et al.</etal> (<year>2004</year>). <article-title>Approximation algorithms for a hierarchically structured bin packing problem</article-title>. <source>Information Processing Letters</source>, <volume>89</volume>(<issue>5</issue>), <fpage>215</fpage>&#x2013;<lpage>221</lpage>.</mixed-citation></ref>
+<ref id="c6"><mixed-citation publication-type="journal"><string-name><surname>Consortium</surname>, <given-names>T. C. P.-G.</given-names></string-name> (<year>2018</year>). <article-title>Computational pan-genomics: status, promises and challenges</article-title>. <source>Briefings in Bioinformatics</source>, <volume>19</volume>(<issue>1</issue>), <fpage>118</fpage>&#x2013;<lpage>135</lpage>.</mixed-citation></ref>
+<ref id="c7"><mixed-citation publication-type="journal"><string-name><surname>Dadi</surname>, <given-names>T. H.</given-names></string-name> <etal>et al.</etal> (<year>2017</year>). <article-title>SLIMM: species level identification of microorganisms from metagenomes</article-title>. <source>PeerJ</source>, <volume>5</volume>(<issue>3</issue>), <fpage>e3138</fpage>.</mixed-citation></ref>
+<ref id="c8"><mixed-citation publication-type="journal"><string-name><surname>Federhen</surname>, <given-names>S.</given-names></string-name> (<year>2012</year>). <article-title>The NCBI Taxonomy database</article-title>. <source>Nucleic Acids Research</source>, <volume>40</volume>(<issue>D1</issue>), <fpage>D136</fpage>&#x2013;<lpage>D143</lpage>.</mixed-citation></ref>
+<ref id="c9"><mixed-citation publication-type="confproc"><string-name><surname>Ferragina</surname>, <given-names>P.</given-names></string-name> and <string-name><surname>Manzini</surname>, <given-names>G.</given-names></string-name> (<year>2000</year>). <article-title>Opportunistic data structures with applications. In</article-title> <conf-name>Proceedings 41st Annual Symposium on Foundations of Computer Science</conf-name>, pages <fpage>390</fpage>&#x2013;<lpage>398</lpage>.</mixed-citation></ref>
+<ref id="c10"><mixed-citation publication-type="journal"><string-name><surname>Gog</surname>, <given-names>S.</given-names></string-name> <etal>et al.</etal> (<year>2014</year>). <article-title>From theory to practice: Plug and play with succinct data structures</article-title>. <source>In 13th International Symposium on Experimental Algorithms, (SEA 2014)</source>, pages <fpage>326</fpage>&#x2013;<lpage>337</lpage>.</mixed-citation></ref>
+<ref id="c11"><mixed-citation publication-type="journal"><string-name><surname>Haft</surname>, <given-names>D. H.</given-names></string-name> <etal>et al.</etal> (<year>2017</year>). <article-title>RefSeq: an update on prokaryotic genome annotation and curation</article-title>. <source>Nucleic Acids Research</source>, (<issue>November</issue>), <fpage>1</fpage>&#x2013;<lpage>10</lpage>.</mixed-citation></ref>
+<ref id="c12"><mixed-citation publication-type="journal"><string-name><surname>Hauswedell</surname>, <given-names>H.</given-names></string-name> <etal>et al.</etal> (<year>2014</year>). <article-title>Lambda: the local aligner for massive biological data</article-title>. <source>Bioinformatics</source>, <volume>30</volume>(<issue>17</issue>), <fpage>i349</fpage>&#x2013;<lpage>i355</lpage>.</mixed-citation></ref>
+<ref id="c13"><mixed-citation publication-type="journal"><string-name><surname>Holtgrewe</surname>, <given-names>M.</given-names></string-name> (<year>2010</year>). <article-title>Mason a read simulator for second generation sequencing data</article-title>. <source>Technical Report FU Berlin</source>.</mixed-citation></ref>
+<ref id="c14"><mixed-citation publication-type="journal"><string-name><surname>Langmead</surname>, <given-names>B.</given-names></string-name> and <string-name><surname>Salzberg</surname>, <given-names>S. L.</given-names></string-name> (<year>2012</year>). <article-title>Fast gapped-read alignment with Bowtie 2</article-title>. <source>Nat Methods</source>, <volume>9</volume>(<issue>4</issue>), <fpage>357</fpage>&#x2013;<lpage>359</lpage>.</mixed-citation></ref>
+<ref id="c15"><mixed-citation publication-type="journal"><string-name><surname>Li</surname>, <given-names>H.</given-names></string-name> and <string-name><surname>Durbin</surname>, <given-names>R.</given-names></string-name> (<year>2010</year>). <article-title>Fast and accurate long-read alignment with burrowswheeler transform</article-title>. <source>Bioinformatics</source>, <volume>26</volume>(<issue>5</issue>), <fpage>589</fpage>&#x2013;<lpage>595</lpage>.</mixed-citation></ref>
+<ref id="c16"><mixed-citation publication-type="journal"><string-name><surname>Piro</surname>, <given-names>V. C.</given-names></string-name> <etal>et al.</etal> (<year>2016</year>). <article-title>DUDes: a top-down taxonomic profiler for metagenomics</article-title>. <source>Bioinformatics</source>, <volume>32</volume>(<issue>15</issue>), <fpage>2272</fpage>&#x2013;<lpage>2280</lpage>.</mixed-citation></ref>
+<ref id="c17"><mixed-citation publication-type="journal"><string-name><surname>Rahn</surname>, <given-names>R.</given-names></string-name> <etal>et al.</etal> (<year>2014</year>). <article-title>Journaled string tree-a scalable data structure for analyzing thousands of similar genomes on your laptop</article-title>. <source>Bioinformatics (Oxford, England)</source>, page <fpage>btu438</fpage>.</mixed-citation></ref>
+<ref id="c18"><mixed-citation publication-type="journal"><string-name><surname>Reinert</surname>, <given-names>K.</given-names></string-name> <etal>et al.</etal> (<year>2017</year>). <article-title>The SeqAn C&#x002B;&#x002B; template library for efficient sequence analysis: A resource for programmers</article-title>. <source>Journal of Biotechnology</source>.</mixed-citation></ref>
+<ref id="c19"><mixed-citation publication-type="journal"><string-name><surname>Schneeberger</surname>, <given-names>K.</given-names></string-name> <etal>et al.</etal> (<year>2009</year>). <article-title>Simultaneous alignment of short reads against multiple genomes</article-title>. <source>Genome biology</source>, <volume>10</volume>(<issue>9</issue>), <fpage>R98</fpage>.</mixed-citation></ref>
+<ref id="c20"><mixed-citation publication-type="journal"><string-name><surname>Shakya</surname>, <given-names>M.</given-names></string-name> <etal>>et al.</etal> (<year>2013</year>). <article-title>Comparative metagenomic and rRNA microbial diversity characterization using archaeal and bacterial synthetic communities</article-title>. <source>Environmental microbiology</source>, <volume>15</volume>(<issue>6</issue>), <fpage>1882</fpage>&#x2013;<lpage>99</lpage>.</mixed-citation></ref>
+<ref id="c21"><mixed-citation publication-type="book"><string-name><surname>Siragusa</surname>, <given-names>E.</given-names></string-name> (<year>2013</year>). <chapter-title>Approximate string matching for high-throughput sequencing</chapter-title>. <publisher-name>Ph.D. thesis, Freie Universit&#x00E4;t Berlin</publisher-name>.</mixed-citation></ref>
+<ref id="c22"><mixed-citation publication-type="book"><string-name><surname>Sir&#x00E9;n</surname>, <given-names>J.</given-names></string-name> (<year>2009</year>). <chapter-title>Compressed suffix arrays for massive data</chapter-title>. <person-group>In <string-name><given-names>J.</given-names> <surname>Karlgren</surname></string-name>, <string-name><given-names>J.</given-names> <surname>Tarhio</surname></string-name>, and <string-name><given-names>H.</given-names> <surname>Hyyr&#x00F6;</surname></string-name>, editors</person-group>, <source>String Processing and Information Retrieval</source>, pages <fpage>63</fpage>&#x2013;<lpage>74</lpage>, <publisher-name>Berlin, Heidelberg Springer Berlin Heidelberg</publisher-name>.</mixed-citation></ref>
+<ref id="c23"><mixed-citation publication-type="journal"><string-name><surname>Weese</surname>, <given-names>D.</given-names></string-name> <etal>et al.</etal> (<year>2012</year>). <article-title>Razers 3: Faster, fully sensitive read mapping</article-title>. <source>Bioinformatics</source>, <volume>28</volume>(<issue>20</issue>), <fpage>2592</fpage>&#x2013;<lpage>2599</lpage>.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

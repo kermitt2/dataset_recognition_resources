@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/245217</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Guidance on filtering DNA methylation microarray probes by detection p-values</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author" corresp="yes">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0003-1448-2509</contrib-id>
+<name>
+<surname>Heiss</surname>
+<given-names>Jonathan A.</given-names>
+</name>
+<xref ref-type="aff" rid="a1">a</xref>
+<xref ref-type="corresp" rid="cor1">&#x002A;</xref>
+</contrib>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0003-4312-5957</contrib-id>
+<name>
+<surname>Just</surname>
+<given-names>Allan C.</given-names>
+</name>
+<xref ref-type="aff" rid="a1">a</xref>
+</contrib>
+<aff id="a1"><label>a</label><institution>Department of Environmental Medicine and Public Health</institution>, Icahn School of Medicine at Mount Sinai, One Gustave L. Levy Place, Box 1057, New York, NY 10029, <email>jonathan.heiss@mssm.edu</email>, <email>allan.just@mssm.edu</email></aff>
+</contrib-group>
+<author-notes>
+<corresp id="cor1"><label>&#x002A;</label>Corresponding author</corresp>
+<fn><p><bold>Disclosure of interest:</bold> The authors report no conflict of interest.</p></fn>
+</author-notes>
+<pub-date pub-type="epub">
+<year>2018</year>
+</pub-date>
+<elocation-id>245217</elocation-id>
+<history>
+<date date-type="received">
+<day>09</day>
+<month>1</month>
+<year>2018</year>
+</date>
+<date date-type="rev-recd">
+<day>09</day>
+<month>1</month>
+<year>2018</year>
+</date>
+<date date-type="accepted">
+<day>10</day>
+<month>1</month>
+<year>2018</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2018, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2018</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="245217.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>DNA methylation microarrays are popular for epigenome-wide association studies, but spurious outlier values complicate downstream analysis. It was demonstrated previously that commonly used detection p-value cut-offs were insufficient and led to many calls on the Y-chromosome probes in females. We extend these observations by assessing 2,507 samples from 18 studies run on the 450K chip as well as outliers across technical replicates. We provide comprehensive guidance and software for filtering methylation microarrays as an essential step to reduce outliers.</p>
+</abstract>
+<counts>
+<page-count count="5"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1"><title>Introduction</title>
+<p>The Illumina Infinium HumanMethylation450 (450K) and the more recent Infinium MethylationEPIC (850K) arrays are two widely popular platforms for epigenome-wide association studies. Before beginning with downstream analyses, comprehensive quality control (QC) should be conducted to identify problematic samples. But samples passing QC still contain outliers, e.g. when targeted loci are present in low quantity due to amplification artifacts, or are mutated and no longer match their probe sequence. Affected probes feature mostly background noise and should be excluded. This decision is based on detection p-values, a concept explained below. Suggested cut-offs in the literature span several magnitudes from 0.05 to 1e-16. Lehne et al. systematically evaluated cut-offs based on the idea that probes targeting the Y-chromosome should be detected among males but not females [<xref ref-type="bibr" rid="c1">1</xref>]. We provide updated guidance with a corrected implementation across multiple datasets.</p>
+</sec>
+<sec id="s2"><title>Methods</title>
+<p>Treating DNA with bisulfite converts epigenetic modifications into distinct base sequences. In combination with subsequent whole-genome amplification, the ratio of methylated/unmethylated CpG sites is translated into differences in abundance of these distinct sequences which hybridize to complementary probes on the microarray and are linked with fluorescent dyes. By comparing fluorescence intensities of the probes targeting the methylated (<italic>M</italic>) and unmethylated (<italic>U</italic>) variant of a CpG site, its methylation level in the DNA input can be inferred. In case of a completely unmethylated CpG site, the <italic>U</italic> probe features a very high intensity, whereas the <italic>M</italic> intensity is low, or vice versa in case of a completely methylated CpG site. Thus, the total intensity <italic>T&#x003D;U&#x002B;M</italic> is &#x2014; to a certain degree &#x2014; independent of the methylation level itself. High intensities usually indicate good signal-to-noise ratio and such probes are hence deemed <italic>detected</italic>, whereas low intensities indicate <italic>undetected</italic> probes. Where to draw the line is based on the concept of detection p-values: the parameters of a background distribution <italic>B</italic> are estimated based on probes thought to feature mainly background noise. If the observed value of <italic>T</italic> is unlikely to be generated by <italic>B</italic> (associated p-value is below significance level) a probe is considered detected, otherwise undetected. The previous recommendation by Lehne et al. is based on <italic>minfi</italic> v1.2.0 [<xref ref-type="bibr" rid="c2">2</xref>] which misspecified the parameters of B (adding standard deviations instead of variances).</p>
+<p>We explored two approaches to estimate <italic>B</italic> using either negative control probes (NEG), specifically designed not to match the human genome, or so-called out-of-band (OOB) intensities, i.e. those observed in the usually unused color channel [<xref ref-type="bibr" rid="c3">3</xref>]. Robust estimators of location and spread were used. 18 public 450K datasets comprising 2,663 samples representing a wide range of tissues were downloaded. 2,507 samples passed our comprehensive QC including screening for sex-mismatches. Samples were grouped by sex (m/f&#x003D;1,184/1,323) and the number of detected Y-chromosome probes was counted for a range of p-value cut-offs.</p>
+<p>Code to reproduce analyses is provided in the supplement and a function to calculate detection p-values can be found in the <italic>ewastools</italic> package (github.com/hhhh5/ewastools_releases).</p>
+</sec>
+<sec id="s3"><title>Results</title>
+<p>The figure shows the median (2.5th and 97.5th percentiles) number out of the 416 Y-chromosome probes that were classified as detected grouped by sex. When estimating <italic>B</italic> using NEG evaluated cut-offs ranged from 1e0 to 1e-80, and from 1e0 to 1e-2 for the higher OOB intensities as they consequently resulted in higher p-values (to achieve similar results for NEG as for the combination OOB/0.1 a cut-off around 1e-117 was necessary).</p>
+<p>Even for the most stringent cut-offs considered here the number of detected probes among females was non-zero. Calculating the detection rate among females for each probe (<xref ref-type="fig" rid="figS1">Fig. S1</xref>) there was an almost clear-cut separation between always undetected and detected (probably cross-reactive with autosomal loci) probes.</p>
+<p>Using NEG and a cut-off of 1e-2 resulted in a median of 84 undetected probes per sample, not counting Y-chromosome probes. Lowering the cut-off to 1e-16 increased this number to 334 probes. Switching to OOB and a cut-off of 0.1 resulted in a median of 3,565 undetected probes per sample, approximately 0.7&#x0025; of the data.</p>
+<p>A subset of 6 index samples (whole blood) and their technical replicates was used to assess the absolute difference in methylation levels for paired measurements. The median difference was 1.3 percentage points (pp) among the pairs with probes detected in both index sample and replicate, and 6.2pp (NEG/1e-16) and 4.3pp (OOB/0.1) for all other pairs, respectively. 3,733 pairs had a difference &#x003E;20pp, of which 1,058 (NEG/1e-16) and 2,355 (OOB/0.1) were classified as undetected, respectively. The commonly used combination NEG/0.01 classified only 342 (9&#x0025;) of these outliers as undetected.</p>
+<fig id="ufig1" position="float" orientation="portrait" fig-type="figure">
+<graphic xlink:href="245217_ufig1.tif"/>
+</fig>
+</sec>
+<sec id="s4"><title>Conclusions</title>
+<p>While both negative control probes and OOB intensities are utilized in background subtraction/correction, they show very distinct distributions. OOB intensities might reflect more realistic levels of background noise resulting from cross-hybridization as many probes possess some sequence similarity with off-target loci resulting in off-target binding. In contrast, negative control probes are designed not to match the human genome (their probe sequences are proprietary) and consequently feature lower intensities. We recommend to use OOB to estimate the background distribution and a detection p-value cut-off of 0.1, as this combination helped to exclude the majority of major outliers (&#x003E;20pp) between technical replicates. Most undetected probes showed smaller differences and removing such data points may seem overly conservative, however, with the exception of a few exposures such as smoking, effect sizes of associations in whole blood are often very small and removing unreliable data points may strengthen statistical power. Examples include BMI [<xref ref-type="bibr" rid="c4">4</xref>], diabetes [<xref ref-type="bibr" rid="c5">5</xref>], or age, all of which were found and replicated to be associated with methylation changes of a few percentage points.</p>
+</sec>
+</body>
+<back>
+<ref-list><title>References</title>
+<ref id="c1"><label>1.</label><mixed-citation publication-type="other"><string-name><surname>Lehne</surname> <given-names>B</given-names></string-name>, <string-name><surname>Drong</surname> <given-names>AW</given-names></string-name>, <string-name><surname>Loh</surname> <given-names>M</given-names></string-name>, <string-name><surname>Zhang</surname> <given-names>W</given-names></string-name>, <string-name><surname>Scott</surname> <given-names>WR</given-names></string-name>, <string-name><surname>Tan</surname> <given-names>S-T</given-names></string-name>, <etal>et al.</etal> <article-title>A coherent approach for analysis of the Illumina HumanMethylation450 BeadChip improves data quality and performance in epigenome-wide association studies</article-title>. <source>Genome Biol</source>. <year>2015</year>;<fpage>16</fpage>. doi:<pub-id pub-id-type="doi">10.1186/s13059-015-0600-x</pub-id></mixed-citation></ref>
+<ref id="c2"><label>2.</label><mixed-citation publication-type="journal"><string-name><surname>Aryee</surname> <given-names>MJ</given-names></string-name>, <string-name><surname>Jaffe</surname> <given-names>AE</given-names></string-name>, <string-name><surname>Corrada-Bravo</surname> <given-names>H</given-names></string-name>, <string-name><surname>Ladd-Acosta</surname> <given-names>C</given-names></string-name>, <string-name><surname>Feinberg</surname> <given-names>AP</given-names></string-name>, <string-name><surname>Hansen</surname> <given-names>KD</given-names></string-name>, <etal>et al.</etal> <article-title>Minfi: a flexible and comprehensive Bioconductor package for the analysis of Infinium DNA methylation microarrays</article-title>. <source>Bioinformatics</source>. <year>2014</year>;<volume>30</volume>: <fpage>1363</fpage>&#x2013;<lpage>1369</lpage>.</mixed-citation></ref>
+<ref id="c3"><label>3.</label><mixed-citation publication-type="journal"><string-name><surname>Bibikova</surname> <given-names>M</given-names></string-name>, <string-name><surname>Barnes</surname> <given-names>B</given-names></string-name>, <string-name><surname>Tsan</surname> <given-names>C</given-names></string-name>, <string-name><surname>Ho</surname> <given-names>V</given-names></string-name>, <string-name><surname>Klotzle</surname> <given-names>B</given-names></string-name>, <string-name><surname>Le</surname> <given-names>JM</given-names></string-name>, <etal>et al.</etal> <article-title>High density DNA methylation array with single CpG site resolution</article-title>. <source>Genomics</source>. <year>2011</year>;<volume>98</volume>: <fpage>288</fpage>&#x2013;<lpage>295</lpage>.</mixed-citation></ref>
+<ref id="c4"><label>4.</label><mixed-citation publication-type="journal"><string-name><surname>Demerath</surname> <given-names>EW</given-names></string-name>, <string-name><surname>Guan</surname> <given-names>W</given-names></string-name>, <string-name><surname>Grove</surname> <given-names>ML</given-names></string-name>, <string-name><surname>Aslibekyan</surname> <given-names>S</given-names></string-name>, <string-name><surname>Mendelson</surname> <given-names>M</given-names></string-name>, <string-name><surname>Zhou</surname> <given-names>Y-H</given-names></string-name>, <etal>et al.</etal> <article-title>Epigenome-wide association study (EWAS) of BMI, BMI change and waist circumference in African American adults identifies multiple replicated loci</article-title>. <source>Hum Mol Genet</source>. <year>2015</year>;<volume>24</volume>: <fpage>4464</fpage>&#x2013;<lpage>4479</lpage>.</mixed-citation></ref>
+<ref id="c5"><label>5.</label><mixed-citation publication-type="journal"><string-name><surname>Chambers</surname> <given-names>JC</given-names></string-name>, <string-name><surname>Loh</surname> <given-names>M</given-names></string-name>, <string-name><surname>Lehne</surname> <given-names>B</given-names></string-name>, <string-name><surname>Drong</surname> <given-names>A</given-names></string-name>, <string-name><surname>Kriebel</surname> <given-names>J</given-names></string-name>, <string-name><surname>Motta</surname> <given-names>V</given-names></string-name>, <etal>et al.</etal> <article-title>Epigenome-wide association of DNA methylation markers in peripheral blood from Indian Asians and Europeans with incident type 2 diabetes: a nested case-control study</article-title>. <source>The Lancet Diabetes &#x0026; Endocrinology</source>. <year>2015</year>;<volume>3</volume>: <fpage>526</fpage>&#x2013;<lpage>534</lpage>.</mixed-citation></ref>
+</ref-list>
+<sec id="s5" sec-type="supplementary-material">
+<title>Supplement</title>
+<fig id="figS1" position="float" orientation="portrait" fig-type="figure">
+<label>Figure S1:</label>
+<caption><p>Detection rates of Y-chromosome probes among the 1,323 female samples. For the common threshold of 0.01 and a background distribution estimated from negative control probes, not a single probe had a detection rate of zero. For more stringent criteria there is a almost clear-cut separation between undetected and detected (probably cross-reactive with autosomal loci) probes. The order of probes is not identical between curves.</p>
+</caption>
+<graphic xlink:href="245217_figS1.tif"/>
+</fig>
+</sec>
+</back>
+</article>

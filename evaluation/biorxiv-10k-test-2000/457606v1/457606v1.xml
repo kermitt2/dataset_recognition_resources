@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/457606</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Gkmexplain: Fast and Accurate Interpretation of Nonlinear Gapped <italic>k</italic>-mer SVMs Using Integrated Gradients</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author" corresp="yes"><contrib-id contrib-id-type="orcid">http://orcid.org/0000-0002-6443-4671</contrib-id>
+<name><surname>Shrikumar</surname><given-names>Avanti</given-names></name>
+<xref ref-type="author-notes" rid="n1">&#x002A;</xref>
+<xref ref-type="corresp" rid="cor1">&#x2020;</xref>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<contrib contrib-type="author" corresp="yes"><name><surname>Prakash</surname><given-names>Eva</given-names></name>
+<xref ref-type="author-notes" rid="n1">&#x002A;</xref>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0003-3084-2287</contrib-id>
+<name><surname>Kundajef</surname><given-names>Anshul</given-names></name>
+<xref ref-type="aff" rid="a3">3</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>Stanford University</institution>, <email>avanti@stanford.edu</email></aff>
+<aff id="a2"><label>2</label><institution>BASIS Silicon Valley</institution>, <email>evaprakash2@gmail.com</email></aff>
+<aff id="a3"><label>3</label><institution>Stanford University</institution>, <email>akundaje@stanford.edu</email></aff>
+</contrib-group>
+<author-notes>
+<fn id="n1" fn-type="other"><label>&#x002A;</label><p>co-first authors</p></fn>
+<corresp id="cor1"><label>&#x2020;</label>co-corresponding authors: Avanti Shrikumar <email>avanti@stanford.edu</email>, Eva Prakash <email>evaprakash2@gmail.com</email></corresp>
+</author-notes>
+<pub-date pub-type="epub"><year>2018</year></pub-date>
+<elocation-id>457606</elocation-id>
+<history>
+<date date-type="received">
+<day>30</day>
+<month>10</month>
+<year>2018</year>
+</date>
+<date date-type="rev-recd">
+<day>30</day>
+<month>10</month>
+<year>2018</year>
+</date>
+<date date-type="accepted">
+<day>01</day>
+<month>11</month>
+<year>2018</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2018, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2018</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="457606.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>Support Vector Machines with gapped <italic>k</italic>-mer kernels (gkm-SVMs) have been used to learn predictive models of regulatory dNA sequence. However, interpreting predictive sequence patterns learned by gkm-SVMs can be challenging. Existing interpretation methods such as deltaSVM, in-silico mutagenesis (ISM), or SHAP either do not scale well or make limiting assumptions about the model that can produce misleading results when the gkm kernel is combined with nonlinear kernels. Here, we propose gkmexplain: a novel approach inspired by the method of Integrated Gradients for interpreting gkm-SVM models. Using simulated regulatory DNA sequences, we show that gkmexplain identifies predictive patterns with high accuracy while avoiding pitfalls of deltaSVM and ISM and being orders of magnitude more computationally efficient than SHAP. We use a novel motif discovery method called TF-MoDISco to recover consolidated TF motifs from gkm-SVM models of <italic>in vivo</italic> TF binding by aggregating predictive patterns identified by gkmexplain. Finally, we find that mutation impact scores derived through gkmexplain using gkm-SVM models of chromatin accessibility in lymphoblastoid cell-lines consistently outperform deltaSVM and ISM at identifying regulatory genetic variants (dsQTLs). Code and example notebooks replicating the workflow are available at <ext-link ext-link-type="uri" xlink:href="https://github.com/kundajelab/gkmexplain">https://github.com/kundajelab/gkmexplain</ext-link>.</p>
+</abstract>
+<counts>
+<page-count count="17"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<label>1</label>
+<title>Introduction</title>
+<p>Deciphering the combinatorial regulatory DNA sequence patterns that determine transcription factor (TF) binding and chromatin state is critical to understand gene regulation and interpret the molecular impact of regulatory genetic variation. High-throughput <italic>in vivo</italic> and <italic>in vitro</italic> functional genomics experiments provide large datasets to train predictive models using machine learning approaches that can learn the relationship between regulatory DNA sequences and their associated molecular phenotypes. Support Vector Machines (SVMs) are a popular choice in machine learning prediction tasks because they are stable to train and, when used with an appropriate kernel, can model complex input-output relationships. For classification tasks, SVMs learn an optimal linear separating hyperplane in a high-dimensional space determined by a kernel that measures the similarity between all pairs of examples. The gapped <italic>k</italic>-mer (gkm) string kernel [<xref ref-type="bibr" rid="c11">11</xref>, <xref ref-type="bibr" rid="c6">6</xref>] was developed to enable training SVMs on string inputs such as DNA or protein sequences. The gkm kernel computes a similarity between pairs of sequences based on biologically motivation notion of shared approximate occurrences of short subsequences allowing for gaps and mismatches. The gkm kernel can be further combined with other nonlinear kernels such as radial basis function (RBF) kernel to capture complex nonlinear relationships between the input string features. Gapped <italic>k</italic>-mer SVMs and their extensions have been successfully applied to several prediction tasks in regulatory genomics such as TF binding and chromatin accessibility prediction. Interpretation of these trained SVMs is important to decipher the patterns such as TF binding motifs present in the any DNA sequences that are predictive of its associated molecular label. Moreover, these models can be used to predict the impacts of genetic variants in regulatory DNA sequences. Unfortunately, interpretation of gkm-SVMs can be challenging. DeltaSVM [<xref ref-type="bibr" rid="c9">9</xref>], a popular tool developed by the authors of gkm-SVM to estimate the effects of variants, can produce unsatisfactory results when used with nonlinear versions of the gkm kernel such as the gkmrbf kernel [<xref ref-type="bibr" rid="c8">8</xref>]. In-silico mutagenesis (ISM) [<xref ref-type="bibr" rid="c4">4</xref>], an interpretation approach that consists of performing individual perturbations and observing the impact on the output, can be computationally inefficient and can fail to reveal the presence of motifs when nonlinear saturation effects are present [<xref ref-type="bibr" rid="c13">13</xref>]. SHAP [<xref ref-type="bibr" rid="c12">12</xref>], a method based on estimating Shapely values, can address the nonlinearity issues faced by deltaSVM and ISM but is even less computationally efficient than ISM. As such, there is a need for fast interpretation of gapped <italic>k</italic>-mer Support Vector Machines that works reliably in the presence of nonlinear effects.</p>
+<p>Here we present gkmexplain, a computationally efficient method for explaining the predictions of both linear and nonlinear variants of gapped <italic>k</italic>-mer SVMs. Specifically, gkmexplain is a feature attribution method that efficiently computes the predictive contribution or importance of every nucleotide in an input DNA sequence to its associated output label through the lens of a gkmSVM model. gkmexplaim works by decomposing the output of the gapped <italic>k</italic>-mer string kernel into the contributions of matching positions within the <italic>k</italic>-mers, and can be interpreted as a variation of the Integrated Gradients, a feature attribution method developed to interpret deep learning models [<xref ref-type="bibr" rid="c15">15</xref>]. On simulated regulatory DNA sequences, where the ground truth predictive motifs are known, we show that gkmexplain outperforms deltaSVM and ISM while being multiple orders of magnitude more computationally efficient than SHAP. We use a novel motif discovery method called TF-MoDISco [<xref ref-type="bibr" rid="c14">14</xref>] to recover consolidated TF motifs from gkm-SVM models of <italic>in vivo</italic> tF binding by aggregating predictive patterns identified by gkmexplain. Finally, using non-linear gkmSVM models of chromatin accessible regulatory DNA sequences, we show that mutation impact scores derived through gkmexplain outperform deltaSVM and ISM at identifying DNAse-I hypersensitive QTLs (dsQTLs) in lymphoblastoid cell-lines.</p>
+</sec>
+<sec id="s2">
+<label>2</label>
+<title>Background</title>
+<sec id="s2a">
+<label>2.1</label>
+<title>Gapped <italic>k</italic>-mers</title>
+<p>A full <italic>k</italic>-mer refers to a letter subsequence of length <italic>k</italic> - for example, AAGT is a full 4-mer. By contrast, a gapped <italic>k</italic>-mer refers to a subsequence containing <italic>k</italic> letters and some number of gaps - for example, A&#x002A;AG&#x002A;T is a gapped 4-mer containing 2 gaps (&#x002A; is used to denote a gap). In the gkm-SVM implementation, <italic>l</italic> denotes the full length of the subsequences considered (including gaps), and <italic>k</italic> denotes the number of non-gap positions - for example, the l-mer ACG (where l &#x003D; 3) contains the gapped <italic>k</italic>-mers AC&#x002A;, A&#x002A;G and &#x002A;CG (where <italic>k</italic> &#x003D; 2).</p>
+</sec>
+<sec id="s2b">
+<label>2.2</label>
+<title>Support Vector Machines and Gapped <italic>k</italic>-mer Kernels</title>
+<p>Let x be an input to a Support Vector Machine (SVM), <italic>m</italic> be the total number of support vectors, <italic>Z<sup>i</sup></italic> be the ith support vector, <italic>y<sup>i</sup></italic> be the label (&#x002B;1 or &#x2212;1) associated with the <italic>i</italic>th support vector, <italic>&#x03B1;<sub>i</sub></italic> be the weight associated with the ith support vector, <italic>b</italic> be a constant bias term, and <italic>K</italic> be a <italic>kernel function</italic> that is used to compute a similarity score between <italic>Z<sup>i</sup></italic> and <bold>x</bold>. The SVM produces an output of the form:
+<disp-formula id="eqn1">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn1.gif"/></alternatives>
+</disp-formula></p>
+<p>Kernel functions can be thought of as implicitly computing dot products between their inputs mapped to vectors in some feature space. For example, the <italic>gapped <italic>k</italic>-mer</italic> kernel implicitly maps its inputs to feature vectors representing the normalized counts of gapped <italic>k</italic>-mers. Thus, it has the form:
+<disp-formula id="eqn2">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn2.gif"/></alternatives>
+</disp-formula></p>
+<p>Where <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline1.gif"/></alternatives></inline-formula> and <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline2.gif"/></alternatives></inline-formula> are feature vectors consisting of the counts of gapped <italic>k</italic>-mers in sequences <italic>S</italic><sub>1</sub> and <italic>S</italic><sub>2</sub> respectively. Because the feature space corresponding to gapped <italic>k</italic>-mer counts can be quite large, a more computationally efficient formulation [<xref ref-type="bibr" rid="c11">11</xref>, <xref ref-type="bibr" rid="c6">6</xref>] of the gapped <italic>k</italic>-mer kernel performs a sum only over the full <italic>l</italic>-mers that are actually present in the sequences. Let <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline3.gif"/></alternatives></inline-formula> represent the identity of the <italic>l</italic>-mer at position <italic>i</italic> in sequence <italic>S<sub>x</sub></italic>, and let <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline4.gif"/></alternatives></inline-formula> be a function that returns the number of mismatches between the <italic>l</italic>-mers <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline5.gif"/></alternatives></inline-formula> and <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline6.gif"/></alternatives></inline-formula>. We can write <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline7.gif"/></alternatives></inline-formula> as:
+<disp-formula id="eqn3">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn3.gif"/></alternatives>
+</disp-formula></p>
+<p>Where the indexes <italic>i</italic> and <italic>j</italic> sum over all <italic>l</italic>-mers in <italic>S</italic><sub>1</sub> and <italic>S</italic><sub>2</sub> respectively, and <italic>h</italic>(<italic>m</italic>) is a function that returns the contribution of an <italic>l</italic>-mer pair with <italic>m</italic> mismatches to the dot product <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline8.gif"/></alternatives></inline-formula>. For example, if <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline9.gif"/></alternatives></inline-formula> and <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline10.gif"/></alternatives></inline-formula> are a pair of <italic>l</italic>-mers with <italic>m</italic> mismatches between them, then the number of gapped <italic>k</italic>-mers they share is <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline11.gif"/></alternatives></inline-formula>. Thus, in the case of the traditional gapped <italic>k</italic>-mer kernel, <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline12.gif"/></alternatives></inline-formula>. Note that Gandhi et al. [<xref ref-type="bibr" rid="c6">6</xref>] proposed variants of the gapped <italic>k</italic>-mer kernel such as the <italic>truncated gkm-filter.</italic> These variants differ in the function <italic>h</italic>(<italic>m</italic>), but otherwise have an identical formulation.</p>
+</sec>
+<sec id="s2c">
+<label>2.3</label>
+<title>Extensions of the gkm kernel</title>
+<p>We described the extensions to the gkm kernel proposed by Lee in [<xref ref-type="bibr" rid="c8">8</xref>].</p>
+<sec id="s2c1">
+<label>2.3.1</label>
+<title>The wgkm kernel</title>
+<p>In the weighted gkm (wgkm) kernel, <italic>l</italic>-mers are given a weight according to the position at which they occur. A dot product in the feature space of weighted gapped <italic>k</italic>-mers can thus be expressed as:
+<disp-formula id="eqn4">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn4.gif"/></alternatives>
+</disp-formula></p>
+<p>Where <italic>w<sub>i</sub></italic> and <italic>W<sub>j</sub></italic> are the weights associated with <italic>l</italic>-mers at position <italic>i</italic> and <italic>j</italic> respectively. The weighted gkm kernel then becomes:
+<disp-formula id="eqn5">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn5.gif"/></alternatives>
+</disp-formula></p>
+<p>Note that the gkm kernel is a special case of the wgkm kernel with <italic>w<sub>i</sub></italic> &#x003D; 1 for all <italic>i</italic>.</p>
+</sec>
+<sec id="s2c2">
+<label>2.3.2</label>
+<title>The gkmrbf kernel</title>
+<p>The RBF kernel is useful for modeling complex nonlinear interactions between input features, and is defined as <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline13.gif"/></alternatives></inline-formula> (where <bold>x</bold> and <bold>y</bold> are vectors). Recall that the gkm kernel can be thought of as mapping the input sequences to a feature space of normalized gapped <italic>k</italic>-mer counts. The gkmrbf kernel maps sequences to the same feature space as the gkm kernel, but then applies the RBF kernel rather than the dot product. For efficient computation, we leverage the following equality:
+<disp-formula id="ueqn1">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_ueqn1.gif"/></alternatives>
+</disp-formula></p>
+<p>As gkm feature vectors are always unit normalized, <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline14.gif"/></alternatives></inline-formula>. If we let <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline15.gif"/></alternatives></inline-formula>, we get:
+<disp-formula id="eqn6">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn6.gif"/></alternatives>
+</disp-formula></p>
+</sec>
+<sec id="s2c3">
+<label>2.3.3</label>
+<title>The wgkmrbf kernel</title>
+<p>Analogous to Eqn. 6, the wgkmrbf kernel is a combination of the wgkm kernel and the RBF kernel:
+<disp-formula id="eqn7">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn7.gif"/></alternatives>
+</disp-formula></p>
+</sec>
+</sec>
+</sec>
+<sec id="s3">
+<label>3</label>
+<title>Previous Work</title>
+<p>DeltaSVM [<xref ref-type="bibr" rid="c9">9</xref>] is a popular tool developed by the authors of gkm-SVM to estimate the in-silico effects of genetic variants. DeltaSVM defines a score for each <italic>l</italic>-mer as the output of the gkm-SVM when the gkm-SVM is supplied only that <italic>l</italic>-mer as input. It then estimates the impact of a mutation as the total change in the scores of all <italic>l</italic>-mers overlapping the mutation. Although computationally efficient, this formulation does not consider interactions between <italic>l</italic>-mers that can be learned by the gkmrbf or wgkmrbf kernels (<bold><xref ref-type="sec" rid="s2c">Sec. 2.3</xref></bold>). It also does not consider the influence of positional weights that are present in the wgkm or wgkmrbf kernels. Consistent with this, Lee [<xref ref-type="bibr" rid="c8">8</xref>] observed that deltaSVM used in conjunction with the gkmrbf, wgkm or wgkmrbf kernels did not produce improvements in variant scoring relative to the gkm kernel, even though predictive models trained with the former kernels performed better.</p>
+<p>An alternative to deltaSVM for estimating the impact of individual mutations is to directly compute the change in the output of the SVM when the mutation is introduced into the input sequence. This approach is called in-silico mutagenesis (ISM) [<xref ref-type="bibr" rid="c4">4</xref>], and it has been successfully applied to interpret complex machine learning models [<xref ref-type="bibr" rid="c17">17</xref>]. However, individually computing the impact of all possible mutations in an input sequence can become computationally inefficient. Further, ISM can fail to reveal the presence of motifs in a sequence when nonlinear saturating effects are present [<xref ref-type="bibr" rid="c13">13</xref>] - for example, if multiple GATA1 motifs exist in an input sequence, but only one GATA1 motif is needed for the output to be positive, perturbing any single GATA1 motif may not cause a substantial change in the output. Such nonlinear relationships can be learned by the gkmrbf or wgkmrbf kernels (<bold><xref ref-type="sec" rid="s2c">Sec. 2.3</xref></bold>), both of which frequently produced improvements in performance relative to the gkm kernel [<xref ref-type="bibr" rid="c8">8</xref>].</p>
+<p>SHAP [<xref ref-type="bibr" rid="c12">12</xref>] is a general-purpose interpretation method that addresses the saturation issue of ISM by sampling several combinations of input perturbations and looking at the change in the output in each case. Although SHAP has good theoretical guarantees, it is far less computationally efficient than ISM as the number of sampled perturbations needed to get accurate importance estimates can be quite large. For example, the authors of SHAP used 50,000 sampled perturbations to obtain stable estimates of feature importance on a single example from the MNIST digit recognition dataset (each example is a 28 &#x00D7; 28 image).</p>
+</sec>
+<sec id="s4">
+<label>4</label>
+<title>Methods</title>
+<sec id="s4a">
+<label>4.1</label>
+<title>Integrated gradients for gapped <italic>k</italic>-mer SVMs</title>
+<p>In this section, we describe the gkmexplain method. Gkmexplain can be motivated in terms of the Integrated Gradients attribution method [<xref ref-type="bibr" rid="c15">15</xref>]. For any output function <italic>F</italic>(<italic>X</italic>), where <italic>X</italic> is a vector in &#x211D;<sup><italic>n</italic></sup>, and a path function <italic>&#x03C0;</italic> : [0,1] &#x2192; &#x211D;<sup><italic>n</italic></sup>, the <italic>Path Integrated Gradients</italic> [<xref ref-type="bibr" rid="c15">15</xref>] importance on the <italic>i</italic>th feature <italic>X<sub>i</sub></italic> is defined as:
+<disp-formula id="eqn8">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn8.gif"/></alternatives>
+</disp-formula></p>
+<p><xref ref-type="disp-formula" rid="eqn8">Equation 8</xref> requires the output function <italic>F</italic> to be differentiable. Unfortunately, this is not the case for SVMs that use string kernels because DNA sequence is discrete. We solve this issue by introducing a collection of continuous variables <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline16.gif"/></alternatives></inline-formula> that can be interpreted as representing the &#x201C;intensity&#x201D; of the base at position i of sequence <italic>S<sub>x</sub></italic>. Reformulating the SVM objective to contain these artificial intensity variables, we can apply the method of Integrated Gradients. A derivation is provided in <bold><xref ref-type="app" rid="app1a">Appendix A.1</xref></bold>. The resulting formula for the importance of base <italic>i</italic> in sequence <italic>S<sub>x</sub></italic> in a wgkm-SVM is:
+<disp-formula id="eqn9">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn9.gif"/></alternatives>
+</disp-formula></p>
+<p>Where <italic>S<sub>z</sub>j</italic>, <italic>&#x03B1;<sub>j</sub></italic> and <italic>y<sup>j</sup></italic> are, respectively, the sequence, weight and label of support vector <italic>j</italic>, and:
+<disp-formula id="eqn10">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn10.gif"/></alternatives>
+</disp-formula></p>
+<p>Where <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline17.gif"/></alternatives></inline-formula> is the identity of the base at position <italic>i</italic> in sequence <italic>S<sub>x</sub></italic> and
+<disp-formula id="eqn11">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn11.gif"/></alternatives>
+</disp-formula></p>
+<p>The formula for the importance of base <italic>i</italic> in position <italic>S<sub>x</sub></italic> for the wkgmrbf kernel is:
+<disp-formula id="eqn12">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn12.gif"/></alternatives>
+</disp-formula></p>
+<p>Where
+<disp-formula id="eqn13">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn13.gif"/></alternatives>
+</disp-formula></p>
+<p>In terms of implementation, the gkmexplain importance scores can be computed efficiently by modifying the <italic>k</italic>-mer tree depth-first search that was originally used to compute the output of the gkm-SVM (see our implementation at <ext-link ext-link-type="uri" xlink:href="https://github.com/kundajelab/lsgkm">https://github.com/kundajelab/lsgkm</ext-link>).</p>
+<sec id="s4a1">
+<label>4.1.1</label>
+<title>Intuitive motivation</title>
+<p>Although <bold><xref ref-type="disp-formula" rid="eqn9">Eqns. 9</xref> &#x0026; <xref ref-type="disp-formula" rid="eqn12">12</xref></bold> can be justified using the method of Integrated Gradients, it can be helpful to have an intuitive understanding of the formulas. Recall from <bold><xref ref-type="disp-formula" rid="eqn3">Eqn. 3</xref></bold> that <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline18.gif"/></alternatives></inline-formula> is the contribution of the <italic>l</italic>-mer pair <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline19.gif"/></alternatives></inline-formula> to the dot product <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline20.gif"/></alternatives></inline-formula>. Let us denote <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline21.gif"/></alternatives></inline-formula> as <italic>m</italic>, and let us consider a position <italic>i</italic> in sequence <italic>S<sub>x</sub></italic> that overlaps <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline22.gif"/></alternatives></inline-formula>. Let us denote the base at position <italic>i</italic> as <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline23.gif"/></alternatives></inline-formula>, and the corresponding base within <italic>l</italic>-mer <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline24.gif"/></alternatives></inline-formula> as <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline25.gif"/></alternatives></inline-formula> (&#x201C;corresponding&#x201D; means that the offset of <italic>B<sub>x</sub></italic> relative to the start of <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline26.gif"/></alternatives></inline-formula> is the same as the offset of <italic>B<sub>z</sub></italic> relative to the start of <italic>w<sub>i</sub>w<sub>j</sub>h</italic>(<italic>m</italic>). If we evenly distribute <italic>w<sub>i</sub>w<sub>j</sub>h(m</italic>) among the (<italic>l</italic> &#x2013; <italic>m</italic>) matching positions between <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline27.gif"/></alternatives></inline-formula> and <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline28.gif"/></alternatives></inline-formula>, then position <italic>i</italic> would inherit an importance of <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline29.gif"/></alternatives></inline-formula>, and would inherit an importance of <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline30.gif"/></alternatives></inline-formula> if <italic>B<sub>x</sub></italic> &#x003D; <italic>B<sub>z</sub></italic>. In other words, using the definition of eff(<italic>m</italic>, <italic>B<sub>x</sub></italic>, <italic>B<sub>z</sub></italic>) in <bold><xref ref-type="disp-formula" rid="eqn11">Eqn. 11</xref></bold>, we can write the importance inherited by position <italic>i</italic> from the <italic>l</italic>-mer pair <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline31.gif"/></alternatives></inline-formula> as <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline32.gif"/></alternatives></inline-formula> If we sum this quantity over all possible <italic>l</italic>-mer pairs where <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline33.gif"/></alternatives></inline-formula> overlaps position <italic>i</italic>, and normalize by the total wgkm feature vector lengths (as is done in the wgkm kernel), we arrive at the quantity <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline34.gif"/></alternatives></inline-formula> in <bold><xref ref-type="disp-formula" rid="eqn10">Eqn. 10</xref></bold>, which we can view as the contribution of base <italic>i</italic> in sequence <italic>S<sub>x</sub></italic> to the kernel output <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline35.gif"/></alternatives></inline-formula>. The final importance of base <italic>i</italic> in <bold><xref ref-type="disp-formula" rid="eqn9">Eqn. 9</xref></bold> can then be seen as a weighted sum of the contributions of <italic>i</italic> to the kernel outputs <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline36.gif"/></alternatives></inline-formula>, where the weights <italic>&#x03B1;<sub>j</sub>y<sub>j</sub></italic> are the same as the SVM weights.</p>
+<p>As intuition for <bold><xref ref-type="disp-formula" rid="eqn12">Eqn. 12</xref></bold> (pertaining to the wgkmrbf kernel), note that exp(&#x2013;&#x03B3;) is the output of the <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline37.gif"/></alternatives></inline-formula> kernel when <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline38.gif"/></alternatives></inline-formula> is 0. If we consider the &#x201C;baseline&#x201D; input <italic>S<sub>x</sub></italic> to be one that has a wgkm dot product of 0 with all the support vectors, then exp(<italic>&#x03B3;</italic>(<italic>K<sub>wgkm</sub></italic>(<italic>S<sub>z</sub>j</italic>, <italic>S<sub>x</sub></italic>) &#x2013; 1)) &#x2013; exp(&#x2013;&#x03B3;) is the &#x201C;difference from baseline&#x201D; of <italic>K<sub>wgkmrbf</sub></italic>(<italic>S<sub>x</sub></italic>, <italic>S<sub>z</sub></italic>). Earlier, we said that <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline39.gif"/></alternatives></inline-formula> can be thought of as the contribution of base <italic>i</italic> in sequence <italic>S<sub>x</sub></italic> to the kernel output <italic>K<sub>wgkm</sub></italic>(<italic>S<sub>x</sub></italic>, <italic>S<sub>z</sub></italic>). The quantity <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline40.gif"/></alternatives></inline-formula> (<bold><xref ref-type="disp-formula" rid="eqn13">Eqn. 13</xref></bold>) can thus be viewed as attributing the &#x201C;difference from baseline&#x201D; of <italic>K<sub>wgkmrbf</sub></italic>(<italic>S<sub>x</sub></italic>, <italic>S<sub>z</sub></italic>) to the positions <italic>i</italic> in proportion to the contribution of base <italic>i</italic> to <italic>K<sub>wgkm</sub></italic>(<italic>S<sub>x</sub></italic>, <italic>S<sub>z</sub></italic>). The final importance of base <italic>i</italic> in <bold><xref ref-type="disp-formula" rid="eqn12">Eqn. 12</xref></bold> can then be seen as a weighted sum of the contributions of <italic>i</italic> to the &#x201C;difference from baseline&#x201D; of the kernel outputs <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline41.gif"/></alternatives></inline-formula>, where the weights are <italic>&#x03B1;<sub>j</sub> y<sup>j</sup></italic>.</p>
+</sec>
+</sec>
+<sec id="s4b">
+<label>4.2</label>
+<title>Mutation Impact Scores</title>
+<p>The typical approach to estimating the impact of individual mutations is in-silico mutagenesis (ISM). In ISM, a mutation is introduced in the sequence and the change in the predicted output is computed. However, as illustrated in <bold><xref ref-type="fig" rid="fig1">Fig. 1</xref></bold>, ISM can overlook motifs if the response of the model has saturated in the presence of the motif (as can happen when the gkmrbf kernel is used). For these reasons, it can be beneficial to estimate the effects of mutations using a different approach. Building on <bold><xref ref-type="sec" rid="s4a">Sec. 4.1</xref></bold>, we introduce the term <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline42.gif"/></alternatives></inline-formula> to represent the estimated impact on the kernel output <italic>K<sub>wgkm</sub></italic>(<italic>S<sub>x</sub></italic>, <italic>S<sub>z</sub></italic>) of changing position <italic>i</italic> in sequence <italic>S<sub>x</sub></italic> to base <italic>B</italic>&#x002A;. We have:
+<disp-formula id="eqn14">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn14.gif"/></alternatives>
+</disp-formula>
+where
+<disp-formula id="eqn15">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn15.gif"/></alternatives>
+</disp-formula></p>
+<fig id="fig1" position="float">
+<label>Figure 1:</label>
+<caption><title>Comparison of gkmexplain, ISM, deltaSVM and SHAP on an individual sequence.</title>
+<p>An SVM with a gkmrbf kernel with <italic>l</italic> &#x003D; 6, <italic>k</italic> &#x003D; 5 and <italic>d</italic> &#x003D;1 was used to distinguish sequences containing both TAL1 and GATA1 motifs from sequences containing only one kind of motif or neither kind of motif. The locations of embedded GATA1 motifs are indicated by blue stars, and the location of the embedded TAL1 motif is indicated by a red star. For SHAP, a background of 20 shuffled versions of the original sequence was used. The relatively poor performance of ISM and deltaSVM is due to the nonlinear nature of the RBF kernel.</p>
+</caption>
+<graphic xlink:href="457606_fig1.tif"/></fig>
+<p>By analogy to <bold><xref ref-type="disp-formula" rid="eqn9">Eqns. 9</xref> &#x0026; <xref ref-type="disp-formula" rid="eqn12">12</xref></bold>, we then define the mutation impact scores for base <italic>B</italic>&#x002A; at position <italic>i</italic> in sequence <italic>S<sub>x</sub></italic> as follows:
+<disp-formula id="eqn16">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn16.gif"/></alternatives>
+</disp-formula>
+and
+<disp-formula id="eqn17">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn17.gif"/></alternatives>
+</disp-formula>
+where
+<disp-formula id="eqn18">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn18.gif"/></alternatives>
+</disp-formula></p>
+<p>Once again, these quantities can be efficiently computed by modifying the <italic>k</italic>-mer tree depth-first search originally used to compute the output of the gkm-SVM (see our implementation at <ext-link ext-link-type="uri" xlink:href="https://github.com/kundajelab/lsgkm">https://github.com/kundajelab/lsgkm</ext-link>). While the original implementation only performs recursion on <italic>l</italic>-mer pairs for which no more than d mismatches have been encountered so far, we perform recursion on <italic>l</italic>-mer pairs for which we may have encountered <italic>d</italic> &#x002B;1 mismatches (because a mutation can flip a mismatching position to a match).</p>
+</sec>
+</sec>
+<sec id="s5">
+<label>5</label>
+<title>Results</title>
+<sec id="s5a">
+<label>5.1</label>
+<title>Simulated regulatory DNA sequences</title>
+<p>To evaluate the performance of different explanation methods, we used the simulated genomics dataset from [<xref ref-type="bibr" rid="c13">13</xref>]. Briefly, 8000 200bp-long sequences were generated by randomly sampling the letters ACGT with background probabilities of 0.3, 0.2, 0.2 and 0.3 respectively. 0-3 instances of the TAL1-known1 and GATA1-disc1 motifs [<xref ref-type="bibr" rid="c7">7</xref>] were then embedded into non-overlapping positions in each sequence. 25&#x0025; of sequences contained both embedded TAL1 motifs and embedded gATA1 motifs and were labeled &#x002B;1.</p>
+<p>The remaining sequences contained either just embedded GATA1 motifs, just embedded TAL1 motifs, or neither embedded TAL1 nor embedded GATA1 motif, and were labeled &#x2212;1. 10&#x0025; of sequences were reserved for a testing set, while the remaining were used for training. A Support Vector Machine with a gkmrbf kernel and parameters <italic>l</italic> &#x003D; 6, <italic>k</italic> &#x003D; 5 and <italic>d</italic> &#x003D;1 was trained to distinguish the positive set from the negative set. It attained 90&#x0025; auROC. A notebook demonstrating model training and interpretation is at <ext-link ext-link-type="uri" xlink:href="https://github.com/kundajelab/gkmexplain/blob/master/lsgkmexplain-TALGATA.ipynb">https://github.com/kundajelab/gkmexplain/blob/master/lsgkmexplain-TALGATA.ipynb</ext-link>.</p>
+<p><bold><xref ref-type="fig" rid="fig1">Fig. 1</xref></bold> illustrates the behavior of different algorithms on a sequence containing 3 GATA1 motifs and 1 TAL1 motif. For deltaSVM and ISM, the importance of a position was computed as the negative of the mean impact of all 3 possible mutations at that position (positions that produce negative scores when mutated will therefore receive positive importance). The gkmexplain method successfully highlights all GATA1 and TAL1 motifs present in the sequence. DeltaSVM performs very poorly, likely due to the nonlinear nature of the gkmrbf decision function (the nonlinearity is needed to learn the logic that both GATA1 and TAL1 must be present in the sequence for the output to be positive). ISM fails to clearly highlight some individual GATA1 motifs in this sequence, likely because the presence of multiple GATA1 motifs has a saturating effect on the nonlinear decision function. To confirm this was not an isolated example of the failure of ISM, we compared the ability of gkmexplain and ISM to identify the embedded motifs across 2000 examples, and found that gkmexplain does indeed perform better (<bold><xref ref-type="fig" rid="fig3">Fig. 3</xref> &#x0026; <xref ref-type="fig" rid="fig4">4</xref></bold>). SHAP shows promise at highlighting the relevant motifs, but only when many perturbation samples are used. Unfortunately, when a large number of perturbation samples are needed, SHAP has a very slow runtime compared to the other methods (<bold><xref ref-type="fig" rid="fig2">Fig. 2</xref></bold>).</p>
+<fig id="fig2" position="float">
+<label>Figure 2:</label>
+<caption><title>Time taken to compute importance on a single sequence for various algorithms (log scale).</title>
+<p>Evaluation was done on the model and data described in 5.1. For SHAP, a background of 20 shuffled versions of the original sequence was used (the runtime of SHAP scales linearly in the product of the size of the background and the number of samples).</p>
+</caption>
+<graphic xlink:href="457606_fig2.tif"/></fig>
+<fig id="fig3" position="float">
+<label>Figure 3:</label>
+<caption><title>gkmexplain outperforms ISM at identifying TAL1 motifs.</title>
+<p>A gkmrbf SVM was trained as described in <bold><xref ref-type="sec" rid="s5a">Sec. 5.1</xref></bold>, but with a random heldout set of size 2000 rather than 800. The 2000 heldout examples were scanned using 16bp windows (the length of the TAL1-known1 motif). Windows containing a complete embedded TAL1-known1 motif were labeled positive. Windows containing no portion of any embedded motif were labeled negative. All other windows were excluded from analysis. Windows were ranked according to the total importance score produced by the importance scoring method in question, and AuROC and AuPRC were computed. The gkmexplain method outperforms ISM on both metrics. The dashed red line shows the performance of a random classifier.</p>
+</caption>
+<graphic xlink:href="457606_fig3.tif"/></fig>
+<fig id="fig4" position="float">
+<label>Figure 4:</label>
+<caption><title>gkmexplain outperforms ISM at identifying GATA1 motifs.</title>
+<p>Analogous to <bold><xref ref-type="fig" rid="fig3">Fig. 3</xref></bold>, but using 10bp windows (the length of the GATA1 motif) rather than 16bp windows.</p>
+</caption>
+<graphic xlink:href="457606_fig4.tif"/></fig>
+<p>As further confirmation that gkmexplain was able to detect the embedded TAL1 and GATA1 motifs, we supplied gkmexplain-derived importance score profiles across all sequences in the positive set a new motif discovery method called TF-MoDISco [<xref ref-type="bibr" rid="c14">14</xref>]. Briefly, TF-MoDISco identifies subsequences (termed &#x201C;seqlets&#x201D;) of high importance in all the input sequences, builds an affinity matrix between seqlets using a crosscorrelation-like metric, clusters the affinity matrix, and then aggregates aligned seqlets in each cluster to form consolidated motifs. TF-MoDISco accepts both importance score profiles as well as &#x201C;hypothetical&#x201D; importance score profiles of multiple sequences. Hypothetical importance scores can be intuitively thought of as revealing how the classifier might respond to seeing alternative bases at any given position in a sequence. For gkmexplain, we derived these hypothetical scores using the method described in <bold><xref ref-type="app" rid="app1b">Appendix A.2</xref></bold>. We also normalized the scores as described in <bold><xref ref-type="app" rid="app1b1">Appendix A.2.1</xref></bold>. The resulting motifs are shown in <bold><xref ref-type="fig" rid="fig5">Fig. 5</xref></bold>. We find that TF-MoDISco is able to learn motifs that closely match the true embedded motifs.</p>
+<fig id="fig5" position="float">
+<label>Figure 5:</label>
+<caption><title>Motifs extracted by running TF-MoDISco on gkmexplain importance scores successfully recovers ground-truth simulated motifs.</title>
+<p>Letter heights are proportional to the information content of the probabilities across the different bases at that position.</p>
+</caption>
+<graphic xlink:href="457606_fig5.tif"/></fig>
+</sec>
+<sec id="s5b">
+<label>5.2</label>
+<title>NFE2 in <italic>vivo</italic> Transcription Factor binding models</title>
+<p>We also studied the performance of gkmexplain on a gkmSVM model trained on ChIP-seq data for the NFE2 transcription factor in Gm12878. The model and example sequences were directly obtained from the published lsgkm repository [<xref ref-type="bibr" rid="c10">10</xref>]. The model was trained using a wgkm kernel with <italic>l</italic> &#x003D; 10, <italic>k</italic> &#x003D; 6 and <italic>d</italic> &#x003D; 3 to discriminate 644 variable-length DNA sequences that overlap NFE2 ChIP-seq peaks in GM12878 from an equal number of genomic background sequences matched for GC-content and repeat-fraction. Gkmexplain importance scores were then computed on the 644 positively-labeled training sequences and 69 positively-labeled test sequences that shipped with the repository. Scores on a few example sequences are shown in <bold><xref ref-type="fig" rid="fig6">Fig. 6</xref></bold>. The results of TF-MoDISco are in <bold><xref ref-type="fig" rid="fig7">Fig. 7</xref></bold>. TF-MoDISco successfully recovers the top two motifs for NFE2 identified using traditional motif discovery methods [<xref ref-type="bibr" rid="c1">1</xref>, <xref ref-type="bibr" rid="c16">16</xref>], as well as some evidence of a motif dimer. A notebook reproducing the results is at <ext-link ext-link-type="uri" xlink:href="https://github.com/kundajelab/gkmexplain/blob/master/lsgkmexplain-NFE2.ipynb">https://github.com/kundajelab/gkmexplain/blob/master/lsgkmexplain-NFE2.ipynb</ext-link>.</p>
+<fig id="fig6" position="float">
+<label>Figure 6:</label>
+<caption><title>Gkmexplain importance scores on example NFE2-bound sequences.</title>
+</caption>
+<graphic xlink:href="457606_fig6.tif"/></fig>
+<fig id="fig7" position="float">
+<label>Figure 7:</label>
+<caption><title>NFE2 motifs derived using TF-MoDISco.</title>
+<p>Letter heights are proportional to the information content of the probabilities across the different bases at that position.&#x201D;Seqlets&#x201D; are subsequences of high importance that are used by TF-MoDISco to create motifs [<xref ref-type="bibr" rid="c14">14</xref>]. The number of seqlets contained within each TF-MoDISco motif is indicated; motifs with a larger number of seqlets are more reliable.</p>
+</caption>
+<graphic xlink:href="457606_fig7.tif"/></fig>
+</sec>
+<sec id="s5c">
+<label>5.3</label>
+<title>Predicting regulatory genetic variants affecting DNase hypersensitivity</title>
+<p>We trained models using the lsgkm package [<xref ref-type="bibr" rid="c8">8</xref>] on a DNase-seq dataset in the GM12878 lymphoblastoid cell-line. The training dataset is publicly downloadable from the deltaSVM website [<xref ref-type="bibr" rid="c3">3</xref>]. It consists of a single positive set containing 22,384 300bp sequences that overlapped DNase hypersensitive peaks, and five independently-generated negative sets that each matched the size, length distribution, GC-content and repeat-fraction of the positive set. One gkm-SVM and one gkmrbf-SVM were trained for each choice of negative set. For the gkm-SVM and gkmrbf-SVM, we used the parameter settings <italic>l</italic> &#x003D; 10, <italic>k</italic> &#x003D; 6 and <italic>d</italic> &#x003D; 3, consistent with the deltaSVM paper. For gkmrbf-SVM, we further set the regularization parameter <italic>c</italic> to 10 and the gamma value <italic>g</italic> to 2, as suggested by the lsgkm documentation [<xref ref-type="bibr" rid="c10">10</xref>]. Remaining values were left to the lsgkm defaults.</p>
+<p>To assess whether gkmexplain could be used to quantify the functional impact of regulatory genetic variants, we used the same benchmarking dataset of DNase I&#x2013;sensitivity quantitative trait loci (dsQTLs) in lymphomablastoid cell lines (LCLs) that was used in the deltaSVM paper [<xref ref-type="bibr" rid="c9">9</xref>, <xref ref-type="bibr" rid="c5">5</xref>], consisting of 579 dsQTL SNPs and 28,950 control SnPs. The dsQTL SNPs were each located within their associated 100bp DNase hypersensitive peak and had an association <italic>p</italic>-value below 10<sup>&#x2212;5</sup>, while the control SNPs each had minor allele frequency above 5&#x0025; and were randomly sampled from the top 5&#x0025; of DNase hypersensitive sites.</p>
+<p>We used 4 methods to score dsQTLs and control SNPs: deltaSVM applied to the gkm-SVM, deltaSVM applied to the gkmrbf-SVM, in-silico mutagenesis (ISM) applied to the gkmrbf-SVM, and gkmexplain mutation impact scores (<bold><xref ref-type="sec" rid="s4b">Sec. 4.2</xref></bold>) applied to the gkmrbf-SVM. For ISM and gkmexplain, a window of 51bp centered on the SNP was used as context. Results are shown in <bold><xref ref-type="fig" rid="fig8">Fig. 8</xref></bold>. Across the models trained on the 5 independent negative sequence sets, gkmexplain consistently produces the best auPRC (binomial p-value &#x003D; 0.5<sup>5</sup> &#x003D; 0.03125). Interestingly, we found that deltaSVM applied to the gkmrbf-SVM consistently produced better auRPC than deltaSVM applied to the gkm-SVM, even though Lee found that deltaSVM did not produce improvements when used with the gkmrbf kernel [<xref ref-type="bibr" rid="c8">8</xref>], possibly due to differences in the dataset and parameter settings. Results for auROC are in <bold><xref ref-type="app" rid="app1c">Appendix A.3</xref></bold>.</p>
+<fig id="fig8" position="float">
+<label>Figure 8:</label>
+<caption><title>Gkmexplain Mutation Impact Scores Outperform deltaSVM and ISM at identifying dsQTLs.</title>
+<p>For each choice of negative set provided in the deltaSVM paper, we trained a gkm-SVM and gkmrbf-SVM. LCL dsQTLs and control SNPs were then scores using four methods: deltaSVM on the gkm-SVM, deltaSVM on the gkmrbf-SVM, ISM on the gkmrbf-SVM and gkmexplain Mutation Impact Scores (<bold><xref ref-type="sec" rid="s4b">Sec. 4.2</xref></bold>) on the gkmrbf-SVM. For ISM and gkmexplain, a 51bp window centered around the SNP was used as context. The gkmexplain mutation impact scores consistently produce the best auPRC across all 5 choices of the negative set (binomial p-value &#x003D; 0.5<sup>5</sup> &#x003D; 0.03125).</p>
+</caption>
+<graphic xlink:href="457606_fig8.tif"/></fig>
+</sec>
+</sec>
+<sec id="s6">
+<label>6</label>
+<title>Conclusion</title>
+<p>We have presented gkmexplain, an algorithm based on Integrated Gradients that can be used to efficiently explain the predictions of a Support Vector Machine trained with various gapped <italic>k</italic>-mer string kernels. On simulated data, we showed that our method outperforms ISM and deltaSVM when used with a nonlinear gapper <italic>k</italic>-mer kernel such as the gkmrbf kernel (<bold><xref ref-type="fig" rid="fig1">Fig. 1</xref>, <xref ref-type="fig" rid="fig3">3</xref> &#x0026; <xref ref-type="fig" rid="fig4">4</xref></bold>), while being far more computationally efficient than ISM or SHAP (<bold><xref ref-type="fig" rid="fig2">Fig. 2</xref></bold>). We further demonstrated that importance scores derived through gkmexplain can be supplied to TF-MoDISco [<xref ref-type="bibr" rid="c14">14</xref>] to perform motif discovery (<bold><xref ref-type="fig" rid="fig5">Fig. 5</xref> &#x0026; <xref ref-type="fig" rid="fig7">7</xref></bold>). On a DNAse-I hypersensitivity QTL dataset derived from lymphomablastoid cell lines, we found that gkmexplain Mutation Impact Scores consistently produced better auPRC than ISM or deltaSVM (<bold><xref ref-type="fig" rid="fig8">Fig. 8</xref></bold>). Finally, we note that the idea of using Integrated Gradients to interpret SVMs is not limited to genomics; it can be applied to other kinds of data, as illustrated in <bold><xref ref-type="app" rid="app1d">Appendix A.4</xref></bold>.</p>
+</sec>
+</body>
+<back>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>[1]</label><mixed-citation publication-type="website"><collab>Nf-e2 - factorbook</collab>. <ext-link ext-link-type="uri" xlink:href="http://v1.factorbook.org/mediawiki/index.php/NF-E2">http://v1.factorbook.org/mediawiki/index.php/NF-E2</ext-link>. (Accessed on <date-in-citation>10/19/2018</date-in-citation>).</mixed-citation></ref>
+<ref id="c2"><label>[2]</label><mixed-citation publication-type="website"><collab>Uci machine learning repository: Madelon data set</collab>. <ext-link ext-link-type="uri" xlink:href="https://archive.ics.uci.edu/ml/datasets/Madelon">https://archive.ics.uci.edu/ml/datasets/Madelon</ext-link>. (Accessed on <date-in-citation>08/01/2018</date-in-citation>).</mixed-citation></ref>
+<ref id="c3"><label>[3]</label><mixed-citation publication-type="website"><ext-link ext-link-type="uri" xlink:href="http://www.beerlab.org/deltasvm/">http://www.beerlab.org/deltasvm/</ext-link>. <ext-link ext-link-type="uri" xlink:href="http://www.beerlab.org/deltasvm/">http://www.beerlab.org/deltasvm/</ext-link>. (Accessed on <date-in-citation>10/26/2018</date-in-citation>).</mixed-citation></ref>
+<ref id="c4"><label>[4]</label><mixed-citation publication-type="journal"><article-title>Yana Bromberg and Burkhard Rost. Comprehensive in silico mutagenesis highlights functionally important residues in proteins</article-title>. <source>Bioinformatics</source>, <volume>24</volume>(<issue>16</issue>):<fpage>i207</fpage>&#x2013;<lpage>12</lpage>, <month>August</month> <year>2008</year>.</mixed-citation></ref>
+<ref id="c5"><label>[5]</label><mixed-citation publication-type="journal"><string-name><given-names>Jacob F</given-names> <surname>Degner</surname></string-name>, <string-name><given-names>Athma A</given-names> <surname>Pai</surname></string-name>, <string-name><given-names>Roger</given-names> <surname>Pique-Regi</surname></string-name>, <string-name><given-names>Jean-Baptiste</given-names> <surname>Veyrieras</surname></string-name>, <string-name><given-names>Daniel J</given-names> <surname>Gaffney</surname></string-name>, <string-name><given-names>Joseph k</given-names> <surname>Pickrell</surname></string-name>, <string-name><given-names>Sherryl</given-names> <surname>De Leon</surname></string-name>, <string-name><given-names>Katelyn</given-names> <surname>Michelini</surname></string-name>, <string-name><given-names>Noah</given-names> <surname>Lewellen</surname></string-name>, <string-name><given-names>Gregory E</given-names> <surname>Crawford</surname></string-name>, <string-name><given-names>Matthew</given-names> <surname>Stephens</surname></string-name>, <string-name><given-names>Yoav</given-names> <surname>Gilad</surname></string-name>, and <string-name><given-names>Jonathan k</given-names> <surname>Pritchard</surname>.</string-name> <article-title>DNase i sensitivity QTLs are a major determinant of human expression variation</article-title>. <source>Nature</source>, <volume>482</volume>(<issue>7385</issue>):<fpage>390</fpage>&#x2013;<lpage>394</lpage>, <month>February</month> <year>2012</year>.</mixed-citation></ref>
+<ref id="c6"><label>[6]</label><mixed-citation publication-type="journal"><string-name><given-names>Mahmoud</given-names> <surname>Ghandi</surname></string-name>, <string-name><given-names>Dongwon</given-names> <surname>Lee</surname></string-name>, <string-name><given-names>Morteza</given-names> <surname>Mohammad-Noori</surname></string-name>, and <string-name><given-names>Michael A</given-names> <surname>Beer</surname>.</string-name> <article-title>Enhanced regulatory sequence prediction using gapped <italic>k</italic>-mer features</article-title>. <source>PLoS Comput. Biol</source>., <volume>10</volume>(<issue>7</issue>):<fpage>e1003711</fpage>, <month>July</month> <year>2014</year>.</mixed-citation></ref>
+<ref id="c7"><label>[7]</label><mixed-citation publication-type="journal"><string-name><given-names>Pouya</given-names> <surname>Kheradpour</surname></string-name> and <string-name><given-names>Manolis</given-names> <surname>Kellis</surname>.</string-name> <article-title>Systematic discovery and characterization of regulatory motifs in ENCODE TF binding experiments</article-title>. <source>Nucleic Acids Res</source>., <volume>42</volume>(<issue>5</issue>):<fpage>2976</fpage>&#x2013;<lpage>2987</lpage>, <month>March</month> <year>2014</year>.</mixed-citation></ref>
+<ref id="c8"><label>[8]</label><mixed-citation publication-type="journal"><string-name><given-names>Dongwon</given-names> <surname>Lee</surname>.</string-name> <article-title>LS-GKM: anew gkm-SVM for large-scale datasets</article-title>. <source>Bioinformatics</source>, <volume>32</volume>(<issue>14</issue>):<fpage>2196</fpage>&#x2013;<lpage>2198</lpage>, <month>July</month> <year>2016</year>.</mixed-citation></ref>
+<ref id="c9"><label>[9]</label><mixed-citation publication-type="journal"><string-name><given-names>Dongwon</given-names> <surname>Lee</surname></string-name>, <string-name><given-names>David U</given-names> <surname>Gorkin</surname></string-name>, <string-name><given-names>Maggie</given-names> <surname>Baker</surname></string-name>, <string-name><given-names>Benjamin J</given-names> <surname>Strober</surname></string-name>, <string-name><given-names>Alessandro L</given-names> <surname>Asoni</surname></string-name>, <string-name><given-names>Andrew S</given-names> <surname>McCallion</surname></string-name>, and <string-name><given-names>Michael A</given-names> <surname>Beer</surname>.</string-name> <article-title>A method to predict the impact of regulatory variants from DNA sequence</article-title>. <source>Nat. Genet</source>., <volume>47</volume>(<issue>8</issue>):<fpage>955</fpage>&#x2013;<lpage>961</lpage>, <month>August</month> <year>2015</year>.</mixed-citation></ref>
+<ref id="c10"><label>[10]</label><mixed-citation publication-type="website"><collab>Downgwon&#x0022; &#x0022;Lee</collab>. Dongwon-lee/lsgkm. <ext-link ext-link-type="uri" xlink:href="https://github.com/Dongwon-Lee/lsgkm">https://github.com/Dongwon-Lee/lsgkm</ext-link>. (Accessed on 10/19/2018).</mixed-citation></ref>
+<ref id="c11"><label>[11]</label><mixed-citation publication-type="journal"><string-name><given-names>Christina</given-names> <surname>Leslie</surname></string-name> and <string-name><given-names>Rui</given-names> <surname>Kuang</surname>.</string-name> <article-title>Fast string kernels using inexact matching for protein sequences</article-title>. <source>J. Mach. Learn. Res</source>., <volume>5</volume>(<issue>Nov</issue>):<fpage>1435</fpage>&#x2013;<lpage>1455</lpage>, <year>2004</year>.</mixed-citation></ref>
+<ref id="c12"><label>[12]</label><mixed-citation publication-type="other"><string-name><given-names>Scott</given-names> <surname>Lundberg</surname></string-name> and <string-name><given-names>Su-In</given-names> <surname>Lee</surname>.</string-name> <article-title>A unified approach to interpreting model predictions</article-title>. <source>NIPS</source>, <year>2017</year>.</mixed-citation></ref>
+<ref id="c13"><label>[13]</label><mixed-citation publication-type="other"><string-name><given-names>Avanti</given-names> <surname>Shrikumar</surname></string-name>, <string-name><given-names>Peyton</given-names> <surname>Greenside</surname></string-name>, and <string-name><given-names>Anshul</given-names> <surname>Kundaje</surname>.</string-name> <article-title>Learning important features through propagating activation differences</article-title>. <month>April</month> <year>2017</year>.</mixed-citation></ref>
+<ref id="c14"><label>[14]</label><mixed-citation publication-type="website"><string-name><given-names>Avanti</given-names> <surname>Shrikumar</surname></string-name>, <string-name><given-names>Katherine</given-names> <surname>Tian</surname></string-name>, <string-name><given-names>Anna</given-names> <surname>Shcherbina</surname></string-name>, <string-name><given-names>&#x017D;iga</given-names> <surname>Avsec</surname></string-name>, <string-name><given-names>Abhimanyu</given-names> <surname>Banerjee</surname></string-name>, <string-name><given-names>Mahfuza</given-names> <surname>Sharmin</surname></string-name>, <string-name><given-names>Surag</given-names> <surname>Nair</surname></string-name>, and <string-name><given-names>Anshul</given-names> <surname>Kundaje</surname>.</string-name> <source>tfmodisco/tf-modisco-v0-4-4-2-technical-note.pdf at master &#x00B7; kundajelab/tfmodisco</source>. <ext-link ext-link-type="uri" xlink:href="https://github.com/kundajelab/tfmodisco/blob/master/TF-MoDISco-v0-4-4-2-Technical-Note.pdf">https://github.com/kundajelab/tfmodisco/blob/master/TF-MoDISco-v0-4-4-2-Technical-Note.pdf</ext-link>. (Accessed on 10/30/2018).</mixed-citation></ref>
+<ref id="c15"><label>[15]</label><mixed-citation publication-type="book"><string-name><given-names>Mukund</given-names> <surname>Sundararajan</surname></string-name>, <string-name><given-names>Ankur</given-names> <surname>Taly</surname></string-name>, and <string-name><given-names>Qiqi</given-names> <surname>Yan</surname>.</string-name> <chapter-title>Axiomatic attribution for deep networks</chapter-title>. In <source>Doina Precup and Yee Whye Teh, editors, Proceedings of the 34th International Conference on Machine Learning, volume 70 of Proceedings of Machine Learning Research</source>, pages <fpage>3319</fpage>&#x2013;<lpage>3328</lpage>, <publisher-name>International Convention Centre</publisher-name>, <publisher-loc>Sydney, Australia</publisher-loc>, <day>06-11</day> <month>Aug</month> <year>2017</year>. PMLR.</mixed-citation></ref>
+<ref id="c16"><label>[16]</label><mixed-citation publication-type="journal"><string-name><given-names>Jie</given-names> <surname>Wang</surname></string-name>, <string-name><given-names>Jiali</given-names> <surname>Zhuang</surname></string-name>, <string-name><given-names>Sowmya</given-names> <surname>Iyer</surname></string-name>, <string-name><given-names>Xin-Ying</given-names> <surname>Lin</surname></string-name>, <string-name><given-names>Melissa C</given-names> <surname>Greven</surname></string-name>, <string-name><given-names>Bong-Hyun</given-names> <surname>Kim</surname></string-name>, <string-name><given-names>Jill</given-names> <surname>Moore</surname></string-name>, <string-name><given-names>Brian G</given-names> <surname>Pierce</surname></string-name>, <string-name><given-names>Xianjun</given-names> <surname>Dong</surname></string-name>, <string-name><given-names>Daniel</given-names> <surname>Virgil</surname></string-name>, <string-name><given-names>Ewan</given-names> <surname>Birney</surname></string-name>, <string-name><given-names>Jui-Hung</given-names> <surname>Hung</surname></string-name>, and <string-name><given-names>Zhiping</given-names> <surname>Weng</surname>.</string-name> <article-title>Factorbook.org: a wiki-based database for transcription factor-binding data generated by the ENCODE consortium</article-title>. <source>Nucleic Acids Res</source>., <volume>41</volume>(Database issue):<fpage>D171</fpage>&#x2013;<lpage>6</lpage>, <month>January</month> <year>2013</year>.</mixed-citation></ref>
+<ref id="c17"><label>[17]</label><mixed-citation publication-type="journal"><string-name><given-names>Jian</given-names> <surname>Zhou</surname></string-name> and <string-name><given-names>Olga G</given-names> <surname>Troyanskaya</surname>.</string-name> <article-title>Predicting effects of noncoding variants with deep learning-based sequence model</article-title>. <source>Nat. Methods</source>, <volume>12</volume>(<issue>10</issue>):<fpage>931</fpage>&#x2013;<lpage>934</lpage>, <month>August</month> <year>2015</year>.</mixed-citation></ref>
+</ref-list>
+<app-group>
+<app id="app1">
+<label>A</label>
+<title>Appendices</title>
+<sec id="app1a">
+<label>A.1</label>
+<title>Derivation of <xref ref-type="disp-formula" rid="eqn9">Equations 9</xref> and <xref ref-type="disp-formula" rid="eqn12">12</xref></title>
+<p>This section derives the formulas present in <bold><xref ref-type="sec" rid="s4a">Sec. 4.1</xref></bold> using the method of Integrated Gradients.</p>
+<p>Applying the definition of Path Integrated Gradients from <bold><xref ref-type="disp-formula" rid="eqn8">Eqn. 8</xref></bold> to the objective function for SVMs in <bold><xref ref-type="disp-formula" rid="eqn1">Eqn. 1</xref></bold> we get:
+<disp-formula id="eqn19">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn19.gif"/></alternatives>
+</disp-formula></p>
+<p>As mentioned earlier, the primary hurdle when applying Integrated Gradients to support vector machine string kernels is that the formula for Integrated Gradients requires the kernel function <italic>k</italic> to be differentiable. Because DNA sequence is discrete, most string kernels are not differnentiable. To circumvent this issue, we introduce vector of variables <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline43.gif"/></alternatives></inline-formula> where each element <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline44.gif"/></alternatives></inline-formula> can be interpreted as the &#x201C;intensity&#x201D; of the base at position <italic>i</italic> of sequence <italic>S<sub>x</sub></italic>. Let <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline45.gif"/></alternatives></inline-formula> denote the identity of base <italic>i</italic> in sequence <italic>S<sub>x</sub></italic>, let <italic>l</italic> be the length of the <italic>l</italic>-mers, and let <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline46.gif"/></alternatives></inline-formula> be an indicator function that takes the value of 1 if <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline47.gif"/></alternatives></inline-formula> and 0 otherwise. We rewrite the wgkm kernel between an input sequence <italic>S<sub>x</sub></italic> and a support vector sequence <italic>S<sub>z</sub></italic> as a function of <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline48.gif"/></alternatives></inline-formula> as follows:
+<disp-formula id="eqn20">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn20.gif"/></alternatives>
+</disp-formula></p>
+<p>When <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline49.gif"/></alternatives></inline-formula> for all <italic>i</italic>, <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline50.gif"/></alternatives></inline-formula> is equal to <italic>K<sub>wgkm</sub></italic>(<italic>S<sub>x</sub></italic>, <italic>S<sub>z</sub></italic>).</p>
+<p>Recall that <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline51.gif"/></alternatives></inline-formula> is the contribution of the <italic>l</italic>-mer pair <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline52.gif"/></alternatives></inline-formula> to <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline53.gif"/></alternatives></inline-formula>. In the expression above, <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline54.gif"/></alternatives></inline-formula> is scaled according to the total intensity of all the <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline55.gif"/></alternatives></inline-formula> matching bases between<inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline56.gif"/></alternatives></inline-formula> and <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline57.gif"/></alternatives></inline-formula>.</p>
+<p>Let len(<italic>S<sub>x</sub></italic>) be a function that returns the length of the sequence <italic>S<sub>x</sub></italic>. Because <bold><xref ref-type="disp-formula" rid="eqn20">Eqn. 20</xref></bold> is differentiable, we can compute the partial derivative <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline58.gif"/></alternatives></inline-formula> as:
+<disp-formula id="eqn21">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn21.gif"/></alternatives>
+</disp-formula></p>
+<p>Intuitively, the expression looks at each <italic>l</italic>-mer <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline59.gif"/></alternatives></inline-formula> in <italic>S<sub>x</sub></italic> that overlaps position <italic>i</italic>, compares it to every <italic>l</italic>-mer <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline60.gif"/></alternatives></inline-formula> in <italic>S<sub>z</sub></italic>, and increments the gradient proportionally to <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline61.gif"/></alternatives></inline-formula> only if the base at position (<italic>i</italic> &#x2013; <italic>j</italic>) in <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline62.gif"/></alternatives></inline-formula> is a match to the corresponding base in <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline63.gif"/></alternatives></inline-formula>. Note that the number of <italic>l</italic>-mers in sequence <italic>S<sub>x</sub></italic> is (len(<italic>S<sub>x</sub></italic>) &#x2013; (<italic>l</italic> &#x2013; 1))</p>
+<p>Rewriting the formula for Path Integrated Gradients in <bold><xref ref-type="disp-formula" rid="eqn19">Eqn. 19</xref></bold> using the differentiable reparameterization in <bold><xref ref-type="disp-formula" rid="eqn20">Eqn. 20</xref></bold>, we get:
+<disp-formula id="eqn22">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn22.gif"/></alternatives>
+</disp-formula></p>
+<p>If we now consider the path <italic>&#x03C0;<sub>i</sub></italic>(<italic>&#x03B2;</italic>) &#x003D; <italic>&#x03B2;</italic> (i.e. if we linearly scale the intensities <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline64.gif"/></alternatives></inline-formula> uniformly between 0 and 1), we would have <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline65.gif"/></alternatives></inline-formula>. This choice of path is the standard &#x201C;Integrated Gradients&#x201D; path. Because the partial derivative in <bold><xref ref-type="disp-formula" rid="eqn21">Eqn. 21</xref></bold> is constant with respect to <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline66.gif"/></alternatives></inline-formula>, simplifying the expression above results in the formula for the importance of individual bases in a wkgm SVM that was presented earlier in <bold><xref ref-type="disp-formula" rid="eqn9">Eqn. 9</xref></bold>, reproduced below for convenience:
+<disp-formula id="eqn23">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn23.gif"/></alternatives>
+</disp-formula></p>
+<p>Where <italic>S<sub>z</sub>j</italic>, <italic>&#x03B1;<sub>j</sub></italic> and <italic>y<sup>j</sup></italic> are, respectively, the sequence, weight and label of support vector <italic>j</italic>, and:
+<disp-formula id="eqn24">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn24.gif"/></alternatives>
+</disp-formula></p>
+<p>Where <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline67.gif"/></alternatives></inline-formula>is the identity of the base at position <italic>i</italic> in sequence <italic>S<sub>x</sub></italic> and
+<disp-formula id="eqn25">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn25.gif"/></alternatives>
+</disp-formula></p>
+<p>For the case of the wgkmrbf kernel (<bold><xref ref-type="disp-formula" rid="eqn7">Eqn. 7</xref></bold>), we once again reparameterize the kernel in terms of <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline68.gif"/></alternatives></inline-formula> as follows:
+<disp-formula id="eqn26">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn26.gif"/></alternatives>
+</disp-formula></p>
+<p>By the chain rule, we get:
+<disp-formula id="eqn27">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn27.gif"/></alternatives>
+</disp-formula></p>
+<p>As before, we consider the path <italic>&#x03C0;<sub>i</sub></italic>(<italic>&#x03B2;</italic>) &#x003D; <italic>&#x03B2;</italic> (i.e. we linearly scale the intensities<inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline69.gif"/></alternatives></inline-formula> uniformly between 0 and 1). From <bold><xref ref-type="disp-formula" rid="eqn20">Eqn. 20</xref></bold>, we note that <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline70.gif"/></alternatives></inline-formula> is linear in the values of <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline71.gif"/></alternatives></inline-formula>. Thus, we can write:
+<disp-formula id="ueqn2">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_ueqn2.gif"/></alternatives>
+</disp-formula></p>
+<p>Recall that <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline72.gif"/></alternatives></inline-formula> is constant with respect to <italic>&#x03C0;<sub>i</sub></italic>(<italic>&#x03B2;</italic>). After performing the integral with respect to <italic>&#x03B2;</italic>, we obtain <bold><xref ref-type="disp-formula" rid="eqn12">Eqn. 12</xref></bold>, reproduced below for convenience:
+<disp-formula id="eqn28">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn28.gif"/></alternatives>
+</disp-formula></p>
+<p>Where
+<disp-formula id="eqn29">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn29.gif"/></alternatives>
+</disp-formula></p>
+</sec>
+<sec id="app1b">
+<label>A.2</label>
+<title>Hypothetical importance scores</title>
+<p>For motif discovery with TF-MoDISCo [<xref ref-type="bibr" rid="c14">14</xref>], it is useful to have <italic>hypothetical</italic> importance scores in addition to the true importance scores. The hypothetical importance score of base B at position <italic>i</italic> estimates the preference of the classifier for seeing base B at position <italic>i</italic> instead of the base that is actually present at position <italic>i</italic>. If base <italic>B</italic> is the same as the base that is actually present in the sequence at position <italic>i</italic>, the hypothetical importance score is defined to be the same as the actual importance score. As an example, suppose a particular TF has high affinity to the sequences GATAAT and GATTAT and low affinity to the sequences GATCAT and GATGAT. If the sequence GATAAT is presented to a classifier trained to predict binding sites of the TF, the hypothetical importance assigned to base T in the 4th position would be positive, as would be the (actual) importance assigned to base A in the 4th position. By contrast, the hypothetical importance scores assigned to C and G in the 4th position would be negative. To compute hypothetical importance scores, we first define the quantity <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline73.gif"/></alternatives></inline-formula> (analogous to <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline74.gif"/></alternatives></inline-formula> in <bold>Eqn. 10</bold>) as follows:
+<disp-formula id="eqn30">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn30.gif"/></alternatives>
+</disp-formula>
+where
+<disp-formula id="eqn31">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn31.gif"/></alternatives>
+</disp-formula></p>
+<p>By analogy to <xref ref-type="disp-formula" rid="eqn9">equations 9</xref> and <xref ref-type="disp-formula" rid="eqn12">12</xref>, we then define the hypothetical contribution scores for base <italic>B</italic>&#x002A; at position <italic>i</italic> in sequence <italic>S<sub>x</sub></italic> as follows:
+<disp-formula id="eqn32">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn32.gif"/></alternatives>
+</disp-formula>
+and
+<disp-formula id="eqn33">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn33.gif"/></alternatives>
+</disp-formula>
+where
+<disp-formula id="eqn34">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn34.gif"/></alternatives>
+</disp-formula></p>
+<p>The hypothetical importance scores are useful for motif discovery with TF-MoDISco because different instances of a motif that have variations in their underlying sequence may nonetheless have similar hypothetical importance scores because the hypothetical importance scores impute the importance on all possible bases that could be present (and not just the bases that happen to be present in the specific instance of the motif). If the goal is to infer the impact of individual mutations rather than to perform motif discovery, the Mutation Impact Scores (described in <bold><xref ref-type="sec" rid="s4b">Sec 4.2</xref></bold>) would be more appropriate.</p>
+<p>Hypothetical importance scores can be efficiently computed by modifying the <italic>k</italic>-mer tree depth-first search originally used to compute the output of the gkm-SVM (see our implementation at <ext-link ext-link-type="uri" xlink:href="https://github.com/kundajelab/lsgkm">https://github.com/kundajelab/lsgkm</ext-link>). While the original implementation only performs recursion on <italic>l</italic>-mer pairs for which no more than <italic>d</italic> mismatches have been encountered so far, in order to get the most accurate hypothetical importance scores we should perform recursion on <italic>l</italic>-mer pairs for which we may have encountered <italic>d</italic> &#x002B; 1 mismatches because a mutation can flip a mismatching position to a match. However, the additional layer of recursion can increase runtime substantially. In practice, we found that hypothetical importance scores derived by only considering recursions on <italic>l</italic>-mer pairs with up to <italic>d</italic> mismatches work well, and that is what we used in this paper.</p>
+</sec>
+<sec id="app1b1">
+<label>A.2.1</label>
+<title>Normalization of scores for TF-MoDISco</title>
+<p>Empirically, we found that the following normalization of the importance scores produces improved results with TF-MoDISco. Let <italic>f<sub>h</sub></italic>(<italic>S<sub>x</sub></italic>, <italic>i</italic>, <italic>B</italic>&#x002A;) be a function that returns the hypothetical importance of base <italic>B</italic>&#x002A; at position <italic>i</italic> in sequence <italic>S<sub>x</sub></italic>, and let <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline75.gif"/></alternatives></inline-formula> be the base at position <italic>i</italic> in sequence <italic>S<sub>x</sub></italic>. To normalize the hypothetical importance scores at position <italic>i</italic>, we divide by the sum of all hypothetical scores at position <italic>i</italic> with the same sign as <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline76.gif"/></alternatives></inline-formula>. The rationale is that if a different base at position <italic>i</italic> could produce a score of higher magnitude than <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline77.gif"/></alternatives></inline-formula>, then <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_inline78.gif"/></alternatives></inline-formula> is relatively less important. Let 1&#x007B;<italic>x &#x003E;</italic> 0&#x007D; be an indicator function that returns 1 if <italic>x</italic> is positive and 0 otherwise. Formally, the normalized hypothetical importance for base <italic>B</italic>&#x002A; at position <italic>i</italic> is defined as:
+<disp-formula id="eqn35">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn35.gif"/></alternatives>
+</disp-formula></p>
+<p>Similarly, we define the normalized importance score as:
+<disp-formula id="eqn36">
+<alternatives><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="457606_eqn36.gif"/></alternatives>
+</disp-formula></p>
+<p>We find that the normalized importance scores appear to be less noisy relative to the unnormalized importance scores, as illustrated in <bold><xref ref-type="fig" rid="figA1">Fig. A1</xref></bold>.</p>
+<fig id="figA1" position="float">
+<label>Figure A1:</label>
+<caption><title>Normalization of gkmexplain importance scores for TF-MoDISco.</title>
+<p>A gkmrbf SVM was trained as described in <bold><xref ref-type="sec" rid="s5a">Sec. 5.1</xref></bold>. Shown are unnormalized gkmexplain importance scores (top row), normalized hypothetical importance scores (<bold><xref ref-type="disp-formula" rid="eqn35">Eqn. 35</xref></bold>), and normalized importance scores (<bold><xref ref-type="disp-formula" rid="eqn36">Eqn. 36</xref></bold>) on a single sequence. The blue star indicates the location of an embedded GATA1 motif (GATAAG), and the red star indicates the location of an embedded TAL1 motif (CAGATG). The normalized importance scores appear less noisy than the unnormalized importance scores.</p>
+</caption>
+<graphic xlink:href="457606_figA1.tif"/></fig>
+</sec>
+</app>
+<app id="app1c">
+<label>A.3</label>
+<title>AuROC on dsQTL data</title>
+<p>Performance in terms of auROC on the dsQTL dataset is shown in <bold><xref ref-type="fig" rid="figA2">Fig. A2</xref></bold>. Although gkmexplain gives a weaker auROC than ISM in 4 out of 5 cases, the difference is not statistically significant (possibly owing to the small number of samples; binomial p-value &#x003D; 0.1875). We note that when negatives greatly outnumber positives, auPRC is generally considered a more useful performance metric than auROC. We also note that gkmexplain consistently outperforms deltaSVM.</p>
+<fig id="figA2" position="float">
+<label>Figure A2:</label>
+<caption><title>AuROC for dsQTL identification.</title>
+<p>Analogous to <bold><xref ref-type="fig" rid="fig8">Fig. 8</xref></bold>, but showing auROC instead of auPRC. The gkmexplain and ISM methods consistently outperform deltaSVM.</p>
+</caption>
+<graphic xlink:href="457606_figA2.tif"/></fig>
+</app>
+<app id="app1d">
+<label>A.4</label>
+<title>Integrated Gradients for interpreting other non-linear SVM models</title>
+<p>To explore the general applicability of Integrated Gradients to SVM interpretation beyond genomics, we used the MADELON dataset [<xref ref-type="bibr" rid="c2">2</xref>]. This dataset has a training set of 2000 examples and a validation set of 600 examples, all with 500 features, of which 20 features are informative and the remaining are &#x201C;distractor&#x201D; features with no predictive power. Because the Gaussian SVM had a strong tendency to overfit to the full dataset, we created 10 reduced feature sets, each with the same set of examples in the training and validation sets, but with 20 likely informative features (identified based on the challenge submission results) and a different set of 20 distractor features in each set. Each of these 10 sets served as a distinct data point on which to evaluate the accuracy of the importance scoring algorithm in question (Integrated Gradients or SHAP). Each feature in each set was normalized by subtracting the average feature value and dividing by the standard deviation. We trained Gaussian kernel SVM on each of the datasets and achieved approximately 0.8 accuracy on the validation set. These classifiers were then provided to the importance scoring algorithms.</p>
+<p>When applying Integrated Gradients, we used a reference that was the average feature value of the negative labeled training points and approximated the integration of the partial derivatives using 10 linearly-spaced intermediate points between each test point and the reference. With SHAP, we experimented with 10 and 50 samples around the test points using the same reference as was used for IG. We judged the quality of each importance scoring algorithm by feeding the top 10 most important features reported by the algorithm to a Gaussian kernel SVM and measuring the SVM&#x2019;s accuracy on the validation set. The results are shown in <xref ref-type="fig" rid="figA3">Figure A3</xref>. Integrated Gradients is significantly faster than <sc>SHAp</sc> and tends to be more accurate than when SHAP is used with a small number of perturbation samples. With a larger number of perturbation samples, SHAP is more accurate, though it is still slower. A notebook demonstrating how to use Integrated Gradients on a non-genomic dataset is at <ext-link ext-link-type="uri" xlink:href="https://colab.research.google.com/drive/1LUGMIwOHLKDdK3deg7IIZ71kb2Nu1qv2">https://colab.research.google.com/drive/1LUGMIwOHLKDdK3deg7IIZ71kb2Nu1qv2</ext-link>.</p>
+<fig id="figA3" position="float">
+<label>Figure A3:</label>
+<caption><title>Comparison of Integrated Gradients with SHAP for Gaussian kernel SVM interpretation on the Madelon dataset.</title>
+<p>Dashed lines indicate means. IG appears to be pareto optimal in the sense that it can provide more accurate results faster than compared to <sc>SHAp</sc> used with a small number of perturbation samples.</p>
+</caption>
+<graphic xlink:href="457606_figA3.tif"/></fig>
+</app>
+</app-group>
+</back>
+</article>

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/056846</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Efficient cardinality estimation for k-mers in large DNA sequencing data sets</article-title>
+<subtitle>k-mer cardinality estimation</subtitle>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0003-4371-9659</contrib-id>
+<name><surname>Irber</surname><given-names>Luiz C.</given-names><suffix>Jr.</suffix></name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<contrib contrib-type="author" corresp="yes">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0001-6001-2677</contrib-id>
+<name><surname>Brown</surname><given-names>C. Titus</given-names></name>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>Department of Population Health and Reproduction, University of California</institution>, Davis,Davis, CA 95616, <country>USA</country></aff>
+<aff id="a2"><label>2</label><institution>Department of Population Health and Reproduction, University of California</institution>, Davis,Davis, CA 95616, <country>USA</country></aff>
+</contrib-group>
+<author-notes>
+<corresp id="cor1">Corresponding author; <email>ctbrown@ucdavis.edu</email></corresp>
+</author-notes>
+<pub-date pub-type="epub"><year>2016</year></pub-date>
+<elocation-id>056846</elocation-id>
+<history>
+<date date-type="received"><day>07</day><month>6</month><year>2016</year></date>
+<date date-type="accepted"><day>07</day><month>6</month><year>2016</year></date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2016, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2016</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="056846.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract><title>Abstract</title>
+<p>We present an open implementation of the HyperLogLog cardinality estimation sketch for counting fixed-length substrings of DNA strings (&#x201C;k-mers&#x201D;).</p>
+<p>The HyperLogLog sketch implementation is in C&#x002B;&#x002B; with a Python interface, and is distributed as part of the khmer software package. khmer is freely available from <ext-link ext-link-type="uri" xlink:href="https://github.com/dib-lab/khmer">https://github.com/dib-lab/khmer</ext-link>under a BSD License. The features presented here are included in version 1.4 and later.</p></abstract>
+<counts>
+<page-count count="5"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1"><title>Introduction</title>
+<p>DNA sequencing technologies have increased in data generation capacity faster than Moore&#x2019;s Law for more than a decade now, driving the development of new computationalanalysis approaches.</p>
+<p><xref ref-type="bibr" rid="c1">Alon et al. [1996]</xref> analyses randomized algorithms for the approximation of &#x201C;frequency moments&#x201D; of a sequence using a streaming approach, where items of the sequence are not (or can not be) stored, and are processed sequentially (arrive one by one). KmerStream Melsted and <xref ref-type="bibr" rid="c2">Halld&#x00F3;rsson [2014]</xref> implemented</p>
+<p>A number of probabilistic data structures and algorithms have been developed over the last few years to scale analysis approaches to the rapidly increasing volume of data [<xref ref-type="bibr" rid="c3">Pell et al., 2012</xref>],</p>
+<p>Here we present an open implementation of the Hyper-LogLog cardinality estimation algorithm, specialized for <italic>k</italic>-length substrings of DNA strings, or <italic>k-mers</italic>. The <italic>HyperLogLog sketch</italic> (HLL) [<xref ref-type="bibr" rid="c4">Flajolet et al., 2008</xref>] is a cardinality estimation data structure with constant (and low) memory footprint.</p>
+<p>Efficient k-mer cardinality estimation is useful for a variety of purposes, including estimating the memory requirements for de Bruijn graph assemblers [<xref ref-type="bibr" rid="c5">Zerbino and Birney, 2008</xref>] and choosing the initial memory allocation for data structures like Bloom filters and Count-Min Sketches ([<xref ref-type="bibr" rid="c6">Zhang et al., 2014</xref>]).</p>
+</sec>
+<sec id="s2"><title>Methods</title>
+<p>We implemented HyperLogLog for k-mers in C&#x002B;&#x002B; on top of the khmer library. <italic>khmer</italic>[Crusoe et al.] is a library and suite of command line tools for working with DNA sequences. It implements <italic>k</italic>-mer counting, read filtering and graph traversal using probabilistic data structures such as Bloom Filters and Count-Min Sketches. Building on top of khmer leveraged the existing infrastructure (read parsers, package installation, API signatures and some <italic>k</italic>-mer hashing methods).</p>
+<p>The <italic>HyperLogLog sketch</italic> (HLL) [<xref ref-type="bibr" rid="c4">Flajolet et al., 2008</xref>] estimates the approximate cardinality (<italic>F</italic><sub>0</sub> frequency moment) of a set. The HLL is composed of a byte array <italic>M</italic>[1&#x2025;<italic>m</italic>] initialized with 0s and a precision value <italic>p</italic>, where
+<disp-formula id="ueqn1"><alternatives><graphic xlink:href="056846_ueqn1.gif"/></alternatives></disp-formula>
+</p>
+<p>The expected error rate <italic>e</italic> is
+<disp-formula id="ueqn2"><alternatives><graphic xlink:href="056846_ueqn2.gif"/></alternatives></disp-formula>
+and by modifying <italic>p</italic> we can control the precision of the estimate.</p>
+<p>Each position of <italic>M</italic> represents the longest run of zeros found in the <italic>n</italic>th substream, where <italic>n</italic> is an index calculated from the least significant <italic>p</italic> bits of the hashed value:</p>
+<disp-formula id="ueqn3"><alternatives><graphic xlink:href="056846_ueqn3.gif"/></alternatives></disp-formula>
+<p>The two basic operations of a sketch are <italic>Add</italic> (or update) and <italic>Merge</italic>. Adding an element <italic>x</italic> involves calculating its hash value using a hash function <italic>f</italic>,
+<disp-formula id="ueqn4"><alternatives><graphic xlink:href="056846_ueqn4.gif"/></alternatives></disp-formula>
+where <italic>&#x03C1;</italic>(<italic>h</italic>) is the number of leading zeros in the binaryrepresentation of <italic>h</italic>.</p>
+<p>The cardinality estimator <italic>E</italic> is the normalized harmonicmean of the estimation on the substream:</p>
+<disp-formula id="ueqn5"><alternatives><graphic xlink:href="056846_ueqn5.gif"/></alternatives></disp-formula>
+<p>Multiple HLL sketches can be merged by taking the maximum value, element-wise, from every sketch byte-array. For a more detailed description and error bounds analysis, see [<xref ref-type="bibr" rid="c4">Flajolet et al., 2008</xref>].</p>
+</sec>
+<sec id="s3"><title>Implementation details</title>
+<p>We chose MurmurHash3 for the hash function because it is one of the fastest non-cryptographic hash functions available and it has a reasonably uniform hash space distribution. Since a <italic>k</italic>-mer is a representation of a substring of a single strand of DNA, the reverse complement on the other strand must also be considered to avoid overcounting. We hash the <italic>k</italic>-mer and its reverse complement individually using MurmurHash3 and create a unique value by doing a binary exclusive-OR on the two hashed values, generating a 128-bit hash value. For compatibility with the current khmer codebase, where hashed values are 64 bits long, we do another binary exclusive-OR over the first and last 64 bits to have a single 64-bit hash value. This procedure is executed len(sequence) &#x2212; (<italic>k</italic> &#x2212; 1) times for each sequence in the dataset, where <italic>k</italic> is the desired <italic>k</italic>-mer size.</p>
+<p>Our implementation of HLL for multiple processors uses a shared memory model, creating multiple HLL sketches in order to avoid synchronization and locking when adding elements. A master thread processes the input and distributes reads between task threads. After all the reads are consumed the sketches are merged and the final sketch can be used for cardinality estimation of the entire data set. Since sketch sizes are small (16 KiB for a 1&#x0025; error rate), instantiating additional temporary HLL sketches is a viable tradeoff. One alternative is one HLL shared between threads, with a locking mechanism to isolate the byte array on updates. This would avoid the merge process at the end, but then threads could block on updating the shared structure.</p>
+<p>The shared memory model is also a good fit since this is the architecture most potential users have readily available for use. OpenMP is an appropriate choice for the conditions we outlined, and the code compiles to a sequential implementation when OpenMP is not available. We used the OpenMP tasks functionality, since they map well to our problem.</p>
+</sec>
+<sec id="s4"><title>Benchmarking</title>
+<p>All tests were executed on a server hosted by Rackspace. This machine has an Intel Xeon E5-2680 CPU with 20 physical cores (2 sockets) running at 2.80GHz, 60 GB of RAM and a SATA block storage with 200 MB/s transfer rate. During the streaming tests the network transfer rate with the external server was measured to be 10 MB/s.</p>
+</sec>
+<sec id="s5"><title>Results</title>
+<sec id="s5a"><title>Comparison with exact counters</title>
+<p>To test the correctness of the implementation we used two exact cardinality data structures for comparison to our HLL sketch implementation. For exact cardinality we created a Python implementation using the standard library (&#x201C;collections.Counter&#x201D;) and another in C&#x002B;&#x002B; using the Google sparsehash library. Neither are parallelized. Both implementations are impractical for large cardinalities, so we chose two relatively small datasets from the Sequence Read Archive for benchmarking:
+<list list-type="bullet">
+<list-item><p>SRR797943, containing 417 PacBio and 454 sequences with average length 1690 basepairs and totaling 704,951 basepairs, with 670,487 unique <italic>k</italic>-mers. Referred to below as the small dataset.</p></list-item>
+<list-item><p>SRR1216679, containing 675,236 Illumina reads with average length of 250 bp, 168,809,000 basepairs and 17,510,301 unique <italic>k</italic>-mers. Referred to below as the medium dataset.</p></list-item>
+</list>
+</p>
+<p><xref ref-type="table" rid="tbl1">Table 1</xref> and 2 show the runtime, memory consumption, cardinality and the error of the estimate compared to the true cardinality of each dataset. Both exact implementations report the same cardinality and consume similar amounts of memory for each dataset, with the Python implementation taking longer to run. HLL is an order of magnitude faster and consumes a constant amount of memory for both cases, about 6 times less on the small dataset and 200 times less on the medium dataset.</p>
+<p>The error in the HLL implementation is close to the ideal upper bound, 1&#x0025;. The difference can be attributed to MurmurHash3 and our hashing procedure not being perfectly uniform on the hash value space.</p>
+<table-wrap id="tbl1" orientation="portrait" position="float"><label>Table 1.</label>
+<caption><p>Wall clock time and memory consumption for HLL and two exact cardinality implementations (Python and C&#x002B;&#x002B;/sparsehash) using the small size dataset.</p></caption>
+<graphic xlink:href="056846_tbl1.tif"/>
+</table-wrap>
+<table-wrap id="tbl2" orientation="portrait" position="float"><label>Table 2.</label>
+<caption><p>Wall clock time and memory consumption for HLL and two exact cardinality implementations (Python and C&#x002B;&#x002B;/sparsehash) using the medium size dataset</p></caption>
+<graphic xlink:href="056846_tbl2.tif"/>
+</table-wrap>
+</sec>
+<sec id="s5b"><title>Scaling behavior</title>
+<p>We chose a larger dataset for examining the scaling performance of our HLL implementation. This larger dataset, SRR1304364, contains 163,379 PacBio sequences with average length 12,934 bp, and 2,113,086,496 basepairs in total.</p>
+<p>We examined how our implementation scaled with number of threads. Since hashing is CPU-bound, the problem can be easily parallelized. We ran a simple benchmark to discover the I/O lower bound, using the same input and read parsing infrastructure as the HLL sketch tests, but without performing any kind of processing. <xref ref-type="fig" rid="fig1">Figure 1</xref> shows the results of these tests, where we found 16 threads are needed to saturate I/O on this particular setup, which has 16 physical cores.</p>
+<fig id="fig1" position="float" fig-type="figure"><label>Fig. 1.</label>
+<caption><title>Walltime and lower bound(I/O)</title></caption>
+<graphic xlink:href="056846_fig1.tif"/>
+</fig>
+</sec>
+<sec id="s5c"><title>Streaming</title>
+<p>The HyperLogLog sketch is designed for streams of data, and we can take advantage of this property to compose the cardinality estimation capabilities with other pipelines. Here, the overhead of the cardinality counting is minimal with respect to I/O: downloading SRR1304364 and piping it into our HLL implementation adds only 1&#x0025; to the overall runtime (199.7 &#x00B1; 9.5 seconds for counting and saving, versus 199.5&#x00B1;13.6 seconds for simply saving the file). Thus our HLL implementation can be used &#x201C;midstream&#x201D; to evaluate the effects of streaming lossy compression and error trimming.</p></sec>
+</sec>
+<sec id="s6"><title>Discussion/Conclusions</title>
+<p>We present an open and remixable implementation of the HyperLogLog sketch for cardinality counting of DNA k-mers, written in C&#x002B;&#x002B;. The implementation scales well to multiple threads, and uses OpenMP for task coordination.</p>
+<sec id="s6a"><title>Author contribution</title>
+<p>LCI and CTB conceived the study and designed the experiments. LCI carried out the research, prepared figures and tables and performed the computation work. LCI and CTB analyzed the data and wrote the paper. All authors were involved in the revision of the draft manuscript and have agreed to the final content.</p></sec>
+<sec id="s6b"><title>Competing interests</title>
+<p>The authors have no conflicts of interest or competing interests to disclose.</p></sec>
+<sec id="s6c"><title>Grant information</title>
+<p>This work was supported by grant 2013&#x2013;67015&#x2013;21357 from the United States Department of Agriculture. The funders had no role in study design, data collection and analysis, decision to publish, or preparation of the manuscript.</p>
+</sec>
+</sec>
+</body>
+<back>
+<ack><title>Acknowledgements</title>
+<p>This work was supported by grant 2013&#x2013;67015&#x2013;21357 from the United States Department of Agriculture. The funders had no role in study design, data collection and analysis, decision to publish, or preparation of the manuscript.</p>
+</ack>
+<ref-list><title>References</title>
+<ref id="c1"><mixed-citation publication-type="confproc"><string-name><surname>Noga</surname> <given-names>Alon</given-names></string-name>, <string-name><given-names>Yossi</given-names> <surname>Matias</surname></string-name>, and <string-name><given-names>Mario</given-names> <surname>Szegedy</surname></string-name> <article-title>The space complexity of approximating the frequency moments</article-title>. In <conf-name>Proceedings of the twenty-eighth annual ACM symposium on Theory of computing</conf-name>, pages <fpage>20</fpage>&#x2013;<lpage>29</lpage>. <conf-sponsor>ACM</conf-sponsor>, <year>1996</year>. URL <ext-link ext-link-type="uri" xlink:href="http://dl.acm.org/citation.cfm?id=237823">http://dl.acm.org/citation.cfm?id=237823</ext-link>.</mixed-citation></ref>
+<ref id="c2"><label>2</label><mixed-citation publication-type="journal"><string-name><given-names>P&#x00E1;ll</given-names> <surname>Melsted</surname></string-name> and <string-name><given-names>Bjarni V</given-names> <surname>Halld&#x00D3;rsson</surname></string-name>. <article-title>Kmerstream: streaming algorithms for k-mer abundance estimation</article-title>. <source>Bioinformatics</source>, <volume>30</volume>(<issue>24</issue>):<fpage>3541</fpage>&#x2013;<lpage>3547</lpage>, <year>2014</year>. doi: <pub-id pub-id-type="doi">10.1093/bioinformatics/btu713</pub-id>. URL <ext-link ext-link-type="uri" xlink:href="http://bioinformatics.oxfordjournals.org/content/30/24/3541.abstract">http://bioinformatics.oxfordjournals.org/content/30/24/3541.abstract</ext-link>.</mixed-citation></ref>
+<ref id="c3"><mixed-citation publication-type="confproc"><string-name><given-names>Jason</given-names> <surname>Pell</surname></string-name>, <string-name><given-names>Hintze</given-names> <surname>Arend</surname></string-name>, <string-name><surname>Rosangela</surname> <given-names>Canino-Koning</given-names></string-name>, <string-name><surname>Adina</surname> <given-names>Howe</given-names></string-name>, <string-name><given-names>James M</given-names> <surname>Tiedje</surname></string-name>, and <string-name><given-names>C Titus</given-names> <surname>Brown</surname></string-name>. <conf-name>Proceedings of the National Academy of Sciences</conf-name>, <volume>109</volume>(<issue>33</issue>):<fpage>13272</fpage>&#x2013;<lpage>13277</lpage>, <year>2012</year>.</mixed-citation></ref>
+<ref id="c4"><mixed-citation publication-type="confproc"><string-name><surname>Philippe</surname> <given-names>Flajolet</given-names></string-name>, <string-name><given-names>&#x00C9;ric</given-names> <surname>Fusy</surname></string-name>, <string-name><surname>Olivier</surname> <given-names>Gandouet</given-names></string-name>, and <string-name><given-names>Fr&#x00E9;d&#x00E9;ric</given-names> <surname>Me-unier</surname></string-name>. <article-title>Hyperloglog: the analysis of a near-optimal cardinality estimation algorithm</article-title>. <conf-name>DMTCS Proceedings</conf-name>, (<volume>1</volume>), <year>2008</year>.</mixed-citation></ref>
+<ref id="c5"><mixed-citation publication-type="journal"><string-name><given-names>Daniel R.</given-names> <surname>Zerbino</surname></string-name> and <string-name><given-names>Ewan</given-names> <surname>Birney</surname></string-name>. <article-title>Velvet: algorithms for de novo short read assembly using de Bruijn graphs</article-title>. <source>Genome research</source>, <volume>18</volume>(<issue>5</issue>):<fpage>821</fpage>&#x2013;<lpage>829</lpage>, <year>2008</year>.</mixed-citation></ref>
+<ref id="c6"><mixed-citation publication-type="journal"><string-name><surname>Qingpeng</surname> <given-names>Zhang</given-names></string-name>, <string-name><given-names>Jason</given-names> <surname>Pell</surname></string-name>, <string-name><surname>Rosangela</surname> <given-names>Canino-Koning</given-names></string-name>, <string-name><given-names>Ad-ina</given-names> <surname>Chuang Howe</surname></string-name>, and <string-name><given-names>C. Titus</given-names> <surname>Brown</surname></string-name>. <article-title>These are not the k-mers you are looking for: Efficient online k-mer counting using a probabilistic data structure</article-title>. <source>PLoS ONE</source>, <volume>9</volume>(<issue>7</issue>):<fpage>e101271</fpage>, <month>07</month> <year>2014</year>. doi: <pub-id pub-id-type="doi">10.1371/journal.pone.0101271</pub-id>. <ext-link ext-link-type="uri" xlink:href="http://dx.doi.org/10.1371&#x0025;2Fjournal.pone.0101271">http://dx.doi.org/10.1371&#x0025;2Fjournal.pone.0101271</ext-link>.</mixed-citation></ref>
+<ref id="c7"><mixed-citation publication-type="confproc"><string-name><surname>Michael</surname> <given-names>R. Crusoe</given-names></string-name>, <string-name><given-names>Hussien F.</given-names> <surname>Alameldin</surname></string-name>, <string-name><surname>Sherine</surname> <given-names>Awad</given-names></string-name>, <string-name><given-names>Elmar</given-names> <surname>Bucher</surname></string-name>, <string-name><given-names>Adam</given-names> <surname>Caldwell</surname></string-name>, <string-name><given-names>Reed</given-names> <surname>Cartwright</surname></string-name>, <string-name><given-names>Amanda</given-names> <surname>Charbon-neau</surname></string-name>, <string-name><given-names>Bede</given-names> <surname>Constantinides</surname></string-name>, <string-name><given-names>Greg</given-names> <surname>Edvenson</surname></string-name>, <string-name><surname>Scott</surname> <given-names>Fay</given-names></string-name>, <string-name><given-names>Jacob</given-names> <surname>Fenton</surname></string-name>, <string-name><given-names>Thomas</given-names> <surname>Fenzl</surname></string-name>, <string-name><surname>Jordan</surname> <given-names>Fish</given-names></string-name>, <string-name><given-names>Leonor</given-names> <surname>Garcia-Gutierrez</surname></string-name>, <string-name><given-names>Phillip</given-names> <surname>Garland</surname></string-name>, <string-name><surname>Jonathan</surname> <given-names>Gluck</given-names></string-name>, <string-name><given-names>Ivan</given-names> <surname>Gonzalez</surname></string-name>, <string-name><given-names>Sarah</given-names> <surname>Guer-mond</surname></string-name>, <string-name><surname>Jiarong</surname> <given-names>Guo</given-names></string-name>, <string-name><surname>Aditi</surname> <given-names>Gupta</given-names></string-name>, <string-name><given-names>Joshua R.</given-names> <surname>Herr</surname></string-name>, <string-name><surname>Adina</surname> <given-names>Howe</given-names></string-name>, <string-name><surname>Alex</surname> <given-names>Hyer</given-names></string-name>, <string-name><surname>Andreas</surname> <given-names>Harpfer</given-names></string-name>, <string-name><given-names>Luiz</given-names> <surname>Irber</surname></string-name>, <string-name><surname>Rhys</surname> <given-names>Kidd</given-names></string-name>, <string-name><surname>David</surname> <given-names>Lin</given-names></string-name>, <string-name><surname>Justin</surname> <given-names>Lippi</given-names></string-name>, <string-name><given-names>Tamer</given-names> <surname>Mansour</surname></string-name>, <string-name><given-names>Pamela</given-names> <surname>McANulty</surname></string-name>, <string-name><given-names>Eric</given-names> <surname>McDonald</surname></string-name>, <string-name><given-names>Jessica</given-names> <surname>Mizzi</surname></string-name>, <string-name><given-names>Kevin D.</given-names> <surname>Murray</surname></string-name>, <string-name><given-names>Joshua R.</given-names> <surname>Nahum</surname></string-name>, <string-name><given-names>Kaben</given-names> <surname>Nanlohy</surname></string-name>, <string-name><given-names>Alexander Johan</given-names> <surname>Nederbragt</surname></string-name>,<string-name><given-names>Humberto</given-names> <surname>Ortiz-Zuazaga</surname></string-name>, <string-name><surname>Jeramia</surname> <given-names>Ory</given-names></string-name>, <string-name><given-names>Jason</given-names> <surname>Pell</surname></string-name>, <string-name><given-names>Charles</given-names> <surname>Pepe-Ranney</surname></string-name>, <string-name><surname>Zachary</surname> <given-names>N Russ</given-names></string-name>, <string-name><given-names>Erich</given-names> <surname>Schwarz</surname></string-name>, <string-name><surname>Camille</surname> <given-names>Scott</given-names></string-name>, <string-name><surname>Josiah</surname> <given-names>Seaman</given-names></string-name>, <string-name><given-names>Scott</given-names> <surname>Sievert</surname></string-name>, <string-name><given-names>Jared</given-names> <surname>Simpson</surname></string-name>, <string-name><given-names>Connor T.</given-names> <surname>Skennerton</surname></string-name>, <string-name><given-names>James</given-names> <surname>Spencer</surname></string-name>, <string-name><surname>Ramakrishnan</surname> <given-names>Srinivasan</given-names></string-name>, <string-name><given-names>Daniel</given-names> <surname>Standage</surname></string-name>, <string-name><given-names>James A.</given-names> <surname>Stapleton</surname></string-name>, <string-name><given-names>Joe</given-names> <surname>Stein</surname></string-name>, <string-name><given-names>Susan R</given-names> <surname>Steinman</surname></string-name>, <string-name><surname>Benjamin</surname> <given-names>Taylor</given-names></string-name>, <string-name><given-names>Will</given-names> <surname>Trimble</surname></string-name>, <string-name><surname>Heather</surname> <given-names>L. Wiencko</given-names></string-name>, <string-name><surname>Michael</surname> <given-names>Wright</given-names></string-name>, <string-name><surname>Brian</surname> <given-names>Wyss</given-names></string-name>, <string-name><surname>Qingpeng</surname> <given-names>Zhang</given-names></string-name>, <string-name><given-names>en</given-names> <surname>zyme</surname></string-name>, and <string-name><given-names>C.</given-names> <surname>Titus Brown</surname></string-name>. <string-name><given-names>Evangelos</given-names> <surname>Georganas</surname></string-name>, <string-name><given-names>Aydin</given-names> <surname>Buluq</surname></string-name>, <string-name><surname>Jarrod</surname> <given-names>Chapman</given-names></string-name>, <string-name><surname>Leonid</surname> <given-names>Oliker</given-names></string-name>, <string-name><given-names>Daniel</given-names> <surname>Rokhsar</surname></string-name>, and <string-name><given-names>Katherine</given-names> <surname>Yelick</surname></string-name>. <article-title>Parallel de bruijn graph construction and traversal for de novo genome assembly</article-title>. In <conf-name>High Performance Computing, Networking, Storage and Analysis, SC14: International Conference for</conf-name>, pages <fpage>437448</fpage>. <conf-sponsor>IEEE</conf-sponsor>, <year>2014</year>.</mixed-citation></ref>
+<ref id="c8"><mixed-citation publication-type="confproc"><string-name><given-names>Yousra</given-names> <surname>Chabchoub</surname></string-name> and <string-name><given-names>Georges</given-names> <surname>Hebrail</surname></string-name>. <article-title>Sliding hyperloglog: Estimating cardinality in a data stream over a sliding window</article-title>. In <conf-name>Data Mining Workshops (ICDMW), 2010 IEEE International Conference on</conf-name>, pages <fpage>1297</fpage>&#x2013;<lpage>1303</lpage>. <conf-sponsor>IEEE</conf-sponsor>, <year>2010</year>.</mixed-citation></ref>
+<ref id="c9"><mixed-citation publication-type="confproc"><string-name><given-names>Stefan</given-names> <surname>Heule</surname></string-name>, <string-name><given-names>Marc</given-names> <surname>Nunkesser</surname></string-name>, and <string-name><given-names>Alexander</given-names> <surname>Hall</surname></string-name>. <article-title>Hyperloglog in practice: algorithmic engineering of a state of the art cardinality estimation algorithm</article-title>. In <conf-name>Proceedings of the 16th International Conference on Extending Database Technology</conf-name>, pages <fpage>683</fpage>&#x2013;<lpage>692</lpage>. <conf-sponsor>ACM</conf-sponsor>, <year>2013</year>.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

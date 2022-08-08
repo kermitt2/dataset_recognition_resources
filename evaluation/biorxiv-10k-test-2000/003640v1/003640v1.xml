@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/003640</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>The Scramble Conversion Tool</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<name><surname>Bonfield</surname><given-names>James K</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>Wellcome Trust Sanger Institute</institution></aff>
+</contrib-group>
+<author-notes>
+<fn><p><bold>Contact</bold>: <email>jkb@sanger.ac.uk</email></p></fn>
+</author-notes>
+<pub-date pub-type="epub"><year>2014</year></pub-date>
+<elocation-id>003640</elocation-id>
+<history>
+<date date-type="received">
+<day>28</day>
+<month>3</month>
+<year>2014</year>
+</date>
+<date date-type="accepted">
+<day>28</day>
+<month>3</month>
+<year>2014</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2014, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2014</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="003640.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>ABSTRACT</title>
+<sec><title>Motivation</title>
+<p>The reference CRAM file format implementation is in Java. We present &#x201C;Scramble&#x201D;: a new C implementation of SAM, BAM and CRAM file I/O.</p>
+</sec>
+<sec><title>Results</title>
+<p>The C API for CRAM is 1.5&#x2013;1.7x slower than BAM at decoding, but 1.8&#x2013;2.6x faster at encoding. We see file size savings of 40&#x2013;50&#x0025;.</p>
+</sec>
+<sec><title>Availability</title>
+<p>Source code is available from <ext-link ext-link-type="uri" xlink:href="http://sourceforge.net/">http://sourceforge.net/projects/staden/files/io_lib/</ext-link></p>
+</sec>
+</abstract>
+<counts>
+<page-count count="2"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1"><label>1</label><title>INTRODUCTION</title>
+<p>Storage capacity has been the primary driver behind the development of the CRAM format (<xref ref-type="bibr" rid="c2">Cochrane <italic>et al.</italic>, 2013</xref>). The European Bioinformatics Institute observed that when storing a sequence alignment to a known reference, bases that agree with the reference could be omitted and hence file size reduced (<xref ref-type="bibr" rid="c4">Fritz <italic>et al.</italic>, 2011</xref>). The CRAM format is a practical implementation of this idea and is a viable alternative to the earlier BAM format (<xref ref-type="bibr" rid="c6">Li <italic>et al.</italic>, 2009</xref>). CRAM is now the preferred submission format for the European Nucleotide Archive.</p>
+<p>The initial CRAM prototype was in Python, quickly followed by a Picard (<xref ref-type="bibr" rid="c8">Wysoker <italic>et al.</italic>, 2009</xref>) compatible Java implementation (<xref ref-type="bibr" rid="c9">Zalunin <italic>et al.</italic>, 2011</xref>). We identified a need for a C implementation, which was implemented as part of the Staden Package&#x2019;s (<xref ref-type="bibr" rid="c7">Staden <italic>et al.</italic>, 1999</xref>) &#x201C;io lib&#x201D; library.</p>
+<p>The primary conversion tool is named Scramble. It can read and write SAM, BAM and CRAM formats using a unified API.</p>
+</sec>
+<sec id="s2"><label>2</label><title>METHODS</title>
+<p>We will not cover the CRAM file format here except to note that CRAM internally separates data by type before compressing with Zlib (<xref ref-type="bibr" rid="c3">Deutsch and Gailly, 1996</xref>). Thus we have regular blocks of quality values, blocks of sequence names and blocks of auxiliary tags, each of which may be compressed using different Zlib parameters. A key efficiency observation was that using the run-length-encoding strategy (&#x201C;Z_RLE&#x201D;) was considerably faster than the default strategy while also often offering slightly higher compression ratios for quality values. Note that this trick is not possible within the BAM format as all data types are interleaved within the same Zlib blocks.</p>
+<p>Our implementation periodically samples both Z_RLE and the default strategy on quality blocks to determine the optimal method. This ensures rapid speed without loss in compression ratio.</p>
+<p>Multi-threading is implemented using a thread pool, shared by both encoding and decoding tasks. This contrasts well when compared with Samtools which can only parallelize file encoding. It also permits the most efficient use of threads when converting between differing file formats, automatically balancing the encoder and decoder work loads. Note that our SAM encoding and decoding is single threaded.</p>
+</sec>
+<sec id="s3"><label>3</label><title>RESULTS AND DISCUSSION</title>
+<p>We tested our implementation against the reference Java cramtools implementation as well as existing BAM implementations in C (Samtools) and Java (Picard). The test data used was a 4x coverage of a <italic>Homo Sapiens</italic> sample (ERR317482) aligned by BWA, with a further test set (ERR251692) from the 1000 Genomes project listed in the Supplementary Information.</p>
+<p>A break-down of the file size by item type within the Scramble CRAM output can be seen in <xref rid="tbl1" ref-type="table">Table 1</xref>. The impact of lossy compression on quality values was also tested by applying Illumina&#x2019;s quantizing system that portions the 40 distinct values into 8 new bins (<xref ref-type="bibr" rid="c5">Illumina, 2012</xref>). This reduces the file size by 38&#x0025;, however even in the reduced file the quality values still account for the bulk of the storage costs.</p>
+<table-wrap id="tbl1" orientation="portrait" position="float"><label>Table 1.</label>
+<caption><p>CRAM breakdown by file percentage</p></caption>
+<graphic xlink:href="003640_tbl1.tif"/>
+</table-wrap>
+<p><xref rid="tbl2" ref-type="table">Table 2</xref> shows the time taken to read and write formats from the various tools along with their resultant file sizes. For encoding it is clear that the C implementation of CRAM is considerably faster than the Java implementation and also beats Picard/Samtools BAM speed despite the use of the Intel tuned Deflate implementation by Picard. This is almost entirely down to the use of Z_RLE for encoding quality values. Decoding of CRAM is not as fast as C BAM, but it is comparable to the widely used Picard&#x2019;s BAM decoder. We also observe that the CRAM files produced by Scramble are around 7&#x0025; smaller than those produced by Cramtools.jar.</p>
+<table-wrap id="tbl2" orientation="portrait" position="float"><label>Table 2.</label>
+<caption><p>9827 2&#x0023;49.bam (ERR317482)</p></caption>
+<graphic xlink:href="003640_tbl2.tif"/>
+</table-wrap>
+<p>Scramble has full multi-threading support for both reading and writing of BAM and CRAM file formats. It scales nearly linearly up to 16 cores, but with some performance inefficiencies becoming visible in CRAM with high core counts. The results can be seen in <xref rid="fig1" ref-type="fig">Figure 1</xref>.</p>
+<fig id="fig1" position="float" orientation="portrait" fig-type="figure"><label>Fig. 1.</label>
+<caption><p>Real time taken to convert from BAM to BAM/CRAM format using Scramble and Samtools (BAM to BAM only).</p></caption>
+<graphic xlink:href="003640_fig1.tif"/>
+</fig>
+</sec>
+<sec id="s4"><label>4</label><title>CONCLUSION</title>
+<p>We have demonstrated that the C implementation of CRAM performs well, beating Samtools, Picard and Cramtools for encoding speed. Decoding speed is not as efficient as Samtools, but is still comparable to Picard and nearly twice as fast as the Java CRAM implementation.</p>
+<p>CRAM is not capable of achieving the top compression ratios, using 3.96 bits/base with 40 quality bins and 2.05 bits/base with 8 bins compared against only 3.16 and 1.52 for fqz comp (<xref ref-type="bibr" rid="c1">Bonfield and Mahoney, 2013</xref>), and 41 bits per read name in CRAM versus 23 bits in fqz_comp. This demonstrates room for improvement in future CRAM versions, possibly achieved by implementing arithmetic coding instead of relying on Zlib.</p>
+<p>Scramble is not a drop-in replacement for the Samtools API however a port of the CRAM components of Scramble has been made to the HTSlib library and is available within a test release of Samtools, available from <italic><ext-link ext-link-type="uri" xlink:href="https://github.com/samtools/htslib">https://github.com/samtools/htslib</ext-link></italic>.</p>
+</sec>
+</body>
+<back>
+<ack>
+<title>ACKNOWLEDGEMENT</title>
+<p>We would like to acknowledge Vadim Zalunin for his assistance and collaboration with re-implementing the CRAM specification.</p>
+<p><italic>Funding</italic>: This work was funded by the Wellcome Trust [098051].</p>
+</ack>
+<ref-list><title>REFERENCES</title>
+<ref id="c1"><mixed-citation publication-type="journal"><string-name><surname>Bonfield</surname>, <given-names>J. K.</given-names></string-name> and <string-name><surname>Mahoney</surname>, <given-names>M. V.</given-names></string-name> (<year>2013</year>). <article-title>Compression of FASTQ and SAM format sequencing data</article-title>. <source>PloS one</source>, <volume>8</volume>(<issue>3</issue>), <fpage>e59190</fpage>.</mixed-citation></ref>
+<ref id="c2"><mixed-citation publication-type="journal"><string-name><surname>Cochrane</surname>, <given-names>G.</given-names></string-name>, <string-name><surname>Alako</surname>, <given-names>B.</given-names></string-name>, <string-name><surname>Amid</surname>, <given-names>C.</given-names></string-name>, <string-name><surname>Bower</surname>, <given-names>L.</given-names></string-name>, <string-name><surname>Cerdeqo-Tarraga</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Cleland</surname>, <given-names>I.</given-names></string-name>, <string-name><surname>Gibson</surname>, <given-names>R.</given-names></string-name>, <string-name><surname>Goodgame</surname>, <given-names>N.</given-names></string-name>, <string-name><surname>Jang</surname>, <given-names>M.</given-names></string-name>, <string-name><surname>Kay</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Leinonen</surname>, <given-names>R.</given-names></string-name>, <string-name><surname>Lin</surname>, <given-names>X.</given-names></string-name>, <string-name><surname>Lopez</surname>, <given-names>R.</given-names></string-name>, <string-name><surname>McWilliam</surname>, <given-names>H.</given-names></string-name>, <string-name><surname>Oisel</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Pakseresht</surname>, <given-names>N.</given-names></string-name>, <string-name><surname>Pallreddy</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Park</surname>, <given-names>Y.</given-names></string-name>, <string-name><surname>Plaister</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Radhakrishnan</surname>, <given-names>R.</given-names></string-name>, <string-name><surname>Rivihre</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Rossello</surname>, <given-names>M.</given-names></string-name>, <string-name><surname>Senf</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Silvester</surname>, <given-names>N.</given-names></string-name>, <string-name><surname>Smirnov</surname>, <given-names>D.</given-names></string-name>, <string-name><surname>ten Hoopen</surname>, <given-names>P.</given-names></string-name>, <string-name><surname>Toribio</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Vaughan</surname>, <given-names>D.</given-names></string-name>, and <string-name><surname>Zalunin</surname>, <given-names>V.</given-names></string-name> (<year>2013</year>). <article-title>Facing growth in the european nucleotide archive</article-title>. <source>Nucleic Acids Research</source>, <volume>41</volume>(<issue>D1</issue>), <fpage>D30</fpage>&#x2013;<lpage>D35</lpage>.</mixed-citation></ref>
+<ref id="c3"><mixed-citation publication-type="website"><string-name><surname>Deutsch</surname>, <given-names>P.</given-names></string-name> and <string-name><surname>Gailly</surname>, <given-names>J. L.</given-names></string-name> (<year>1996</year>). <article-title>Zlib compressed data format specification version 3.3</article-title>. RFC 1950. <ext-link ext-link-type="uri" xlink:href="http://www.ietf.org/rfc/rfc1950.txt">http://www.ietf.org/rfc/rfc1950.txt</ext-link>.</mixed-citation></ref>
+<ref id="c4"><mixed-citation publication-type="journal"><string-name><surname>Fritz</surname>, <given-names>M. H.-Y.</given-names></string-name>, <string-name><surname>Leinonen</surname>, <given-names>R.</given-names></string-name>, <string-name><surname>Cochrane</surname>, <given-names>G.</given-names></string-name>, and <string-name><surname>Birney</surname>, <given-names>E.</given-names></string-name> (<year>2011</year>). <article-title>Efficient storage of high throughput DNA sequencing data using reference-based compression</article-title>. <source>Genome Research</source>, <volume>21</volume>, <fpage>734</fpage>&#x2013;<lpage>740</lpage>.</mixed-citation></ref>
+<ref id="c5"><mixed-citation publication-type="website"><collab>Illumina</collab> (<year>2012</year>). <article-title>Reducing whole-genome data storage footprint</article-title>. Technical report. <ext-link ext-link-type="uri" xlink:href="http://res.illumina.com/documents/products/whitepapers/whitepaper_datacompression.pdf">http://res.illumina.com/documents/products/whitepapers/whitepaper_datacompression.pdf</ext-link>.</mixed-citation></ref>
+<ref id="c6"><mixed-citation publication-type="journal"><string-name><surname>Li</surname>, <given-names>H.</given-names></string-name>, <string-name><surname>Handsaker</surname>, <given-names>B.</given-names></string-name>, <string-name><surname>Wysoker</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Fennell</surname>, <given-names>T.</given-names></string-name>, <string-name><surname>Ruan</surname>, <given-names>J.</given-names></string-name>, <string-name><surname>Homer</surname>, <given-names>N.</given-names></string-name>, <string-name><surname>Marth</surname>, <given-names>G.</given-names></string-name>, <string-name><surname>Abecasis</surname>, <given-names>G.</given-names></string-name>, and <string-name><surname>Durbin</surname>, <given-names>R.</given-names></string-name> (<year>2009</year>). <article-title>The Sequence Alignment/Map format and SAMtools</article-title>. <source>Bioinformatics</source>, <volume>16</volume>, <fpage>2078</fpage>&#x2013;<lpage>2079</lpage>.</mixed-citation></ref>
+<ref id="c7"><mixed-citation publication-type="book"><string-name><surname>Staden</surname>, <given-names>R.</given-names></string-name>, <string-name><surname>Beal</surname>, <given-names>K. F.</given-names></string-name>, and <string-name><surname>Bonfield</surname>, <given-names>J. K.</given-names></string-name> (<year>1999</year>). <chapter-title>The staden package, 1998</chapter-title>. In <source>Bioinformatics methods and protocols</source>, pages <fpage>115</fpage>&#x2013;<lpage>130</lpage>. <publisher-name>Humana Press</publisher-name>.</mixed-citation></ref>
+<ref id="c8"><mixed-citation publication-type="website"><string-name><surname>Wysoker</surname>, <given-names>A.</given-names></string-name> <etal>et al.</etal> (<year>2009</year>). <article-title>Picard</article-title>. <ext-link ext-link-type="uri" xlink:href="http://picard.sourceforge.net/">http://picard.sourceforge.net/</ext-link>.</mixed-citation></ref>
+<ref id="c9"><mixed-citation publication-type="website"><string-name><surname>Zalunin</surname>, <given-names>V.</given-names></string-name> <etal>et al.</etal> (<year>2011</year>). <article-title>Cram</article-title>. <ext-link ext-link-type="uri" xlink:href="https://www.ebi.ac.uk/ena/about/cram_toolkit">https://www.ebi.ac.uk/ena/about/cram_toolkit</ext-link>.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

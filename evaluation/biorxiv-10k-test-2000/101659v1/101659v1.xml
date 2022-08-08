@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/101659</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Genomics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Modelling haplotypes with respect to reference cohort variation graphs</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0002-3870-2169</contrib-id>
+<name><surname>Rosen</surname><given-names>Yohei</given-names></name>
+</contrib>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0001-8345-8356</contrib-id>
+<name><surname>Eizenga</surname><given-names>Jordan</given-names></name>
+</contrib>
+<contrib contrib-type="author">
+<name><surname>Paten</surname><given-names>Benedict</given-names></name>
+</contrib>
+<aff><institution>UC Santa Cruz Genomics Institute, University of California</institution> Santa Cruz, Santa Cruz, CA 95064, <country>USA</country></aff>
+</contrib-group>
+<pub-date pub-type="epub">
+<year>2017</year>
+</pub-date><elocation-id>101659</elocation-id><history>
+<date date-type="received">
+<day>19</day>
+<month>1</month>
+<year>2017</year>
+</date>
+<date date-type="accepted">
+<day>20</day>
+<month>1</month>
+<year>2017</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2017, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2017</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="101659.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>Current statistical models of haplotypes are limited to cohorts of haplotypes which can be represented by arrays of values at linearly ordered bi- or multiallelic loci. These methods cannot model either structural variants or overlapping or nested variants. A variation graph is a mathematical structure can encode arbitrarily complex genetic variation. We present the first model which uses a variation graph representation of haplotypes. We present an algorithm to calculate the likelihood that a haplotype arose from a population through recombinations and demonstrate time complexity linear in haplotype length and sublinear in population size. We demonstrate mathematical extensions to allow modelling of mutations. Our results provide a starting point for haplotype inference on variation graphs. This is an essential step forward for clinical genomics and genetic epidemiology since it is the first haplotype model which can represent all sorts of variation in the population.</p>
+</abstract>
+<counts><page-count count="16"/></counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1"><label>1</label>
+<title>Background</title>
+<p>Statistical modelling of individual haplotypes within population distributions of genetic variation dates back to Kingman&#x2019;s <italic>n-coalescent</italic> [<xref rid="c5" ref-type="bibr">5</xref>]. In general, the coalescent and other models describe haplotypes as generated from some structured state space via recombination and mutation events.</p>
+<p>Whereas coalescent models are powerful generative tools, their computational complexity is unsuited to inference on observed haplotype data. Therefore, the dominant haplotype likelihood model used for statistical inference is Li and Stephens&#x2019; 2003 model (LS) [<xref rid="c7" ref-type="bibr">7</xref>] and its various modifications. LS closely approximates the more exact coalescent models but admits implementations with rapid runtime.</p>
+<p>Orthogonal to statistical models, another important frontier in genomics is the development of variation graphs [<xref rid="c10" ref-type="bibr">10</xref>]. This is a structure which encodes the wide variety of variation found in the population, including many types of variation which cannot be represented with conventional models. Variation graphs are a natural structure to represent reference cohorts for haplotype inference since they encode haplotypes in a canonical manner: as node sequences embedded in the graph [<xref rid="c8" ref-type="bibr">8</xref>].</p>
+<p>In this paper, we present the first statistical model for haplotype modelling with respect to graph-embedded populations. We also describe an efficient algorithm for calculating haplotype likelihoods with respect to large reference panels. The algorithm makes significant use of Novak&#x2019;s graph positional Burrows-Wheeler transform (gPBWT) [<xref rid="c8" ref-type="bibr">8</xref>].</p>
+</sec>
+<sec id="s2"><label>2</label>
+<title>Encoding the full set of human variation</title>
+<p>Haplotypes in the Kingman <italic>n</italic>-coalescent and Li-Stephens models are represented as sequences of values at linearly ordered, non-overlapping binary loci [<xref rid="c5" ref-type="bibr">5</xref>,<xref rid="c6" ref-type="bibr">6</xref>,<xref rid="c7" ref-type="bibr">7</xref>]. Some authors model multiallelic loci (for example, single base positions taking on values of <italic>A, C, T, G, or gap</italic>) [<xref rid="c6" ref-type="bibr">6</xref>], but all assume that the entirety of genetic variation can be expressed by linearly ordered loci.</p>
+<p>However, many types of genetic variation cannot be represented in this manner. Copy number variations, inversions or transpositions of sequence cannot be represented by linearly ordered loci. Large population cohorts such as the <italic>1000 Genomes</italic> project data [<xref rid="c1" ref-type="bibr">1</xref>] contain simple insertions, deletions and substitution at a sufficient density that these variants overlap or nest into structures not representable by linearly ordered sites.</p>
+<fig id="fig1" position="float" fig-type="figure"><label>Figure 1:</label>
+<caption>
+<p>Overlapping, non-linearly orderable loci in a graph of <italic>1000 Genomes</italic> variation data for chromosome 22</p>
+</caption>
+<graphic xlink:href="101659_fig1.tif"/>
+</fig>
+<p>In order to represent these more challenging types of variation, we use a <italic>variation graph</italic>. This is a type of <italic>sequence graph</italic>&#x2014;a mathematical graph in which nodes represent elements of sequence, augmented with 5&#x2032; and 3&#x2032; sides, and edges are drawn between sides if the adjacency of sequence is observed in the population cohort [<xref rid="c10" ref-type="bibr">10</xref>]. Haplotypes are embedded as paths through oriented nodes in the graph. We are able to represent novel recombinations, deletions, copy number variations, or other structural events by adding paths with new edges to the graph, and novel inserted sequence by paths through new nodes.</p>
+</sec>
+<sec id="s3"><label>3</label>
+<title>Adapting the recombination component of Li and Stephens to graphs</title>
+<p>The Li and Stephens model (LS) can be described by an HMM with a state space consisting of haplotypes and observations consisting of the haplotypes&#x2019; alleles at loci [<xref rid="c6" ref-type="bibr">6</xref>,<xref rid="c7" ref-type="bibr">7</xref>]. Transitions between states correspond to recombinations and mutations are modelled within the emission probabilities. Since variation graphs encode full nucleic acid sequences rather than lists of sites we extend the model to allow recombinations at base-pair resolution rather than just between loci.</p>
+<p>Let <italic>G</italic> denote a variation graph. Let <italic>S</italic>(<italic>G</italic>) be the set of all possible finite paths visiting orientednodes of <italic>G</italic>. A path <italic>h</italic> in <italic>S</italic>(<italic>G</italic>) encodes a potential <italic>haplotype</italic>. A variation graph posesses an embedded <italic>population reference cohort H</italic> which is a multiset of haplotypes. Given a pair (<italic>G, H</italic>), we seek the likelihood <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline1.gif"/></alternatives></inline-formula> that <italic>h</italic> arose from haplotypes in <italic>H</italic> via recombinations.</p>
+<p>Recall that every oriented node of <italic>G</italic> is labelled with a nucleic acid sequence. Therefore, every path <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline87.gif"/></alternatives></inline-formula> corresponds to a nucleic acid sequence <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline98.gif"/></alternatives></inline-formula> formed by concatenation of its node labels. We represent recombinations between by assembling subsequences of these sequences <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline109.gif"/></alternatives></inline-formula> for<inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline120.gif"/></alternatives></inline-formula>. We call a concatenation of such subsequences a <italic>recombination mosaic</italic>.</p>
+<fig id="fig2" position="float" fig-type="figure"><label>Figure 2:</label>
+<caption>
+<p>The pink path shows the recombination mosaic <italic>x</italic> superimposed on the embedded haplotypes <italic>H</italic> in our <italic>1000 Genomes project</italic> chr 22 graph; below <italic>x</italic> is mapped onto its nucleic acid sequence.</p>
+</caption>
+<graphic xlink:href="101659_fig2.tif"/>
+</fig>
+<p>We can assign a likelihood to a mosaic <italic>x</italic> by analogy with the recombination model from Li and Stephens. Assume that nucleotide in <italic>x</italic> has precisely one successor in each <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline131.gif"/></alternatives></inline-formula> to which it could recombine. Then, between each base pair, we assign a probability <italic>&#x03C0;</italic><sub><italic>r</italic></sub> of recombining, and therefore a probability <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline142.gif"/></alternatives></inline-formula> of not recombining. Write <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline164.gif"/></alternatives></inline-formula> for <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline153.gif"/></alternatives></inline-formula>.</p>
+<p>By the same argument underlying the Li and Stephens recombination model, we then we have aprobability of a given mosaic having arisen from (<italic>G, H</italic>) through recombinations:</p>
+<disp-formula id="eqn1"><alternatives><graphic xlink:href="101659_eqn1.gif"/></alternatives></disp-formula>
+<p>We will use this to determine the probability <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline2.gif"/></alternatives></inline-formula> for a given. <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline13.gif"/></alternatives></inline-formula> noting that multiple mosaics <italic>x</italic> can correspond to the same node path <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline24.gif"/></alternatives></inline-formula>.</p>
+<p>Given a haplotype <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline35.gif"/></alternatives></inline-formula>, let <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline46.gif"/></alternatives></inline-formula> be the set of all mosaics involving the same path through the graph as <italic>h</italic>. The law of total probability gives</p>
+<disp-formula id="eqn2"><alternatives><graphic xlink:href="101659_eqn12.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn3"><alternatives><graphic xlink:href="101659_eqn13.gif"/></alternatives></disp-formula>
+<p>Let <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline57.gif"/></alternatives></inline-formula>; then <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline68.gif"/></alternatives></inline-formula> is proportional to a <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline79.gif"/></alternatives></inline-formula>-weighted enumeration of <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline85.gif"/></alternatives></inline-formula>.</p>
+<p>We can extend this model by allowing recombination rate <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline86.gif"/></alternatives></inline-formula> and effective population size <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline88.gif"/></alternatives></inline-formula> to vary across the genome according to node <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline89.gif"/></alternatives></inline-formula> in the graph. Varying the effective population size allows the model to remain sensible in regions traversed multiple times by cycle-containing haplotypes. In our basic implementation we will assume that <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline90.gif"/></alternatives></inline-formula> is constant and <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline91.gif"/></alternatives></inline-formula>, however varying these parameters does not add to the computational complexity of the model.</p>
+</sec>
+<sec id="s4"><label>4</label>
+<title>A linear-time dynamic programming for likelihood calculation</title>
+<p>We wish to be able to calculate the sums <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline92.gif"/></alternatives></inline-formula> efficiently. We will achieve this by traversing the node sequence <italic>h</italic> left-to-right, computing the sum for all prefixes of <italic>h</italic>. Write <italic>h</italic><sub><italic>b</italic></sub> for the prefix of <italic>h</italic> ending with node <italic>b</italic>.</p>
+<statement>
+<label>Definition 1.</label>
+<p>A <italic>subinterval s</italic> of a haplotype <italic>h</italic> is a contiguous subpath of <italic>h</italic>. Two subintervals <italic>s</italic><sub>1</sub><italic>, s</italic>2 of haplotypes <italic>h</italic><sub>1</sub><italic>, h</italic>2 are <italic>consistent</italic> if <italic>s</italic><sub>1</sub> = <italic>s</italic><sub>2</sub> as paths, however we distinguish them as separate objects.</p>
+</statement>
+<statement>
+<label>Definition 2.</label>
+<p><inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline93.gif"/></alternatives></inline-formula> is the set of subintervals <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline94.gif"/></alternatives></inline-formula> such that</p>
+<p><list list-type="order">
+<list-item><p>there exists a subinterval <italic>s</italic> of <italic>h</italic> which begins with <italic>a</italic>, ends with <italic>b</italic> and is consistent with <italic>s&#x2032;</italic></p></list-item>
+<list-item><p>there exists no such subinterval which begins with <italic>a &#x2212;</italic> 1, the node before <italic>a</italic> in <italic>h (left-maximality)</italic></p></list-item>
+</list></p>
+</statement>
+<statement>
+<label>Definition 3.</label>
+<p>For a given prefix <italic>h</italic><sub><italic>b</italic></sub> of <italic>h</italic> and a subinterval <italic>s&#x2032;</italic> of a haplotype <italic>h&#x2032; &#x2208; H</italic>, define the subset <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline95.gif"/></alternatives></inline-formula> as the set of all mosaics whose rightmost segment corresponds to <italic>s&#x2032;</italic>.</p>
+<p>The following result is key to being able to efficiently enumerate mosaics:</p>
+<p><bold>Claim 1.</bold> <italic>If</italic> <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline96.gif"/></alternatives></inline-formula> <italic>for some a, then there exists a recombination-count preserving bijection between</italic> <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline97.gif"/></alternatives></inline-formula></p>
+<p><italic>Proof.</italic> See supplement.</p>
+</statement>
+<statement>
+<label>Corollary 1.</label>
+<p><italic>If we define</italic></p>
+<p><disp-formula id="eqn4"><alternatives><graphic xlink:href="101659_eqn14.gif"/></alternatives></disp-formula></p>
+<p><italic>then</italic> <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline99.gif"/></alternatives></inline-formula> <italic>for some a. Called this shared value</italic> <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline100.gif"/></alternatives></inline-formula></p>
+</statement>
+<statement>
+<label>Definition 4.</label>
+<p><italic>A</italic><sub><italic>b</italic></sub> is the set of all nodes <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline101.gif"/></alternatives></inline-formula> such that <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline301.gif"/></alternatives></inline-formula> is nonempty.</p>
+</statement>
+<p>Using these results, the likelihood <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline102.gif"/></alternatives></inline-formula> of the prefix <italic>h</italic><sub><italic>b</italic></sub> can be written as</p>
+<disp-formula id="eqn5"><alternatives><graphic xlink:href="101659_eqn15.gif"/></alternatives></disp-formula>
+<p>Let <italic>b &#x2212;</italic> 1 represent the node preceding <italic>b</italic> in <italic>h</italic>; it remains to show that if we know <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline103.gif"/></alternatives></inline-formula> for all <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline104.gif"/></alternatives></inline-formula>, we can calculate <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline105.gif"/></alternatives></inline-formula> for all <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline106.gif"/></alternatives></inline-formula> in constant time with respect to <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline107.gif"/></alternatives></inline-formula>. This can be recognized by inspection of the following linear transformation. Proof that this computes <italic>Rb</italic>(<italic>&#x00B7;</italic>) from <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline108.gif"/></alternatives></inline-formula> is straightforward but lengthy and therefore deferred to the supplement.</p>
+<disp-formula id="eqn6"><alternatives><graphic xlink:href="101659_eqn16.gif"/></alternatives></disp-formula>
+<p>where <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline118.gif"/></alternatives></inline-formula>, and <italic>A, B</italic> are the <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline119.gif"/></alternatives></inline-formula> element sums</p>
+<disp-formula id="ueqn1"><alternatives><graphic xlink:href="101659_ueqn1.gif"/></alternatives></disp-formula>
+<p>Assuming memoization of the polynomials <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline110.gif"/></alternatives></inline-formula>, and knowledge of <italic>w, l</italic> and all <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline111.gif"/></alternatives></inline-formula>, all <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline112.gif"/></alternatives></inline-formula> can be calculated together in two shared <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline113.gif"/></alternatives></inline-formula>-element sums (to calculate <italic>A</italic> and <italic>A</italic> &#x002B; <italic>B</italic>) followed by a single sum per <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline114.gif"/></alternatives></inline-formula>. Therefore, by computing increasing prefixes <italic>h</italic><sub><italic>b</italic></sub> of <italic>h</italic>, we can compute <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline115.gif"/></alternatives></inline-formula> in time complexity which is <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline116.gif"/></alternatives></inline-formula>, and <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline117.gif"/></alternatives></inline-formula>. The latter quantity is bounded by <italic>|H|</italic> in the worst theoretical case; we will show experimentally that runtime is sublinear in <italic>|H|</italic>.</p>
+<fig id="fig3" position="float" fig-type="figure"><label>Figure 3:</label>
+<caption>
+<p>A sketch of the flow of information in the likelihood calculation algorithm described. Blue arrows a represent the <italic>rectangular decomposition</italic>, <italic>R</italic>.(<italic>&#x00B7;</italic>) are prefix likelihoods</p>
+</caption>
+<graphic xlink:href="101659_fig3.tif"/>
+</fig>
+</sec>
+<sec id="s5"><label>5</label>
+<title>Using the gPBWT to enumerate equivalence classes in linear time</title>
+<p>Novak&#x2019;s graph positional Burrows Wheeler transform index (gPBWT) [<xref rid="c8" ref-type="bibr">8</xref>] is a succinct data structure which allows for linear-time subpath search in a variation graph. This is graph analogue of Durbin&#x2019;s positional Burrows Wheeler transform [<xref rid="c3" ref-type="bibr">3</xref>] used in Lunter&#x2019;s fast implementation of the Viterbi algorithm in the LS model [<xref rid="c6" ref-type="bibr">6</xref>]. Like other Burrows-Wheeler transform variants, its search function returns intervals in a path index, and therefore querying the number of subpaths in a graph matching a path is also linear-time in path length.</p>
+<p>We demonstrate that we also need only perform a maximum of <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline121.gif"/></alternatives></inline-formula> gPBWT operations and a corresponding amount of arithmetic to calculate all <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline122.gif"/></alternatives></inline-formula> for a given <italic>b</italic>, provided that we have all <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline123.gif"/></alternatives></inline-formula></p>
+<statement>
+<label>Definition 5.</label>
+<p><inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline136.gif"/></alternatives></inline-formula> := the number of subpaths in <italic>H</italic> matching <italic>h</italic> between nodes <italic>a</italic> and <italic>b</italic></p>
+<p>This is <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline139.gif"/></alternatives></inline-formula> in the gPBWT for <italic>n</italic> = <italic>b &#x2212; a</italic>; in particular, it is <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline140.gif"/></alternatives></inline-formula> given that we have the search interval to compute <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline141.gif"/></alternatives></inline-formula>.</p>
+<p><bold>Definition 6.</bold> <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline124.gif"/></alternatives></inline-formula></p>
+<p><bold>Claim 2.</bold> <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline125.gif"/></alternatives></inline-formula></p>
+</statement>
+<p><italic>Proof.</italic> By straightforward manipulation of definitions 2, 5, 6.</p>
+<p>It is then evident that <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline126.gif"/></alternatives></inline-formula> single-node search extension queries<sup>1</sup> are sufficient to determine <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline127.gif"/></alternatives></inline-formula> for all <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline128.gif"/></alternatives></inline-formula> Determining these values for all <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline129.gif"/></alternatives></inline-formula> is therefore also <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline130.gif"/></alternatives></inline-formula>, and<inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline132.gif"/></alternatives></inline-formula></p>
+<p>In practice, since <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline133.gif"/></alternatives></inline-formula>, we can reduce the number of gPBWT queries even further by employing a recursive partitioning of intervals to avoid querying those whose values we can tell are unchanged.</p>
+</sec>
+<sec id="s6"><label>6</label>
+<title>Modelling mutations</title>
+<p>We can assign to two haplotypes <italic>h, h&#x2032;</italic> the probability <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline134.gif"/></alternatives></inline-formula> that <italic>h</italic> arose from <italic>h&#x2032;</italic> through a mutation event. As in Li and Stephens, we can assume conditional independence such that</p>
+<disp-formula id="ueqn2"><alternatives><graphic xlink:href="101659_ueqn12.gif"/></alternatives></disp-formula>
+<p>It is reasonable to make the simplifying assumption that <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline135.gif"/></alternatives></inline-formula> unless <italic>h&#x2032;</italic> differs from <italic>h</italic> exclusively at simple bubbles since more dramatic mutation events are vanishingly rare. This assumption is implicitly contained in the <italic>n</italic>-coalescent and Li and Stephens models by their inability to model more complex mutations.</p>
+<p>Detection of all simple bubbles in the graph traversed by <italic>h</italic> can be achieved in linear time with respect to the length of <italic>h</italic>. The number of such paths remains exponential in the number of simple sites. However, our model allows us to perform branch-and-bound type approaches to exploring these paths. This is possible since we can calculate upper bounds for likelihood knowing either only a prefix, or in cases where we have censored the nodes which a path traverses through an encapsulated region in the middle of the path.</p>
+<p>Furthermore, it is evident from our algorithm that if two paths share the same prefix, then we can reuse the calculation over this prefix. Furthermore, if two paths share the same suffix, in general we only need to recompute the <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline137.gif"/></alternatives></inline-formula> values for a small number of nodes.</p>
+</sec>
+<sec id="s7"><label>7</label>
+<title>Implementation</title>
+<p>To test our methods, we implemented the algorithms describe in C&#x002B;&#x002B;, using elements of the variation graph toolkit <italic>vg</italic> [<xref rid="c4" ref-type="bibr">4</xref>] and the gPBWT index implementation in <italic>xg</italic> [<xref rid="c8" ref-type="bibr">8</xref>]. This can be found in the <italic>&#x201C;haplotypes&#x201D;</italic> branch at <ext-link ext-link-type="uri" xlink:href="https://github.com/yoheirosen/vg">https://github.com/yoheirosen/vg</ext-link>. Since no competing graph-based haplotype models exist, we were not able to provide comparative performance data; absolute performance on a single machine is presented instead.</p>
+</sec>
+<sec id="s8"><label>8</label>
+<title>Results</title>
+<p>We assessed time complexity of our likelihood algorithm algorithm using the implementation described above on a single thread of an Intel Xeon X7560 running at 2.27 GHz.</p>
+<p>We created a 5008 haplotype graph of human chromosome 22, using the 1000 Genomes Phase 3 VCF on the hg19 assembly created using <italic>vg</italic> and data from the <italic>1000 Genomes</italic> project [<xref rid="c1" ref-type="bibr">1</xref>]. We calculated likelihoods of randomly selected subhaplotypes of specific lengths.</p>
+<fig id="fig4" position="float" fig-type="figure"><label>Figure 4:</label>
+<caption>
+<p>Runtime (s) vs. haplotype length (nodes) for chromosome 22 1000 Genomes data</p>
+</caption>
+<graphic xlink:href="101659_fig4.tif"/>
+</fig>
+<p>The observed relationship of runtime to haplotype length is consistent with<inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline144.gif"/></alternatives></inline-formula> time complexity with respect to <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline143.gif"/></alternatives></inline-formula>. Average time for per million nodes was 116 seconds; with the node density of avariation graph derived from the 1000 Genomes dataset on chromosome 22, 1 million nodes corresponds to on average 16.0 million base pairs.</p>
+<p>We built graphs of subpopulations of specific sizes to asses the effect of reference cohort size on runtime. Random subsets of the <italic>1000 Genomes</italic> data were made using <italic>vcftools</italic> [<xref rid="c2" ref-type="bibr">2</xref>] and our graph-building process was repeated. Five replicate subset graphs were made per population size.</p>
+<fig id="fig5" position="float" fig-type="figure"><label>Figure 5:</label>
+<caption>
+<p>Runtime (s) vs. reference cohort size (diploid individuals) for chromosome 22 1000 Genomes data</p>
+</caption>
+<graphic xlink:href="101659_fig5.tif"/>
+</fig>
+<p>We observe an asymptotically sublinear relationship between runtime and reference cohort size.</p>
+</sec>
+<sec id="s9"><label>9</label>
+<title>Conclusions</title>
+<p>We have introduced a method of representing the shared sequence relationship of an individual haplotype to a reference cohort represented in a variation graph. We have extended this into an efficient algorithm for haplotype inference based on Novak&#x2019;s gPBWT [<xref rid="c8" ref-type="bibr">8</xref>]. We applied this method to a full chromosome graph consisting of 5008 haplotypes from the 1000 Genomes data set to show that this algorithm can efficiently model recombination with respect to both long sequences and large reference cohorts. This is an important proof of concept for translating haplotype inference to the richer set of variation representable on graphs.</p>
+<p>Our implementation does not model mutation. This depends on being able to efficiently calculate likelihoods for similar haplotypes. There exist mathematical generalizations of our algorithm which allow us to reuse information to compute the likelihood of haplotypes which are similar with respect to their embedding in the graph. Methods to most efficiently explore this space of haplotypes are necessary to allow extension to a mutation model for graphs. This is a subject of our continuing research.</p>
+</sec>
+</body>
+<back>
+<ack>
+<title>10 Acknowledgements</title>
+<p>Y.R. is supported by a Howard Hughes Medical Institute Medical Research Fellowship. This work was also supported by the National Human Genome Research Institute of the National Institutes of Health under Award Number 5U54HG007990 and grants from the W.M. Keck foundation and the Simons Foundation. The content is solely the responsibility of the authors and does not necessarily represent the official views of the National Institutes of Health.</p>
+</ack>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>[1]</label><mixed-citation publication-type="journal"><collab>1000 Genomes Project Consortium</collab>, <etal>et al.</etal>: <article-title>A global reference for human genetic variation</article-title>. <source>Nature</source> <volume>526</volume>(<issue>7571</issue>), <fpage>68</fpage>&#x2013;<lpage>74</lpage> (<year>2015</year>)</mixed-citation></ref>
+<ref id="c2"><label>[2]</label><mixed-citation publication-type="journal"><string-name><surname>Danecek</surname>, <given-names>P.</given-names></string-name>, <string-name><surname>Auton</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Abecasis</surname>, <given-names>G.</given-names></string-name>, <string-name><surname>Albers</surname>, <given-names>C.A.</given-names></string-name>, <string-name><surname>Banks</surname>, <given-names>E.</given-names></string-name>, <string-name><surname>DePristo</surname>, <given-names>M.A.</given-names></string-name>, <string-name><surname>Handsaker</surname>, <given-names>R.E.</given-names></string-name>, <string-name><surname>Lunter</surname>, <given-names>G.</given-names></string-name>, <string-name><surname>Marth</surname>, <given-names>G.T.</given-names></string-name>, <string-name><surname>Sherry</surname>, <given-names>S.T.</given-names></string-name>, <string-name><surname>McVean</surname>, <given-names>G.</given-names></string-name>: (2011). <article-title>The variant call format and VCFtools</article-title>. <source>Bioinformatics</source>, <volume>27</volume>(<issue>15</issue>), <fpage>2156</fpage>&#x2013;<lpage>2158</lpage> (<year>2011</year>)</mixed-citation></ref>
+<ref id="c3"><label>[3]</label><mixed-citation publication-type="journal"><string-name><surname>Durbin</surname>, <given-names>R.</given-names></string-name>: <article-title>Efficient haplotype matching and storage using the positional Burrows-Wheeler transform (PBWT)</article-title>. <source>Bioinformatics</source> <volume>30</volume>(<issue>9</issue>), <fpage>1266</fpage>&#x2013;<lpage>1272</lpage> (<year>2014</year>)</mixed-citation></ref>
+<ref id="c4"><label>[4]</label><mixed-citation publication-type="other"><string-name><surname>Garrison</surname>, <given-names>E.</given-names></string-name>: <article-title>vg: the variation graph toolkit</article-title> (<year>2016</year>), <ext-link ext-link-type="uri" xlink:href="https://github.com/vgteam/vg/blob/80e823f5d241796f10b7">https://github.com/vgteam/vg/blob/80e823f5d241796f10b7</ext-link></mixed-citation></ref>
+<ref id="c5"><label>[5]</label><mixed-citation publication-type="journal"><string-name><surname>Kingman</surname>, <given-names>J.F.C.</given-names></string-name>: <article-title>On the genealogy of large populations</article-title>. <source>Journal of Applied Probability</source>, <volume>19</volume>, <fpage>27</fpage>&#x2013;<lpage>43</lpage> (<year>1982</year>)</mixed-citation></ref>
+<ref id="c6"><label>[6]</label><mixed-citation publication-type="other"><string-name><surname>Lunter</surname>, <given-names>G.</given-names></string-name>: <source>Fast haplotype matching in very large cohorts using the Li and Stephens model</source>. bioRxiv (<year>2016</year>), <ext-link ext-link-type="uri" xlink:href="http://biorxiv.org/content/early/2016/04/12/048280">http://biorxiv.org/content/early/2016/04/12/048280</ext-link></mixed-citation></ref>
+<ref id="c7"><label>[7]</label><mixed-citation publication-type="journal"><string-name><surname>Li</surname>, <given-names>N.</given-names></string-name>, <string-name><surname>Stephens</surname>, <given-names>M.</given-names></string-name>: <article-title>Modeling linkage disequilibrium and identifying recombination hotspots using single-nucleotide polymorphism data</article-title>. <source>Genetics</source>, <volume>165</volume>(<issue>4</issue>), <fpage>2213</fpage>&#x2013;<lpage>2233</lpage> (<year>2013</year>)</mixed-citation></ref>
+<ref id="c8"><label>[8]</label><mixed-citation publication-type="other"><string-name><surname>Novak</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Garrison</surname>, <given-names>E.</given-names></string-name>, <string-name><surname>Paten</surname>, <given-names>B.</given-names></string-name>: <source>A Graph Extension of the Positional Burrows-Wheeler Transform and Its Applications</source>. bioRxiv (<year>2016</year>) <ext-link ext-link-type="uri" xlink:href="http://biorxiv.org/content/early/2016/05/02/051409">http://biorxiv.org/content/early/2016/05/02/051409</ext-link></mixed-citation></ref>
+<ref id="c9"><label>[9]</label><mixed-citation publication-type="other"><string-name><surname>Paten</surname>, <given-names>B.</given-names></string-name>, <string-name><surname>Novak</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Garrison</surname>, <given-names>E.</given-names></string-name>, <string-name><surname>Hickey</surname>, <given-names>G.</given-names></string-name>: <source>Superbubbles, ultrabubbles, and cacti</source>. In preparation (<year>2016</year>)</mixed-citation></ref>
+<ref id="c10"><label>[10]</label><mixed-citation publication-type="other"><string-name><surname>Paten</surname>, <given-names>B.</given-names></string-name>, <string-name><surname>Novak</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Haussler</surname>, <given-names>D.</given-names></string-name>: <source>Mapping to a reference genome structure</source>. ArXiv e-prints (Apr <year>2014</year>), <ext-link ext-link-type="uri" xlink:href="http://arxiv.org/abs/1404.5010">http://arxiv.org/abs/1404.5010</ext-link></mixed-citation></ref>
+</ref-list>
+<app-group>
+<app id="app1">
+<label>Appendix A:</label>
+<title>An <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline147.gif"/></alternatives></inline-formula> implementation of the rectangular de composition construction</title>
+<p>Suppose that we wish to find subhaplotypes embedded in the graph which are consistent with a query sequence <italic>h</italic> of nodes. In brief, in the gPBWT, indexing information for haplotypes is stored in such a way that this can be achieved by calling a function <sc>Start</sc><sc>Search</sc><sc>At</sc><sc>Node</sc>(<italic>Node</italic>) on the first node of <italic>h</italic>, which returns a search interval <italic>gPBWTInt</italic> of a form analogous to the search interval of a Burrows&#x2013; Wheeler Transform based index of sequences. This search interval is extended by calling an operation <sc>Extend</sc>(<italic>gPBWTInt, Node</italic>) to extend this search with each additional node in <italic>h</italic>. Finally, this search interval can be converted into a count of matching subhaplotypes using a function <sc>Count</sc>(gPBWTInt). It is shown in [<xref rid="c8" ref-type="bibr">8</xref>] that <sc>Start</sc><sc>Search</sc><sc>At</sc><sc>Node</sc>, <sc>Extend</sc> and <sc>Count</sc> all admit <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline148.gif"/></alternatives></inline-formula> implementations. It is evident that this search process yields a function <sc>Count</sc><sc>Haplotype</sc><sc>Matches</sc>(<italic>h</italic>) which is <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline149.gif"/></alternatives></inline-formula> in the length <italic>|h|</italic> of <italic>h</italic> in nodes. Let <italic>h</italic><sub>1</sub><italic>h</italic><sub>2</sub><italic>h</italic><sub>3</sub> <italic>&#x2026; h</italic><sub>|<italic>h</italic>|&#x2212;1</sub><italic>h</italic><sub>|<italic>h</italic>|</sub> denote the node sequence of <italic>h</italic>. Using <sc>Count</sc><sc>Haplotype</sc><sc>Matches</sc> we can identify the set <italic>A</italic> of nodes in <italic>h</italic> such that either <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline145.gif"/></alternatives></inline-formula> or <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline146.gif"/></alternatives></inline-formula> independent length-2 subhaplotype count queries:</p>
+<fig id="ufig1" position="float" fig-type="figure"><label>Algorithm 1</label>
+<caption>
+<p>Identifying <italic>A</italic>, the set of &#x201C;relevant&#x201D; nodes</p>
+</caption>
+<graphic xlink:href="101659_ufig1.tif"/>
+</fig>
+<p>Given that we have constructed <italic>A</italic>, we can determine the rest of the rectangular decomposition and all of the <italic>J</italic>-values according to the following algorithm:</p>
+<fig id="ufig2" position="float" fig-type="figure"><label>Algorithm 2</label>
+<caption>
+<p>Building the <italic>J</italic>&#x2019;s and <italic>A</italic><sub><italic>curr</italic></sub>&#x2019;s</p>
+</caption>
+<graphic xlink:href="101659_ufig2.tif"/>
+</fig>
+</app>
+<app id="app2">
+<label>Appendix B:</label>
+<title>Arithmetic for derivation of Equation ??</title>
+<p>Here we lay out the arithmetic to derive Equation (6), which is used in our iterative computation of likelihood of a haplotype <italic>h</italic> with respect to a population reference cohort <italic>H</italic> embedded in a variation graph <italic>G</italic>. The reasoning is straight forward but involves many subcases which require care.</p>
+<sec id="s11a"><label>12.1</label>
+<title>Notation</title>
+<statement>
+<label>Definition 7.</label>
+<p>A haplotype is a sequence of nodes <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline150.gif"/></alternatives></inline-formula>in a variation graph. The base sequence of a haplotype is the sequence of DNA bases spelled by its node labels. A haplotype subinterval is a contiguous subsequence of a haplotype. A haplotype base sequence subinterval is analogously defined. Denote by <italic>|h|</italic> the length of a haplotype base sequence in base pairs.</p>
+</statement>
+<statement>
+<label>Definition 8.</label>
+<p>Haplotypes <italic>h, h&#x2032;</italic> are consistent if <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline151.gif"/></alternatives></inline-formula> and <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline152.gif"/></alternatives></inline-formula></p>
+</statement>
+<statement>
+<label>Definition 9.</label>
+<p>A mosaic of haplotypes <italic>x</italic> consistent with <italic>h</italic> is a vector <italic>(x</italic>(<italic>i</italic>)<italic>)</italic> of subintervals of base sequences of haplotypes in <italic>H</italic> whose concatenation is consistent with the base sequence of <italic>h</italic>. The recombination count <italic>R</italic>(<italic>x</italic>) is one less than the number of elements in <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline154.gif"/></alternatives></inline-formula>. NB: defining these in terms of base sequence rather than node subintervals permits recombination within nodes. Recall <xref ref-type="fig" rid="fig3">Figure 3</xref> from the main text.</p>
+</statement>
+<statement>
+<label>Definition 10.</label>
+<p><italic>&#x03C7;</italic>(<italic>h</italic>) is the set of all mosaics <italic>x</italic> consistent with <italic>h</italic>. <italic>&#x03C7;</italic>(<italic>h</italic>)<italic><sup>R</sup></italic> is the subset with <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline155.gif"/></alternatives></inline-formula><inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline156.gif"/></alternatives></inline-formula> is the subset whose final subinterval is a subinterval of <italic>g</italic>. <italic>&#x03C7;</italic>(<italic>h</italic>)[<italic>g,</italic>] is that with initial subinterval a subinterval of <italic>g</italic>. <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline157.gif"/></alternatives></inline-formula> is the number of elements in <italic>&#x03C7;</italic>(<italic>h</italic>).</p>
+</statement>
+</sec>
+<sec id="s11b"><label>12.2</label>
+<title>Arithmetic shortcuts</title>
+<statement>
+<label>Lemma 1.</label>
+<p><italic>There exists a partition of h into subintervals h</italic><sub>1</sub><italic>, h</italic><sub>2</sub><italic>, &#x2026; , h</italic><sub><italic>n</italic></sub> <italic>such that if a haplotype</italic> <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline158.gif"/></alternatives></inline-formula><italic>has a subinterval consistent with a subinterval of h</italic><sub><italic>i</italic></sub> <italic>then it has a subinterval consistent with all of h</italic><sub><italic>i</italic></sub>.</p>
+</statement>
+<p><italic>Proof.</italic> It is straightforward to verify that the intervals between successive nodes in the set <italic>A</italic> described in the main text produce such a partition of <italic>h</italic>.</p>
+<p>This is important because we will show that it is simple to calculate <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline159.gif"/></alternatives></inline-formula> within any interval with this property.</p>
+<p>The following is a more notationally precise statement of Lemma 1 from the main text:</p>
+<statement>
+<label>Lemma 1.</label>
+<p>For any <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline160.gif"/></alternatives></inline-formula>, given that f and g are members of the same equivalence class <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline8.gif"/></alternatives></inline-formula> of haplotypes, the haplotype mosaics <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline161.gif"/></alternatives></inline-formula> and <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline162.gif"/></alternatives></inline-formula> consistent with the subinterval<inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline163.gif"/></alternatives></inline-formula> <italic>and ending with subintervals of f and g are in bijective correspondence.</italic></p>
+</statement>
+<p><italic>Proof.</italic> We assume that <italic>g</italic> &#x2260; <italic>f</italic> else this is trivial. Consider any mosaic <italic>x</italic> in <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline165.gif"/></alternatives></inline-formula>. Given <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline166.gif"/></alternatives></inline-formula>, let <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline167.gif"/></alternatives></inline-formula> is not a subinterval of <italic>g</italic> or <italic>f</italic>}. We will construct a mosaic <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline168.gif"/></alternatives></inline-formula> such that for all <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline169.gif"/></alternatives></inline-formula> and for all <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline170.gif"/></alternatives></inline-formula> is the subinterval of the same length as <italic>x</italic><sub><italic>i</italic></sub> but derived from the opposite haplotype of the pair <italic>f, g</italic>.</p>
+<p>The concatenation <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline171.gif"/></alternatives></inline-formula> is consistent with <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline172.gif"/></alternatives></inline-formula> since given that both <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline173.gif"/></alternatives></inline-formula>, the first node of <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline174.gif"/></alternatives></inline-formula> must be at or after <italic>a</italic>. Therefore clearly <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline3.gif"/></alternatives></inline-formula> since its final subinterval corresponds to <italic>g</italic>. The inherent invertibility of this transformation proves that it is a bijection.</p>
+<fig id="fig6" position="float" fig-type="figure"><label>Figure 6:</label>
+<caption>
+<p>Visual proof of the above lemma by explicit construction of the bijection involved</p>
+</caption>
+<graphic xlink:href="101659_fig6.tif"/>
+</fig>
+<statement>
+<label>Lemma 3.</label>
+<p><italic>Suppose that hi is a subinterval of h such that if a haplotype</italic> <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline4.gif"/></alternatives></inline-formula> <italic>has a subinterval consistent with a subinterval of h</italic><sub><italic>i</italic></sub> <italic>then it has a subinterval consistent with all of h</italic><sub><italic>i</italic></sub><italic>. Then suppose that</italic> <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline5.gif"/></alternatives></inline-formula><italic>, and all have subintervals consistent with all of h</italic><sub><italic>i</italic></sub><italic>. Then for all</italic> <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline6.gif"/></alternatives></inline-formula> <italic>there is a bijection between</italic> <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline7.gif"/></alternatives></inline-formula></p>
+</statement>
+<p><italic>Proof.</italic> The proof imitates that of the previous lemma.</p>
+</sec>
+<sec id="s11c"><label>12.3</label>
+<title>The case of a single simple interval <italic>h</italic><sub><italic>i</italic></sub></title>
+<p>Suppose that <italic>h</italic><sub><italic>i</italic></sub> is an interval of the form in Lemma 2, <italic>&#x00A3;</italic> base pairs in in length, and has subintervals of <italic>h</italic><sub><italic>t</italic></sub> haplotypes of <italic>H</italic> consistent with it. Consider <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline9.gif"/></alternatives></inline-formula> such that both have subintervals consistent with <italic>h</italic><sub><italic>i</italic></sub>. Suppose that we wish to calculate, for some <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline10.gif"/></alternatives></inline-formula> the number <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline11.gif"/></alternatives></inline-formula> of mosaics consistent with <italic>h</italic><sub><italic>i</italic></sub> having <italic>R</italic> recombinations and ending with haplotype <italic>g</italic>. To calculate <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline12.gif"/></alternatives></inline-formula> within an interval of the form above, we need only calculate</p>
+<list list-type="order">
+<list-item><p><inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline14.gif"/></alternatives></inline-formula>, the number of paths both beginning on and ending on <italic>g</italic> and</p></list-item>
+<list-item><p><inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline15.gif"/></alternatives></inline-formula>, the number of paths beginning on <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline16.gif"/></alternatives></inline-formula> and ending on <italic>g</italic>, which, by lemma 4, is the same for all such <italic>f</italic>.</p></list-item>
+</list>
+<p>Consider <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline17.gif"/></alternatives></inline-formula>. It is clear that</p>
+<disp-formula id="eqn7"><alternatives><graphic xlink:href="101659_eqn17.gif"/></alternatives></disp-formula>
+<p>Lemma 4 tells us that all haplotypes <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline18.gif"/></alternatives></inline-formula> are equivalent for the purposes <italic>/</italic>of enumeration, therefore we write <italic>&#x00AC;g</italic> to denote any arbitrary representative <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline19.gif"/></alternatives></inline-formula>. There are <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline20.gif"/></alternatives></inline-formula> such haplotypes.</p>
+<disp-formula id="eqn8"><alternatives><graphic xlink:href="101659_eqn18.gif"/></alternatives></disp-formula>
+<p>We begin by calculating <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline21.gif"/></alternatives></inline-formula>. Consider first <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline22.gif"/></alternatives></inline-formula> for which, given the lack of possible recombinations, <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline23.gif"/></alternatives></inline-formula> For <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline25.gif"/></alternatives></inline-formula> any <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline26.gif"/></alternatives></inline-formula> must at its second node visit a haplotype which is neither <italic>g</italic> nor the <italic>&#x00AC;g</italic> under consideration, therefore <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline27.gif"/></alternatives></inline-formula>. Suppose now that, for arbitrary <italic>l</italic> = <italic>R</italic>, we know <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline28.gif"/></alternatives></inline-formula>. Then, counting the (<italic>ht &#x2212;</italic> 1) possible haplotypes before finally recombining to <italic>g</italic> shows us that</p>
+<disp-formula id="eqn9"><alternatives><graphic xlink:href="101659_eqn19.gif"/></alternatives></disp-formula>
+<p>By (8), we know that</p>
+<disp-formula id="ueqn3"><alternatives><graphic xlink:href="101659_ueqn19.gif"/></alternatives></disp-formula>
+<p>Which by (9) implies</p>
+<disp-formula id="eqn10"><alternatives><graphic xlink:href="101659_eqn2.gif"/></alternatives></disp-formula>
+<p>Using (10) as the induction step with base case <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline29.gif"/></alternatives></inline-formula> we find that <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline30.gif"/></alternatives></inline-formula></p>
+<disp-formula id="ueqn6"><alternatives><graphic xlink:href="101659_ueqn22.gif"/></alternatives></disp-formula>
+<p>We now relax the restriction that <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline31.gif"/></alternatives></inline-formula>For given <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline32.gif"/></alternatives></inline-formula> each subset of nodes at which recombinations happen will define an additional set of possible recombinations. Counting all possible such subsets</p>
+<disp-formula id="ueqn4"><alternatives><graphic xlink:href="101659_ueqn20.gif"/></alternatives></disp-formula>
+<p>and</p>
+<disp-formula id="ueqn5"><alternatives><graphic xlink:href="101659_ueqn21.gif"/></alternatives></disp-formula>
+</sec>
+<sec id="s12"><label>12.4</label>
+<title>Extending a computation for a prefix by a simple subinterval <italic>h</italic><sub><italic>i</italic></sub></title>
+<p>To extend our ability to calculate<inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline33.gif"/></alternatives></inline-formula> beyond the single interval <italic>h</italic><sub><italic>i</italic></sub>, suppose we have a partition <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline34.gif"/></alternatives></inline-formula> of <italic>h</italic> into subintervals of the form in Lemma 2. Let <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline36.gif"/></alternatives></inline-formula> such that <italic>b</italic> is a node on the boundary of such an interval, let <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline37.gif"/></alternatives></inline-formula> be the prefix of <italic>h</italic> formed by concatenation of the subintervals preceding node <italic>b</italic>, and let <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline38.gif"/></alternatives></inline-formula> be the subinterval beginning with node <italic>b</italic>.</p>
+<p>Suppose now that we have calculated each <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline39.gif"/></alternatives></inline-formula> and now wish to calculate these values up to <italic>b</italic>, the node in <italic>A</italic> succeeding <italic>b</italic> 1. By Lemma 2, the intervening sequence <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline40.gif"/></alternatives></inline-formula> is of the form for which we have just calculated <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline41.gif"/></alternatives></inline-formula> and <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline42.gif"/></alternatives></inline-formula>. We divide this into cases.</p>
+<p><italic>Case 1</italic>: Suppose that <italic>f</italic> has no subinterval consistent with <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline43.gif"/></alternatives></inline-formula> that is, <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline44.gif"/></alternatives></inline-formula> for some <italic>a</italic> but <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline45.gif"/></alternatives></inline-formula> Then any mosaic extending any mosaic in <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline47.gif"/></alternatives></inline-formula> must recombine. Since <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline48.gif"/></alternatives></inline-formula> there are <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline49.gif"/></alternatives></inline-formula> possible haplotypes to which this recombination at <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline50.gif"/></alternatives></inline-formula> may occur. Let <italic>l</italic> be the length (in base pairs) of the interval <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline51.gif"/></alternatives></inline-formula> to <italic>b</italic>, then <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline52.gif"/></alternatives></inline-formula> we have previously calculated in (8) that</p>
+<disp-formula id="ueqn7"><alternatives><graphic xlink:href="101659_ueqn23.gif"/></alternatives></disp-formula>
+<p>and therefore, where we write <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline53.gif"/></alternatives></inline-formula> for the set of mosaics formed by continuing mosaics in <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline54.gif"/></alternatives></inline-formula> such that they recombine between <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline55.gif"/></alternatives></inline-formula> and <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline56.gif"/></alternatives></inline-formula> and end with a subinterval of <italic>g</italic>,</p>
+<disp-formula id="eqn11"><alternatives><graphic xlink:href="101659_eqn3.gif"/></alternatives></disp-formula>
+<p><italic>Case 2</italic>: Suppose now that we know <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline58.gif"/></alternatives></inline-formula> and <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline59.gif"/></alternatives></inline-formula> for some <italic>a</italic>, that is, <italic>f</italic> does have a subinterval consistent with <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline60.gif"/></alternatives></inline-formula></p>
+<p>There are two subcases: either there is, or there is not a recombination between the last base in <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline61.gif"/></alternatives></inline-formula> and the subsequent base at the beginning of <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline62.gif"/></alternatives></inline-formula> Suppose that there is not. In this case, where we write <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline63.gif"/></alternatives></inline-formula> for the set of mosaics formed by continuing mosaics in <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline64.gif"/></alternatives></inline-formula> such that they do not recombine between <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline65.gif"/></alternatives></inline-formula> and <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline66.gif"/></alternatives></inline-formula> and such that they do end with a subinterval of <italic>g</italic>,</p>
+<disp-formula id="eqn12"><alternatives><graphic xlink:href="101659_eqn4.gif"/></alternatives></disp-formula>
+<p>such that if <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline67.gif"/></alternatives></inline-formula></p>
+<disp-formula id="eqn13"><alternatives><graphic xlink:href="101659_eqn5.gif"/></alternatives></disp-formula>
+<p>else</p>
+<disp-formula id="eqn14"><alternatives><graphic xlink:href="101659_eqn6.gif"/></alternatives></disp-formula>
+<p>The other subcase is that there is a recombination between the last base in <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline69.gif"/></alternatives></inline-formula> and the subsequent base at the beginning of <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline70.gif"/></alternatives></inline-formula> In this case if <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline71.gif"/></alternatives></inline-formula></p>
+<disp-formula id="eqn15"><alternatives><graphic xlink:href="101659_eqn7.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn16"><alternatives><graphic xlink:href="101659_eqn8.gif"/></alternatives></disp-formula>
+<p>else</p>
+<disp-formula id="eqn17"><alternatives><graphic xlink:href="101659_eqn9.gif"/></alternatives></disp-formula>
+<sec id="s12a"><label>12.5</label>
+<title>Deriving the Formula for <italic>P</italic>(<italic>h|G, H</italic>)</title>
+<p>Suppose that we have calculated <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline72.gif"/></alternatives></inline-formula> for all <italic>f</italic> and now wish to calculate <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline73.gif"/></alternatives></inline-formula> for some <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline74.gif"/></alternatives></inline-formula> for some <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline75.gif"/></alternatives></inline-formula></p>
+<p>Note that as defined in the main text, <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline76.gif"/></alternatives></inline-formula> for the <italic>a</italic> such that <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline77.gif"/></alternatives></inline-formula> This means this calculatiuon will in fact give us the formula with which to calculate <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline78.gif"/></alternatives></inline-formula>given <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline80.gif"/></alternatives></inline-formula> Let us write <italic>Rb</italic>(<italic>f</italic>) for <italic>Rb</italic>(<italic>a</italic>) such that <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline81.gif"/></alternatives></inline-formula></p>
+<p>Accounting for all prefixes in <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline82.gif"/></alternatives></inline-formula> which can produce mosaics in <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline83.gif"/></alternatives></inline-formula> then</p>
+<disp-formula id="ueqn8"><alternatives><graphic xlink:href="101659_ueqn24.gif"/></alternatives></disp-formula>
+<disp-formula id="ueqn9"><alternatives><graphic xlink:href="101659_ueqn25.gif"/></alternatives></disp-formula>
+<disp-formula id="ueqn13"><alternatives><graphic xlink:href="101659_ueqn2.gif"/></alternatives></disp-formula>
+<disp-formula id="ueqn14"><alternatives><graphic xlink:href="101659_ueqn3.gif"/></alternatives></disp-formula>
+<disp-formula id="ueqn15"><alternatives><graphic xlink:href="101659_ueqn4.gif"/></alternatives></disp-formula>
+<disp-formula id="ueqn15a"><alternatives><graphic xlink:href="101659_ueqn5.gif"/></alternatives></disp-formula>
+<disp-formula id="ueqn16"><alternatives><graphic xlink:href="101659_ueqn6.gif"/></alternatives></disp-formula>
+<p>Letting</p>
+<disp-formula id="ueqn17"><alternatives><graphic xlink:href="101659_ueqn7.gif"/></alternatives></disp-formula>
+<disp-formula id="ueqn31"><alternatives><graphic xlink:href="101659_ueqn8.gif"/></alternatives></disp-formula>
+<p>(And we note that <italic>RRSame</italic> and <italic>RRDiff</italic> do not actually depend on choice of <italic>g</italic>)</p>
+<disp-formula id="ueqn30"><alternatives><graphic xlink:href="101659_ueqn9.gif"/></alternatives></disp-formula>
+<p>Noting that</p>
+<disp-formula id="ueqn18"><alternatives><graphic xlink:href="101659_ueqn10.gif"/></alternatives></disp-formula>
+<p>Letting:</p>
+<disp-formula id="ueqn19"><alternatives><graphic xlink:href="101659_ueqn11.gif"/></alternatives></disp-formula>
+<p>then the above is equal to</p>
+<disp-formula id="ueqn20"><alternatives><graphic xlink:href="101659_ueqn13.gif"/></alternatives></disp-formula>
+<p>For <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline84.gif"/></alternatives></inline-formula>, the calculation is similar:</p>
+<disp-formula id="ueqn21"><alternatives><graphic xlink:href="101659_ueqn14.gif"/></alternatives></disp-formula>
+<p>We can simplify the sums above by writing</p>
+<disp-formula id="eqn18"><alternatives><graphic xlink:href="101659_eqn10.gif"/></alternatives></disp-formula>
+<p>Given a second definition</p>
+<disp-formula id="eqn19"><alternatives><graphic xlink:href="101659_eqn11.gif"/></alternatives></disp-formula>
+<p>we can actually write</p>
+<disp-formula id="ueqn24"><alternatives><graphic xlink:href="101659_ueqn17.gif"/></alternatives></disp-formula>
+<p>and so finally, we can write our formula for <italic>Rb</italic>(<italic>g</italic>) in a compact form as</p>
+<disp-formula id="ueqn25"><alternatives><graphic xlink:href="101659_ueqn18.gif"/></alternatives></disp-formula>
+</sec>
+</sec>
+</app>
+</app-group>
+<fn-group>
+<fn id="fn1">
+<label><sup>1</sup></label>
+<p>the additional one is to compute <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="101659_inline138.gif"/></alternatives></inline-formula></p>
+</fn></fn-group>
+</back>
+</article>

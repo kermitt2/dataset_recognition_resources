@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/464982</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Microbiology</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>A Framework to Incorporate D-trace Loss into Compositional Data Analysis</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<name><surname>He</surname><given-names>Shun</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0002-2411-9650</contrib-id>
+<name><surname>Deng</surname><given-names>Minghua</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="aff" rid="a2">2</xref>
+<xref ref-type="author-notes" rid="n1">&#x2217;</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>School of Mathematical Sciences, Peking University</institution>, Beijing, 10087, <country>P.R.China</country></aff>
+<aff id="a2"><label>2</label><institution>Center for Statistical Science, Peking University</institution>, Beijing, 10087, <country>P.R.China</country></aff>
+</contrib-group>
+<author-notes>
+<fn id="n1"><label>&#x2217;</label><p><email>dengmh@math.pku.edu.cn</email></p></fn>
+</author-notes>
+<pub-date pub-type="epub"><year>2018</year></pub-date>
+<elocation-id>464982</elocation-id>
+<history>
+<date date-type="received">
+<day>07</day>
+<month>11</month>
+<year>2018</year>
+</date>
+<date date-type="rev-recd">
+<day>07</day>
+<month>11</month>
+<year>2018</year>
+</date>
+<date date-type="accepted">
+<day>07</day>
+<month>11</month>
+<year>2018</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2018, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2018</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="464982.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>The development of high-throughput sequencing technologies for 16S rRNA gene profiling provides higher quality compositional data for microbe communities. Inferring the direct interaction network under a specific condition and understanding how the network structure changes between two different environmental or genetic conditions are two important topics in biological studies. However, the compositional nature and high dimensionality of the data are challenging in the context of network and differential network recovery. To address this problem in the present paper, we proposed a framework to incorporate the data transformations developed for compositional data analysis into D-trace loss for network and differential network estimation, respectively. The sparse matrix estimators are defined as the minimizer of the corresponding lasso penalized loss. This framework is characterized by its straightforward application based on the ADMM algorithm for numerical solution. Simulations show that the proposed method outperforms other state-of-the-art methods in network and differential network inference under different scenarios. Finally, as an illustration, our method is applied to a mouse skin microbiome data.</p>
+<sec>
+<title>Author summary</title>
+<p>Inferring the direct interactions among microbes and how these interactions change under different conditions are important to understand community-wide dynamics. The compositional nature and high dimensionality are two distinctive features of microbial data, which invalidate traditional correlation analysis and challenge interaction network estimation. In this study, we set up a framework that combines data transformation with D-trace loss to infer the direct interaction network and differential network from compositional data. Simulations and real data analysis show that our proposed methods lead to results with higher accuracy and stability.</p>
+</sec>
+</abstract>
+<counts>
+<page-count count="19"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<label>1</label>
+<title>Introduction</title>
+<p>Microbes play critical roles in Earth&#x2019;s biogeochemical cycles [<xref ref-type="bibr" rid="c8">8</xref>] and impact the health of humans significantly [<xref ref-type="bibr" rid="c24">24</xref>]. Understanding interactions among microbes under a specific condition is a key research topic in microbial ecology [<xref ref-type="bibr" rid="c17">17</xref>]. Bandyopadhyay <italic>et al.</italic> [<xref ref-type="bibr" rid="c3">3</xref>] also showed that these interactions can change under various environmental or genetic conditions. With the development of high-throughout sequencing technology, 16s rRNA gene sequences can be amplified, sequenced, and grouped into common Operational Taxonomic Units (OTUs), and as a result, microbial abundance information can be obtained for further exploration [<xref ref-type="bibr" rid="c27">27</xref>]. One of the major challenges is to discover associations among microbes and how these associations change under different conditions, which could in turn help us to unravel the underlying interaction network and offer an insight into community-wide dynamics.</p>
+<p>Correlation analysis is commonly used to infer the interaction network for absolute abundance data. However, applying traditional correlation analysis to compositional data, as only representative of relative abundances of microbial species, may yield spurious results [<xref ref-type="bibr" rid="c1">1</xref>, <xref ref-type="bibr" rid="c14">14</xref>]. Recent methods, such as SparCC [<xref ref-type="bibr" rid="c14">14</xref>], CCREPE [<xref ref-type="bibr" rid="c11">11</xref>, <xref ref-type="bibr" rid="c12">12</xref>], REBACCA [<xref ref-type="bibr" rid="c2">2</xref>] and CCLasso [<xref ref-type="bibr" rid="c9">9</xref>], have been proposed to address compositional bias and infer the correlation network of microbe communities. However, pairwise correlations contain both direct and indirect interactions, and correlations may arise when microbes are connected indirectly [<xref ref-type="bibr" rid="c18">18</xref>]. Thus, the conditional dependence network describing direct interactions is often more intrinsic and fundamental [<xref ref-type="bibr" rid="c10">10</xref>, <xref ref-type="bibr" rid="c15">15</xref>].</p>
+<p>For absolute abundance, conditional dependence networks are frequently modeled as Gaussian graphical models where direct interactions are correspond to the support of precision matrix [<xref ref-type="bibr" rid="c19">19</xref>, <xref ref-type="bibr" rid="c26">26</xref>]. Meinshausen and B&#x00FC;hlmann [<xref ref-type="bibr" rid="c20">20</xref>] proposed a neighborhood selection approach to recover the precision matrix row-by-row by fitting a lasso penalized least square regression model [<xref ref-type="bibr" rid="c25">25</xref>]. Yuan and Lin [<xref ref-type="bibr" rid="c29">29</xref>] derived the likelihood for Gaussian graphical models and suggested using the maxdet algorithm to compute the corresponding lasso penalized estimator. Friedman <italic>et al.</italic> [<xref ref-type="bibr" rid="c13">13</xref>] developed a more efficient algorithm called the graphical lasso. Zhang and Zou [<xref ref-type="bibr" rid="c30">30</xref>] proposed a new loss function called D-trace loss and introduced a sparse precision matrix estimator as the minimizer of lasso penalized D-trace loss. Several methods have been proposed to infer the direct interaction network from compositional data. Biswas <italic>et al.</italic> [<xref ref-type="bibr" rid="c5">5</xref>] suggested learning the direct interactions from compositional data with a Poisson-multivariate normal hierarchical model called MInt. Kurtz<italic>et al.</italic> [<xref ref-type="bibr" rid="c18">18</xref>] proposed a method called SPIEC-EASI, which combines centered log-ratio (clr) transformation [<xref ref-type="bibr" rid="c1">1</xref>] for compositional data with the neighborhood selection approach [<xref ref-type="bibr" rid="c20">20</xref>] or graphical lasso [<xref ref-type="bibr" rid="c13">13</xref>] to estimate the precision matrix. Similar to the idea of Yuan and Lin [<xref ref-type="bibr" rid="c29">29</xref>], Fang <italic>et al.</italic> [<xref ref-type="bibr" rid="c10">10</xref>] first derived likelihood with compositional data for Gaussian graphical models and then estimated the precision matrix with a lasso penalized maximum likelihood method called gCoda. In this paper, we proposed a framework to incorporate clr transformation [<xref ref-type="bibr" rid="c1">1</xref>] into D-trace loss [<xref ref-type="bibr" rid="c30">30</xref>] to estimate the precision matrix from compositional data.</p>
+<p>Biological networks often vary according to different environmental or genetic conditions [<xref ref-type="bibr" rid="c3">3</xref>]. Understanding how networks change and estimating differential networks are important tasks in biological studies. In recent years, researchers have actively sought methods of estimating differential networks for absolute abundance data. Chiquet <italic>et al.</italic> [<xref ref-type="bibr" rid="c6">6</xref>], Guo <italic>et al.</italic> [<xref ref-type="bibr" rid="c16">16</xref>] and Danaher <italic>et al.</italic> [<xref ref-type="bibr" rid="c7">7</xref>] estimated the precision matrices and their differences jointly by penalizing the joint log-likelihood with different penalties. Zhao <italic>et al.</italic> [<xref ref-type="bibr" rid="c31">31</xref>] developed a .<italic>&#x2113;</italic><sub>1</sub>-minimization method for direct estimation of differential networks, which does not require sparsity of precision matrices or their separate estimation. Yuan <italic>et al.</italic> [<xref ref-type="bibr" rid="c28">28</xref>] proposed a new loss function called DTL based on D-trace loss [<xref ref-type="bibr" rid="c30">30</xref>] to estimate the precision matrix difference directly. In this paper, we also extended our framework to incorporate clr transformation [<xref ref-type="bibr" rid="c1">1</xref>] into DTL [<xref ref-type="bibr" rid="c28">28</xref>] to estimate the differential network from compositional data.</p>
+<p>The remainder of the paper is organized as follows. In <xref ref-type="sec" rid="s2">Section 2</xref>, we introduce our framework to incorporate clr transformations for compositional data analysis into D-trace loss, thereby enabling us to estimate both direct interaction network and differential direct interaction networks from compositional data, respectively. In <xref ref-type="sec" rid="s3">Section 3</xref>, the performance of our method was evaluated and compared with other state-of-the-art methods under various simulation scenarios. In <xref ref-type="sec" rid="s4">Section 4</xref>, the proposed methods are illustrated with an application to a mouse skin microbiome data.</p>
+</sec>
+<sec id="s2">
+<label>2</label>
+<title>Materials and methods</title>
+<sec id="s2a">
+<label>2.1</label>
+<title>Compositional Data and clr Transformation</title>
+<p>We begin with some notations and definitions for convenience. For a <italic>p</italic> &#x00D7; <italic>p</italic> matrix <italic>X</italic> &#x003D; (<italic>X<sub>ij</sub></italic>) &#x2208; &#x1d4e1;<sup><italic>p</italic>&#x00D7;<italic>p</italic></sup>, its transposition, trace and determinant are denoted as <italic>X</italic><sup>T</sup>, <italic>tr</italic>(<italic>X</italic>) and det <italic>X</italic>, respectively. Let
+<inline-formula><alternatives><inline-graphic xlink:href="464982_inline1.gif"/></alternatives></inline-formula> |<italic>X</italic>|<sub>1</sub> &#x003D; max<sub><italic>j</italic></sub> &#x2211;<sub><italic>i</italic></sub> |<italic>X<sub>ij</sub></italic>|, &#x2225;<italic>X</italic>&#x2225;<sub>1</sub> &#x003D; &#x2211;<sub><italic>i</italic>,<italic>j</italic></sub> |<italic>X<sub>ij</sub></italic>|, and &#x2225;<italic>X</italic>&#x2225;<sub>1,off</sub> &#x003D; &#x2211;<sub><italic>i</italic>&#x2260;<italic>j</italic></sub> |<italic>X<sub>ij</sub></italic>| be the Frobenius norm, &#x221E;-norm, 1-norm, <italic>&#x2113;</italic><sub>1</sub>-norm and off-diagonal <italic>&#x2113;</italic><sub>1</sub>-norm of <italic>X</italic>. Denote by <italic>vec</italic>(<italic>X</italic>) the <italic>p</italic><sup>2</sup>-vector from stacking the columns of <italic>X</italic>, and <italic>X</italic> &#x227B; 0 means that <italic>X</italic> is positive definite. For two matrices <italic>X</italic>, <italic>Y</italic> &#x2208; &#x1d4e1;<sup><italic>p</italic>&#x00D7;<italic>p</italic></sup>, let <italic>X</italic> &#x2297; <italic>Y</italic> be the Kronecker product of <italic>X</italic> and <italic>Y</italic> . We use &#x3008;<italic>X</italic>, <italic>Y</italic>&#x3009; to denote <italic>tr</italic>(<italic>XY</italic><sup>T</sup>) throughout this paper.</p>
+<p>Suppose that there are <italic>p</italic> microbe species and that their absolute abundances are
+<bold><italic>z</italic></bold> &#x003D; (<italic>z</italic><sub>1</sub>, <italic>z</italic><sub>2</sub>, &#x2026;, <italic>z<sub>p</sub></italic>) respectively. However, instead of absolute abundances, it is often the case that only the relative abundances (or compositions) <bold><italic>x</italic></bold> &#x003D; (<italic>x</italic><sub>1</sub>, <italic>x</italic><sub>2</sub>, &#x2026;, <italic>x<sub>p</sub></italic>), where
+<disp-formula id="eqn1">
+<alternatives><graphic xlink:href="464982_eqn1.gif"/></alternatives>
+</disp-formula>
+can be observed in real experiments. If the log-transformed absolute abundances ln <bold><italic>z</italic></bold> follow a multivariate Gaussian distribution with mean <bold><italic>&#x03BC;</italic></bold> and nonsingular covariance matrix &#x03A3;, the precision matrix &#x0398; &#x003D; &#x03A3;<sup>&#x2212;1</sup> depicts the direct interaction network among microbial specials since ln <italic>z<sub>i</sub></italic> and ln <italic>z<sub>j</sub></italic> are conditionally independent given other components of <bold><italic>z</italic></bold> if and only if &#x0398;<italic><sub>ij</sub></italic> &#x003D; 0 [<xref ref-type="bibr" rid="c15">15</xref>]. Moreover, we can describe this direct interaction network with an undirected graph if we represent the <italic>p</italic> microbe species with <italic>p</italic> vertices and connect the conditionally dependent species pairs.</p>
+<p>Log-ratios
+<inline-formula><alternatives><inline-graphic xlink:href="464982_inline2.gif"/></alternatives></inline-formula>
+[<xref ref-type="bibr" rid="c1">1</xref>] are commonly used in compositional data analysis, since the simple equality
+<inline-formula><alternatives><inline-graphic xlink:href="464982_inline3.gif"/></alternatives></inline-formula> serves as the bridge between the compositions and the unobserved absolute abundances [<xref ref-type="bibr" rid="c18">18</xref>]. Aitchison [<xref ref-type="bibr" rid="c1">1</xref>] also proposed a statistically equivalent centered log-ratio (clr) transformation. The clr transformation matrix is
+<inline-formula><alternatives><inline-graphic xlink:href="464982_inline4.gif"/></alternatives></inline-formula> where <bold>1</bold><sub><italic>p</italic></sub> is a <italic>p</italic>-dimensional all-ones vector and <italic>I</italic> is identity matrix. Applying the clr transformation and using ln <bold><italic>x</italic></bold> &#x003D; ln <bold><italic>z</italic></bold> &#x2212; <bold>1</bold><sub><italic>p</italic></sub> ln <italic>s</italic> and <italic>G</italic><bold>1</bold><sub><italic>p</italic></sub> &#x003D; <bold>0</bold><sub><italic>p</italic></sub>, it follows that
+<disp-formula id="eqn2">
+<alternatives><graphic xlink:href="464982_eqn2.gif"/></alternatives>
+</disp-formula></p>
+<p>Denoted by &#x03A3;<sub>ln <bold><italic>x</italic></bold></sub> the covariance matrix of the log-transformed relative abundances, we have
+<disp-formula id="eqn3">
+<alternatives><graphic xlink:href="464982_eqn3.gif"/></alternatives>
+</disp-formula></p>
+<p>Similarly, <xref ref-type="disp-formula" rid="eqn2">equation (2)</xref> and <xref ref-type="disp-formula" rid="eqn3">(3)</xref> establish a bridge between the observed relative abundances and the unobserved absolute abundances. SPIEC-EASI [<xref ref-type="bibr" rid="c18">18</xref>] assumes that <italic>G</italic>&#x03A3;<sub>ln <bold><italic>x</italic></bold></sub> <italic>G</italic> serves as a good approximation of &#x03A3; since <italic>G</italic> &#x2212; <italic>I</italic> &#x2248; 0 when <italic>p</italic> &#x226B; 0, and apply the neighborhood selection approach [<xref ref-type="bibr" rid="c20">20</xref>] or graphical lasso [<xref ref-type="bibr" rid="c13">13</xref>] to the clr-transformed relative abundances for precision matrix estimation.</p>
+</sec>
+<sec id="s2b">
+<label>2.2</label>
+<title>CDTr : Compositional Network Analysis with D-trace Loss</title>
+<p>From the empirical loss minimization perspective, SPIEC-EASI is not the most natural and concise because of the approximation and the log-determinant term in graphical lasso [<xref ref-type="bibr" rid="c13">13</xref>]. In this section, we introduce an innovative framework to estimate the direct interaction network from compositional data with D-trace loss. The new D-trace loss for compositional data (CDTr loss) is proposed as
+<disp-formula id="eqn4">
+<alternatives><graphic xlink:href="464982_eqn4.gif"/></alternatives>
+</disp-formula></p>
+<p>We can view the CDTr loss as an analogue of the D-trace [<xref ref-type="bibr" rid="c30">30</xref>] loss
+<inline-formula><alternatives><inline-graphic xlink:href="464982_inline5.gif"/></alternatives></inline-formula> The meaning of incorporating clr transformation into the original D-trace loss is to avoid the unobserved absolute abundance and account for the compositionality. If we know the absolute abundance data, we can simply substitute the finite sample estimator of &#x03A3; sample estimator of (denoted by
+<inline-formula><alternatives><inline-graphic xlink:href="464982_inline6.gif"/></alternatives></inline-formula>) into D-trace loss and estimate the precision matrix &#x0398; with the corresponding lasso penalized estimator. However, for relative abundances or compositional data, only the finite sample estimator of &#x03A3;<sub>ln <bold><italic>x</italic></bold></sub> (denoted by
+<inline-formula><alternatives><inline-graphic xlink:href="464982_inline7.gif"/></alternatives></inline-formula>) is available, instead of the finite sample estimator of &#x03A3;. Thanks to the clr transformation and the bridge <xref ref-type="disp-formula" rid="eqn3">equation (3)</xref>, we can estimate <italic>G</italic>&#x2211;<italic>G</italic> with
+<inline-formula><alternatives><inline-graphic xlink:href="464982_inline8.gif"/></alternatives></inline-formula> even though
+<inline-formula><alternatives><inline-graphic xlink:href="464982_inline9.gif"/></alternatives></inline-formula> is not available.</p>
+<p>It is easy to check that CDTr loss can be written as
+<disp-formula id="eqn5">
+<alternatives><graphic xlink:href="464982_eqn5.gif"/></alternatives>
+</disp-formula></p>
+<p>To ensure that &#x03A3;<sup>&#x2212;1</sup> minimizes <italic>L<sub>CD</sub></italic>, namely &#x03A3;<sup>1/2</sup><italic>G</italic>&#x0398; &#x2212; &#x03A3;<sup>&#x2212;1/2</sup><italic>G</italic> &#x003D; 0 when &#x0398; &#x003D; &#x03A3;<sup>&#x2212;1</sup>, we need the following exchangeable condition:
+<disp-formula id="eqn6">
+<alternatives><graphic xlink:href="464982_eqn6.gif"/></alternatives>
+</disp-formula></p>
+<p>Denote by <italic>&#x03C3;<sub>ij</sub></italic> and <italic>&#x03C1;<sub>ij</sub></italic> the covariance and correlation between ln <italic>z<sub>i</sub></italic> and ln <italic>z<sub>j</sub></italic>, respectively. Then, the exchangeable condition is equivalent to &#x2211;<italic><sub>l</sub> &#x03C3;<sub>il</sub></italic> &#x003D; &#x2211;<italic><sub>l</sub> &#x03C3;<sub>jl</sub></italic> for all <italic>i</italic>, <italic>j</italic> &#x003D; 1, 2, &#x2026;, <italic>p</italic>, which is similar to the assumption &#x2211;<sub><italic>l</italic>&#x2260;<italic>i</italic></sub> <italic>&#x03C3;<sub>il</sub></italic> &#x003D; 0, <italic>i</italic> &#x003D; 1, 2, &#x2026;, <italic>p</italic> in SparCC [<xref ref-type="bibr" rid="c14">14</xref>]. If the variances <italic>&#x03C3;<sub>ii</sub></italic>, <italic>i</italic> &#x003D; 1, 2, &#x2026;, <italic>p</italic> are all the same, then the exchangeable condition simplifies to &#x2211;<sub><italic>l</italic>&#x2260;<italic>i</italic></sub> <italic>&#x03C1;<sub>il</sub></italic>, <italic>i</italic> &#x003D; 1, 2, &#x2026;, <italic>p</italic> are all the same, which implies that the average correlation with other species is nearly the same for each specie. Analogously, the assumption in SparCC simplifies to &#x2211;<sub><italic>l</italic>&#x2260;<italic>i</italic></sub> <italic>&#x03C1;<sub>il</sub></italic> &#x003D; 0, <italic>i</italic> &#x003D; 1, 2, &#x2026;, <italic>p</italic>, which implies that the average correlations are very small. In the numerical experiments of <xref ref-type="sec" rid="s3">section 3</xref>, we show that CDTr still performs well, even when the exchangeable condition does not hold.</p>
+<p>In practical applications, we use the empirical version of CDTr loss as
+<disp-formula id="eqn7">
+<alternatives><graphic xlink:href="464982_eqn7.gif"/></alternatives>
+</disp-formula></p>
+<p>Since most species do not interact directly when the number of species <italic>p</italic> is large, we further assume that the direct interaction network, or &#x0398;, is sparse, which also helps to solve the under-determined problem caused by compositionality and dimensionality [<xref ref-type="bibr" rid="c9">9</xref>, <xref ref-type="bibr" rid="c10">10</xref>, <xref ref-type="bibr" rid="c29">29</xref>]. We employ the commonly used <italic>&#x2113;</italic><sub>1</sub> penalty [<xref ref-type="bibr" rid="c25">25</xref>, <xref ref-type="bibr" rid="c29">29</xref>, <xref ref-type="bibr" rid="c30">30</xref>] to handle the sparse assumption, and our sparse estimator of the precision matrix &#x0398; is proposed as
+<disp-formula id="eqn8">
+<alternatives><graphic xlink:href="464982_eqn8.gif"/></alternatives>
+</disp-formula>
+where &#x03BB; &#x2265; 0 is the tuning parameter for the tradeoff between the model fitting and the sparsity of
+<inline-formula><alternatives><inline-graphic xlink:href="464982_inline10.gif"/></alternatives></inline-formula> Following the idea of Zhao <italic>et al.</italic> [<xref ref-type="bibr" rid="c31">31</xref>], the tuning parameter is selected by minimizing the Bayesian Information Criterion (BIC) [<xref ref-type="bibr" rid="c22">22</xref>] as
+<disp-formula id="eqn9">
+<alternatives><graphic xlink:href="464982_eqn9.gif"/></alternatives>
+</disp-formula>
+where |&#x0398;|<sub>0</sub> is the number of non-zero elements in the upper-triangle of &#x0398;, and <italic>n</italic> is the sample size.</p>
+<p>Zhang and Zou [<xref ref-type="bibr" rid="c30">30</xref>] developed an efficient algorithm based on alternating direction methods [<xref ref-type="bibr" rid="c21">21</xref>] for the solution of penalized D-trace loss estimator. We can simply replace
+<inline-formula><alternatives><inline-graphic xlink:href="464982_inline11.gif"/></alternatives></inline-formula> and <italic>I</italic> in D-trace loss with
+<inline-formula><alternatives><inline-graphic xlink:href="464982_inline12.gif"/></alternatives></inline-formula> and <italic>G</italic> in our CDTr loss and use the algorithm of Zhang and Zhou [<xref ref-type="bibr" rid="c30">30</xref>] for the numerical solution of <xref ref-type="disp-formula" rid="eqn8">(8)</xref>. Following the idea of Zhang and Zhou [<xref ref-type="bibr" rid="c30">30</xref>] and Scheinberg <italic>et al.</italic> [<xref ref-type="bibr" rid="c21">21</xref>], we introduce two new matrices, &#x0398;<sub>0</sub> and &#x0398;<sub>1</sub>. The augmented Lagrangian function of <xref ref-type="disp-formula" rid="eqn8">(8)</xref> are considered, and &#x039B;<sub>0</sub>, &#x039B;<sub>1</sub>, <italic>&#x03C1;</italic> are Lagrangian multipliers. The steps of the ADMM algorithm for the lasso penalized CDTr loss estimator are summaried in <xref ref-type="statement" rid="stat1">Algorithm 1</xref>. The definitions of matrix operators</p>
+<statement id="stat1">
+<label>Algorithm 1</label>
+<p>The algorithm for lasso penalized CDTr loss estimator.</p>
+<p><fig id="ufig1" position="float" fig-type="figure">
+<graphic xlink:href="464982_ufig1.tif"/>
+</fig></p>
+<p><italic>H</italic>(<italic>X</italic>), <italic>S</italic>(<italic>X</italic>) and [<italic>X</italic>]<sub>&#x002B;</sub> are listed in S1 Appendix.</p>
+</statement>
+</sec>
+<sec id="s2c">
+<label>2.3</label>
+<title>DCDTr : Differential Compositional Network Analysis with D-trace Loss</title>
+<p>Consider that the absolute abundances of <italic>p</italic> microbe species become
+<inline-formula><alternatives><inline-graphic xlink:href="464982_inline13.gif"/></alternatives></inline-formula> under another condition and that the relative abundances are
+<inline-formula><alternatives><inline-graphic xlink:href="464982_inline14.gif"/></alternatives></inline-formula> respectively. Similarly, we assume ln <bold><italic>z</italic><sup>&#x2217;</sup></bold> &#x223C; &#x1d4dd; (<bold><italic>&#x03BC;</italic><sup>&#x2217;</sup></bold>, &#x03A3;<sup>&#x2217;</sup>). Thus, we want to estimate the difference between direct interaction networks under different conditions, i.e., the resultant differential network &#x0394; &#x003D; &#x03A3;<sup>&#x2217;&#x2212;1</sup> &#x2212; &#x03A3;<sup>&#x2212;1</sup>.</p>
+<p>A straightforward approach to estimate &#x0394; is to estimate &#x03A3;<sup>&#x2212;1</sup> and &#x03A3;<sup>&#x2217;&#x2212;1</sup> separately and then subtract the estimates under the key assumption that both precision matrices are sparse. However, a more reasonable assumption is that the difference between the precision matrices are sparse, not that both matrices are sparse, since direct interactions may not be sparse while the changes under different conditions are often sparse [<xref ref-type="bibr" rid="c28">28</xref>]. Therefore, we proposed a new loss function for differential network estimation with compositional data (DCDTr loss) to estimate &#x0394; directly, under the assumption that the differential network &#x0394; is sparse. The DCDTr loss is proposed as
+<disp-formula id="eqn10">
+<alternatives><graphic xlink:href="464982_eqn10.gif"/></alternatives>
+</disp-formula></p>
+<p>Similarly, our DCDTr loss can be regarded as an analogue to the DTL loss
+<inline-formula><alternatives><inline-graphic xlink:href="464982_inline15.gif"/></alternatives></inline-formula> which is proposed by Yuan <italic>et al.</italic> [<xref ref-type="bibr" rid="c28">28</xref>] to estimate the differential network &#x0394; when the absolute abundances are known. Again, our DCDTr loss takes the advantage of the bridge <xref ref-type="disp-formula" rid="eqn3">equation (3)</xref> to avoid the unobserved absolute abundance and account for the compositionality. From another perspective, we can arrive at our DCDTr loss <xref ref-type="disp-formula" rid="eqn10">(10)</xref> by substituting the approximation &#x03A3; &#x2248; <italic>G</italic>&#x03A3;<sub>ln <bold>x</bold></sub> <italic>G</italic>, &#x03A3;<sup>&#x2217;</sup> &#x2248; <italic>G</italic> &#x03A3;<sub>ln <bold><italic>x</italic></bold><sup>&#x2217;</sup></sub> <italic>G</italic> into DTL loss. In the numerical experiments of <xref ref-type="sec" rid="s3">section 3</xref>, we also investigated the performance of procedures which combine the approximation &#x03A3; &#x2248; <italic>G</italic> &#x03A3;<sub>ln <bold><italic>x</italic></bold></sub> <italic>G</italic>, &#x03A3;<sup>&#x2217;</sup> &#x2248; <italic>G</italic>&#x03A3;<sub>ln <bold><italic>x</italic></bold><sup>&#x2217;</sup></sub> <italic>G</italic> with other methods for differential network estimation, including the <italic>&#x2113;</italic><sub>1</sub>-minimization method [<xref ref-type="bibr" rid="c31">31</xref>] for direct estimation of differential networks and joint graphical lasso (FGL, GGL) [<xref ref-type="bibr" rid="c7">7</xref>] for joint estimation of precision matrices. The detailed formulas are left in <bold>??</bold>.</p>
+<p>Under the exchangeable condition <italic>G</italic>&#x03A3; &#x003D; &#x03A3;<italic>G</italic> and <italic>G</italic> &#x03A3;<sup>&#x2217;</sup> &#x003D; &#x03A3;<sup>&#x2217;</sup> <italic>G</italic>, it is easy to check that
+<disp-formula id="eqn11">
+<alternatives><graphic xlink:href="464982_eqn11.gif"/></alternatives>
+</disp-formula></p>
+<p>Obviously, &#x0394; &#x003D; &#x03A3;<sup>&#x2217;&#x2212;1</sup> &#x2212; &#x03A3;<sup>&#x2212;1</sup> is a minimizer of our DCDTr loss <italic>L<sub>DCDTr</sub></italic> . In practical applications, we incorporate the finite sample estimators of &#x03A3;, &#x03A3;<sup>&#x2217;</sup> and <italic>&#x2113;</italic><sub>1</sub> penalty into DCDTr loss, and our sparse estimator for the differential network &#x0394; is proposed as
+<disp-formula id="eqn12">
+<alternatives><graphic xlink:href="464982_eqn12.gif"/></alternatives>
+</disp-formula></p>
+<p>The tuning parameter &#x03BB; is selected by minimizing the Bayesian Information Criterion (BIC) [<xref ref-type="bibr" rid="c22">22</xref>, <xref ref-type="bibr" rid="c28">28</xref>, <xref ref-type="bibr" rid="c31">31</xref>] as
+<disp-formula id="eqn13">
+<alternatives><graphic xlink:href="464982_eqn13.gif"/></alternatives>
+</disp-formula>
+where |&#x0394;|<sub>0</sub> is the number of non-zero elements in the upper-triangle of &#x0394;, and <italic>n</italic> and <italic>n</italic><sup>&#x2217;</sup> are the sample size.</p>
+<p>Taking advantage of the algorithm developed by Yuan <italic>et al.</italic> [<xref ref-type="bibr" rid="c28">28</xref>] for the numerical solution of lasso penalized DTL loss estimator, the algorithm for the numerical solution of <xref ref-type="disp-formula" rid="eqn12">(12)</xref> is straightforward, essentially because we can simply replace
+<inline-formula><alternatives><inline-graphic xlink:href="464982_inline16.gif"/></alternatives></inline-formula>
+in DTL loss with
+<inline-formula><alternatives><inline-graphic xlink:href="464982_inline17.gif"/></alternatives></inline-formula> in our DCDTr loss. Following the idea of Yuan <italic>et al.</italic> [<xref ref-type="bibr" rid="c28">28</xref>], we introduce three new matrices &#x0394;<sub>1,2,3</sub> and Lagrangian multipliers &#x039B;<sub>1,2,3</sub>, <italic>&#x03C1;</italic> for the solution of <xref ref-type="disp-formula" rid="eqn12">(12)</xref>. The steps of the ADMM algorithm for the lasso penalized DCDTr loss estimator are presented in <xref ref-type="statement" rid="stat2">Algorithm 2</xref>. The definitions of matrix operators <italic>K</italic>(<italic>X</italic>) and <italic>S</italic>(<italic>X</italic>) are listed in S1 Appendix.</p>
+</sec>
+</sec>
+<sec id="s3">
+<label>3</label>
+<title>Numerical Results</title>
+<p>In this section, we conduct several numerical experiments under different settings and compare them with other state-of-the-art methods. Given mean <italic><bold>&#x03BC;</bold><sub>p</sub></italic> and precision matrix &#x0398;, we first generate the log-transformed absolute abundance ln <italic><bold>z</bold><sub>i</sub></italic> &#x003D; (ln <italic>z</italic><sub><italic>i</italic>1</sub>, ln <italic>z</italic><sub><italic>i</italic>2</sub>, &#x2026;, ln <italic>z<sub>ip</sub></italic>) with the multivariate normal distribution &#x1d4dd;<sub><italic>p</italic></sub>(<italic><bold>&#x03BC;</bold><sub>p</sub></italic>, &#x0398;<sup>&#x2212;1</sup>), and then the relative abundances are
+<inline-formula><alternatives><inline-graphic xlink:href="464982_inline18.gif"/></alternatives></inline-formula>
+<italic>i</italic> &#x003D; 1, 2, &#x2026;, <italic>n</italic>. For another given mean
+<inline-formula><alternatives><inline-graphic xlink:href="464982_inline19.gif"/></alternatives></inline-formula> and precision matrix &#x0398;<sup>&#x2217;</sup> under a new condition, the samples
+<inline-formula><alternatives><inline-graphic xlink:href="464982_inline20.gif"/></alternatives></inline-formula>, <italic>i</italic> &#x003D; 1, 2, &#x2026;, <italic>n</italic> are similarly generated. In the following simulations, we take <italic>p</italic> &#x003D; 50 and <italic><bold>&#x03BC;</bold><sub>p</sub></italic> sampled from the uniform distribution &#x1d4e4;<sub><italic>p</italic></sub>(&#x2212;0.5, 0.5).</p>
+<statement id="stat2">
+<label>Algorithm 2</label>
+<p>The algorithm for lasso penalized DCDTr loss estimator.</p>
+<p><fig id="ufig2" position="float" fig-type="figure">
+<graphic xlink:href="464982_ufig2.tif"/>
+</fig></p>
+</statement>
+<sec id="s3a">
+<label>3.1</label>
+<title>Simulations for CDTr Loss</title>
+<p>To investigate the performance of CDTr loss and the influence of the exchangeable condition, we considered the following network structures for &#x0398;.</p>
+<sec id="s3a1">
+<label>1.</label>
+<title>Band graph</title>
+<p><disp-formula>
+<alternatives><graphic xlink:href="464982_ueqn1.gif"/></alternatives>
+</disp-formula></p>
+</sec>
+<sec id="s3a2">
+<label>2.</label>
+<title>Cluster graph</title>
+<p>Divide <italic>p</italic> nodes into 5 clusters evenly. The nodes in different clusters are not connected, while the network for each cluster is the same as matrix <italic>C</italic> &#x003D; (<italic>c<sub>ij</sub></italic>)<sub>10&#x00D7;10</sub>, where
+<disp-formula>
+<alternatives><graphic xlink:href="464982_ueqn2.gif"/></alternatives>
+</disp-formula></p>
+<p>The link strength is uniformly distributed in [<italic>l</italic>, <italic>u</italic>]. To be specific, <italic>&#x03B8;<sub>ij</sub></italic> is replaced with <italic>&#x03B8;<sub>ij</sub>s<sub>ij</sub></italic>, where <italic>s<sub>ij</sub></italic> &#x223C; &#x1d4e4; (<italic>l</italic>, <italic>u</italic>). We take (<italic>l</italic>, <italic>u</italic>) &#x003D; (0.1, 0.1), (0.05, 0.15) and (0.0.2) separately to study the performance of CDTr loss when the exchangeable condition is satisfied by different degrees. These scenarios are named as Band-exact (Band-e), Band-approx1 (Band-a1), Band-approx2 (Band-a2) and Cluster-exact (Cluster-e), Cluster-approx1 (Cluster-a1), Cluster-approx2 (Cluster-a2), respectively. To obtain a positive definite precision matrix &#x0398;, we first compute the smallest eigenvalue of &#x0398; (denoted by <italic>e</italic>); then the diagonal elements of &#x0398; are set as |<italic>e</italic>| &#x002B; 0.3. The deviation to the exchangeable condition is measured with <italic>dev</italic> &#x003D; &#x2225;<italic>G</italic>&#x03A3; &#x2212; &#x03A3;<italic>G</italic>&#x2225;<sub>F</sub>. The deviations under the aforementioned six scenarios are listed in <xref ref-type="table" rid="tbl1">Table 1</xref>. For each combination of the six network structures and four sample sizes <italic>n</italic> &#x003D; 50, 100, 150, 200, a total of 100 datasets are generated and used to recover the network structure. Three state-of-the-art methods for network recovery are investigated, including gCoda [<xref ref-type="bibr" rid="c10">10</xref>], SPIEC(MB) and SPIEC(GL) [<xref ref-type="bibr" rid="c18">18</xref>]. We further consider an approximation method called aCDTr, which approximates &#x03A3; with <italic>G</italic>&#x03A3;<sub>ln <italic><bold>x</bold>G</italic></sub> [<xref ref-type="bibr" rid="c18">18</xref>] and employs D-trace loss to estimate &#x0398; &#x003D; &#x03A3;<sup>&#x2212;1</sup>. Specifically, the estimator of aCDTr is
+<disp-formula id="eqn14">
+<alternatives><graphic xlink:href="464982_eqn14.gif"/></alternatives>
+</disp-formula></p>
+<table-wrap id="tbl1" orientation="portrait" position="float">
+<label>Table 1.</label>
+<caption>
+<p>Deviations from the exchangeable condition under different scenarios.</p>
+</caption><graphic xlink:href="464982_tbl1.tif"/>
+</table-wrap>
+<p>The true positive rate and true negative rate are evaluated at different tuning parameters and used to generate the receiver operating characteristic (ROC) curve. We use the area under the curve (AUC) to quantify the ability to recover the true underlying network.</p>
+<p>In <xref ref-type="table" rid="tbl2">Table 2</xref>, we present the mean AUC scores of the above-mentioned methods under different settings. The mean AUC scores of CDTr and aCDTr are superior to the other three methods in all cases, even when the exchangeable condition does not hold exactly, which implies that CDTr and aCDTr outperform other methods in direct interaction network recovery. Moreover, the mean AUC of CDTr is slightly higher than that of aCDTr, except for the cluster graph and sample size <italic>n</italic> &#x003D; 50. With increasing deviation, the performance of CDTr and aCDTr decreases, which is reasonable if the exchangeable condition does not exactly hold. Interestingly, the performance for the other three methods also decreases with increasing deviation. For all network structures and methods, the mean AUC scores increase as the sample size increases.</p>
+<table-wrap id="tbl2" orientation="portrait" position="float">
+<label>Table 2.</label>
+<caption>
+<p>The mean AUC scores of different methods under different settings.</p>
+</caption><graphic xlink:href="464982_tbl2.tif"/>
+</table-wrap>
+<p>We further conducted several experiments on the following six representative network structures, without considering the exchangeable condition.</p>
+<list list-type="order">
+<list-item>
+<p><italic>Random graph</italic>: Two nodes are connected with probability 0.1, and the strength is generated from a uniform distribution in [&#x2212;0.2, &#x2212; 0.1] &#x222A; [0.1, 0.2].</p></list-item>
+<list-item>
+<p><italic>Band graph</italic>: Connect pair (<italic>i</italic>, <italic>j</italic>) with strength uniformly distributed in [0.05<italic>m</italic> &#x2212; 0.3, 0.05<italic>m</italic> &#x2212; 0.25] &#x222A; [0.25 &#x2212; 0.05<italic>m</italic>, 0.3 &#x2212; 0.05<italic>m</italic>], if |<italic>i</italic> &#x2212; <italic>j</italic>| &#x003D; <italic>m</italic>, <italic>m</italic> &#x003D; 1, 2, 3, 4.</p></list-item>
+<list-item>
+<p><italic>Neighbor graph</italic>: Select <italic>p</italic> points from &#x1d4e4;(0, 1) and connect the 5 nearest neighbors for each point with strength sampled from a uniform distribution in [&#x2212; 0.15, &#x2212; 0.05] &#x222A; [0.05, 0.15].</p></list-item>
+<list-item>
+<p><italic>Scale</italic>-<italic>free graph</italic>: A scale-free graph is produced, following the B-A algorithm [<xref ref-type="bibr" rid="c4">4</xref>]. The initial graph has two connected nodes, and each new node is connected to only one node in the existing graph with the probability proportional to the degree of the each node in the existing graph. This results in <italic>p</italic> edges in the graph, and the strength between connected nodes is generated from a uniform distribution in [&#x2212;0.2, &#x2212; 0.1] &#x222A; [0.1, 0.2].</p></list-item>
+<list-item>
+<p><italic>Hub graph</italic>: Partition the nodes into 3 disjoint groups evenly and select a node as hub for each group. The hubs are connected with the non-hubs in the same group with strength uniformly distributed in [&#x2212;0.2, &#x2212; 0.1] &#x222A; [0.1, 0.2].</p></list-item>
+<list-item>
+<p><italic>Block graph</italic>: Divide <italic>p</italic> nodes into 5 blocks evenly. Connect pairs in the same block with probability 0.3 and pairs in different blocks with probability 0.1. The strength between connected nodes is uniformly distributed in [&#x2212;0.2, &#x2212; 0.1] &#x222A; [0.2, 0.1].</p></list-item>
+</list>
+<p>Similarly, the diagonal elements of &#x0398; are set as |<italic>e</italic>| &#x002B; 0.3, where <italic>e</italic> is the smallest eigenvalue of &#x0398;. The deviations from the exchangeable condition of these networks are listed in <xref ref-type="table" rid="tbl3">Table 3</xref>.</p>
+<table-wrap id="tbl3" orientation="portrait" position="float">
+<label>Table 3.</label>
+<caption>
+<p>Deviations from the exchangeable condition of six different network structures.</p>
+</caption><graphic xlink:href="464982_tbl3.tif"/>
+</table-wrap>
+<p>We generated 100 datasets for each setting and used them to estimate the true precision matrix. The mean AUC scores of different methods under different settings are shown in <xref ref-type="table" rid="tbl4">Table 4</xref>. We can see that CDTr performs better than other methods in all cases, while the results of aCDTr is comparable to those of gCoda, and the results of SPIEC(MB) and SPIEC(GL) is are worse than the others. Note that we did not consider the exchangeable condition when we set up the networks, implying that CDTr still works, even when the the exchangeable condition does not hold.</p>
+<table-wrap id="tbl4" orientation="portrait" position="float">
+<label>Table 4.</label>
+<caption>
+<p>The mean AUC scores of different methods under different settings.</p>
+</caption><graphic xlink:href="464982_tbl4.tif"/>
+</table-wrap>
+</sec>
+</sec>
+<sec id="s3b">
+<label>3.2</label>
+<title>Simulations for DCDTr Loss</title>
+<p>We investigate the performance of DCDTr loss with some experiments in this section. The first precision matrix &#x0398; is generated as follows:</p>
+<list list-type="order">
+<list-item>
+<p><italic>Random graph</italic>: For &#x0398;, two nodes are connected with probability 0.5, and the strength is generated from a uniform distribution in [&#x2212;0.4, &#x2212; 0.2] &#x222A; [0.2, 0.4].</p></list-item>
+<list-item>
+<p><italic>Band graph</italic>: Connect pair (<italic>i</italic>, <italic>j</italic>) with strength uniformly distributed in [0.05<italic>m</italic> &#x2212; 0.3, 0.05<italic>m</italic> &#x2212; 0.25] &#x222A; [0.25 &#x2212; 0.05<italic>m</italic>, 0.3 &#x2212; 0.05<italic>m</italic>], if |<italic>i</italic> &#x2212; <italic>j</italic>| &#x003D; <italic>m</italic>, <italic>m</italic> &#x003D; 1, 2, 3, 4.</p></list-item>
+<list-item>
+<p><italic>Neighbor graph</italic>: Select <italic>p</italic> points from &#x1d4e4;(0, 1) and connect the 10 nearest neighbors for each point with strength sampled from a uniform distribution in [&#x2212;0.4, &#x2212; 0.2] &#x222A; [0.2, 0.4].</p></list-item>
+<list-item>
+<p><italic>Scale</italic>-<italic>free graph</italic>: The scale-free graph is generated with the B-A algorithm [<xref ref-type="bibr" rid="c4">4</xref>]. The strength between connected nodes is generated from a uniform distribution in [&#x2212;0.4, &#x2212; 0.2] &#x222A; [0.2, 0.4].</p></list-item>
+<list-item>
+<p><italic>Hub graph</italic>: Partition the nodes into 3 disjoint groups evenly and select a node as hub for each group. The hubs are connected with the non-hubs in the same group with strength uniformly distributed in [&#x2212;0.4, &#x2212; 0.2] &#x222A; [0.2, 0.4].</p></list-item>
+<list-item>
+<p><italic>Block graph</italic>: Divide <italic>p</italic> nodes into 5 blocks evenly. Connect pairs in the same block with probability 0.5 and pairs in different blocks with probability 0.3. The strength between connected nodes is uniformly distributed in [&#x2212;0.4, &#x2212; 0.2] &#x222A; [0.4, 0.2].</p></list-item>
+</list>
+<p>Then 10&#x0025; of the connected pairs in &#x0398; will change to an unconnected state, while the same number of unconnected pairs in &#x0398; will change to a connected state, such that we get another precision matrix &#x0398;<sup>&#x2217;</sup>. For scale-free and hub graph, the ratio of change is 40&#x0025; based on the sparsity of the two graphs. The diagonal elements of &#x0398; and &#x0398;<sup>&#x2217;</sup> are set as |<italic>e</italic>| &#x002B; 0.3, where <italic>e</italic> is the smallest eigenvalue of &#x0398; or &#x0398;<sup>&#x2217;</sup>, respectively. The deviations from the exchangeable condition of &#x0398; and &#x0398;<sup>&#x2217;</sup> are listed in <xref ref-type="table" rid="tbl5">Table 5</xref>. Therefor, the differential matrix &#x0394; is &#x0398;<sup>&#x2217;</sup> &#x2212; &#x0398;. The two precision matrices &#x0398; and &#x0398;<sup>&#x2217;</sup> are used to generate data separately. The aforementioned four methods, including DCDTr, FGL, GGL and <italic>&#x2113;</italic>-M, are used to estimate the true differential matrix &#x0394;. Similarly, we evaluate the true positive rate and true negative rate at different tuning parameters and then compute the area under the ROC curve (AUC). We take the sample size <italic>n</italic> &#x003D; 100, 200, 300, 400 and repeat this procedure 100 times.</p>
+<table-wrap id="tbl5" orientation="portrait" position="float">
+<label>Table 5.</label>
+<caption>
+<p>Deviations from the exchangeable condition of six different network structures.</p>
+</caption><graphic xlink:href="464982_tbl5.tif"/>
+</table-wrap>
+<p><xref ref-type="table" rid="tbl6">Table 6</xref> presents the mean AUC scores of different methods under different settings. We see that no method is generally better than the others in all cases. DCDTr performs better than other methods in random graph, neighbor graph and block graph, while GGL achieves higher AUC in scale-free and hub graph. With the increase of sample size, the advantage of DCDTr becomes increasingly significant. Generally speaking, our proposed DCDTr performs well in different network estimations.</p>
+<table-wrap id="tbl6" orientation="portrait" position="float">
+<label>Table 6.</label>
+<caption>
+<p>The mean AUC scores of different methods under different settings.</p>
+</caption><graphic xlink:href="464982_tbl6.tif"/>
+</table-wrap>
+</sec>
+</sec>
+<sec id="s4">
+<label>4</label>
+<title>Real Data Analysis</title>
+<p>In this section, we illustrate our proposed method with an application to mouse skin microbiome data [<xref ref-type="bibr" rid="c23">23</xref>]. A total of 261 mice were divided into 3 groups: 78 non-immunized controls (Control), 119 immunized healthy individuals (Healthy) and 64 immunized epidermolysis bullosa acquisita individuals (EBA), according to the health conditions of skin immunizations. The OTUs appearing in less than 50&#x0025; of the samples are filtered out, and the samples with a number of nonzero OTU counts less than 50&#x0025; of the total selected OTUs are also removed. We finally arrived at a dataset with <italic>p</italic> &#x003D; 77 OTUs and <italic>n</italic> &#x003D; 232 samples (63 Control, 114 Healthy and 55 EBA). We increased all OTU counts by 0.5 to avoid zero counts and normalized the data to compositional data.</p>
+<p>Since the the underlying true direct interaction networks were not available and the accuracy of estimated networks was unobtainable, we evaluated the performance of the proposed methods with reproducibility as suggested by Fang <italic>et al.</italic> [<xref ref-type="bibr" rid="c10">10</xref>] and Kurtz <italic>et al.</italic> [<xref ref-type="bibr" rid="c18">18</xref>] suggusted. More specifically, we first constructed a reference network <italic>est</italic><sub>1</sub> (precision matrix or differential matrix) with all data for each group and method. We then selected half of the samples randomly to estimate the precision matrix or differential matrix (denoted by <italic>est</italic><sub>2</sub>) again. The reproducibility was measured by the fraction of overlapping edges shared by <italic>est</italic><sub>1</sub> and <italic>est</italic><sub>2</sub> in the reference network <italic>est</italic><sub>1</sub>.</p>
+<p>For each group and each method of precision matrix estimation, the procedure stated above was repeated 20 times. The mean reproducibility is summarized in <xref ref-type="table" rid="tbl7">Table 7</xref>. CDTr and aCDTr outperformed the other three methods in terms of reproducibility in all three groups, implying that CDTr and aCDTr are more stable and accurate in direct interaction estimation. We also estimated the differential network for the Control-Healthy and Control-EBA groups, and the evaluation procedure was also repeated 20 times. The mean reproducibility is listed in <xref ref-type="table" rid="tbl8">Table 8</xref>. The highest reproducibility of DCDTr also implies that DCDTr is more stable and accurate in differential network estimation.</p>
+<table-wrap id="tbl7" orientation="portrait" position="float">
+<label>Table 7.</label>
+<caption>
+<p>The mean reproducibility for various methods and groups.</p>
+</caption><graphic xlink:href="464982_tbl7.tif"/>
+</table-wrap>
+<table-wrap id="tbl8" orientation="portrait" position="float">
+<label>Table 8.</label>
+<caption>
+<p>The mean reproducibility for various methods and groups.</p>
+</caption><graphic xlink:href="464982_tbl8.tif"/>
+</table-wrap>
+<p>Finally, we employed all methods to build a candidate microbiome association network from the unified dataset for each group and group pairs. In Fig <bold>??</bold>, we present the number of shared edges for direct interaction networks recovered from various methods via Venn diagrams. We can see that the direct interaction network from CDTr is close to that of aCDTr, while the network from SPIEC(GL) and SPIEC(MB) are more similar. A total of 28, 46 and 24 edges are shared by all candidate networks for control, healthy and EBA groups, respectively, comprising the core interaction network among OTUs. Moreover, almost all direct interactions discovered by CDTr and aCDTr are in this core interaction network, while SPIEC(GL), SPIEC(MB) and gCoda discover some eccentric interactions. The number of shared edges for differential networks are shown in Fig <bold>??</bold>. The situation for differential networks is much more complicated. <italic>&#x2113;</italic><sub>1</sub>-M discovered many eccentric differential edges in both groups, but these were not confirmed by other methods. The differential edges from GGL and FGL are almost the same for both groups, and are more than the edges from DCDTr. Most differential edges from DCDTr were verified by both GGL and FGL for both groups, implying that DCDTr is good at inferring the crucial differential edges without mixing nonessential edges.</p>
+</sec>
+<sec id="s5">
+<label>5</label>
+<title>Conclusion</title>
+<p>Inferring the direct interactions among microbial species and understanding how the network structure changes are important in the study of ecology and medicine. In this paper, we propose a framework to estimate the direct interaction network and differential network from compositional microbial data based on clr transformation and D-trace loss for absolute abundance data. Although the proposed CDTr loss and DCDTr loss are derived from an exchangeable condition, we show that they still perform well and better than other methods under different scenarios in our numerical simulations. However, the reasonableness of the exchangeable condition should be further examined in theory and biology. Finally, the consistency of the estimators does not come with a theoretical guarantee, which is a common limitation of gCoda, SPIEC, CDTr and DCDTr. For future work, we are interested in developing theorems about the consistency property in both direct interaction network and differential network estimation.</p>
+</sec>
+</body>
+<back>
+<sec sec-type="supplementary-material">
+<title>Supporting information</title>
+</sec>
+<app-group>
+<app id="app1">
+<label>S1 Appendix.</label>
+<title>Supplementary for A Framework to Incorporate D-trace Loss into Compositional Data Analysis.</title>
+<p>The matrix operators <italic>S</italic>(<italic>X</italic>),<italic>K</italic>(<italic>X</italic>),<italic>H</italic>(<italic>X</italic>) and [<italic>X</italic>]<sub>&#x002B;</sub> used in <xref ref-type="statement" rid="stat1">Algorithm 1</xref> and <xref ref-type="statement" rid="stat2">Algorithm 2</xref> for the numerical solutions of lasso penalized CDTr and DCDTr loss are presented in this Supplementary. We also demonstrate the relationship between D-trace loss and CDTr loss, as well as the relationship between DTL loss and DCDTr loss. The detailed formulas of <italic>&#x2113;</italic><sub>1</sub>-minimization method and joint graphical lasso (FGL, GGL) are listed in this Supplementary.</p>
+</app>
+</app-group>
+<ack>
+<title>Acknowledgments</title>
+<p>This work was supported by The National Key Research and Development Program of China (No.2016YFA0502303), the National Key Basic Research Project of China (No. 2015CB910303), and the National Natural Science Foundation of China (No.31471246).</p>
+</ack>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>1.</label><mixed-citation publication-type="journal"><string-name><given-names>John</given-names> <surname>Aitchison</surname></string-name>. <article-title>A new approach to null correlations of proportions</article-title>. <source>Mathematical Geology</source>, <volume>13</volume>(<issue>2</issue>):<fpage>175</fpage>&#x2013;<lpage>189</lpage>, <year>1981</year>.</mixed-citation></ref>
+<ref id="c2"><label>2.</label><mixed-citation publication-type="journal"><string-name><given-names>Yuguang</given-names> <surname>Ban</surname></string-name>, <string-name><given-names>Lingling</given-names> <surname>An</surname></string-name>, and <string-name><given-names>Hongmei</given-names> <surname>Jiang</surname></string-name>. <article-title>Investigating microbial co-occurrence patterns based on metagenomic compositional data</article-title>. <source>Bioinformatics</source>, <volume>31</volume>(<issue>20</issue>):<fpage>3322</fpage>&#x2013;<lpage>3329</lpage>, <year>2015</year>.</mixed-citation></ref>
+<ref id="c3"><label>3.</label><mixed-citation publication-type="journal"><string-name><given-names>Sourav</given-names> <surname>Bandyopadhyay</surname></string-name>, <string-name><given-names>Monika</given-names> <surname>Mehta</surname></string-name>, <string-name><given-names>Dwight</given-names> <surname>Kuo</surname></string-name>, <string-name><surname>Min-Kyung Sung</surname></string-name>, <string-name><given-names>Ryan</given-names> <surname>Chuang</surname></string-name>, <string-name><given-names>Eric J</given-names> <surname>Jaehnig</surname></string-name>, <string-name><given-names>Bernd</given-names> <surname>Bodenmiller</surname></string-name>, <string-name><given-names>Katherine</given-names> <surname>Licon</surname></string-name>, <string-name><given-names>Wilbert</given-names> <surname>Copeland</surname></string-name>, <string-name><given-names>Michael</given-names> <surname>Shales</surname></string-name>, <etal>et al.</etal> <article-title>Rewiring of genetic networks in response to dna damage</article-title>. <source>Science</source>, <volume>330</volume>(<issue>6009</issue>):<fpage>1385</fpage>&#x2013;<lpage>1389</lpage>, <year>2010</year>.</mixed-citation></ref>
+<ref id="c4"><label>4.</label><mixed-citation publication-type="journal"><string-name><given-names>Albert-L&#x00E1;szl&#x00F3;</given-names> <surname>Barab&#x00E1;si</surname></string-name> and <string-name><given-names>Reka</given-names> <surname>Albert</surname></string-name>. <article-title>Emergence of scaling in random networks</article-title>. <source>science</source>, <volume>286</volume>(<issue>5439</issue>):<fpage>509</fpage>&#x2013;<lpage>512</lpage>, <year>1999</year>.</mixed-citation></ref>
+<ref id="c5"><label>5.</label><mixed-citation publication-type="journal"><string-name><given-names>Surojit</given-names> <surname>Biswas</surname></string-name>, <string-name><given-names>Meredith</given-names> <surname>Mcdonald</surname></string-name>, <string-name><given-names>Derek S.</given-names> <surname>Lundberg</surname></string-name>, <string-name><given-names>Jeffery L.</given-names> <surname>Dangl</surname></string-name>, and <string-name><given-names>Vladimir</given-names> <surname>Jojic</surname></string-name>. <article-title>Learning microbial interaction networks from metagenomic count data</article-title>. <source>Journal of Computational Biology A Journal of Computational Molecular Cell Biology</source>, <volume>23</volume>(<issue>6</issue>):<fpage>526</fpage>, <year>2016</year>.</mixed-citation></ref>
+<ref id="c6"><label>6.</label><mixed-citation publication-type="journal"><string-name><given-names>Julien</given-names> <surname>Chiquet</surname></string-name>, <string-name><given-names>Yves</given-names> <surname>Grandvalet</surname></string-name>, and <string-name><given-names>Christophe</given-names> <surname>Ambroise</surname></string-name>. <article-title>Inferring multiple graphical structures</article-title>. <source>Statistics and Computing</source>, <volume>21</volume>(<issue>4</issue>):<fpage>537</fpage>&#x2013;<lpage>553</lpage>, <year>2011</year>.</mixed-citation></ref>
+<ref id="c7"><label>7.</label><mixed-citation publication-type="journal"><string-name><given-names>Patrick</given-names> <surname>Danaher</surname></string-name>, <string-name><given-names>Pei</given-names> <surname>Wang</surname></string-name>, and <string-name><given-names>Daniela M.</given-names> <surname>Witten</surname></string-name>. <article-title>The joint graphical lasso for inverse covariance estimation across multiple classes</article-title>. <source>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</source>, <volume>76</volume>(<issue>2</issue>):<fpage>373</fpage>&#x2013;<lpage>397</lpage>, <year>2014</year>.</mixed-citation></ref>
+<ref id="c8"><label>8.</label><mixed-citation publication-type="journal"><string-name><given-names>P. G.</given-names> <surname>Falkowski</surname></string-name>, <string-name><given-names>T</given-names> <surname>Fenchel</surname></string-name>, and <string-name><given-names>E. F.</given-names> <surname>Delong</surname></string-name>. <article-title>The microbial engines that drive earth&#x2019;s biogeochemical cycles</article-title>. <source>Science</source>, <volume>320</volume>(<issue>5879</issue>):<fpage>1034</fpage>&#x2013;<lpage>9</lpage>, <year>2008</year>.</mixed-citation></ref>
+<ref id="c9"><label>9.</label><mixed-citation publication-type="journal"><string-name><given-names>Huaying</given-names> <surname>Fang</surname></string-name>, <string-name><given-names>Chengcheng</given-names> <surname>Huang</surname></string-name>, <string-name><given-names>Hongyu</given-names> <surname>Zhao</surname></string-name>, and <string-name><given-names>Minghua</given-names> <surname>Deng</surname></string-name>. <article-title>Cclasso: correlation inference for compositional data through lasso</article-title>. <source>Bioinformatics</source>, <volume>31</volume>(<issue>19</issue>): <fpage>3172</fpage>&#x2013;<lpage>3180</lpage>, <year>2015</year>.</mixed-citation></ref>
+<ref id="c10"><label>10.</label><mixed-citation publication-type="journal"><string-name><given-names>Huaying</given-names> <surname>Fang</surname></string-name>, <string-name><given-names>Chengcheng</given-names> <surname>Huang</surname></string-name>, <string-name><given-names>Hongyu</given-names> <surname>Zhao</surname></string-name>, and <string-name><given-names>Minghua</given-names> <surname>Deng</surname></string-name>. <article-title>gcoda: Conditional dependence network inference for compositional data</article-title>. <source>Journal of Computational Biology</source>, <year>2017</year>.</mixed-citation></ref>
+<ref id="c11"><label>11.</label><mixed-citation publication-type="journal"><string-name><given-names>Karoline</given-names> <surname>Faust</surname></string-name> and <string-name><given-names>Jeroen</given-names> <surname>Raes.</surname></string-name> <article-title>Microbial interactions: from networks to models</article-title>. <source>Nature reviews. Microbiology</source>, <volume>10</volume>(<issue>8</issue>):<fpage>538</fpage>, <year>2012</year>.</mixed-citation></ref>
+<ref id="c12"><label>12.</label><mixed-citation publication-type="journal"><string-name><given-names>Karoline</given-names> <surname>Faust</surname></string-name>, <string-name><given-names>J</given-names> <surname>Fah Sathirapongsasuti</surname></string-name>, <string-name><given-names>Jacques</given-names> <surname>Izard</surname></string-name>, <string-name><given-names>Nicola</given-names> <surname>Segata</surname></string-name>, <string-name><given-names>Dirk</given-names> <surname>Gevers</surname></string-name>, <string-name><given-names>Jeroen</given-names> <surname>Raes</surname></string-name>, and <string-name><given-names>Curtis</given-names> <surname>Huttenhower</surname></string-name>. <article-title>Microbial co-occurrence relationships in the human microbiome</article-title>. <source>PLoS computational biology</source>, <volume>8</volume>(<issue>7</issue>):<fpage>e1002606</fpage>, <year>2012</year>.</mixed-citation></ref>
+<ref id="c13"><label>13.</label><mixed-citation publication-type="journal"><string-name><given-names>Jerome</given-names> <surname>Friedman</surname></string-name>, <string-name><given-names>Trevor</given-names> <surname>Hastie</surname></string-name>, and <string-name><given-names>Robert</given-names> <surname>Tibshirani</surname></string-name>. <article-title>Sparse inverse covariance estimation with the graphical lasso</article-title>. <source>Biostatistics</source>, <volume>9</volume>(<issue>3</issue>):<fpage>432</fpage>&#x2013;<lpage>441</lpage>, <year>2008</year>.</mixed-citation></ref>
+<ref id="c14"><label>14.</label><mixed-citation publication-type="journal"><string-name><given-names>Jonathan</given-names> <surname>Friedman</surname></string-name> and <string-name><given-names>Eric J</given-names> <surname>Alm</surname></string-name>. <article-title>Inferring correlation networks from genomic survey data</article-title>. <source>PLoS computational biology</source>, <volume>8</volume>(<issue>9</issue>):<fpage>e1002687</fpage>, <year>2012</year>.</mixed-citation></ref>
+<ref id="c15"><label>15.</label><mixed-citation publication-type="journal"><string-name><given-names>Nir</given-names> <surname>Friedman</surname></string-name>. <article-title>Inferring cellular networks using probabilistic graphical models</article-title>. <source>Science</source>, <volume>303</volume>(<issue>5659</issue>):<fpage>799</fpage>&#x2013;<lpage>805</lpage>, <year>2004</year>.</mixed-citation></ref>
+<ref id="c16"><label>16.</label><mixed-citation publication-type="journal"><string-name><given-names>Jian</given-names> <surname>Guo</surname></string-name>, <string-name><given-names>Elizaveta</given-names> <surname>Levina</surname></string-name>, <string-name><given-names>George</given-names> <surname>Michailidis</surname></string-name>, and <string-name><given-names>Ji</given-names> <surname>Zhu</surname></string-name>. <article-title>Joint estimation of multiple graphical models</article-title>. <source>Biometrika</source>, <volume>98</volume>(<issue>1</issue>):<fpage>1</fpage>&#x2013;<lpage>15</lpage>, <year>2011</year>.</mixed-citation></ref>
+<ref id="c17"><label>17.</label><mixed-citation publication-type="journal"><string-name><given-names>Allan</given-names> <surname>Konopka</surname></string-name>. <article-title>What is microbial community ecology&#x2014;[quest]&#x2014;</article-title>. <source>Isme Journal</source>, <volume>3</volume>(<issue>11</issue>):<fpage>1223</fpage>, <year>2009</year>.</mixed-citation></ref>
+<ref id="c18"><label>18.</label><mixed-citation publication-type="journal"><string-name><given-names>Zachary D</given-names> <surname>Kurtz</surname></string-name>, <string-name><given-names>Christian L</given-names> <surname>M&#x00FC;ller</surname></string-name>, <string-name><given-names>Emily R</given-names> <surname>Miraldi</surname></string-name>, <string-name><given-names>Dan R</given-names> <surname>Littman</surname></string-name>, <string-name><given-names>Martin J</given-names> <surname>Blaser</surname></string-name>, and <string-name><given-names>Richard A</given-names> <surname>Bonneau</surname></string-name>. <article-title>Sparse and compositionally robust inference of microbial ecological networks</article-title>. <source>PLoS computational biology</source>, <volume>11</volume>(<issue>5</issue>):<fpage>e1004226</fpage>, <year>2015</year>.</mixed-citation></ref>
+<ref id="c19"><label>19.</label><mixed-citation publication-type="journal"><string-name><given-names>Florian</given-names> <surname>Markowetz</surname></string-name> and <string-name><given-names>Rainer</given-names> <surname>Spang.</surname></string-name> <article-title>Inferring cellular networks&#x2013;a review</article-title>. <source>BMC bioinformatics</source>, <volume>8</volume>(<issue>6</issue>):<fpage>S5</fpage>, <year>2007</year>.</mixed-citation></ref>
+<ref id="c20"><label>20.</label><mixed-citation publication-type="journal"><string-name><given-names>Nicolai</given-names> <surname>Meinshausen</surname></string-name> and <string-name><given-names>Peter</given-names> <surname>B&#x00FC;hlmann</surname></string-name>. <article-title>High-dimensional graphs and variable selection with the lasso</article-title>. <source>The annals of statistics</source>, pages <fpage>1436</fpage>&#x2013;<lpage>1462</lpage>, <year>2006</year>.</mixed-citation></ref>
+<ref id="c21"><label>21.</label><mixed-citation publication-type="journal"><string-name><given-names>Katya</given-names> <surname>Scheinberg</surname></string-name>, <string-name><given-names>Shiqian</given-names> <surname>Ma</surname></string-name>, and <string-name><given-names>Donald</given-names> <surname>Goldfarb</surname></string-name>. <article-title>Sparse inverse covariance selection via alternating linearization methods</article-title>. <source>Advances in Neural Information Processing Systems</source>, pages <fpage>2101</fpage>&#x2013;<lpage>2109</lpage>, <year>2010</year>.</mixed-citation></ref>
+<ref id="c22"><label>22.</label><mixed-citation publication-type="journal"><string-name><given-names>Gideon</given-names> <surname>Schwarz</surname></string-name> <etal>et al.</etal> <article-title>Estimating the dimension of a model</article-title>. <source>The annals of statistics</source>, <volume>6</volume>(<issue>2</issue>):<fpage>461</fpage>&#x2013;<lpage>464</lpage>, <year>1978</year>.</mixed-citation></ref>
+<ref id="c23"><label>23.</label><mixed-citation publication-type="journal"><string-name><given-names>Girish</given-names> <surname>Srinivas</surname></string-name>, <string-name><surname>Steffen M&#x00F6;ller</surname></string-name>, <string-name><given-names>Jun</given-names> <surname>Wang</surname></string-name>, <string-name><given-names>Sven</given-names> <surname>K&#x00FC;nzel</surname></string-name>, <string-name><given-names>Detlef</given-names> <surname>Zillikens</surname></string-name>, <string-name><given-names>John F</given-names> <surname>Baines</surname></string-name>, and <string-name><given-names>Saleh M</given-names> <surname>Ibrahim</surname></string-name>. <article-title>Genome-wide mapping of gene&#x2013;microbiota interactions in susceptibility to autoimmune skin blistering</article-title>. <source>Nature communications</source>, <volume>4</volume>, <year>2013</year>.</mixed-citation></ref>
+<ref id="c24"><label>24.</label><mixed-citation publication-type="journal"><string-name><given-names>I</given-names> <surname>Thiele</surname></string-name>, <string-name><given-names>A</given-names> <surname>Heinken</surname></string-name>, and <string-name><given-names>R. M.</given-names> <surname>Fleming</surname></string-name>. <article-title>A systems biology approach to studying the role of microbes in human health</article-title>. <source>Current Opinion in Biotechnology</source>, <volume>24</volume>(<issue>1</issue>): <fpage>4</fpage>&#x2013;<lpage>12</lpage>, <year>2013</year>.</mixed-citation></ref>
+<ref id="c25"><label>25.</label><mixed-citation publication-type="journal"><string-name><given-names>Robert</given-names> <surname>Tibshirani</surname></string-name>. <article-title>Regression shrinkage and selection via the lasso</article-title>. <source>Journal of the Royal Statistical Society. Series B (Methodological)</source>, pages <fpage>267</fpage>&#x2013;<lpage>288</lpage>, <year>1996</year>.</mixed-citation></ref>
+<ref id="c26"><label>26.</label><mixed-citation publication-type="book"><string-name><given-names>Joe</given-names> <surname>Whittaker</surname></string-name>. <source>Graphical models in applied multivariate statistics</source>. <publisher-name>Wiley Publishing</publisher-name>, <year>2009</year>.</mixed-citation></ref>
+<ref id="c27"><label>27.</label><mixed-citation publication-type="journal"><string-name><given-names>John C</given-names> <surname>Wooley</surname></string-name>, <string-name><given-names>Adam</given-names> <surname>Godzik</surname></string-name>, and <string-name><given-names>Iddo</given-names> <surname>Friedberg</surname></string-name>. <article-title>A primer on metagenomics</article-title>. <source>PLoS computational biology</source>, <volume>6</volume>(<issue>2</issue>):<fpage>e1000667</fpage>, <year>2010</year>.</mixed-citation></ref>
+<ref id="c28"><label>28.</label><mixed-citation publication-type="journal"><string-name><given-names>Huili</given-names> <surname>Yuan</surname></string-name>, <string-name><given-names>Ruibin</given-names> <surname>Xi</surname></string-name>, and <string-name><given-names>Minghua</given-names> <surname>Deng</surname></string-name>. <article-title>Differential network analysis via the lasso penalized d-trace loss</article-title>. <source>Biometrika</source>, <volume>104</volume>(<issue>4</issue>), <year>2015</year>.</mixed-citation></ref>
+<ref id="c29"><label>29.</label><mixed-citation publication-type="journal"><string-name><given-names>Ming</given-names> <surname>Yuan</surname></string-name> and <string-name><given-names>Yi</given-names> <surname>Lin.</surname></string-name> <article-title>Model selection and estimation in the gaussian graphical model</article-title>. <source>Biometrika</source>, <volume>94</volume>(<issue>1</issue>):<fpage>19</fpage>&#x2013;<lpage>35</lpage>, <year>2007</year>.</mixed-citation></ref>
+<ref id="c30"><label>30.</label><mixed-citation publication-type="journal"><string-name><given-names>Teng</given-names> <surname>Zhang</surname></string-name> and <string-name><given-names>Hui</given-names> <surname>Zou.</surname></string-name> <article-title>Sparse precision matrix estimation via lasso penalized d-trace loss</article-title>. <source>Biometrika</source>, <volume>101</volume>(<issue>1</issue>):<fpage>103</fpage>&#x2013;<lpage>120</lpage>, <year>2014</year>.</mixed-citation></ref>
+<ref id="c31"><label>31.</label><mixed-citation publication-type="journal"><string-name><given-names>Sihai</given-names> <surname>Dave Zhao</surname></string-name>, <string-name><given-names>T.</given-names> <surname>Tony Cai</surname></string-name>, and <string-name><given-names>Hongzhe</given-names> <surname>Li</surname></string-name>. <article-title>Direct estimation of differential networks</article-title>. <source>Biometrika</source>, <volume>101</volume>(<issue>2</issue>):<fpage>253</fpage>&#x2013;<lpage>268</lpage>, <year>2014</year>.</mixed-citation></ref>
+</ref-list>
+<sec>
+<fig id="ufig3" position="float" fig-type="figure">
+<graphic xlink:href="464982_ufig3.tif"/>
+</fig>
+<fig id="ufig4" position="float" fig-type="figure">
+<graphic xlink:href="464982_ufig4.tif"/>
+</fig>
+<fig id="ufig5" position="float" fig-type="figure">
+<graphic xlink:href="464982_ufig5.tif"/>
+</fig>
+<fig id="ufig6" position="float" fig-type="figure">
+<graphic xlink:href="464982_ufig6.tif"/>
+</fig>
+<fig id="ufig7" position="float" fig-type="figure">
+<graphic xlink:href="464982_ufig7.tif"/>
+</fig>
+</sec>
+</back>
+</article>

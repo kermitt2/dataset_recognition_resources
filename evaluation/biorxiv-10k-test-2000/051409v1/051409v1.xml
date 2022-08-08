@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/051409</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>A Graph Extension of the Positional Burrows-Wheeler Transform and its Applications</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0001-5828-047X</contrib-id>
+<name>
+<surname>Novak</surname>
+<given-names>Adam M.</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<contrib contrib-type="author">
+<name>
+<surname>Garrison</surname>
+<given-names>Erik</given-names>
+</name>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<contrib contrib-type="author">
+<name>
+<surname>Paten</surname>
+<given-names>Benedict</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>Genomics Institute, University of California Santa Cruz</institution>, Santa Cruz, CA 95064, <country>USA</country></aff>
+<aff id="a2"><label>2</label><institution>Wellcome Trust Sanger Institute</institution>, Cambridge, <country>UK</country></aff>
+</contrib-group>
+<pub-date pub-type="epub">
+<year>2016</year>
+</pub-date>
+<elocation-id>051409</elocation-id>
+<history>
+<date date-type="received">
+<day>02</day>
+<month>5</month>
+<year>2016</year>
+</date>
+<date date-type="accepted">
+<day>02</day>
+<month>5</month>
+<year>2016</year>
+</date>
+</history><permissions><copyright-statement>&#x00A9; 2016, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2016</copyright-year><license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license></permissions>
+<self-uri xlink:href="051409.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<label>1</label>
+<title>Abstract</title>
+<p>We present a generalization of the Positional Burrows-Wheeler Transform (PBWT) to genome graphs, which we call the gPBWT. A genome graph is a collapsed representation of a set of genomes described as a graph. In a genome graph, a haplotype corresponds to a restricted form of walk. The gPBWT is a compressible representation of a set of these graph-encoded haplotypes that allows for efficient subhaplotype match queries. We give efficient algorithms for gPBWT construction and query operations. We describe our implementation, showing the compression and search of 1000 Genomes data. As a demonstration, we use the gPBWT to quickly count the number of haplotypes consistent with random walks in a genome graph, and with the paths taken by mapped reads; results suggest that haplotype consistency information can be practically incorporated into graph-based read mappers.</p>
+</abstract>
+<counts>
+<page-count count="11"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<label>2</label>
+<title>Introduction</title>
+<p>The PBWT is a compressable data structure for storing haplotypes that provides an efficient search operation for subhaplotype matches [<xref rid="c2" ref-type="bibr">2</xref>]. Implementations, such as BGT (<ext-link ext-link-type="uri" xlink:href="https://github.com/lh3/bgt">https://github.com/lh3/bgt</ext-link>), can be used to compactly store and query thousands of samples. The PBWT can also allow existing haplotype-based algorithms to work on much larger collections of haplotypes than would otherwise be practical [<xref rid="c4" ref-type="bibr">4</xref>]. In the PBWT, each site (corresponding to a genetic variant) is a binary feature and the sites are totally ordered. The input haplotypes to the PBWT are binary strings, with each element in the string indicating the state of a site. In the generalization we present, each input haplotype is a walk in a general bidirected graph. This allows haplotypes to be partial (they can start and end at arbitrary nodes) and to traverse arbitrary structural variation. It does not require the sites (nodes in the graph) to have a biologically relevant ordering in order to provide compression. However, despite these generalizations, the core data structures are similar, the compression still exploits genetic linkage and the haplotype matching algorithm is essentially the same.</p>
+</sec>
+<sec id="s2">
+<label>3</label>
+<title>Definitions</title>
+<p>We define <italic>G</italic> &#x003D; (<italic>V, E</italic>) as a <bold>genome graph</bold> in a bidirected formulation [<xref rid="c5" ref-type="bibr">5</xref>,<xref rid="c6" ref-type="bibr">6</xref>]. Each node in <italic>V</italic> has a DNA-sequence label; a left, or 5&#x2032;, <bold>side;</bold> and a right, or 3&#x2032;, side. Each edge in <italic>E</italic> is a pairset of sides. The graph is not a multigraph: only one edge may connect a given pair of sides and thus only one <bold>self-loop</bold> can be present on any given side.</p>
+<p>We consider all the sides in the graph to be (arbitrarily) ordered relative to one another. We also define the idea of the <bold>opposite</bold> of a side <italic>s</italic>, with the notation <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="051409_inline1.gif"/></alternatives></inline-formula> meaning the side of s&#x2019;s node which is not <italic>s</italic> (i.e. the left side of the node if <italic>s</italic> is the right side, and the right side of the node if <italic>s</italic> is the left side). Finally, we use the notation <italic>n</italic>(<italic>s</italic>) to denote the node to which a side <italic>s</italic> belongs.</p>
+<p>Within the graph <italic>G</italic>, we define the concept of a <bold>thread</bold>, which can be used to represent a haplotype or haplotype fragment. A thread <italic>t</italic> on <italic>G</italic> is a reversible nonempty sequence of sides, such that for 0 &#x2264; <italic>i</italic> &#x003C; <italic>N</italic> sides <italic>t</italic><sub>2<italic>i</italic></sub> and <italic>t</italic><sub>2<italic>i</italic>&#x002B;1</sub> are opposites of each other, and such that <italic>G</italic> contains an edge connecting every pair of sides <italic>t</italic><sub>2<italic>i</italic>&#x002B;1</sub> and <italic>t</italic><sub>2<italic>i</italic>&#x002B;1</sub>. In other words, a thread is a walk through the sides of the graph that alternates traversing nodes and traversing edges and which starts and ends with nodes. Note that a thread is reversible: exactly reversing the sequence of sides making up a thread produces an equivalent thread. We call a thread traversed in a certain direction an <bold>orientation</bold>.</p>
+<p>We consider <italic>G</italic> to have associated with it a collection of <bold>embedded</bold> threads, denoted as <italic>T</italic>. We propose an efficient storage and query mechanism for <italic>T</italic> given <italic>G</italic>.</p>
+<p>We call an instance of side in a thread a <bold>visit</bold>; a thread may visit a given side multiple times. Consider all visits of threads in <italic>T</italic> to a side <italic>s</italic> where the thread arrives at <italic>s</italic> either by traversing an edge incident to <italic>s</italic> (and not by traversing <italic>n</italic>(<italic>s</italic>)) or by beginning at <italic>s</italic>. For each such visit, take the sequence of sides coming before this arrival at <italic>s</italic> in the thread and reverse it, and then sort the visits lexicographically by these sequences of sides, breaking ties by an arbitrary global ordering of the threads. Then, for each visit, look two steps ahead in its thread (past <italic>s</italic> and <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="051409_inline2.gif"/></alternatives></inline-formula>), and note what side comes next (or the null side if the thread ends). After repeating for all the sorted visits to <italic>s</italic>, take all the noted sides in order and produce the array <italic>B</italic><sub><italic>s</italic></sub>[] for side <italic>s</italic>. An example <italic>B</italic>[] array and its interpretation are shown in <xref ref-type="fig" rid="fig1">Figure 1</xref>. (Note that, throughout, arrays are indexed from 0 and can produce their lengths trivially upon demand.)</p>
+<fig id="fig1" position="float" fig-type="figure">
+<label>Fig. 1.</label>
+<caption><p>An illustration of the <italic>B</italic><sub>0</sub>[] array for a single side numbered 0. Threads visiting this side may enter their next nodes on sides 1, 2, or 3. The <italic>B</italic><sub>0</sub>[] array records, for each visit of a thread to side 0, the side on which it enters its next node. This determines through which of the available edges it should leave the current node. Because threads tend to be similar to each other, they are likely to run in &#x201C;ribbons&#x201D; of multiple threads that both enter and leave together. These ribbons cause the <italic>B</italic><sub><italic>s</italic></sub> [] arrays to contain runs of identical values, which may be compressed.</p></caption>
+<graphic xlink:href="051409_fig1.tif"/>
+</fig>
+<p>Each unoriented edge {s,<italic>s&#x2019;</italic>} in <italic>E</italic> has two orientations (<italic>s, s&#x2019;</italic>) and (<italic>s&#x2019;, s</italic>). Let c() be a function of these oriented edges, such that for an oriented edge (<italic>s&#x2019;, s</italic>), <italic>c(s, s')</italic> is the smallest index in <italic>B</italic><sub><italic>s&#x2019;</italic></sub> [] of a visit of <italic>s&#x2019;</italic> that arrives at <italic>s&#x2019;</italic> by traversing {<italic>s,s&#x2019;</italic>}. Note that, because of the global ordering of sides and the sorting rules defined for <italic>B</italic><sub>s&#x2019;</sub>[] above, <italic>c</italic>(<italic>s</italic><sub>0</sub>, <italic>s&#x2019;</italic>) will be less than or equal to <italic>c</italic>(<italic>s</italic><sub>1</sub>, <italic>s&#x2019;</italic>) for <italic>s</italic><sub>0</sub> &#x003C;<italic>s</italic><sub>1</sub> both adjacent to <italic>s&#x2019;</italic>.</p>
+<p>For a given <italic>G</italic>, we call the combination of the <italic>c</italic>() function and the <italic>B</italic>[] arrays a <bold>graph Positional Burrows Wheeler Transform</bold> (<bold>gPBWT</bold>). We submit that a gPBWT is sufficient to represent <italic>T</italic>, and, moreover, that it allows efficient counting of the number of threads in <italic>T</italic> that contain a given new thread as a subthread. <xref ref-type="fig" rid="fig2">Figure 2</xref> and <xref ref-type="table" rid="tbl1">Table 1</xref> give a worked example.</p>
+<fig id="fig2" position="float" fig-type="figure">
+<label>Fig. 2.</label>
+<caption><p>A diagram of a graph containing two embedded threads. The graph consists of nodes [1, 2, 3,4,5], with sides [1<italic>L</italic>, 1<italic>R</italic>, 2<italic>L</italic>, 2<italic>R</italic>,&#x2026;], connected by edges [1<italic>R</italic>, 3<italic>L</italic>], [2<italic>R</italic>, 3<italic>L</italic>], [3<italic>R</italic>, 4<italic>L</italic>], [3<italic>R</italic>, 5<italic>L</italic>], [4<italic>R</italic>,4<italic>R</italic>], and [5<italic>R</italic>, 5<italic>L</italic>]. Embedded threads travel on the right-hand side of the nodes they are traveling through. Each thread here corresponds to a pair of &#x201C;lanes&#x201D; running in opposite directions. Visits are ordered from top to bottom, with &#x201C;lanes&#x201D; for lesser visits above those for greater ones. the &#x201C;lanes&#x201D; on the top half of each node are ordered in correspondence with the <italic>B</italic><sub><italic>s</italic></sub>[] entries for the right side of the node, and those on the bottom half are ordered in correspondence with the <italic>B</italic><sub><italic>s</italic></sub>[] entries for the right side of the node. The threads shown here are [1<italic>L</italic>, 1<italic>R</italic>, 3<italic>L</italic>, 3<italic>R</italic>, 5<italic>L</italic>, 5<italic>R</italic>, 5<italic>L</italic>, 5<italic>R</italic>] and [2<italic>L</italic>, 2<italic>R</italic>, 3<italic>L</italic>,3<italic>R</italic>, 4<italic>L</italic>,4<italic>R</italic>, 4<italic>R</italic>, 4<italic>L</italic>].</p></caption>
+<graphic xlink:href="051409_fig2.tif"/>
+</fig>
+<table-wrap id="tbl1" orientation="portrait" position="float">
+<label>Table 1.</label>
+<caption><p><italic>B</italic><sub><italic>s</italic></sub>[] and <italic>c</italic>() values for the embedding of threads illustrated in <xref ref-type="fig" rid="fig2">Figure 2</xref>.</p></caption>
+<graphic xlink:href="051409_tbl1.tif"/>
+</table-wrap>
+</sec>
+<sec id="s3">
+<label>4</label>
+<title>Extracting Threads</title>
+<p>To reproduce <italic>T</italic> from <italic>G</italic>, and the gPBWT, consider each side <italic>s</italic> in <italic>G</italic> in turn. Establish how many threads begin (or, equivalently, end) at <italic>s</italic> by taking the minimum of <italic>c</italic>(<italic>x, s</italic>) for all sides <italic>x</italic> adjacent to <italic>s</italic>. If <italic>s</italic> has no incident edges, take the length of <italic>B</italic><sub><italic>s</italic></sub>[] instead. Call this number <italic>b</italic>. Then, for <italic>i</italic> running from 0 to <italic>b</italic>, exclusive, begin a new thread at <italic>n</italic>(<italic>s</italic>) with the sides [<italic>s</italic>, <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="051409_inline3.gif"/></alternatives></inline-formula>]. Next, we traverse from <italic>n</italic>(<italic>s</italic>) to the next node. Consult the <italic>B</italic><sub><italic>s</italic></sub>[<italic>i</italic>] entry. If it is the null side, stop traversing, yield the thread, and start again from the original node <italic>s</italic> with the next <italic>i</italic> value less than <italic>b</italic>. Otherwise, traverse to side <italic>s&#x2019;</italic> &#x003D; <italic>B</italic><sub><italic>s</italic></sub>[<italic>i</italic>]. Calculate the arrival index <italic>i&#x2019;</italic> as <italic>c</italic>(<inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="051409_inline4.gif"/></alternatives></inline-formula>, <italic>s&#x2019;</italic>) plus the number of entries in <italic>B</italic><sub><italic>s</italic></sub>[] before entry <italic>i</italic> that are also equal to <italic>s&#x2019;</italic>. This gives the index in <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="051409_inline5.gif"/></alternatives></inline-formula> of the thread being extracted. Then append <italic>s&#x2019;</italic> and <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="051409_inline6.gif"/></alternatives></inline-formula> to the growing thread, and repeat the traversal process with <italic>i</italic> &#x2190; <italic>i&#x2019;</italic> and <italic>s</italic> &#x2190; <italic>s&#x2019;</italic>, until the end of the thread is reached.</p>
+<p>This process will enumerate all threads in the graph, and will enumerate each such thread twice (once from each end). The threads merely need to be deduplicated (such that two enumerated threads produce one actual thread, as the original collection of embedded threads may have had duplicates) in order to produce the collection of embedded threads <italic>T</italic>. Pseudocode for thread extraction is shown in Algorithm 1.</p>
+<statement>
+<label>Algorithm 1</label>
+<title>Algorithm for extracting threads from a graph.</title>
+<p><bold>function</bold> starting_AT(<italic>Side, G, B</italic>[], <italic>c</italic>())</p>
+<p>&#x25B9; Count instances of threads starting at <italic>Side</italic>.</p>
+<p>&#x25B9; Replace by an access to a partial sum data structure if appropriate.</p>
+<p><bold>if</bold> <italic>Side</italic> has incident edges <bold>then</bold></p>
+<p><bold>return</bold> <italic>c</italic>(<italic>s,Side</italic>) for minimum <italic>s</italic> over all sides adjacent to <italic>Side</italic>.</p>
+<p><bold>else</bold></p>
+<p><bold>return</bold> LENGTH(<italic>B</italic><sub><italic>Side</italic></sub>[])</p>
+<p><bold>function</bold> RANK(<italic>b</italic>[], <italic>Index, Item</italic>)</p>
+<p>&#x25B9; Count instances of <italic>Item</italic> before <italic>Index</italic> in <italic>b</italic>[].</p>
+<p>&#x25B9; Replace by RANK of a rank-select data structure if appropriate.</p>
+<p><italic>Rank</italic> &#x27F5;;0</p>
+<p><bold>for</bold> <italic>i</italic> &#x27F5; 0; <italic>i</italic> &#x003C; <italic>Indec i</italic> &#x27F5; <italic>i</italic> &#x002B; 1 <bold>do</bold></p>
+<p><bold>if</bold> <italic>b</italic>[<italic>i</italic>] &#x003D; <italic>Item</italic> <bold>then</bold></p>
+<p><italic>Rank</italic> &#x27F5;; <italic>Rank</italic> &#x002B; 1</p>
+<p><bold>return</bold> <italic>RANK</italic></p>
+<p><bold>function</bold> WHERE_TO(<italic>Side, Index, B</italic>[], <italic>c</italic>())</p>
+<p>&#x25B9; For thread visiting <italic>Side</italic> with <italic>Index</italic> in the reverse prefix sort order, get the corresponding sort index of the thread for the next side in the thread.</p>
+<p><bold>return</bold> <italic>c</italic>(<inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="051409_inline7.gif"/></alternatives></inline-formula>, <italic>B</italic><sub><italic>Sid</italic></sub> [<italic>Index</italic>]) &#x002B; R<sc>ank</sc>(<italic>B</italic><sub><italic>Side</italic></sub>[], <italic>Index, B</italic><sub><italic>Side</italic></sub>[<italic>Index</italic>])</p>
+<p><bold>function</bold> EXTRACT(<italic>G, c</italic>(), <italic>B</italic>[])</p>
+<p>&#x25B9; Extract all oriented threads from graph <italic>G</italic>.</p>
+<p><bold>for all</bold> Side <italic>s</italic> in <italic>G</italic> <bold>do</bold>
+<italic>TotalStarting</italic> &#x27F5; STARTING_AT(<italic>s</italic>, <italic>G, B</italic>[], <italic>c</italic>())</p>
+<p><bold>for</bold> <italic>i</italic> &#x27F5; 0; <italic>i</italic> &#x003C; <italic>TotalStarting</italic>; <italic>i</italic> &#x27F5; <italic>i</italic> &#x002B; 1 <bold>do</bold></p>
+<p><italic>Side</italic> &#x27F5; <italic>s</italic></p>
+<p><italic>Index</italic> &#x27F5; <italic>i</italic></p>
+<p><italic>Thread</italic> &#x27F5; [<italic>s</italic>, <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="051409_inline8.gif"/></alternatives></inline-formula>]</p>
+<p><bold>loop</bold></p>
+<p><italic>NextSide &#x27F5; <italic>B</italic><sub><italic>Side</italic></sub> [<italic>Index</italic>]</italic></p>
+<p><bold>if</bold> <italic>NextSide</italic> &#x003D; null <bold>then</bold></p>
+<p><bold>yield</bold> <italic>Thread</italic></p>
+<p><bold>break</bold></p>
+<p><italic>Thread</italic> &#x27F5; <italic>Thread</italic> &#x002B; [<italic>NextSide</italic>, <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="051409_inline9.gif"/></alternatives></inline-formula>]</p>
+<p><italic>Index</italic> &#x27F5; WHERE_TO(<italic>Side, Index, B</italic>[], <italic>c</italic>())</p>
+<p><italic>Side</italic> &#x27F5; <italic>NextSide</italic></p>
+</statement>
+</sec>
+<sec id="s4">
+<label>5</label>
+<title>Succinct Storage</title>
+<p>For the case of storing haplotype threads specifically, we can assume that, because of linkage, many threads in <italic>T</italic> are identical local haplotypes for long runs, diverging from each other only at relatively rare crossovers or mutations. Because of the reverse prefix sorting of the visits to each side, successive entries in the <italic>B</italic>[] arrays are thus quite likely to refer to locally identical haplotypes, and thus to contain the same value for the side to enter the next node on. Thus, the <italic>B</italic>[] arrays should benefit from run-length compression. Moreover, since (as will be seen below) one of the most common operations on the <italic>B</italic>[] arrays will be expected to be rank queries, a succinct representation, such as a collection of bit vectors or a dynamic wavelet tree, would be appropriate. To keep the alphabet of symbols in the <italic>B</italic>[] arrays small, it is possible to replace the stored sides for each <italic>B</italic>[] with numbers referring to the nodes adjacent to <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="051409_inline10.gif"/></alternatives></inline-formula></p>
+<p>We note that, for contemporary variant collections (e.g. the 1000 Genomes Project), the underlying graph <italic>G</italic> may be very large, while there may be relatively few threads (of the order of thousands) [<xref rid="c1" ref-type="bibr">1</xref>]. Implementers should thus consider combining multiple <italic>B</italic>[] arrays into a single data structure to minimize overhead.</p>
+</sec>
+<sec id="s5">
+<label>6</label>
+<title>Embedding Threads</title>
+<p>A trivial construction algorithm for the gPBWT is to independently construct <italic>B</italic><sub><italic>s</italic></sub>[] and <italic>c</italic>(<italic>s, s&#x2019;</italic>) for all sides <italic>s</italic> and oriented edges (<italic>s, s&#x2019;</italic>) according to their definitions above. However, this would be very inefficient. Here we present an efficient algorithm for gPBWT construction, in which the problem of constructing the gPBWT is reduced to the problem of embedding an additional thread.</p>
+<p>Each thread is embedded by embedding its two orientations, one after the other. To embed a thread orientation <italic>t</italic> &#x003D; [<italic>t</italic><sub>0</sub>, <italic>t</italic><sub>1</sub>,&#x2026;<italic>t</italic><sub>2<italic>N</italic></sub>, <italic>t</italic><sub>2<italic>N</italic></sub>&#x002B;1] we first look at node <italic>n</italic>(<italic>t</italic><sub>0</sub>), entering by <italic>t</italic><sub>0</sub>. We insert a new entry for this visit into <italic>B</italic><sub><italic>t</italic>0</sub>[], lengthening the array by one. The location of the new entry is near the beginning, before all the entries for visits arriving by edges, with the exact location determined by the arbitrary order imposed on thread orientations. Thus, its addition necessitates incrementing <italic>c</italic>(<italic>s,t</italic><sub>0</sub>) by one for all oriented edges (<italic>s,t</italic><sub>0</sub>) incident on <italic>t</italic><sub>0</sub> from sides <italic>s</italic> in <italic>G</italic>. If no other order of thread orientations suggests itself, the order created by their addition to the graph will suffice, in which case the new entry can be placed at the beginning of <italic>B</italic><sub><italic>t</italic>0</sub>[]. We call the location of this entry <italic>k</italic>. The value of the entry will be <italic>t</italic><sub>2</sub>, or, if <italic>t</italic> is not sufficiently long, the null side, in which case we have finished.</p>
+<p>If we have not finished the thread, we first increment <italic>c</italic>(<italic>s,t</italic><sub>2</sub>) by one for each side <italic>s</italic> adjacent to <italic>t</italic><sub>2</sub> and after <italic>t</italic><sub>1</sub> in the global ordering of sides. This updates the <italic>c</italic>() function to account for the insertion into <italic>B</italic><sub><italic>t</italic>2</sub>[] we are about to make. We then find the index at which the next visit in <italic>t</italic> ought to have its entry in <italic>B</italic><sub><italic>t</italic>2</sub>[], given that the entry of the current visit in <italic>t</italic> falls at index <italic>k</italic> in <italic>B</italic><sub><italic>t</italic>0</sub>[]. This is given by the same procedure used to calculate the arrival index when extracting threads, denoted as <italic>WHERE_TO</italic>(<italic>t</italic><sub>1</sub>, <italic>k</italic>) (see Alg. 1). Setting <italic>k</italic> to this value, we can then repeat the preceding steps to embed <italic>t</italic><sub>2</sub>, <italic>t</italic><sub>3</sub>, etc. until <italic>t</italic> is exhausted and its embedding terminated with a null-side entry. Pseudocode for this process is shown in Algorithm 2.</p>
+<p>Assuming that the <italic>B</italic>[] array information is both indexed for <italic>O</italic>(<italic>log</italic>(<italic>n</italic>)) rank queries and stored in such a way as to allow <italic>O</italic>(<italic>log</italic>(<italic>n</italic>)) insertion and update (in the length of the array <italic>n</italic>), this insertion algorithm is <italic>O</italic>(<italic>N</italic> &#x00B7; <italic>log</italic>(<italic>N</italic> &#x002B; <italic>E</italic>)) in the length of the thread to be inserted (<italic>N</italic>) and the total length of existing threads (<italic>E</italic>). Inserting <italic>M</italic> threads of length <italic>N</italic> will take <italic>O</italic>(<italic>M</italic> &#x00B7; <italic>N</italic> &#x00B7; <italic>log</italic>(<italic>M &#x00B7; N</italic>)) time.</p>
+<statement>
+<label>Algorithm 2</label>
+<title>Algorithm for embedding a thread in a graph.</title>
+<p><bold>procedure</bold> INSERT(<italic>b</italic>[], <italic>Index, Item)</italic></p>
+<p>&#x25B9; Insert <italic>Item</italic> at <italic>Index</italic> in <italic>b</italic>[].</p>
+<p>&#x25B9; Replace by insert of a rank-select-insert data structure if appropriate.</p>
+<p>LENGTH(<italic>b</italic>[]) &#x27F5; LENGTH(<italic>b</italic>[]) &#x002B; 1 &#x25B9; Increase length of the array by 1</p>
+<p><bold>for</bold> <italic>i</italic> &#x27F5; LENGTH(<italic>b</italic>[]) &#x2212; 1; <italic>i</italic> &#x003E; <italic>Index; i</italic> &#x27F5; <italic>i</italic> &#x2212; 1 <bold>do</bold></p>
+<p><italic>b</italic>[<italic>i</italic>] &#x27F5; <italic>b</italic>[<italic>i</italic> &#x2212; 1]</p>
+<p><italic>b</italic>[<italic>Index</italic>] &#x003D; <italic>Item</italic></p>
+<p><bold>procedure</bold> INCREMENT_C(<italic>Side, NextSide, c</italic>())</p>
+<p>&#x25B9; Modify <italic>c</italic>() to reflect the addition of a visit to the edge (<italic>Side, NextSide</italic>).</p>
+<p><bold>for all</bold> side <italic>s</italic> adjacent to <italic>NextSide</italic> in <italic>G</italic> <bold>do</bold></p>
+<p>if <italic>s</italic> &#x003E; <italic>Side</italic> in side ordering <bold>then</bold></p>
+<p><italic>c</italic>(<italic>s, NextSide</italic>) &#x27F5; <italic>c</italic>(<italic>s, NextSide</italic>) &#x002B; 1</p>
+<p><bold>procedure</bold> EMBED(<italic>t, G, B</italic>[], <italic>c</italic>())</p>
+<p>&#x25B9; Embed an oriented thread <italic>t</italic> in graph <italic>G</italic>.</p>
+<p>&#x25B9; Call this twice to embed it for search in both directions.</p>
+<p><italic>k</italic> &#x27F5; 0 &#x25B9; Index we are at in <italic>B</italic><sub>t<sub>2i</sub></sub> []</p>
+<p><bold>for</bold> <italic>i</italic> &#x27F5; 0; 2<italic>i</italic> &#x003C; LENGTH(<italic>t</italic>); <italic>i &#x27F5; <italic>i</italic> &#x002B; 1 <bold>do</bold></italic></p>
+<p><bold>if</bold> 2<italic>i</italic> &#x002B; 2 &#x003C; LENGTH(<italic>t</italic>) <bold>then</bold></p>
+<p>&#x25B9; The thread has somewhere to go next.</p>
+<p>INSERT(<italic>B</italic><sub>t<sub>2i</sub></sub>[], <italic>k,t</italic><sub>2i</sub>&#x002B;a2)</p>
+<p>INCREMENT_C(<italic>t</italic><sub>2i</sub>&#x002B;1, <italic>t</italic><sub>2i</sub>&#x002B;2, <italic>c</italic>())</p>
+<p><italic>k</italic> &#x27F5; WHERE_TO(<italic>t</italic><sub>2i</sub>, <italic>k</italic>, <italic>B</italic>[], <italic>c</italic>())</p>
+<p><bold>else</bold></p>
+<p>INSERT(<italic>B</italic><sub>t<sub>2i</sub></sub> [], <italic>k</italic>, null)</p>
+</statement>
+</sec>
+<sec id="s6">
+<label>7</label>
+<title>Counting Occurrences of Subthreads</title>
+<p>The generalized PBWT data structure presented here preserves some of the original PBWT&#x2019;s efficient haplotype search properties [<xref rid="c2" ref-type="bibr">2</xref>]. The algorithm for counting all subthread instances in <italic>T</italic> of a new thread orientation <italic>t</italic> runs as follows.</p>
+<p>We define &#x0192;<sub><italic>i</italic></sub> and <italic>g</italic><sub><italic>i</italic></sub> as the first and past-the-last indexes for the range of visits of threads in <italic>T</italic> to side <italic>t</italic><sub>2i</sub>, ordered as in <italic>B</italic><sub>t<sub>2i</sub></sub>[].</p>
+<p>For the first step of the algorithm, &#x0192;<sub>0</sub> and <italic>g</italic><sub><italic>0</italic></sub> are initialized to 0 and the length of <italic>B</italic><sub>t<sub>0</sub></sub>[], respectively, so that they select all visits to node <italic>n</italic>(<italic>t</italic><sub>0</sub>), seen as entering through <italic>t</italic><sub>0</sub>. On subsequent steps, &#x0192;<sub>i&#x002B;1</sub> and <italic>g</italic><sub>i&#x002B;1</sub>, are calculated from &#x0192;<italic>i</italic> and <italic>g</italic><sub>i</sub> merely by applying the <italic>WHERE_TO</italic>() function (see Alg. 1). We calculate &#x0192;<sub>i&#x002B;</sub>1 &#x003D; WHERE_TO(<italic>t</italic><sub>2i</sub>, &#x0192;<sub>i</sub>) and <italic>g</italic><sub><italic>i</italic>&#x002B;1</sub> &#x003D; WHERE_TO(<italic>t</italic><sub>2i</sub>, <italic>g</italic><sub><italic>i</italic></sub>).</p>
+<p>This process can be repeated until either &#x0192;<sub>i&#x002B;1</sub> &#x2265; <italic>g</italic><sub><italic>i</italic>&#x002B;1</sub>, in which case we can conclude that the threads in the graph have no matches to <italic>t</italic> in its entirety, or until <italic>t</italic><sub>2<italic>N</italic></sub>, the last entry in <italic>t</italic>, has its range &#x0192;<italic>N</italic> and <italic>g</italic><sub><italic>N</italic></sub> calculated, in which case <italic>g</italic><sub>N</sub> &#x2014; &#x0192;<italic>N</italic> gives the number of occurrences of <italic>t</italic> as a subthread in threads in <italic>T</italic>. Moreover, given the final range from counting the occurrences for a thread <italic>t</italic>, we can count the occurrences of any longer thread that begins with <italic>t</italic>, merely by continuing the algorithm with the additional entries in the longer thread.</p>
+<p>Assuming that the <italic>B</italic>[] arrays have been indexed for <italic>O</italic>(1) rank queries, the algorithm is <italic>O</italic>(<italic>N</italic>) in the length of the subthread <italic>t</italic> to be searched for, and has a runtime independent of the number of occurrences of <italic>t</italic>. Pseudocode is shown in Algorithm 3.</p>
+<statement>
+<label>Algorithm 3</label>
+<title>Algorithm for searching for a subthread in the graph.</title>
+<p><bold>function</bold> COUNT(<italic>t, G, B</italic>[], <italic>c</italic>())</p>
+<p>&#x25B9; Count occurrences of subthread <italic>t</italic> in graph <italic>G</italic>.</p>
+<p>&#x0192; &#x27F5; 0</p>
+<p><italic>g</italic> &#x27F5; LENGTH(<italic>B</italic><sub>t<sub>0</sub></sub> [])</p>
+<p><bold>for</bold> <italic>i</italic> &#x27F5; 0; 2(<italic>i</italic> &#x002B; 1) &#x003C; LENGTH(<italic>t</italic>); <italic>i</italic> &#x27F5; <italic>i</italic> &#x002B; 1 <bold>do</bold></p>
+<p>&#x0192; &#x27F5; WHERE_TO(<italic>t</italic><sub>2i</sub>, &#x0192;, <italic>B</italic>[], <italic>c</italic>())</p>
+<p><italic>g</italic> &#x27F5; WHERE_TO(<italic>t</italic><sub>2i</sub>, <italic>g</italic>, <italic>B</italic>[], <italic>c</italic>())</p>
+<p><bold>if</bold> &#x0192; &#x2265; <italic>g</italic> <bold>then</bold></p>
+<p><bold>return</bold> 0</p>
+<p><bold>return</bold> <italic>g</italic> &#x2212; &#x0192;</p>
+</statement>
+</sec>
+<sec id="s7">
+<label>8</label>
+<title>Results</title>
+<p>The gPBWT was implemented within xg, the succinct graph indexing component of the vg variation graph toolkit [<xref rid="c3" ref-type="bibr">3</xref>]. Due to the succinct data structure libraries employed, efficient integer vector insert operations were not possible, and so a batch construction algorithm, applicable only to directed acyclic graphs, was implemented. A modified release of vg, which can be used to replicate the results shown here, is available from <ext-link ext-link-type="uri" xlink:href="https://github.com/adamnovak/vg/releases/tag/gpbwt-paper">https://github.com/adamnovak/vg/releases/tag/gpbwt-paper</ext-link>.</p>
+<p>The modified vg was used to create a variation graph for human chromosome 22, using the 1000 Genomes Phase 3 VCF on the hg19 assembly, embedding information about the correspondence between VCF variants and graph elements [<xref rid="c1" ref-type="bibr">1</xref>]. Next, haplotype information for the 5,008 haplotypes stored in the VCF was imported and stored in a gPBWT-enabled xg index for the graph, using the batch construction algorithm mentioned above. In cases where the VCF specified self-inconsistent haplotypes (for example, a haplotype with a G to C SNP and a G to GAT insertion at the same position), they were broken apart at the inconsistent positions. The xg indexing and gPBWT construction process took 25 hours and 45 minutes using a single indexing thread on an Intel Xeon X7560 running at 2.27 GHz, and consumed 344 GB of memory. The high memory usage was a result of the decision to retain the entire data set in memory in an uncompressed format during construction. However, the resulting xg index was 662 MB on disk, of which 573 MB was used by the gPBWT. Information on the 5,008 haplotypes across the 1,103,547 variants was thus stored in about 1.7 bits per phased diploid genotype in the succinct self-indexed representation, or 0.018 bits per haplotype base. Extrapolating linearly from the 51 megabases of chromosome 22 to the entire 3.1 gigabase human reference genome, a similar index of the entire 1000 Genomes dataset would take 40 GB, with 35 GB devoted to the gPBWT. This is well within the storage and memory capacities of modern computer systems.</p>
+<sec id="s7a">
+<title>Random Walks</title>
+<p>To evaluate query performance, 1 million random walks of 100 bp each were simulated from the graph. To remove walks covering ambiguous regions, walks that contained two or more N bases in a row were eliminated, leaving 686,897 random walks. The number of haplotypes in the gPBWT index consistent with each walk was then determined, taking 81.30 seconds in total using a single query thread on the above-mentioned Xeon system. The entire operation took a maximum of 685 MB of memory, indicating that the on-disk index did not require significant expansion during loading to be usable. Overall, the gPBWT index required 118 microseconds per count operation on the 100 bp random walks. It was found that 317,681 walks, or 46&#x0025;, were not consistent with any haplotype in the graph. The distribution of of the number of haplotypes consistent with each random walk is visible in <xref ref-type="fig" rid="fig3">Figure 3</xref>.</p>
+<fig id="fig3" position="float" fig-type="figure">
+<label>Fig. 3.</label>
+<caption><p>Distribution (top) and cumulative distribution (bottom) of the number of 1000 Genomes Phase 3 haplotypes consistent with short paths in the chromosome 22 graph. Primary mappings of 101 bp reads with scores of 90 out of 101 or above (<italic>n</italic> &#x003D; 1, 509, 672) are the solid blue line. Secondary mappings meeting the same score criteria (<italic>n</italic> &#x003D; 57, 115) are the dashed green line. Simulated 100 bp random walks in the graph without consecutive N characters (<italic>n</italic> &#x003D; 686, 897) are the dotted red line. Consistent haplotypes were counted using the gPBWT support added to <monospace>vg</monospace> [<xref rid="c3" ref-type="bibr">3</xref>].</p></caption>
+<graphic xlink:href="051409_fig3.tif"/>
+</fig>
+</sec>
+<sec id="s7b">
+<title>Read Mapping</title>
+<p>To further evaluate the performance of the query implementation, 1000 Genomes Low Coverage Phase 3 reads for NA12878 that were mapped in the official alignment to chromosome 22 were downloaded and re-mapped to the chromosome 22 graph, using the xg/GCSA2-based mapper in vg, allowing for up to a single secondary mapping per read. The reads which mapped with scores of at least 90 points out of a maximum of 101 points (for a perfectly-mapped 101 bp read) were selected (so filtering out alignnments highly like to be erroneous), and broken down into primary and secondary mappings. The number of haplotypes in the gPBWT index consistent with each read&#x2019;s path through the graph was calculated (<xref ref-type="fig" rid="fig3">Figure 3</xref>). For 1,509,672 primary mappings, the count operation took 226.36 seconds in total, or 150 microseconds per mapping, again using 685 MB of memory. It was found that 13,918 of these primary mappings, or 0.9&#x0025;, and 1,280 of 57,115 secondary mappings, or 2.2&#x0025;, were not consistent with any haplotype path in the graph. These read mappings, despit having reasonable edit based scores, may represent rare recombinations, but the set is also likely to be enriched for spurious mappings.</p>
+</sec>
+</sec>
+<sec id="s8">
+<label>9</label>
+<title>Discussion</title>
+<p>We have introduced the gPBWT, a graph based generalization of the PBWT. We have demonstrated that a gPBWT can be built for a substantial genome graph (all of human chromosome 22 and the associated chromosome 22 variants in 1000 Genomes), and extrapolated that a whole-genome gPBWT could be constructed for all 5,008 haplotypes of the 1000 Genomes data and stored in the main memory of a contemporary computer. Looking forward, this combination of genome graph and gPBWT could potentially enable efficient mapping not just to one reference genome or collapsed genome graph, but simultaneously to a large set of genomes related by a genome graph.</p>
+</sec>
+</body>
+<back>
+<ack>
+<label>10</label>
+<title>Acknowledgements</title>
+<p>We would like to thank Richard Durbin for inspiration and David Haussler for his extremely helpful comments on the manuscript.</p>
+</ack>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>1.</label><mixed-citation publication-type="journal"><collab>1000 Genomes Project Consortium</collab>, <etal>et al.</etal>: <article-title>A global reference for human genetic variation</article-title>. <source>Nature</source> <volume>526</volume>(<issue>7571</issue>), <fpage>68</fpage>&#x2013;<lpage>74</lpage> (<year>2015</year>)</mixed-citation></ref>
+<ref id="c2"><label>2.</label><mixed-citation publication-type="journal"><string-name><surname>Durbin</surname>, <given-names>R.</given-names></string-name>: <article-title>Efficient haplotype matching and storage using the positional Burrows&#x2013; Wheeler transform (PBWT)</article-title>. <source>Bioinformatics</source> <volume>30</volume>(<issue>9</issue>), <fpage>1266</fpage>&#x2013;<lpage>1272</lpage> (<year>2014</year>)</mixed-citation></ref>
+<ref id="c3"><label>3.</label><mixed-citation publication-type="other"><string-name><surname>Garrison</surname>, <given-names>E.</given-names></string-name>: <article-title>vg: the variation graph toolkit</article-title> (<year>2016</year>), <ext-link ext-link-type="uri" xlink:href="https://github.com/vgteam/vg/blob/80e823f5d241796f10b7af6284e0d3d3d464c18f/doc/paper/main.tex">https://github.com/vgteam/vg/blob/80e823f5d241796f10b7af6284e0d3d3d464c18f/doc/paper/main.tex</ext-link></mixed-citation></ref>
+<ref id="c4"><label>4.</label><mixed-citation publication-type="journal"><string-name><surname>Lunter</surname>, <given-names>G.</given-names></string-name>: <article-title>Fast haplotype matching in very large cohorts using the Li and Stephens model</article-title>. <source>bioRxiv</source> (<year>2016</year>), <ext-link ext-link-type="uri" xlink:href="http://biorxiv.org/content/early/2016/04/12/048280">http://biorxiv.org/content/early/2016/04/12/048280</ext-link></mixed-citation></ref>
+<ref id="c5"><label>5.</label><mixed-citation publication-type="journal"><string-name><surname>Medvedev</surname>, <given-names>P.</given-names></string-name>, <string-name><surname>Brudno</surname>, <given-names>M.</given-names></string-name>: <article-title>Maximum likelihood genome assembly</article-title>. <source>Journal of Computational Biology</source> <volume>16</volume>(<issue>8</issue>), <fpage>1101</fpage>&#x2013;<lpage>1116</lpage> (<year>2009</year>)</mixed-citation></ref>
+<ref id="c6"><label>6.</label><mixed-citation publication-type="journal"><string-name><surname>Paten</surname>, <given-names>B.</given-names></string-name>, <string-name><surname>Novak</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Haussler</surname>, <given-names>D.</given-names></string-name>: <article-title>Mapping to a reference genome structure</article-title>. <source>ArXiv e-prints</source> (<month>Apr</month> <year>2014</year>), <ext-link ext-link-type="uri" xlink:href="http://arxiv.org/abs/1404.5010">http://arxiv.org/abs/1404.5010</ext-link></mixed-citation></ref>
+</ref-list>
+</back>
+</article>
