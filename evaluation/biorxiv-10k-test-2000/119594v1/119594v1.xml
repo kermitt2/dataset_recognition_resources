@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/119594</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Neuroscience</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Neurodesign: Optimal experimental designs for task fMRI</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0001-9030-2202</contrib-id>
+<name><surname>Durnez</surname><given-names>Joke</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="aff" rid="a2">2</xref>
+<xref ref-type="aff" rid="a3">3</xref>
+</contrib>
+<contrib contrib-type="author">
+<name><surname>Blair</surname><given-names>Ross</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0001-6755-0259</contrib-id>
+<name><surname>Poldrack</surname><given-names>Russell A.</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>Department of Psychology, Stanford University</institution>,</aff>
+<aff id="a2"><label>2</label><institution>Stanford Center for Reproducible Neuroscience, Stanford University</institution></aff>
+<aff id="a3"><label>3</label><institution>Parietal, Neurospin, Institut National de Recherche en Informatique et en Automatique</institution></aff>
+</contrib-group>
+<pub-date pub-type="epub"><year>2017</year>
+</pub-date>
+<elocation-id>119594</elocation-id>
+<history>
+<date date-type="received"><day>23</day><month>3</month><year>2017</year></date>
+<date date-type="accepted"><day>23</day><month>3</month><year>2017</year></date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2017, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2017</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="119594.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract><title>Abstract</title>
+<p>A recent stream of alarming publications questions the validity of published neuroimaging findings. As a consequence, fMRI teams worldwide are encouraged to increase their sample sizes to reach higher power and thus increase the positive predictive value of their findings. However, an often-overlooked factor influencing power is the experimental design: by choosing the appropriate experimental design, the statistical power of a study can be increased within subjects. By optimizing the order and timing of the stimuli, power can be gained at no extra cost. To facilitate design optimization, we created a python package and web-based tool called Neurodesign to maximize the detection power or estimation efficiency within subjects, while controlling for psychological factors such as the predictability of the design. We implemented the genetic algorithm, introduced by <xref ref-type="bibr" rid="c13">Wager and Nichols (2003)</xref> and further improved by <xref ref-type="bibr" rid="c10">Kao et al. (2009)</xref>, to optimize the experimental design. The toolbox allows more complex experimental setups than existing toolboxes, while the GUI provides a more user-friendly experience. The toolbox is accessible online at <ext-link ext-link-type="uri" xlink:href="http://www.neuropowertools.org">www.neuropowertools.org</ext-link>.</p>
+</abstract>
+<counts>
+<page-count count="17"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1"><label>1</label><title>Introduction</title>
+<p>A recent stream of alarming publications questions the validity of published neuroimaging findings (<xref ref-type="bibr" rid="c6">Eklund et al., 2016</xref>; <xref ref-type="bibr" rid="c9">Ioannidis, 2005</xref>; <xref ref-type="bibr" rid="c12">Open Science Collaboration, 2015</xref>). At the core of the reproducibility crisis is the lack of power typically observed in neuroimaging <xref ref-type="bibr" rid="c2">Button et al. (2013)</xref>, and more specifically, fMRI studies (<xref ref-type="bibr" rid="c5">Durnez et al., 2014)</xref>. The signal measured in fMRI is known to be very noisy, while the hypothesised effects are small, such that a push for larger sample sizes promises a more powerful future for neuroimaging. Different power analysis strategies offer a way to optimise the sample size for a specific power level (<xref ref-type="bibr" rid="c5">Durnez et al., 2014</xref>; <xref ref-type="bibr" rid="c11">Mumford and Nichols, 2008</xref>; <xref ref-type="bibr" rid="c8">Hayasaka et al., 2007</xref>; <xref ref-type="bibr" rid="c4">Durnez et al., 2016</xref>). However, fMRI data are typically acquired and aggregated on two levels: within and between subjects. As such, increasing the power of an fMRI experiment can be achieved by increasing the number of subjects, but also via the within subjects experimental design. This is especially true for smaller and more subtle effects, where the power curve is characterised by a slower increase, and thus the resulting power is more affected by the number of subjects and the number of time points. In addition to the duration of the experiment for each subject, the order and timing of different conditions within the experiment also influence the power of the resulting analyses. The goal in task fMRI experiments is often one of two: detection or estimation. Detection refers to detecting the difference in brain activation between conditions or groups, while estimation relates to estimating the exact shape of the evoked fMRI response (called the haemodynamic response function, HRF). Ideally, the design of an fMRI experiment changes according to the specific research question asked. An optimal design with respect to these two distinct research questions are said to maximize the detection power or the estimation efficiency respectively. It is often argued that those two goals are opposite and an increase in detection power inevitably leads to a decrease of estimation efficiency. For example, when two trials of the same condition follow each other closely, the signal tends to accumulate linearly (<xref ref-type="bibr" rid="c3">Dale, 1999</xref>), which makes it easier to detect. Therefore, the experiments often consist of blocks of the same condition. This type of design is called a blocked design. On the contrary, the accumulation (and saturation) of the measured signal conceals the shape of the HRF. To estimate the HRF, scientists often opt for an event-related design, where both the timing and order of conditions are randomised. However, <xref ref-type="bibr" rid="c10">Kao et al. (2009)</xref> show that the necessary trade-off between detection and estimation can be improved using certain optimisation algorithms. Another important aspect in an fMRI design is the psychological experience of the subject in the scanner. With a blocked design, the design becomes very predictable for subjects which can potentially bias the psychological function hypothesised in the first place. To minimise the predictability, <xref ref-type="bibr" rid="c1">Buracas and Boynton (2002)</xref> propose the use of m-sequences. Very often, the best design is a combination of a maximal signal with low predictability. Therefore, <xref ref-type="bibr" rid="c13">Wager and Nichols (2003)</xref> suggest the use of a genetic algorithm to find an optimisation between estimation efficiency, detection power and predictability. This algorithm optimises a weighted average of different outcome measures, with the weights depending on the hypothesis and the expected outcome of the experiment. Later, the algorithm has been further fine tuned and compared with other approaches (<xref ref-type="bibr" rid="c10">Kao et al., 2009</xref>). In this paper, we present an implementation of the genetic algorithm for fMRI designs, which is both available as a python module as well as a GUI web tool, available at <ext-link ext-link-type="uri" xlink:href="http://www.neuropowertools.org">www.neuropowertools.org</ext-link>. The paper is structured as follows: we start with a general description of the methodology in <xref ref-type="sec" rid="s2">section 2</xref>. We show how designs can be compared and optimised using our python module in <xref ref-type="sec" rid="s3">Section 3</xref>. An overview of the GUI is given in <xref ref-type="sec" rid="s4">Section 4</xref>. Finally, we conclude and compare to other existing software in <xref ref-type="sec" rid="s5">Section 5</xref>.</p>
+</sec>
+<sec id="s2"><label>2</label><title>Design optimisation using the genetic algorithm</title>
+<sec id="s2a"><label>2.1</label><title>Statistical measures of design optimality</title>
+<p>The signal measured using fMRI is the blood oxygen level dependent (BOLD) signal, which is a assumed to be related to the neural signal via convolution with a hemodynamic response function (HRF). We consider the general linear model as the underlying model for the statistical objective:
+<disp-formula><alternatives><graphic xlink:href="119594_ueqn1.gif"/></alternatives></disp-formula></p>
+<p>We denote <italic>Y</italic> as the measured signal. <italic>Z</italic> represents the design matrix, <italic>&#x03B2;</italic> is the response amplitude for each column/condition in <italic>X</italic> and <italic>&#x03F5;</italic> the error. We consider two types of design matrices <italic>X</italic>: the convolved model and the finite impulse response (FIR) model. <xref ref-type="fig" rid="fig1">Figure 1</xref> shows an example of both models. The first model aims to estimate the amplitude of the signal, while the goal of the latter is estimating the exact shape of the HRF.</p>
+<fig id="fig1" position="float" fig-type="figure"><label>Figure 1:</label>
+<caption>
+<p>An experimental fMRI design with one stimulus type and two common models used in the GLM when modeling the resulting BOLD signal. The first panel shows the timeseries of the stimulus onsets. The second panel shows the stimulus onsets convolved with the double-gamma HRF, which can be interpreted as the expected BOLD signal if the measurement is related to the task. The parameter <italic>&#x03B2;</italic> in equation 1 with this model represents the amplitude of the signal related to the task. The third panel shows the FIR model, with each regressor a shifted version of the stimulus onsets. The <italic>&#x03B2;</italic>-parameters represent the amplitude of the HRF at specific time points following stimulus onset. Units on the x-axis are seconds. Units on the y-axis are removed, as these are meaningless and often rescaled to have unit height.</p>
+</caption>
+<graphic xlink:href="119594_fig1.tif"/>
+</fig>
+<p>Often, researchers are interested in specific hypotheses concerning particular combinations of parameters. The parameter of interest can be estimated using the least squares estimator:
+<disp-formula><alternatives><graphic xlink:href="119594_ueqn2.gif"/></alternatives></disp-formula> and its variance,
+<disp-formula><alternatives><graphic xlink:href="119594_ueqn3.gif"/></alternatives></disp-formula>
+with <italic>c</italic> the contrast vector of interest. To account for the specific character of fMRI data, we alter the model slightly. Because fMRI timeseries data exhibit substantial temporal autocorrelation, the data are assumed to follow the covariance matrix <italic>V</italic>, where off-diagonal values represent the correlation between measurements at different time points. Furthermore, a regressor <italic>S</italic>, representing low-frequency noise components, is added to the model (see <xref ref-type="bibr" rid="c10">Kao et al. (2009)</xref> for detailed derivations). The resulting variance of the estimator becomes:
+<disp-formula><alternatives><graphic xlink:href="119594_ueqn4.gif"/></alternatives></disp-formula> with <italic>W</italic> = <italic>V &#x2212; VS</italic>&#x2032;(<italic>SV S</italic>&#x2032;)<sup>-1</sup><italic>SV</italic> An optimal experimental design with respect to the estimator minimises the variance of the estimator. We will therefore quantify the optimality of the design as <italic>c</italic>(<italic>X&#x2032;WX</italic>)<sup>&#x2212;1</sup><italic><sub>c</sub></italic>&#x2032; Most often, an fMRI experiment has multiple contrasts of interest, <italic>c</italic>(<italic>X&#x2032;WX</italic>)<sup>&#x2212;1</sup><italic>c</italic>&#x2032; becomes a square matrix. With <italic>r<sub>c</sub></italic> the number of contrasts, there are two common ways to quantify the optimality of the design:
+<disp-formula><alternatives><graphic xlink:href="119594_ueqn5.gif"/></alternatives></disp-formula></p>
+<p>We denote <italic>F<sub>e</sub></italic> as the estimation efficiency if <italic>X</italic> is a FIR, and <italic>F<sub>d</sub></italic> as the detection power if <italic>X</italic> is a convolved design matrix.</p>
+</sec>
+<sec id="s2b"><label>2.2</label><title>Psychological measures of design optimality</title>
+<p>Apart from the statistical concept of design efficiency, it is important to account for psychological factors that might render the experimental design invalid. The most important factor is predictability. For example in experiments addressing cognitive control, such as a stop-signal task, it is of the utmost importance that the trial type on any given trial cannot be easily predicted from the trial type on the previous trial, to avoid psychological confounding of the experiment. We quantify the optimality of the design in terms of confounding as:
+<disp-formula><alternatives><graphic xlink:href="119594_ueqn6.gif"/></alternatives></disp-formula> where <inline-formula><alternatives><inline-graphic xlink:href="119594_inline1.gif"/></alternatives></inline-formula> is the number of trials of type <italic>i</italic> at timepoint <italic>t</italic> preceding a trial of type <italic>j</italic> at timepoint <italic>t</italic> &#x002B; <italic>r</italic>. <italic>P<sub>i</sub></italic> is the proportion that trial should occur in the experiment. IF <italic>F<sub>c</sub></italic> = 0, there are no unforeseen contingencies between trial types. The final optimality criterion controls the desired trial type frequencies: <inline-formula><alternatives><inline-graphic xlink:href="119594_inline2.gif"/></alternatives></inline-formula>, with <italic>n<sub>i</sub></italic> the number of trials of type <italic>i</italic>.</p>
+</sec>
+<sec id="s2c"><label>2.3</label><title>Multi-objective criterion</title>
+<p>To ensure comparability across different optimality criteria, we first rescale the the different optimality criterion to a scale of 0 to 1 as in <xref ref-type="bibr" rid="c10">Kao et al. (2009)</xref>.</p>
+<p>To find the maximum <italic>F<sub>d</sub></italic> and <italic>F<sub>e</sub></italic> possible, we first run an optimisation with weights 1 for respectively <italic>F<sub>d</sub></italic> and <italic>F<sub>e</sub></italic> and weights 0 for the other optimality criteria. In the multi-objective criterion, the <italic>F<sub>d</sub></italic> and <italic>F<sub>e</sub></italic> scores are divided by their respective maximum to ensure scores between 0 and 1. For <italic>F<sub>f</sub></italic> and <italic>F<sub>c</sub></italic>, the score for the worst possible design (a design with only the least probable stimulus) is taken as the maximum score. Second, whereas larger <italic>F<sub>e</sub></italic> and <italic>F<sub>d</sub></italic> represent better design, the opposite is true for <italic>F<sub>c</sub></italic> and <italic>F<sub>f</sub></italic>. Therefore the scores for <italic>F<sub>c</sub></italic> and <italic>F<sub>f</sub></italic> are subtracted from 1. As such, the resulting optimality criteria can be written as
+<disp-formula><alternatives><graphic xlink:href="119594_ueqn7.gif"/></alternatives></disp-formula></p>
+<p>As no design can ensure optimality in all four optimality criteria, the goal of any design optimisation depends on the researcher&#x2019;s goal of the experiment. Given prespecified weights <italic>w<sub>i</sub></italic> with <italic>i</italic> = <italic>c, d, e, f</italic>, &#x2211;<italic><sub>i</sub> w<sub>i</sub></italic> = 1, <italic>w<sub>i</sub></italic> &#x2265; 0, we define the weighted optimality criterion as: <italic>F</italic>&#x002A; = <italic>w<sub>c</sub>F<sub>c</sub></italic> &#x002B; <italic>w<sub>d</sub>F<sub>d</sub></italic> &#x002B; <italic>w<sub>e</sub>F<sub>e</sub></italic> &#x002B; <italic>w<sub>f</sub>F<sub>f</sub></italic>.</p>
+</sec>
+<sec id="s2d"><label>2.4</label><title>Genetic algorithm</title>
+<p>A genetic algorithm is a method for solving optimisation problems inspired by natural selection in biological evolution. Contrary to classical optimisation algorithms, a genetic algorithm generates a population of points at each iteration. A graphic representation of the genetic algorithm with an fMRI example is shown in <xref ref-type="fig" rid="fig2">Figure 2</xref>. The steps of the genetic algorithm are.
+<list list-type="order">
+<list-item><p>Create G initial designs.</p></list-item>
+<list-item><p><bold>Crossover.</bold> Pair the best G/2 designs with each other.</p></list-item>
+<list-item><p><bold>Mutation.</bold> Randomly switch q&#x0025; of all trials by random trial types.</p></list-item>
+<list-item><p><bold>Immigration.</bold> Add new random designs to the population.</p></list-item>
+<list-item><p><bold>Natural selection.</bold> Compute optimality scores and select G best designs</p></list-item>
+<list-item><p>Repeat step 2-5 until a stopping rule is met.</p></list-item>
+</list></p>
+<fig id="fig2" position="float" fig-type="figure"><label>Figure 2:</label>
+<caption>
+<p>Graphical representation of the genetic algorithm. The examples in each step are pieces of experimental designs with 3 different trial types. In the example, the inter-trial interval is ignored.</p>
+</caption>
+<graphic xlink:href="119594_fig2.tif"/>
+</fig>
+</sec>
+</sec>
+<sec id="s3"><label>3</label><title>Neurodesign, python module</title>
+<sec id="s3a"><label>3.1</label><title>Installation</title>
+<p>NeuroDesign is available on <bold>PyPi</bold> and can be installed as:</p>
+<p><monospace>pip install neurodesign</monospace></p>
+<p>Next, we will give an introduction to the python module. For all functionality, please refer to the manual.</p>
+</sec>
+<sec id="s3b"><label>3.2</label><title>Specifying the characteristics of the experiment</title>
+<p>In a first step, the experiment should be described in the class called <bold>experiment</bold>. This contains general information, such as the number of stimuli and the duration of the experiment, but also more specific information, such as the model with which the inter trial intervals (ITI) are sampled. This function will generate the assumed covariance matrix, the drift function and the whitening matrix. All parameters are described in <xref ref-type="table" rid="tbl1">Table 1</xref>, while a graphical representation of components of an experiment are described in <xref ref-type="fig" rid="fig3">Figure 3</xref>. We define a simple experimental setup with 20 trials and 3 conditions, which we will use to exemplify the next functions:</p>
+<p><preformat>
+from neurodesign import geneticalgorithm
+EXP = geneticalgorithm.experiment(
+   TR=1.2,
+   n_trials=20,
+   P = [0.3,0.3,0.4],
+   C = [[1,-1,0],[0,1,-1]],
+   n_stimuli = 3,
+   rho = 0.3,
+   stim_duration=1,
+   ITImodel = &#x2018;uniform&#x2019;,
+   ITImin = 2,
+   ITImax=4
+   )
+</preformat></p>
+<table-wrap id="tbl1" orientation="portrait" position="float"><label>Table 1:</label>
+<caption><p>Arguments for object of class <bold>geneticalgorithm.experiment</bold></p></caption>
+<graphic xlink:href="119594_tbl1.tif"/>
+</table-wrap>
+<fig id="fig3" position="float" fig-type="figure"><label>Figure 3:</label>
+<caption>
+<p>The basic layout of an experimental trial</p>
+</caption>
+<graphic xlink:href="119594_fig3.tif"/>
+</fig>
+</sec>
+<sec id="s3c"><label>3.3</label><title>Generating a design matrix</title>
+<p>Within the defined experimental setup, we can now define a design matrix, develop the design matrix and compute the optimality scores using the class <bold>design</bold>. We use equal weights for the different optimality criteria for the weighted average optimality attribute. The only input required is the stimulus order, the ITI&#x2019;s and an object of class <bold>geneticalgorithm.experiment</bold>:</p>
+<p><preformat>
+from neurodesign import geneticalgorithm
+DES1 = geneticalgorithm.design(
+   order = [0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0,1],
+   ITI = [2]&#x002A;20,
+   experiment=EXP
+)
+DES1.designmatrix(); DES1.FCalc(weights=[0.25,0.25,0.25,0.25])
+</preformat></p>
+<p>Now using matplotlib, we can plot the convolved design matrix:</p>
+<p><preformat>
+import matplotlib.pyplot as plt
+plt.plot(DES1.Xconv)
+</preformat></p>
+<fig id="ufig1" position="float" fig-type="figure">
+<graphic xlink:href="119594_ufig1.tif"/>
+</fig>
+<p>We can now define a new design and compare both designs:</p>
+<p><preformat>
+DES2 = geneticalgorithm.design(
+    order = [0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1],
+    ITI = [2]&#x002A;20,
+    experiment=EXP
+)
+DES2.designmatrix(); DES2.FCalc(weights=[0.25,0.25,0.25,0.25])
+print(&#x201C;Ff of Design 1: &#x201C;&#x002B;str(DES1.Ff))
+print(&#x201C;Ff of Design 2: &#x201C;&#x002B;str(DES2.Ff))
+print(&#x201C;Fd of Design 1: &#x201C;&#x002B;str(DES1.Fd))
+print(&#x201C;Fd of Design 2: &#x201C;&#x002B;str(DES2.Fd))
+
+Ff of Design 1: 0.857142857143
+Ff of Design 2: 0.428571428571
+Fd of Design 1:0.0870022296147
+Fd of Design 2:0.69476511364
+</preformat></p>
+<p>As the second design ignores the presence of the third condition, the frequency optimality (<italic>F<sub>f</sub></italic>) is much worse. However, the blocked character of the design largely improves the detection power. The principles of the genetic algorithm, such as crossover, can be applied to the designs:
+<preformat>
+DES3,DES4 = DES1.crossover(DES2,seed=2000)
+DES3.order
+
+[0, 1, 2, 0, 1, 2, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1]
+
+DES4.order
+
+[0, 0, 0, 0, 0, 1, 1, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1]
+</preformat></p>
+<sec id="s3d"><label>3.4</label><title>Optimal design using the genetic algorithm</title>
+<p>To use the genetic algorithm to find the optimal design, we use the <bold>genetical-gorithm.population</bold> class, to denote the population of possible designs. All parameters are described in <xref ref-type="table" rid="tbl2">Table 2</xref>.</p>
+<preformat>
+POP = geneticalgorithm.population(
+    experiment=EXP,
+    weights=[0,0.5,0.25,0.25],
+    preruncycles = 10000,
+    cycles = 10000,
+    folder = "./",
+    seed=100
+    )
+POP.naturalselection()
+</preformat>
+<table-wrap id="tbl2" orientation="portrait" position="float"><label>Table 2:</label>
+<caption><p>Arguments for object of class <bold>geneticalgorithm.population</bold></p></caption>
+<graphic xlink:href="119594_tbl2.tif"/>
+</table-wrap>
+</sec>
+</sec>
+</sec>
+<sec id="s4"><label>4</label><title>Neurodesign: the GUI</title>
+<p>To make the methods more publicly available, we have created a graphic user interface running in a web-application. The back-end of the application is written in python and uses the python module neurodesign described above, the front-end is generated using django, and the application is deployed through a multi-container docker environment on Amazon Web Services.</p>
+<p>There are 5 crucial windows of the GUI: main input, contrasts and probabilities, review, console and settings. A part of the main input window is shown in <xref ref-type="fig" rid="fig4">Figure 4</xref>, which has fields for most parameters from <xref ref-type="table" rid="tbl1">Table 1</xref>. Only the parameters P and C are asked in the second window (&#x2019;Contrasts and probabilities&#x2019;). The review window shows all parameters and also prints out the default settings for the genetic algorithm. These parameters, presented in <xref ref-type="table" rid="tbl2">Table 2</xref>, can be adjusted in the settings window. The console allows for the optimizations to be started, stopped and followed. When a design optimization is started, the user receives an email with a link to the console where the optimization can be followed (<xref ref-type="fig" rid="fig5">Figure 5</xref>). Once the optimization is finished, a zip file can be downloaded containing a chosen number of designs. Each design contains the onsets for each stimulus, a report with design diagnostics (such as collinearity among regressors, see <xref ref-type="fig" rid="fig3">Figure 3</xref>), and a script. The script can be used for future reference, or for regenerating the designs locally.</p>
+<fig id="fig4" position="float" fig-type="figure"><label>Figure 4:</label>
+<caption>
+<p>Part of the input window for the GUI.</p>
+</caption>
+<graphic xlink:href="119594_fig4.tif"/>
+</fig>
+<fig id="fig5" position="float" fig-type="figure"><label>Figure 5:</label>
+<caption>
+<p>Screenshot of the console where the optimisation can be followed. Every 10 generations, the design is updated with the latest score and the best design.</p>
+</caption>
+<graphic xlink:href="119594_fig5.tif"/>
+</fig>
+<fig id="fig6" position="float" fig-type="figure"><label>Figure 6:</label>
+<caption><p>Screenshot of the report describing the optimisation and the best 3 designs from the optimisation.
+</p></caption>
+<graphic xlink:href="119594_fig6.tif"/>
+</fig>
+</sec>
+<sec id="s5"><label>5</label><title>Discussion</title>
+<sec id="s5a"><label>5.1</label><title>Default settings</title>
+<p>Both the initialisation of the experiment, represented by the class experiment in the python module and the main input window in the GUI, and the genetic algorithm, represented by the class population in the python module and the settings window in the GUI, have some default settings. The default settings of the python module, shown in Tables 1 and 2, are optimised for a good optimisation, while the GUI&#x2019;s default settings are optimised for short optimisation duration. While the default settings for the GUI can lead to a sub-optimal design, the user is warned (with a big red textblock at the top of the page) that the settings should be changed if the results will be used for a good optimisation. We have chosen these sub-optimal defaults for the GUI to provide a fast run through for first time users, as well as to avoid memory and CPU overload on the server end. For the experiment, we assume a priori that there are no rest blocks and that the trial only consists of stimulation (no fixation cross etc.). There is by default no limit on the maximum number of times a stimulus can be repeated, and the stimulus frequency is not controlled with a hard limit. The default resolution in the python module is 0.1 seconds, while in the GUI it is 0.25 seconds. For the genetic algorithm, the default settings are as follows. The optimisation calculates the A-optimality. In each generation, the percentage of mutations is 1&#x0025;, the number of immigrants is 4 designs and the size of each generation is 20 designs. When generating new designs, there are 40&#x0025; blocked designs, 40&#x0025; random designs and 20&#x0025; m-sequences. Convergence is reached when the score is stable for 1000 generations. There are no default settings on the number of cycles in the python module, while the GUI runs by default 10 cycles to find the maximum <italic>F<sub>d</sub></italic> and <italic>F<sub>e</sub></italic> and 100 cycles for the optimisation (again with a clear message that this should be increased for optimal results).</p>
+</sec>
+<sec id="s5b"><label>5.2</label><title>Reproducibility</title>
+<p>In line with the recent effort to make neuroimaging research fully reproducible, this application makes it possible to track the exact source of each design. Low level reproducibility is provided by making a script available for download with which the optimisation can be regenerated. Running this script in python, given that the required libraries are installed, will repeat the analysis. However, this script will repeat the analysis but does not guarantee the same results as the specific configuration of the computer on which the analysis is run can influence the results.</p>
+<p>Higher level reproducibility, that guarantees replicability not only of the analysis but also of the results, is possible with the use of docker containers, which is a small piece of software that emulates a given computational configuration (operating system, libraries, python packages,&#x2026;). Based on the model presented by BIDS-apps (<xref ref-type="bibr" rid="c7">Gorgolewski et al., 2016</xref>), our analyses run in docker containers that are open-source and available for download at <ext-link ext-link-type="uri" xlink:href="https://hub.docker.com/r/neuropower/neuropower/">https://hub.docker.com/r/neuropower/neuropower/</ext-link>. Running the following command in a terminal will replicate the analysis that has been performed through the GUI.</p>
+<preformat>
+docker run -v /location_where_the_script_is/:/local \\
+-it neuropower/neuropower python /local/name_of_the_script.py
+</preformat>
+<p>This use of docker containers is not only well suited for reproducibility of the GUI, but also allows the replication of results from a python script (given that a random seed is set).</p>
+</sec>
+</sec>
+<sec id="s6"><label>6</label><title>Conclusion</title>
+<p>We present a toolbox for optimizing fMRI designs. The toolbox is an extension of currently available toolboxes, allowing for more complex design and better control and optimization of timing of stimuli. The toolbox is available through different modalities: a user-friendly GUI accessible at <ext-link ext-link-type="uri" xlink:href="http://www.neuropowertools.org">www.neuropowertools.org</ext-link> and a python package. The code is available on <ext-link ext-link-type="uri" xlink:href="http://www.github.com/users/neuropower">www.github.com/users/neuropower</ext-link>.</p>
+</sec>
+</body>
+<back>
+<ack><title>Acknowledgements</title>
+<p>This work was supported by the Laura and John Arnold Foundation. J.D. has received funding from the European Unions Horizon 2020 research and innovation programme under the Marie Sklodowska-Curie grant agreement No 706561.</p></ack>
+<ref-list><title>References</title>
+<ref id="c1"><mixed-citation publication-type="journal"><string-name><surname>Buracas</surname>, <given-names>G. T.</given-names></string-name> and <string-name><given-names>G. M.</given-names> <surname>Boynton</surname></string-name> <year>2002</year>. <article-title>Efficient design of event-related fMRI experiments using m-sequences</article-title>. <source>Neuroimage</source>, <volume>16</volume>(<issue>3 Pt 1</issue>):<fpage>801</fpage>&#x2013;<lpage>813</lpage>.</mixed-citation></ref>
+<ref id="c2"><mixed-citation publication-type="journal"><string-name><surname>Button</surname>, <given-names>K. S.</given-names></string-name>, <string-name><given-names>J. P. A.</given-names> <surname>Ioannidis</surname></string-name>, <string-name><given-names>C.</given-names> <surname>Mokrysz</surname></string-name>, <string-name><given-names>B. A.</given-names> <surname>Nosek</surname></string-name>, <string-name><given-names>J.</given-names> <surname>Flint</surname></string-name>, <string-name><given-names>E. S. J.</given-names> <surname>Robinson</surname></string-name>, and <string-name><given-names>M. R.</given-names> <surname>Munaf&#x00F2;</surname></string-name> <year>2013</year>. <article-title>Power failure: why small sample size undermines the reliability of neuroscience</article-title>. <source>Nat. Rev. Neurosci</source>., <volume>14</volume>(<issue>5</issue>):<fpage>365</fpage>&#x2013;<lpage>376</lpage>. </mixed-citation></ref>
+<ref id="c3"><mixed-citation publication-type="journal"><string-name><surname>Dale</surname>, <given-names>A. M.</given-names></string-name> <year>1999</year>. <article-title>Optimal experimental design for event-related fMRI. Hum</article-title>. <source>Brain Mapp</source>., <volume>8</volume>(<issue>2-3</issue>):<fpage>109</fpage>&#x2013;<lpage>114</lpage>.</mixed-citation></ref>
+<ref id="c4"><mixed-citation publication-type="other"><string-name><surname>Durnez</surname>, <given-names>J.</given-names></string-name>, <string-name><given-names>J.</given-names> <surname>Degryse</surname></string-name>, <string-name><given-names>B.</given-names> <surname>Moerkerke</surname></string-name>, <string-name><given-names>R.</given-names> <surname>Seurinck</surname></string-name>, <string-name><given-names>V.</given-names> <surname>Sochat</surname></string-name>, <string-name><given-names>R.</given-names> <surname>Poldrack</surname></string-name>, and <string-name><given-names>T.</given-names> <surname>Nichols</surname></string-name> <year>2016</year>. <source>Power and sample size calculations for fMRI studies based on the prevalence of active peaks</source>.</mixed-citation></ref>
+<ref id="c5"><mixed-citation publication-type="journal"><string-name><surname>Durnez</surname>, <given-names>J.</given-names></string-name>, <string-name><given-names>B.</given-names> <surname>Moerkerke</surname></string-name>, and <string-name><given-names>T. E.</given-names> <surname>Nichols</surname></string-name> <year>2014</year>. <article-title>Post-hoc power estimation for topological inference in fMRI</article-title>. <source>Neuroimage</source>, <volume>84</volume>: <fpage>45</fpage>&#x2013;<lpage>64</lpage>.</mixed-citation></ref>
+<ref id="c6"><mixed-citation publication-type="journal"><string-name><surname>Eklund</surname>, <given-names>A.</given-names></string-name>, <string-name><given-names>T. E.</given-names> <surname>Nichols</surname></string-name>, and <string-name><given-names>H.</given-names> <surname>Knutsson</surname></string-name> <year>2016</year>. <article-title>Cluster failure: Why fMRI inferences for spatial extent have inflated false-positive rates</article-title>. <source>Proc. Natl. Acad. Sci. U. S. A</source>., <volume>113</volume>(<issue>28</issue>): <fpage>7900</fpage>&#x2013;<lpage>7905</lpage>.</mixed-citation></ref>
+<ref id="c7"><mixed-citation publication-type="other"><string-name><surname>Gorgolewski</surname>, <given-names>K. J.</given-names></string-name>, <string-name><given-names>F.</given-names> <surname>Alfaro-Almagro</surname></string-name>, <string-name><given-names>T.</given-names> <surname>Auer</surname></string-name>, <string-name><given-names>P.</given-names> <surname>Bellec</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Capota</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Mallar Chakravarty</surname></string-name>, <string-name><given-names>N. W.</given-names> <surname>Churchill</surname></string-name>, <string-name><given-names>R.</given-names> <surname>Cameron Craddock</surname></string-name>, <string-name><given-names>G. A.</given-names> <surname>Devenyi</surname></string-name>, <string-name><given-names>A.</given-names> <surname>Eklund</surname></string-name>, <string-name><given-names>O.</given-names> <surname>Esteban</surname></string-name>, <string-name><given-names>G.</given-names> <surname>Flandin</surname></string-name>, <string-name><given-names>S. S.</given-names> <surname>Ghosh</surname></string-name>, <string-name><given-names>J.</given-names> <surname>Swaroop Guntupalli</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Jenkinson</surname></string-name>, <string-name><given-names>A.</given-names> <surname>Keshavan</surname></string-name>, <string-name><given-names>G.</given-names> <surname>Kiar</surname></string-name>, <string-name><given-names>P. R.</given-names> <surname>Raamana</surname></string-name>, <string-name><given-names>D.</given-names> <surname>Raffelt</surname></string-name>, <string-name><given-names>C. J.</given-names> <surname>Steele</surname></string-name>, <string-name><given-names>P.-O.</given-names> <surname>Quirion</surname></string-name>, <string-name><given-names>R. E.</given-names> <surname>Smith</surname></string-name>, <string-name><given-names>S. C.</given-names> <surname>Strother</surname></string-name>, <string-name><given-names>G.</given-names> <surname>Varoquaux</surname></string-name>, <string-name><given-names>T.</given-names> <surname>Yarkoni</surname></string-name>, <string-name><given-names>Y.</given-names> <surname>Wang</surname></string-name>, and <string-name><given-names>R. A.</given-names> <surname>Poldrack</surname></string-name> <year>2016</year>. <source>BIDS apps: Improving ease of use, accessibility and reproducibility of neuroimaging data analysis methods</source>.</mixed-citation></ref>
+<ref id="c8"><mixed-citation publication-type="journal"><string-name><surname>Hayasaka</surname>, <given-names>S.</given-names></string-name>, <string-name><given-names>A. M.</given-names> <surname>Peiffer</surname></string-name>, <string-name><given-names>C. E.</given-names> <surname>Hugenschmidt</surname></string-name>, and <string-name><given-names>P. J.</given-names> <surname>Laurienti</surname></string-name> <year>2007</year>. <article-title>Power and sample size calculation for neuroimaging studies by noncentral random field theory</article-title>. <source>Neuroimage</source>, <volume>37</volume>(<issue>3</issue>): <fpage>721</fpage>&#x2013;<lpage>730</lpage>.</mixed-citation></ref>
+<ref id="c9"><mixed-citation publication-type="journal"><string-name><surname>Ioannidis</surname>, <given-names>J. P. A.</given-names></string-name> <year>2005</year>. <article-title>Why most published research findings are false</article-title>. <source>PLoS Med</source>., <volume>2</volume>(<issue>8</issue>):<fpage>e124</fpage>.</mixed-citation></ref>
+<ref id="c10"><mixed-citation publication-type="journal"><string-name><surname>Kao</surname>, <given-names>M.-H.</given-names></string-name>, <string-name><given-names>A.</given-names> <surname>Mandal</surname></string-name>, <string-name><given-names>N.</given-names> <surname>Lazar</surname></string-name>, and <string-name><given-names>J.</given-names> <surname>Stufken</surname></string-name> <year>2009</year>. <article-title>Multi-objective optimal experimental designs for event-related fMRI studies</article-title>. <source>Neuroimage</source>, <volume>44</volume>(<issue>3</issue>): <fpage>849</fpage>&#x2013;<lpage>856</lpage>.</mixed-citation></ref>
+<ref id="c11"><mixed-citation publication-type="journal"><string-name><surname>Mumford</surname>, <given-names>J. A.</given-names></string-name> and <string-name><given-names>T. E.</given-names> <surname>Nichols</surname></string-name> <year>2008</year>. <article-title>Power calculation for group fMRI studies accounting for arbitrary design and temporal autocorrelation</article-title>. <source>Neuroimage</source>, <volume>39</volume>(<issue>1</issue>): <fpage>261</fpage>&#x2013;<lpage>268</lpage>.</mixed-citation></ref>
+<ref id="c12"><mixed-citation publication-type="journal"><collab>Open Science Collaboration</collab> <year>2015</year>. <article-title>PSYCHOLOGY. estimating the reproducibility of psychological science</article-title>. <source>Science</source>, <volume>349</volume>(<issue>6251</issue>):aac4716.</mixed-citation></ref>
+<ref id="c13"><mixed-citation publication-type="journal"><string-name><surname>Wager</surname>, <given-names>T. D.</given-names></string-name> and <string-name><given-names>T. E.</given-names> <surname>Nichols</surname></string-name> <year>2003</year>. <article-title>Optimization of experimental design in fMRI: a general framework using a genetic algorithm</article-title>. <source>Neuroimage</source>, <volume>18</volume>(<issue>2</issue>): <fpage>293</fpage>&#x2013;<lpage>309</lpage>.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

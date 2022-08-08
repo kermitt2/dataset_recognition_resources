@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/023036</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Genomics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>ASTRID: Accurate Species TRees from Internode Distances</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<name><surname>Vachaspati</surname><given-names>Pranjal</given-names></name>
+</contrib>
+<contrib contrib-type="author" corresp="yes">
+<name><surname>Warnow</surname><given-names>Tandy</given-names></name>
+<xref ref-type="corresp" rid="cor1">&#x002A;</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>Department of Computer Science, University of Illinois at Urbana-Champaign</institution>, 201 N. Goodwin Avenue, Urbana, IL, 61801 <country>USA</country></aff>
+</contrib-group>
+<author-notes>
+<corresp id="cor1">
+<label>&#x002A;</label>Correspondence: <email>warnow@illinois.edu</email></corresp>
+</author-notes>
+<pub-date pub-type="epub">
+<year>2015</year>
+</pub-date>
+<elocation-id>023036</elocation-id>
+<history>
+<date date-type="received">
+<day>22</day>
+<month>7</month>
+<year>2015</year>
+</date>
+<date date-type="accepted">
+<day>22</day>
+<month>7</month>
+<year>2015</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2015, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2015</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="023036.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract><title>Abstract</title>
+<sec><title>Background</title>
+<p>Incomplete lineage sorting (ILS), modelled by the multi-species coalescent (MSC), is known to create discordance between gene trees and species trees, and lead to inaccurate species tree estimations unless appropriate methods are used to estimate the species tree. While many statistically consistent methods have been developed to estimate the species tree in the presence of ILS, only ASTRAL-2 and NJst have been shown to have good accuracy on large datasets. Yet, NJst is generally slower and less accurate than ASTRAL-2, and cannot run on some datasets.</p>
+</sec>
+<sec><title>Results</title>
+<p>We have redesigned NJst to enable it to run on all datasets, and we have expanded its design space so that it can be used with different distance-based tree estimation methods. The resultant method, ASTRID, is statistically consistent under the MSC model, and has accuracy that is competitive with ASTRAL-2. Furthermore, ASTRID is much faster than ASTRAL-2, completing in minutes on some datasets for which ASTRAL-2 used hours.</p>
+</sec>
+<sec><title>Conclusions</title>
+<p>ASTRID is a new coalescent-based method for species tree estimation that is competitive with the best current method in terms of accuracy, while being much faster. ASTRID is available in open source form on github.</p>
+</sec></abstract>
+<kwd-group kwd-group-type="author"><title>Key words</title>
+<kwd>incomplete lineage sorting</kwd>
+<kwd>phylogenomics</kwd>
+<kwd>species trees</kwd>
+<kwd>ASTRAL</kwd>
+<kwd>NJst</kwd>
+<kwd>MP-EST</kwd>
+<kwd>FastME</kwd>
+<kwd>PhyD&#x002A;</kwd>
+<kwd>neighbor joining</kwd>
+</kwd-group>
+<counts>
+<page-count count="18"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1"><title>Background</title>
+<p>Species tree estimation in the presence of gene tree incongruence is a major challenge for many biological analyses. Gene tree incongruence can result from a variety of processes, notably incomplete lineage sorting (ILS) [<xref rid="c1" ref-type="bibr">1</xref>], which is modelled by the multispecies coalescent (MSC) [<xref rid="c2" ref-type="bibr">2</xref>]. Concatenated maximum likelihood analyses is generally the most common method for species tree estimation from multiple loci, but can be statistically inconsistent, and even positively misleading, in some cases [<xref rid="c3" ref-type="bibr">3</xref>], thus converging to an incorrect tree with increasing amounts of sequence data. In recent years, a number of species tree estimation methods have been developed that are statistically consistent under the MSC, and so will converge in probability to the true species trees as the amount of data increases; see [<xref rid="c4" ref-type="bibr">4</xref>, <xref rid="c5" ref-type="bibr">5</xref>, <xref rid="c6" ref-type="bibr">6</xref>]. Methods that are statistically consistent under the MSC include ASTRAL [<xref rid="c7" ref-type="bibr">7</xref>], ASTRAL-2 [<xref rid="c8" ref-type="bibr">8</xref>], &#x002A;BEAST [<xref rid="c9" ref-type="bibr">9</xref>], BEST [<xref rid="c10" ref-type="bibr">10</xref>], the population tree from BUCKy [<xref rid="c11" ref-type="bibr">11</xref>], METAL [<xref rid="c12" ref-type="bibr">12</xref>], MP-EST [<xref rid="c13" ref-type="bibr">13</xref>], NJst [<xref rid="c14" ref-type="bibr">14</xref>], SNAPP [<xref rid="c15" ref-type="bibr">15</xref>], STEAC [<xref rid="c16" ref-type="bibr">16</xref>], STEM [<xref rid="c17" ref-type="bibr">17</xref>], and SVDquartets [<xref rid="c18" ref-type="bibr">18</xref>]. While little is yet known about some of these methods (either because they have not yet been adequately studied or because they are not yet implemented), only a few of them (MP-EST, NJst, and ASTRAL-2) have been shown to be able to analyze very large datasets (especially those with large numbers of taxa) with high accuracy. MP-EST has been used more than either NJst or ASTRAL-2, but NJst is more accurate than MP-EST, and ASTRAL-2 is more accurate than both [<xref rid="c8" ref-type="bibr">8</xref>]. Furthermore, the currently available implementation of NJst is slower than ASTRAL-2, and cannot run on some datasets [<xref rid="c8" ref-type="bibr">8</xref>, <xref rid="c14" ref-type="bibr">14</xref>].</p>
+<p>In this paper, we present ASTRID, a new ILS-aware distance-based method for species tree estimation. Our approach is based on NJst, but is substantially faster, and, unlike NJst, functions even when each gene tree contains only a small portion of the data. The input to NJst is a set of unrooted gene trees. In the first step, an <italic>n</italic> &#x00D7; <italic>n</italic> matrix <italic>D</italic>[<italic>x, y</italic>] is computed, where <italic>D</italic>[<italic>x, y</italic>] is the average distance (in terms of number of edges) between <italic>x</italic> and <italic>y</italic> among all the gene trees. In the second step, neighbor joining [<xref rid="c19" ref-type="bibr">19</xref>], a very popular distance-based method of phylogeny estimation, is used to produce the species tree.</p>
+<p>ASTRID improves on NJst by enabling other distance-based methods to be used in the second step. In particular, although NJ cannot be run on datasets with missing entries, other distance-based methods can, and ASTRID enables the use of these other methods. We also explore the use of more accurate distance-based methods. Thus, ASTRID is a very simple modification to NJst. As we will show, ASTRID is much faster than NJst.</p>
+<p>The comparison between ASTRID and ASTRAL-2 and MP-EST, two established coalescent-based summary methods, is also interesting. ASTRID completed in minutes on some datasets where the other methods took hours, and was fast enough to analyze datasets with 1000 species and 1000 genes on a single processor within an hour (ASTRAL-2 and MP-EST take much more time on datasets of this size). Furthermore, ASTRID clearly dominates MP-EST in terms of accuracy, and is competitive with ASTRAL-2 (more accurate in some cases, and less accurate in others). Finally, ASTRID has desirable theoretical properties: it runs in polynomial time, and it remains statistically consistent under the MSC model without assuming the molecular clock, nor requiring rooted gene trees as input.</p>
+</sec>
+<sec id="s2"><title>Methods</title>
+<sec id="s2a"><title>ASTRID</title>
+<p>The input to ASTRID is a set of unrooted gene trees <italic>T</italic><sub>1</sub>,&#x2026;, <italic>T</italic><sub><italic>k</italic></sub>. We let <italic>S</italic><sub><italic>i</italic></sub> = &#x2112; (<italic>T</italic><sub><italic>i</italic></sub>) denote the leafset of <italic>T</italic><sub><italic>i</italic></sub>, and <italic>S</italic> = &#x222A;<sub><italic>i</italic></sub>&#x2112; (<italic>T</italic><sub><italic>i</italic></sub>). Let &#x007C;<italic>S</italic>&#x007C; = <italic>n</italic>.</p>
+<p>Step 1: Construct <italic>n</italic> &#x00D7; <italic>n</italic> matrix <inline-formula><alternatives><inline-graphic xlink:href="023036_inline1.gif"/></alternatives></inline-formula>:</p>
+<list list-type="order">
+<list-item><p>For all <italic>i</italic> = 1, 2,&#x2026;, <italic>k</italic>, compute <italic>n</italic> &#x00D7; <italic>n</italic> matrix <italic>M</italic><sub><italic>i</italic></sub>, as follows. For pairs <italic>p, q</italic> of species where both are in <italic>S</italic><sub><italic>i</italic></sub>, set <italic>M</italic><sub><italic>i</italic></sub>(<italic>p, q</italic>) to be the number of edges in the path between <italic>p</italic> and <italic>q</italic> in <italic>T</italic><sub><italic>i</italic></sub>. For all other pairs <italic>p, q</italic> (i.e., where one or both are not in <italic>S</italic><sub><italic>i</italic></sub>), set <italic>M</italic><sub><italic>i</italic></sub>(<italic>p, q</italic>) = 0. Thus, the only non-zero entries in <italic>M</italic><sub><italic>i</italic></sub> are for pairs of species in <italic>T</italic><sub><italic>i</italic></sub>.</p></list-item>
+<list-item><p>For all {<italic>p, q</italic>} &#x2282; <italic>S</italic>, let <italic>n</italic>(<italic>p, q</italic>) be the number of trees <italic>T</italic><sub><italic>i</italic></sub> that contain both <italic>p</italic> and <italic>q</italic>.</p></list-item>
+<list-item><p>Define <italic>n</italic> &#x00D7; <italic>n</italic> matrix <inline-formula><alternatives><inline-graphic xlink:href="023036_inline2.gif"/></alternatives></inline-formula> by setting <inline-formula><alternatives><inline-graphic xlink:href="023036_inline3.gif"/></alternatives></inline-formula> and <inline-formula><alternatives><inline-graphic xlink:href="023036_inline4.gif"/></alternatives></inline-formula> (to denote a missing value) otherwise.</p></list-item>
+</list>
+<p>Step 2: Compute tree on <inline-formula><alternatives><inline-graphic xlink:href="023036_inline5.gif"/></alternatives></inline-formula> using a selected distance-based method</p>
+</sec>
+<sec id="s2b"><title>Datasets</title>
+<p>We tested species tree estimation methods on simulated datasets from previous publications, and also evaluated ASTRID on the mammalian biological dataset of 37 species, originally studied in [<xref rid="c20" ref-type="bibr">20</xref>]. Here we briefly describe the simulation procedures used to generate these datasets, and provide empirical statistics for the datasets in <xref rid="c1" ref-type="table">Table 1</xref>. See the original publications for details about the simulation protocols, and our supplementary online materials for links to the data.</p>
+<table-wrap id="tbl1" orientation="portrait" position="float">
+<label>Table 1</label>
+<caption><title>Empirical statistics of simulated datasets used in this study</title>
+<p>The ILS level is measured by the average Robinson-Foulds distance (AD) between the true gene trees and the species tree, expressed as a percentage; ILS levels are then classified as low (L), moderate (M), high (H), or very high (VH).</p></caption>
+<graphic xlink:href="023036_tbl1.tif"/>
+</table-wrap>
+<p>All datasets included both true and estimated gene trees, obtained by using maximum likelihood methods on the true sequence alignments, as well as species trees estimated on these gene trees obtained in the prior publications. Each gene tree had at most one copy of each species. We computed ASTRID species trees for these datasets, using various techniques for Step 2 (how to compute the species tree given the distance matrix).</p>
+<p>We estimated the amount of ILS in the data by quantifying the average gene tree discord in the data, using the average Robinson-Foulds (RF) [<xref rid="c21" ref-type="bibr">21</xref>] distance between true gene trees and the model species tree, expressed as a percentage (written AD for &#x201C;average distance&#x201D;). We also explored some simulated datasets where the DNA sequence evolution was under the strict molecular clock. Model conditions with AD at most 25&#x0025; can be considered low ILS, conditions with AD between 26&#x0025; and 39&#x0025; can be considered moderate ILS, conditions with AD between 40&#x0025; and 59&#x0025; can be considered high ILS, and conditions with AD of at least 60&#x0025; can be considered very high ILS. In <xref rid="c1" ref-type="table">Table 1</xref>, we indicate these ILS levels for the different model conditions we study both with the AD value, but also the general level (L for low, M for moderate, H for high, and VH for very high).</p>
+<sec id="s2b1"><title>Mammalian and avian simulated datasets</title>
+<p>These datasets were created in [<xref rid="c22" ref-type="bibr">22</xref>] to evaluate method performance under model conditions similar to real data. Species trees were generated with MP-EST for the avian phylogenomics dataset with 48 species and 14,446 loci [<xref rid="c24" ref-type="bibr">24</xref>], and for a mammalian dataset with 37 species and 447 loci [<xref rid="c25" ref-type="bibr">25</xref>]. These species trees were used as basic model trees, with branch lengths in coalescent units. In addition, two other model species trees were created for each dataset by scaling the species tree branch lengths up (to reduce ILS) or down (to increase ILS). The ILS levels of the resultant model species trees were very heterogeneous, ranging from AD = 21&#x0025; (low) to 50&#x0025; (high) for the mammalian simulation, and from AD = 29&#x0025; (moderate) to 60&#x0025; (very high) for the avian simulation.</p>
+<p>Both datasets had sequences of length 500 for all three model conditions. For the default (&#x201C;1X&#x201D;) branch length condition, the avian dataset also had sequences of length 250, 500, 100, and 1500, and the mammalian dataset had sequences of length 250, 500 and 1000. Sequence evolution on these datasets deviated from the strict molecular clock.</p>
+</sec>
+<sec id="s2b2"><title>10-taxon simulated datasets</title>
+<p>These data were presented in [<xref rid="c23" ref-type="bibr">23</xref>], and explored two ILS levels (AD=48&#x0025; (high) and AD=89&#x0025; (very high)). Sequence evolution deviated from the strict molecular clock.</p>
+</sec>
+<sec id="s2b3"><title>15-taxon clocklike simulated datasets</title>
+<p>These datasets evolved under a strict molecular clock, and were presented in [<xref rid="c23" ref-type="bibr">23</xref>]. The species tree was a caterpillar model tree (i.e., a path with leaves hanging off the path) with very short internal branches, and a long branch to the outgroup species. The ILS level in these data was very high (AD=82&#x0025;).</p>
+</sec>
+<sec id="s2b4"><title>ASTRAL-2 simulated datasets</title>
+<p>These data were presented in [<xref rid="c8" ref-type="bibr">8</xref>], and provided a variety of model conditions with varying ILS levels, tree shapes, numbers of taxa, and sequence lengths per locus. SimPhy [<xref rid="c26" ref-type="bibr">26</xref>] was used to generate the species and gene trees, based on two parameters: the number of generations (given as the first number in the model) and the speciation rate (given as the second number). The number of generations simulated ranged between 500K, 2M, and 10M, and the speciation rate varied between 1e6 and 1e7. Model conditions with fewer generations had more ILS. Model conditions with the 1e6 speciation rate had speciation events nearer the tips (leaves) of the trees, while model conditions with the 1e7 speciation rate had speciation events nearer the root. The ILS levels varied from very low (AD = 9&#x0025;) to very high (AD = 69&#x0025;). Sequences evolved down the gene trees under multiple GTRGAMMA models that deviated from the strict molecular clock. Maximum likelihood gene trees were computed using FastTree-2.</p>
+</sec>
+<sec id="s2b5"><title>Incomplete gene tree datasets</title>
+<p>To explore performance on incomplete gene trees, we modified the ASTRAL-2 dataset by randomly removing taxa from trees in the 50-taxon datasets. Up to 40 taxa were removed from the 50-taxon dataset, and up to 5 taxa were removed from the 10-taxon dataset. In each of these cases, maximum likelihood gene trees were estimated using FastTree-2 version 2.1.7 SSE3 [<xref rid="c27" ref-type="bibr">27</xref>], using the following command:</p>
+<p><code>fasttree -nt -gtr -quiet -nopr -gamma -n 1000 &#x003C;fastafile&#x003E; &#x003E; &#x003C;genetreefile&#x003E;</code> where <code>&#x003C;fastafile&#x003E;</code> was the input file of aligned sequences and <code>&#x003C;genetreefile&#x003E;</code> was the output file.</p>
+</sec></sec>
+<sec id="s2c"><title>Distance-based tree estimation methods</title>
+<p>In order to explore the design space for ASTRID, we ran various distance-based methods for Step 2 (computing the tree from the distance matrix). For incomplete distance matrices (where some entries are -1, indicating that the pair of taxa do not appear together in any gene tree), we explored the methods in PhyD&#x002A; [<xref rid="c28" ref-type="bibr">28</xref>]: <italic>N J</italic> &#x002A;, <italic>BION J</italic> &#x002A;, <italic>M V R</italic>&#x002A;, <italic>U N J</italic> &#x002A;. These algorithms are all variants on neighbor joining that work on incomplete distance matrices. We also explored <italic>F AST M E</italic> [<xref rid="c29" ref-type="bibr">29</xref>], which is a heuristic for the minimum evolution problem.</p>
+</sec>
+<sec id="s2d"><title>ASTRAL-2</title>
+<p>To compute ASTRAL-2 species trees on the incomplete gene trees generated for the ASTRAL-2 datasets, we ran ASTRAL-2 version 4.7.8, using command line arguments</p>
+<p><code>java -Xmx4000M -jar astral.4.7.8.jar -i &#x003C;genetrees&#x003E; -o &#x003C;outputtree&#x003E;</code></p>
+</sec>
+<sec id="s2e"><title>Computing tree error</title>
+<p>All trees computed in this study were fully resolved. We report the RF tree error (the proportion of the branches in the model tree missing from the estimated tree), using scripts that are available in the supplementary online materials.</p>
+</sec>
+</sec>
+<sec id="s3"><title>Results</title>
+<sec id="s3a"><title>Selection of distance-based tree estimation method for Step 2</title>
+<p>First, we evaluated various distance-based tree estimation methods to determine which one would be most accurate for the tree computation phase of ASTRID. Results on datasets with all complete gene trees (no missing species in any gene) are shown in <xref rid="fig1" ref-type="fig">Figure 1</xref> and results on datasets with incomplete gene trees are shown in <xref rid="fig2" ref-type="fig">Figure 2</xref>. Note that for datasets with entirely complete gene trees, FastME performed as well as or better than the other distance-based methods, but there were datasets with incomplete distance matrices in which FastME had very poor accuracy. Therefore, we selected FastME to analyze datasets where the distance matrix has no missing entries, since it had the best accuracy. For the datasets with incomplete distance matrices <inline-formula><alternatives><inline-graphic xlink:href="023036_inline6.gif"/></alternatives></inline-formula> (indicated by <inline-formula><alternatives><inline-graphic xlink:href="023036_inline7.gif"/></alternatives></inline-formula> for some p,q), we selected BioNJ&#x002A;, since it generally had among the most accurate results of these PhyD&#x002A; methods.</p>
+<fig id="fig1" position="float" fig-type="figure">
+<label>Figure 1</label>
+<caption><title>A comparison of ASTRID variants on the moderate ILS avian simulated datasets with 500bp, using different distance-based methods for the tree estimation phase</title>
+<p>We report RF topological error rates over 20 replicates. Red dots represent means, while lines represent medians and boxes represent quartiles.</p></caption>
+<graphic xlink:href="023036_fig1.tif"/>
+</fig>
+<fig id="fig2" position="float" fig-type="figure">
+<label>Figure 2</label>
+<caption><title>Comparison of ASTRID variants on 50-taxon ASTRAL-2 MC8 datasets with missing taxa</title>
+<p>We show average RF error rates over 50 replicates for ASTRID variants, that differ in terms of the method used to compute the tree from the distance matrix. The datasets have taxa randomly removed from each gene and the sequence lengths truncated to 300bp. Red dots represent means, while lines represent medians and boxes represent quartiles.</p></caption>
+<graphic xlink:href="023036_fig2.tif"/>
+</fig>
+</sec>
+<sec id="s3b"><title>Comparison of ASTRID, ASTRAL, and MP-EST</title>
+<p>We begin with a comparison between ASTRID, ASTRAL-2, and MP-EST on the avian simulated datasets with high (1X) ILS, varying number of genes and sequence alignment lengths, but where all genes are complete; see <xref rid="fig3" ref-type="fig">Figure 3</xref>.</p>
+<fig id="fig3" position="float" fig-type="figure">
+<label>Figure 3</label>
+<caption><title>Comparison of ASTRID, ASTRAL-2, and MP-EST on the avian simulated data</title>
+<p>The simulated data evolve under 1X (high ILS) species tree branch lengths, and with varying gene sequence lengths. We report mean RF rates with standard error bars over 20 replicates.</p></caption>
+<graphic xlink:href="023036_fig3.tif"/>
+</fig>
+<p>All methods improved with increasing numbers of genes or increasing sequence length; however, the methods differed substantially in terms of their accuracy. Across all conditions we explored, MP-EST had the highest error and ASTRID had the lowest error. ASTRAL-2 was in between, but was closer to ASTRID than to MP-EST. The gap between MP-EST and ASTRID was very large, and increased with the number of genes. For example, at 1000 genes and gene sequence alignments of length 500, MP-EST had 19&#x0025; RF error while ASTRID had about 7&#x0025; RF error. The gap between ASTRID and ASTRAL-2 was substantial on the 200- and 500-gene cases, but very small on the 1000-gene case.</p>
+<p>Thus, although MP-EST is statistically consistent under the MSC model and hence theoretically robust to ILS, it did not have particularly good accuracy on these data. Among all coalescent-based methods, MP-EST is probably the one that has been used the most in biological data analyses, but its performance here and in [<xref rid="c8" ref-type="bibr">8</xref>, <xref rid="c30" ref-type="bibr">30</xref>] demonstrates that it is not competitive with the best methods on datasets with even moderate numbers of species. Therefore, we omit MP-EST from the rest of this study.</p>
+</sec>
+<sec id="s3c"><title>Comparison of ASTRID and ASTRAL-2 on complete gene trees</title>
+<sec id="s3c1"><title>Comparison on avian datasets</title>
+<p><xref rid="fig4" ref-type="fig">Figure 4</xref> shows the performance of ASTRAL-2 and ASTRID on avian simulated datasets under three ILS conditions (moderate, high, and very high). Both methods performed better when provided with more genes, and both performed worse on higher levels of ILS. Overall, ASTRID tended to outperform ASTRAL-2, with the largest effect seen when many genes were available. With 800 genes available, the ASTRID species tree had a RF error rate that was 2.4 percentage points better than ASTRAL-2&#x2019;s under the very high and high ILS model conditions, and 1.2 percentage points better for the moderate ILS model condition. On the moderate ILS model condition, ASTRID had the greatest advantage over ASTRAL-2 for moderate numbers of genes. Above 200 genes, the error rate dropped below ten percent for both ASTRAL-2 and ASTRID, and ASTRID had an average advantage of only about one percentage point.</p>
+<fig id="fig4" position="float" fig-type="figure">
+<label>Figure 4</label>
+<caption><title>Comparison of ASTRID and ASTRAL-2 on avian simulated datasets</title>
+<p>We show average RF error rates and standard error bars for 20 replicates. Gene sequence alignments have 500 sites and varying amount of ILS. Species tree branch lengths of 0.5x have very high ILS, 1X has high ILS, and 2x have moderate ILS.</p></caption>
+<graphic xlink:href="023036_fig4.tif"/>
+</fig>
+<p>It is well known that summary methods improve in accuracy as the number of sites per gene or the number of genes increase [<xref rid="c31" ref-type="bibr">31</xref>, <xref rid="c32" ref-type="bibr">32</xref>, <xref rid="c33" ref-type="bibr">33</xref>, <xref rid="c34" ref-type="bibr">34</xref>]. We explored the impact of varying the sequence length and number of genes on the avian datasets with high (1X) ILS, as well as on true gene trees. <xref rid="fig5" ref-type="fig">Figure 5</xref> shows results on 10, 100, and 1000 genes; results on other numbers of genes have the same trends (data provided in supplementary materials). As expected, both methods improved with increased sequence length, and had their best accuracy on true gene trees. Both methods also improved as the number of genes increased. ASTRID was always at least as accurate as ASTRAL-2, with the biggest improvement for shortest sequences (with 250bp).</p>
+<fig id="fig5" position="float" fig-type="figure">
+<label>Figure 5</label>
+<caption><title>Performance on the avian simulated data with 1X species tree branch lengths, varying gene sequence length and number of genes</title>
+<p>We report RF rates over 20 replicates.</p></caption>
+<graphic xlink:href="023036_fig5.tif"/>
+</fig>
+</sec>
+<sec id="s3c2"><title>Comparison on mammalian datasets</title>
+<p>A comparison of ASTRAL-2 and ASTRID on the mammalian datasets with different levels of ILS (high, moderate, and low) is given in <xref rid="fig6" ref-type="fig">Figure 6</xref>. ASTRAL-2 and ASTRID performed fairly similarly on the low (2X branch lengths) and moderate (1X branch lengths) ILS conditions. Under the high ILS level (0.5X branch lengths), ASTRAL-2 was fairly consistently more accurate than ASTRID, with the largest improvement on the 10-gene case.</p>
+<fig id="fig6" position="float" fig-type="figure">
+<label>Figure 6</label>
+<caption><title>Comparison of methods on mammalian simulated datasets, varying ILS level and number of genes</title>
+<p>We show average RF error rates and standard error bars for 20 replicates. Gene sequence alignments had 500 sites. Model conditions varied in ILS level from high (0.5x branch lengths) to low (2X branch lengths).</p></caption>
+<graphic xlink:href="023036_fig6.tif"/>
+</fig>
+</sec>
+<sec id="s3c3"><title>Comparison on the ASTRAL-2 datasets</title>
+<p>We explored performance on the ASTRAL-2 datasets with 200 taxa (model conditions MC1 to MC6, see <xref rid="fig7" ref-type="fig">Fig. 7</xref>). These model trees varied in ILS level, with MC1 and MC4 having very high ILS, MC2 and MC5 having moderate ILS, and MC3 and MC6 having low ILS. Under MC2, MC3, and MC5, the two methods had essentially identical accuracy. However, under MC1, MC4, and MC6, ASTRAL-2 had an advantage over ASTRID. In MC1 and MC4, the improvement disappeared at 100 genes, but in MC6 ASTRAL-2 was still more accurate than ASTRID on 100 genes.</p>
+<fig id="fig7" position="float" fig-type="figure">
+<label>Figure 7</label>
+<caption><title>Comparison of ASTRID and ASTRAL-2 on the simulated ASTRAL-2 datasets with 200 taxa, varying levels of ILS, tree shape, and number of genes</title>
+<p>We report RF error rates and standard error bars over 10 replicates. See <xref rid="c1" ref-type="table">Table 1</xref> for information on the model conditions listed.</p></caption>
+<graphic xlink:href="023036_fig7.tif"/>
+</fig>
+</sec>
+<sec id="s3c4"><title>Comparison on the 15-taxon datasets</title>
+<p>The 15-taxon datasets evolved on a caterpillar species tree under very high ILS (AD=82&#x0025;), the highest ILS considered in this study. We explored performance under two sequence lengths (100bp and 1000bp) and varied the number of genes from 10 to 1000. Results on the 15-taxon datasets (<xref rid="fig8" ref-type="fig">Fig. 8</xref>) showed very close performance between ASTRID and ASTRAL-2. On the 100bp alignments and on 1000bp alignments with at least 100 genes, the two methods could not be distinguished. However, on 1000bp alignments with at most 50 genes, ASTRAL-2 had an advantage over ASTRID.</p>
+<fig id="fig8" position="float" fig-type="figure">
+<label>Figure 8</label>
+<caption><title>A comparison of ASTRID and ASTRAL-2 on the 15-taxon simulated datasets for two different sequence lengths</title>
+<p>The 15-taxon datasets evolve down gene trees generated by a caterpillar tree with very high ILS (AD=82&#x0025;), the highest ILS condition explored in this study.</p></caption>
+<graphic xlink:href="023036_fig8.tif"/>
+</fig>
+</sec>
+<sec id="s3c5"><title>Comparison on the 10-taxon datasets</title>
+<p>The 10-taxon datasets evolved under two different ILS levels - high and very high, and we explored performance on both true and estimated gene trees; see <xref rid="fig9" ref-type="fig">Figure 9</xref>. In general, ASTRID and ASTRAL-2 had very close accuracy on these data, but there were some cases where they had different accuracy levels. For example, on the high ILS condition with estimated gene trees, ASTRAL-2 was more accurate than ASTRID for 200 genes, and ASTRID was more accurate than ASTRAL-2 on 25 genes.</p>
+<fig id="fig9" position="float" fig-type="figure">
+<label>Figure 9</label>
+<caption><title>Results on true and estimated gene trees on 10-taxon datasets with two ILS levels (high and very high)</title>
+<p>All gene sequence alignments have 100bp. We report RF rates and standard error bars over 20 replicates.</p></caption>
+<graphic xlink:href="023036_fig9.tif"/>
+</fig>
+</sec></sec>
+<sec id="s3d"><title>Performance on incomplete gene trees</title>
+<p>We explored the impact of missing data on ASTRAL-2 and ASTRID by deleting taxa from gene trees in the 50-taxon datasets (MC8) from the ASTRAL-2 collection, using 150bp per gene, and varying the number of genes and the amount of missing taxa; see <xref rid="fig10" ref-type="fig">Figure 10</xref>. ASTRAL-2 and ASTRID had very similar topological accuracy throughout these experiments. With low amounts of missing data (20&#x0025; to 40&#x0025; missing taxa from each gene tree), both methods had very good accuracy (below 5&#x0025; tree error) by 500 genes. With 60&#x0025; of the taxa missing from each gene tree, the error rates increased for low numbers of genes (above 20&#x0025; RF error for up to 100 genes), but then declined to about 10&#x0025; by 1000 genes. With 80&#x0025; of the taxa missing from each gene (so that all gene trees have only 10 taxa out of 50), error rates were very high with 25 genes (at least 85&#x0025; RF), but decreased quickly with increases in the number of genes, so that at 500 genes the error rate was 24&#x0025;, and then at most 18&#x0025; at 1000 genes. The trends suggest that the error rates had not plateaued, and that adding additional incomplete gene trees should result in continued improvement.</p>
+<fig id="fig10" position="float" fig-type="figure">
+<label>Figure 10</label>
+<caption><title>Results on 50-taxon ASTRAL-2 dataset (MC8) with missing taxa and sequence lengths of 150bp</title>
+<p>We report RF rates and standard error over 50 replicates.</p></caption>
+<graphic xlink:href="023036_fig10.tif"/>
+</fig>
+</sec>
+<sec id="s3e"><title>Analysis of the mammalian biological dataset</title>
+<p>We analyzed the mammalian biological dataset originally studied in [<xref rid="c35" ref-type="bibr">35</xref>]. The original dataset had 37 species and 447 genes, but there were 23 erroneous genes (as noted by [<xref rid="c20" ref-type="bibr">20</xref>]) which we removed before doing the analysis.</p>
+<p>We obtained maximum likelihood gene trees and bootstrap replicates of these gene trees from [<xref rid="c22" ref-type="bibr">22</xref>]. We then analyzed these data using ASTRAL-2 and ASTRID&#x002B;FastME and compared these analyses to previously published trees obtained using AS-TRAL and MP-EST [<xref rid="c7" ref-type="bibr">7</xref>]. We then annotated the branches of the ASTRID&#x002B;FastME and ASTRAL-2 trees with bootstrap support from 100 multi-locus bootstrapping (MLBS). The ASTRID&#x002B;FastME and ASTRAL-2 trees were topologically identical to the ASTRAL tree and differed only in the bootstrap support; see <xref rid="fig11" ref-type="fig">Figure 11</xref> for the ASTRID&#x002B;FastME tree. On the other hand, the support for the placement of Scandentia - one of the major open questions about mammalian evolution - was very low, only 47&#x0025; (ASTRAL-2 gave it 82&#x0025;). Hence, neither the ASTRID tree nor the ASTRAL-2 tree resolved the placement of Scandentia with high support.</p>
+<fig id="fig11" position="float" fig-type="figure">
+<label>Figure 11</label>
+<caption><title>ASTRID analysis of a mammalian biological dataset</title>
+<p>We used ASTRID&#x002B;FastME to analyze the mammalian biological dataset studied in [<xref rid="c20" ref-type="bibr">20</xref>, <xref rid="c7" ref-type="bibr">7</xref>], with 37 taxa and 424 genes. The branches are annotated with bootstrap support values from 100 MLBS bootstrap samples; values not shown indicate 100&#x0025; support. The ASTRID tree is identical to the ASTRAL and ASTRAL-2 trees on the same data, but differs from the MP-EST analysis in the placement of Scandentia.</p></caption>
+<graphic xlink:href="023036_fig11.tif"/>
+</fig>
+</sec>
+<sec id="s3f"><title>Running time results</title>
+<sec id="s3f1"><title>Asymptotic running time</title>
+<p>ASTRID has two steps: the first step computes the distance matrix, and the second step uses a selected distance-based method to construct a tree from the distance matrix. When the input has <italic>n</italic> species and <italic>k</italic> genes, then calculating the distance matrix can be performed in <italic>O</italic>(<italic>kn</italic><sup>2</sup>) time. Distance-based tree estimation methods typically run in <italic>O</italic>(<italic>n</italic><sup>2</sup>) to <italic>O</italic>(<italic>n</italic><sup>3</sup>) time, but this step no longer depends on <italic>k</italic>. Hence, the overall running time depends on the selected distance-based method, but is generally dominated by the first phase, especially for typical inputs, for which <italic>k</italic> &#x003E;&#x003E; <italic>n</italic>. Thus, under the assumption that <italic>k &#x003E; n</italic> and that ASTRID uses a distance-based method that runs in <italic>O</italic>(<italic>n</italic><sup>3</sup>) time, ASTRID&#x2019;s running time is <italic>O</italic>(<italic>kn</italic><sup>2</sup>).</p>
+<p>ASTRAL-2&#x2019;s scaling is more complicated to discuss. Asymptotically, ASTRAL-2 runs in <italic>O</italic>(<italic>nk</italic>&#x007C;<italic>X</italic>&#x007C;<sup>2</sup>) time, where <italic>n</italic> is the number of species, <italic>k</italic> is the number of genes, and <italic>X</italic> is a set of bipartitions it computes to constrain the search space. The size of <italic>X</italic> is not bounded by a polynomial in the input size, and the technique that ASTRAL-2 uses means that <italic>X</italic> can be large under conditions with high ILS. Thus the asymptotic running times of ASTRAL-2 and ASTRID (used with various distance methods) are quite different.</p>
+</sec>
+</sec>
+<sec id="s3g"><title>Running times on simulated data</title>
+<p>In practice, creating the distance matrix took the majority of the running time. On 1000 taxa, creating the distance matrix took several minutes to several hours, depending on the number of genes, but running <italic>F AST M E</italic> took less than one second regardless of the number of genes. However, PhyD&#x002A; methods were much slower than <italic>F AST M E</italic>; on 1000 taxa, running any of the PhyD&#x002A; methods took approximately 40 minutes (data not shown).</p>
+<p>We recorded running times for ASTRAL-2, ASTRID-FastME, and NJst, on avian simulated datasets with high ILS (1X), as we varied the number of genes (see <xref rid="fig12" ref-type="fig">Fig. 12</xref>). Note that ASTRID-FastME was by far the fastest of the three methods, and NJst was the slowest. However, the trends suggest that NJst will be faster than ASTRAL-2 for larger numbers of genes. Note also that ASTRID-FastME and NJst both scaled linearly with the number of genes, but that ASTRAL-2&#x2019;s running time scaled super-linearly.</p>
+<fig id="fig12" position="float" fig-type="figure">
+<label>Figure 12</label>
+<caption><title>Scatterplot of running times for ASTRID-FastME, ASTRAL-2, and NJst, on avian high ILS (1X) simulated datasets, varying number of genes</title>
+<p>We show running time for 20 replicates of each number of genes. The quadratic dependence of ASTRAL-2&#x2019;s running time is clearly contrasted with the linear dependence of both ASTRID and NJst. Experiments were run on a single core of a 2.7 GHz Intel Xeon processor.</p></caption>
+<graphic xlink:href="023036_fig12.tif"/>
+</fig>
+<p>We recorded running times for two variants of ASTRID (one using FastME and the other using BioNJ&#x002A;), and compared them to ASTRAL-2 on ASTRAL-2 simulated datasets with 1000 taxa (MC11) as we varied the number of genes (<xref rid="fig13" ref-type="fig">Fig. 13</xref>) and for 500-gene datasets in which we varied the number of taxa (MC 2 and 7-10, see <xref rid="fig14" ref-type="fig">Fig. 14</xref>). The relative running times show that all methods were very fast for smaller datasets, but were clearly distinguished on the larger datasets, where ASTRID-FastME was much faster than ASTRID-BioNJ&#x002A; and both variants of ASTRID were much faster than ASTRAL-2. For example, on the dataset with 1000 genes and 1000 taxa, ASTRID-FastME finished in 33 minutes, ASTRID-BioNJ finished in 1 hour and 10 minutes, and ASTRAL-2 finished in 12 hours and 30 minutes.</p>
+<fig id="fig13" position="float" fig-type="figure">
+<label>Figure 13</label>
+<caption><title>Running time on the ASTRAL-2 simulated datasets with 1000 taxa (MC11), varying number of genes</title>
+<p>We show results for the each of the ASTRID steps &#x2013; matrix generation and tree estimation. We compare ASTRID used with two ways of computing the trees: FastME and BioNJ&#x002A;. Experiments were run on a single core of a 2.7 GHz Intel Xeon processor.</p></caption>
+<graphic xlink:href="023036_fig13.tif"/>
+</fig>
+<fig id="fig14" position="float" fig-type="figure">
+<label>Figure 14</label>
+<caption><title>Running time of two ASTRID methods on the ASTRAL-2 simulated dataset with 500 genes, varying number of taxa</title>
+<p>We show results on a single replicate of model conditions MC2 and 7-10 from the ASTRAL-2 collection. Experiments were run on a single core of a 2.7 GHz Intel Xeon processor.</p></caption>
+<graphic xlink:href="023036_fig14.tif"/>
+</fig>
+</sec>
+<sec id="s3h"><title>Running times on biological data</title>
+<p>We recorded running times for ASTRID-FastME and ASTRAL-2 on the mammalian biological dataset. Both methods took 6 seconds for a single bootstrap replicate on one core of a 2.7 GHz Intel Xeon processor with 424 genes and 37 taxa.</p>
+</sec></sec>
+<sec id="s4"><title>Discussion</title>
+<p>A few trends are apparent upon examining the data as a whole. ASTRAL-2 and ASTRID had, for the most part, very similar levels of accuracy, while MP-EST was consistently less accurate. However, there were cases where ASTRID and ASTRAL-2 have small but detectably different levels of accuracy. One intriguing trend in the data is the improvement of ASTRAL-2 over ASTRID on high ILS datasets; see <xref rid="fig6" ref-type="fig">Figures 6</xref>, <xref rid="fig7" ref-type="fig">7</xref>, <xref rid="fig8" ref-type="fig">8</xref>, and <xref rid="fig9" ref-type="fig">9</xref>. In particular, <xref rid="fig6" ref-type="fig">Figures 6</xref> and <xref rid="fig7" ref-type="fig">7</xref> suggest that increases in ILS should favor ASTRAL-2 over ASTRID. Yet, ASTRID is consistently at least as accurate as ASTRAL-2 on the avian datasets, which have moderate to very high levels of ILS (<xref rid="fig4" ref-type="fig">Fig. 4</xref>). Thus, ILS level might have an impact on the relative accuracy of the two methods, but it is not a determining favor. Similarly, neither method dominates the other based on the number of taxa, number of genes, or amount of gene tree estimation error. Thus, it is very difficult to characterize the conditions under which each method is likely to have an advantage over the other. However, even for the cases where there are differences in accuracy, in general the differences are fairly small. Thus, the main difference between the two methods is computational efficiency, where ASTRID is clearly faster. ASTRID has the biggest running time advantage over ASTRAL-2 for large numbers of gene trees, since ASTRID scales linearly in the number of genes while ASTRAL scales super-linearly. This makes ASTRID an especially good method for genome-scale datasets that have a large number of genes.</p>
+</sec>
+<sec id="s5"><title>Conclusion</title>
+<p>ASTRID is a fast and highly accurate method for species tree estimation that is robust to high levels of ILS, and provably statistically consistent under the multispecies coalescent model. Like ASTRAL-2, ASTRID can analyze datasets with unrooted gene trees, an advantage that the two methods have over many other methods (e.g., MP-EST) that can only be run on rooted gene trees. ASTRID (like NJst) runs in time that is polynomial in the number of gene trees and species, but ASTRAL-2 and other leading coalescent-based methods do not have this guarantee. Thus, ASTRID has many desirable theoretical properties compared to existing methods. From an empirical viewpoint, ASTRID is also extremely fast and can analyze very large datasets in minutes, where other methods either cannot run or take hours. In particular, ASTRID is much faster than ASTRAL-2, especially on datasets with many genes and large numbers of species. ASTRID also produces more accurate trees than MP-EST and NJst, and is competitive with ASTRAL-2 in terms of accuracy.</p>
+<p>However, even better (more accurate) results might be obtained through more extensive modifications to the ASTRID algorithm design. In particular, the accuracy of the tree depends on the particular distance-based method that is used. New distance-based phylogeny estimation methods, such as the absolute fast converging methods [<xref rid="c36" ref-type="bibr">36</xref>, <xref rid="c37" ref-type="bibr">37</xref>, <xref rid="c38" ref-type="bibr">38</xref>, <xref rid="c39" ref-type="bibr">39</xref>], might provide improved accuracy for very large datasets. Another important direction is developing additional methods for estimating species trees from distance matrices that have good accuracy when the distance matrix has missing data. As we saw here, FastME produced more accurate trees than the PhyD&#x002A; methods, but it could only be applied to distance matrices without any missing data. An extension of FastME to enable it to handle incomplete distance matrices would also be of great interest.</p>
+<p>This study can be expanded in several directions. Future work should more carefully investigate the conditions under which ASTRID is more reliable than ASTRAL-2, and explore performance on more biological datasets. This study also only investigated relatively long sequences; a subsequent study should investigate the relative and absolute accuracy of ASTRID and other methods on very short sequences, since recombination-free loci can be very short [<xref rid="c32" ref-type="bibr">32</xref>]. In addition, this study only examined datasets with a single individual per species, yet ASTRID (like NJst) can be run on datasets with multiple individuals; future work should evaluate the absolute and relative accuracy of ASTRID and other methods on such data. This study showed that ASTRID performed well in terms of species tree topology estimation, but we did not explore its accuracy with respect to the estimation of coalescent branch lengths; future work will need to explore how well ASTRID estimates these numeric parameters. Finally, it may well be that ASTRID will be most useful as a starting tree for use within more computationally intensive analyses, including Bayesian MCMC analyses (e.g., &#x002A;BEAST) or maximum likelihood analyses.</p>
+</sec>
+</body>
+<back>
+<sec><title>Availability of supporting data</title>
+<p>All datasets used in this study are available from prior publications. ASTRID is available in open source form on github at <ext-link ext-link-type="uri" xlink:href="http://pranjalv123.github.io/ASTRID">http://pranjalv123.github.io/ASTRID</ext-link>. Supporting materials are available online at <ext-link ext-link-type="uri" xlink:href="http://pranj.al/ASTRID">http://pranj.al/ASTRID</ext-link>.</p>
+</sec>
+<sec><title>Abbreviations</title>
+<def-list>
+<def-item>
+<term>AD</term>
+<def><p>Average distance</p></def>
+</def-item>
+<def-item>
+<term>ILS</term>
+<def><p>Incomplete lineage sorting</p></def>
+</def-item>
+<def-item>
+<term>MSC</term>
+<def><p>Multi-species coalescent</p></def>
+</def-item>
+<def-item>
+<term>RF</term>
+<def><p>Robinson-Foulds</p></def>
+</def-item>
+</def-list>
+</sec>
+<sec><title>Competing interests</title>
+<p>The authors declare that they have no competing interests.</p>
+</sec>
+<sec><title>Author&#x2019;s contributions</title>
+<p>PV implemented ASTRID, performed experiments, wrote the first draft, and analyzed the data. TW designed the study, analyzed the data, and wrote the final draft.</p>
+</sec>
+<ack><title>Acknowledgements</title>
+<p>PV was supported by the Roy J. Carver graduate fellowship from the University of Illinois at Urbana-Champaign, College of Engineering. TW was supported by National Science Foundation grant DBI-1461364. PV and TW were both supported by the College of Engineering at the University of Illinois at Urbana-Champaign through a gift from the Grainger Foundation.</p>
+</ack>
+<ref-list><title>References</title>
+<ref id="c1"><label>1.</label><mixed-citation publication-type="journal"><string-name><surname>Maddison</surname>, <given-names>W.</given-names></string-name>: <article-title>Gene trees in species trees</article-title>. <source>Syst Biol</source> <volume>46</volume>(<issue>3</issue>), <fpage>523</fpage>&#x2013;<lpage>536</lpage> (<year>1997</year>)</mixed-citation></ref>
+<ref id="c2"><label>2.</label><mixed-citation publication-type="journal"><string-name><surname>Kingman</surname>, <given-names>J.F.C.</given-names></string-name>: <article-title>On the genealogy of large populations</article-title>. <source>J Appl Prob</source> <volume>19</volume>, <fpage>27</fpage> (<year>1982</year>). doi:<pub-id pub-id-type="doi">10.2307/3213548</pub-id></mixed-citation></ref>
+<ref id="c3"><label>3.</label><mixed-citation publication-type="journal"><string-name><surname>Roch</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Steel</surname>, <given-names>M.</given-names></string-name>: <article-title>Likelihood-based tree reconstruction on a concatenation of alignments can be statistically inconsistent</article-title>. <source>Theoretical Population Biology</source> <volume>100</volume>, <fpage>56</fpage>&#x2013;<lpage>62</lpage> (<year>2015</year>)</mixed-citation></ref>
+<ref id="c4"><label>4.</label><mixed-citation publication-type="journal"><string-name><surname>Degnan</surname>, <given-names>J.H.</given-names></string-name>, <string-name><surname>Rosenberg</surname>, <given-names>N.A.</given-names></string-name>: <article-title>Gene tree discordance, phylogenetic inference and the multispecies coalescent</article-title>. <source>Trends Ecol Evol</source> <volume>24</volume>(<issue>6</issue>), <fpage>332</fpage>&#x2013;<lpage>340</lpage> (<year>2009</year>). doi:<pub-id pub-id-type="doi">10.1016/j.tree.2009.01.009</pub-id></mixed-citation></ref>
+<ref id="c5"><label>5.</label><mixed-citation publication-type="journal"><string-name><surname>Liu</surname>, <given-names>L.</given-names></string-name>, <string-name><surname>Yu</surname>, <given-names>L.</given-names></string-name>, <string-name><surname>Kubatko</surname>, <given-names>L.</given-names></string-name>, <string-name><surname>Pearl</surname>, <given-names>D.K.</given-names></string-name>, <string-name><surname>Edwards</surname>, <given-names>S.V.</given-names></string-name>: <article-title>Coalescent methods for estimating phylogenetic trees</article-title>. <source>Mol Phylogenet Evol</source> <volume>53</volume>(<issue>1</issue>), <fpage>320</fpage>&#x2013;<lpage>328</lpage> (<year>2009</year>)</mixed-citation></ref>
+<ref id="c6"><label>6.</label><mixed-citation publication-type="book"><string-name><surname>Knowles</surname>, <given-names>L.L.</given-names></string-name>, <string-name><surname>Kubatko</surname>, <given-names>L.</given-names></string-name>: <source>Estimating Species Trees: Practical and Theoretical Aspects</source>. <publisher-name>Wiley-Blackwell</publisher-name>, <publisher-loc>Hoboken, NJ</publisher-loc> (<year>2011</year>)</mixed-citation></ref>
+<ref id="c7"><label>7.</label><mixed-citation publication-type="journal"><string-name><surname>Mirarab</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Reaz</surname>, <given-names>R.</given-names></string-name>, <string-name><surname>Bayzid</surname>, <given-names>M.S.</given-names></string-name>, <string-name><surname>Zimmermann</surname>, <given-names>T.</given-names></string-name>, <string-name><surname>Swenson</surname>, <given-names>M.S.</given-names></string-name>, <string-name><surname>Warnow</surname>, <given-names>T.</given-names></string-name>: <article-title>ASTRAL: genome-scale coalescent-based species tree estimation</article-title>. <source>Bioinformatics</source> <volume>30</volume>, <fpage>541</fpage>&#x2013;<lpage>548</lpage> (<year>2014</year>). doi:<pub-id pub-id-type="doi">10.1093/bioinformatics/btu462</pub-id></mixed-citation></ref>
+<ref id="c8"><label>8.</label><mixed-citation publication-type="website"><string-name><surname>Mirarab</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Warnow</surname>, <given-names>T.</given-names></string-name>: <article-title>ASTRAL-II: coalescent-based species tree estimation with many hundreds of taxa and thousands of genes</article-title>. <source>Bioinformatics</source> <volume>31</volume>(<issue>12</issue>), <fpage>44</fpage>&#x2013;<lpage>52</lpage> (<year>2015</year>). doi:<pub-id pub-id-type="doi">10.1093/bioinformatics/btv234</pub-id>. <ext-link ext-link-type="uri" xlink:href="http://bioinformatics.oxfordjournals.org/content/31/12/i44.full.pdf&#x002B;html">http://bioinformatics.oxfordjournals.org/content/31/12/i44.full.pdf&#x002B;html</ext-link></mixed-citation></ref>
+<ref id="c9"><label>9.</label><mixed-citation publication-type="journal"><string-name><surname>Heled</surname>, <given-names>J.</given-names></string-name>, <string-name><surname>Drummond</surname>, <given-names>A.J.</given-names></string-name>: <article-title>Bayesian inference of species trees from multilocus data</article-title>. <source>Mol Biol Evol</source> <volume>27</volume>, <fpage>570</fpage>&#x2013;<lpage>580</lpage> (<year>2010</year>). doi:<pub-id pub-id-type="doi">10.1093/molbev/msp274</pub-id></mixed-citation></ref>
+<ref id="c10"><label>10.</label><mixed-citation publication-type="journal"><string-name><surname>Liu</surname>, <given-names>L.</given-names></string-name>, <string-name><surname>Pearl</surname>, <given-names>D.K.</given-names></string-name>: <article-title>Species trees from gene trees: reconstructing Bayesian posterior distributions of a species phylogeny using estimated gene tree distributions</article-title>. <source>Syst Biol</source> <volume>56</volume>, <fpage>504</fpage>&#x2013;<lpage>514</lpage> (<year>2007</year>). doi:<pub-id pub-id-type="doi">10.1080/10635150701429982</pub-id></mixed-citation></ref>
+<ref id="c11"><label>11.</label><mixed-citation publication-type="journal"><string-name><surname>Larget</surname>, <given-names>B.R.</given-names></string-name>, <string-name><surname>Kotha</surname>, <given-names>S.K.</given-names></string-name>, <string-name><surname>Dewey</surname>, <given-names>C.N.</given-names></string-name>, <string-name><surname>An&#x00E9;</surname>, <given-names>C.</given-names></string-name>: <article-title>BUCKy: Gene tree/species tree reconciliation with Bayesian concordance analysis</article-title>. <source>Bioinformatics</source> <volume>26</volume>, <fpage>2910</fpage>&#x2013;<lpage>2911</lpage> (<year>2010</year>). doi:<pub-id pub-id-type="doi">10.1093/bioinformatics/btq539.0912.4472</pub-id></mixed-citation></ref>
+<ref id="c12"><label>12.</label><mixed-citation publication-type="journal"><string-name><surname>Dasarathy</surname>, <given-names>G.</given-names></string-name>, <string-name><surname>Nowak</surname>, <given-names>R.</given-names></string-name>, <string-name><surname>Roch</surname>, <given-names>S.</given-names></string-name>: <article-title>Data requirement for phylogenetic inference from multiple loci: A new distance method</article-title>. <source>IEEE/ACM Trans Comp Biol Bioinformatics</source> <volume>12</volume>, <fpage>422</fpage>&#x2013;<lpage>432</lpage> (<year>2015</year>). DOI: <pub-id pub-id-type="doi">10.1109/TCBB.2014.2361685</pub-id></mixed-citation></ref>
+<ref id="c13"><label>13.</label><mixed-citation publication-type="journal"><string-name><surname>Liu</surname>, <given-names>L.</given-names></string-name>, <string-name><surname>Yu</surname>, <given-names>L.</given-names></string-name>, <string-name><surname>Edwards</surname>, <given-names>S.V.</given-names></string-name>: <article-title>A maximum pseudo-likelihood approach for estimating species trees under the coalescent model</article-title>. <source>BMC Evol Biol</source> <volume>10</volume>, <fpage>302</fpage> (<year>2010</year>). doi:<pub-id pub-id-type="doi">10.1186/1471-2148-10-302</pub-id></mixed-citation></ref>
+<ref id="c14"><label>14.</label><mixed-citation publication-type="journal"><string-name><surname>Liu</surname>, <given-names>L.</given-names></string-name>, <string-name><surname>Yu</surname>, <given-names>L.</given-names></string-name>: <article-title>Estimating species trees from unrooted gene trees</article-title>. <source>Syst Biol</source> <volume>60</volume>(<issue>5</issue>), <fpage>661</fpage>&#x2013;<lpage>667</lpage> (<year>2011</year>). doi:<pub-id pub-id-type="doi">10.1093/sysbio/syr027</pub-id></mixed-citation></ref>
+<ref id="c15"><label>15.</label><mixed-citation publication-type="journal"><string-name><surname>Bryant</surname>, <given-names>D.</given-names></string-name>, <string-name><surname>Bouckaert</surname>, <given-names>R.</given-names></string-name>, <string-name><surname>Felsenstein</surname>, <given-names>J.</given-names></string-name>, <string-name><surname>Rosenberg</surname>, <given-names>N.A.</given-names></string-name>, <string-name><surname>RoyChoudhury</surname>, <given-names>A.</given-names></string-name>: <article-title>Inferring species trees directly from biallelic genetic markers: bypassing gene trees in a full coalescent analysis</article-title>. <source>Mol Biol Evol</source> <volume>29</volume>(<issue>8</issue>), <fpage>1917</fpage>&#x2013;<lpage>1932</lpage> (<year>2012</year>)</mixed-citation></ref>
+<ref id="c16"><label>16.</label><mixed-citation publication-type="journal"><string-name><surname>Liu</surname>, <given-names>L.</given-names></string-name>, <string-name><surname>Yu</surname>, <given-names>L.</given-names></string-name>, <string-name><surname>Pearl</surname>, <given-names>D.K.</given-names></string-name>, <string-name><surname>Edwards</surname>, <given-names>S.V.</given-names></string-name>: <article-title>Estimating species phylogenies using coalescence times among sequences</article-title>. <source>Syst Biol</source> <volume>58</volume>(<issue>5</issue>), <fpage>468</fpage>&#x2013;<lpage>477</lpage> (<year>2009</year>). doi:<pub-id pub-id-type="doi">10.1093/sysbio/syp031</pub-id></mixed-citation></ref>
+<ref id="c17"><label>17.</label><mixed-citation publication-type="journal"><string-name><surname>Kubatko</surname>, <given-names>L.</given-names></string-name>, <string-name><surname>Carstens</surname>, <given-names>B.C.</given-names></string-name>, <string-name><surname>Knowles</surname>, <given-names>L.L.</given-names></string-name>: <article-title>STEM: Species tree estimation using maximum likelihood for gene trees under coalescence</article-title>. <source>Bioinformatics</source> <volume>25</volume>, <fpage>971</fpage>&#x2013;<lpage>973</lpage> (<year>2009</year>)</mixed-citation></ref>
+<ref id="c18"><label>18.</label><mixed-citation publication-type="website"><string-name><surname>Chifman</surname>, <given-names>J.</given-names></string-name>, <string-name><surname>Kubatko</surname>, <given-names>L.</given-names></string-name>: <article-title>Quartet inference from snp data under the coalescent model</article-title>. <source>Bioinformatics</source> (<year>2014</year>). doi:<pub-id pub-id-type="doi">10.1093/bioinformatics/btu530</pub-id>. <ext-link ext-link-type="uri" xlink:href="http://bioinformatics.oxfordjournals.org/content/early/2014/08/27/bioinformatics.btu530.full.pdf&#x002B;html">http://bioinformatics.oxfordjournals.org/content/early/2014/08/27/bioinformatics.btu530.full.pdf&#x002B;html</ext-link></mixed-citation></ref>
+<ref id="c19"><label>19.</label><mixed-citation publication-type="journal"><string-name><surname>Saitou</surname>, <given-names>N.</given-names></string-name>, <string-name><surname>Nei</surname>, <given-names>M.</given-names></string-name>: <article-title>The neighbor-joining method: a new method for reconstructing phylogenetic trees</article-title>. <source>Mol Biol Evol</source> <volume>4</volume>, <fpage>406</fpage>&#x2013;<lpage>425</lpage> (<year>1987</year>). doi:<pub-id pub-id-type="doi">citeulike-article-id:93683</pub-id></mixed-citation></ref>
+<ref id="c20"><label>20.</label><mixed-citation publication-type="journal"><string-name><surname>Mirarab</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Bayzid</surname>, <given-names>M.S.</given-names></string-name>, <string-name><surname>Boussau</surname>, <given-names>B.</given-names></string-name>, <string-name><surname>Warnow</surname>, <given-names>T.</given-names></string-name>: <article-title>Statistical binning enables an accurate coalescent-based estimation of the avian tree</article-title>. <source>Science</source> <volume>346</volume>(<issue>6215</issue>), <fpage>1250463</fpage> (<year>2014</year>)</mixed-citation></ref>
+<ref id="c21"><label>21.</label><mixed-citation publication-type="journal"><string-name><surname>Robinson</surname>, <given-names>D.F.</given-names></string-name>, <string-name><surname>Foulds</surname>, <given-names>L.R.</given-names></string-name>: <article-title>Comparison of phylogenetic trees</article-title>. <source>Math Biosci</source> <volume>53</volume>, <fpage>131</fpage>&#x2013;<lpage>147</lpage> (<year>1981</year>)</mixed-citation></ref>
+<ref id="c22"><label>22.</label><mixed-citation publication-type="other"><string-name><surname>Mirarab</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Bayzid</surname>, <given-names>M.S.</given-names></string-name>, <string-name><surname>Bossau</surname>, <given-names>B.</given-names></string-name>, <string-name><surname>Warnow</surname>, <given-names>T.</given-names></string-name>: <article-title>Statistical binning improves species tree estimation in the presence of gene tree incongruence</article-title>. <source>IDEALS</source> (<year>2014</year>). doi:<pub-id pub-id-type="doi">10.13012/C5MW2F2P</pub-id></mixed-citation></ref>
+<ref id="c23"><label>23.</label><mixed-citation publication-type="other"><string-name><surname>Bayzid</surname>, <given-names>M.S.</given-names></string-name>, <string-name><surname>Mirarab</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Warnow</surname>, <given-names>T.</given-names></string-name>: <article-title>Weighted statistical binning: enabling statistically consistent genome-scale phylogenetic analyses</article-title>. <source>PLoS One</source> (<year>2014</year>)</mixed-citation></ref>
+<ref id="c24"><label>24.</label><mixed-citation publication-type="journal"><string-name><surname>Jarvis</surname>, <given-names>E.D.</given-names></string-name>, <string-name><surname>Mirarab</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Aberer</surname>, <given-names>A.J.</given-names></string-name>, <string-name><surname>Li</surname>, <given-names>B.</given-names></string-name>, <string-name><surname>Houde</surname>, <given-names>P.</given-names></string-name>, <string-name><surname>Li</surname>, <given-names>C.</given-names></string-name>, <string-name><surname>Ho</surname>, <given-names>S.Y.</given-names></string-name>, <string-name><surname>Faircloth</surname>, <given-names>B.C.</given-names></string-name>, <string-name><surname>Nabholz</surname>, <given-names>B.</given-names></string-name>, <string-name><surname>Howard</surname>, <given-names>J.T.</given-names></string-name>, <etal>et al.</etal>: <article-title>Whole-genome analyses resolve early branches in the tree of life of modern birds</article-title>. <source>Science</source> <volume>346</volume>(<issue>6215</issue>), <fpage>1320</fpage>&#x2013;<lpage>1331</lpage> (<year>2014</year>)</mixed-citation></ref>
+<ref id="c25"><label>25.</label><mixed-citation publication-type="journal"><string-name><surname>Song</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Liu</surname>, <given-names>L.</given-names></string-name>, <string-name><surname>Edwards</surname>, <given-names>S.V.</given-names></string-name>, <string-name><surname>Wu</surname>, <given-names>S.</given-names></string-name>: <article-title>Resolving conflict in eutherian mammal phylogeny using phylogenomics and the multispecies coalescent model</article-title>. <source>Proc Natl Acad Sci USA</source> <volume>109</volume>(<issue>37</issue>), <fpage>14942</fpage>&#x2013;<lpage>14947</lpage> (<year>2012</year>)</mixed-citation></ref>
+<ref id="c26"><label>26.</label><mixed-citation publication-type="website"><string-name><surname>Mallo</surname>, <given-names>D.</given-names></string-name>, <string-name><surname>Oliviera Martins</surname>, <given-names>L.</given-names></string-name>, <string-name><surname>Posada</surname>, <given-names>D.</given-names></string-name>: <source>SimPhy: Comprehensive Simulation of Gene, Locus and Species Trees at the Genome-wide Level</source>. <ext-link ext-link-type="uri" xlink:href="https://github.com/adamallo/SimPhy">https://github.com/adamallo/SimPhy</ext-link></mixed-citation></ref>
+<ref id="c27"><label>27.</label><mixed-citation publication-type="journal"><string-name><surname>Price</surname>, <given-names>M.N.</given-names></string-name>, <string-name><surname>Dehal</surname>, <given-names>P.S.</given-names></string-name>, <string-name><surname>Arkin</surname>, <given-names>A.P.</given-names></string-name>: <article-title>FastTree 2 - Approximately maximum-likelihood trees for large alignments</article-title>. <source>PLoS ONE</source> <volume>5</volume>(<issue>3</issue>) (<year>2010</year>). doi:<pub-id pub-id-type="doi">10.1371/journal.pone.0009490</pub-id></mixed-citation></ref>
+<ref id="c28"><label>28.</label><mixed-citation publication-type="journal"><string-name><surname>Criscuolo</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Gascuel</surname>, <given-names>O.</given-names></string-name>: <article-title>Fast NJ-like algorithms to deal with incomplete distance matrices</article-title>. <source>BMC Bioinformatics</source> <volume>9</volume>, <fpage>166</fpage> (<year>2008</year>). doi:<pub-id pub-id-type="doi">10.1186/1471-2105-9-166</pub-id></mixed-citation></ref>
+<ref id="c29"><label>29.</label><mixed-citation publication-type="journal"><string-name><surname>Desper</surname>, <given-names>R.</given-names></string-name>, <string-name><surname>Gascuel</surname>, <given-names>O.</given-names></string-name>: <article-title>Fast and accurate phylogeny minimum-evolution principle</article-title>. <source>J Comput Biol</source> <volume>9</volume>, <fpage>687</fpage>&#x2013;<lpage>705</lpage> (<year>2002</year>). doi:<pub-id pub-id-type="doi">10.1089/106652702761034136</pub-id></mixed-citation></ref>
+<ref id="c30"><label>30.</label><mixed-citation publication-type="journal"><string-name><surname>Bayzid</surname>, <given-names>M.S.</given-names></string-name>, <string-name><surname>Hunt</surname>, <given-names>T.</given-names></string-name>, <string-name><surname>Warnow</surname>, <given-names>T.</given-names></string-name>: <article-title>Disk covering methods improve phylogenomic analyses</article-title>. <source>BMC Genomics</source> <volume>15</volume> (Suppl <issue>6</issue>), <fpage>7</fpage> (<year>2014</year>)</mixed-citation></ref>
+<ref id="c31"><label>31.</label><mixed-citation publication-type="journal"><string-name><surname>Mirarab</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Bayzid</surname>, <given-names>M.S.</given-names></string-name>, <string-name><surname>Warnow</surname>, <given-names>T.</given-names></string-name>: <article-title>Evaluating summary methods for multi-locus species tree estimation in the presence of incomplete lineage sorting</article-title>. <source>Syst Biol</source>, <fpage>063</fpage> (<year>2014</year>)</mixed-citation></ref>
+<ref id="c32"><label>32.</label><mixed-citation publication-type="journal"><string-name><surname>Gatesy</surname>, <given-names>J.P.</given-names></string-name>, <string-name><surname>Springer</surname>, <given-names>M.S.</given-names></string-name>: <article-title>Phylogenetic analysis at deep timescales: Unreliable gene trees, bypassed hidden support, and the coalescence/concatalescence conundrum</article-title>. <source>Mol Phylog Evol</source> <volume>80</volume>, <fpage>231</fpage>&#x2013;<lpage>266</lpage> (<year>2014</year>)</mixed-citation></ref>
+<ref id="c33"><label>33.</label><mixed-citation publication-type="journal"><string-name><surname>Bayzid</surname>, <given-names>M.S.</given-names></string-name>, <string-name><surname>Warnow</surname>, <given-names>T.</given-names></string-name>: <article-title>Naive binning improves phylogenomic analyses</article-title>. <source>Bioinformatics</source> <volume>29</volume>(<issue>18</issue>), <fpage>2277</fpage>&#x2013;<lpage>84</lpage> (<year>2013</year>). doi:<pub-id pub-id-type="doi">10.1093/bioinformatics/btt394</pub-id></mixed-citation></ref>
+<ref id="c34"><label>34.</label><mixed-citation publication-type="journal"><string-name><surname>Roch</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Warnow</surname>, <given-names>T.</given-names></string-name>: <article-title>On the robustness to gene tree estimation error (or lack thereof) of coalescent-based species tree methods</article-title>. <source>Syst Biol</source> <volume>64</volume>(<issue>4</issue>), <fpage>663</fpage>&#x2013;<lpage>676</lpage> (<year>2015</year>)</mixed-citation></ref>
+<ref id="c35"><label>35.</label><mixed-citation publication-type="journal"><string-name><surname>Song</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Liu</surname>, <given-names>L.</given-names></string-name>, <string-name><surname>Edwards</surname>, <given-names>S.V.</given-names></string-name>, <string-name><surname>Wu</surname>, <given-names>S.</given-names></string-name>: <article-title>Resolving conflict in eutherian mammal phylogeny using phylogenomics and the multispecies coalescent model</article-title>. <source>Proc Natl Acad Sci USA</source> <volume>109</volume>(<issue>37</issue>), <fpage>14942</fpage>&#x2013;<lpage>14947</lpage> (<year>2012</year>)</mixed-citation></ref>
+<ref id="c36"><label>36.</label><mixed-citation publication-type="journal"><string-name><surname>Roch</surname>, <given-names>S.</given-names></string-name>: <article-title>Towards extracting all phylogenetic information from matrices of evolutionary distances</article-title>. <source>Science</source> <volume>327</volume>(<issue>5971</issue>), <fpage>1376</fpage>&#x2013;<lpage>1379</lpage> (<year>2010</year>)</mixed-citation></ref>
+<ref id="c37"><label>37.</label><mixed-citation publication-type="book"><string-name><surname>Warnow</surname>, <given-names>T.</given-names></string-name>, <string-name><surname>Moret</surname>, <given-names>B.M.E.</given-names></string-name>, <string-name><surname>St. John</surname>, <given-names>K.</given-names></string-name>: <chapter-title>Absolute phylogeny: true trees from short sequences</chapter-title>. <source>In: Proc 12th Ann ACM/SIAM Symp Discrete Algs (SODA01)</source>, pp. <fpage>186</fpage>&#x2013;<lpage>195</lpage>. <publisher-name>SIAM Press</publisher-name>, <publisher-loc>Philadelphia, PA</publisher-loc> (<year>2001</year>)</mixed-citation></ref>
+<ref id="c38"><label>38.</label><mixed-citation publication-type="journal"><string-name><surname>Gronau</surname>, <given-names>I.</given-names></string-name>, <string-name><surname>Moran</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Snir</surname>, <given-names>S.</given-names></string-name>: <article-title>Fast and reliable reconstruction of phylogenetic trees with indistinguishable edges</article-title>. <source>J Random Struct Algs</source> <volume>40</volume>(<issue>3</issue>), <fpage>350</fpage>&#x2013;<lpage>384</lpage> (<year>2012</year>). doi=<pub-id pub-id-type="doi">10.1002/rsa.20372</pub-id></mixed-citation></ref>
+<ref id="c39"><label>39.</label><mixed-citation publication-type="journal"><string-name><surname>Nakhleh</surname>, <given-names>L.</given-names></string-name>, <string-name><surname>Roshan</surname>, <given-names>U.</given-names></string-name>, <string-name><surname>St. John</surname>, <given-names>K.</given-names></string-name>, <string-name><surname>Sun</surname>, <given-names>J.</given-names></string-name>, <string-name><surname>Warnow</surname>, <given-names>T.</given-names></string-name>: <article-title>Designing fast converging phylogenetic methods</article-title>. <source>Bioinformatics</source> <volume>17</volume>(suppl <issue>1</issue>), <fpage>190</fpage>&#x2013;<lpage>198</lpage> (<year>2001</year>). doi:<pub-id pub-id-type="doi">10.1093/bioinformatics/17.suppl 1.S190</pub-id></mixed-citation></ref>
+</ref-list>
+</back>
+</article>

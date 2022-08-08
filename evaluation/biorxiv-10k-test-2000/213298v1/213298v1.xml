@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/213298</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Synthetic Biology</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Model reduction permits Turing instability analysis of arbitrary reaction-diffusion models</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<name>
+<surname>Smith</surname>
+<given-names>Stephen</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<contrib contrib-type="author" corresp="yes">
+<name>
+<surname>Dalchau</surname>
+<given-names>Neil</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="corresp" rid="cor1">&#x002A;</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>Biological Computation group, Microsoft Research</institution>, Cambridge CB1 2FB, <country>UK</country></aff>
+<aff id="a2"><label>2</label><institution>School of Biological Sciences, University of Edinburgh</institution>, Edinburgh EH9 3JR, <country>UK</country></aff>
+</contrib-group>
+<author-notes>
+<corresp id="cor1"><label>&#x002A;</label>To whom correspondence should be addressed: <email>ndalchau@microsoft.com</email></corresp>
+</author-notes>
+<pub-date pub-type="epub">
+<year>2017</year>
+</pub-date>
+<elocation-id>213298</elocation-id>
+<history>
+<date date-type="received">
+<day>02</day>
+<month>11</month>
+<year>2017</year>
+</date>
+<date date-type="rev-recd">
+<day>02</day>
+<month>11</month>
+<year>2017</year>
+</date>
+<date date-type="accepted">
+<day>02</day>
+<month>11</month>
+<year>2017</year>
+</date>
+</history>
+<permissions><copyright-statement>&#x00A9; 2017, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2017</copyright-year><license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license></permissions>
+<self-uri xlink:href="213298.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>Synthesising a genetic network which generates stable Turing patterns is one of the great challenges of synthetic biology, but a significant obstacle is the disconnect between the mathematical theory and the biological reality. Current mathematical understanding of patterning is typically restricted to systems of 2 or 3 chemical species, for which equations are tractable, but plausible genetic networks typically consist of dozens of interacting species. In this article, we suggest a method for reducing large biochemical systems to systems with 2 or 3 species which can then be studied analytically. We provide conditions to guarantee that the full system forms patterns if the reduced system does, and vice-versa. We confirm our technique with 3 examples: the Brusselator, an example proposed by Turing, and a biochemically plausible patterning system consisting of 17 species. These examples show that our method significantly simplifies the study of pattern formation in large systems.</p>
+</abstract>
+<kwd-group kwd-group-type="author">
+<title>Keywords</title>
+<kwd>Turing patterns</kwd>
+<kwd>Model reduction</kwd>
+<kwd>Synthetic gene circuits</kwd>
+<kwd>Reaction-diffusion</kwd>
+</kwd-group>
+<counts>
+<page-count count="16"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<label>1</label>
+<title>Introduction</title>
+<p>How cells co-ordinate with one another to form regular patterns of alternate differentiated states is a foundational question in developmental biology [<xref ref-type="bibr" rid="c1">1</xref>]. Establishing general rules that biochemistry can follow to enable pattern formation could impact on our ability to understand and cure developmental disorders [<xref ref-type="bibr" rid="c2">2</xref>], construct synthetic organs/organoids [<xref ref-type="bibr" rid="c3">3</xref>], or enable synthetic biology applications to utilise multicellular self-organisation [<xref ref-type="bibr" rid="c4">4</xref>, <xref ref-type="bibr" rid="c5">5</xref>, <xref ref-type="bibr" rid="c6">6</xref>]. While there are several mechanisms that are known to enable multicellular self-organisation of regular patterns, such as the <italic>french flag</italic> model [<xref ref-type="bibr" rid="c7">7</xref>], we focus here on <italic>diffusion-driven instability</italic> (DDI) first described by Alan Turing [<xref ref-type="bibr" rid="c8">8</xref>]. He proposed that two &#x201C;morphogens&#x201D; (intercellular signalling molecules) could enable tissues to produce regular patterns, and introduced a framework based on the reaction-diffusion equations that can establish when a given chemical system has pattern-forming potential. Later, Gierer and Meinhardt proposed that self-organisation requires a self-enhancing activator, which also up-regulates an inhibitor, forming a negative feedback, and further that the activator must diffuse more slowly than the inhibitor [<xref ref-type="bibr" rid="c9">9</xref>]. While an activator-inhibitor system is the simplest pattern-forming network, requiring only two chemical species but with differential diffusion, the introduction of a third (non-diffusing) species has been found to enable pattern formation when the morphogens have equal diffusion rates [<xref ref-type="bibr" rid="c10">10</xref>, <xref ref-type="bibr" rid="c11">11</xref>].</p>
+<p>Despite the theory of Turing patterns having existed since the 1950s, only much more recently has compelling evidence emerged that suggests that Turing patterns are responsible for pattern formation in natural biological systems, including digit patterning [<xref ref-type="bibr" rid="c12">12</xref>, <xref ref-type="bibr" rid="c13">13</xref>] and fish skin colouring [<xref ref-type="bibr" rid="c14">14</xref>]. In most cases, it has been challenging to relate known biology involving many interacting species to simple 2- and 3-species networks for which analysis of DDI is more straightforward [<xref ref-type="bibr" rid="c13">13</xref>, <xref ref-type="bibr" rid="c15">15</xref>]. As such, it remains the subject of debate as to whether the examples of biological pattern formation cited above actually depend on DDI, or might arise due to other reasons. To help understand the biochemical mechanisms that can result in biological pattern formation, several articles have proposed constructing synthetic biochemical networks that are engineered to specifically implement pattern-forming behaviours, some based on Turing instability [<xref ref-type="bibr" rid="c16">16</xref>, <xref ref-type="bibr" rid="c17">17</xref>, <xref ref-type="bibr" rid="c18">18</xref>, <xref ref-type="bibr" rid="c19">19</xref>] but also other mechanisms [<xref ref-type="bibr" rid="c20">20</xref>, <xref ref-type="bibr" rid="c21">21</xref>, <xref ref-type="bibr" rid="c22">22</xref>, <xref ref-type="bibr" rid="c23">23</xref>]. Libraries of biological parts/components have now been compiled that have been demonstrated to be functional in specific cellular systems that are frequently used in synthetic biology applications (e.g. <italic>Escherichia coli, Saccharomyces cerevisiae).</italic> Knowledge of the functioning of these components could then be utilised to demonstrate how manipulating kinetic parameters influence the conditions for DDI, and alter pattern wavelength, in predictable ways. Establishing a close relationship between theory and experiment would then provide further evidence that Turing&#x2019;s mechanism can drive biological pattern formation. However, examples of synthetic biological circuits that can produce Turing patterns have yet to emerge, further raising the question of whether the Turing mechanism alone is sufficient to robustly generate regular patterns in a biological system.</p>
+<p>Analysis of DDI for two species is now well-established [<xref ref-type="bibr" rid="c24">24</xref>], but quickly becomes more complicated with the introduction of additional (often non-diffusing) species [<xref ref-type="bibr" rid="c10">10</xref>]. While more theory and automated mathematical tools are now emerging that facilitate the analysis of DDI in general n-dimensional systems [<xref ref-type="bibr" rid="c25">25</xref>, <xref ref-type="bibr" rid="c11">11</xref>], it still remains a challenge when the underlying system is nonlinear, as is typically the case in biological systems. Therefore, it is not uncommon to start with a more detailed mathematical description of a chemical system, then attempt to reduce it to a simpler form whilst retaining the majority of the behaviour of the detailed model [<xref ref-type="bibr" rid="c16">16</xref>]. However, little analysis has emerged that establishes whether the conditions of DDI are preserved during a model reduction, despite it being observed that model reduction can change the required diffusion ratio for pattern formation [<xref ref-type="bibr" rid="c10">10</xref>].</p>
+<p>Many techniques have been established that reduce the size of ordinary differential equation (ODE) models, offering a starting point for interpreting the impact of model reduction on Turing pattern formation. Each technique is based on minimising the fidelity between detailed and reduced models with respect to a specific property (see [<xref ref-type="bibr" rid="c26">26</xref>, <xref ref-type="bibr" rid="c27">27</xref>] for reviews of model reduction techniques). Some methods guarantee that equilibrium solutions (and their stability properties) are retained through a reduction, while others attempt to minimise the deviation of the transient behaviour of a specified model variable or variables, in response to a stimulus. Furthermore, some methods preserve the model co-ordinates/variables, while others do not. In biochemical systems, timescale separation techniques are often used, of which the most common are the quasi-steady state assumption (QSSA) and the quasi-equilibrium (QE) assumption [<xref ref-type="bibr" rid="c26">26</xref>]. Both involve removing species that are <italic>fast,</italic> substituting the concentration of these species for functions of the dynamic species that are derived from equilibrium relationships arising from the full system.</p>
+<p>In this article, we investigate the question of whether model reduction can be applied to a chemical reaction network in a manner that preserves Turing pattern-forming behaviour. In section 2, we prove that if a reduced model forms patterns, then so does the corresponding full system (and vice-versa), given that some easily-checkable conditions are fulfilled. In section 3, we confirm our results on three separate CRNs, including the Brusselator, and a synthetic gene network with 17 species. These examples show that the method developed in this article allows for quick and easy Turing pattern analysis of aribtrarily large and complex chemical systems.</p>
+</sec>
+<sec id="s2">
+<label>2</label>
+<title>Theory</title>
+<sec id="s2a">
+<label>2.1</label>
+<title>Background description of Turing instability</title>
+<p>The majority of theoretical work on Turing patterns builds upon the classical reaction-diffusion equations for a chemical system undergoing diffusion. In the absence of convection/advection, the reaction diffusion equations are given by
+<disp-formula id="eqn1">
+<alternatives>
+<graphic xlink:href="213298_eqn1.gif"/>
+</alternatives>
+</disp-formula>
+where <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline1.gif"/></alternatives></inline-formula> is in general a nonlinear system for the rate equations of a CRN involving <italic>N</italic> species (<italic>X</italic><sub>1</sub>,&#x2026;, <italic>X</italic><sub><italic>N</italic></sub>), and <bold>D</bold> is a diagonal matrix containing the diffusion rates of each species. The &#x2207; operator describes the spatial derivatives in <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline2.gif"/></alternatives></inline-formula>, where <italic>d</italic> is the number of spatial dimensions. In 1d, this simply corresponds to <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline3.gif"/></alternatives></inline-formula></p>
+<p>A Turing pattern arises when an equilibrium of the spatially homogoneous system (<bold>c</bold> &#x003D; &#x0109; such that <bold>f</bold>(&#x0109;) &#x003D; 0) goes unstable in the presence of diffusion. In our definition of a Turing pattern, this equilibrium is also assumed to be stable in the absence of diffusion. To analyse stability, we consider standard linear analysis of the system about the equilibrium <italic>&#x0109;</italic>. If <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline4.gif"/></alternatives></inline-formula> when <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline5.gif"/></alternatives></inline-formula>, then <xref rid="eqn1" ref-type="disp-formula">(1)</xref> becomes
+<disp-formula id="eqn2">
+<alternatives>
+<graphic xlink:href="213298_eqn2.gif"/>
+</alternatives>
+</disp-formula>
+where <bold>J</bold> is the matrix of first-order partial derivatives of <bold>f</bold> with respect to each species <italic>j</italic>
+<disp-formula id="eqn3">
+<alternatives>
+<graphic xlink:href="213298_eqn3.gif"/>
+</alternatives>
+</disp-formula>
+evaluated at <bold>c</bold> &#x003D; <bold>&#x0109;</bold>.</p>
+<p>To assess stability in the presence of diffusion, we consider how perturbations evolve over time. If <italic>w</italic><sub><italic>k</italic></sub>(<bold>x</bold>) are the eigenmodes of the Laplacian operator &#x2207;<sup>2</sup>, i.e. &#x2207;<sup>2</sup><italic>w</italic><sub><italic>k</italic></sub> &#x003D; <italic>&#x03B7;</italic><sub><italic>k</italic></sub><italic>w</italic><sub><italic>k</italic></sub>, then it has been shown that <italic>&#x03B7;</italic><sub><italic>k</italic></sub> &#x2264; 0 (with zero flux boundary conditions) [<xref ref-type="bibr" rid="c28">28</xref>]. Therefore, it is customary to let <italic>&#x03B7;</italic><sub><italic>k</italic></sub> &#x003D; &#x2212;<italic>k</italic><sup>2</sup>, with <italic>k</italic> corresponding to the wavenumber of the eigenmode. As such, in 1d, on a domain <italic>x</italic> &#x2208; [0, <italic>L</italic>], there are solutions of the form
+<disp-formula id="eqn4">
+<alternatives>
+<graphic xlink:href="213298_eqn4.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>Accordingly, the original linearisation problem <xref rid="eqn2" ref-type="disp-formula">(2)</xref> translates into
+<disp-formula id="eqn5">
+<alternatives>
+<graphic xlink:href="213298_eqn5.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>Therefore, we are interested in the eigenvalues of <bold>J</bold> &#x2212; <bold>D</bold><italic>k</italic><sup>2</sup>. If we denote by <italic>&#x03BB;(k)</italic> the solutions of the eigenvalue problem associated with <bold>J</bold> &#x2212; <bold>D</bold><italic>k</italic><sup>2</sup>, then this gives rise to a dispersion relation
+<disp-formula id="eqn6">
+<alternatives>
+<graphic xlink:href="213298_eqn6.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>For Turing instability, we require that the system is stable in the absence of diffusion, which translates to eigenvalues at <italic>k</italic> &#x003D; 0 all having negative real part. Additionally, we require the existence of at least one unstable wavenumber. i.e. there exists a wavenumber <italic>k</italic>&#x002A; such that there is a corresponding eigenvalue <italic>&#x03BB;</italic>&#x002A; with positive real part.</p>
+</sec>
+<sec id="s2b">
+<label>2.2</label>
+<title>Model reduction</title>
+<p>We now consider a system of <italic>N</italic> species in which the first <italic>M</italic> species can diffuse with diffusion coefficients <italic>D</italic><sub>1</sub>,&#x2026;,<italic>D</italic><sub><italic>m</italic></sub>, while the remaining species cannot. Accordingly, we describe a spatially inhomogeneous reaction-diffusion system as
+<disp-formula id="eqn7">
+<alternatives>
+<graphic xlink:href="213298_eqn7.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>The associated spatially homogeneous system can therefore be written compactly as
+<disp-formula id="eqn8">
+<alternatives>
+<graphic xlink:href="213298_eqn8.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>We further assume that there exists a non-negative spatially homogeneous equilibrium of <xref rid="eqn1" ref-type="disp-formula">(1)</xref> given by <italic>&#x0109;</italic><sub><italic>i</italic></sub> which satisfies:
+<disp-formula id="eqn9">
+<alternatives>
+<graphic xlink:href="213298_eqn9.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>We now outline a strategy to reduce system <xref rid="eqn8" ref-type="disp-formula">(8)</xref> to a smaller system of <italic>N</italic><sub><italic>R</italic></sub> species, with <italic>M</italic> &#x2264; <italic>N</italic><sub><italic>R</italic></sub> &#x003C; <italic>N</italic>, including all diffusible species. Without loss of generality, we assume that the reduced model consists of species <italic>X</italic><sub>1</sub>,&#x2026;,<italic>X</italic><sub><italic>N</italic><sub><italic>R</italic></sub></sub>. The reduction is obtained by defining the functions <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline6.gif"/></alternatives></inline-formula>, (<italic>i</italic> &#x003D; <italic>N</italic><sub><italic>R</italic></sub>&#x002B;1,&#x2026;,<italic>N</italic>), which satisfy:
+<disp-formula id="eqn10">
+<alternatives>
+<graphic xlink:href="213298_eqn10.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>Intuitively, this amounts to solving the steady-state ODEs for the <italic>removed</italic> species, as functions of the <italic>remaining</italic> species, thereby eliminating <italic>N</italic> &#x2212; <italic>N</italic><sub><italic>R</italic></sub> species from the system. Note that <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline7.gif"/></alternatives></inline-formula>. The reduced system of ODEs becomes:
+<disp-formula id="eqn11">
+<alternatives>
+<graphic xlink:href="213298_eqn11.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>Using the chain rule, the Jacobian for system <xref rid="eqn11" ref-type="disp-formula">(11)</xref> is given by: evualated at &#x003C;inline&#x003E;, and the diffusion matrix is given by:
+<disp-formula id="eqn12">
+<alternatives>
+<graphic xlink:href="213298_eqn12.gif"/>
+</alternatives>
+</disp-formula>
+evualated at <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline8.gif"/></alternatives></inline-formula> and the diffusion matrix is given by:
+<disp-formula id="eqn13">
+<alternatives>
+<graphic xlink:href="213298_eqn13.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>We now have two systems, <xref rid="eqn8" ref-type="disp-formula">(8)</xref> and <xref rid="eqn11" ref-type="disp-formula">(11)</xref>, which are models of the same underlying process. To consider how Turing pattern formation is affected by the reduction from <xref rid="eqn8" ref-type="disp-formula">(8)</xref> to <xref rid="eqn11" ref-type="disp-formula">(11)</xref>, we return to the mathematical conditions of pattern-forming behaviour introduced above.</p>
+<p>We say a system is <italic>pattern-forming</italic> if there exist <italic>k</italic><sub>1</sub>, <italic>k</italic><sub>2</sub>,<italic>k</italic><sub>3</sub>, <italic>k</italic><sub>4</sub> &#x003E; 0 with <italic>k</italic><sub>1</sub> &#x2264; <italic>k</italic><sub>2</sub>&#x003C; <italic>k</italic><sub>3</sub>&#x2264; <italic>k</italic><sub>4</sub> such that all eigenvalues of <bold>J</bold> &#x2212; <italic>k</italic><sup>2</sup><bold>D</bold> have negative real parts when <italic>k</italic> &#x003C; <italic>k</italic><sub>1</sub> and <italic>k</italic> &#x003E; <italic>k</italic><sub>4</sub>, and there is a positive real eigenvalue when <italic>k</italic><sub>2</sub> &#x003C; <italic>k</italic> &#x003C; <italic>k</italic><sub>3</sub>. This is a strict definition that explicitly excludes certain systems that are capable of forming patterns: (i) systems with patterns formed by Turing-Hopf bifurcations, (ii) systems that are unstable without diffusion, and (iii) systems that can form patterns on arbitrarily small length-scales (&#x201C;noise-amplifying networks&#x201D; [<xref ref-type="bibr" rid="c11">11</xref>]). Systems of type (i) are excluded because they can form either spatial patterns or temporal oscillations depending on the initial conditions, and so are not consistently pattern-forming; systems of type (ii) are excluded because they violate Turing&#x2019;s concept of diffusion-driven instability; systems of type (iii) are excluded because they violate physical principles by permitting, for example, patterns on length-scales smaller than a molecule [<xref ref-type="bibr" rid="c10">10</xref>].</p>
+<p>Knowing that we are interested in the behaviour of the matrix <bold>J</bold> &#x2212; <italic>k</italic><sup>2</sup><bold>D</bold>, and its reduced counterpart <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline9.gif"/></alternatives></inline-formula>, we note the following relationship between the full and reduced systems:</p>
+<p><bold>Lemma 2.1.</bold> |<bold>J</bold> &#x2212; <italic>k</italic><sup>2</sup><bold>D</bold>| <italic>and</italic> <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline10.gif"/></alternatives></inline-formula> <italic>have the same roots as functions of k</italic>.</p>
+<p><italic>Proof</italic>. We define:
+<disp-formula id="eqn14">
+<alternatives>
+<graphic xlink:href="213298_eqn14.gif"/>
+</alternatives>
+</disp-formula>
+so that,
+<disp-formula id="eqn15">
+<alternatives>
+<graphic xlink:href="213298_eqn15.gif"/>
+</alternatives>
+</disp-formula>
+and we define:
+<disp-formula id="eqn16">
+<alternatives>
+<graphic xlink:href="213298_eqn16.gif"/>
+</alternatives>
+</disp-formula>
+so that,
+<disp-formula id="eqn17">
+<alternatives>
+<graphic xlink:href="213298_eqn17.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>We now compare |<bold>J</bold> &#x2212; <italic>k</italic><sup>2</sup><bold>D</bold>| and |<bold>J</bold> &#x2212; <italic>k</italic><sup>2</sup><bold>D</bold>|. In the former case, we have that:
+<disp-formula id="eqn18">
+<alternatives>
+<graphic xlink:href="213298_eqn18.gif"/>
+</alternatives>
+</disp-formula>
+while in the latter case,
+<disp-formula id="eqn19">
+<alternatives>
+<graphic xlink:href="213298_eqn19.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>The two determinants are directly proportional if <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline11.gif"/></alternatives></inline-formula>. We observe that we can write <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline12.gif"/></alternatives></inline-formula>, where,
+<disp-formula id="eqn20">
+<alternatives>
+<graphic xlink:href="213298_eqn20.gif"/>
+</alternatives>
+</disp-formula>
+so that the condition for proportional determinants becomes that <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline13.gif"/></alternatives></inline-formula>, or algebraically, that
+<disp-formula id="eqn21">
+<alternatives>
+<graphic xlink:href="213298_eqn21.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>We note from <xref rid="eqn10" ref-type="disp-formula">Eq. <xref rid="eqn10" ref-type="disp-formula">(10)</xref></xref> that, <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline14.gif"/></alternatives></inline-formula>, (<italic>i</italic> &#x003D; <italic>N</italic><sub><italic>R</italic></sub> &#x002B;1,&#x0026;<italic>N</italic>) is a constant function of <italic>c</italic><sub>1</sub>,&#x2026;,<italic>c</italic><sub><italic>N</italic><sub><italic>R</italic></sub></sub>, i.e.,
+<disp-formula id="eqn22">
+<alternatives>
+<graphic xlink:href="213298_eqn22.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>Expanding this gives precisely the condition <xref rid="eqn21" ref-type="disp-formula">(21)</xref>. It follows that the determinants of the full and reduced systems are directly proportional, and consequently that any zero eigenvalues of the full system are replicated in the reduced system, and vice versa. &#x25A1;</p>
+<p>In the case of two systems with two diffusible species, we can also make the following statement:</p>
+<p><bold>Lemma 2.2.</bold> <italic>A system with two diffusible species (M &#x003D; 2) is pattern-forming if it has the following properties</italic>:</p>
+<p><italic>(I) the system is linearly stable without diffusion (i.e. max(Re(eig(<bold>J</bold>))) &#x003C; 0),</italic></p>
+<p><italic>(II) the non-diffusible subsystem is either linearly stable without diffusion (i.e. max(Re(eig(<bold>J</bold><sub>2,2</sub>))) &#x003C; 0), or else non-existent (i.e. M&#x003D;N&#x003D;2)</italic>,</p>
+<p><italic>(III)</italic> |<bold>J</bold> &#x2212; <italic>k</italic><sup>2</sup><bold>D</bold>| <italic>has two positive real roots (<italic>k</italic><sub>2</sub>, <italic>k</italic><sub>3</sub> with 0 &#x003C; <italic>k</italic><sub>2</sub> &#x003C; <italic>k</italic><sub>3</sub>) as a function of <italic>k</italic></italic>.</p>
+<p><italic>Proof.</italic> By (I), all eigenvalues of <bold>J</bold> &#x2212; <italic>k</italic><sup>2</sup><bold>D</bold> are negative when <italic>k</italic> &#x003D; 0, and by continuity, also negative up to some <italic>k</italic><sub>1</sub>&#x003E; 0 with <italic>k</italic><sub>1</sub>&#x2264; <italic>k</italic><sub>2</sub>. When <italic>k</italic> is very large, the characteristic polynomial of the system will have the form (<italic>&#x03BB;</italic> &#x2212; <italic>k</italic><sup>2</sup><italic>D</italic><sub>1</sub>)(<italic>&#x03BB;</italic> &#x2212; <italic>k</italic><sup>2</sup><italic>D</italic><sub>2</sub>)|<bold>J</bold><sub>2,2</sub> &#x2212; <italic>&#x03BB;</italic><bold>I</bold>| &#x002B; <italic>O</italic>(<italic>k</italic><sup>2</sup>) &#x003D; 0 if <italic>N</italic> &#x003E; 2, or else (<italic>&#x03BB;</italic> &#x2212; <italic>k</italic><sup>2</sup><italic>D</italic><sub>1</sub>)(<italic>&#x03BB;</italic> &#x2212; <italic>k</italic><sup>2</sup><italic>D</italic><sub>2</sub>) &#x003D; 0 if <italic>N</italic> &#x003D; 2. The eigenvalues of <bold>J</bold> &#x2212; <italic>k</italic><sup>2</sup><bold>D</bold> will therefore converge to &#x2212;<italic>k</italic><sup>2</sup><italic>D</italic><sub>1</sub>, &#x2212; <italic>k</italic><sup>2</sup><italic>D</italic><sub>2</sub> and (if <italic>N</italic> &#x003E; 2) the eigenvalues of <bold>J</bold><sub>2,2</sub>, which are all negative by (II). It follows that all eigenvalues of <bold>J</bold> &#x2212; <italic>k</italic><sup>2</sup><bold>D</bold> are negative for sufficiently large <italic>k</italic> (say, larger than some <italic>k</italic><sub>4</sub>&#x2265; <italic>k</italic><sub>3</sub>). Furthermore, since <italic>M</italic> &#x003D; 2, |<bold>J</bold> &#x2212; <italic>k</italic><sup>2</sup><bold>D</bold>| is a quadratic function of <italic>k</italic><sup>2</sup>, it follows from (III) that |<bold>J</bold> &#x2212; <italic>k</italic><sup>2</sup><bold>D</bold>| changes sign at <italic>k</italic><sub>2</sub> and <italic>k</italic><sub>3</sub>, and nowhere else. Since there exist <italic>k</italic> &#x003C; <italic>k</italic><sub>2</sub> and <italic>k</italic> &#x003E; <italic>k</italic><sub>3</sub> both corresponding to all negative eigenvalues of <bold>J</bold> &#x2212; <italic>k</italic><sup>2</sup><bold>D</bold>, it follows that there is at least one positive eigenvalue when <italic>k</italic><sub>2</sub> &#x003C; <italic>k</italic> &#x003C; <italic>k</italic><sub>3</sub>. The system therefore satisfies all conditions required for pattern-forming behaviour.&#x25A1;</p>
+<p>The combination of Lemmas 2.1 and 2.2 directly provides the conditions for which model reduction preserves pattern-forming behaviour. In particular, we have the following result:</p>
+<p><bold>Lemma 2.3.</bold> <italic>If a full (reduced) system is pattern-forming, then the reduced (full) system is also pattern-forming if both the reduced (full) system and - if it exists - its non-diffusible subsystem is stable without diffusion</italic>.</p>
+<p><italic>Proof.</italic> Conditions (I) and (II) of Lemma 2.2 hold by definition. Since the full (reduced) system is pattern-forming, there must exist distinct <italic>k</italic><sub>2</sub>, <italic>k</italic><sub>3</sub>&#x003E; 0 such that <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline15.gif"/></alternatives></inline-formula>. By Lemma 2.1, zeros of the full and reduced systems&#x2019; determinants coincide, so condition (III) of Lemma 2.2 also holds. Therefore the reduced (full) system is pattern-forming.</p>
+<p>There are two important implications of this result for model reduction in practice. Firstly, if we reduce a large model and find a set of parameters for which the reduced model forms patterns, then we only have to check the Jacobian of the full model to find if it also forms patterns. This is useful because checking the stability of a Jacobian is computationally much simpler than finding largest real eigenvalues as functions of <italic>k</italic>, especially for systems with many species. Secondly, if the reduced model is stable for a region of parameter space, then the full model cannot form patterns in that region. This is useful because the stable region is typically large, and unstable regions frequently correspond to physically impossible parameter values, and so model reduction can be an efficient way of eliminating systems incapable of pattern formation.</p>
+<p>In the next section we apply our technique to some example systems and confirm that our results hold.</p>
+</sec>
+</sec>
+<sec id="s3">
+<label>3</label>
+<title>Examples</title>
+<sec id="s3a">
+<label>3.1</label>
+<title>Brusselator</title>
+<p>One of the simplest chemical systems that is known to exhibit Turing patterns is the Brusselator, which in its original form is described by four reactions involving only two essential chemical species <italic>X</italic> and <italic>Y</italic> [<xref ref-type="bibr" rid="c29">29</xref>]</p>
+<disp-formula id="eqn23">
+<alternatives>
+<graphic xlink:href="213298_eqn23.gif"/>
+</alternatives>
+</disp-formula>
+<p>Here, the species <italic>A, B, D</italic> and <italic>E</italic> are explicitly included to ensure that mass is conserved. However, they are often removed during analysis as they do not contribute to the characterisation of the system behaviour, under the assumption that <italic>A</italic> and <italic>B</italic> are never depleted.</p>
+<p>Following some debate over the chemical plausibility of reactions with more than two reactants, it was proposed in [<xref ref-type="bibr" rid="c30">30</xref>] that by introducing a third chemical species, the trimolecular reaction could be converted to a pair of bimolecular reactions</p>
+<disp-formula id="eqn24">
+<alternatives>
+<graphic xlink:href="213298_eqn24.gif"/>
+</alternatives>
+</disp-formula>
+<p>As the resulting bimolecular Brusselator system has not previously been analysed for Turing pattern formation explicitly, we applied our model reduction approach to determine conditions for which Turing instability is preserved. To simplify the reaction network whilst retaining full coverage of the space of possible behaviours of the bimolecular Brusselator system, we remove the non-essential species and remove two of the rate parameters, leaving:
+<disp-formula id="eqn25">
+<alternatives>
+<graphic xlink:href="213298_eqn25.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>Assuming that X diffuses with unit rate, <italic>Y</italic> at a relative rate <italic>D</italic><sub><italic>Y</italic></sub> and <italic>Z</italic> is immobile, the concentrations of <italic>X</italic>, <italic>Y</italic> and <italic>Z</italic> for this system evolve as:
+<disp-formula id="eqn26">
+<alternatives>
+<graphic xlink:href="213298_eqn26.gif"/>
+</alternatives>
+</disp-formula>
+with equilibria <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline16.gif"/></alternatives></inline-formula>. We perform a model reduction which removes <italic>Z</italic> from the system. As per our strategy, this is achieved by solving <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline17.gif"/></alternatives></inline-formula> for <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline18.gif"/></alternatives></inline-formula>. We get:
+<disp-formula id="eqn27">
+<alternatives>
+<graphic xlink:href="213298_eqn27.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>The reduced model is obtained by substituting <xref rid="eqn27" ref-type="disp-formula">Eq. <xref rid="eqn27" ref-type="disp-formula">(27)</xref></xref> into <xref rid="eqn26" ref-type="disp-formula">Eq. <xref rid="eqn26" ref-type="disp-formula">(26)</xref></xref>:
+<disp-formula id="eqn28">
+<alternatives>
+<graphic xlink:href="213298_eqn28.gif"/>
+</alternatives>
+</disp-formula>
+which recovers the reaction-diffusion equations for the classical Brusselator model.</p>
+<p>In general, we find that parameter values which lead to patterns in the bimolecular Brusselator model also lead to patterns in the classical Brusselator model (<xref rid="fig1" ref-type="fig">Fig. 1 (a), (b)</xref>). To see this, we varied the parameter <italic>b</italic> and the diffusion constant <italic>D<sub>Y</sub></italic>over large ranges, and compared the bifurcation diagrams. As we would expect from Lemma 2.3, these show that parameter values which lead to patterns in the reduced system also lead to patterns in the full system; correspondingly, parameters which lead to patterns in the full system lead either to patterns or instability in the reduced system. In <xref rid="fig1" ref-type="fig">Fig. 1 (c), (d)</xref> we show the patterns formed by the species X in systems <xref rid="eqn26" ref-type="disp-formula">(26)</xref> and <xref rid="eqn28" ref-type="disp-formula">(28)</xref> respectively.</p>
+<fig id="fig1" position="float" fig-type="figure">
+<label>Figure 1:</label>
+<caption><title>Model reduction of a bimolecular Brusselator mostly retains the bifurcation structure of the classical Brusselator model</title>
+<p>Bifurcation diagrams are shown for (a) the bimolecular Brusselator <xref rid="eqn26" ref-type="disp-formula"><xref rid="eqn26" ref-type="disp-formula">(26)</xref></xref> system and (b) the classical Brusselator <xref rid="eqn28" ref-type="disp-formula"><xref rid="eqn28" ref-type="disp-formula">(28)</xref></xref> system. The clear area indicates parameter values of <italic>b</italic> and <italic>D</italic><sub><italic>Y</italic></sub> for which the homogeneous equilibrium is stable, while the black region indicates parameter values corresponding to Turing instability. The grey region indicates where the equilibrium solution is unstable in the spatially homogeneous scenario. (c),(d) Stable patterns formed by species X in the bimolecular Brusellator <xref rid="eqn26" ref-type="disp-formula"><xref rid="eqn26" ref-type="disp-formula">(26)</xref></xref> and classical Brusselator <xref rid="eqn28" ref-type="disp-formula"><xref rid="eqn28" ref-type="disp-formula">(28)</xref></xref> systems respectively. The parameter values used in these analyses were <italic>a</italic> &#x003D; 1, <italic>D</italic><sub><italic>X</italic></sub> &#x003D; 1, <italic>b</italic> &#x003D; 1.88, <italic>D</italic><sub><italic>Y</italic></sub> &#x003D; 10. Spatial simulations used a domain length of 20 (arbitrary units).</p></caption>
+<graphic xlink:href="213298_fig1.tif"/>
+</fig>
+<p>In <xref rid="fig2" ref-type="fig">Fig. 2</xref> we show the dispersion relations for systems <xref rid="eqn26" ref-type="disp-formula">(26)</xref> and <xref rid="eqn28" ref-type="disp-formula">(28)</xref>. As predicted by Lemma 2.1, while the relations themselves are different, they both change sign at the same values of <italic>k</italic>, implying that both systems will form patterns on the same wavelengths.</p>
+<fig id="fig2" position="float" fig-type="figure">
+<label>Figure 2:</label>
+<caption><title>Dispersion relations for the bimolecular and classical Brusselators</title>
+<p>Dispersion relations are shown for the bimolecular Brusselator <xref rid="eqn26" ref-type="disp-formula"><xref rid="eqn26" ref-type="disp-formula">(26)</xref></xref> system and the classical Brusselator <xref rid="eqn28" ref-type="disp-formula">(28)</xref> system. Although the two plots are different in general, they both cross the zero line at the same points. Parameter values are as in <xref rid="fig1" ref-type="fig">Fig. 1</xref>.</p></caption>
+<graphic xlink:href="213298_fig2.tif"/>
+</fig>
+</sec>
+<sec id="s3b">
+<label>3.2</label>
+<title>Turing&#x2019;s example</title>
+<p>We next considered a larger example that is closely related to one proposed by Turing [<xref ref-type="bibr" rid="c8">8</xref>]. It consists of species <italic>X, Y, W, C</italic>, and <italic>C</italic>&#x2032;, and concentrations <italic>x, y, w, c,</italic> and <italic>c&#x2032;</italic> respectively. <italic>X</italic> and <italic>Y</italic> can diffuse with diffusion coefficients <italic>D</italic><sub><italic>X</italic></sub> and <italic>D</italic><sub><italic>Y</italic></sub>, and the reactions are given by:
+<disp-formula id="eqn29">
+<alternatives>
+<graphic xlink:href="213298_eqn29.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>We note that the <italic>C</italic> and <italic>C&#x2032;</italic> are related via a conservation law, and so we substitute <italic>c&#x2032;</italic> &#x003D; <italic>c</italic><sub>Tot</sub> &#x2212; <italic>c</italic> (<italic>c</italic><sub>Tot</sub> constant), which leads to four independent ODEs that completely characterise the deterministic behaviour of the system:
+<disp-formula id="eqn30">
+<alternatives>
+<graphic xlink:href="213298_eqn30.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>To demonstrate how the model reduction can be applied to different extents, we reduce this system to both 3- and 2-species system approximations. First, we eliminate <italic>c</italic> by solving <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline19.gif"/></alternatives></inline-formula> for <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline20.gif"/></alternatives></inline-formula>, which gives
+<disp-formula id="eqn31">
+<alternatives>
+<graphic xlink:href="213298_eqn31.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>Substituting <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline21.gif"/></alternatives></inline-formula>; in system <xref rid="eqn30" ref-type="disp-formula">(30)</xref>, we obtain a 3 species system defined by
+<disp-formula id="eqn32">
+<alternatives>
+<graphic xlink:href="213298_eqn32.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>Next, we eliminate <italic>w</italic> by solving <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline22.gif"/></alternatives></inline-formula>, which gives
+<disp-formula id="eqn33">
+<alternatives>
+<graphic xlink:href="213298_eqn33.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>Substituting <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="213298_inline23.gif"/></alternatives></inline-formula> in <xref rid="eqn32" ref-type="disp-formula"><xref rid="eqn32" ref-type="disp-formula">(32)</xref></xref>, we obtain a 2 species system defined by
+<disp-formula id="eqn34">
+<alternatives>
+<graphic xlink:href="213298_eqn34.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>We therefore arrive at three models of system <xref rid="eqn29" ref-type="disp-formula"><xref rid="eqn29" ref-type="disp-formula">(29)</xref></xref> with varying levels of dynamical complexity. A <italic>complete</italic> model is described by 4 species, whereas two successive equilibrium assumptions applied to C and then <italic>W</italic> generate two simpler models. To demonstrate the equivalence of Turing instability (Lemma 2.3) across these models, we illustrate bifurcation diagrams of the full system (<xref rid="fig3" ref-type="fig">Figure 3 (a)</xref>), and the reduced 3 (<xref rid="fig3" ref-type="fig">Figure 3 (b)</xref>) and 2 species (<xref rid="fig3" ref-type="fig">Figure 3 (c)</xref>) systems. These show that the 4 and 3 species models have indistinguishable parameter-dependent behaviour, while the 2 species model is unstable for a region of parameter space where the other models are stable. We note that this unstable region prevents the 2 species model from forming patterns when the diffusion rates of <italic>X</italic> and <italic>Y</italic> are equal (<italic>D</italic><sub><italic>X</italic></sub> &#x003D; <italic>D</italic><sub><italic>Y</italic></sub> &#x003D; 1), though such equal diffusion rates can produce patterns for the 3 and 4 species models. We also observe that pattern-forming parameters in the 2 species system also lead to patterns in the larger systems (<xref rid="fig3" ref-type="fig">Figure 3 (d)-(f)</xref>). This is similar to the situation observed for the Brusselator, whereby model reduction leads to a shrinkage of the parameter space that produces patterns. However, we have not established whether this is generally the case following equilibrium-based model reduction.</p>
+<fig id="fig3" position="float" fig-type="figure">
+<label>Figure 3.</label>
+<caption><title>Turing pattern analysis for a reaction network from Turing [<xref ref-type="bibr" rid="c8">8</xref>]</title>
+<p>(a-c) Bifurcation diagrams for 4- <xref rid="eqn30" ref-type="disp-formula">(30)</xref>, 3- <xref rid="eqn32" ref-type="disp-formula">(32)</xref> and 2-species <xref rid="eqn34" ref-type="disp-formula">(34)</xref> systems. In all cases, the parameter values used were <italic>k</italic><sub>1</sub> &#x003D; 2, <italic>k</italic><sub>2</sub> &#x003D; 0.2, <italic>k</italic><sub>3</sub> &#x003D; 0.01, <italic>k</italic><sub>4</sub> &#x003D; 0.08, k<sub>5</sub> &#x003D; 0.04, k<sub>7</sub> &#x003D; 2, <italic>c</italic><sub>Tot</sub> &#x003D; 6, <italic>D</italic><sub><italic>X</italic></sub> &#x003D; 1. (d-f) Stable patterns formed by species X in the 4- <xref rid="eqn30" ref-type="disp-formula">(30)</xref>, 3- <xref rid="eqn32" ref-type="disp-formula">(32)</xref> and 2-species <xref rid="eqn34" ref-type="disp-formula">(34)</xref> systems respectively. In all cases, the parameter values used were as in (a-c) but additionally <italic>k</italic><sub>6</sub> &#x003D; 3.37, <italic>D</italic><sub><italic>Y</italic></sub> &#x003D;0.04, domain length&#x003D; 6.</p></caption>
+<graphic xlink:href="213298_fig3.tif"/>
+</fig>
+<p>In <xref rid="fig4" ref-type="fig">Fig. 4</xref> we show the dispersion relations for the 4- <xref rid="eqn30" ref-type="disp-formula">(30)</xref>, 3- <xref rid="eqn32" ref-type="disp-formula">(32)</xref> and 2-species <xref rid="eqn34" ref-type="disp-formula">(34)</xref> systems. As predicted by Lemma 2.1, while the relations themselves are generally different (although the 3- and 4- species relations are near-indistinguishable), they all change sign at the same values of <italic>k</italic>, implying that all systems will produce patterns on the same lengthscales.</p>
+<fig id="fig4" position="float" fig-type="figure">
+<label>Figure 4.</label>
+<caption><title>Dispersion relations for the reaction network from Turing [<xref ref-type="bibr" rid="c8">8</xref>]</title>
+<p>Dispersion relations are shown 4- <xref rid="eqn30" ref-type="disp-formula">(30)</xref>, 3- <xref rid="eqn32" ref-type="disp-formula">(32)</xref> and 2-species <xref rid="eqn34" ref-type="disp-formula">(34)</xref> systems (blue, red and yellow respectively). Although the plots are different in general, all three cross the zero line at the same points. An inset plot shows the crossing of the zero line at the lower value of <italic>k</italic>. Parameter values are as in <xref rid="fig3" ref-type="fig">Fig. 3</xref>.</p></caption>
+<graphic xlink:href="213298_fig4.tif"/>
+</fig>
+</sec>
+<sec id="s3c">
+<label>3.3</label>
+<title>A synthetic gene circuit</title>
+<p>In our final example, we consider a much larger system consisting of 17 species, which is based on the synthetic gene circuit proposed in [<xref ref-type="bibr" rid="c18">18</xref>]. While this publication presents only a theoretical analysis of the synthetic gene circuit, it represents a biologically plausible approach to realising a synthetic cellular Turing patterning circuit in live cells. The synthetic gene circuit is arranged in an activator-inhibitor network, whereby the intercellular signalling molecule Acyl Homoserine Lactonase (AHL) plays the role of a short-range activator, and hydrogen peroxide gas (H<sub>2</sub>O<sub>2</sub>) plays the role of a long-range inhibitor. Activation is achieved by AHL binding a constitutively expressed LuxR receiver protein, forming an activating complex for PLux promoters, which are placed upstream of coding sequences for the AHL synthase luxI [<xref ref-type="bibr" rid="c31">31</xref>] and the H<sub>2</sub>O<sub>2</sub>-producing ndh. The inhibitory loop is formed by an H<sub>2</sub>O<sub>2</sub>-sensitive topA promoter stimulating production of the AHL lactonase aiiA, which degrades AHL [<xref ref-type="bibr" rid="c32">32</xref>], thus inhibiting its action.</p>
+<p>In [<xref ref-type="bibr" rid="c18">18</xref>], it is shown that a model containing 5 variables (but analysis over 4 variables due to the presence of a conservation law) can give rise to diffusion-driven instability for certain parameter choices. Already, analysis of Turing instability is made challenging by virtue of there being more than 2 essential dependent variables. One might categorise their model as having intermediate complexity, as a simpler model could be arrived at by considering only the concentrations of the diffusive signals AHL and H<sub>2</sub>O<sub>2</sub>. In contrast, a more complex model might be considered that describes more of the intracellular components, and complexes between them, directly.</p>
+<p>Here, we show that the bifurcation properties of models of the synthetic gene circuit in [<xref ref-type="bibr" rid="c18">18</xref>] are preserved across models of varying complexity. To demonstrate this, we start by considering a model described by elementary chemical reactions, as follows:
+<disp-formula id="eqn35">
+<alternatives>
+<graphic xlink:href="213298_eqn35.gif"/>
+</alternatives>
+</disp-formula></p>
+<p>For brevity, we do not write out the full system of reaction rate equations here (although code is available from the authors upon request). We reduce the full system of equations to one of intermediate complexity consisting only of AHL, H<sub>2</sub>O<sub>2</sub>, AHL.luxR, and aiiA (as considered in [<xref ref-type="bibr" rid="c18">18</xref>], whose concentrations we write as <italic>L</italic>, <italic>H, P</italic> and A respectively. The reduced ODEs are:
+<disp-formula id="eqn36">
+<alternatives>
+<graphic xlink:href="213298_eqn36.gif"/>
+</alternatives>
+</disp-formula>
+where <italic>n</italic><sub><italic>p</italic></sub> is the total promoter concentration and <italic>n</italic><sub><italic>p</italic></sub> is the total <italic>Fis</italic> concentration. While this system is very similar to the four species model studied in [<xref ref-type="bibr" rid="c18">18</xref>], there are some minor differences, but we nevertheless still find that Turing instabilities arise.</p>
+<p>Finally, we can further reduce the system of intermediate complexity to a system comprising only the diffusive molecules AHL and H<sub>2</sub>O<sub>2</sub>:</p>
+<disp-formula id="eqn37">
+<alternatives>
+<graphic xlink:href="213298_eqn37.gif"/>
+</alternatives>
+</disp-formula>
+<p>In <xref rid="fig5" ref-type="fig">Fig. 5 (a)-(c)</xref>, we show bifurcation diagrams of the full system <xref rid="eqn35" ref-type="disp-formula">(35)</xref>, the four species model <xref rid="eqn36" ref-type="disp-formula">(36)</xref> and the two species model <xref rid="eqn37" ref-type="disp-formula">(37)</xref>. In this case, we find that the diagrams for the full <xref rid="eqn35" ref-type="disp-formula">(35)</xref> and intermediate <xref rid="eqn36" ref-type="disp-formula">(36)</xref> complexity systems are identical, while the diagram for fully reduced system <xref rid="eqn37" ref-type="disp-formula">(37)</xref> shows an unstable region of parameter space where the larger models are stable (in accordance with Lemma 2.3). All three models have identical pattern forming regions. In <xref rid="fig5" ref-type="fig">Fig. 5 (d)-(f)</xref> we show stable two-dimensional patterns of [AHL] in each system, which illustrates how patterns of a similar wavelength emerge. This is confirmed by the dispersion relations shown in <xref rid="fig6" ref-type="fig">Fig. 6</xref>, which show that each system&#x2019;s dispersion relation changes sign at precisely the same wavenumbers (in accordance with Lemma 2.1).</p>
+<fig id="fig5" position="float" fig-type="figure">
+<label>Figure 5.</label>
+<caption><title>Turing patterns are robust to reductions of a model of a synthetic gene circuit with intercellular signalling</title>
+<p>(a-c) Bifurcation diagrams for systems <xref rid="eqn35" ref-type="disp-formula">(35)</xref>, <xref rid="eqn36" ref-type="disp-formula">(36)</xref> and <xref rid="eqn37" ref-type="disp-formula">(37)</xref> respectively. (d-f) Stable patterns formed by species AHL in systems <xref rid="eqn35" ref-type="disp-formula">(35)</xref>, <xref rid="eqn36" ref-type="disp-formula">(36)</xref> and <xref rid="eqn37" ref-type="disp-formula">(37)</xref> respectively. Parameter values: <italic>a</italic><sub>1</sub> &#x003D; 2142, <italic>a</italic><sub>3</sub> &#x003D; 1190, <italic>k</italic><sub><italic>AHL</italic></sub> &#x003D; 2, <italic>k</italic><sub><italic>H2O2</italic></sub> &#x003D; 0.057, <italic>b</italic><sub>1</sub> &#x003D; 0.156, <italic>b</italic><sub>3</sub> &#x003D; 0.03, <italic>b</italic><sub>4</sub> &#x003D; 0.25, <italic>b</italic><sub><italic>F</italic></sub> &#x003D; 2, <italic>d</italic><sub><italic>N</italic></sub> &#x003D; 2, <italic>d</italic><sub><italic>I</italic></sub> &#x003D; 2, <italic>d</italic><sub><italic>R</italic></sub> &#x003D; 2, <italic>&#x03B3;</italic><sub>2</sub> &#x003D; 2, <italic>&#x03B3;</italic><sub>3</sub> &#x003D; 2, <italic>b</italic><sub><italic>R</italic></sub> &#x003D; 0.0156, <italic>u</italic><sub><italic>R</italic></sub> &#x003D; 2, <italic>u</italic><sub><italic>A</italic></sub> &#x003D; 2, <italic>k</italic><sub><italic>A</italic></sub> &#x003D; 2, <italic>b</italic><sub><italic>A</italic></sub> &#x003D; 0.0117, <italic>a</italic><sub><italic>R</italic></sub> &#x003D; 0.5, <italic>k</italic><sub><italic>un</italic></sub> &#x003D; 2, <italic>n</italic><sub><italic>F</italic></sub> &#x003D; 2, <italic>n</italic><sub><italic>P</italic></sub> &#x003D; 2, <italic>u</italic><sub>1</sub> &#x003D; 2, <italic>u</italic><sub>3</sub> &#x003D; 2, <italic>u</italic><sub>4</sub> &#x003D; 2, <italic>u</italic><sub><italic>F</italic></sub> &#x003D; 2, <italic>D</italic><sub><italic>AHL</italic></sub> &#x003D; 1; in panels d-f, <italic>k</italic><sub><italic>dim</italic></sub> &#x003D; 2, <italic>D</italic><sub><italic>H202</italic></sub> &#x003D; 100, domain length&#x003D; 100.</p></caption>
+<graphic xlink:href="213298_fig5.tif"/>
+</fig>
+<fig id="fig6" position="float" fig-type="figure">
+<label>Figure 6.</label>
+<caption><title>Dispersion relations for the synthetic gene circuit model</title>
+<p>Dispersion relations are shown for systems <xref rid="eqn35" ref-type="disp-formula">(35)</xref>, <xref rid="eqn36" ref-type="disp-formula">(36)</xref> and <xref rid="eqn37" ref-type="disp-formula">(37)</xref> (blue, red and yellow respectively). Although the plots are different in general, all three cross the zero line at the same points. Parameter values are as in <xref rid="fig5" ref-type="fig">Fig. 5</xref>.</p></caption>
+<graphic xlink:href="213298_fig6.tif"/>
+</fig>
+</sec>
+</sec>
+<sec id="s4">
+<label>4</label>
+<title>Discussion</title>
+<p>In this article we have proposed a technique for reducing a large chemical system to a small one, in a manner that preserves pattern-forming behaviour as far as possible. In essence, the reduction relies on a quasi-steady-state approximation (QSSA), since it assumes that the concentrations of the removed species can be written in terms of the remaining species without reference to time. However, the comparison to the QSSA is slightly disingenuous, since all species (not just the removed subset) must be in steady-state for stable Turing patterns to form, and the QSSA is normally applied to time-dependent systems. Comparison with other model reduction techniques is also difficult, since unlike typical approaches, our strategy is not necessarily interested in preserving the correct dynamical behaviour of the full system: indeed, we make no claims that the reduced model is an accurate description of the original system. The reduced model is derived with one aim in mind: to help find parameters of the full model which can lead to Turing patterns, or to help prove that none exist.</p>
+<p>In that respect, our technique is very successful. We have shown that, if we can find a pattern-forming parameter set for the reduced system, then it is simply a matter of checking the stability of the Jacobian of the full system to determine whether it, too, forms paterns with those parameters. Furthermore, if we can find a region of parameter space for which the reduced system is stable, then we know for certain that the full system cannot form patterns in that region.</p>
+<p>The power of our technique is demonstrated very well on system <xref rid="eqn35" ref-type="disp-formula">(35)</xref>: a biologically plausible system consisting of 17 species and 31 reactions. At face-value, it is impossible to know whether this system is capable of forming patterns, and, if so, which parameters correspond to pattern-forming behaviour. By performing a dramatic reduction from 17 to 2 species, we quickly found regions of parameter space corresponding to pattern-forming and stability in the reduced model. Our results prove that these regions necessarily correspond to potential-pattern-forming and no-pattern-forming respectively in the full system. The fact that both systems generate near-indistinguishable patterns is an added bonus. Temporal dynamics are not conserved, which can be seen in the larger eigenvalues of reduced systems (<xref rid="fig2" ref-type="fig">Figures 2</xref>, <xref rid="fig4" ref-type="fig">4</xref> and <xref rid="fig6" ref-type="fig">6</xref>), which is known to correlate with faster pattern emergence [<xref ref-type="bibr" rid="c33">33</xref>]. However, this is not surprising. Our model reduction technique is to simply assume that certain species equilibrate infinitely fast, and so the overall dynamics of reduced systems will be faster in general.</p>
+<p>Overall, our results provide a quick and rigorous way to check for pattern-forming behaviour in large biochemical networks. While we do not attempt to automate this process here, such automation could be of serious utility to synthetic biologists in their attempts to find and synthesise genetic networks capable of forming stable patterns. The results in this article will also be of general interest to those in the reaction-diffusion field, since they provide a means to extend the current analytical tools developed for 2 or 3 species Turing-patterning systems to systems composed of an arbitrary number of species.</p>
+</sec>
+</body>
+<back>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>[1]</label><mixed-citation publication-type="journal"><string-name><given-names>A. J.</given-names> <surname>Koch</surname></string-name> and <string-name><given-names>H.</given-names> <surname>Meinhardt</surname></string-name>, &#x201C;<article-title>Biological pattern formation: From basic mechanisms to complex structures</article-title>,&#x201D; <source>Reviews of Modern Physics</source>, vol. <volume>66</volume>, no. <issue>4</issue>, pp. <fpage>1481</fpage>&#x2013;<lpage>1507</lpage>, <year>1994</year>.</mixed-citation></ref>
+<ref id="c2"><label>[2]</label><mixed-citation publication-type="journal"><string-name><given-names>H.</given-names> <surname>Edlund</surname></string-name>, &#x201C;<article-title>Organogenesis: Pancreatic organogenesis developmental mechanisms and implica-tions for therapy</article-title>,&#x201D; <source>Nat Rev Genet</source>, vol. <volume>3</volume>, no. <issue>7</issue>, pp. <fpage>524</fpage>&#x2013;<lpage>532</lpage>, <year>2002</year>.</mixed-citation></ref>
+<ref id="c3"><label>[3]</label><mixed-citation publication-type="journal"><string-name><given-names>A.</given-names> <surname>Fatehullah</surname></string-name>, <string-name><given-names>S. H.</given-names> <surname>Tan</surname></string-name>, and <string-name><given-names>N.</given-names> <surname>Barker</surname></string-name>, &#x201C;<article-title>Organoids as an in vitro model of human development and disease</article-title>,&#x201D; <source>Nature Cell Biology</source>, vol. <volume>18</volume>, no. <issue>3</issue>, pp. <fpage>246</fpage>&#x2013;<lpage>254</lpage>, <year>2016</year>.</mixed-citation></ref>
+<ref id="c4"><label>[4]</label><mixed-citation publication-type="journal"><string-name><given-names>M.-T.</given-names> <surname>Chen</surname></string-name> and <string-name><given-names>R.</given-names> <surname>Weiss</surname></string-name>, &#x201C;<article-title>Artificial cell-cell communication in yeast Saccharomyces cerevisiae using signaling elements from Arabidopsis thaliana</article-title>.,&#x201D; <source>Nature biotechnology</source>, vol. <volume>23</volume>, no. <issue>12</issue>, pp. <fpage>1551</fpage>&#x2013;<lpage>5</lpage>, <year>2005</year>.</mixed-citation></ref>
+<ref id="c5"><label>[5]</label><mixed-citation publication-type="journal"><string-name><given-names>H.</given-names> <surname>Song</surname></string-name>, <string-name><given-names>S.</given-names> <surname>Payne</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Gray</surname></string-name>, and <string-name><given-names>L.</given-names> <surname>You</surname></string-name>, &#x201C;<article-title>Spatiotemporal modulation of biodiversity in a synthetic chemical-mediated ecosystem</article-title>.,&#x201D; <source>Nature chemical biology</source>, vol. <volume>5</volume>, no. <issue>12</issue>, pp. <fpage>929</fpage>&#x2013;<lpage>35</lpage>, <year>2009</year>.</mixed-citation></ref>
+<ref id="c6"><label>[6]</label><mixed-citation publication-type="journal"><string-name><given-names>P. K.</given-names> <surname>Grant</surname></string-name>, <string-name><given-names>N.</given-names> <surname>Dalchau</surname></string-name>, <string-name><given-names>J. R.</given-names> <surname>Brown</surname></string-name>, <string-name><given-names>F.</given-names> <surname>Federici</surname></string-name>, <string-name><given-names>T. J.</given-names> <surname>Rudge</surname></string-name>, <string-name><given-names>B.</given-names> <surname>Yordanov</surname></string-name>, <string-name><given-names>O.</given-names> <surname>Patange</surname></string-name>, <string-name><given-names>A.</given-names> <surname>Phillips</surname></string-name>, and <string-name><given-names>J.</given-names> <surname>Haseloff</surname></string-name>, &#x201C;<article-title>Orthogonal intercellular signaling for programmed spatial behavior</article-title>.,&#x201D; <source>Molecular systems biology</source>, vol. <volume>12</volume>, no. <issue>1</issue>, p. <fpage>849</fpage>, <year>2016</year>.</mixed-citation></ref>
+<ref id="c7"><label>[7]</label><mixed-citation publication-type="journal"><string-name><given-names>L.</given-names> <surname>Wolpert</surname></string-name>, &#x201C;<article-title>Positional information and the spatial pattern of cellular differentiation</article-title>,&#x201D; <source>Journal of Theoretical Biology</source>, vol. <volume>25</volume>, no. <issue>1</issue>, pp. <fpage>1</fpage>&#x2013;<lpage>47</lpage>, <year>1969</year>.</mixed-citation></ref>
+<ref id="c8"><label>[8]</label><mixed-citation publication-type="journal"><string-name><given-names>A. M.</given-names> <surname>Turing</surname></string-name>, &#x201C;<article-title>The Chemical Basis of Morphogenesis</article-title>,&#x201D; <source>Philosophical transactions of the Royal Society of London. Series B, Biological sciences</source>, vol. <volume>237</volume>, no. <issue>641</issue>, pp. <fpage>37</fpage>&#x2013;<lpage>72</lpage>, <year>1952</year>.</mixed-citation></ref>
+<ref id="c9"><label>[9]</label><mixed-citation publication-type="journal"><string-name><given-names>A.</given-names> <surname>Gierer</surname></string-name> and <string-name><given-names>H.</given-names> <surname>Meinhardt</surname></string-name>, &#x201C;<article-title>A theory of biological pattern formation</article-title>,&#x201D; <source>Kybernetik</source>, vol. <volume>12</volume>, no. <issue>1</issue>, pp. <fpage>30</fpage>&#x2013;<lpage>39</lpage>, <year>1972</year>.</mixed-citation></ref>
+<ref id="c10"><label>[10]</label><mixed-citation publication-type="journal"><string-name><given-names>V.</given-names> <surname>Klika</surname></string-name>, <string-name><given-names>R. E.</given-names> <surname>Baker</surname></string-name>, <string-name><given-names>D.</given-names> <surname>Headon</surname></string-name>, and <string-name><given-names>E. A.</given-names> <surname>Gaffney</surname></string-name>, &#x201C;<article-title>The Influence of Receptor-Mediated Inte-ractions on Reaction-Diffusion Mechanisms of Cellular Self-organisation</article-title>,&#x201D; <source>Bulletin of Mathematical Biology</source>, vol. <volume>74</volume>, no. <issue>4</issue>, pp. <fpage>935</fpage>&#x2013;<lpage>957</lpage>, <year>2012</year>.</mixed-citation></ref>
+<ref id="c11"><label>[11]</label><mixed-citation publication-type="journal"><string-name><given-names>L.</given-names> <surname>Marcon</surname></string-name>, <string-name><given-names>X.</given-names> <surname>Diego</surname></string-name>, <string-name><given-names>J.</given-names> <surname>Sharpe</surname></string-name>, and <string-name><given-names>P.</given-names> <surname>M&#x00FC;ller</surname></string-name>, &#x201C;<article-title>High-throughput mathematical analysis identifies Turing networks for patterning with equally diffusing signals</article-title>,&#x201D; <source>eLife</source>, vol. <volume>5</volume>, no. <issue>APRIL2016</issue>, pp. <fpage>1</fpage>&#x2013;<lpage>60</lpage>, <year>2016</year>.</mixed-citation></ref>
+<ref id="c12"><label>[12]</label><mixed-citation publication-type="journal"><string-name><given-names>R.</given-names> <surname>Sheth</surname></string-name>, <string-name><given-names>L.</given-names> <surname>Marcon</surname></string-name>, <string-name><given-names>M. F.</given-names> <surname>Bastida</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Junco</surname></string-name>, <string-name><given-names>L.</given-names> <surname>Quintana</surname></string-name>, <string-name><given-names>R.</given-names> <surname>Dahn</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Kmita</surname></string-name>, <string-name><given-names>J.</given-names> <surname>Sharpe</surname></string-name>, and <string-name><given-names>M. A.</given-names> <surname>Ros</surname></string-name>, &#x201C;<article-title>Hox genes regulate digit patterning by controlling the wavelength of a Turing-type mechanism</article-title>,&#x201D; <source>Science</source>, vol. <volume>338</volume>, no. <issue>6113</issue>, pp. <fpage>1476</fpage>&#x2013;<lpage>1480</lpage>, <year>2012</year>.</mixed-citation></ref>
+<ref id="c13"><label>[13]</label><mixed-citation publication-type="journal"><string-name><given-names>J.</given-names> <surname>Raspopovic</surname></string-name>, <string-name><given-names>L.</given-names> <surname>Marcon</surname></string-name>, <string-name><given-names>L.</given-names> <surname>Russo</surname></string-name>, and <string-name><given-names>J.</given-names> <surname>Sharpe</surname></string-name>, &#x201C;<article-title>Digit patterning is controlled by a Bmp-Sox9-Wnt Turing network modulated by morphogen gradients</article-title>,&#x201D; <source>Science</source>, vol. <volume>345</volume>, no. <issue>6196</issue>, pp. <fpage>566570</fpage>, <year>2014</year>.</mixed-citation></ref>
+<ref id="c14"><label>[14]</label><mixed-citation publication-type="journal"><string-name><given-names>A.</given-names> <surname>Nakamasu</surname></string-name>, <string-name><given-names>G.</given-names> <surname>Takahashi</surname></string-name>, <string-name><given-names>A.</given-names> <surname>Kanbe</surname></string-name>, and <string-name><given-names>S.</given-names> <surname>Kondo</surname></string-name>, &#x201C;<article-title>Interactions between zebrafish pigment cells responsible for the generation of Turing patterns</article-title>,&#x201D; <source>Proceedings of the National Academy of Sciences</source>, vol. <volume>106</volume>, no. <issue>21</issue>, pp. <fpage>8429</fpage>&#x2013;<lpage>8434</lpage>, <year>2009</year>.</mixed-citation></ref>
+<ref id="c15"><label>[15]</label><mixed-citation publication-type="other"><string-name><given-names>M.</given-names> <surname>Watanabe</surname></string-name> and <string-name><given-names>S.</given-names> <surname>Kondo</surname></string-name>, &#x201C;<source>Is pigment patterning in fish skin determined by the Turing me-chanism?</source>,&#x201D; <year>2015</year>.</mixed-citation></ref>
+<ref id="c16"><label>[16]</label><mixed-citation publication-type="journal"><string-name><given-names>I.</given-names> <surname>Lengyel</surname></string-name> and <string-name><given-names>I. R.</given-names> <surname>Epstein</surname></string-name>, &#x201C;<article-title>A Chemical Approach to Designing Turing Patterns in Reaction Diffusion Systems</article-title>,&#x201D; <source>PNAS</source>, vol. <volume>89</volume>, p. <fpage>3977</fpage>, <year>1992</year>.</mixed-citation></ref>
+<ref id="c17"><label>[17]</label><mixed-citation publication-type="journal"><string-name><given-names>L.</given-names> <surname>Diambra</surname></string-name>, <string-name><given-names>V. R.</given-names> <surname>Senthivel</surname></string-name>, <string-name><given-names>D. B.</given-names> <surname>Menendez</surname></string-name>, and <string-name><given-names>M.</given-names> <surname>Isalan</surname></string-name>, &#x201C;<article-title>Cooperativity to increase turing pattern space for synthetic biology</article-title>,&#x201D; <source>ACS Synthetic Biology</source>, vol. <volume>4</volume>, no. <issue>2</issue>, pp. <fpage>177</fpage>&#x2013;<lpage>186</lpage>, <year>2015</year>.</mixed-citation></ref>
+<ref id="c18"><label>[18]</label><mixed-citation publication-type="journal"><string-name><given-names>B.</given-names> <surname>Borek</surname></string-name>, <string-name><given-names>J.</given-names> <surname>Hasty</surname></string-name>, and <string-name><given-names>L.</given-names> <surname>Tsimring</surname></string-name>, &#x201C;<article-title>Turing Patterning Using Gene Circuits with Gas-Induced Degradation of Quorum Sensing Molecules</article-title>.,&#x201D; <source>PloS one</source>, vol. <volume>11</volume>, p. <fpage>e0153679</fpage>, <month>jan</month> <year>2016</year>.</mixed-citation></ref>
+<ref id="c19"><label>[19]</label><mixed-citation publication-type="journal"><string-name><given-names>N. S.</given-names> <surname>Scholes</surname></string-name> and <string-name><given-names>M.</given-names> <surname>Isalan</surname></string-name>, &#x201C;<article-title>A three-step framework for programming pattern formation</article-title>,&#x201D; <source>Current Opinion in Chemical Biology</source>, vol. <volume>40</volume>, pp. <fpage>1</fpage>&#x2013;<lpage>7</lpage>, <year>2017</year>.</mixed-citation></ref>
+<ref id="c20"><label>[20]</label><mixed-citation publication-type="journal"><string-name><given-names>S.</given-names> <surname>Basu</surname></string-name>, <string-name><given-names>Y.</given-names> <surname>Gerchman</surname></string-name>, <string-name><given-names>C. H.</given-names> <surname>Collins</surname></string-name>, <string-name><given-names>F. H.</given-names> <surname>Arnold</surname></string-name>, and <string-name><given-names>R.</given-names> <surname>Weiss</surname></string-name>, &#x201C;<article-title>A synthetic multicellular system for programmed pattern formation</article-title>.,&#x201D; <source>Nature</source>, vol. <volume>434</volume>, no. <issue>7037</issue>, pp. <fpage>1130</fpage>&#x2013;<lpage>1134</lpage>, <year>2005</year>.</mixed-citation></ref>
+<ref id="c21"><label>[21]</label><mixed-citation publication-type="journal"><string-name><given-names>C.</given-names> <surname>Liu</surname></string-name>, <string-name><given-names>X.</given-names> <surname>Fu</surname></string-name>, <string-name><given-names>L.</given-names> <surname>Liu</surname></string-name>, <string-name><given-names>X.</given-names> <surname>Ren</surname></string-name>, <string-name><given-names>C. K. L.</given-names> <surname>Chau</surname></string-name>, <string-name><given-names>S.</given-names> <surname>Li</surname></string-name>, <string-name><given-names>L.</given-names> <surname>Xiang</surname></string-name>, <string-name><given-names>H.</given-names> <surname>Zeng</surname></string-name>, <string-name><given-names>G.</given-names> <surname>Chen</surname></string-name>, <string-name><given-names>L.-H.</given-names> <surname>Tang</surname></string-name>, <string-name><given-names>P.</given-names> <surname>Lenz</surname></string-name>, <string-name><given-names>X.</given-names> <surname>Cui</surname></string-name>, <string-name><given-names>W.</given-names> <surname>Huang</surname></string-name>, <string-name><given-names>T.</given-names> <surname>Hwa</surname></string-name>, and <string-name><given-names>J.-D.</given-names> <surname>Huang</surname></string-name>, &#x201C;<article-title>Sequential Establishment of Stripe Patterns in an Expanding Cell Population</article-title>,&#x201D; <source>Science</source>, vol. <volume>334</volume>, no. <issue>6053</issue>, pp. <fpage>238</fpage>&#x2013;<lpage>241</lpage>, <year>2011</year>.</mixed-citation></ref>
+<ref id="c22"><label>[22]</label><mixed-citation publication-type="journal"><string-name><given-names>S.</given-names> <surname>Payne</surname></string-name>, <string-name><given-names>B.</given-names> <surname>Li</surname></string-name>, <string-name><given-names>Y.</given-names> <surname>Cao</surname></string-name>, <string-name><given-names>D.</given-names> <surname>Schaeffer</surname></string-name>, <string-name><given-names>M. D.</given-names> <surname>Ryser</surname></string-name>, and <string-name><given-names>L.</given-names> <surname>You</surname></string-name>, &#x201C;<article-title>Temporal control of self-organized pattern formation without morphogen gradients in bacteria</article-title>,&#x201D; <source>Molecular Systems Biology</source>, vol. <volume>9</volume>, no. <issue>1</issue>, pp. <fpage>697</fpage>&#x2013;<lpage>697</lpage>, <year>2013</year>.</mixed-citation></ref>
+<ref id="c23"><label>[23]</label><mixed-citation publication-type="other"><string-name><given-names>M. M.</given-names> <surname>Gomez</surname></string-name> and <string-name><given-names>M.</given-names> <surname>Arcak</surname></string-name>, &#x201C;<article-title>A Tug-of-War Mechanism for Pattern Formation in a Genetic Network</article-title>,&#x201D; <source>ACS Synthetic Biology</source>, <year>2017</year>.</mixed-citation></ref>
+<ref id="c24"><label>[24]</label><mixed-citation publication-type="other"><string-name><given-names>J. D.</given-names> <surname>Murray</surname></string-name>, <article-title>Mathematical Biology II - Spatial Models and Biomedical Ap&#x00F6;lications</article-title>. <year>2008</year>.</mixed-citation></ref>
+<ref id="c25"><label>[25]</label><mixed-citation publication-type="journal"><string-name><given-names>R. A.</given-names> <surname>Satnoianu</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Menzinger</surname></string-name>, and <string-name><given-names>P. K.</given-names> <surname>Maini</surname></string-name>, &#x201C;<article-title>Turing instabilities in general systems</article-title>,&#x201D; <source>Journal of Mathematical Biology</source>, vol. <volume>41</volume>, no. <issue>6</issue>, pp. <fpage>493</fpage>&#x2013;<lpage>512</lpage>, <year>2000</year>.</mixed-citation></ref>
+<ref id="c26"><label>[26]</label><mixed-citation publication-type="other"><string-name><given-names>O.</given-names> <surname>Radulescu</surname></string-name>, <string-name><given-names>A. N.</given-names> <surname>Gorban</surname></string-name>, <string-name><given-names>A.</given-names> <surname>Zinovyev</surname></string-name>, and <string-name><given-names>V.</given-names> <surname>Noel</surname></string-name>, &#x201C;<article-title>Reduction of dynamical biochemical reactions networks in computational biology</article-title>,&#x201D; <year>2012</year>.</mixed-citation></ref>
+<ref id="c27"><label>[27]</label><mixed-citation publication-type="journal"><string-name><given-names>T. J.</given-names> <surname>Snowden</surname></string-name>, <string-name><given-names>P. H.</given-names> <surname>van der Graaf</surname></string-name>, and <string-name><given-names>M. J.</given-names> <surname>Tindall</surname></string-name>, &#x201C;<article-title>Methods of Model Reduction for Large-Scale Biological Systems: A Survey of Current Methods and Trends</article-title>,&#x201D; <source>Bulletin of Mathematical Biology</source>, vol. <volume>79</volume>, no. <issue>7</issue>, pp. <fpage>1449</fpage>&#x2013;<lpage>1486</lpage>, <year>2017</year>.</mixed-citation></ref>
+<ref id="c28"><label>[28]</label><mixed-citation publication-type="journal"><string-name><given-names>R. E.</given-names> <surname>Baker</surname></string-name>, <string-name><given-names>E. A.</given-names> <surname>Gaffney</surname></string-name>, and <string-name><given-names>P. K.</given-names> <surname>Maini</surname></string-name>, &#x201C;<article-title>Partial differential equations for self-organization in cellular and developmental biology</article-title>,&#x201D; <source>Nonlinearity</source>, vol. <volume>21</volume>, pp. <fpage>R251</fpage>&#x2013;<lpage>R290</lpage>, <month>nov</month> <year>2008</year>.</mixed-citation></ref>
+<ref id="c29"><label>[29]</label><mixed-citation publication-type="journal"><string-name><given-names>I.</given-names> <surname>Prigogine</surname></string-name> and <string-name><given-names>R.</given-names> <surname>Lefever</surname></string-name>, &#x201C;<article-title>Symmetry Breaking Instabilities in Dissipative Systems. II</article-title>,&#x201D; <source>The Journal of Chemical Physics</source>, vol. <volume>48</volume>, no. <issue>4</issue>, p. <fpage>1695</fpage>, <year>1968</year>.</mixed-citation></ref>
+<ref id="c30"><label>[30]</label><mixed-citation publication-type="journal"><string-name><given-names>R.</given-names> <surname>Lefever</surname></string-name>, <string-name><given-names>G.</given-names> <surname>Nicolis</surname></string-name>, and <string-name><given-names>P.</given-names> <surname>Borckmans</surname></string-name>, &#x201C;<article-title>The brusselator: it does oscillate all the same</article-title>,&#x201D; <source>Journal of the Chemical Society, Faraday Transactions 1</source>, vol. <volume>84</volume>, no. <issue>4</issue>, p. <fpage>1013</fpage>, <year>1988</year>.</mixed-citation></ref>
+<ref id="c31"><label>[31]</label><mixed-citation publication-type="journal"><string-name><given-names>A. L.</given-names> <surname>Schaefer</surname></string-name>, <string-name><given-names>D. L.</given-names> <surname>Val</surname></string-name>, <string-name><given-names>B. L.</given-names> <surname>Hanzelka</surname></string-name>, <string-name><given-names>J. E.</given-names> <surname>Cronan</surname></string-name>, and <string-name><given-names>E. P.</given-names> <surname>Greenberg</surname></string-name>, &#x201C;<article-title>Generation of cell-to-cell signals in quorum sensing: acyl homoserine lactone synthase activity of a purified Vibrio fischeri LuxI protein</article-title>.,&#x201D; <source>Proceedings of the National Academy of Sciences of the United States of America</source>, vol. <volume>93</volume>, no. <issue>18</issue>, pp. <fpage>9505</fpage>&#x2013;<lpage>9509</lpage>, <year>1996</year>.</mixed-citation></ref>
+<ref id="c32"><label>[32]</label><mixed-citation publication-type="journal"><string-name><given-names>D.</given-names> <surname>Liu</surname></string-name>, <string-name><given-names>J.</given-names> <surname>Momb</surname></string-name>, <string-name><given-names>P. W.</given-names> <surname>Thomas</surname></string-name>, <string-name><given-names>A.</given-names> <surname>Moulin</surname></string-name>, <string-name><given-names>G. A.</given-names> <surname>Petsko</surname></string-name>, <string-name><given-names>W.</given-names> <surname>Fast</surname></string-name>, and <string-name><given-names>D.</given-names> <surname>Ringe</surname></string-name>, &#x201C;<article-title>Mechanism of the quorum-quenching lactonase (AiiA) from Bacillus thuringiensis. 1. Product-bound structu-res</article-title>,&#x201D; <source>Biochemistry</source>, vol. <volume>47</volume>, no. <issue>29</issue>, pp. <fpage>7706</fpage>&#x2013;<lpage>7714</lpage>, <year>2008</year>.</mixed-citation></ref>
+<ref id="c33"><label>[33]</label><mixed-citation publication-type="journal"><string-name><given-names>T.</given-names> <surname>Miura</surname></string-name> and <string-name><given-names>P. K.</given-names> <surname>Maini</surname></string-name>, &#x201C;<article-title>Speed of pattern appearance in reaction-diffusion models: Implica-tions in the pattern formation of limb bud mesenchyme cells</article-title>,&#x201D; <source>Bulletin of Mathematical Biology</source>, vol. <volume>66</volume>, no. <issue>4</issue>, pp. <fpage>627</fpage>&#x2013;<lpage>649</lpage>, <year>2004</year>.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

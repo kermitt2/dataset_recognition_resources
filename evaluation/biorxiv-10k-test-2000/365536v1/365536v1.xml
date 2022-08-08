@@ -1,0 +1,801 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/365536</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Estimating recent migration and population size surfaces</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author" corresp="yes">
+<name><surname>Al-Asadi</surname><given-names>Hussein</given-names></name>
+<xref ref-type="corresp" rid="cor1">&#x002A;</xref>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<contrib contrib-type="author">
+<name><surname>Petkova</surname><given-names>Desislava</given-names></name>
+<xref ref-type="aff" rid="a3">3</xref>
+</contrib>
+<contrib contrib-type="author" corresp="yes">
+<name><surname>Stephens</surname><given-names>Matthew</given-names></name>
+<xref ref-type="corresp" rid="cor1">&#x002A;</xref>
+<xref ref-type="aff" rid="a2">2</xref>
+<xref ref-type="aff" rid="a4">4</xref>
+</contrib>
+<contrib contrib-type="author" corresp="yes">
+<name><surname>Novembre</surname><given-names>John</given-names></name>
+<xref ref-type="corresp" rid="cor1">&#x002A;</xref>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="aff" rid="a4">4</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>Committee on Evolutionary Biology, University of Chicago</institution></aff>
+<aff id="a2"><label>2</label><institution>Department of Statistics, University of Chicago</institution></aff>
+<aff id="a3"><label>3</label><institution>Department of Statistics, Oxford University</institution></aff>
+<aff id="a4"><label>4</label><institution>Department of Human Genetics, University of Chicago</institution></aff>
+</contrib-group>
+<author-notes>
+<corresp id="cor1"><label>&#x002A;</label>to whom correspondence shall be addressed</corresp>
+<fn id="fn1"><p>July 9, 2018</p></fn>
+</author-notes>
+<pub-date pub-type="epub"><year>2018</year></pub-date>
+<elocation-id>365536</elocation-id>
+<history>
+<date date-type="received">
+<day>09</day>
+<month>7</month>
+<year>2018</year>
+</date>
+<date date-type="rev-recd">
+<day>09</day>
+<month>7</month>
+<year>2018</year>
+</date>
+<date date-type="accepted">
+<day>09</day>
+<month>7</month>
+<year>2018</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2018, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2018</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="365536.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>In many species a fundamental feature of genetic diversity is that genetic similarity decays with geographic distance; however, this relationship is often complex, and may vary across space and time. Methods to uncover and visualize such relationships have widespread use for analyses in molecular ecology, conservation genetics, evolutionary genetics, and human genetics. While several frameworks exist, a promising approach is to infer maps of how migration rates vary across geographic space. Such maps could, in principle, be estimated across time to reveal the full complexity of population histories. Here, we take a step in this direction: we present a method to infer separate maps of population sizes and migration rates for different time periods from a matrix of genetic similarity between every pair of individuals. Specifically, genetic similarity is measured by counting the number of long segments of haplotype sharing (also known as identity-by-descent tracts). By varying the length of these segments we obtain parameter estimates for qualitatively different time periods. Using simulations, we show that the method can reveal time-varying migration rates and population sizes, including changes that are not detectable when ignoring haplotypic structure. We apply the method to a dataset of contemporary European individuals (POPRES), and provide an integrated analysis of recent population structure and growth over the last <italic>&#x007E;</italic>3,000 years in Europe. Software implementing the methods is available at <ext-link ext-link-type="uri" xlink:href="https://github.com/halasadi/MAPS">https://github.com/halasadi/MAPS</ext-link>.</p>
+</abstract>
+<counts>
+<page-count count="47"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<label>1</label>
+<title>Introduction</title>
+<p>Populations exist on a physical landscape and often have limited dispersal. As a result, most genetic data exhibit a pattern of isolation by distance (<xref ref-type="bibr" rid="c48">Wright, 1943</xref>), which is simply to say that populations closer to each other geographically are more similar genetically. Furthermore, the degree of isolation by distance can vary across space and time (<xref ref-type="bibr" rid="c24">Manel et al., 2003</xref>). For instance, in a mountainous area of a terrestrial species&#x2019; range, a pair of individuals may be more divergent from each other than a pair of individuals separated by the same distance in a flat and open area of the habitat. Additionally, the degree of isolation by distance can change over time &#x2013; for example, if dispersal patterns are changing over time. Such spatial and temporal heterogeneity is an important aspect of population biology, and understanding it is crucial to solving problems in ecology (<xref ref-type="bibr" rid="c45">Turner et al., 2001</xref>), conservation genetics (<xref ref-type="bibr" rid="c42">Segelbacher et al., 2010</xref>), evolution (<xref ref-type="bibr" rid="c40">Rousset, 2004</xref>), and human genetics (<xref ref-type="bibr" rid="c39">Rosenberg et al., 2005</xref>).</p>
+<p>Several methods have been developed to reveal spatial heterogeneity in patterns of isolation by distance (<xref ref-type="bibr" rid="c47">Womble, 1951</xref>; <xref ref-type="bibr" rid="c3">Barbujani et al., 1989</xref>; <xref ref-type="bibr" rid="c15">Guillot et al., 2005</xref>, <xref ref-type="bibr" rid="c16">2009</xref>; <xref ref-type="bibr" rid="c10">Caye et al., 2016</xref>; <xref ref-type="bibr" rid="c33">Petkova et al., 2016</xref>; <xref ref-type="bibr" rid="c7">Bradburd et al., 2016</xref>, <xref ref-type="bibr" rid="c6">2017</xref>). Some methods are based on explicitly modeling the spatial structure in the data (<xref ref-type="bibr" rid="c15">Guillot et al., 2005</xref>, <xref ref-type="bibr" rid="c16">2009</xref>; <xref ref-type="bibr" rid="c33">Petkova et al., 2016</xref>; <xref ref-type="bibr" rid="c7">Bradburd et al., 2016</xref>, <xref ref-type="bibr" rid="c6">2017</xref>); others take non-parametric approaches (e.g. <xref ref-type="bibr" rid="c47">Womble, 1951</xref>; <xref ref-type="bibr" rid="c3">Barbujani et al., 1989</xref>); while other methods ignore the spatial configuration of the samples and rely on researchers to make a <italic>post hoc</italic> geographic interpretation of the results (e.g. <xref ref-type="bibr" rid="c34">Pritchard et al., 2000</xref>; <xref ref-type="bibr" rid="c32">Patterson et al., 2006</xref>). However, none of these methods can be flexibly applied to address temporal heterogeneity in isolation by distance patterns, and new methods are needed.</p>
+<p>One source of information for inferring changes in demography across time is the density of mutations observed in pairwise sequence comparisons (<xref ref-type="bibr" rid="c23">Li and Durbin, 2011</xref>; <xref ref-type="bibr" rid="c41">Schraiber and Akey, 2015</xref>). For example, when individuals are similar along a long segment of their chromosomes, it suggests that these segments share a recent common ancestor (<xref ref-type="bibr" rid="c31">Palamara et al., 2012</xref>). These segments are often called &#x201C;identity-by-descent&#x201D; tracts, although here we prefer the term &#x201C;long pairwise shared coalescence&#x201D; (lPSC) segments (as identity by descent traditionally required a definition of a founder generation, which is not clear in most data applications). A key feature of these segments is that filtering them by length provides a means to interrogate different periods of population history. The longest segments reflect the most recent population history, whereas shorter segments reflect longer periods of time. Recent analyses using lPSC segments suggest that they can reveal fine-scale spatial and temporal patterns of population structure that are not evident with genotype-based methods such as principal components analysis (<xref ref-type="bibr" rid="c35">Ralph and Coop, 2013</xref>; <xref ref-type="bibr" rid="c21">Lawson et al., 2012</xref>; <xref ref-type="bibr" rid="c22">Leslie et al., 2015</xref>).</p>
+<p>Here we develop a new method to infer spatial and temporal heterogeneity in population sizes and migration rates. The method takes as input geographic coordinates for a set of individuals sampled across a spatial landscape, and a matrix of their genetic similarities as measured by sharing of lPSC segments. It then infers two maps, one representing dispersal rates across the landscape, and another representing population density. Crucially, building these maps using different lengths of lPSC segments can help reveal changes in dispersal rates and population sizes over time.</p>
+<p>Our method is based on a stepping-stone model where randomly-mating subpopulations are connected to neighboring subpopulations in a grid. Such models are parameterized by a vector of population sizes (<inline-formula><alternatives><inline-graphic xlink:href="365536_inline1.gif"/></alternatives></inline-formula>) and a sparse migration rate matrix (<bold>M</bold>). Stepping-stone models with a large number of demes can approximate spatially continuous population models (<xref ref-type="bibr" rid="c4">Barton et al., 2002</xref>; <xref ref-type="bibr" rid="c1">Baharian et al., 2016</xref>), and this can be exploited to produce maps of approximate dispersal rates and population density across continuous space.</p>
+<p>Our method builds upon a method developed for estimating effective migration surfaces (EEMS) (<xref ref-type="bibr" rid="c33">Petkova et al., 2016</xref>). While EEMS infers local rates of effective migration relative to a global average, here we can explicitly infer absolute parameter values by leveraging lPSC segments and modeling the recombination process [<inline-formula><alternatives><inline-graphic xlink:href="365536_inline2.gif"/></alternatives></inline-formula> and <bold>M</bold> values in the stepping-stone model, and effective spatial density function <italic>D<sub>e</sub></italic>(<inline-formula><alternatives><inline-graphic xlink:href="365536_inline3.gif"/></alternatives></inline-formula>) and dispersal rate function <italic>&#x03C3;</italic>(<inline-formula><alternatives><inline-graphic xlink:href="365536_inline4.gif"/></alternatives></inline-formula>) in the continuous limit]. We call this method MAPS, for inferring Migration And Population-size Surfaces.</p>
+<p>We test MAPS on coalescent simulations and apply it to a European subset of 2,224 individuals from the POPRES data (<xref ref-type="bibr" rid="c27">Nelson et al., 2008</xref>). In simulations, we show that MAPS can infer both time-resolved migration barriers and population sizes across the habitat. In empirical data, we infer dispersal rates <italic>&#x03C3;</italic>(<inline-formula><alternatives><inline-graphic xlink:href="365536_inline5.gif"/></alternatives></inline-formula>) and population densities <italic>D<sub>e</sub></italic>(<inline-formula><alternatives><inline-graphic xlink:href="365536_inline6.gif"/></alternatives></inline-formula>) across different time periods in Europe.</p>
+</sec>
+<sec id="s2">
+<label>2</label>
+<title>Results</title>
+<sec id="s2a">
+<label>2.1</label>
+<title>Outline of the MAPS method</title>
+<p>MAPS estimates demography using the number of Pairwise Shared Coalescence (PSC) segments of different lengths shared between individuals. We define a PSC segment between (haploid) individuals to be a genomic segment with a single coalescent time across its length (<xref ref-type="fig" rid="fig1">Figure 1A</xref>). Long PSC (lPSC) segments tend to have a recent coalescent time, and so manifest themselves in genotype data as unusually long regions of high pairwise similarity, which can be detected by various software packages (<xref ref-type="bibr" rid="c17">Gusev et al., 2009</xref>; <xref ref-type="bibr" rid="c8">Browning and Browning, 2011</xref>, <xref ref-type="bibr" rid="c9">2013</xref>; <xref ref-type="bibr" rid="c12">Chiang et al., 2016</xref>). Because lPSC segments typically reflect recent coalescent events, counts of lPSC segments are especially informative for recent population structure (<xref ref-type="bibr" rid="c37">Ringbauer et al., 2017</xref>; <xref ref-type="bibr" rid="c31">Palamara et al., 2012</xref>; <xref ref-type="bibr" rid="c1">Baharian et al., 2016</xref>). And partitioning lPSC segments into different lengths bins (e.g. 2-8cM, <italic>&#x2265;</italic>8cM) can help focus inference on different (recent) temporal scales.</p>
+<fig id="fig1" position="float" fig-type="figure">
+<label>Figure 1:</label>
+<caption><title>Schematic overview of MAPS.</title>
+<p>(a) Coalescent times between a pair of hapolo-types (A and B) will vary across the genome in discrete segments bordered by recombination breakpoints. On average, longer segments represent shorter pairwise coalescent times (<italic>T<sub>AB</sub></italic>) (b) Flow diagram of MAPS. i) We start with a matrix of called genotypes; ii) lPSC segments between all pairs of chromosomes across the genome are identified from the data using external methods (such as BEAGLE, <xref ref-type="bibr" rid="c8">Browning and Browning (2011)</xref>); iii) lPSC segments between pairs of individuals are aggregated at the levels of pairs of populations; iv) A grid is constructed and individuals are assigned to the most nearby node; v) The probability of the PSC sharing matrix can be computed under a stepping-stone model where each node represents a population and each edge represents symmetric migration; vi) We use an MCMC scheme to sample from the posterior distribution of migration rates and population sizes. The final MAPS output is the mean over these posterior samples, and the averaged rates can be transformed to units of dispersal rate and population density. The diagram does not show a bootstrapping step used to estimate likelihood weights to account for correlations between lPSC segments, see <xref ref-type="disp-formula" rid="eqn6">Equation (6)</xref> in Methods.</p></caption>
+<graphic xlink:href="365536_fig1.tif"/>
+</fig>
+<p>The MAPS model involves two components: i) a likelihood function, which relates the observed data (genetic similarities, as measured by sharing of lPSC segments) to the underlying demographic parameters (migration rates and population sizes); and ii) a prior distribution on the demographic parameters, which captures the idea that nearby locations will often have similar demographic parameters. The likelihood function comes from a coalescent-based &#x201C;stepping-stone&#x201D; model in which discrete populations (demes) arranged on a spatial grid exchange migrants with their neighbors (<xref ref-type="fig" rid="fig1">Figure 1b</xref>). The parameters of this model are the migration rates between neighboring demes (<italic>M<sub>&#x03B1;,&#x03B2;</sub></italic>) and the population sizes within each deme (<italic>N<sub>&#x03B1;</sub></italic>). The prior distribution is similar to that from <xref ref-type="bibr" rid="c33">Petkova et al. (2016)</xref>, and is based on partitioning the habitat into cells using Voronoi tesselations (one for migration and one for population size), and assuming that migration rates (or population sizes) are constant in each cell. We use an MCMC scheme to sample from the posterior distribution on the model parameters (migration rates, population sizes, and Voronoi cell configurations). We can summarize these results by surfaces showing the posterior means of demographic parameters across the habitat.</p>
+<p>The inferred migration rates and population sizes will depend on the density of the grid used. However, using ideas from <xref ref-type="bibr" rid="c4">Barton et al. (2002)</xref> and <xref ref-type="bibr" rid="c1">Baharian et al. (2016)</xref> we convert them to corresponding parameters in continuous space, whose interpretation is independent of the grid for suitably dense grids. Specifically, we convert the migration rates to a spatial diffusion parameter <italic>&#x03C3;</italic>(<inline-formula><alternatives><inline-graphic xlink:href="365536_inline7.gif"/></alternatives></inline-formula>), often referred to as the &#x201C;root mean square dispersal distance&#x201D;, which can be interpreted roughly as the expected distance an individual disperses in one generation; and we convert the population sizes (<inline-formula><alternatives><inline-graphic xlink:href="365536_inline8.gif"/></alternatives></inline-formula>) to an &#x201C;effective population density&#x201D; <italic>D<sub>e</sub></italic>(<inline-formula><alternatives><inline-graphic xlink:href="365536_inline9.gif"/></alternatives></inline-formula>) which can be interpreted as the number of individuals per square kilometer. Similar to the original grid-based demographic parameters, we can summarize MAPS results by surfaces showing the posterior means of <italic>&#x03C3;</italic>(<inline-formula><alternatives><inline-graphic xlink:href="365536_inline10.gif"/></alternatives></inline-formula>) and <italic>D<sub>e</sub></italic>(<inline-formula><alternatives><inline-graphic xlink:href="365536_inline11.gif"/></alternatives></inline-formula>) across the habitat.</p>
+</sec>
+<sec id="s2b">
+<label>2.2</label>
+<title>Differences from EEMS</title>
+<p>Our MAPS approach is closely related to the EEMS method from <xref ref-type="bibr" rid="c33">Petkova et al. (2016)</xref>, but there are some important differences. First, the MAPS likelihood is based on lPSC sharing, rather than a simple average genetic distance across markers. This was primarily motivated by the fact that, by considering lPSC segments in different length bins, MAPS can interrogate demographic parameters across different recent time periods. However, this change also allows MAPS, in principle, to estimate absolute values for the parameters <bold>M</bold> and <inline-formula><alternatives><inline-graphic xlink:href="365536_inline12.gif"/></alternatives></inline-formula>, whereas EEMS can estimate only &#x201C;effective&#x201D; parameters which represent the combined effects of <bold>M</bold> and <inline-formula><alternatives><inline-graphic xlink:href="365536_inline13.gif"/></alternatives></inline-formula>. This ability of MAPS to estimate absolute values stems from its use of a known recombination map, which acts as an independent clock to calibrate the decay of PSC segments. Finally, MAPS uses a coalescent model, whereas <xref ref-type="bibr" rid="c33">Petkova et al. (2016)</xref> uses a resistance distance approximation (<xref ref-type="bibr" rid="c25">McRae, 2006</xref>).</p>
+</sec>
+<sec id="s2c">
+<label>2.3</label>
+<title>Evaluation of performance under a stepping-stone coalescent model</title>
+<p>We assess the performance of MAPS with several simulations, and compare and contrast the results with EEMS. We used the program MACS (<xref ref-type="bibr" rid="c11">Chen et al., 2009</xref>) to simulate data under a coalescent stepping stone model and refinedIBD (<xref ref-type="bibr" rid="c8">Browning and Browning, 2011</xref>, <xref ref-type="bibr" rid="c9">2013</xref>) to identify lPSC segments. All simulations involved twenty demes, each containing 10,000 diploid individuals, and each exchanging migrants with their neighbors. We analyzed each simulated data set using PSC segments of length 2-6cM and <italic>&#x2265;</italic>6cM, which correspond to time-scales of approximately 50 generations and 12.5 generations respectively (see Lemma in the Supplementary Note). Results for other length bins are qualitatively similar (<xref ref-type="fig" rid="figS1">Supplementary Figure S1</xref> &#x0026; <xref ref-type="fig" rid="figS2">S2</xref>).</p>
+<sec id="s2c1">
+<title>Migration Rate Inference</title>
+<p>First, we simulated under a uniform (constant) migration surface with migration rate 0.01 (<xref ref-type="fig" rid="fig2">Figure 2a</xref>), assumed to have stayed constant over time. In this case both EEMS and MAPS correctly infer uniform migration (<xref ref-type="fig" rid="fig2">Figure 2a</xref>), and MAPS provides accurate estimates of the migration rate (posterior mean 0.010 when using segments 2-6cM and 0.0086 using segments <italic>&#x2265;</italic>6cM). As noted earlier, EEMS does not estimate the absolute migration rate; it estimates only the <italic>relative</italic> (effective) migration rates.</p>
+<fig id="fig2" position="float" fig-type="figure">
+<label>Figure 2:</label>
+<caption><title>Simulations comparing migration rates inferred with MAPS against effective migration rates inferred with EEMS.</title>
+<p>(a) We simulated data under uniform migration rates equal to 0.01 and applied EEMS and MAPS using PSC segments in the range 2-6cM and <italic>&#x2265;</italic>6cM. Like EEMS, MAPS correctly infers a uniform migration surface. Additionally, MAPS provides accurate estimates of the migration rates for both PSC segments 2-6cM (mean 0.01) and PSC segments <italic>&#x2265;</italic>6cM (mean 0.0086). (b) We simulated a recent sudden migration barrier formation 10 generations ago. Here, EEMS is unable to infer a barrier, while MAPS correctly infers the historical uniform surface (2-6cM) and a barrier in the more recent time scale (<italic>&#x2265;</italic>6cM). (c) We simulated a long-standing migration barrier that recently dissipated 20 generations ago. EEMS infers a barrier, while MAPS correctly infers both the historical migration barrier (2-6cM) and the uniform migration surface in the more recent time scale (<italic>&#x2265;</italic>6cM). In all cases shown here, we simulated a 20 deme stepping stone model such that the population sizes all equal to 10,000, and 10 diploid individuals were sampled at each deme.</p></caption>
+<graphic xlink:href="365536_fig2.tif"/>
+</fig>
+<p>Next, we considered a scenario where the migration surface changed across time. Specifically the migration surface matches the constant migration scenario (above) until 10 generations ago, when a complete barrier to gene flow instantaneously arose (a &#x201C;vicariance event&#x201D;, <xref ref-type="fig" rid="fig2">Figure 2b</xref>). In this setting EEMS again infers a uniform migration surface. This is because EEMS is based on pairwise genetic distances, which are negligibly influenced by the recent barrier. In contrast, by applying MAPS with different PSC segment lengths, we can see both the historically uniform migration surface (for segments 2-6cM) and the recent barrier (segments <italic>&#x2265;</italic>6cM).</p>
+<p>Next we consider a complementary time-varying scenario: an ancestral barrier disappeared 20 generations ago to allow uniform migration (<xref ref-type="fig" rid="fig2">Figure 2c</xref>). Here the EEMS results again reflect the longer-term processes, and a barrier is evident. And again, by applying MAPS with different PSC segment lengths, we can see different migration surfaces corresponding to different time scales, which are here reversed compared with the previous scenario: the historical barrier (for segments 2-6cM) and the recent uniform migration (segments <italic>&#x2265;</italic>6cM).</p>
+</sec>
+<sec id="s2c2">
+<title>Population Size Inference</title>
+<p>As noted above, and discussed in (<xref ref-type="bibr" rid="c33">Petkova et al., 2016</xref>), EEMS estimates an &#x201C;effective&#x201D; migration surface that reflects the combined effects of population sizes <inline-formula><alternatives><inline-graphic xlink:href="365536_inline14.gif"/></alternatives></inline-formula> and migration rates <bold>M</bold>; consequently it cannot distinguish between variation in <bold>M</bold> and variation in <inline-formula><alternatives><inline-graphic xlink:href="365536_inline15.gif"/></alternatives></inline-formula>. In contrast, MAPS has the potential to distinguish these two types of variation.</p>
+<p>To illustrate this difference we simulate data with a constant migration surface, and a population size surface that has a 10-fold &#x201C;dip&#x201D; in the middle of the habitat (deme size 1,000 vs 10,000; <xref ref-type="fig" rid="fig3">Figure 3</xref>). <xref ref-type="bibr" rid="c33">Petkova et al. (2016)</xref> performed a similar simulation, and showed that EEMS estimated an effective migration surface with an &#x201C;effective barrier&#x201D; in the middle, caused by the dip in population size. As expected, we obtain a similar result for EEMS here. Further, the EEMS inferred diversity surface is also approximately constant, because the diversity surface reflects changes in within-deme heterozygosity, and these vary little in this simulation. In contrast, MAPS is able to separate the influence of migration and population sizes: the estimated migration surface is approximately constant (with mean migration rate equal to the true value 0.01) and the estimated population size surface shows a dip in the middle, with accurate estimates of deme sizes (mean 985 at the center and 9100 at the edges). Additional simulations with non-uniform migration rates reinforce these results; see <xref ref-type="fig" rid="figS3">Supplementary Figure S3</xref>.</p>
+<fig id="fig3" position="float" fig-type="figure">
+<label>Figure 3:</label>
+<caption><title>Simulations comparing population sizes inferred with MAPS and &#x201C;diversity-rates&#x201D; inferred with EEMS.</title>
+<p>We simulated uniform migration rates of 0.01 and a trough of low population sizes in the center of the habitat such that population sizes equal to 1,000 at the center and 10,000 otherwise. Under these simulations, EEMS infers a barrier in effective migration and infers uniform diversity rates. However, MAPS correctly infers a uniform migration surface (mean 0.01) and provides accurate estimates of deme sizes (mean 985 at the center and 9100 at the edges)</p></caption>
+<graphic xlink:href="365536_fig3.tif"/>
+</fig>
+</sec>
+</sec>
+<sec id="s2d">
+<label>2.4</label>
+<title>Applying MAPS to the POPRES data</title>
+<p>To illustrate MAPS on real data, we analyze a genome-wide SNP dataset on individuals of European ancestry (the &#x201C;POPRES&#x201D; study <xref ref-type="bibr" rid="c27">Nelson et al., 2008</xref>). Previous analyses of these data have shown the strong influence of geography on patterns of genetic similarity (<xref ref-type="bibr" rid="c29">Novembre et al., 2008</xref>; <xref ref-type="bibr" rid="c20">Lao et al., 2008</xref>; <xref ref-type="bibr" rid="c35">Ralph and Coop, 2013</xref>). In particular <xref ref-type="bibr" rid="c35">Ralph and Coop (2013)</xref> analyzed spatial patterns in the sharing of PSC segments across Europe. To facilitate comparison with their results, we use their PSC segment calls, focusing on a subset of 2224 individuals after filtering (see Methods).</p>
+<p>We applied MAPS to these data using three different PSC segment length bins: 1 <italic>&#x2212;</italic> 5cM, 5 <italic>&#x2212;</italic> 10cM, and > 10cM. The longer bins correspond to more recent demography because as PSC lengths increase, the average coalescent times decrease. Indeed, the average coalescent times for each of these three length bins is inferred to be 90, 23 and 7.5 generations respectively (Supplementary Note), which correspond to 2700 years, 675 years and 225 years if we assume 30 years per generation.</p>
+<p>We note that the accuracy of called PSC segments will vary across these bins: based on simulations in <xref ref-type="bibr" rid="c35">Ralph and Coop (2013)</xref> PSC segment calls in the smallest bin (1-5cM) will likely suffer from both false positives and false negatives, whereas for the longer bins PSC calls should be very reliable. Nonetheless, even in the smallest bin, closely-related individuals will still tend to show higher PSC sharing, and so the estimated MAPS surfaces should provide a useful qualitative summary of spatial patterns of variation even if quantitative estimates may be less reliable.</p>
+<sec id="s2d1">
+<title>Inferring dispersal and population density surfaces</title>
+<p>The inferred MAPS dispersal rates (migration rates scaled by grid step size) and population densities (population sizes scaled by grid area size) for each PSC length bin are shown in <xref ref-type="fig" rid="fig4">Figure 4</xref>.</p>
+<fig id="fig4" position="float" fig-type="figure">
+<label>Figure 4:</label>
+<caption><title>Inferred Dispersal Surfaces and Population Density Surfaces over time for Europe.</title>
+<p>We apply MAPS to a European subset of POPRES <xref ref-type="bibr" rid="c27">Nelson et al. (2008)</xref> with 2,234 individuals and plot the inferred dispersal <italic>&#x03C3;</italic>(<inline-formula><alternatives><inline-graphic xlink:href="365536_inline16.gif"/></alternatives></inline-formula>) and population density <italic>D<sub>e</sub></italic>(<inline-formula><alternatives><inline-graphic xlink:href="365536_inline17.gif"/></alternatives></inline-formula>) surfaces for PSC length bins (a) &#x003E; 1cM (b) 5-10cM and (c) &#x003E;10cM. We transform estimates of <inline-formula><alternatives><inline-graphic xlink:href="365536_inline18.gif"/></alternatives></inline-formula> and <bold>M</bold> to estimates of <italic>&#x03C3;</italic>(<inline-formula><alternatives><inline-graphic xlink:href="365536_inline19.gif"/></alternatives></inline-formula>) and <italic>D<sub>e</sub></italic>(<inline-formula><alternatives><inline-graphic xlink:href="365536_inline20.gif"/></alternatives></inline-formula>) by scaling the migration rates and population sizes by the grid step-size and area (see <xref ref-type="disp-formula" rid="eqn17">Equations (17)</xref> and <xref ref-type="disp-formula" rid="eqn18">(18)</xref>). Generally, we observe the patterns of dispersal to be relatively constant over time periods, however, we see a sharp increase in population density in the most recent time scale (&#x003E;10cM). Note the wider plotting limits in inferred densities in the most recent time scale.</p></caption>
+<graphic xlink:href="365536_fig4.tif"/>
+</fig>
+<p>Largely speaking, the spatial variation in inferred dispersal rates and population densities is remarkably consistent across the different time scales (<xref ref-type="fig" rid="fig4">Figure 4</xref>). In the MAPS dispersal surfaces, several regions with consistently low estimated dispersal rates coincide with geographic features that would be expected to reduce gene flow, including the English Channel, Adriatic Sea and the Alps. In addition we see consistently high dispersal across the region between the UK and Norway, which may reflect the known genetic effects of the Viking expansion (e.g <xref ref-type="bibr" rid="c22">Leslie et al., 2015</xref>). The MAPS population density surfaces consistently show lowest density in Ireland, Switzerland, Iberia, and the southwest region of the Balkans. This is consistent with samples within each of these areas having among the highest PSC segment sharing (<xref ref-type="fig" rid="figS4">Supplementary Figure S4a</xref>). The MAPS inferred country population sizes are also highly correlated with estimated current census population sizes from <xref ref-type="bibr" rid="c44">The World Bank (2016)</xref> and <xref ref-type="bibr" rid="c26">National Records of Scotland (2011)</xref> (<xref ref-type="fig" rid="figS6">Supplementary Figure S6</xref>).</p>
+<p>The most notable variation among the estimated surfaces from different time scales is a dramatic increase in the mean estimated population density in the most recent time scale (<xref ref-type="fig" rid="fig4">Figure 4</xref> and <xref ref-type="fig" rid="figS7">Supplementary Figure S7</xref>). Indeed, the estimated mean for the last time scale &#x2013; 1.4 individuals per square km &#x2013; is 6-9 fold higher than those for the earlier time scales (0.16 and 0.22 respectively). This increase is consistent with the recent exponential growth of human population sizes (<xref ref-type="bibr" rid="c13">Cohen, 1995</xref>). The estimates themselves are lower than historical estimates of <italic>&#x2248;</italic>1-30 individuals per square km based on archaeological data (e.g. <xref ref-type="bibr" rid="c49">Zimmermann et al., 2009</xref>).</p>
+<p>The dispersal surfaces show more minor changes between time periods (<xref ref-type="fig" rid="fig4">Figure 4</xref> and <xref ref-type="fig" rid="figS7">Supplementary Figure S7</xref>). In particular, the estimated mean dispersal rates are relatively constant across time, being 73, 103 and 72 respectively (in units of km in a single generation). These mean estimates are consistent with empirical estimates of 10-100 km in a single generation compiled by <xref ref-type="bibr" rid="c19">Kaplanis et al. (2018)</xref> using pedigrees of individuals living between 1650 and 1950 AD. We do note the lower estimated dispersal rates between Portugal and Spain in the analyses of longer PSC segments (5-10 and &#x003E; 10cM), and the higher estimated dispersal rates through the Baltic Sea (&#x003E; 10cM segments), possibly reflecting changing gene flow in these regions in recent history.</p>
+</sec>
+<sec id="s2d2">
+<title>Comparison to <xref ref-type="bibr" rid="c37">Ringbauer et al. (2017)</xref></title>
+<p><xref ref-type="bibr" rid="c37">Ringbauer et al. (2017)</xref> also estimate a mean dispersal rate and population density from the Eastern European subset of the data analyzed here. Their estimates are based on PSC segments &#x003E; 4cM, which is most comparable with our analysis of 5-10cM. Unlike our analysis, their estimates are based on a spatially homogeneous model. To compare with their estimates we computed the mean of the estimated dispersal rate and population densities in Eastern Europe (but based on an analysis of the full data). For the dispersal rate this yields an estimate of 88 km in a single generation, which is consistent with the range of 50-100 given by (<xref ref-type="bibr" rid="c37">Ringbauer et al., 2017</xref>). For the population density, it yields an estimate of 0.10 individuals per square km, which is somewhat higher than the estimate of 0.05 obtained under a comparable (time-homogeneous) population model in (<xref ref-type="bibr" rid="c37">Ringbauer et al., 2017</xref>). Possibly our higher estimate partly reflects the influence of our spatial modeling approach, which will tend to shift the estimate for Eastern Europe toward the estimated mean across all of Europe (which is 0.22). In addition, the difference in length thresholds (&#x003E; 4cM versus 5-10cM) may also be contributing; if segments in the <xref ref-type="bibr" rid="c37">Ringbauer et al. (2017)</xref> analysis are on average shorter and hence older, one would expect lower density estimates, based on our results that suggest lower densities in the past (<xref ref-type="fig" rid="fig4">Figure 4</xref>).</p>
+</sec>
+<sec id="s2d3">
+<title>Comparison with EEMS</title>
+<p>The EEMS results for these data (<xref ref-type="fig" rid="figS8">Figure S8</xref>) show non-trivial differences with the MAPS results (<xref ref-type="fig" rid="fig4">Figure 4a</xref>). Two potential causes are: i) differences in the summary data used (PSC segment sharing vs genetic distances) and hence sensitivity to different timescales; and ii) differences in the underlying models (e.g. composite Poisson likelihood vs Wishart likelihood, and different parameterizations/approximations to the coalescent model; see Discussion). To evaluate the impact of i) we compared the PSC segment sharing and genetic distances, and found their correlation to be only modest (Pearson&#x2019;s <italic>&#x03C1;</italic> &#x003D; &#x2212;0.38), with the most notable deviation for comparisons between countries in Eastern Europe (<xref ref-type="fig" rid="figS9">Figure S9a</xref>). Furthermore, most of this correlation is due to geographic distance: after controlling for geographic distance the correlation is only &#x2212;0.18, which may be a more relevant metric because inferred spatial heterogeneity in gene flow (barriers and corridors) is driven by departures from simple isolation by distance.</p>
+<p>To better assess the impact of ii) we applied EEMS on a distance matrix constructed to have the same similarity patterns as the PSC segment sharing matrix input to MAPS (1<italic>&#x2212;</italic>5cM length bin). The resulting EEMS surface is more similar to the corresponding MAPS dispersal surface (<xref ref-type="fig" rid="figS9">Supplementary Figure S9b</xref> vs <xref ref-type="fig" rid="fig4">Figure 4a</xref>), but there remain substantial differences. This investigation confirms what we expected <italic>a priori</italic> &#x2014; the two surfaces should be different because the underlying models and inferred parameters of MAPS and EEMS are different. As noted before, EEMS infers the &#x201C;effective migration rate&#x201D; which reflects the effects of both the migration rates and population sizes, while MAPS infers them separately.</p>
+</sec>
+</sec>
+</sec>
+<sec id="s3">
+<label>3</label>
+<title>Discussion</title>
+<p>We developed a method (MAPS) for inferring migration rates and population sizes across space and time periods from geo-referenced samples. Our method builds upon a previous method developed for estimating effective migration surfaces (EEMS) (<xref ref-type="bibr" rid="c33">Petkova et al., 2016</xref>). However there are several differences between MAPS and EEMS. Most fundamentally, MAPS draws inferences from observed levels of PSC sharing between samples, whereas EEMS draws inferences from the genetic distance. These two data summaries capture different information about the coalescent distributions: in essence, PSC sharing captures the frequency of recent coalescent events, whereas genetic distance captures the mean coalescent time. Consequently MAPS inferences largely reflect the recent past (&#x2A85; 1000 years for human recombination rates and generation times with PSC segments &#x003E; 2cM), whereas EEMS inferences reflect demographic history on a longer timescale across which pairwise coalescence occurs (99&#x0025; of events &#x003E; 6000 years old, assuming diploid <italic>N<sub>e</sub></italic> of 10,000 for humans, exponential coalescent time distribution).</p>
+<p>Another consequence of modelling PSC sharing, rather than genetic distance, is that MAPS can separately estimate demographic parameters related to migration rates (<bold>M</bold>) and population sizes (<inline-formula><alternatives><inline-graphic xlink:href="365536_inline21.gif"/></alternatives></inline-formula>), as in <xref ref-type="fig" rid="fig3">Figure 3</xref> for example. In essence MAPS does this by using the known recombination map as an additional piece of information to help calibrate inferences. In contrast EEMS, which makes no use of recombination maps, cannot separate <bold>M</bold> and <inline-formula><alternatives><inline-graphic xlink:href="365536_inline22.gif"/></alternatives></inline-formula>. Instead EEMS infers a compound parameter referred to as the &#x201C;effective migration rate&#x201D;, which is influenced by changes in both <bold>M</bold> and <inline-formula><alternatives><inline-graphic xlink:href="365536_inline23.gif"/></alternatives></inline-formula>; see <xref ref-type="fig" rid="fig3">Figure 3</xref>. In principle, if applied to sequence data instead of genotype data at ascertained SNPs, the genetic distances used by EEMS could perhaps also separately estimate <bold>M</bold> and <inline-formula><alternatives><inline-graphic xlink:href="365536_inline24.gif"/></alternatives></inline-formula> by exploiting known mutation rates to calibrate inferences. However, this would require non-trivial additional changes to the current EEMS likelihood, which was designed to be applicable to ascertained SNPs and does not explicitly model variation in population sizes. (The EEMS likelihood instead uses a &#x201C;diversity rate&#x201D; <italic>e<sub>q</sub></italic>, which reflects within-deme heterozygosity but is not explicitly a population size parameter.)</p>
+<p>An additional useful feature of PSC segments is that, by varying the lengths analyzed, one can infer parameter values across different time scales. For example, our simulations show how by contrasting shorter and longer PSC segments, the method can reveal different gene flow patterns in scenarios with recent changes (see <xref ref-type="fig" rid="fig2">Figures 2</xref> and <xref ref-type="fig" rid="fig3">3</xref>). Further support comes from our empirical analysis of the POPRES data-set, where we found population sizes inferred from longer PSC segments to be more correlated with census sizes The World Bank (2015 census <xref ref-type="bibr" rid="c44">2016</xref>) and National Records of Scotland (<xref ref-type="bibr" rid="c26">2011</xref>, 2011 census) than sizes inferred from shorter segments (e.g. Spearman&#x2019;s <italic>&#x03C1;</italic> &#x003D; 0.71 for 1 <italic>&#x2212;</italic> 5cM and <italic>&#x03C1;</italic> &#x003D; 0.84 for &#x003E; 10cM; see Supplementary Figures S5 and S6). Also, not surprisingly, PSC segments greatly outperform using heterozygosity as an indicator of census population size (the Spearman&#x2019;s correlation coefficient between heterozygosity and census size was insignificant, p-value &#x003D; 0.25).</p>
+<p>Our estimates of dispersal distances and population density from the POPRES data are among the first such estimates using a spatial model for Europe (though see (<xref ref-type="bibr" rid="c37">Ringbauer et al., 2017</xref>)). The features observed in the dispersal and population density surfaces are in principle discernible by careful inspection of the numbers of shared PSC segments between pairs of countries (e.g. using average pairwise numbers of shared segments, <xref ref-type="fig" rid="figS4">Supplementary Figure S4b</xref>, as in <xref ref-type="bibr" rid="c35">Ralph and Coop (2013)</xref>). For example, high connectivity across the North Sea is reflected in the raw PSC calls: samples from the British Isles share a relatively high number of PSC segments with those from Sweden (<xref ref-type="fig" rid="figS4">Supplementary Figure S4b</xref>). Also the low estimated dispersal between Switzerland and Italy is consistent with Swiss samples sharing relatively few PSC segments with Italians given their close proximity (<xref ref-type="fig" rid="figS4">Supplementary Figure S4b</xref>). However, identifying interesting patterns directly from the PSC segment sharing data is not straightforward, and one goal of MAPS (and EEMS) is to produce visualizations that point to patterns in the data that suggest deviations from simple isolation by distance.</p>
+<p>Our results suggest that several features of dispersal in Europe have been relatively stable over the last <italic>&#x007E;</italic>3000 years, whereas the population sizes have been increasing. The relative stability of the gene flow patterns is perhaps surprising given ancient DNA results suggest a continually dynamic history of population movements. One possibility is that much of European population structure may have been established by the end of the Bronze Age (4,000 years ago), with relatively more stable patterns in the intervening period that is reflected in lPSC segments. Nonetheless, the dispersal is not completely stable&#x2013; our results suggest changes in Iberia, the Baltic, and to minor degrees in other areas.</p>
+<p>The inferred population size surfaces for the POPRES data show a general increase in sizes through time, with small fluctuations across geography; for instance, Polish samples have a relatively larger population size in inferred values from the largest length scale (&#x003E; 10cM). In our results, the smallest inferred population sizes are in the Balkans and Eastern Europe more generally. This is in agreement with the signal seen by <xref ref-type="bibr" rid="c35">Ralph and Coop (2013)</xref>; however, taken at face value, our results suggest that high PSC sharing in these regions may be due more to consistently low population densities than to historical expansions (such as the Slavic or Hunnic expansions).</p>
+<p>Although consistent with previous results, our estimates of dispersal and population sizes do not exactly agree with empirical estimates. For example, our estimates of population sizes are consistently lower than the census sizes (<xref ref-type="fig" rid="figS6">Supplementary Figure S6</xref>). This is to be expected for several reasons. First, census sizes include non-breeding individuals (juvenile and post-reproductive age) that do not impact the formation of PSC segments. Second, MAPS is fitting a single population size per location, and in a growing population the best fit population size will be an under-estimate of contemporary size. Third, in a wide class of population genetic models, the effective size, even among reproductive age individuals, is lower than the census size because of factors that inflate the variance in offspring number. Fourth, some discrepancy is expected simply because the stepping-stone population genetic model used here is only a coarse approximation to the complex spatial dynamics of human populations. Finally, recombination rate mis-specification can bias the inferred parameters. Furthermore, we caution that our results must be interpreted in the light of the fact that we have limited spatial sampling across Europe, and only very coarse geographical origin data (country of origin).</p>
+<p>Here, as in <xref ref-type="bibr" rid="c33">Petkova et al. (2016)</xref> we use a discrete stepping-stone model to approximate a process that might be more naturally modelled as continuously varying in space. Recent work (<xref ref-type="bibr" rid="c37">Ringbauer et al., 2017</xref>; <xref ref-type="bibr" rid="c1">Baharian et al., 2016</xref>) exploits continuous models to estimate dispersal and population density parameters from sharing of lPSC segments. However, these methods assume that dispersal and population density are constant across space: extending them to allow these parameters to vary across space could be an interesting avenue for future work.</p>
+<p>A major achievement in method development in population genetics would be to jointly infer migration rates and population sizes across both space and time. MAPS is a step towards this goal. However, we do not infer demography explicitly as a function of time and instead infer surfaces in time blocks defined by PSC length bins. In principle, our method allows for inference of demography across time by treating PSC segments as independent across length bins, see <xref ref-type="disp-formula" rid="eqnS27">Equation (S27)</xref> in Supplementary Methods. However, this requires fitting multiple migration/population surfaces and is computationally unfeasible with our current MCMC routine. Other computational techniques (e.g. Variational Bayes or fast optimization of the likelihood) might make this goal possible.</p>
+</sec>
+<sec id="s4">
+<label>4</label>
+<title>Methods</title>
+<sec id="s4a">
+<label>4.1</label>
+<title>MAPS configuration</title>
+<p>For the empirical data analysis, we ran MAPS with 200 demes. The MAPS output was obtained by averaging over 20 independent replicates (the number of MCMC iterations in each replicate was to set 5e6, number of burn-in iterations set to 2e6, and we thinned every 2000 iterations). We provide the the MAPS here: <ext-link ext-link-type="uri" xlink:href="https://github.com/halasadi/MAPS">https://github.com/halasadi/MAPS</ext-link>, and the plotting scripts here: <ext-link ext-link-type="uri" xlink:href="https://github.com/halasadi/plotmaps">https://github.com/halasadi/plotmaps</ext-link>.</p>
+</sec>
+<sec id="s4b">
+<label>4.2</label>
+<title>Inferring PSC segments from the data</title>
+<p>Our pipeline to call PSC segments for simulations can be found here: <ext-link ext-link-type="uri" xlink:href="https://github.com/halasadi/ibd_data_pipeline">https://github.com/halasadi/ibd_data_pipeline</ext-link>. We follow the recommendations of Browning and Browning (<xref ref-type="bibr" rid="c8">2011</xref>, <xref ref-type="bibr" rid="c9">2013</xref>) and <xref ref-type="bibr" rid="c35">Ralph and Coop (2013)</xref> by running BEAGLE multiple times and merging shorter segments.</p>
+<p>For the empirical data analysis, we use the PSC segments (&#x201C;IBD&#x201D;) calls from <xref ref-type="bibr" rid="c35">Ralph and Coop (2013)</xref>, which can be found here: <ext-link ext-link-type="uri" xlink:href="https://github.com/petrelharp/euroibd">https://github.com/petrelharp/euroibd</ext-link>. We further applied a filter to retain countries with at least 5 sampled individuals, and removed Russian and Greek individuals to restrict the habitat to a smaller spatial scale</p>
+</sec>
+<sec id="s4c">
+<label>4.3</label>
+<title>Model</title>
+<p>MAPS assumes a population genetic model consisting of triangular grid of <italic>d</italic> demes (or populations) with symmetric migration. The density of the grid is pre-specified by the user with the consideration that the computational complexity is <italic>O</italic>(<italic>d</italic><sup>3</sup>). We use Bayesian inference to estimate the MAPS parameters: the migration rates and coalescent rates <italic>M</italic> and <italic><underline>q</underline></italic> respectively. Its key components are the likelihood, which measures how well the parameters explain the observed data, and the prior, which captures the expectation that <italic>M</italic> and <italic><underline>q</underline></italic> have some spatial structure (in particular, the idea that nearby edges will tend to have similar migration rates and nearby demes have similar coalescent rates).</p>
+<p>MAPS estimate the posterior distribution of &#x0398; &#x003D; <italic>M, <underline>q</underline></italic> given the data. The data used for MAPS consists of a similarity matrix <inline-formula><alternatives><inline-graphic xlink:href="365536_inline25.gif"/></alternatives></inline-formula> which denotes the number of PSC segments in a range <italic>R</italic> &#x003D; [<italic>u, v</italic>] base-pairs shared between pairs of haploid individuals (<italic>i, j</italic>) &#x2208; {1, &#x22EF;, <italic>n</italic>} &#x00D7; {1, &#x22EF;, <italic>n</italic>} where <italic>n</italic> is the number of (haploid) individuals. Furthermore, a recombination rate map is required as input for MAPS. The likelihood is a function of the expected value of <inline-formula><alternatives><inline-graphic xlink:href="365536_inline26.gif"/></alternatives></inline-formula>. Below we describe the computation of <inline-formula><alternatives><inline-graphic xlink:href="365536_inline27.gif"/></alternatives></inline-formula> and the other key components of the likelihood. Finally, we briefly describe the prior used and an MCMC scheme to sample from the posterior distribution of &#x0398;.</p>
+<sec id="s4c1">
+<title>The likelihood function</title>
+<p>Let <italic>&#x03B1;, &#x03B2;</italic> denote the demes that (haploid) individuals <italic>i</italic> and <italic>j</italic> are sampled in, we define,</p>
+<disp-formula id="eqn1">
+<alternatives>
+<graphic xlink:href="365536_eqn1.gif"/>
+</alternatives>
+</disp-formula>
+<p>For the marginal distribution, we assume
+<disp-formula id="eqn2">
+<alternatives>
+<graphic xlink:href="365536_eqn2.gif"/>
+</alternatives>
+</disp-formula>
+and one option for computing the joint distribution of the data is to assume independence between pairs of individuals (<italic>i, j</italic>) as done previously (<xref ref-type="bibr" rid="c31">Palamara et al., 2012</xref>; <xref ref-type="bibr" rid="c30">Palamara and Peer, 2013</xref>; <xref ref-type="bibr" rid="c35">Ralph and Coop, 2013</xref>; <xref ref-type="bibr" rid="c37">Ringbauer et al., 2017</xref>). This assumption leads to the log-likelihood,
+<disp-formula id="eqn3">
+<alternatives>
+<graphic xlink:href="365536_eqn3.gif"/>
+</alternatives>
+</disp-formula>
+where <italic><overline>X</overline></italic> &#x003D; {<italic><overline>X</overline></italic><sub><italic>&#x03B1;,&#x03B2;</italic></sub>} such that (<italic>&#x03B1;, &#x03B2;</italic>) &#x2208; {1, &#x22EF;, <italic>d</italic>} &#x00D7; {1, &#x22EF;, <italic>d</italic>} and <italic>d</italic> is the number of demes. Furthermore
+<disp-formula id="eqn4">
+<alternatives>
+<graphic xlink:href="365536_eqn4.gif"/>
+</alternatives>
+</disp-formula>
+where <italic>n<sub>&#x03B1;</sub></italic> is the number of sampled individuals in deme <italic>&#x03B1;</italic>, <italic>d<sub>&#x03B1;</sub></italic> is the set of all individuals in deme <italic>&#x03B1;</italic>, and</p>
+<disp-formula id="eqn5">
+<alternatives>
+<graphic xlink:href="365536_eqn5.gif"/>
+</alternatives>
+</disp-formula>
+<p>However, we found that there were significant correlations in lPSC segments between individuals. To deal with this, we down-weighted the likelihood function to reflect the &#x201C;effective&#x201D; number of samples (<italic>e<sub>&#x03B1;,&#x03B2;</sub></italic>) instead of the number of pairs (<italic>n<sub>&#x03B1;,&#x03B2;</sub></italic>). The effective number of samples between demes <italic>&#x03B1;,&#x03B2;</italic> is given by,</p>
+<disp-formula id="eqn6">
+<alternatives>
+<graphic xlink:href="365536_eqn6.gif"/>
+</alternatives>
+</disp-formula>
+<p>In the case of independence, <inline-formula><alternatives><inline-graphic xlink:href="365536_inline28.gif"/></alternatives></inline-formula>. However, because of correlations in the data, the actual variance is significantly larger than the variance computed under an independence model. Here, we estimate Var[<italic><overline>X</overline><sub>&#x03B1;,&#x03B2;</sub></italic>] by bootstrapping individuals with replacement. This way, we model the correlations between pairs of individuals for within and between-deme comparisons. The loglikelihood adjusted for correlations is given by,</p>
+<disp-formula id="eqn7">
+<alternatives>
+<graphic xlink:href="365536_eqn7.gif"/>
+</alternatives>
+</disp-formula>
+</sec>
+<sec id="s4c2">
+<title>Computing the expectation of <inline-formula><alternatives><inline-graphic xlink:href="365536_inline30.gif"/></alternatives></inline-formula></title>
+<p>Next, we derive expressions to compute the expectation of the number of PSC segments of length greater than <inline-formula><alternatives><inline-graphic xlink:href="365536_inline31.gif"/></alternatives></inline-formula> conditional on the demography &#x0398;. From results in <xref ref-type="bibr" rid="c31">Palamara et al. (2012)</xref> it is easy to show that
+<disp-formula id="eqn8">
+<alternatives>
+<graphic xlink:href="365536_eqn8.gif"/>
+</alternatives>
+</disp-formula>
+where <italic>G</italic> denotes the length of the genome (in base-pairs), <italic>L</italic> denotes the random length (in base-pairs) of the PSC segment between <italic>i</italic> and <italic>j</italic> containing a pre-specified position in the genome (base <italic>b</italic> say), and <italic>f<sub>L</sub></italic> is its probability density. Intuitively, <italic>Gf<sub>L</sub></italic>(<italic>l&#x007C;</italic>&#x0398;) is the expected number of base-pairs that lie in PSC segments of length <italic>l</italic>, making <inline-formula><alternatives><inline-graphic xlink:href="365536_inline32.gif"/></alternatives></inline-formula> the expected number of PSC segments of length <italic>l</italic>. Integrating the latter quantity from <italic>&#x00B5;</italic> to <italic>&#x221E;</italic> gives the desired result.</p>
+<p>To help compute (8) we introduce <italic>T<sub>ij</sub></italic> to denote the (random) coalescent time in generations between <italic>i</italic> and <italic>j</italic> at base <italic>b</italic>, with density <italic>f<sub>T<sub>ij</sub></sub></italic> (<italic>t&#x007C;</italic>&#x0398;). Then (8) can be written as an integral over <italic>T<sub>ij</sub></italic>:
+<disp-formula id="eqn9">
+<alternatives>
+<graphic xlink:href="365536_eqn9.gif"/>
+</alternatives>
+</disp-formula>
+<disp-formula id="eqn10">
+<alternatives>
+<graphic xlink:href="365536_eqn10.gif"/>
+</alternatives>
+</disp-formula>
+<disp-formula id="eqn11">
+<alternatives>
+<graphic xlink:href="365536_eqn11.gif"/>
+</alternatives>
+</disp-formula>
+using the relation that <italic>f<sub>L,T<sub>i,j</sub></sub></italic> (<italic>l, t&#x007C;</italic>&#x0398;) &#x003D; <italic>f<sub>L</sub></italic>(<italic>l&#x007C;t</italic>, &#x0398;)<italic>f<sub>T<sub>i,j</sub></sub></italic> (<italic>t&#x007C;</italic>&#x0398;) &#x003D; <italic>f<sub>L</sub></italic>(<italic>l&#x007C;t</italic>)<italic>f<sub>T<sub>i,j</sub></sub></italic> (<italic>t&#x007C;</italic>&#x0398;). A key simplification here comes from the fact that, given <italic>T<sub>ij</sub></italic>, <italic>L</italic> is conditionally independent of &#x0398;.</p>
+<p>It can be shown that the conditional distribution of <italic>L</italic> given <italic>T<sub>ij</sub></italic> is an erlang-2 distribution (<xref ref-type="bibr" rid="c31">Palamara et al., 2012</xref>; <xref ref-type="bibr" rid="c30">Palamara and Peer, 2013</xref>; <xref ref-type="bibr" rid="c18">Hein et al., 2004</xref>) with density
+<disp-formula id="eqn12">
+<alternatives>
+<graphic xlink:href="365536_eqn12.gif"/>
+</alternatives>
+</disp-formula>
+where <italic>r</italic> is the recombination rate per base-pair. Substituting this into the inner integral of (11) and integrating analytically yields
+<disp-formula id="eqn13">
+<alternatives>
+<graphic xlink:href="365536_eqn13.gif"/>
+</alternatives>
+</disp-formula>
+leading to</p>
+<disp-formula id="eqn14">
+<alternatives>
+<graphic xlink:href="365536_eqn14.gif"/>
+</alternatives>
+</disp-formula>
+<p>Here, we assume the probability density of <italic>T<sub>i,j</sub></italic> is given by,
+<disp-formula id="eqn15">
+<alternatives>
+<graphic xlink:href="365536_eqn15.gif"/>
+</alternatives>
+</disp-formula>
+where demes <italic>&#x03B1;, &#x03B2;</italic> denote the deme where lineages <italic>i</italic> and <italic>j</italic> are sampled from, <inline-formula><alternatives><inline-graphic xlink:href="365536_inline33.gif"/></alternatives></inline-formula> is the coalescent rate in deme <italic>&#x03BA;</italic>, and <italic>M</italic> &#x003D; <italic>&#x2329;m<sub>&#x03B1;,&#x03B2;</sub>&#x232A;</italic> is the migration rate matrix between all <italic>d</italic> demes such that (<italic>&#x03B1;, &#x03B2;</italic>) &#x2208; {1, &#x22EF;, <italic>d</italic>} &#x00D7; {1, &#x2026;, <italic>d</italic>}. We compute the matrix exponential by first diagonalizing the matrix <italic>M</italic> &#x003D; <italic>P DP<sup>T</sup></italic> and compute <italic>e<sup>&#x2212;M t</sup></italic> &#x003D; <italic>P e<sup>&#x2212;Dt</sup>P<sup>T</sup></italic>.</p>
+<p>Having computed all individual components of <inline-formula><alternatives><inline-graphic xlink:href="365536_inline34.gif"/></alternatives></inline-formula>, we are left to evaluate a one-dimensional integral which we do by Gaussian quadrature (with 50 weights).</p>
+<p>To compute the expected number of PSC segments in a range <italic>R</italic> &#x003D; (<italic>&#x00B5;, &#x03BD;</italic>)</p>
+<disp-formula id="eqn16">
+<alternatives>
+<graphic xlink:href="365536_eqn16.gif"/>
+</alternatives>
+</disp-formula>
+<p>As mentioned previously, the units of <italic>&#x00B5;, &#x03BD;</italic> are in base-pairs. However, we can transform to units of centiMorgans (cM) by: <italic>&#x00B5;<sub>cM</sub></italic> &#x003D; 100<italic>&#x00B5;r</italic>.</p>
+</sec>
+<sec id="s4c3">
+<title>The Prior</title>
+<p>MAPS uses a hierarchical prior parameterized by Voronoi tessellation (similar to EEMS). The Voronoi tessellation partitions the habitat into <italic>C</italic> cells. Given a Voronoi tessellation of the habitat, each cell <italic>c</italic> &#x2208; {1, &#x22EF;, <italic>C</italic>} is associated with a migration rate (<italic>&#x2133;<sub>c</sub></italic>) and population size (<italic>&#x1D4A9;<sub>c</sub></italic>). Demes (<italic>&#x03B1;</italic>) that fall into cell <italic>c</italic> will have population size <italic>N<sub>&#x03B1;</sub></italic> &#x003D; <italic>&#x1D4A9;<sub>c</sub></italic>, and similarly, migration rates between demes <italic>&#x03B1;, &#x03B2;</italic> equal <inline-formula><alternatives><inline-graphic xlink:href="365536_inline35.gif"/></alternatives></inline-formula> if demes <italic>&#x03B1;, &#x03B2;</italic> fall into cells <italic>c</italic><sub>1</sub> and <italic>c</italic><sub>2</sub>. We use an MCMC to integrate over the distribution on partitions of Voronoi cells. See Supplementary Notes <xref ref-type="sec" rid="s6d">section 5.4</xref> for more information.</p>
+</sec>
+<sec id="s4c4">
+<title>The MCMC</title>
+<p>We break up the MCMC updates into updating a series of conditionally independent distributions. Provided the conditional posterior distributions for each part give support to all the parameter space, this will define an irreducible Markov chain with the correct joint posterior distribution <xref ref-type="bibr" rid="c43">Stephens (2000)</xref>. We use Metropolis-Hastings to update all parameters, and random-walk proposals for most updates, with exception of birth-death updates for updating the number of Voronoi cells. See Supplementary Notes <xref ref-type="sec" rid="s6e">section 5.5</xref> for more information.</p>
+</sec>
+<sec id="s4c5">
+<title>Transformation of parameters to continuous space</title>
+<p>Given an inferred population size at a particular deme <italic>&#x03B1;</italic> and a grid with uniform spacing, the transformation from population size to population density is given by
+<disp-formula id="eqn17">
+<alternatives>
+<graphic xlink:href="365536_eqn17.gif"/>
+</alternatives>
+</disp-formula>
+where <inline-formula><alternatives><inline-graphic xlink:href="365536_inline36.gif"/></alternatives></inline-formula> is the area covered per deme such that &#xD49C;<sub><italic>H</italic></sub> is the area of the habitat (in km<sup>2</sup>), <italic>d</italic> is the number of demes, and <italic>x</italic> corresponds to the spatial position of deme <italic>&#x03B1;</italic>. Intuitively, (17) implies that the density multiplied by the area equals population size, i.e. <italic>D<sub>e</sub></italic>(<italic>x</italic>)&#x2206;<italic>A &#x2248; N<sub>&#x03B1;</sub></italic>. <xref ref-type="disp-formula" rid="eqn17">Equation (17)</xref> can is analogous to <xref ref-type="disp-formula" rid="eqn7">equation 7</xref> in (<xref ref-type="bibr" rid="c1">Baharian et al., 2016</xref>).</p>
+<p>Given a migration rate (<italic>m</italic>), the transformation to dispersal distances is given by,
+<disp-formula id="eqn18">
+<alternatives>
+<graphic xlink:href="365536_eqn18.gif"/>
+</alternatives>
+</disp-formula>
+where &#x2206;<italic>x</italic> is the step size of the grid (km). The dispersal distance represents the distance traveled by an individual after one generation, and sometimes is called the &#x201C;root mean square distance&#x201D; or &#x201C;dispersal rate&#x201D; (<xref ref-type="bibr" rid="c4">Barton et al., 2002</xref>). Please see Supplementary Note <xref ref-type="sec" rid="s6b">section 5.2</xref> for the derivation of (18).</p>
+</sec>
+</sec>
+</sec>
+</body>
+<back>
+<sec id="s5">
+<title>Funding</title>
+<p>This work was supported by National Institute of Health funding [U01CA198933 to H.A., M.S., and J.N], [HG002585 to M.S.]; and the National Science Foundation Graduate Research Fellowship to H.A.</p>
+</sec>
+<ack>
+<title>Acknowledgements</title>
+<p>We thank Dick Hudson for helpful discussion on the identifiability of demographic parameters in coalescent models; Evan Koch, Ben Peter and the Novembre &#x0026; Stephens Lab for comments on the paper and helpful discussion. We further thank Peter Carbonetto for computational support and helpful discussion.</p>
+</ack>
+<sec id="s6">
+<label>5</label>
+<title>Supplementary Note</title>
+<sec id="s6a">
+<label>5.1</label>
+<title>The model</title>
+<p>The coalescent process for two samples under a multi-deme model can be described by a continuous time Markov chain (CTMC) (<xref ref-type="bibr" rid="c2">Bahlo and Griffiths, 2001</xref>). Let <italic>i, j</italic> represent sampled lineages and <italic>&#x03B1;, &#x03B2;</italic> their locations, respectively, <italic>d</italic> is the number of demes (or populations) and (<italic>&#x03B1;, &#x03B2;</italic>) &#x2208; {1, &#x22EF;, <italic>d</italic>} &#x00D7; {1, &#x2026;, <italic>d</italic>}. Let <italic>c</italic> denote the coalescent state. The infinitesimal rate matrix <italic>R</italic> of this CTMC is
+<disp-formula id="eqnS19">
+<alternatives>
+<graphic xlink:href="365536_eqnS19.gif"/>
+</alternatives>
+</disp-formula>
+where <italic>M</italic> &#x003D; <italic>&#x2329;m<sub>&#x03B1;,&#x03B2;</sub>&#x232A;</italic> denotes the migration rate matrix, and <italic>m<sub>&#x03B1;,&#x03B2;</sub></italic> is the migration rate between demes <italic>&#x03B1;, &#x03B2;</italic> and <inline-formula><alternatives><inline-graphic xlink:href="365536_inline37.gif"/></alternatives></inline-formula> is the coalescent rate of deme <italic>&#x03B1;</italic> which is proportional to the inverse of the population size at deme <italic>&#x03B1;</italic> (<italic>N<sub>k</sub></italic>). Let <italic>T<sub>i,j</sub></italic> denote the (random) coalescent time between the pair of sampled lineages, and <italic>f<sub>T<sub>i,j</sub></sub></italic> (<italic>t</italic>) denote the probability density of a coalescent event at time <italic>t</italic>. Here, we derive <italic>f<sub>T<sub>i,j</sub></sub></italic> (<italic>t</italic>) by conditioning on the position of the two lineages.</p>
+<statement>
+<label>Lemma 5.1</label>
+<p><italic>Let X<sub>i</sub></italic>(<italic>t</italic>), <italic>X<sub>j</sub></italic> (<italic>t</italic>) &#x2208; {1, &#x22EF;, <italic>d</italic>} &#x00D7; {1, &#x2026;, <italic>d</italic>} <italic>denote the position of lineage i and lineage j at time t respectively. The probability density f<sub>T<sub>i,j</sub></sub> (t) that lineage i and j coalesce at time t is given by <inline-formula><alternatives><inline-graphic xlink:href="365536_inline38.gif"/></alternatives></inline-formula></italic></p>
+</statement>
+<p>For &#x2206;<italic>t &#x2248;</italic> 0,</p>
+<disp-formula id="eqnS20">
+<alternatives>
+<graphic xlink:href="365536_eqnS20.gif"/>
+</alternatives>
+</disp-formula>
+<disp-formula id="eqnS21">
+<alternatives>
+<graphic xlink:href="365536_eqnS21.gif"/>
+</alternatives>
+</disp-formula>
+<disp-formula id="eqnS22">
+<alternatives>
+<graphic xlink:href="365536_eqnS22.gif"/>
+</alternatives>
+</disp-formula>
+<p>Taking the limit &#x2206;<italic>t &#x2192;</italic> 0, we arrive at the density</p>
+<disp-formula id="eqnS23">
+<alternatives>
+<graphic xlink:href="365536_eqnS23.gif"/>
+</alternatives>
+</disp-formula>
+<sec id="s6a1">
+<title>The random walk approximation to the coalescent</title>
+<p>Here, we introduce an approximation,</p>
+<disp-formula id="eqnS24">
+<alternatives>
+<graphic xlink:href="365536_eqnS24.gif"/>
+</alternatives>
+</disp-formula>
+<p>The intuition is that probability that lineage <italic>i</italic> and <italic>j</italic> coalesce before time <italic>t</italic> is extremely small such that the two lineages approximately behave like two independently moving particles. Each lineage can be modeled by a random walk with transition matrix <italic>M</italic>. These assumptions were also made in the context of continuous spatial diffusion models for haplotype sharing <xref ref-type="bibr" rid="c1">Baharian et al. (2016)</xref>; <xref ref-type="bibr" rid="c37">Ringbauer et al. (2017)</xref>, and even further back, as a general approximation to the two-dimensional continuous-space coalescent process (<xref ref-type="bibr" rid="c4">Barton et al., 2002</xref>; <xref ref-type="bibr" rid="c46">Wilkins, 2004</xref>; <xref ref-type="bibr" rid="c5">Blum et al., 2004</xref>; <xref ref-type="bibr" rid="c28">Novembre and Slatkin, 2009</xref>; <xref ref-type="bibr" rid="c38">Robledo-Arnuncio and Rousset, 2010</xref>).</p>
+<p>This approximation implies that
+<disp-formula id="eqnS25">
+<alternatives>
+<graphic xlink:href="365536_eqnS25.gif"/>
+</alternatives>
+</disp-formula>
+where lineages <italic>i, j</italic> are initially sampled in deme <italic>&#x03B1;, &#x03B2;</italic>. Or equivalently in matrix form,
+<disp-formula id="eqnS26">
+<alternatives>
+<graphic xlink:href="365536_eqnS26.gif"/>
+</alternatives>
+</disp-formula>
+where <italic>Q</italic> &#x003D; <italic>diag</italic>(<italic>q</italic><sub>1</sub>, &#x2026;, <italic>q<sub>d</sub></italic>).</p>
+</sec>
+<sec id="s6a2">
+<title>Varying migration rates and population sizes across time</title>
+<statement>
+<label>Corollary 5.1.1</label>
+<p><italic>Let time slice k be defined by the interval t<sub>k&#x2212;</sub></italic><sub>1</sub> <italic>&#x003C; t &#x003C; t<sub>k</sub>, M<sub>k</sub> denote the migration rate matrix in time slice k, and <inline-formula><alternatives><inline-graphic xlink:href="365536_inline39.gif"/></alternatives></inline-formula> where <inline-formula><alternatives><inline-graphic xlink:href="365536_inline40.gif"/></alternatives></inline-formula> denotes the coalescent rate in deme &#x03B1; at time slice k. Let T<sub>i,j</sub> denote the coalescent time between lineage i, j sampled in demes &#x03B1;, &#x03B2;, then under the independence assumption, for t &#x2208;</italic> (<italic>t<sub>K&#x2212;</sub></italic><sub>1</sub>, <italic>t<sub>K</sub></italic>),
+<disp-formula id="eqnS27">
+<alternatives>
+<graphic xlink:href="365536_eqnS27.gif"/>
+</alternatives>
+</disp-formula>
+</p>
+<p><italic>where <inline-formula><alternatives><inline-graphic xlink:href="365536_inline41.gif"/></alternatives></inline-formula></italic>.</p>
+</statement>
+</sec>
+<sec id="s6a3">
+<title>Expected number of lPSC segments given the demography &#x0398;</title>
+<statement>
+<label>Lemma 5.2</label>
+<p><italic>Let <inline-formula><alternatives><inline-graphic xlink:href="365536_inline42.gif"/></alternatives></inline-formula> denote the number of PSC segment greater than &#x00B5; basepairs shared between haploid individuals i, j</italic>, &#x0398; <italic>denote the demographic model, G the size of the genome, L denotes the random length (in base-pairs) of the PSC segment between i and j containing a pre-specified position in the genome, then <inline-formula><alternatives><inline-graphic xlink:href="365536_inline43.gif"/></alternatives></inline-formula></italic>.</p>
+</statement>
+<p>Let <italic>E</italic>[<italic>&#x2131;<sup>&#x03BC;</sup>&#x007C;</italic>&#x0398;] denote the expected fraction of the genome between <italic>i, j</italic> that lies in PSC segments greater than <italic>&#x03BC;</italic>, and <italic>E</italic>[<italic>s<sup>&#x03BC;</sup>&#x007C;</italic>&#x0398;] the expected size of a PSC segment conditional on it being at least length <italic>&#x03BC;</italic>. According to <xref ref-type="disp-formula" rid="eqn9">equations 9</xref>-<xref ref-type="disp-formula" rid="eqn14">14</xref> from (<xref ref-type="bibr" rid="c31">Palamara et al., 2012</xref>),</p>
+<disp-formula id="eqnS28">
+<alternatives>
+<graphic xlink:href="365536_eqnS28.gif"/>
+</alternatives>
+</disp-formula>
+<disp-formula id="eqnS29">
+<alternatives>
+<graphic xlink:href="365536_eqnS29.gif"/>
+</alternatives>
+</disp-formula>
+<disp-formula id="eqnS30">
+<alternatives>
+<graphic xlink:href="365536_eqnS30.gif"/>
+</alternatives>
+</disp-formula>
+<p>We obtain the desired result by substituting (S29) and (S30) into (S28) and canceling liketerms.</p>
+</sec>
+<sec id="s6a4">
+<title>Expected age of a segment</title>
+<p>We choose PSC segment lengths based on their expected age which is derived below.</p>
+<statement>
+<label>Lemma 5.3</label>
+<p><italic>The expected coalescent time (t, in generations) of an PSC segment between between length L</italic><sub>1</sub> <italic>centiMorgans and L</italic><sub>2</sub> <italic>centiMorgans is approximately <inline-formula><alternatives><inline-graphic xlink:href="365536_inline44.gif"/></alternatives></inline-formula> if the effective population size (N) is sufficiently large</italic>.</p>
+</statement>
+<p>We choose to work in units of basepairs, and will convert back to units of morgans at the end. We convert <italic>L</italic><sub>1</sub> into units of base-pairs with the transformation: <inline-formula><alternatives><inline-graphic xlink:href="365536_inline45.gif"/></alternatives></inline-formula> and similarly <inline-formula><alternatives><inline-graphic xlink:href="365536_inline46.gif"/></alternatives></inline-formula></p>
+<p>Let us denote <italic>T &#x007C;l, N</italic> as the random coalescent time of a PSC segment that is at least length <italic>l</italic> under a single-deme demography model with population size <italic>N</italic>. The expected coalescent time of an PSC segment longer than <italic>&#x03BC;</italic> base-pairs can be expressed as
+<disp-formula id="eqnS31">
+<alternatives>
+<graphic xlink:href="365536_eqnS31.gif"/>
+</alternatives>
+</disp-formula>
+where <italic>f<sub>L</sub></italic>(<italic>l&#x007C;t</italic>) &#x003D; 4<italic>r</italic><sup>2</sup><italic>t</italic><sup>2</sup><italic>le</italic><sup>&#x2212;2<italic>trl</italic></sup> denotes the probability density that a PSC segment is of length <italic>l</italic> given it has a common ancestor event at time <italic>t</italic>, <italic>f<sub>T</sub></italic> (<italic>t&#x007C;N</italic>) denotes the probability density that a coalescent event occurs at time <italic>t</italic> under the demography model with population size <italic>N</italic>.</p>
+<p>Next, we expand a key term in <xref ref-type="disp-formula" rid="eqnS31">equation (S31)</xref>
+<disp-formula id="eqnS32">
+<alternatives>
+<graphic xlink:href="365536_eqnS32.gif"/>
+</alternatives>
+</disp-formula>
+and assume,</p>
+<disp-formula id="eqnS33">
+<alternatives>
+<graphic xlink:href="365536_eqnS33.gif"/>
+</alternatives>
+</disp-formula>
+<p>Putting everything together,</p>
+<disp-formula id="eqnS34">
+<alternatives>
+<graphic xlink:href="365536_eqnS34.gif"/>
+</alternatives>
+</disp-formula>
+<p>We can remove the dependence of <italic>N</italic> by taking lim<sub><italic>N &#x2192;&#x221E;</italic></sub> as done similarly in <xref ref-type="bibr" rid="c1">Baharian et al. (2016)</xref>,</p>
+<disp-formula id="eqnS35">
+<alternatives>
+<graphic xlink:href="365536_eqnS35.gif"/>
+</alternatives>
+</disp-formula>
+<p>Now that we have derived the expected age of PSC segment longer than <italic>&#x03BC;</italic>, it is quite simple to expand the equation for PSC segments between <italic>&#x03BC;</italic> and <italic>&#x03BD;</italic> base-pairs,</p>
+<disp-formula id="eqnS36">
+<alternatives>
+<graphic xlink:href="365536_eqnS36.gif"/>
+</alternatives>
+</disp-formula>
+<p>We transform back to units of centimorgans: let <italic>L</italic><sub>1</sub> &#x003D; 100<italic>r&#x03BC;</italic> and <italic>L</italic><sub>2</sub> &#x003D; 100<italic>r&#x03BD;</italic> be in units of centiMograns, and taking the limit, we get the desired result</p>
+<disp-formula id="eqnS37">
+<alternatives>
+<graphic xlink:href="365536_eqnS37.gif"/>
+</alternatives>
+</disp-formula>
+</sec>
+</sec>
+<sec id="s6b">
+<label>5.2</label>
+<title>Transformation of migration rates to dispersal rates</title>
+<p>Migration rates inferred under a discrete model can be transformed to dispersal distances representing parameters in continuous space. Here, we derive the transformation.
+<statement>
+<label>Lemma 5.4</label>
+<p><italic>Consider a random walk on a 2D grid, where steps are taken according to a Poisson process with rate m, and let <underline>X</underline></italic>(<italic>t</italic>) <italic>be a vector denoting the coordinates of the particle at time t. The distribution of <underline>X</underline></italic>(<italic>t</italic>) <italic>approximately only depends on the compound parameter m</italic>(&#x2206;<italic>x</italic>)<sup>2</sup> <italic>(or equivalently</italic> <inline-formula><alternatives><inline-graphic xlink:href="365536_inline47.gif"/></alternatives></inline-formula>).</p>
+</statement>
+<disp-formula id="eqnS38">
+<alternatives>
+<graphic xlink:href="365536_eqnS38.gif"/>
+</alternatives>
+</disp-formula>
+where <italic>N</italic> (<italic>t</italic>) is the number of steps taken by time <italic>t</italic>, and <italic><underline>Z</underline><sub>i</sub></italic> is a random variable representing the direction and magnitude taken at step <italic>i</italic>. Since <italic>X</italic>(<italic>t</italic>) is a sum of iid variables, a form of the central limit theorem applies here and <italic>X</italic>(<italic>t</italic>) converges to the normal distribution (<xref ref-type="bibr" rid="c36">R&#x00E9;nyi, 1960</xref>).</p>
+<p>In a random walk on a triangular grid, a particle can move in one of the 6 directions (upper-right, right, lower-right, left, upper-left, and lower-left):
+<disp-formula id="ueqn1">
+<alternatives>
+<graphic xlink:href="365536_ueqn1.gif"/>
+</alternatives>
+</disp-formula>
+where &#x2206;<italic>x</italic> represents the step size in the grid (i.e. edge length). The mean and variance are given by,
+<disp-formula id="eqnS39">
+<alternatives>
+<graphic xlink:href="365536_eqnS39.gif"/>
+</alternatives>
+</disp-formula>
+and,
+<disp-formula id="eqnS40">
+<alternatives>
+<graphic xlink:href="365536_eqnS40.gif"/>
+</alternatives>
+</disp-formula>
+where <italic>I</italic><sub>2</sub> is the identity matrix. Under normality, the mean and variance are sufficient statistics. Note that (S39) and (S40) also hold for square grids.</p>
+<sec id="s6b1">
+<title>Interpretation of the migration diffusion parameter <italic>m</italic>(&#x2206;<italic>x</italic>)<sup>2</sup></title>
+<p>In addition, we provide a physical interpretation to (&#x2206;<italic>x</italic>)<sup>2</sup> in terms of the squared distance from the origin per generation. Let the distance <inline-formula><alternatives><inline-graphic xlink:href="365536_inline48.gif"/></alternatives></inline-formula>, then</p>
+<disp-formula id="eqnS41">
+<alternatives>
+<graphic xlink:href="365536_eqnS41.gif"/>
+</alternatives>
+</disp-formula>
+<p><inline-formula><alternatives><inline-graphic xlink:href="365536_inline49.gif"/></alternatives></inline-formula> can be interpreted as the distance traveled by an individual after one generation, and sometimes is called the &#x201C;dispersal&#x201D; distance or the &#x201C;root mean square distance&#x201D;.</p>
+</sec>
+</sec>
+<sec id="s6c">
+<label>5.3</label>
+<title>Diversity rates versus coalescent rates</title>
+<p>For computational efficiency, the EEMS software uses a combination of the resistance distance model and within-deme &#x201C;diversity rates&#x201D; to approximate expected pairwise coalescent times, in which,
+<disp-formula id="eqnS42">
+<alternatives>
+<graphic xlink:href="365536_eqnS42.gif"/>
+</alternatives>
+</disp-formula>
+where <italic>E</italic>[<italic>T&#x0302;</italic><sub>&#x03B1;&#x03B2;</sub>] is the resistance distance approximation to the expected coalescent time between deme <italic>&#x03B1;</italic> and deme <italic>&#x03B2;</italic>, <italic>e<sub>q<sub>&#x03B1;</sub></sub></italic> is the &#x201C;diversity rate&#x201D; in deme <italic>&#x03B1;</italic>, and <italic>R<sub>&#x03B1;,&#x03B2;</sub></italic> is the resistance distance between demes <italic>&#x03B1;, &#x03B2;</italic> (<xref ref-type="bibr" rid="c33">Petkova et al., 2016</xref>). The diversity rates have no simple expression in terms of population-genetic parameters under the multi-deme coalescent model. As an alternative, diversity rates can be interpreted as reflecting average within deme heterozygosity since <italic>e<sub>q</sub></italic> &#x003D; <italic>E</italic>[<italic>T&#x0302;</italic><sub><italic>w</italic></sub>] &#x221D; <italic>H<sub>&#x03B1;</sub></italic> where the heterozygosity for deme <italic>&#x03B1;</italic> (<italic>H<sub>&#x03B1;</sub></italic>) is defined as,
+<disp-formula id="eqnS43">
+<alternatives>
+<graphic xlink:href="365536_eqnS43.gif"/>
+</alternatives>
+</disp-formula>
+where <italic>D<sub>i,j</sub></italic> is the average number of differences between (haploid) individuals <italic>i</italic> and <italic>j</italic>.</p>
+<sec id="s6c1">
+<title>Migration and population sizes are identifiable in MAPS</title>
+<p>MAPS models the recombination process using rates estimated from a recombination rate map. In this model, population sizes and migration rates can be inferred separately rather than as a joint parameter. Intuitively, the recombination rate serves an independent clock to calibrate estimates.</p>
+<p>More formally, a statement of identifiability is a statement regarding the likelihood. MAPS models the expected number of lPSC segments shared between pairs of (haploid) individuals, and can be computed with an integral (14). The integral can be broken up into a product of two functions: a function describing the decay of PSC segments as a function of time (&#x201C;recombination rate clock&#x201D;), and the coalescent time probability density <italic>f<sub>T</sub>i,j</italic> (<italic>t</italic>) (15). The migration rates and population sizes only appear in <italic>f<sub>T</sub>i,j</italic> (<italic>t</italic>), and cannot be cannot be factored into parameters involving combinations of the migration rates and population sizes.</p>
+</sec>
+</sec>
+<sec id="s6d">
+<label>5.4</label>
+<title>The prior</title>
+<p>The structure of the prior closely resembles the prior in the EEMS method <xref ref-type="bibr" rid="c33">Petkova et al. (2016)</xref>. The tessellation for the migration rates (<italic>T<sub>m</sub></italic>) is encoded by a list (<italic><underline>l<sup>m</sup></underline>, <underline>m</underline>, c<sub>m</sub>, &#x03BC;<sub>m</sub></italic>) where <italic><underline>l<sup>m</sup></underline></italic> are the locations of each cell, <italic><underline>m</underline></italic> the rates of each cell, and are vectors of length <italic>c<sub>m</sub></italic> (i.e. number of Voronoi cells), and <italic>&#x03BC;<sub>m</sub></italic> is the overall mean migration rate. The Voronoi tessellation for the coalescent rates is <italic>T<sub>q</sub></italic> &#x003D; (<italic><underline>l<sup>q</sup></underline>, <underline>q</underline>, c<sub>q</sub>, &#x03BC;<sub>q</sub></italic>).</p>
+<p>The location of each (unordered) Voronoi cell is distributed uniformly across the habitat,
+<disp-formula id="eqnS44">
+<alternatives>
+<graphic xlink:href="365536_eqnS44.gif"/>
+</alternatives>
+</disp-formula>
+and the number of cells (a-priori) are drawn from a negative binomial distribution,</p>
+<disp-formula id="eqnS45">
+<alternatives>
+<graphic xlink:href="365536_eqnS45.gif"/>
+</alternatives>
+</disp-formula>
+<p>The effects of each Voronoi cell is normally distributed with variance <italic>&#x03C9;</italic><sup>2</sup>.</p>
+<disp-formula id="eqnS46">
+<alternatives>
+<graphic xlink:href="365536_eqnS46.gif"/>
+</alternatives>
+</disp-formula>
+<disp-formula id="eqnS47">
+<alternatives>
+<graphic xlink:href="365536_eqnS47.gif"/>
+</alternatives>
+</disp-formula>
+<p>The probability of a particular (unordered) cell configuration is,</p>
+<disp-formula id="eqnS48">
+<alternatives>
+<graphic xlink:href="365536_eqnS48.gif"/>
+</alternatives>
+</disp-formula>
+<p>We assume,</p>
+<disp-formula id="eqnS49">
+<alternatives>
+<graphic xlink:href="365536_eqnS49.gif"/>
+</alternatives>
+</disp-formula>
+<disp-formula id="eqnS50">
+<alternatives>
+<graphic xlink:href="365536_eqnS50.gif"/>
+</alternatives>
+</disp-formula>
+<p>We set log10(2) as the upper bound for log10(<italic>&#x03C9;<sub>m</sub></italic>) so the <italic>m</italic> so the probability that it is within 3 orders of magnitude from the mean is 0.95 a priori, and we set log10(1) as the upper bound for log10(<italic>&#x03C9;<sub>q</sub></italic>) to restrict the population sizes so to be within 2 orders of magnitude from the mean with probability 0.95 a priori.</p>
+<p>We assume,</p>
+<disp-formula id="eqnS51">
+<alternatives>
+<graphic xlink:href="365536_eqnS51.gif"/>
+</alternatives>
+</disp-formula>
+<disp-formula id="eqnS52">
+<alternatives>
+<graphic xlink:href="365536_eqnS52.gif"/>
+</alternatives>
+</disp-formula>
+<p>We place a uniform prior on the log of the mean rates to reflect that we are uncertain about the order of magnitude. Here, the data is highly informative of the mean, as a result, we can allow the support of the prior to vary by many orders of magnitude.</p>
+</sec>
+<sec id="s6e">
+<label>5.5</label>
+<title>MCMC</title>
+<sec id="s6e1">
+<title>Re-parameterization</title>
+<p>We re-parameterize the model to improve mixing of the MCMC. We decouple the migration (or coalescent) rates from the mean rate (<italic>&#x03BC;</italic>), and variance (<italic>&#x03C9;</italic>) by introducing a new variable <italic>e<sub>i</sub></italic>,
+<disp-formula id="eqnS53">
+<alternatives>
+<graphic xlink:href="365536_eqnS53.gif"/>
+</alternatives>
+</disp-formula>
+and the cell specific migration (or coalescent) rates are computed as,
+<disp-formula id="eqnS54">
+<alternatives>
+<graphic xlink:href="365536_eqnS54.gif"/>
+</alternatives>
+</disp-formula>
+which allows us to update the magnitude of the parameters (<italic>&#x03BC;</italic>) and the variance scale (<italic>&#x03C9;</italic>) separately.</p>
+<p>We add MH joint random-walk updates to <italic>&#x03BC;</italic> and <italic>e<sub>i</sub></italic> to ensure that <inline-formula><alternatives><inline-graphic xlink:href="365536_inline50.gif"/></alternatives></inline-formula>. To do this, we jointly update <italic>&#x03BC;</italic> and <italic>e<sub>i</sub></italic> by,
+<disp-formula id="eqnS55">
+<alternatives>
+<graphic xlink:href="365536_eqnS55.gif"/>
+</alternatives>
+</disp-formula>
+<disp-formula id="eqnS56">
+<alternatives>
+<graphic xlink:href="365536_eqnS56.gif"/>
+</alternatives>
+</disp-formula>
+where <italic>&#x220A; &#x007E; N</italic> (0, 1). We do this for both the migration rates and population sizes.</p>
+</sec>
+<sec id="s6e2">
+<title>Updating the number of cells</title>
+<p>The number of cells change the dimension of the likelihood, and a result, we must use a Reversible Jump MCMC step so that the ratio of densities in the Metropolis-Hastings acceptance ratio is well-defined (<xref ref-type="bibr" rid="c14">Green, 1995</xref>). We choose to update the number of cells with a birth-death update (<xref ref-type="bibr" rid="c43">Stephens, 2000</xref>). Fortunately, in such a case, the updates reduce to standard Metropolis-Hastings because the dimension matching constant (i.e. the &#x201C;Jacobian&#x201D;) equals one (<xref ref-type="bibr" rid="c33">Petkova et al., 2016</xref>; <xref ref-type="bibr" rid="c43">Stephens, 2000</xref>). See <xref ref-type="disp-formula" rid="eqnS31">equations S31</xref> and <xref ref-type="disp-formula" rid="eqnS32">S32</xref> in <xref ref-type="bibr" rid="c33">Petkova et al. (2016)</xref> for formulas regarding the birth-death update. Here, we use nearly identical updates (with a slight modification).</p>
+<p>When increasing the number of cells from <italic>c</italic> to <italic>c</italic> &#x002B; 1 (i.e. a birth-update), we randomly choose a location uniformly across the habitat, and the new migration is proposed from a standard normal because our cell effects are standardized. In contrast, EEMS proposes cell effects migration to be normally distributed around a cell effect at a randomly chosen point in the habitat. Here we set, p(birth) &#x003D; p(death) &#x003D; 0.5 if the number cells <italic>&#x2265;</italic> 1, otherwise p(birth) &#x003D; 1.</p>
+<p>The acceptance ratio for a birth update (going from <italic>c</italic> cells to <italic>c</italic> &#x002B; 1 cells) is
+<disp-formula id="eqnS57">
+<alternatives>
+<graphic xlink:href="365536_eqnS57.gif"/>
+</alternatives>
+</disp-formula>
+where <italic>x</italic> denotes the current state of the MCMC, <italic>x&#x2032;</italic> the proposed state, <italic>e</italic><sub><italic>c</italic>&#x002B;1</sub> is the proposed cell effect drawn from a standard normal. Conversely, in a death-update, we randomly choose one cell uniformly to kill. In this case, the acceptance ratio for a death proposal (going from <italic>c</italic> &#x002B; 1 cells to <italic>c</italic> cells) is</p>
+<disp-formula id="eqnS58">
+<alternatives>
+<graphic xlink:href="365536_eqnS58.gif"/>
+</alternatives>
+</disp-formula>
+</sec>
+</sec>
+</sec>
+<sec sec-type="supplementary-material">
+<label>6</label>
+<title>Supplementary Figures</title>
+<fig id="figS1" position="float" fig-type="figure">
+<label>Figure S1:</label>
+<caption><title>The performance of MAPS on a recent barrier scenario under different PSC length bins.</title>
+<p>Here, we investigate the ability of MAPS to detect a recent barrier (<italic>&#x003C;</italic> 10 generations) for various PSC length bins (a) Simulation scenario. Population sizes were set to 10,000 per deme and 10 diploids were sampled per deme, replicating the conditions in <xref ref-type="fig" rid="fig2">Figure 2b</xref>. (b) Results for different PSC length bins. Length bins that encompass shorter segments (2-4cM 2-6cM 2-8cM) recover the higher uniform migration surface; while length bins with longer segments (&#x003E;4, &#x003E;6, &#x003E;8) recover the recent ancestral barrier. For the last length scale (&#x003E; 8cM), the signature of low migration extends across the habitat. The variation in migration rates is missed presumably because of the small number of shared segments at this length scale.</p></caption>
+<graphic xlink:href="365536_figS1.tif"/>
+</fig>
+<fig id="figS2" position="float" fig-type="figure">
+<label>Figure S2:</label>
+<caption><title>The performance of MAPS on a past barrier scenario under different PSC length bins.</title>
+<p>a) Simulation scenario. Population sizes were set to 10000 per deme and 10 diploids were sampled per deme, replicating the conditions in <xref ref-type="fig" rid="fig2">Figure 2c</xref>. (b) Results for different PSC length bins. Length bins that encompass shorter segments (2-4cM, 2-6cM, 2-8cM) recover the ancestral barrier; while length bins with longer segments (&#x003E;4, &#x003E;6, &#x003E;8) recover the recent constant migration surface.</p></caption>
+<graphic xlink:href="365536_figS2.tif"/>
+</fig>
+<fig id="figS3" position="float" fig-type="figure">
+<label>Figure S3:</label>
+<caption><title>The performance of MAPS under a jointly heterogeneous migration rate and population size surface.</title>
+<p>a) Simulation Scenario. Heterogeneous populationsizes and migration rates (as shown) were simulated, and 10 diploid individuals were sampled per deme. (b) Results for PSC segments greater than 2cM are shown.</p></caption>
+<graphic xlink:href="365536_figS3.tif"/>
+</fig>
+<fig id="figS4" position="float" fig-type="figure">
+<label>Figure S4:</label>
+<caption><title>Visualizing normalized sharing of PSC segments that are 1-5cM.</title>
+<p>The color scheme is the same as used in <xref ref-type="bibr" rid="c35">Ralph and Coop (2013)</xref> where the colors give categories based on the regional groupings: W Western Europe, S Southern Europe, and E Eastern Europe (a) The average sharing within each sample locale is transformed to population sizes using the simple single deme estimator by <xref ref-type="bibr" rid="c31">Palamara et al. (2012)</xref>. This transformation can be roughly summarized as to say that <inline-formula><alternatives><inline-graphic xlink:href="365536_inline51.gif"/></alternatives></inline-formula> where <italic>N<sub>&#x03B1;</sub></italic> is the effective population size in deme <italic>&#x03B1;</italic> and <italic><overline>x</overline></italic><sub><italic>&#x03B1;,&#x03B1;</italic></sub> is the average pairwise PSC sharing between individuals in deme <italic>&#x03B1;</italic>. (b) Similar to <xref ref-type="bibr" rid="c35">Ralph and Coop (2013)</xref>, for each focal population (marked with an x), we plot the normalized average pairwise sharing between that population and all others (normalized by the average sharing within the focal population), i.e. if <italic>&#x03B1;</italic> is the focal population, we show <inline-formula><alternatives><inline-graphic xlink:href="365536_inline52.gif"/></alternatives></inline-formula> for each other country <italic>&#x03B2;</italic>.</p></caption>
+<graphic xlink:href="365536_figS4.tif"/>
+</fig>
+<fig id="figS5" position="float" fig-type="figure">
+<label>Figure S5:</label>
+<caption><title>The correlation between census size and inverse average PSC sharing as a function of minimum PSC length considered.</title>
+<p>We use census size compiled from the <xref ref-type="bibr" rid="c44">The World Bank (2016)</xref> and National Records of Scotland (2011). The smooth black curve denotes the loess fit. Longer PSC segments correlate more strongly with census size than shorter PSC segments</p></caption>
+<graphic xlink:href="365536_figS5.tif"/>
+</fig>
+<fig id="figS6" position="float" fig-type="figure">
+<label>Figure S6:</label>
+<caption><title>Census size versus MAPS estimated population sizes.</title>
+<p>Using the MAPS output, we estimate a total size per population by summing the estimated deme-level sizes across the area of each respective country (whether&#x2019;s a deme&#x2019;s location falls within a country was determined by querying The GeoNames Geographical Database). Finally, we plot the results on a log10 scale for different length scales (a) 1-5cM, (b) 5-10cM, and (c) &#x003E;10cM. The red curve denotes the linear fit on the absolute scale. Note Kosovo and Albania as candidate outliers possibility because of cryptic relatedness artificially decreasing population sizes.</p></caption>
+<graphic xlink:href="365536_figS6.tif"/>
+</fig>
+<fig id="figS7" position="float" fig-type="figure">
+<label>Figure S7:</label>
+<caption><title>Plots of estimated average log10 differences in demographic parameters between adjacent time scales.</title>
+<p>(a) We plot estimates of <inline-formula><alternatives><inline-graphic xlink:href="365536_inline53.gif"/></alternatives></inline-formula> and <inline-formula><alternatives><inline-graphic xlink:href="365536_inline54.gif"/></alternatives></inline-formula> across the spatial habitat where <italic>&#x03C3;&#x2032;</italic>(<italic>D&#x2032;<sub>e</sub></italic>) denotes the dispersal rates (population densities) in the 5-10cM length bin and <italic>&#x03C3;</italic> (<italic>D<sub>e</sub></italic>) denotes the dispersal rates (population densities) in the 1-5cM length bin. (b) The results here are similarly plotted as above, however, the adjacent length scales are given by: 5-10cM and &#x003E;10cM. The log10 differences are estimated in such a way so that the mean log10 difference is shrunk to zero. For example, for estimating dispersal in 5-10cM, we assume log10(<italic>&#x03C3;&#x2032;</italic>) &#x003D; <italic>E</italic>[log10(<italic>&#x03C3;</italic>)] &#x002B; <italic>&#x220A;</italic> where <italic>E</italic>[log10(<italic>&#x03C3;</italic>)] is estimated using PSC segments 1-5cM and <italic>&#x220A; &#x007E; N</italic> (0, <italic>&#x03C9;</italic><sup>2</sup>) is estimated from PSC segments 5-10cM. Consequently, the log ratio between dispersal rates from the two lengths bins is constructed to have mean zero <italic>apriori</italic> (i.e. <italic><inline-formula><alternatives><inline-graphic xlink:href="365536_inline55.gif"/></alternatives></inline-formula></italic> &#x003D; 0).</p></caption>
+<graphic xlink:href="365536_figS7.tif"/>
+</fig>
+<fig id="figS8" position="float" fig-type="figure">
+<label>Figure S8:</label>
+<caption><title>EEMS applied to the POPRES dataset.</title>
+<p>We apply EEMS to the same set of individuals as used in <xref ref-type="fig" rid="fig4">Figure 4</xref> (see Methods). (a) The effective migration rates (b) The effective diversity rates. Here, we ran EEMS with 200 demes (as in <xref ref-type="fig" rid="fig4">Figure 4</xref>) with default parameters and averaged over 10 independent replicate chains. Each chain ran with 50e6 MCMC iterations, 25e6 set as burn-in, and we thinned every 5000 iterations.</p></caption>
+<graphic xlink:href="365536_figS8.tif"/>
+</fig>
+<fig id="figS9" position="float" fig-type="figure">
+<label>Figure S9:</label>
+<caption><title>Genetic distance vs PSC sharing</title>
+<p>(a) The averaged genetic distance (as used in EEMS) is plotted against the average number of PSC segments (&#x003E; 1cM) for each pair of populations. Each point denotes a pair, the symbols represent groupings from <xref ref-type="bibr" rid="c35">Ralph and Coop (2013)</xref> (W Western Europe, S Southern Europe, and E Eastern Europe), and the colors represent the pair of regions. We see a negative correlation between the two summary statistics (Pearson&#x2019;s <italic>&#x03C1;</italic> &#x003D; &#x2212;0.38, p-value &#x003D; 7e-11), with the largest deviations occurring in comparisons between Eastern European populations. (b) EEMS results on PSC data transformed to a distance matrix. First, we encoded the PSC sharing statistics into a similarity matrix <italic>S</italic> such that <italic>S<sub>i,j</sub></italic> is the number of shared PSC segments between samples i and j and <italic>S<sub>i,i</sub></italic> is the maximum number of shared segments in the dataset (which we denote as <italic>c</italic>) to ensure <italic>S</italic> is a similarity matrix. Next, we transformed <italic>S</italic> to a genetic distance matrix <italic>D</italic> such that <italic>D</italic> &#x003D; <italic>c</italic>11<italic><sup>T</sup> &#x2212; S</italic> &#x002B; <italic>E</italic> where <italic>E &#x2248;</italic> 0 is a random genetic distance matrix of normal vectors with mean 0 and standard deviation of 0.01 added to ensure <italic>D</italic> is full rank. Finally, we applied EEMS to the distance matrix <italic>D</italic>. Though this procedure is heuristic, we see shared features between this surface and the MAPS dispersal surface shown in <xref ref-type="fig" rid="fig4">Figure 4</xref>.</p></caption>
+<graphic xlink:href="365536_figS9.tif"/>
+</fig>
+</sec>
+<ref-list>
+<title>References</title>
+<ref id="c1"><mixed-citation publication-type="journal"><string-name><given-names>Soheil</given-names> <surname>Baharian</surname></string-name>, <string-name><given-names>Maxime</given-names> <surname>Barakatt</surname></string-name>, <string-name><given-names>Christopher R</given-names> <surname>Gignoux</surname></string-name>, <string-name><given-names>Suyash</given-names> <surname>Shringarpure</surname></string-name>, <string-name><given-names>Jacob</given-names> <surname>Errington</surname></string-name>, <string-name><given-names>William J</given-names> <surname>Blot</surname></string-name>, <string-name><given-names>Carlos D</given-names> <surname>Bustamante</surname></string-name>, <string-name><given-names>Eimear E</given-names> <surname>Kenny</surname></string-name>, <string-name><given-names>Scott M</given-names> <surname>Williams</surname></string-name>, <string-name><given-names>Melinda C</given-names> <surname>Aldrich</surname></string-name>, <etal>et al.</etal> <article-title>The Great Migration and African-American Genomic Diversity</article-title>. <source>PLoS Genetics</source>, <volume>12</volume>(<issue>5</issue>):<fpage>e1006059</fpage>, <year>2016</year>.</mixed-citation></ref>
+<ref id="c2"><mixed-citation publication-type="journal"><string-name><given-names>Melanie</given-names> <surname>Bahlo</surname></string-name> and <string-name><given-names>Robert C</given-names> <surname>Griffiths</surname></string-name>. <article-title>Coalescence Time for Two Genes from a Subdivided Population</article-title>. <source>Journal of Mathematical Biology</source>, <volume>43</volume>(<issue>5</issue>):<fpage>397</fpage>&#x2013;<lpage>410</lpage>, <year>2001</year>.</mixed-citation></ref>
+<ref id="c3"><mixed-citation publication-type="journal"><string-name><given-names>Guido</given-names> <surname>Barbujani</surname></string-name>, <string-name><given-names>Neal L</given-names> <surname>Oden</surname></string-name>, and <string-name><given-names>Robert R</given-names> <surname>Sokal</surname></string-name>. <article-title>Detecting regions of abrupt change in maps of biological variables</article-title>. <source>Systematic Zoology</source>, <volume>38</volume>(<issue>4</issue>):<fpage>376</fpage>&#x2013;<lpage>389</lpage>, <year>1989</year>.</mixed-citation></ref>
+<ref id="c4"><mixed-citation publication-type="journal"><string-name><given-names>Nick H</given-names> <surname>Barton</surname></string-name>, <string-name><given-names>Frantz</given-names> <surname>Depaulis</surname></string-name>, and <string-name><given-names>Alison M</given-names> <surname>Etheridge</surname></string-name>. <article-title>Neutral Evolution in Spatially Continuous Populations</article-title>. <source>Theoretical Population Biology</source>, <volume>61</volume>(<issue>1</issue>):<fpage>31</fpage>&#x2013;<lpage>48</lpage>, <year>2002</year>.</mixed-citation></ref>
+<ref id="c5"><mixed-citation publication-type="journal"><string-name><given-names>Michael GB</given-names> <surname>Blum</surname></string-name>, <string-name><given-names>Christophe</given-names> <surname>Damerval</surname></string-name>, <string-name><given-names>Stephanie</given-names> <surname>Manel</surname></string-name>, and <string-name><given-names>Olivier</given-names> <surname>Fran&#x00B8;cois</surname></string-name>. <article-title>Brownian Models and Coalescent Structures</article-title>. <source>Theoretical Population Biology</source>, <volume>65</volume>(<issue>3</issue>):<fpage>249</fpage>&#x2013;<lpage>261</lpage>, <year>2004</year>.</mixed-citation></ref>
+<ref id="c6"><mixed-citation publication-type="other"><string-name><given-names>Gideon</given-names> <surname>Bradburd</surname></string-name>, <string-name><given-names>Graham</given-names> <surname>Coop</surname></string-name>, and <string-name><given-names>Peter</given-names> <surname>Ralph</surname></string-name>. <article-title>Inferring Continuous and Discrete Population Genetic Structure across Space</article-title>. <source>bioRxiv</source>, page 189688, <year>2017</year>.</mixed-citation></ref>
+<ref id="c7"><mixed-citation publication-type="journal"><string-name><given-names>Gideon S</given-names> <surname>Bradburd</surname></string-name>, <string-name><given-names>Peter L</given-names> <surname>Ralph</surname></string-name>, and <string-name><given-names>Graham M</given-names> <surname>Coop.</surname></string-name> <article-title>A Spatial Framework for Under-standing Population Structure and Admixture</article-title>. <source>PLoS Genet</source>, <volume>12</volume>(<issue>1</issue>):<fpage>e1005703</fpage>, <year>2016</year>.</mixed-citation></ref>
+<ref id="c8"><mixed-citation publication-type="journal"><string-name><given-names>Brian L</given-names> <surname>Browning</surname></string-name> and <string-name><given-names>Sharon R</given-names> <surname>Browning</surname></string-name>. <article-title>A Fast, Powerful Method for Detecting Identity-by-Descent</article-title>. <source>The American Journal of Human Genetics</source>, <volume>88</volume>(<issue>2</issue>):<fpage>173</fpage>&#x2013;<lpage>182</lpage>, <year>2011</year>.</mixed-citation></ref>
+<ref id="c9"><mixed-citation publication-type="journal"><string-name><given-names>Brian L</given-names> <surname>Browning</surname></string-name> and <string-name><given-names>Sharon R</given-names> <surname>Browning</surname></string-name>. <article-title>Improving the Accuracy and Efficiency of Identity-by-Descent Detection in Population Data</article-title>. <source>Genetics</source>, <volume>194</volume>(<issue>2</issue>):<fpage>459</fpage>&#x2013;<lpage>471</lpage>, <year>2013</year>.</mixed-citation></ref>
+<ref id="c10"><mixed-citation publication-type="other"><string-name><given-names>Kevin</given-names> <surname>Caye</surname></string-name>, <string-name><given-names>Flora</given-names> <surname>Jay</surname></string-name>, <string-name><given-names>Olivier</given-names> <surname>Michel</surname></string-name>, and <string-name><given-names>Olivier</given-names> <surname>Francois</surname></string-name>. <article-title>Fast Inference of Individual Admixture Coefficients Using Geographic Data</article-title>. <source>bioRxiv</source>, page 080291, <year>2016</year>.</mixed-citation></ref>
+<ref id="c11"><mixed-citation publication-type="journal"><string-name><given-names>Gary K</given-names> <surname>Chen</surname></string-name>, <string-name><given-names>Paul</given-names> <surname>Marjoram</surname></string-name>, and <string-name><given-names>Jeffrey D</given-names> <surname>Wall</surname></string-name>. <article-title>Fast and flexible simulation of DNA sequence data</article-title>. <source>Genome Research</source>, <volume>19</volume>(<issue>1</issue>):<fpage>136</fpage>&#x2013;<lpage>142</lpage>, <year>2009</year>.</mixed-citation></ref>
+<ref id="c12"><mixed-citation publication-type="other"><string-name><given-names>Charleston WK</given-names> <surname>Chiang</surname></string-name>, <string-name><given-names>Joseph H</given-names> <surname>Marcus</surname></string-name>, <string-name><given-names>Carlo</given-names> <surname>Sidore</surname></string-name>, <string-name><given-names>Hussein</given-names> <surname>Al-Asadi</surname></string-name>, <string-name><given-names>Magdalena</given-names> <surname>Zoledziewska</surname></string-name>, <string-name><given-names>Maristella</given-names> <surname>Pitzalis</surname></string-name>, <string-name><given-names>Fabio</given-names> <surname>Busonero</surname></string-name>, <string-name><given-names>Andrea</given-names> <surname>Maschio</surname></string-name>, <string-name><given-names>Giorgio</given-names> <surname>Pistis</surname></string-name>, <string-name><given-names>Maris-tella</given-names> <surname>Steri</surname></string-name>, <etal>et al.</etal> <article-title>Population History of the Sardinian People Inferred from Whole-Genome Sequencing</article-title>. <source>bioRxiv</source>, page 092148, <year>2016</year>.</mixed-citation></ref>
+<ref id="c13"><mixed-citation publication-type="journal"><string-name><given-names>Joel E</given-names> <surname>Cohen</surname></string-name>. <article-title>Population Growth and Earth&#x2019;s Human Carrying Capacity</article-title>. <source>Science</source>, <volume>269</volume> (<issue>5222</issue>):<fpage>341</fpage>&#x2013;<lpage>346</lpage>, <year>1995</year>.</mixed-citation></ref>
+<ref id="c14"><mixed-citation publication-type="journal"><string-name><given-names>Peter J</given-names> <surname>Green</surname></string-name>. <article-title>Reversible Jump Markov Chain Monte Carlo Computation and Bayesian Model Determination</article-title>. <source>Biometrika</source>, <volume>82</volume>(<issue>4</issue>):<fpage>711</fpage>&#x2013;<lpage>732</lpage>, <year>1995</year>.</mixed-citation></ref>
+<ref id="c15"><mixed-citation publication-type="journal"><string-name><given-names>Gilles</given-names> <surname>Guillot</surname></string-name>, <string-name><given-names>Fr&#x00B4;ed&#x00B4;eric</given-names> <surname>Mortier</surname></string-name>, and <string-name><given-names>Arnaud</given-names> <surname>Estoup</surname></string-name>. <article-title>GENELAND: A Computer Package for Landscape Genetics</article-title>. <source>Molecular Ecology Resources</source>, <volume>5</volume>(<issue>3</issue>):<fpage>712</fpage>&#x2013;<lpage>715</lpage>, <year>2005</year>.</mixed-citation></ref>
+<ref id="c16"><mixed-citation publication-type="journal"><string-name><given-names>Gilles</given-names> <surname>Guillot</surname></string-name>, <string-name><given-names>Raphael</given-names> <surname>Leblois</surname></string-name>, <string-name><given-names>Aurelie</given-names> <surname>Coulon</surname></string-name>, and <string-name><given-names>Alain C</given-names> <surname>Frantz</surname></string-name>. <article-title>Statistical Methods in Spatial Genetics</article-title>. <source>Molecular Ecology</source>, <volume>18</volume>(<issue>23</issue>):<fpage>4734</fpage>&#x2013;<lpage>4756</lpage>, <year>2009</year>.</mixed-citation></ref>
+<ref id="c17"><mixed-citation publication-type="journal"><string-name><given-names>Alexander</given-names> <surname>Gusev</surname></string-name>, <string-name><given-names>Jennifer K</given-names> <surname>Lowe</surname></string-name>, <string-name><given-names>Markus</given-names> <surname>Stoffel</surname></string-name>, <string-name><given-names>Mark J</given-names> <surname>Daly</surname></string-name>, <string-name><given-names>David</given-names> <surname>Altshuler</surname></string-name>, <string-name><given-names>Jan L</given-names> <surname>Breslow</surname></string-name>, <string-name><given-names>Jeffrey M</given-names> <surname>Friedman</surname></string-name>, and <string-name><given-names>Itsik</given-names> <surname>Pe&#x2019;er</surname></string-name>. <article-title>Whole Population, Genome-Wide Mapping of Hidden Relatedness</article-title>. <source>Genome Research</source>, <volume>19</volume>(<issue>2</issue>):<fpage>318</fpage>&#x2013;<lpage>326</lpage>, <year>2009</year>.</mixed-citation></ref>
+<ref id="c18"><mixed-citation publication-type="book"><string-name><given-names>Jotun</given-names> <surname>Hein</surname></string-name>, <string-name><given-names>Mikkel</given-names> <surname>Schierup</surname></string-name>, and <string-name><given-names>Carsten</given-names> <surname>Wiuf</surname></string-name>. <source>Gene Genealogies, Variation and Evolution: A Primer in Coalescent Theory</source>. <publisher-name>Oxford University Press</publisher-name>, <publisher-loc>USA</publisher-loc>, <year>2004</year>.</mixed-citation></ref>
+<ref id="c19"><mixed-citation publication-type="other"><string-name><given-names>Joanna</given-names> <surname>Kaplanis</surname></string-name>, <string-name><given-names>Assaf</given-names> <surname>Gordon</surname></string-name>, <string-name><given-names>Tal</given-names> <surname>Shor</surname></string-name>, <string-name><given-names>Omer</given-names> <surname>Weissbrod</surname></string-name>, <string-name><given-names>Dan</given-names> <surname>Geiger</surname></string-name>, <string-name><given-names>Mary</given-names> <surname>Wahl</surname></string-name>, <string-name><given-names>Michael</given-names> <surname>Gershovits</surname></string-name>, <string-name><given-names>Barak</given-names> <surname>Markus</surname></string-name>, <string-name><given-names>Mona</given-names> <surname>Sheikh</surname></string-name>, <string-name><given-names>Melissa</given-names> <surname>Gymrek</surname></string-name>, <etal>et al.</etal> <article-title>Quantitative analysis of population-scale family trees with millions of relatives</article-title>. <source>Science</source>, (early online): eaam9309, <year>2018</year>.</mixed-citation></ref>
+<ref id="c20"><mixed-citation publication-type="journal"><string-name><given-names>Oscar</given-names> <surname>Lao</surname></string-name>, <string-name><given-names>Timothy T</given-names> <surname>Lu</surname></string-name>, <string-name><given-names>Michael</given-names> <surname>Nothnagel</surname></string-name>, <string-name><given-names>Olaf</given-names> <surname>Junge</surname></string-name>, <string-name><given-names>Sandra</given-names> <surname>Freitag-Wolf</surname></string-name>, <string-name><given-names>Amke</given-names> <surname>Caliebe</surname></string-name>, <string-name><given-names>Miroslava</given-names> <surname>Balascakova</surname></string-name>, <string-name><given-names>Jaume</given-names> <surname>Bertranpetit</surname></string-name>, <string-name><given-names>Laurence A</given-names> <surname>Bindoff</surname></string-name>, <string-name><given-names>David</given-names> <surname>Comas</surname></string-name>, <etal>et al.</etal> <article-title>Correlation between Genetic and Geographic Structure in Europe</article-title>. <source>Current Biology</source>, <volume>18</volume>(<issue>16</issue>):<fpage>1241</fpage>&#x2013;<lpage>1248</lpage>, <year>2008</year>.</mixed-citation></ref>
+<ref id="c21"><mixed-citation publication-type="journal"><string-name><given-names>Daniel John</given-names> <surname>Lawson</surname></string-name>, <string-name><given-names>Garrett</given-names> <surname>Hellenthal</surname></string-name>, <string-name><given-names>Simon</given-names> <surname>Myers</surname></string-name>, and <string-name><given-names>Daniel</given-names> <surname>Falush</surname></string-name>. <article-title>Inference of Population Structure using Dense Haplotype Data</article-title>. <source>PLoS Genetics</source>, <volume>8</volume>(<issue>1</issue>):<fpage>e1002453</fpage>, <year>2012</year>.</mixed-citation></ref>
+<ref id="c22"><mixed-citation publication-type="journal"><string-name><given-names>Stephen</given-names> <surname>Leslie</surname></string-name>, <string-name><given-names>Bruce</given-names> <surname>Winney</surname></string-name>, <string-name><given-names>Garrett</given-names> <surname>Hellenthal</surname></string-name>, <string-name><given-names>Dan</given-names> <surname>Davison</surname></string-name>, <string-name><given-names>Abdelhamid</given-names> <surname>Boumertit</surname></string-name>, <string-name><given-names>Tammy</given-names> <surname>Day</surname></string-name>, <string-name><given-names>Katarzyna</given-names> <surname>Hutnik</surname></string-name>, <string-name><given-names>Ellen C</given-names> <surname>Royrvik</surname></string-name>, <string-name><given-names>Barry</given-names> <surname>Cunliffe</surname></string-name>, <string-name><given-names>Daniel J</given-names> <surname>Lawson</surname></string-name>, <etal>et al.</etal> <article-title>The Fine-Scale Genetic Structure of the British Population</article-title>. <source>Nature</source>, <volume>519</volume>(<issue>7543</issue>):<fpage>309</fpage>&#x2013;<lpage>314</lpage>, <year>2015</year>.</mixed-citation></ref>
+<ref id="c23"><mixed-citation publication-type="journal"><string-name><given-names>Heng</given-names> <surname>Li</surname></string-name> and <string-name><given-names>Richard</given-names> <surname>Durbin</surname></string-name>. <article-title>Inference of Human Population History from Individual Whole-Genome Sequences</article-title>. <source>Nature</source>, <volume>475</volume>(<issue>7357</issue>):<fpage>493</fpage>&#x2013;<lpage>496</lpage>, <year>2011</year>.</mixed-citation></ref>
+<ref id="c24"><mixed-citation publication-type="journal"><string-name><given-names>St&#x00E9;phanie</given-names> <surname>Manel</surname></string-name>, <string-name><given-names>Michael K</given-names> <surname>Schwartz</surname></string-name>, <string-name><given-names>Gordon</given-names> <surname>Luikart</surname></string-name>, and <string-name><given-names>Pierre</given-names> <surname>Taberlet</surname></string-name>. <article-title>Landscape Genetics: Combining Landscape Ecology and Population Genetics</article-title>. <source>Trends in Ecology &#x0026; Evolution</source>, <volume>18</volume>(<issue>4</issue>):<fpage>189</fpage>&#x2013;<lpage>197</lpage>, <year>2003</year>.</mixed-citation></ref>
+<ref id="c25"><mixed-citation publication-type="journal"><string-name><given-names>Brad H</given-names> <surname>McRae</surname></string-name>. <article-title>Isolation by Resistance</article-title>. <source>Evolution</source>, <volume>60</volume>(<issue>8</issue>):<fpage>1551</fpage>&#x2013;<lpage>1561</lpage>, <year>2006</year>.</mixed-citation></ref>
+<ref id="c26"><mixed-citation publication-type="website"><source>National Records of Scotland. Scotland&#x2019;s 2011 census, 2011</source>. census size retrieved from, <ext-link ext-link-type="uri" xlink:href="http://www.scotlandscensus.gov.uk/statistical-bulletins">http://www.scotlandscensus.gov.uk/statistical-bulletins</ext-link>.</mixed-citation></ref>
+<ref id="c27"><mixed-citation publication-type="journal"><string-name><given-names>Matthew R</given-names> <surname>Nelson</surname></string-name>, <string-name><given-names>Katarzyna</given-names> <surname>Bryc</surname></string-name>, <string-name><given-names>Karen S</given-names> <surname>King</surname></string-name>, <string-name><given-names>Amit</given-names> <surname>Indap</surname></string-name>, <string-name><given-names>Adam R</given-names> <surname>Boyko</surname></string-name>, <string-name><given-names>John</given-names> <surname>Novembre</surname></string-name>, <string-name><given-names>Linda P</given-names> <surname>Briley</surname></string-name>, <string-name><given-names>Yuka</given-names> <surname>Maruyama</surname></string-name>, <string-name><given-names>Dawn M</given-names> <surname>Waterworth</surname></string-name>, <string-name><given-names>G&#x00B4;erard</given-names> <surname>Waeber</surname></string-name>, <etal>et al.</etal> <article-title>The Population Reference Sample, POPRES: A Resource for Population, Disease, and Pharmacological Genetics Research</article-title>. <source>The American Journal of Human Genetics</source>, <volume>83</volume>(<issue>3</issue>): <fpage>347</fpage>&#x2013;<lpage>358</lpage>, <year>2008</year>.</mixed-citation></ref>
+<ref id="c28"><mixed-citation publication-type="journal"><string-name><given-names>John</given-names> <surname>Novembre</surname></string-name> and <string-name><given-names>Montgomery</given-names> <surname>Slatkin</surname></string-name>. <article-title>Likelihood-Based Inference in Isolation-by-Distance Models Using the Spatial Distribution of Low-Frequency Alleles</article-title>. <source>Evolution</source>, <volume>63</volume>(<issue>11</issue>):<fpage>2914</fpage>&#x2013;<lpage>2925</lpage>, <year>2009</year>.</mixed-citation></ref>
+<ref id="c29"><mixed-citation publication-type="journal"><string-name><given-names>John</given-names> <surname>Novembre</surname></string-name>, <string-name><given-names>Toby</given-names> <surname>Johnson</surname></string-name>, <string-name><given-names>Katarzyna</given-names> <surname>Bryc</surname></string-name>, <string-name><given-names>Zolt&#x00B4;an</given-names> <surname>Kutalik</surname></string-name>, <string-name><given-names>Adam R</given-names> <surname>Boyko</surname></string-name>, <string-name><given-names>Adam</given-names> <surname>Auton</surname></string-name>, <string-name><given-names>Amit</given-names> <surname>Indap</surname></string-name>, <string-name><given-names>Karen S</given-names> <surname>King</surname></string-name>, <string-name><given-names>Sven</given-names> <surname>Bergmann</surname></string-name>, <string-name><given-names>Matthew R</given-names> <surname>Nelson</surname></string-name>, <etal>et al.</etal> <article-title>Genes Mirror Geography within Europe</article-title>. <source>Nature</source>, <volume>456</volume>(<issue>7218</issue>):<fpage>98</fpage>&#x2013;<lpage>101</lpage>, <year>2008</year>.</mixed-citation></ref>
+<ref id="c30"><mixed-citation publication-type="journal"><string-name><given-names>Pier</given-names> <surname>Francesco Palamara</surname></string-name> and <string-name><given-names>Itsik</given-names> <surname>Peer</surname></string-name>. <article-title>Inference of historical migration rates via haplotype sharing</article-title>. <source>Bioinformatics</source>, <volume>29</volume>(<issue>13</issue>):<fpage>i180</fpage>&#x2013;<lpage>i188</lpage>, <year>2013</year>.</mixed-citation></ref>
+<ref id="c31"><mixed-citation publication-type="journal"><string-name><given-names>Pier</given-names> <surname>Francesco Palamara</surname></string-name>, <string-name><given-names>Todd</given-names> <surname>Lencz</surname></string-name>, <string-name><given-names>Ariel</given-names> <surname>Darvasi</surname></string-name>, and <string-name><given-names>Itsik</given-names> <surname>Peer</surname></string-name>. <article-title>Length Distributions of Identity by Descent Reveal Fine-scale Demographic History</article-title>. <source>The American Journal of Human Genetics</source>, <volume>91</volume>(<issue>5</issue>):<fpage>809</fpage>&#x2013;<lpage>822</lpage>, <year>2012</year>.</mixed-citation></ref>
+<ref id="c32"><mixed-citation publication-type="journal"><string-name><given-names>Nick</given-names> <surname>Patterson</surname></string-name>, <string-name><given-names>Alkes L</given-names> <surname>Price</surname></string-name>, and <string-name><given-names>David</given-names> <surname>Reich</surname></string-name>. <article-title>Population Structure and Eigenanalysis</article-title>. <source>PLoS Genet</source>, <volume>2</volume>(<issue>12</issue>):<fpage>e190</fpage>, <year>2006</year>.</mixed-citation></ref>
+<ref id="c33"><mixed-citation publication-type="journal"><string-name><given-names>Desislava</given-names> <surname>Petkova</surname></string-name>, <string-name><given-names>John</given-names> <surname>Novembre</surname></string-name>, and <string-name><given-names>Matthew</given-names> <surname>Stephens</surname></string-name>. <article-title>Visualizing Spatial Population Structure with Estimated Effective Migration Surfaces</article-title>. <source>Nat Genet</source>, <volume>48</volume>(<issue>1</issue>):<fpage>94</fpage>&#x2013;<lpage>100</lpage>, <month>Jan</month> <year>2016</year>. doi: <pub-id pub-id-type="doi">10.1038/ng.3464</pub-id>.</mixed-citation></ref>
+<ref id="c34"><mixed-citation publication-type="journal"><string-name><given-names>Jonathan K</given-names> <surname>Pritchard</surname></string-name>, <string-name><given-names>Matthew</given-names> <surname>Stephens</surname></string-name>, and <string-name><given-names>Peter</given-names> <surname>Donnelly</surname></string-name>. <article-title>Inference of Population Structure using Multilocus Genotype Data</article-title>. <source>Genetics</source>, <volume>155</volume>(<issue>2</issue>):<fpage>945</fpage>&#x2013;<lpage>959</lpage>, <year>2000</year>.</mixed-citation></ref>
+<ref id="c35"><mixed-citation publication-type="journal"><string-name><given-names>Peter</given-names> <surname>Ralph</surname></string-name> and <string-name><given-names>Graham</given-names> <surname>Coop</surname></string-name>. <article-title>The Geography of Recent Genetic Ancestry across Europe</article-title>. <source>PLoS Biol</source>, <volume>11</volume>(<issue>5</issue>):<fpage>e1001555</fpage>, <year>2013</year>.</mixed-citation></ref>
+<ref id="c36"><mixed-citation publication-type="journal"><string-name><given-names>A</given-names> <surname>R&#x00E9;nyi</surname></string-name>. <article-title>On the Central Limit Theorem for the Sum of a Random Number of Independent Random Variables</article-title>. <source>Acta Mathematica Hungarica</source>, <volume>11</volume>(<issue>1-2</issue>):<fpage>97</fpage>&#x2013;<lpage>102</lpage>, <year>1960</year>.</mixed-citation></ref>
+<ref id="c37"><mixed-citation publication-type="journal"><string-name><given-names>Harald</given-names> <surname>Ringbauer</surname></string-name>, <string-name><given-names>Graham</given-names> <surname>Coop</surname></string-name>, and <string-name><given-names>Nicholas H</given-names> <surname>Barton</surname></string-name>. <article-title>Inferring Recent Demography from Isolation-By-Distance of Long Shared Sequence Blocks</article-title>. <source>Genetics</source>, <volume>205</volume>(<issue>3</issue>):<fpage>1335</fpage>&#x2013;<lpage>1351</lpage>, <year>2017</year>.</mixed-citation></ref>
+<ref id="c38"><mixed-citation publication-type="journal"><string-name><given-names>JJ</given-names> <surname>Robledo-Arnuncio</surname></string-name> and <string-name><surname>Rousset</surname></string-name>. <article-title>Isolation by Distance in a Continuous Population under Stochastic Demographic Fluctuations</article-title>. <source>Journal of Evolutionary Biology</source>, <volume>23</volume>(<issue>1</issue>):<fpage>53</fpage>&#x2013;<lpage>71</lpage>, <year>2010</year>.</mixed-citation></ref>
+<ref id="c39"><mixed-citation publication-type="journal"><string-name><given-names>Noah A</given-names> <surname>Rosenberg</surname></string-name>, <string-name><given-names>Saurabh</given-names> <surname>Mahajan</surname></string-name>, <string-name><given-names>Sohini</given-names> <surname>Ramachandran</surname></string-name>, <string-name><given-names>Chengfeng</given-names> <surname>Zhao</surname></string-name>, <string-name><given-names>Jonathan K</given-names> <surname>Pritchard</surname></string-name>, and <string-name><given-names>Marcus W</given-names> <surname>Feldman</surname></string-name>. <article-title>Clines, Clusters, and the Effect of Study Design on the Inference of Human Population Structure</article-title>. <source>PLoS Genet</source>, <volume>1</volume>(<issue>6</issue>):<fpage>e70</fpage>, <year>2005</year>.</mixed-citation></ref>
+<ref id="c40"><mixed-citation publication-type="book"><string-name><given-names>Fran&#x00E7;ois</given-names> <surname>Rousset</surname></string-name>. <source>Genetic Structure and Selection in Subdivided Populations (MPB-40)</source>. <publisher-name>Princeton University Press</publisher-name> <publisher-loc>New Jersey</publisher-loc>, <year>2004</year>.</mixed-citation></ref>
+<ref id="c41"><mixed-citation publication-type="journal"><string-name><given-names>Joshua G</given-names> <surname>Schraiber</surname></string-name> and <string-name><given-names>Joshua M</given-names> <surname>Akey</surname></string-name>. <article-title>Methods and Models for Unravelling Human Evolutionary history</article-title>. <source>Nature Reviews Genetics</source>, <volume>16</volume>(<issue>12</issue>):<fpage>727</fpage>, <year>2015</year>.</mixed-citation></ref>
+<ref id="c42"><mixed-citation publication-type="journal"><string-name><given-names>Gernot</given-names> <surname>Segelbacher</surname></string-name>, <string-name><given-names>Samuel A</given-names> <surname>Cushman</surname></string-name>, <string-name><given-names>Bryan K</given-names> <surname>Epperson</surname></string-name>, <string-name><given-names>Marie-Jos&#x00E9;e</given-names> <surname>Fortin</surname></string-name>, <string-name><given-names>Olivier</given-names> <surname>Francois</surname></string-name>, <string-name><given-names>Olivier J</given-names> <surname>Hardy</surname></string-name>, <string-name><given-names>Rolf</given-names> <surname>Holderegger</surname></string-name>, <string-name><given-names>Pierre</given-names> <surname>Taberlet</surname></string-name>, <string-name><given-names>Lisette P</given-names> <surname>Waits</surname></string-name>, and <string-name><given-names>St&#x00E9;phanie</given-names> <surname>Manel</surname></string-name>. <article-title>Applications of Landscape Genetics in Conservation Biology: Concepts and Challenges</article-title>. <source>Conservation Genetics</source>, <volume>11</volume>(<issue>2</issue>):<fpage>375</fpage>&#x2013;<lpage>385</lpage>, <year>2010</year>.</mixed-citation></ref>
+<ref id="c43"><mixed-citation publication-type="website"><string-name><given-names>Matthew</given-names> <surname>Stephens</surname></string-name>. <article-title>Bayesian Analysis of Mixture Models with an Unknown Number of Components, an Alternative to Reversible Jump Methods</article-title>. <source>Annals of Statistics</source>, pages <fpage>40</fpage>&#x2013;<lpage>74</lpage>, <year>2000</year>. The GeoNames Geographical Database. <italic>Geonames</italic>. Queried on July 2018, <ext-link ext-link-type="uri" xlink:href="http://www.geonames.org/">http://www.geonames.org/</ext-link>.</mixed-citation></ref>
+<ref id="c44"><mixed-citation publication-type="website"><collab>The World Bank. World development indicators</collab>, <year>2016</year>. <source>data retrieved from World Development Indicators</source>, <ext-link ext-link-type="uri" xlink:href="https://data.worldbank.org/indicator/SP.POP.TOTL">https://data.worldbank.org/indicator/SP.POP.TOTL</ext-link>.</mixed-citation></ref>
+<ref id="c45"><mixed-citation publication-type="book"><string-name><given-names>Monica G</given-names> <surname>Turner</surname></string-name>, <string-name><given-names>Robert H</given-names> <surname>Gardner</surname></string-name>, <string-name><given-names>Robert V</given-names> <surname>O&#x2019;neill</surname></string-name>, <etal>et al.</etal> <source>Landscape Ecology in Theory and Practice</source>. <publisher-name>Springer-Verlag</publisher-name> <publisher-loc>New York</publisher-loc>, <year>2001</year>.</mixed-citation></ref>
+<ref id="c46"><mixed-citation publication-type="journal"><string-name><given-names>Jon F</given-names> <surname>Wilkins</surname></string-name>. <article-title>A Separation-of-Timescales Approach to the Coalescent in a Continuous Population</article-title>. <source>Genetics</source>, <volume>168</volume>(<issue>4</issue>):<fpage>2227</fpage>&#x2013;<lpage>2244</lpage>, <year>2004</year>.</mixed-citation></ref>
+<ref id="c47"><mixed-citation publication-type="journal"><string-name><given-names>William H</given-names> <surname>Womble</surname></string-name>. <article-title>Differential systematics</article-title>. <source>Science</source>, <volume>114</volume>(<issue>2961</issue>):<fpage>315</fpage>&#x2013;<lpage>322</lpage>, <year>1951</year>.</mixed-citation></ref>
+<ref id="c48"><mixed-citation publication-type="journal"><string-name><given-names>Sewall</given-names> <surname>Wright</surname></string-name>. <article-title>Isolation by Distance</article-title>. <source>Genetics</source>, <volume>28</volume>(<issue>2</issue>):<fpage>114</fpage>, <year>1943</year>.</mixed-citation></ref>
+<ref id="c49"><mixed-citation publication-type="journal"><string-name><given-names>Andreas</given-names> <surname>Zimmermann</surname></string-name>, <string-name><given-names>Johanna</given-names> <surname>Hilpert</surname></string-name>, and <string-name><given-names>Karl Peter</given-names> <surname>Wendt</surname></string-name>. <article-title>Estimations of Population Density for Selected Periods between the Neolithic and AD 1800</article-title>. <source>Human Biology</source>, <volume>81</volume>(<issue>3</issue>): <fpage>357</fpage>&#x2013;<lpage>380</lpage>, <year>2009</year>.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

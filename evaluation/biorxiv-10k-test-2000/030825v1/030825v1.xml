@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/030825</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>chopBAI: BAM index reduction solves I/O bottlenecks in the joint analysis of large sequencing cohorts</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author" corresp="yes">
+<name>
+<surname>Kehr</surname>
+<given-names>Birte</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="corresp" rid="cor1">&#x002A;</xref>
+</contrib>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0002-8418-6724</contrib-id>
+<name>
+<surname>Melsted</surname>
+<given-names>P&#x00E1;ll</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<aff id="a1">
+<label>1</label><institution>deCODE Genetics/Amgen, Reykjav&#x00ED;k</institution>, <country>Iceland</country>
+</aff>
+<aff id="a2">
+<label>2</label><institution>Faculty of Industrial Engineering, Mechanical Engineering and Computer Science, University of Iceland</institution>, Reykjav&#x00ED;k, <country>Iceland</country>
+</aff>
+</contrib-group>
+<author-notes>
+<corresp id="cor1">
+<label>&#x002A;</label>to whom correspondence should be addressed <bold>Contact</bold> <email>birte.kehr@decode.is</email>
+</corresp>
+</author-notes>
+<pub-date pub-type="epub">
+<year>2015</year>
+</pub-date>
+<elocation-id>030825</elocation-id>
+<history>
+<date date-type="received">
+<day>06</day>
+<month>11</month>
+<year>2015</year>
+</date>
+<date date-type="accepted">
+<day>06</day>
+<month>11</month>
+<year>2015</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2015, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2015</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="030825.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract><title>Abstract</title>
+<sec>
+<title>Summary</title>
+<p>Advances in sequencing capacity have lead to the generation of unprecedented amounts of genomic data. The processing of this data frequently leads to I/O bottlenecks, e. g. when analyzing a small genomic region across a large number of samples. The largest I/O burden is, however, often not imposed by the amount of data needed for the analysis but rather by index files that help retrieving this data. We have developed chopBAI, a program that can chop a BAM index (BAI) file into small pieces. The program outputs a list of BAI files each indexing a specified genomic interval. The output files are much smaller in size but maintain compatibility with existing software tools. We show how preprocessing BAI files with chopBAI can lead to a reduction of I/O by more than 95&#x0025; during the analysis of 10 Kbp genomic regions, eventually enabling the joint analysis of more than 10,000 individuals.</p>
+</sec>
+<sec>
+<title>Availability and Implementation</title>
+<p>The software is implemented in C&#x002B;&#x002B;, GPL licensed and available at <ext-link ext-link-type="uri" xlink:href="http://github.com/DecodeGenetics/chopBAI">http://github.com/DecodeGenetics/chopBAI</ext-link></p>
+</sec>
+</abstract>
+<counts>
+<page-count count="2"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1"><label>1</label><title>INTRODUCTION</title>
+<p>Sequencing capacity has increased dramatically in recent years making it feasible to sequence cohorts of tens of thousands of individuals. The recent introduction of the HiSeq X Ten system allows for sequencing up to 18,000 whole human genomes per year at 30-fold coverage. Raw sequencing data is typically processed with standard bioinformatics pipelines on a computational cluster, parallelized by sample. Several variant calling tools, such as GATK&#x2019;s UnifiedGenotyper (<xref ref-type="bibr" rid="c5">McKenna <italic>et al.,</italic> 2010</xref>), need to work with aligned reads from all sequenced individuals in order to achieve higher accuracy and comparability across samples. Instead of parallelizing by sample, we can parallelize this joint analysis by genomic region. Here, BAM index files allow quick random access to genomic regions, thus limiting the amount of I/O performed on BAM files that are typically more than 50 Gb in size.</p>
+<p>Unfortunately this methodology does not scale for analyses of tens of thousands individuals. In many cases we are interested in small regions where the amount of data transferred per individuals is dwarfed by the size of the index file. A typical BAI index file is roughly 10 Mb in size, hence around 100 Gb of data transfer to a cluster node for each region is required in the case of 10,000 individuals. Depending on the size of the region this overhead can be an order of magnitude larger than the data transfer required to obtain the aligned reads from the BAM files. Thus, the transfer of the indices becomes an I/O bottleneck in the network.</p>
+<p>To solve this issue we propose a method for chopping up the index in a predictable fashion, so that each cluster node can use a small portion of the overall index and network traffic is reduced significantly. We describe our method, chopBAI, and show a reduction in data transfer of more than 95 &#x0025; for 10 Kbp genomic regions, while maintaining compatibility with existing software tools designed for indexed BAM files.</p></sec>
+<sec id="s2"><label>2</label><title>METHODS</title>
+<p>Our program chopBAI implements a reduction of a BAM index file to a specified genomic interval. The resulting index is much smaller in size and is semantically equivalent to the complete index, in the sense that it will give the same answers for all queries to reads within the interval of interest; we make no guarantees to queries outside of the interval.</p>
+<p>In the following, we first recapitulate the structure of a BAM index and how the reads are retrieved from a BAM file using a BAM index, before describing the reduction implemented in chopBAI and explaining the behaviour when using a reduced BAM index file.</p>
+<sec id="s2a"><label>2.1</label><title>BAM index structure.</title>
+<p>BAM files store aligned reads in <italic>chunks,</italic> compressed sets of aligned reads where the size of the set is determined such that the uncompressed information fits into a predefined amount of memory. A BAM index makes use of the format of BAM files and allows for efficient navigation to chunks of aligned reads. As a result, we only need to decompress a small number of chunks and iterate through the aligned reads from only the beginning of chunks, instead of the beginning of the entire BAM file.</p>
+<p>BAM index files (<ext-link ext-link-type="uri" xlink:href="http://samtools.github.io/hts-specs/SAMv1.pdf">http://samtools.github.io/hts-specs/SAMv1.pdf</ext-link>) store file offsets of the beginnings and ends of chunks. The index files typically consist of three sections: metadata including a list of all reference sequences (chromosomes), bin indices (<xref ref-type="bibr" rid="c2">Kent <italic>et al</italic>., 2002</xref>) for all reference sequences, and linear indices for all reference sequences.</p>
+<p>The <italic>bin indices</italic> are lists of bins, each bin storing the file offsets of a set of chunks. Bins represent contiguous genomic intervals that are of a predefined number of sizes. Any two bins do not partly overlap; either they are disjoint or one is completely contained in the other. Each chunk&#x2019;s file offsets are stored in the smallest bin that fully contains all the alignments in the chunk. In addition to bin indices, BAI files contain <italic>linear indices.</italic> The linear indices store the smallest file offsets of aligned reads in all 16 Kbp windows tiling the reference sequences.</p></sec>
+<sec id="s2b"><label>2.2</label><title>Retrieval of reads with a BAM index</title>
+<p>The SAM specification provides C code for computing the list of bins in a bin index that overlap a genomic interval <italic>I</italic>. We refer to bins resulting from this computation as candidate bins. The set of chunks referenced in the candidate bins can further be filtered using a minimal file offset determined for <italic>I</italic> from the linear index. This is especially useful for the top level bins whose range spans 64 to 512 Mbp. Only the chunks of aligned reads remaining after this filtering need to be decompressed and further inspected to retrieve all reads whose alignments overlap <italic>I</italic>.</p></sec>
+<sec id="s2c"><label>2.3</label><title>Reduction of a BAM index to an interval.</title>
+<p>chopBAI achieves the reduction of an index to an interval <italic>I</italic> by considering which chunks would potentially be inspected during the retrieval of reads from <italic>I</italic> and any subset of <italic>I</italic>. Only these chunks are included in the reduced bin index. Following the algorithm for retrieving reads, chopBAI determines candidate bins and further narrows down the list of chunks within candidate bins using the information in the linear index. Optionally, chopBAI copies the linear index of the reference sequence of interest up to the end of <italic>I</italic>. It is important to note that this reduction only operates on the complete index itself and does not query the original BAM file.</p></sec>
+<sec id="s2d"><label>2.4</label><title>Retrieval of reads with a reduced BAM index</title>
+<p>The behaviour when querying a reduced BAM index file for a region that lies within the interval of the reduced BAM index does not differ from the behaviour on a full BAM index. The computation of bins that overlap the region returns only bins present in the reduced index; file offsets of all relevant chunks are present. In the case when the relevant part of the linear index has been copied, the set of chunks in the candidate bins can be filtered as usual. If the linear index was not copied in the reduction, it may be necessary to uncompress and iterate some additional chunks.</p>
+<p>Querying a region outside the interval of the reduced BAM index does not result in an error. Instead, the region may appear as empty even though the BAM file contains aligned reads. It is left to the user to avoid such queries.</p></sec></sec>
+<sec id="s3"><label>3</label><title>RESULTS</title>
+<p>To evaluate the gain of preprocessing BAM indices with chopBAI we indexed a 62 Gb BAM file containing reads from an Icelander sequenced at 30-fold coverage on a HiSeqXTen sequencing machine and aligned with BWA-MEM (<xref ref-type="bibr" rid="c3">Li, 2013</xref>) to GRCh38. The complete BAM index is 8.8 Mb in size, whereas the reduced index built for a 1 Mbp region on chromosome 1 is on average only 4.5 Kb without linear index and 7.2 Kb including a linear index.</p>
+<sec id="s3a"><label>3.1</label><title>I/O reduction</title>
+<p>To quantify chopBAI&#x2019;s impact on I/O we measured the total amount of data transferred by <monospace>samtools</monospace> (<xref ref-type="bibr" rid="c4">Li <italic>et al.,</italic> 2009</xref>) when querying for regions of varying sizes. The data transfer was measured using the <monospace>strace</monospace> tool and includes reading the BAM index, BAM header and all chunks needed to retrieve the reads from the queried region.</p>
+<p><xref ref-type="fig" rid="fig1">Figure 1</xref> displays the total amount of data read using the complete and reduced indices. The absolute difference in data transfer between the complete and reduced index remains the same over all tested interval sizes, but it becomes proportionally less with increasing interval size as shown by the log-scaled axis. We observe a 95 &#x0025; reduction in the total data read for 10 Kbp regions, from 9.3 Mb for the full index to 450 Kb for the reduced index. The amount of data written does not change between the complete and reduced indices.</p>
+<fig id="fig1" position="float" orientation="portrait" fig-type="figure">
+<label>Fig. 1.</label>
+<caption><p>Amount of data transferred by <monospace>samtools</monospace> when querying genomic intervals of different sizes with the complete and with reduced BAI files. Indices were reduced to exactly the queried intervals. Averages over all intervals tiling chromosome 1 (10 Mbp and 1 Mbp) or all intervals tiling chr1:60,000,000-70,000,000 (100 Kbp, 10Kbp, 1 Kbp) are shown.</p></caption>
+<graphic xlink:href="030825_fig1.tif"/>
+</fig></sec>
+<sec id="s3b"><label>3.2</label><title>Running time</title>
+<p>chopBAI can create reduced indices for a list of regions, allowing us to chop up the complete index into smaller pieces. The running time for chopping the BAM index for the complete human genome into 1 Mbp indices that overlap by 500 Kbp was approximately 15 seconds on a standard desktop computer, thus imposing a negligible overhead in terms of preprocessing.</p></sec></sec>
+<sec id="s4"><label>4</label><title>DISCUSSION</title>
+<p>When running an analysis of several small regions across thousands of individuals, such as certain commands in GATK (<xref ref-type="bibr" rid="c5">McKenna <italic>et al.,</italic> 2010</xref>) and PopIns (<xref ref-type="bibr" rid="c1">Kehr <italic>et al.,</italic> 2015</xref>), the status quo puts an unnecessary burden on the network of a computational cluster. With chopBAI&#x2019;s preprocessing, the I/O imposed by BAM index files in the analysis of 10 Kbp regions of 10,000 BAM files can be reduced from 93 Gb to 4.5 Gb per job. This reduction in network I/O removes a significant bottleneck when processing a large set of individuals over small regions and enables running an order of magnitude more jobs simultaneously.</p></sec>
+</body>
+<back>
+<ref-list><title>REFERENCES</title>
+<ref id="c1"><mixed-citation publication-type="other"><string-name><surname>Kehr</surname>, <given-names>B.</given-names></string-name>, <string-name><surname>Melsted</surname>, <given-names>P.</given-names></string-name>, and <string-name><surname>Halld&#x00F3;rsson</surname>, <given-names>B. V.</given-names></string-name> (<year>2015</year>). <article-title>PopIns: population-scale detection of novel sequence insertions</article-title>. <source>Bioinformatics</source>, page btv273.</mixed-citation></ref>
+<ref id="c2"><mixed-citation publication-type="journal"><string-name><surname>Kent</surname>, <given-names>W. J.</given-names></string-name>, <string-name><surname>Sugnet</surname>, <given-names>C. W.</given-names></string-name>, <string-name><surname>Furey</surname>, <given-names>T. S.</given-names></string-name>, <string-name><surname>Roskin</surname>, <given-names>K. M.</given-names></string-name>, <string-name><surname>Pringle</surname>, <given-names>T. H.</given-names></string-name>, <string-name><surname>Zahler</surname>, <given-names>A. M.</given-names></string-name>, and <string-name><surname>Haussler</surname>, <given-names>D.</given-names></string-name> (<year>2002</year>). <article-title>The human genome browser at UCSC</article-title>. <source>Genome research</source>, <volume>12</volume>(<issue>6</issue>), <fpage>996</fpage>&#x2013;<lpage>1006</lpage>.</mixed-citation></ref>
+<ref id="c3"><mixed-citation publication-type="other"><string-name><surname>Li</surname>, <given-names>H.</given-names></string-name> (<year>2013</year>). <article-title>Aligning sequence reads, clone sequences and assembly contigs with BWA-MEM</article-title>. <source>arXiv:1303.3997.</source></mixed-citation></ref>
+<ref id="c4"><mixed-citation publication-type="journal"><string-name><surname>Li</surname>, <given-names>H.</given-names></string-name>, <string-name><surname>Handsaker</surname>, <given-names>B.</given-names></string-name>, <string-name><surname>Wysoker</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Fennell</surname>, <given-names>T.</given-names></string-name>, <string-name><surname>Ruan</surname>, <given-names>J.</given-names></string-name>, <string-name><surname>Homer</surname>, <given-names>N.</given-names></string-name>, <string-name><surname>Marth</surname>, <given-names>G.</given-names></string-name>, <string-name><surname>Abecasis</surname>, <given-names>G.</given-names></string-name>, <string-name><surname>Durbin</surname>, <given-names>R.</given-names></string-name>, and The 1000 Genome Project Data Processing Subgroup. (<year>2009</year>). <article-title>The sequence alignment/map format and SAMtools</article-title>. <source>Bioinformatics</source>, <volume>25</volume>(<issue>16</issue>), <fpage>2078</fpage>&#x2013;<lpage>2079</lpage>.</mixed-citation></ref>
+<ref id="c5"><mixed-citation publication-type="journal"><string-name><surname>McKenna</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Hanna</surname>, <given-names>M.</given-names></string-name>, <string-name><surname>Banks</surname>, <given-names>E.</given-names></string-name>, <string-name><surname>Sivachenko</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Cibulskis</surname>, <given-names>K.</given-names></string-name>, <string-name><surname>Kernytsky</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Garimella</surname>, <given-names>K.</given-names></string-name>, <string-name><surname>Altshuler</surname>, <given-names>D.</given-names></string-name>, <string-name><surname>Gabriel</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Daly</surname>, <given-names>M.</given-names></string-name>, <etal>et al</etal>. (<year>2010</year>). <article-title>The Genome Analysis Toolkit: a MapReduce framework for analyzing next-generation DNA sequencing data</article-title>. <source>Genome research</source>, <volume>20</volume>(<issue>9</issue>), <fpage>1297</fpage>&#x2013;<lpage>1303</lpage>.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

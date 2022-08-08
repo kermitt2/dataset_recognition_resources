@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/340067</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Epidemiology</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Fast Non-Parametric Estimation of Outbreak Growth from Cumulative Incidence Applied to the Current Ebola Epidemic</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0001-5835-8062</contrib-id>
+<name>
+<surname>House</surname>
+<given-names>Thomas</given-names>
+</name>
+</contrib>
+<aff id="a1"><institution>School of Mathematics, University of Manchester</institution>, M13 9PL, <country>UK</country>.</aff>
+</contrib-group>
+<pub-date pub-type="epub">
+<year>2018</year>
+</pub-date>
+<elocation-id>340067</elocation-id>
+<history>
+<date date-type="received">
+<day>05</day>
+<month>6</month>
+<year>2018</year>
+</date>
+<date date-type="rev-recd">
+<day>05</day>
+<month>6</month>
+<year>2018</year>
+</date>
+<date date-type="accepted">
+<day>08</day>
+<month>6</month>
+<year>2018</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2018, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2018</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="340067.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>A method is presented that works with cumulative incidence data to provide a real-time estimate of the growth rate of an outbreak, without assuming any particular disease dynamics, and this is applied to the current Ebola outbreak.</p>
+</abstract>
+<counts>
+<page-count count="9"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<title>Working with Cumulative Incidence Data</title>
+<p>During an ongoing outbreak, data are often not available at the level of detail that would be ideal, and in fact often the only publicly available data is on cumulative incidence &#x2013; i.e. the times that new cases became symptomatic, but not recovery or infection times.</p>
+<p>Previous work on Ebola has in fact required much more data than cumulative incidence to perform useful modelling [<xref ref-type="bibr" rid="c7">7</xref>, <xref ref-type="bibr" rid="c5">5</xref>, <xref ref-type="bibr" rid="c2">2</xref>, <xref ref-type="bibr" rid="c1">1</xref>], however the question is then posed as to what can be done with cumulative incidence data while bearing in mind the limitations of naive approaches [<xref ref-type="bibr" rid="c4">4</xref>].</p>
+<p>In this paper I outline an approach to cumulative incidence data that is part of a general framework I am developing called Time-Asymmetric Conjugate Statistical (TACS) learning. One paper has been submitted [<xref ref-type="bibr" rid="c3">3</xref>] on a specific, Bernoulli, case of this procedure. A more comprehensive manuscript applying the approach to many different datasets and providing careful comparisons with other methods is in preparation, however since this method may be useful to an unfolding public-health crisis I am releasing full mathematical details and code for the approach, together with results on the current Ebola outbreak, with the caveat that the work is somewhat preliminary.</p>
+<p>The TACS estimation approach outlined here rests on three main assumptions:
+<list list-type="order">
+<list-item><p>The Force of Infection follows a Gamma distribution</p></list-item>
+<list-item><p>Bayes&#x2019; theorem is a good update rule given new information</p></list-item>
+<list-item><p>These two ingredients are all that is required</p></list-item>
+</list></p>
+<p>Of these, 1 and 2 are the strongest &#x2013; the Gamma distribution is quite flexible, and Bayes&#x2019; theorem is sound &#x2013; but 3 is weak since ideally we would be able to build in more scientific knowledge. As such, the current approach is in no way a substitute for a full transmission-dynamic model, but is rather a way to &#x2018;make the best of&#x2019; limited data availability.</p>
+<p>Despite this, applying the method to data on the current outbreak gives the results below, with the most important being <xref ref-type="fig" rid="fig4">Figure 4</xref>, which shows close to zero current and past growth, but very fast growth around two weeks in to the outbreak. Roughly speaking, a significant trend above the red line implies growth, and a significant trend below implies control.</p>
+</sec>
+<sec id="s2">
+<title>Mathematical results</title>
+<p>The Gamma distribution has pdf
+<disp-formula id="eqn1">
+<alternatives><graphic xlink:href="340067_eqn1.gif"/></alternatives>
+</disp-formula></p>
+<p>The probability of observing <italic>y</italic> new cases over time <italic>&#x03B4;t</italic> if the force of infection is &#x03BB; is Poisson:
+<disp-formula id="eqn2">
+<alternatives><graphic xlink:href="340067_eqn2.gif"/></alternatives>
+</disp-formula></p>
+<p>Bayes&#x2019; theorem holds for any conditional densities and states
+<disp-formula id="eqn3">
+<alternatives><graphic xlink:href="340067_eqn3.gif"/></alternatives>
+</disp-formula></p>
+<p>Applying this to our Gamma prior and Poisson likelihood gives that
+<disp-formula id="eqn4">
+<alternatives><graphic xlink:href="340067_eqn4.gif"/></alternatives>
+</disp-formula>
+where <italic>k</italic> is a normalising constant independent of &#x03BB;, which gives us the update rules
+<disp-formula id="eqn5">
+<alternatives><graphic xlink:href="340067_eqn5.gif"/></alternatives>
+</disp-formula></p>
+<p>If &#x03BB; is Gamma distributed with time-dependent parameters <italic>&#x03B1;</italic>(<italic>t</italic>) and <italic>&#x03B2;</italic>(<italic>t</italic>), then <italic>X</italic> &#x003D; ln(&#x03BB;) has pdf
+<disp-formula id="eqn6">
+<alternatives><graphic xlink:href="340067_eqn6.gif"/></alternatives>
+</disp-formula></p>
+<p>Integrating gives
+<disp-formula id="eqn7">
+<alternatives><graphic xlink:href="340067_eqn7.gif"/></alternatives>
+</disp-formula>
+where <italic>&#x03C8;<sub>m</sub></italic> is the polygamma function of order <italic>m</italic>. If we consider the effective growth rate <italic>r</italic> to be the derivative of <italic>X</italic>, then we obtain its mean and variance as
+<disp-formula id="eqn8">
+<alternatives><graphic xlink:href="340067_eqn8.gif"/></alternatives>
+</disp-formula>
+where a dot stands for differentiation with respect to time. These can be estimated at observation points as follows.</p>
+<p>We assume that our data is composed of sequential observations of cumulative incidence <italic>C</italic><sub>1</sub>, <italic>C</italic><sub>2</sub>,&#x2026;, <italic>C<sub>n</sub></italic> at time points <italic>t</italic><sub>1</sub>,<italic>t</italic><sub>2</sub>,&#x2026;<italic>t<sub>n</sub></italic> such that <italic>t<sub>i</sub></italic> &#x003C; <italic>t</italic><sub><italic>i</italic>&#x002B;1</sub>, &#x2200;<italic>i</italic>. We then write our update rules as functions of time:
+<disp-formula id="eqn9">
+<alternatives><graphic xlink:href="340067_eqn9.gif"/></alternatives>
+</disp-formula></p>
+<p>This leaves open the values <italic>&#x03B1;</italic>(0), <italic>&#x03B2;</italic>(0). This can be done through maximum likelihood. Firstly we note that
+<disp-formula id="eqn10">
+<alternatives><graphic xlink:href="340067_eqn10.gif"/></alternatives>
+</disp-formula></p>
+<p>Then letting <italic>t</italic><sub>0</sub> &#x003D; 0, <italic>C</italic><sub>0</sub> &#x003D; 0 we have likelihood
+<disp-formula id="eqn11">
+<alternatives><graphic xlink:href="340067_eqn11.gif"/></alternatives>
+</disp-formula>
+and let
+<disp-formula id="eqn12">
+<alternatives><graphic xlink:href="340067_eqn12.gif"/></alternatives>
+</disp-formula></p>
+<p>We numerically optimise <italic>L</italic>, then run the update rules at the optimal initial conditions, before estimating derivaties of the moments of the growth rate <italic>r</italic>.</p>
+<fig id="fig1" position="float" orientation="portrait" fig-type="figure">
+<label>Fig 1:</label>
+<caption>
+<title>Cases.</title>
+<p>Confirmed and Probable Cases [6].</p></caption>
+<graphic xlink:href="340067_fig1.tif"/>
+</fig>
+<fig id="fig2" position="float" orientation="portrait" fig-type="figure">
+<label>Fig 2:</label>
+<caption>
+<title>Cumulative Incidence.</title>
+<p>Assumed cumulative incidence curve.</p></caption>
+<graphic xlink:href="340067_fig2.tif"/>
+</fig>
+<fig id="fig3" position="float" orientation="portrait" fig-type="figure">
+<label>Fig 3:</label>
+<caption>
+<title>FOI.</title>
+<p>Inferred Force of Infection, &#x03BB;.</p></caption>
+<graphic xlink:href="340067_fig3.tif"/>
+</fig>
+<fig id="fig4" position="float" orientation="portrait" fig-type="figure">
+<label>Fig 4:</label>
+<caption>
+<title>Growth.</title>
+<p>Inferred growth rate <italic>r</italic>.</p></caption>
+<graphic xlink:href="340067_fig4.tif"/>
+</fig>
+</sec>
+</body>
+<back>
+<sec>
+<title>Funding Statement</title>
+<p>Work supported by the Engineering and Physical Sciences Research Council, Grant Number EP/N033701/1.</p>
+</sec>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>[1]</label><mixed-citation publication-type="other"><string-name><given-names>A.</given-names> <surname>Camacho</surname></string-name>, <string-name><given-names>A. J.</given-names> <surname>Kucharski</surname></string-name>, <string-name><given-names>Y.</given-names> <surname>Aki-Sawyerr</surname></string-name>, <string-name><given-names>M. A.</given-names> <surname>White</surname></string-name>, <string-name><given-names>S.</given-names> <surname>Flasche</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Baguelin</surname></string-name>, <string-name><given-names>T.</given-names> <surname>Pollington</surname></string-name>, <string-name><given-names>J. R.</given-names> <surname>Carney</surname></string-name>, <string-name><given-names>R.</given-names> <surname>Glover</surname></string-name>, <string-name><given-names>E.</given-names> <surname>Smout</surname></string-name>, <string-name><given-names>A.</given-names> <surname>Tiffany</surname></string-name>, <string-name><given-names>W. J.</given-names> <surname>Edmunds</surname></string-name>, and <string-name><given-names>S.</given-names> <surname>Funk</surname></string-name>. <source>Temporal changes in Ebola transmission in Sierra Leone and implications for control requirements: a real-time modelling study</source>, <year>2015</year>. doi:<pub-id pub-id-type="doi">10.1371/currents.outbreaks.406ae55e83ec0b5193e3085</pub-id>.</mixed-citation></ref>
+<ref id="c2"><label>[2]</label><mixed-citation publication-type="journal"><string-name><given-names>B. S.</given-names> <surname>Cooper</surname></string-name>, <string-name><given-names>M. F.</given-names> <surname>Boni</surname></string-name>, <string-name><given-names>W.</given-names> <surname>Pan-ngum</surname></string-name>, <string-name><given-names>N. P. J.</given-names> <surname>Day</surname></string-name>, <string-name><given-names>P. W.</given-names> <surname>Horby</surname></string-name>, <string-name><given-names>P.</given-names> <surname>Olliaro</surname></string-name>, <string-name><given-names>T.</given-names> <surname>Lang</surname></string-name>, <string-name><given-names>N. J.</given-names> <surname>White</surname></string-name>, <string-name><given-names>L. J.</given-names> <surname>White</surname></string-name>, and <string-name><given-names>J.</given-names> <surname>Whitehead</surname></string-name>. <article-title>Evaluating clinical trial designs for investigational treatments of Ebola virus disease</article-title>. <source>PLOS Medicine</source>, <volume>12</volume>(<issue>4</issue>):<fpage>e1001815</fpage>, <year>2015</year>.</mixed-citation></ref>
+<ref id="c3"><label>[3]</label><mixed-citation publication-type="other"><string-name><given-names>T.</given-names> <surname>House</surname></string-name>, <string-name><given-names>R.</given-names> <surname>Vahid Roudsardi</surname></string-name>, and <string-name><given-names>L.</given-names> <surname>Dawson</surname></string-name>. <source>Beta process learning of longitudinally assessed clinical performance in dental education</source>. Submitted, <year>2018</year>.</mixed-citation></ref>
+<ref id="c4"><label>[4]</label><mixed-citation publication-type="journal"><string-name><given-names>A. A.</given-names> <surname>King</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Domenech de Cell&#x00E8;s</surname></string-name>, <string-name><given-names>F. M. G.</given-names> <surname>Magpantay</surname></string-name>, and <string-name><given-names>P.</given-names> <surname>Rohani</surname></string-name>. <article-title>Avoidable errors in the modelling of outbreaks of emerging pathogens, with special reference to Ebola</article-title>. <source>Proceedings of the Royal Society of London B: Biological Sciences</source>, <volume>282</volume>(<issue>1806</issue>), <year>2015</year>.</mixed-citation></ref>
+<ref id="c5"><label>[5]</label><mixed-citation publication-type="journal"><string-name><given-names>A. A.</given-names> <surname>Kucharski</surname></string-name>, <string-name><given-names>A.</given-names> <surname>Camacho</surname></string-name>, <string-name><given-names>F.</given-names> <surname>Checchi</surname></string-name>, <string-name><given-names>R.</given-names> <surname>Waldman</surname></string-name>, <string-name><given-names>R. R.</given-names> <surname>Grais</surname></string-name>, <string-name><given-names>J.-C. J.-C.</given-names> <surname>Cabrol</surname></string-name>, <string-name><given-names>S.</given-names> <surname>Briand</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Baguelin</surname></string-name>, <string-name><given-names>S.</given-names> <surname>Flasche</surname></string-name>, <string-name><given-names>S.</given-names> <surname>Funk</surname></string-name>, <string-name><given-names>W. J.</given-names> <surname>Edmunds</surname></string-name>, and <string-name><given-names>W.</given-names> <surname>John Edmunds</surname></string-name>. <article-title>Evaluation of the benefits and risks of introducing Ebola community care centers, Sierra Leone</article-title>. <source>Emerging Infectious Diseases</source>, <volume>21</volume>(<issue>3</issue>):<fpage>393</fpage>&#x2013;<lpage>399</lpage>, <year>2015</year>.</mixed-citation></ref>
+<ref id="c6"><label>[6]</label><mixed-citation publication-type="other"><string-name><given-names>C.</given-names> <surname>Rivers</surname></string-name>. <source>Data for the 2018 Ebola outbreak in the Democratic Republic of Congo</source>. doi:<pub-id pub-id-type="doi">10.5281/zenodo.1246777</pub-id>, <year>2018</year>.</mixed-citation></ref>
+<ref id="c7"><label>[7]</label><mixed-citation publication-type="journal"><collab>WHO Ebola Response Team</collab>. <article-title>Ebola virus disease in West Africa &#x2013; the first 9 months of the epidemic and forward projections</article-title>. <source>New England Journal of Medicine</source>, <volume>371</volume>(<issue>16</issue>):<fpage>1481</fpage>&#x2013;<lpage>1495</lpage>, <year>2014</year>.</mixed-citation></ref>
+</ref-list>
+<sec id="s3">
+<title>Python Code and Results</title>
+<preformat>
+In [<xref ref-type="bibr" rid="c1">1</xref>]: &#x0025;matplotlib inline
+           import numpy as np
+           import scipy.stats as st
+           import scipy.special as sp
+           import csv
+           import matplotlib.pyplot as plt
+           import urllib
+           from io import StringIO
+           from datetime import datetime
+           import scipy.optimize as op
+</preformat>
+<preformat>
+In [<xref ref-type="bibr" rid="c2">2</xref>]: url &#x003D; &#x2018;<ext-link ext-link-type="uri" xlink:href="https://raw.githubusercontent.com/cmrivers/ebola_drc/master/drc/data.csv">https://raw.githubusercontent.com/cmrivers/ebola_drc/master/drc/data.csv</ext-link>&#x2019;
+        uo &#x003D; urllib.request.urlopen(url)
+        ub &#x003D; uo.read()
+        us &#x003D; ub.decode().replace(&#x201C;\r\n&#x201D;, &#x201C;\n&#x201D;)
+        print(us)
+</preformat>
+<preformat>
+event&#x005F;date,report&#x005F;date,health&#x005F;zone,confirmed&#x005F;cases,new&#x005F;confirmed,probable&#x005F;cases,new&#x005F;probable,suspect&#x005F;cases,new&#x005F;suspect,deaths
+20180501.20180510,Bikoro,,,,,21,,17
+20180510.20180510,Bikoro,2,,,,9,,1
+20180511.20180511,Bikoro,2,,,,6,,0
+20180511,20180511,Iboko,0,,,,6,,1
+20180512.20180512,Bikoro,2,,,,6,,0
+20180512,20180512,Iboko,0,,,,6,,1
+20180513.20180514,Bikoro,2,0,18,0,12,0,
+20180513,20180514,Iboko,0,0,3,0,5,2,
+20180513.20180514,Wangata,0,0,0,0,2,0,
+20180515.20180516,Bikoro,2,0,18,0,15,1,
+20180515,20180516,Iboko,0,0,2,0,3,0,
+20180515.20180516,Wangata,1,0,0,0,3,0,
+20180515.20180516,Ntondo,0,0,0,0,0,0,
+20180516.20180517,Bikoro,13,0,19,1,4,0,21
+20180516,20180517,Iboko,0,0,2,0,3,0,3
+20180516.20180517,Wangata,1,0,0,0,3,0,1
+20180516.20180517,Ntondo,0,0,0,0,0,0,0
+20180517.20180518,Bikoro,10,0,19,0,0,0,21
+20180517,20180518,Iboko,3,0,2,0,4,4,3
+20180517.20180518,Wangata,4,0,0,0,1,1,1
+20180518.20180520,Bikoro,10,0,19,0,0,0,22
+20180518,20180520,Iboko,7,0,2,0,2,2,3
+20180518.20180520,Wangata,4,0,0,0,2,1,1
+20180520.20180521,Bikoro,10,0,19,0,0,0,22
+20180520,20180521,Iboko,14,0,2,0,0,0,3
+20180520.20180521,Wangata,4,0,0,0,2,2,2
+20180521.20180522,Bikoro,10,0,19,0,0,0,23
+20180521,20180522,Iboko,14,0,2,0,6,6,3
+20180521.20180522,Wangata,4,0,0,0,3,2,1
+20180522.20180523,Bikoro,10,0,12,1,2,2,16
+20180522,20180523,Iboko,16,2,2,0,6,4,3
+20180522.20180523,Wangata,4,0,0,0,6,3,3
+20180523.20180524,Bikoro,10,0,11,0,2,2,16
+20180523,20180524,Iboko,17,1,2,0,5,1,3
+20180523.20180524,Wangata,4,0,0,0,1,0,
+20180524.20180525,Bikoro,10,0,11,0,3,3,16
+20180524,20180525,Iboko,21,4,2,0,2,0,4
+20180524.20180525,Wangata,4,0,0,0,1,1,3
+20180525.20180526,Bikoro,10,0,11,0,2,2,16
+20180525,20180526,Iboko,21,0,2,0,2,0,6
+20180525.20180526,Wangata,4,0,0,0,1,1,3
+20180525.20180526,Ntondo,0,0,0,0,1,1,0
+20180526.20180527,Bikoro,10,0,11,0,1,1,16
+20180526,20180527,Iboko,21,0,2,0,5,3,6
+20180526.20180527,Wangata,4,0,0,0,1,0,3
+20180526.20180527,Ntondo,0,0,0,0,1,0,0
+20180527.20180528,Bikoro,10,0,11,0,1,0,16
+20180527,20180528,Iboko,21,0,2,0,4,0,6
+20180527.20180528,Wangata,4,0,0,0,1,1,3
+20180527.20180528,Ntondo,0,0,0,0,0,0,0
+20180528.20180529,Bikoro,10,0,11,0,1,0,16
+20180528,20180529,Iboko,21,0,2,0,1,1,6
+20180528.20180529,Wangata,4,0,0,0,1,1,3
+20180529.20180530,Bikoro,10,0,11,0,0,0,16
+20180529,20180530,Iboko,22,1,2,0,3,3,6
+20180529.20180530,Wangata,4,0,0,0,1,0,3
+20180530.20180531,Bikoro,10,0,11,0,0,0,17
+20180530,20180531,Iboko,23,1,2,0,0,0,5
+20180530.20180531,Wangata,4,0,0,0,0,0,3
+20180531.20180601,Bikoro,10,0,11,0,3,3,17
+20180531,20180601,Iboko,23,0,2,0,0,0,5
+20180531.20180601,Wangata,4,0,0,0,2,2,3
+20180601.20180602,Bikoro,10,0,11,0,2,2,17
+20180601,20180602,Iboko,23,0,2,0,3,3,5
+20180601.20180602,Wangata,4,0,0,0,2,2,3
+20180602.20180603,Bikoro,10,0,11,0,0,0,17
+20180602,20180603,Iboko,23,0,2,0,3,1,5
+20180602.20180603,Wangata,4,0,0,0,0,0,3
+20180603.20180604,Bikoro,10,0,11,0,5,5,17
+20180603,20180604,Iboko,23,0,2,0,0,0,5
+20180603.20180604,Wangata,4,0,0,0,1,1,3
+</preformat>
+<preformat>
+In [<xref ref-type="bibr" rid="c3">3</xref>]: reader &#x003D; csv.reader(String&#x0129;&#x0169;(us), delimiter&#x003D;&#x2019;,&#x0027;)
+        next(reader, None) <italic>#Header</italic>
+        tb &#x003D; np.array([])
+        ti &#x003D; np.array([])
+        tw &#x003D; np.array([])
+        ib &#x003D; np.array([])
+        ii &#x003D; np.array([])
+        iw &#x003D; np.array([])
+        ibp &#x003D; np.array([])
+        iip &#x003D; np.array([])
+        iwp &#x003D; np.array([])
+        for row in reader:
+            if row[2] &#x003D;&#x003D; &#x2018;Bikoro&#x2019;:
+               tb &#x003D; np.append(tb,datetime.strptime(row[0],&#x2018;&#x0025;Y&#x0025;m&#x0025;d&#x2019;).timestamp())
+               ib &#x003D; np.append(ib,row[3])
+               ibp &#x003D; np.append(ibp,row[5])
+            elif row[2] &#x003D;&#x003D; &#x2018;Iboko&#x2019;:
+               ti &#x003D; np.append(ti,datetime.strptime(row[0],&#x2018;&#x0025;Y&#x0025;m&#x0025;d&#x2019;).timestamp())
+               ii &#x003D; np.append(ii,row[3])
+               iip &#x003D; np.append(iip,row[5])
+            elif row[2] &#x003D;&#x003D; &#x2018;Wangata&#x2019;:
+               tw &#x003D; np.append(tw,datetime.strptime(row[0],&#x2018;&#x0025;Y&#x0025;m&#x0025;d&#x2019;).timestamp())
+               iw &#x003D; np.append(iw,row[3])
+               iwp &#x003D; np.append(iwp,row[5])
+
+        ib[ib&#x003D;&#x003D; &#x0027; &#x0027;] &#x003D; &#x0027; 0 &#x0027;
+        ii[ii&#x003D;&#x003D;&#x0027;&#x0027;]&#x003D;&#x0027;0&#x0027;
+        iw[iw&#x003D;&#x003D;&#x0027;&#x0027;] &#x003D; &#x0027;0&#x0027;
+        ibp[ibp&#x003D;&#x003D;&#x0027;&#x0027;]&#x003D;&#x0027;0&#x0027;
+        iip[iip&#x003D;&#x003D;&#x0027;&#x0027;]&#x003D;&#x0027;0&#x0027;
+        iwp[iwp&#x003D;&#x003D;&#x0027;&#x0027;]&#x003D;&#x0027;0&#x0027;
+        t0 &#x003D; np.min(np.concatenate((tb,ti,tw)))
+        tb &#x003D; np.round((tb-t0)/(60&#x002A;60&#x002A;24))
+        ti &#x003D; np.round((ti-t0)/(60&#x002A;60&#x002A;24))
+        tw &#x003D; np.round((tw-t0)/(60&#x002A;60&#x002A;24))
+        ib &#x003D; ib.astype(np.float)
+        ii &#x003D; ii.astype(np.float)
+        iw &#x003D; iw.astype(np.float)
+        ibp &#x003D; ibp.astype(np.float)
+        iip &#x003D; iip.astype(np.float)
+        iwp &#x003D; iwp.astype(np.float)
+</preformat>
+<preformat>
+In [14]: plt.figure(figsize&#x003D;(8, 4))
+         plt.plot(tb,ib,c&#x003D;[1,0,0])
+         plt.plot(ti,ii,c&#x003D;[0,0.7,0])
+         plt.plot(tw,iw,c&#x003D;[0,0,1])
+         plt.plot(tb,ib&#x002B;ibp,c&#x003D;[1,0,0],linestyle&#x003D;&#x0027;dashed&#x0027;)
+         plt.plot(ti,ii&#x002B;iip,c&#x003D;[0,0.7,0],linestyle&#x003D;&#x0027;dashed&#x0027;)
+         plt.plot(tw,iw&#x002B;iwp,c&#x003D;[0,0,1],linestyle&#x003D;&#x0027;dashed&#x0027;)
+         plt.legend((&#x0027;Bikoro Confirmed&#x0027;,&#x0027;Iboko Confirmed&#x0027;,&#x0027;Wangata Confirmed&#x0027;,
+                     &#x0027;Bikoro Confirmed &#x002B; Probable&#x0027;,&#x0027;Iboko Confirmed &#x002B; Probable&#x0027;,
+                     &#x0027;Wangata Confirmed &#x002B; Probable&#x0027;))
+         plt.xlabel(&#x0027;Day&#x0027;)
+         plt.ylabel(&#x0027;Count&#x0027;)
+         plt.tight&#x005F;layout()
+</preformat>
+<preformat>
+In [5]: <italic># Add confirmed cases</italic>
+           tt &#x003D; np.union1d(tb,np.union1d(ti,tw))
+           cc &#x003D; 0&#x002A;tt
+           n &#x003D; len(tt)
+           for t in tb:
+               j &#x003D; np.where(tt&#x003D;&#x003D;t)
+               cc[j] &#x002B;&#x003D; ib[tb&#x003D;&#x003D;t]
+           for t in ti:
+               j &#x003D; np.where(tt&#x003D;&#x003D;t)
+               cc[j] &#x002B;&#x003D; ii[ti&#x003D;&#x003D;t]
+           for t in tw:
+               j &#x003D; np.where(tt&#x003D;&#x003D;t)
+               cc[j] &#x002B;&#x003D; iw[tw&#x003D;&#x003D;t]
+</preformat>
+<preformat>
+In [6]: <italic># Remove non-informative points - this assumes no doubly flat lines</italic>
+           kk &#x003D; np.where(np.diff(cc)&#x003E;0)
+           kk &#x003D; np.append(kk,len(cc)-1)
+           tt &#x003D; tt[kk]
+           cc &#x003D; cc[kk]
+           n &#x003D; len(tt)
+</preformat>
+<preformat>
+In [15]: <italic># Plot</italic>
+            plt.figure(figsize&#x003D;(8, 4))
+            plt.plot(tt,cc,c&#x003D;[0,0,0])
+            plt.xlabel(&#x0027;Day&#x0027;)
+            plt.ylabel(&#x0027;Cumulative Incidence for Confirmed&#x0027;)
+            plt.tight&#x005F;layout()
+</preformat>
+<preformat>
+In [8]: def nllfun(x,tt,cc,nn):
+            t &#x003D; np.zeros&#x005F;like(cc)
+            y &#x003D; np.zeros&#x005F;like(cc)
+            al &#x003D; np.zeros&#x005F;like(cc)
+            bt &#x003D; np.zeros&#x005F;like(cc)
+            al[0] &#x003D; x[0]
+            bt[0] &#x003D; x[1]
+            nll&#x003D;0
+            for i in range(1,nn):
+                y[i] &#x003D; cc[i] - cc[i-1]
+                t[i] &#x003D; tt[i] - tt[i-1]
+                al[i] &#x003D; al[i-1]
+                bt[i] &#x003D; bt[i-1]
+                al[i] &#x002B;&#x003D; y[i]
+                bt[i] &#x002B;&#x003D; t[i]
+                nll &#x002B;&#x003D; y[i] &#x002A;np. log(t[i] / (t[i] &#x002B;bt[i])) - al[i]&#x002A;np.log((bt[i]/(t[i]&#x002B;bt[i])))
+                nll &#x002B;&#x003D; sp.gammaln(al[i]&#x002B;y[i]) - sp.gammaln(1&#x002B;y[i]) - sp.gammaln(al[i])
+return nll
+</preformat>
+<preformat>
+In [9]: <italic>#Optimizer to fit the initial conditions</italic>
+           nll &#x003D; lambda xx: nllfun(np.abs(xx),tt,cc,n)
+           fout &#x003D; op.minimize(nll,np.array((1.0,1.0)),method&#x003D;&#x0027;Nelder-Mead&#x0027;)
+           astar &#x003D; np.abs(fout.x[0])
+           bstar &#x003D; np.abs(fout.x[1])
+           fout.x
+</preformat>
+<preformat>
+Out[9]: array([-3.32222615e&#x002B;01, 2.33945606e&#x002B;08])
+In [10]: t &#x003D; np.zeros&#x005F;like(cc)
+         y &#x003D; np.zeros&#x005F;like(cc)
+         al &#x003D; np.zeros&#x005F;like(cc)
+         bt &#x003D; np.zeros&#x005F;like(cc)
+         lam &#x003D; np.zeros&#x005F;like(cc)
+         lal &#x003D; np.zeros&#x005F;like(cc)
+         lau &#x003D; np.zeros&#x005F;like(cc)
+         al[0] &#x003D; astar
+         bt[0] &#x003D; bstar
+         lam[0] &#x003D; st.gamma.mean(al[0],0,1/bt[0])
+         lal[0] &#x003D; st.gamma.ppf(0.025,al[0],0,1/bt[0])
+         lau[0] &#x003D; st.gamma.ppf(0.975,al[0],0,1/bt[0])
+</preformat>
+<preformat>
+for i in range(1,n):
+    y[i] &#x003D; cc[i] - cc[i-1]
+    t[i] &#x003D; tt[i] - tt[i-1]
+    al[i] &#x003D; al[i-1]
+    bt[i] &#x003D; bt[i-1]
+    al[i] &#x002B;&#x003D; y[i]
+    bt[i] &#x002B;&#x003D; t[i]
+    lam[i] &#x003D; st.gamma.mean(al[i],0,1/bt[i])
+    lal[i] &#x003D; st.gamma.ppf(0.025,al[i],0,1/bt[i])
+    lau[i] &#x003D; st.gamma.ppf(0.975,al[i],0,1/bt[i])
+</preformat>
+<preformat>
+In [16]: plt.figure(figsize&#x003D;(8, 4))
+         plt.plot(tt,lam,c&#x003D;[0, 0, 0])
+         plt.plot(tt,lal,c&#x003D;[0, 0, 0],linestyle&#x003D;&#x0027;dashed&#x0027;)
+         plt.plot(tt,lau,c&#x003D;[0, 0, 0],linestyle&#x003D;&#x0027;dashed&#x0027;)
+         plt.xlabel(&#x0027;Days&#x0027;)
+         plt.ylabel(&#x0027;Force of Infection\n from Gamma process&#x0027;)
+         plt.tight&#x005F;layout()
+</preformat>
+<preformat>
+In [12]: am &#x003D; al
+         bm &#x003D; bt
+         dt &#x003D; np.gradient(tt)
+         dth &#x003D; (np.gradient(bm)/(-1.0&#x002A;bm&#x002A;&#x002A;2))/dt
+         da &#x003D; (np.gradient(am))/dt
+         rm &#x003D; (dth&#x002A;bm) &#x002B; (sp.polygamma(1,am)&#x002A;da)
+         rv &#x003D; (sp.polygamma(2,am)&#x002A;da)
+         rs &#x003D; np.sqrt(-rv)
+</preformat>
+<preformat>
+In [17]: plt.figure(figsize&#x003D;(8, 4))
+         plt.plot(tt,rm,c&#x003D;[0,0,0])
+         plt.plot(tt,rm-rs,c&#x003D;[0,0,0],linestyle&#x003D;&#x0027;dashed&#x0027;)
+         plt.plot(tt,rm&#x002B;rs,c&#x003D;[0,0,0],linestyle&#x003D;&#x0027;dashed&#x0027;)
+         plt.plot(tt,0&#x002A;tt,c&#x003D;[1,0,0])
+         plt.xlabel(&#x0027;Days&#x0027;)
+         plt.ylabel(&#x0027;Effective growth rate\n from Gamma process&#x0027;)
+         plt.tight&#x005F;layout()
+</preformat>
+</sec>
+</back>
+</article>

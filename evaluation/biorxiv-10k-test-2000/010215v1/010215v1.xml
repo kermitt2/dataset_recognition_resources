@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/010215</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>FinisherSC : A repeat-aware tool for upgrading de-novo assembly using long reads</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<name><surname>Lam</surname><given-names>Ka-Kit</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<contrib contrib-type="author">
+<name><surname>LaButti</surname><given-names>Kurt</given-names></name>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<contrib contrib-type="author">
+<name><surname>Khalak</surname><given-names>Asif</given-names></name>
+<xref ref-type="aff" rid="a3">3</xref>
+</contrib>
+<contrib contrib-type="author" corresp="yes">
+<name><surname>Tse</surname><given-names>David</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="aff" rid="a4">4</xref>
+<xref ref-type="corresp" rid="cor1">&#x002A;</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>Department of Electrical Engineering and Computer Sciences</institution>, UC Berkeley</aff>
+<aff id="a2"><label>2</label><institution>Joint Genome Institute</institution></aff>
+<aff id="a3"><label>3</label><institution>Pacific Biosciences</institution>;</aff>
+<aff id="a4"><label>4</label><institution>Department of Electrical Engineering, Stanford University</institution></aff>
+</contrib-group>
+<author-notes>
+<corresp id="cor1">
+<label>&#x002A;</label>to whom correspondence should be addressed</corresp>
+</author-notes>
+<pub-date pub-type="epub">
+<year>2014</year>
+</pub-date>
+<elocation-id>010215</elocation-id>
+<history>
+<date date-type="received">
+<day>10</day>
+<month>10</month>
+<year>2014</year>
+</date>
+<date date-type="accepted">
+<day>14</day>
+<month>10</month>
+<year>2014</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2014, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2014</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="010215.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>ABSTRACT</title>
+<p>We introduce FinisherSC, which is a repeat-aware and scalable tool for upgrading de-novo assembly using long reads. Experiments with real data suggest that FinisherSC can provide longer and higher quality contigs than existing tools while maintaining high concordance.</p>
+<sec>
+<title>Availability</title>
+<p>The tool and data are available and will be maintained at <ext-link ext-link-type="uri" xlink:href="http://kakitone.github.io/finishingTool/">http://kakitone.github.io/finishingTool/</ext-link></p>
+</sec>
+<sec>
+<title>Contact</title>
+<p><email>dntse@stanford.edu</email></p>
+</sec>
+</abstract>
+<counts>
+<page-count count="9"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<label>1</label>
+<title>INTRODUCTION</title>
+<p>In de-novo assembly pipelines for long reads, reads are often trimmed or thrown away. Moreover, there is no evidence that state-of-the-art assembly pipelines are data-efficient. In this work, we ask whether state-of-the-art assembly pipelines for long reads have already used up all the available information from raw reads to construct assembly of the highest possible quality. To answer this question, we first collect output contigs from the HGAP pipeline and the associated raw reads. Then, we pass them into our tool FinisherSC[<xref rid="c6" ref-type="bibr">6</xref>] to see if higher quality assemblies can be consistently obtained after post-processing.</p>
+</sec>
+<sec id="s2">
+<label>2</label>
+<title>METHODS</title>
+<sec id="s2a">
+<label>2.1</label>
+<title>Usage and pipeline</title>
+<p>FinisherSC is designed to upgrade de-novo assembly using long reads(e.g. PacBio reads). It is especially suitable for data consisting of a single long reads library. Input to FinisherSC are contigs(contigs.fasta) constructed by an assembler and all the raw reads(raw reads.fasta). Output of FinisherSC are upgraded contigs(improved3.fasta) which are expected to be of higher quality than its input (e.g. longer N50, longer longest contigs, fewer number of contigs, high percentage match with reference, high genome fraction, etc). An example use case of FinisherSC is shown in <xref ref-type="fig" rid="fig1">Fig 1</xref>. As shown in <xref ref-type="fig" rid="fig1">Fig 1</xref>, FinisherSC can be readily incorporated into state-of-the-art assembly pipelines (e.g. PacBio HGAP).</p>
+<fig id="fig1" position="float" orientation="portrait" fig-type="figure">
+<label>Fig. 1:</label>
+<caption><p>Pipeline where FinisherSC can fit in</p></caption>
+<graphic xlink:href="010215_fig1.tif"/>
+</fig>
+</sec>
+<sec id="s2b">
+<label>2.2</label>
+<title>Algorithm and features</title>
+<p>The algorithm of FinisherSC is summarized in <xref ref-type="fig" rid="fig1">Fig 1</xref>. Detailed description of the algorithm is in the supplementary materials. We summarize the key features of FinisherSC as follows.</p>
+<list list-type="bullet">
+<list-item><p>Repeat-aware: FinisherSC uses a repeat-aware rule to define overlap. It uses string graphs to capture overlap information and to handle repeats so that FinisherSC can robustly merge contigs. Moreover, there is an optional component that can resolve long approximate repeats with two copies by using the polymorphisms between them.</p></list-item>
+<list-item><p>Data-efficient: FinisherSC utilizes ALL the raw reads to perform re-layout. This can fill gaps and improve robustness in handling repeats.</p></list-item>
+<list-item><p>Scalable: To identify relevant reads for re-layout and refined analysis, FinisherSC first streams raw reads. MUMMER[<xref rid="c4" ref-type="bibr">4</xref>] does the core of the sequence alignment. These techniques allow FinisherSC to be easily scalable to high volume of data.</p></list-item>
+</list>
+</sec>
+</sec>
+<sec id="s3">
+<label>3</label>
+<title>RESULTS AND DISCUSSION</title>
+<sec id="s3a">
+<label>3.1</label>
+<title>Experimental evaluation</title>
+<p>Raw reads are processed according to the use case in <xref ref-type="fig" rid="fig1">Fig 1</xref>. They are first error corrected and then assembled into contigs by an existing pipeline (i.e. HGAP[<xref rid="c1" ref-type="bibr">1</xref>]). Afterwards, we upgrade the contigs using FinisherSC. Quast[<xref rid="c3" ref-type="bibr">3</xref>] evaluates the quality of various assemblies. The data used for assessment are real PacBio reads. These includes data recently produced at JGI and data available online supporting the HGAP publication. We assess the assembly quality of the contigs coming out from the Celera assembler[<xref rid="c7" ref-type="bibr">7</xref>] of HGAP pipeline against the upgraded contigs by FinisherSC. Moreover, we also compare the upgraded contigs by FinisherSC against those upgraded by PBJelly[<xref rid="c2" ref-type="bibr">2</xref>]. A summary of the results is shown in <xref ref-type="table" rid="tbl1">Table 1</xref>. We find that FinisherSC can upgrade the assembly from HGAP without sacrifice on accuracy. Moreover, the upgraded contigs by FinisherSC are generally of higher quality than those upgraded by PBJelly. This suggests that there is extra information from the reads that is not fully utilized by state-of-the-art assembly pipelines for long reads.</p>
+<table-wrap id="tbl1" orientation="portrait" position="float">
+<label>Table 1.</label>
+<caption><p>(a,b) : Pedobacter heparinus DSM 2366 (recent real long reads from JGI) (c, d, e) : Escherichia coli MG 1655, Meiothermus ruber DSM 1279, Pedobacter heparinus DSM 2366 (real long reads supporting the HGAP publication). Detailed analysis by Quast is shown in the supplementary material.</p></caption>
+<graphic xlink:href="010215_tbl1.tif"/>
+</table-wrap>
+</sec>
+<sec id="s3b">
+<label>3.2</label>
+<title>Discussion</title>
+<p>Although FinisherSC was originally designed to improve de-novo assembly by long reads, it can also be used to scaffold long contigs(formed by short reads) using long reads. For that use case, we note that the contigs formed by short reads can sometimes have length shorter than the length of a single long read. Therefore, we suggest users to filter out those short contigs before passing them into FinisherSC.</p>
+</sec>
+</sec>
+<sec id="s4">
+<label>4</label>
+<title>SUPPLEMENTARY MATERIALS</title>
+<sec id="s4a">
+<label>4.1</label>
+<title>Typical use cases</title>
+<p>In this section, we describe example use cases of FinisherSC. Below are several scenarios that FinisherSC is helpful to you.</p>
+<sec id="s4a1">
+<label>4.1.1</label>
+<title>Low coverage data</title>
+<p>There are many reasons that you end up having low coverage reads. You may want to save chemicals, the genome may be too long, some parts of the experimental setup may just malfunction or you do not want to overwhelm the assembler with huge amount of data. In any of these situations, you want to utilize as much information from the reads as possible because of the scarcity of read data.</p>
+</sec>
+<sec id="s4a2">
+<label>4.1.2</label>
+<title>Simple setup for assemblers</title>
+<p>There are normally a lot of parameters that can be tuned for modern assemblers. It is also often not clear what parameters work best for your data. However, you do not want to waste time in repeatedly running the assembler by varying different combinations of parameters/setting. In this case, you need a tool that can efficiently and automatically improve your assemblies from the raw reads without rerunning the assembler.</p>
+</sec>
+<sec id="s4a3">
+<label>4.1.3</label>
+<title>Scaffolding</title>
+<p>You may have long contigs prepared from one library and long reads prepared from the other. In this case, you want to robustly and seamlessly combine data from two libraries through scaffolding.</p>
+</sec>
+</sec>
+<sec id="s4b">
+<label>4.2</label>
+<title>Instructions on using FinisherSC</title>
+<p>Our software, FinisherSC, is helpful for the use cases discussed above. It processes long contigs with long reads. You only need to supply the input data files and issue a one-line command as follows to perform the processing. Let us assume that mumP is the path to your MUMMER and destP is the location where the input and output files stay.</p>
+<list list-type="bullet">
+<list-item><p>Input : raw reads.fasta, contigs.fasta</p></list-item>
+<list-item><p>Output : improved3.fasta</p></list-item>
+<list-item><p>Command :
+<code>python finisherSC.py destP/ mumP/</code></p></list-item>
+</list>
+<p>We provide a sandbox example in the Dropbox folder linked in our webpage. Besides the standard usage, there is an extra option, which can resolve long approximate repeat with two copies. To experiment with this, you should first run FinisherSC as above and then issue the following command.</p>
+<p><code>python experimental/newPhasing.py destP/ mumP/</code></p>
+</sec>
+<sec id="s4c">
+<label>4.3</label>
+<title>Detailed description of the algorithm</title>
+<p>We adopt the terminology in [<xref rid="c5" ref-type="bibr">5</xref>] here. Random flanking region refers to the neighborhood of a repeat interior. A copy of a repeat being bridged means that some reads cover the copy into the random flanking region. Subroutine 1 removes embedded contigs that would otherwise confuse the later string graph operations. Subroutines 2, 3, 6, 7 are designed to handle repeats. Subroutines 2, 3 resolve repeats whose copies are all bridged by some reads. Subroutines 6, 7 resolve two-copies repeats of which only one copy is bridged. Subroutines 4, 5 utilize neglected information from raw reads. They define merges at locations which are not parts of any long repeats. <sup><xref ref-type="fn" rid="fn1">1</xref></sup></p>
+<statement>
+<label>Algorithm 1:</label>
+<title>Subroutine 1: Filter completely embedded contigs</title>
+<p><bold>Input</bold> : contigs.fasta</p>
+<p><bold>Output</bold>: noEmbed.fasta
+<list list-type="order">
+<list-item><p>Obtain alignment among contigs from contigs.fasta</p></list-item>
+<list-item><p>For any (x,y) contig pair, if x is completely embedded in y, then we add x to removeList</p></list-item>
+<list-item><p>Remove all contigs specified in removetList from contigs.fasta. The resultant set of contigs are outputted as noEmbed.fasta</p></list-item>
+</list></p>
+</statement>
+<statement>
+<label>Algorithm 2:</label>
+<title>Subroutine 2: Form a string graph with the BEST successors/predecessors as edges</title>
+<p>
+<fig id="ufig2" position="float" orientation="portrait" fig-type="figure">
+<graphic xlink:href="010215_ufig2.tif"/>
+</fig>
+</p>
+</statement>
+<statement>
+<label>Algorithm 3:</label>
+<title>Subroutine 3: Condense the string graph by contracting edges with both in-degree and out-degree being 1</title>
+<p><fig id="ufig3" position="float" orientation="portrait" fig-type="figure">
+<graphic xlink:href="010215_ufig3.tif"/>
+</fig></p>
+</statement>
+<statement>
+<label>Algorithm 4:</label>
+<title>Subroutine 4: Use raw reads to declare potential successors/predecessors of dangling contigs</title>
+<p><fig id="ufig4" position="float" orientation="portrait" fig-type="figure">
+<graphic xlink:href="010215_ufig4.tif"/>
+</fig></p>
+</statement>
+</sec>
+<sec id="s4d">
+<label>4.4</label>
+<title>Justification of the algorithm</title>
+<sec id="s4d1">
+<label>4.4.1</label>
+<title>Big picture</title>
+<p>There are two main parts of the algorithm underlying FinisherSC. They are</p>
+<list list-type="order">
+<list-item><p>Gap filling</p></list-item>
+<list-item><p>Repeat resolution</p></list-item>
+</list>
+<p>With uniform sampling assumption, the gaps are unlikely to land on the few long repeats on bacterial genomes. Therefore, subroutines 4, 5 can close most of the gaps. For repeat resolution, subroutines 1, 2, 3, 6, 7 robustly define merges using various transformations of String graphs. Detailed discussion is in the coming section.</p>
+<statement>
+<label>Algorithm 5:</label>
+<title>Subroutine 5: Merge contigs(with gaps filled by reads) when they respectively only have 1 successor/1 predecessor</title>
+<p><fig id="ufig5" position="float" orientation="portrait" fig-type="figure">
+<graphic xlink:href="010215_ufig5.tif"/>
+</fig></p>
+</statement>
+<statement>
+<label>Algorithm 6:</label>
+<title>Subroutine 6: Form a string graph with ALL successors/predecessors as edges</title>
+<p><bold>Input</bold> : improved2.fasta, connectivity info</p>
+<p><bold>Output</bold>: String_graph_3
+<list list-type="order">
+<list-item><p>Use connectivity info to form a graph G with nodes from improved2.fasta. All predecessor-successor pairs are edges in G.</p></list-item>
+<list-item><p>Output the corresponding graph as String_graph_3</p></list-item>
+</list></p>
+</statement>
+</sec>
+<sec id="s4d2">
+<label>4.4.2</label>
+<title>Detailed justification on repeat resolution</title>
+<statement>
+<label>Algorithm 7:</label>
+<title>Subroutine 7: Merge contigs with only 1 predecessor or 1 successor and each has no more than two competing edges</title>
+<p><bold>Input</bold> : improved2.fasta, String_graph_3</p>
+<p><bold>Output</bold>: improved3.fasta
+<list list-type="order">
+<list-item><p>Traverse the String_graph_3 for pattern of <italic>u</italic>1 &#x2192; <italic>u</italic>3, <italic>u</italic>2 &#x2192; <italic>u</italic>3, <italic>u</italic>2 &#x2192; <italic>u</italic>4 and that the out-deg(u1) =1, out-deg(u2) = 2, in-deg(u3) =2, in-deg(u4) =1, if found, then,
+<list list-type="alpha-lower">
+<list-item><p>Delete the edge <italic>u</italic>2 &#x2192; <italic>u</italic>3</p></list-item>
+<list-item><p>Condense the graph</p></list-item>
+<list-item><p>Continue until the whole graph is traversed</p></list-item>
+</list></p></list-item>
+<list-item><label>2.</label><p>Output the merged contigs as improved3.fasta</p></list-item>
+</list></p>
+</statement>
+<p>We focus the discussion on a long repeat with two copies. To simplify discussion, we further assume that each base of the genome is covered by some reads and the read length is fixed. The goal here is to correctly merge as many reads as possible in the presence of that repeat. Now, the claim is Subroutine 2, 3, 6, 7 collectively can achieve this goal. Since we focus on one repeat, we only consider the reads either bridging the repeat copies/ reads at the interior of repeats/ touching the repeat copies for that repeat. We separate the discussion on each of the cases depicted in <xref ref-type="fig" rid="fig2">Fig 2</xref>. They are listed as follows.</p>
+<list list-type="order">
+<list-item><p>Both copies are bridged</p></list-item>
+<list-item><p>Only one copy is bridged</p></list-item>
+<list-item><p>Both copies are not bridged</p></list-item>
+</list>
+<fig id="fig2" position="float" orientation="portrait" fig-type="figure">
+<label>Fig. 2:</label>
+<caption><p>Repeat patterns, typical String_graph_1, typical String_graph_3</p></caption>
+<graphic xlink:href="010215_fig2.tif"/>
+</fig>
+<p>In the first case, without loss of generality, let us consider any read R emerging from the left flanking region of the left copy. It will get merged with its successor when condensing String_graph_1. Since R overlaps with its mirror successor through the flanking region, the mirror successor surely will not be declared as R&#x2019;s true successor.</p>
+<p>Now, let us move to the second case. Since there is a bridging read, there are no reads completely embedded in the interior of the repeat. Without loss of generality, we consider the case that the left copy is bridged and the right copy is not. Now we label R2 as the bridging read, R1/R3 respectively as the predecessor/successor of the bridging read, R4/R5 as the most penetrating reads into the second copy of the repeat. For all other reads, they get merged with their best successors/predecessors when condensing in String_graph_1. For the remaining five items of interest, the main question is whether there is an edge between R4 and R5 in String_graph_1 (i.e. whether the best successor of R4 be R3). If not, then condensing in String_graph_1 will merge R4 with R5, which is the correct successor. If such an edge exists, then we end up with the pattern shown in <xref ref-type="fig" rid="fig2">Fig 2</xref> for String_graph_3. This means that only R1 is merged to R2 when condensing String_graph_1. On the other hand, because of the existence of the Z shape pattern, we have R2 merged with R3 and R4 merged with R5 when performing graph operations on String_graph_3 by subroutine 7.</p>
+<p>Finally, we consider the third case, when both repeat copies are not bridged. For reads that are not closest to the repeat copies, they get merged correctly when condensing String_graph_1. Without loss of generality, we consider a read x closest to the left flanking region of the left copy of the repeat. An illustration of this situation in String_graph_1 is show in <xref ref-type="fig" rid="fig3">Fig 3</xref>. Let its true successor be T. We are going to show that it will not get merged with the wrong read in String_graph_1 through a proof by contradiction. If x got merged with some wrong F, then <italic>x</italic> &#x2192; <italic>F</italic> is an edge. Let y be the read closest the left flanking region of the right copy of the repeat. Then, <italic>y</italic> &#x2192; <italic>F</italic> is also an edge. Therefore, there should be no merges of <italic>x</italic> &#x2192; <italic>F</italic>, which results in contradiction. Now we consider String_graph_3, if x has only 1 successor, then it should be T. Otherwise, it is connected to both T and some F. Then, we consider the y coming from the left flanking region of the right copy. There must be an edge from y to F. Now, if there is also an edge from y to T, then both x and y are not merged in String_graph_3. However, if not, then x is merged with T and y with F, which are the appropriate merges.</p>
+<fig id="fig3" position="float" orientation="portrait" fig-type="figure">
+<label>Fig. 3:</label>
+<caption><p>Zpattern in string graph</p></caption>
+<graphic xlink:href="010215_fig3.tif"/>
+</fig>
+</sec>
+</sec>
+<sec id="s4e">
+<label>4.5</label>
+<title>The optional repeat phasing step</title>
+<p>In this section, we discuss the optional step on repeat phasing. This involves two main parts. The first one is to utilize string graph to find out repeats and its neighboring random flanking region. It is summarized in Alg 8. An illustration of a typical string graph is shown in <xref ref-type="fig" rid="fig4">Fig 4</xref> where the contigs are indicated by the circles/reads by the rectangles. The dotted line circles specify the random flanking region and repeat interior that we want to infer from the string graph operations in Alg 8. The second one is to utilize the polymorphisms within the repeat copies to help distinguish the repeats. The implementation for the second part is the same as that implemented in [<xref rid="c5" ref-type="bibr">5</xref>].</p>
+<fig id="fig4" position="float" orientation="portrait" fig-type="figure">
+<label>Fig. 4:</label>
+<caption><p>Using string graph to define repeat interiors and flanking region</p></caption>
+<graphic xlink:href="010215_fig4.tif"/>
+</fig>
+</sec>
+<sec id="s4f">
+<label>4.6</label>
+<title>Future work</title>
+<p>FinisherSC is a step forward in utilizing read information. However, there are still many interesting follow up that can further improve quality of assemblies. These include resolution of long tandem repeats and long repeats with many copies.</p>
+</sec>
+<sec id="s4g">
+<label>4.7</label>
+<title>Detail experimental results</title>
+<p>In this section, we provide the detailed Quast analysis for the results described <xref ref-type="table" rid="tbl1">Table 1</xref>. Moreover, we compare in <xref ref-type="fig" rid="fig5">Fig 5</xref> the memory consumption and running time of FinisherSC with PBJelly. The computing experiments were performed at the computing cluster at JGI. We remark that (a) to (e) are the corresponding data sets in <xref ref-type="table" rid="tbl1">Table 1</xref>.</p>
+<fig id="fig5" position="float" orientation="portrait" fig-type="figure">
+<label>Fig. 5:</label>
+<caption><p>Running time and memory comparison of FinisherSC and PBJelly. (a) to (e) are the corresponding data sets in <xref ref-type="table" rid="tbl1">Table 1</xref>.</p></caption>
+<graphic xlink:href="010215_fig5.tif"/>
+</fig>
+<statement>
+<label>Algorithm 8:</label>
+<title>Repeat phasing option</title>
+<p><fig id="ufig8" position="float" orientation="portrait" fig-type="figure">
+<graphic xlink:href="010215_ufig8.tif"/>
+</fig></p>
+</statement>
+<table-wrap id="tbl2" orientation="portrait" position="float">
+<label>Table 2.</label>
+<caption><p>(a) in <xref ref-type="table" rid="tbl1">Table 1</xref>. All statistics are based on contigs of size &#x2265; 500 bp, unless otherwise noted (e.g., &#x201D;# contigs (&#x2265; 0 bp)&#x201D; and &#x201D;Total length (&#x2265; 0 bp)&#x201D; include all contigs).</p></caption>
+<graphic xlink:href="010215_tbl2.tif"/>
+</table-wrap>
+<table-wrap id="tbl3" orientation="portrait" position="float">
+<label>Table 3.</label>
+<caption><p>(b) in <xref ref-type="table" rid="tbl1">Table 1</xref>. All statistics are based on contigs of size &#x2265; 500 bp, unless otherwise noted (e.g., &#x201D;# contigs (&#x2265; 0 bp)&#x201D; and &#x201D;Total length (&#x2265; 0 bp)&#x201D; include all contigs).</p></caption>
+<graphic xlink:href="010215_tbl3.tif"/>
+</table-wrap>
+<table-wrap id="tbl4" orientation="portrait" position="float">
+<label>Table 4.</label>
+<caption><p>(c) in <xref ref-type="table" rid="tbl1">Table 1</xref>. All statistics are based on contigs of size &#x2265; 500 bp, unless otherwise noted (e.g., &#x201D;# contigs (&#x2265; 0 bp)&#x201D; and &#x201D;Total length (&#x2265; 0 bp)&#x201D; include all contigs).</p></caption>
+<graphic xlink:href="010215_tbl4.tif"/>
+</table-wrap>
+<table-wrap id="tbl5" orientation="portrait" position="float">
+<label>Table 5.</label>
+<caption><p>(d) in <xref ref-type="table" rid="tbl1">Table 1</xref>. All statistics are based on contigs of size &#x2265; 500 bp, unless otherwise noted (e.g., &#x201D;# contigs (&#x2265; 0 bp)&#x201D; and &#x201D;Total length (&#x2265; 0 bp)&#x201D; include all contigs).</p></caption>
+<graphic xlink:href="010215_tbl5.tif"/>
+</table-wrap>
+<table-wrap id="tbl6" orientation="portrait" position="float">
+<label>Table 6.</label>
+<caption><p>(e) in <xref ref-type="table" rid="tbl1">Table 1</xref>. All statistics are based on contigs of size &#x2265; 500 bp, unless otherwise noted (e.g., &#x201D;# contigs (&#x2265; 0 bp)&#x201D; and &#x201D;Total length (&#x2265; 0 bp)&#x201D; include all contigs).</p></caption>
+<graphic xlink:href="010215_tbl6.tif"/>
+</table-wrap>
+</sec>
+</sec>
+</body>
+<back>
+<ref-list>
+<title>REFERENCES</title>
+<ref id="c1"><label>[1]</label><mixed-citation publication-type="journal"><string-name><given-names>Chen-Shan</given-names> <surname>Chin</surname></string-name>, <string-name><given-names>David H</given-names> <surname>Alexander</surname></string-name>, <string-name><given-names>Patrick</given-names> <surname>Marks</surname></string-name>, <string-name><given-names>Aaron A</given-names> <surname>Klammer</surname></string-name>, <string-name><given-names>James</given-names> <surname>Drake</surname></string-name>, <string-name><given-names>Cheryl</given-names> <surname>Heiner</surname></string-name>, <string-name><given-names>Alicia</given-names> <surname>Clum</surname></string-name>, <string-name><given-names>Alex</given-names> <surname>Copeland</surname></string-name>, <string-name><given-names>John</given-names> <surname>Huddleston</surname></string-name>, <string-name><given-names>Evan E</given-names> <surname>Eichler</surname></string-name>, <etal>et al.</etal> <article-title>Nonhybrid, finished microbial genome assemblies from long-read smrt sequencing data</article-title>. <source>Nature methods</source>, <year>2013</year>.</mixed-citation></ref>
+<ref id="c2"><label>[2]</label><mixed-citation publication-type="journal"><string-name><given-names>Adam C</given-names> <surname>English</surname></string-name>, <string-name><given-names>Stephen</given-names> <surname>Richards</surname></string-name>, <string-name><given-names>Yi</given-names> <surname>Han</surname></string-name>, <string-name><given-names>Min</given-names> <surname>Wang</surname></string-name>, <string-name><surname>Vanesa</surname> <given-names>Vee</given-names></string-name>, <string-name><surname>Jiaxin</surname> <given-names>Qu</given-names></string-name>, <string-name><given-names>Xiang</given-names> <surname>Qin</surname></string-name>, <string-name><given-names>Donna M</given-names> <surname>Muzny</surname></string-name>, <string-name><given-names>Jeffrey G</given-names> <surname>Reid</surname></string-name>, <string-name><given-names>Kim C</given-names> <surname>Worley</surname></string-name>, <etal>et al.</etal> <article-title>Mind the gap: Upgrading genomes with pacific biosciences rs long-read sequencing technology</article-title>. <source>PLoS ONE</source>, <volume>7</volume>:<fpage>47768</fpage>, <year>2012</year>.</mixed-citation></ref>
+<ref id="c3"><label>[3]</label><mixed-citation publication-type="journal"><string-name><given-names>Alexey</given-names> <surname>Gurevich</surname></string-name>, <string-name><given-names>Vladislav</given-names> <surname>Saveliev</surname></string-name>, <string-name><given-names>Nikolay</given-names> <surname>Vyahhi</surname></string-name>, and <string-name><given-names>Glenn</given-names> <surname>Tesler</surname></string-name>. <article-title>Quast: quality assessment tool for genome assemblies</article-title>. <source>Bioinformatics</source>, <volume>29</volume>(<issue>8</issue>):<fpage>1072</fpage>&#x2013;<lpage>1075</lpage>,<year>2013</year>.</mixed-citation></ref>
+<ref id="c4"><label>[4]</label><mixed-citation publication-type="journal"><string-name><given-names>Stefan</given-names> <surname>Kurtz</surname></string-name>, <string-name><given-names>Adam</given-names> <surname>Phillippy</surname></string-name>, <string-name><given-names>Arthur L</given-names> <surname>Delcher</surname></string-name>, <string-name><given-names>Michael</given-names> <surname>Smoot</surname></string-name>, <string-name><given-names>Martin</given-names> <surname>Shumway</surname></string-name>, <string-name><given-names>Corina</given-names> <surname>Antonescu</surname></string-name>, and <string-name><given-names>Steven L</given-names> <surname>Salzberg</surname></string-name>. <article-title>Versatile and open software for comparing large genomes</article-title>. <source>Genome biology</source>, <volume>5</volume>(<issue>2</issue>):<fpage>R12</fpage>, <year>2004</year>.</mixed-citation></ref>
+<ref id="c5"><label>[5]</label><mixed-citation publication-type="other"><string-name><given-names>Ka-Kit</given-names> <surname>Lam</surname></string-name>, <string-name><given-names>Asif</given-names> <surname>Khalak</surname></string-name>, and <string-name><given-names>David</given-names> <surname>Tse</surname></string-name>. <article-title>Near-optimal assembly for shotgun sequencing with noisy reads</article-title>. <source>BMC Bioinformatics</source>, <year>2014</year>.</mixed-citation></ref>
+<ref id="c6"><label>[6]</label><mixed-citation publication-type="website"><string-name><given-names>Ka-Kit</given-names> <surname>Lam</surname></string-name>, <string-name><given-names>Kurt</given-names> <surname>LaButti</surname></string-name>, <string-name><given-names>Asif</given-names> <surname>Khalak</surname></string-name>, and <string-name><given-names>David</given-names> <surname>Tse</surname></string-name>. <ext-link ext-link-type="uri" xlink:href="http://kakitone.github.io/finishingTool/">http://kakitone.github.io/finishingTool/</ext-link>.</mixed-citation></ref>
+<ref id="c7"><label>[7]</label><mixed-citation publication-type="journal"><string-name><given-names>Eugene W</given-names> <surname>Myers</surname></string-name>, <string-name><given-names>Granger G</given-names> <surname>Sutton</surname></string-name>, <string-name><given-names>Art L</given-names> <surname>Delcher</surname></string-name>, <string-name><given-names>Ian M</given-names> <surname>Dew</surname></string-name>, <string-name><given-names>Dan P</given-names> <surname>Fasulo</surname></string-name>, <string-name><given-names>Michael J</given-names> <surname>Flanigan</surname></string-name>, <string-name><given-names>Saul A</given-names> <surname>Kravitz</surname></string-name>, <string-name><given-names>Clark M</given-names> <surname>Mobarry</surname></string-name>, <string-name><given-names>Knut HJ</given-names> <surname>Reinert</surname></string-name>, <string-name><given-names>Karin A</given-names> <surname>Remington</surname></string-name>, <etal>et al.</etal> <source>A whole-genome assembly of drosophila</source>.</mixed-citation></ref>
+</ref-list>
+<fn-group>
+<fn id="fn1">
+<label><sup>1</sup></label><p>To simplify discussion, the subroutines described are based on the assumption that reads are extracted from a single-stranded DNA. However, we remark that we have implemented FinisherSC by taking into account that reads are extracted from both forward and reverse strands.</p></fn>
+</fn-group>
+</back>
+</article>

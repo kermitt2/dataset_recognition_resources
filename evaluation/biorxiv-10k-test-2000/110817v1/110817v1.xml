@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/110817</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Systems Biology</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Modeling heterogeneous populations using Boolean networks</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<name><surname>Ross</surname><given-names>Brian C.</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<contrib contrib-type="author">
+<name><surname>Boguslav</surname><given-names>Mayla</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<contrib contrib-type="author">
+<name><surname>Weeks</surname><given-names>Holly</given-names></name>
+<xref ref-type="aff" rid="a3">3</xref>
+</contrib>
+<contrib contrib-type="author" corresp="yes">
+<name><surname>Costello</surname><given-names>James</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="aff" rid="a2">2</xref>
+<xref ref-type="author-notes" rid="n1">&#x002A;</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>Computational Bioscience Program, University of Colorado Anschutz Medical Campus</institution>, Aurora, CO, <country>USA</country></aff>
+<aff id="a2"><label>2</label><institution>Department of Pharmacology, University of Colorado Anschutz Medical Campus</institution>, Aurora, CO, <country>USA</country></aff>
+<aff id="a3"><label>3</label><institution>Department of Biostatistics and Informatics, University of Colorado Anschutz Medical Campus</institution>, Aurora, CO, <country>USA</country></aff>
+</contrib-group>
+<author-notes>
+<fn fn-type="other" id="n1"><label>&#x002A;</label><p>E-mail: <email>james.costello@ucdenver.edu</email></p></fn>
+</author-notes>
+<pub-date pub-type="epub"><year>2017</year></pub-date>
+<elocation-id>110817</elocation-id>
+<history>
+<date date-type="received"><day>21</day><month>2</month><year>2017</year></date>
+<date date-type="accepted"><day>22</day><month>2</month><year>2017</year></date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2017, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2017</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="110817.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>Boolean networks are commonly used to model biological pathways and processes, in part because analyses can often find all possible long-term outcomes. Here we describe a Boolean network analysis that captures both the long-term outcomes of a heterogeneous population, as well as the transient behavior leading up to those outcomes. In contrast to other approaches, our method gives an explicit simulation through time using the composition of the mixed population without having to track each subpopulation individually, thus allowing us to simulate heterogeneous populations. This technique accurately models the dynamics of large populations of deterministic, probabilistic or continuous-time Boolean networks that use either synchronous or asynchronous updating. Our method works by treating the network dynamics as a linear system in a variable space that includes products of the Boolean state variables. We show that these product-basis analyses can help find very rare subpopulations or behaviors that sampling-based analyses would likely miss. Such rare events are critical in processes such as the initiation and progression of cancer, and the development of treatment resistance</p>
+</abstract>
+<counts>
+<page-count count="13"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<p>Mathematical models are an important part of testing and extrapolating our knowledge of biological systems [<xref ref-type="bibr" rid="c1">1</xref>], but they can be difficult to fully analyze. A straightforward way to study a model is to simulate individual instances of that model using a random sampling technique such as Monte Carlo [<xref ref-type="bibr" rid="c2">2</xref>]. These simulations can be run very efficiently, allowing the use of complex models extending even to whole-cell simulations [<xref ref-type="bibr" rid="c3">3</xref>]. A major drawback to random sampling is that simulations have difficulty capturing rare events such as those that initiate biological processes leading to novel and potentially disease-related cellular phenotypes [<xref ref-type="bibr" rid="c4">4</xref>]. For example, tumor initiation, progression, and the survival of select cells following drug treatment all require rare alterations to arise and clonally expand to eventually dominate the population in the long run [<xref ref-type="bibr" rid="c5">5</xref>&#x2013;<xref ref-type="bibr" rid="c7">7</xref>]. While one can bias Monte Carlo to oversample certain outcomes by artificially raising or lowering global parameters such as a mutation rate, and then post-correct for the biased sampling (a strategy known as importance sampling [<xref ref-type="bibr" rid="c8">8</xref>]), this does not help find outcomes that are rare just because they require a very particular starting state or set of mutations.</p>
+<p>An alternative approach to random sampling techniques is to study a model analytically in order to learn about <italic>all</italic> possible behaviors or outcomes even if they are rare. Analytic results are difficult to obtain with complex models, but significant advances have been made in analyzing Boolean networks [<xref ref-type="bibr" rid="c9">9</xref>&#x2013;<xref ref-type="bibr" rid="c16">16</xref>], which are very simple models built entirely from ON/OFF variables. In particular, the focus has been on extracting the possible longterm outcomes, or <italic>attractors</italic>, of Boolean models. An attractor may be a stable state (steady state) or else a repeating sequence of states (limit cycle). Attractors have been found using network-reduction algorithms that find simple networks encoding the long-term behavior of more complex networks [<xref ref-type="bibr" rid="c9">9</xref>, <xref ref-type="bibr" rid="c11">11</xref>, <xref ref-type="bibr" rid="c17">17</xref>], methods that solve steady states as zeros of a polynomial equation [<xref ref-type="bibr" rid="c18">18</xref>], SAT methods [<xref ref-type="bibr" rid="c13">13</xref>, <xref ref-type="bibr" rid="c14">14</xref>, <xref ref-type="bibr" rid="c19">19</xref>], and binary decision diagrams [<xref ref-type="bibr" rid="c15">15</xref>, <xref ref-type="bibr" rid="c16">16</xref>, <xref ref-type="bibr" rid="c20">20</xref>]. See the introduction of Ref. [<xref ref-type="bibr" rid="c10">10</xref>] for a review of these techniques.</p>
+<p>In between Monte Carlo simulations of individuals and attractor analyses of populations, there remains an unaddressed challenge: methods dealing directly with populations do not explicitly track their dynamics in the way that a simulation does. Therefore the power of exact analyses has not been applied to the early-time &#x2018;transient&#x2019; behavior of populations, or used to connect initial states of different subpopulations to the attractors they fall into.</p>
+<p>Here we present an analytical method for simulating a heterogeneous population of Boolean networks, without having to simulate each network individually. The simulations are exact, so they capture every subpopulation of the model and every event that occurs, no matter how rare. The feasibility of building these simulations depends on the size and topology of the network (for complex or highly-recurrent networks it can be an exponential problem), though we can simplify the difficult cases by ignoring the first few time steps of the simulation. In the limit where we focus only on the longest-term behavior, the output describes the attractors of the network.</p>
+<p>Our method applies to deterministic [<xref ref-type="bibr" rid="c1">1</xref>], probabilistic [<xref ref-type="bibr" rid="c21">21</xref>] and continuous-time [<xref ref-type="bibr" rid="c22">22</xref>] Boolean networks, and finds all attractors with equal computational effort (some attractor-finding techniques have more difficulty with limit cycles than steady states). In this paper we only analyze synchronous Boolean network models (i.e. networks whose variables all update together in discrete time steps). However, we argue that an asynchronous network can be accurately modeled as a synchronous probabilistic network that is typically easier to analyze than the original network would be if it were synchronous. One major benefit to our approach is its simplicity, as it follows only two rules: 1) work in a linear basis whose variables are products of the Boolean state variables, and 2) ignore quickly-decaying modes if we are looking at latetime behavior. Based on (1) we refer to our analysis as a <italic>product-basis</italic> method.</p>
+<sec id="s1">
+<title>Results</title>
+<p>To demonstrate our method, we applied it to the T-cell activation network described in Ref. [<xref ref-type="bibr" rid="c23">23</xref>] (see Figure 10 and Table 2 of that paper). This is a deterministic, 40 node network with fifty-four edges containing multiple feedback loops, and whose attractors include both steady states and limit cycles. To use our method, we first provided a target set of variables to follow in time, which the product-basis algorithm used to generate a set of time-evolution equations involving those variables (along with other variables that were added automatically to close the system of equations). We chose to track three variables: the ligand-binding state of the T-cell receptor TCR<sup>BOUND</sup>, the phosphorylation state TCR<sup>P</sup>, and the co-occurrence of binding and phosphorylation. The starting population we considered was a uniform mixture of all possible 2<sup>40</sup>(&#x2248; 1 trillion) initial states of the Boolean variables. We generated the product-basis time-evolution equations, and used them to track the population-level average of each of these three variables for 50 time steps (<xref ref-type="fig" rid="fig1">Figure 1A</xref>). It should be noted that the co-occurrence variable TCR<sup>BOUND</sup> AND TCR<sup>p</sup> is not simply the product TCR<sup>BOUND</sup> &#x00D7; TCR<sup>P</sup>, because TCR<sup>BOUND</sup> and TCR<sup>P</sup> could be correlated or anti-correlated to some degree.</p>
+<fig id="fig1" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 1.</label>
+<caption><p><bold>A)</bold> Time-evolution of the mean TCR state in a heterogeneous population, based on the model of Ref. [<xref ref-type="bibr" rid="c23">23</xref>]. The population begins at <italic>t</italic> &#x003D; 0 as a uniform mixture of all possible starting states. <bold>B)</bold> The effect of a 1&#x0025; knock-out mutation rate per gene on the time evolution of the co-occurrence TCR<sup>BOUND</sup> AND TCR<sup>P</sup> in the population. The slight difference between a 0&#x0025; and 1&#x0025; mutation rate per gene is too small to reliably resolve by Monte Carlo, despite the fact that a third of the population has at least one mutation.</p></caption>
+<graphic xlink:href="110817_fig1.tif"/>
+</fig>
+<p>Next we demonstrated the ability of the product-basis method to analyze mutations in the network by including the full set of possible gene knock-outs in the T-cell activation network. We did this by adding a set of &#x2018;wild-type&#x2019; variables to the network, one for each original variable in the system, and included the wild-type variables in the update rules using an AND operation. For example, an update rule reading <italic>A</italic> &#x2190; <italic>B</italic> OR <italic>C</italic> becomes <italic>A</italic> &#x2190; (<italic>B</italic> OR <italic>C</italic>) AND <italic>A<sup>WT</sup></italic>. We also adjusted the initial populations so that the non-wild-type genes always began OFF. The initial population contained each possible combination of knock-out mutations at a 1&#x0025; mutation rate per variable <italic>and</italic> each possible combination of starting states compatible with each knockout set, spanning on the order of a trillion trillion different subpopulations, and then followed the time course of the TCR<sup>BOUND</sup> AND TCR<sup>P</sup> variable (<xref ref-type="fig" rid="fig1">Figure 1B</xref>). This result demonstrates several important aspects of our method. First, we are able to simulate highly heterogeneous populations. Second, we can exactly model subpopulations that were present at very low levels (see the error bars in <xref ref-type="fig" rid="fig1">Figure 1B</xref>). Third, our method is able to analyze genetically heterogeneous populations instead of populations that are only heterogeneous in their initial state. Finally, we note that our exact result tracked rare subpopulations over time more precisely than Monte Carlo simulations can. For example, the contribution of each triple-mutant was factored in even though a given triple-mutant was present in only 0.0001&#x0025; of the population. While one might artificially raise the Monte Carlo mutation rate to oversample the mutations [<xref ref-type="bibr" rid="c8">8</xref>], this has the disadvantage of overweighting the effect of multiple mutants even though realistic evolutionary paths take one or very few mutational steps at a time [<xref ref-type="bibr" rid="c24">24</xref>]. In contrast, our exact result is dominated by the evolutionarily-accessible subpopulations that are closest to wild-type.</p>
+<p>The code used to generate these results is named &#x201C;tCellActivationEx.m&#x201D;, and is available for download at <ext-link ext-link-type="uri" xlink:href="https://github.com/heltilda/ProBaBool">https://github.com/heltilda/ProBaBool</ext-link>. The equation-generating process for <xref ref-type="fig" rid="fig1">Figure 1A</xref> took &#x007E; 0.4 seconds using our code (written in MATLAB R2015b 8.6.0.267246, running on a 2.6GHZ Intel core i7 Mac with OS 10.9.5). We checked this exact result against <italic>n<sub>runs</sub></italic> &#x003D; 10<sup>4</sup> Monte Carlo runs, which took longer (&#x007E; 290 seconds). Note that Monte Carlo error is proportional to <inline-formula><alternatives><inline-graphic xlink:href="110817_inline1.gif"/></alternatives></inline-formula>.</p>
+</sec>
+<sec id="s2">
+<title>Methods</title>
+<sec id="s2a">
+<title>Simulations of mixed populations</title>
+<p>The principle behind our method is to write the time evolution of each variable in our network using a <italic>linear equation</italic>. Doing so guarantees that the dynamical equations we derive for a single cell also fully describe the dynamics of a mixed population of cells, owing to the superposition property of linear equations.</p>
+<p>The key to writing linear equations is to introduce a new variable to represent each nonlinear term in a naive update rule, acknowledging that we will have to solve for the dynamics of this new variable as well. In our case, each nonlinear term is a product of Boolean variables, so the update rule for its respective introduced variable will be a product of the constituent Boolean update rules. We demonstrate this procedure using <xref ref-type="boxed-text" rid="box1">Example 1</xref>.</p>
+<boxed-text position="float" id="box1">
+<sec>
+<title>Example 1: a 3-variable network</title>
+<p>Suppose we want to track the time evolution of variable A in the network shown in <xref ref-type="fig" rid="fig2">Figure 2</xref>. Since this network evolves by discrete time steps, we write <italic>x<sub>A</sub></italic>(<italic>t</italic> &#x002B; 1) &#x003D; <italic>f<sub>A</sub></italic>(<italic>x<sub>B</sub></italic>) where <italic>f<sub>A</sub></italic> performs the NOT operation. A linear equation implementing the NOT gate is:
+<disp-formula id="eqn1">
+<alternatives><graphic xlink:href="110817_eqn1.gif"/></alternatives></disp-formula></p>
+<fig id="fig2" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 2.</label>
+<caption><p>The 3-Boolean network used in Example 1. Arrows indicate how each variable updates based on the values of its inputs at the previous time step. For example if either A or B is ON at time <italic>t</italic> then C will be ON at time <italic>t</italic> &#x002B; 1; otherwise C will be OFF.</p></caption>
+<graphic xlink:href="110817_fig2.tif"/>
+</fig>
+<p>Evidently, in order to follow <italic>x<sub>A</sub></italic> over all time we must also track the state of its input variable <italic>B</italic> over time. <italic>B</italic> implements an AND gate which is a <italic>nonlinear</italic> operation: <italic>f<sub>B</sub></italic> &#x003D; <italic>x<sub>A</sub></italic>&#x00B7;<italic>x<sub>C</sub></italic>, To make the equation linear, we introduce <italic>x<sub>AC</sub></italic> &#x003D; <italic>x<sub>A</sub></italic>&#x00B7;<italic>x<sub>C</sub></italic>, which is 1 if and only if both A and C are ON, and write <italic>f<sub>B</sub></italic> in terms of this new variable.
+<disp-formula id="eqn2">
+<alternatives><graphic xlink:href="110817_eqn2.gif"/></alternatives></disp-formula>
+We still need to calculate <italic>f<sub>AC</sub></italic> for our new variable <italic>x<sub>A</sub></italic><sub>&#x007C;<italic>C</italic></sub>, which is simply the product <italic>f<sub>A</sub></italic>&#x00B7;<italic>f<sub>C</sub></italic>. (Proof: <italic>f<sub>AC</sub></italic> &#x003D; <italic>x<sub>AC</sub></italic> (<italic>t</italic> &#x002B; 1) &#x003D; <italic>x<sub>A</sub></italic> (<italic>t</italic> &#x002B; 1)&#x00B7;<italic>x<sub>C</sub></italic> (<italic>t</italic> &#x002B; 1) &#x003D; <italic>f<sub>A</sub></italic>&#x00B7;<italic>f<sub>C</sub></italic>) <italic>f<sub>C</sub></italic> implements an OR gate whose linear equation involves yet another product variable <italic>x<sub>AB</sub></italic>.
+<disp-formula id="eqn3">
+<alternatives><graphic xlink:href="110817_eqn3.gif"/></alternatives></disp-formula>
+The formula for <italic>f<sub>AC</sub></italic> made use of the fact that any Boolean value squared equals itself: for example <italic>x<sub>B</sub>&#x00B7;x<sub>B</sub></italic> &#x003D; <italic>x<sub>B</sub></italic>, and <italic>x<sub>B</sub>&#x00B7;x<sub>AB</sub></italic> &#x003D; <italic>x<sub>B</sub></italic>&#x00B7;<italic>x<sub>A</sub></italic>&#x00B7;<italic>x<sub>B</sub></italic> &#x003D; <italic>x<sub>AB</sub></italic>.</p>
+<p>The process of replacing product terms with new variables, and then solving for the time evolution of those new variables, continues until the equations form a closed system: each variable&#x2019;s time evolution is in terms of other variables in our system.
+<disp-formula id="eqn4">
+<alternatives><graphic xlink:href="110817_eqn4.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn5">
+<alternatives><graphic xlink:href="110817_eqn5.gif"/></alternatives></disp-formula>
+This gives us a closed linear system. To avoid the constant term we can rewrite <xref ref-type="disp-formula" rid="eqn1">Eq. (1.1)</xref> as <italic>f<sub>A</sub></italic> &#x003D; <italic>x</italic><sub>&#x2205;</sub> &#x2013; <italic>x<sub>B</sub></italic>, where <italic>x</italic><sub>&#x2205;</sub> &#x003D; 1 updates according to:
+<disp-formula id="eqn6">
+<alternatives><graphic xlink:href="110817_eqn6.gif"/></alternatives></disp-formula>
+<xref ref-type="disp-formula" rid="eqn1">Equations 1.1</xref>&#x2013;<xref ref-type="disp-formula" rid="eqn6">1.6</xref> together with an initial state in (<italic>x<sub>A</sub></italic>, <italic>x<sub>B</sub></italic>, <italic>x<sub>AC</sub></italic>, <italic>x<sub>AB</sub></italic>, <italic>x<sub>ABC</sub></italic>) describe the time evolution of these quantities in a single Boolean network as a sequence of 0s and 1s in each variable. The final step is to reinterpret these equations as describing the dynamics of a mixed population of networks, by assigning to each variable the <italic>fraction</italic> of that population having that variable set to 1. So whereas for a single network the value of <italic>x<sub>A</sub></italic> should always be either 0 or 1, for a mixture of networks in which 40&#x0025; of the population has gene <italic>A</italic> set ON we would set <italic>x<sub>A</sub></italic> &#x003D; 0.4. Owing to the superposition property of linear systems, <xref ref-type="disp-formula" rid="eqn1">Equations 1.1</xref>&#x2013;<xref ref-type="disp-formula" rid="eqn6">1.6</xref> that were derived in the context of a single network also exactly model any mixed ensemble of these networks.</p>
+</sec>
+</boxed-text>
+<p>Any state or mixture of states can be written as a linear combination of product-basis variables &#x007B;<italic>x</italic>&#x007D;, because these variables form a complete basis spanning the state space (see <xref ref-type="app" rid="app1">Appendix 1</xref> for a proof; also Ref. [<xref ref-type="bibr" rid="c18">18</xref>] proves a similar result for a slightly different Boolean algebra). Since each time-evolution function <italic>f</italic> is a sum over all states causing a &#x2018;1&#x2019; in the output variable when written in the state basis, it follows that each <italic>f</italic> is also a linear combination of our <italic>x</italic> variables. Therefore our procedure for modeling a mixed population always works in principle, even if some networks require too many equations for this method to be practical.</p>
+<p>We can extend mixed-population modeling to probabilistic [<xref ref-type="bibr" rid="c21">21</xref>] and continuous-time [<xref ref-type="bibr" rid="c22">22</xref>] Boolean networks. Probabilistic Boolean networks require no changes in the algorithm; the only difference is that the polynomial coefficients in our equations may not be integers. For example, if the NOT gate in <xref ref-type="fig" rid="fig2">Fig. 2</xref> is leaky with <italic>A</italic> turning ON with a probability of 0.9/0.2 if <italic>B</italic> was OFF/ON at the last time step, then the transition rule for gene A becomes <italic>f<sub>A</sub></italic> &#x003D; 0.9 &#x2212; 0.7 <italic>x<sub>B</sub></italic>. As before, a linear equation can always be written because a) a linear equation can still be written in the state space basis, and b) our <italic>x</italic> variables are just a different basis covering the state space. Probabilistic networks give one way to incorporate rate information into our model; another way is to work in continuous time using differential equations: <italic>f<sub>A</sub></italic> &#x003D; <italic>dx<sub>A</sub>/dt.</italic> The differential form does require one change in our method: the rate of change of a higher-order variable is found by using the product rule of derivatives. Whereas under a discrete update <italic>f<sub>ABC</sub></italic>&#x2026; is the product <italic>f<sub>A</sub></italic>&#x00B7;<italic>f<sub>B</sub></italic>&#x00B7;<italic>f<sub>C</sub></italic>&#x00B7; &#x2026;, for the differential case we compute:
+<disp-formula id="eqn7">
+<alternatives><graphic xlink:href="110817_eqn7.gif"/></alternatives></disp-formula>
+Also, under discrete updates the trivial function is <italic>f</italic><sub>&#x2205;</sub> &#x003D; 1 but with differential updates it is <italic>f</italic><sub>&#x2205;</sub> &#x003D; 0.</p>
+</sec>
+<sec id="s2b">
+<title>Long-term behaviors</title>
+<p>A mixed-population simulation may or may not be practical, depending on whether the system of linear equations closes with a manageable number of variables <italic>n</italic>. In the worst case, a significant fraction of the entire x-variable space is involved. By counting subscripts we know that there are <italic>n</italic> &#x003D; 2<sup><italic>N</italic></sup> product variables associated with an <italic>N</italic>-Boolean network, which is expected because our <italic>x</italic> &#x2013; variables are simply a change of basis from the state space (see <xref ref-type="app" rid="app1">Appendix 1</xref>). Therefore the problem has potentially exponential complexity.</p>
+<p>One way to make progress even when a closed system of equations is unmanageable is to focus on the attractors (steady states or limit cycles). The attractors are governed by a linear space whose size is determined by the number of attractor states, which for biological networks is usually much smaller than the full equation space. Mathematically, this means that our linear equations form a very degenerate system: if there are only <italic>n&#x002A;</italic> steady states then there are only <italic>n&#x002A;</italic> non-zero eigenvalues and <italic>n</italic>&#x002A; linearly independent equations. So for a 50-node network with a single steady state attractor we might have <italic>n</italic> &#x003D; 2<sup>50</sup> &#x2248; 10<sup>15</sup> in the worst case, but <italic>n</italic><sup>&#x002A;</sup> &#x003D; 1, which is a vastly smaller linear system. To find only the structure of the final-state space we select <italic>n</italic><sup>&#x002A;</sup> linearly independent variables, substitute them for the other variables in the time-evolution functions, and do an eigenvalue analysis on the much-smaller <italic>n</italic>&#x002A; &#x00D7; <italic>n</italic>&#x002A; system. A continuation of Example 1 gives a simple demonstration of this procedure.</p>
+<boxed-text position="float">
+<sec>
+<title>Example 1, continued</title>
+<p><xref ref-type="disp-formula" rid="eqn1">Eqs. 1.1</xref>&#x2013;<xref ref-type="disp-formula" rid="eqn6">1.6</xref> in <xref ref-type="sec" rid="box1">Example 1</xref> contain a single linear dependency: <italic>f<sub>AB</sub></italic> &#x003D; <italic>f<sub>ABC</sub></italic>. Therefore after the first time step <italic>x<sub>AB</sub></italic> will equal <italic>x<sub>ABC</sub></italic>: we write <inline-formula><alternatives><inline-graphic xlink:href="110817_inline2.gif"/></alternatives></inline-formula>. We use this fact to eliminate <italic>x<sub>AB</sub></italic>, giving a new set of steady state equations:
+<disp-formula id="eqn8">
+<alternatives><graphic xlink:href="110817_eqn8.gif"/></alternatives></disp-formula>
+Our new set of equations has the same non-zero eigenspace as the original set (1.1-1.6), except <xref ref-type="disp-formula" rid="eqn8">Eq. 1.4&#x2019;</xref> is only valid from the second time step onwards. However, the equations lack the null eigenspace because we removed the only linear dependency. States lying in the null eigenspace by definition decay and therefore correspond to transients in the time evolution, whereas eigenvectors whose eigenvalues have magnitude 1 do not decay and are part of the final attractor states. The 5 eigenvalues all have phases that are multiples of 2<italic>&#x03C0;</italic>/5, indicating that the sole attractor is a limit cycle with a period of 5 time steps. The states are: (100) &#x2192; (101) &#x2192; (111) &#x2192; (011) &#x2192; (001) &#x2192; &#x2026; at which point the sequence repeats.</p>
+</sec>
+</boxed-text>
+<p>There would be no time savings if we only eliminated a variable after we had already computed its time-evolution function. Fortunately, each linear dependency constrains not only the dependent variables, but also any variable that is <italic>factorized</italic> by a dependent variable (i.e. has all of the dependent variable&#x0027;s subscripts). Thus a dependency involving a low-order variable with few indices can exclude a significant fraction of the variable space. We find these constraints concurrently with the process of adding equations, and thereby avoid having to evaluate a significant fraction of our variable space.</p>
+<p>Constraints are traditionally enforced by substitution; however, there are two problems with substituting constraint expressions in our case. First, there is no guarantee that when applying two constraints the second will not undo the work of the first, for example by reintroducing an index that the first eliminated. That is, there may be no self-consistent solution that uses all constraints. The second problem is that two dependencies might constrain overlapping indices on the same variable. For example, in the network of <xref ref-type="fig" rid="fig3">Figure 3</xref>, variable <italic>x<sub>ABC</sub></italic> is subject to constraints from both <italic>x<sub>AB</sub></italic> and <italic>x<sub>BC</sub></italic>, and substituting either constraint would eliminate the subscript &#x2018;2&#x2019; that the other constraint requires. We avoid both these problems by <italic>multiplying</italic> constraints rather than substituting them, using the fact that we can freely duplicate (or remove duplicates of) constrained indices, because a Boolean raised to any positive power equals itself. This process forces the removal of all variables containing certain indices and lacking others, of which there is always at least one.</p>
+<fig id="fig3" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 3.</label>
+<caption><p>The network used in <xref ref-type="boxed-text" rid="box2">Example 2</xref></p></caption>
+<graphic xlink:href="110817_fig3.tif"/>
+</fig>
+<boxed-text position="float" id="box2">
+<sec>
+<title>Example 2</title>
+<p>Suppose we want to find the long-time behavior of Boolean variables A, C and E in the network of <xref ref-type="fig" rid="fig3">Figure 3</xref>. After two iterations of solving for time-evolution functions we have:
+<disp-formula id="eqn9">
+<alternatives><graphic xlink:href="110817_eqn9.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn10">
+<alternatives><graphic xlink:href="110817_eqn10.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn11">
+<alternatives><graphic xlink:href="110817_eqn11.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn12">
+<alternatives><graphic xlink:href="110817_eqn12.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn13">
+<alternatives><graphic xlink:href="110817_eqn13.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn14">
+<alternatives><graphic xlink:href="110817_eqn14.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn15">
+<alternatives><graphic xlink:href="110817_eqn15.gif"/></alternatives></disp-formula>
+At this point there are two linear dependencies: <italic>f<sub>AB</sub></italic> &#x003D; <italic>f<sub>D</sub></italic> and <italic>f<sub>BC</sub></italic> &#x003D; <italic>f<sub>B</sub></italic>, implying that
+<disp-formula id="eqn16">
+<alternatives><graphic xlink:href="110817_eqn16.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn17">
+<alternatives><graphic xlink:href="110817_eqn17.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn18">
+<alternatives><graphic xlink:href="110817_eqn18.gif"/></alternatives></disp-formula> Since we are only interested in the long-time behavior, we will use these constraints to simplify our equations. For example if we were to retain <italic>x<sub>ABC</sub></italic> it would be affected by the relationships involving <italic>x<sub>AB</sub></italic>, <italic>x<sub>B</sub></italic> and <italic>x<sub>BC</sub></italic>, and it would not be possible to enforce all of these by substitution because there is only one <italic>B</italic>-index on <italic>x<sub>ABC</sub></italic>. But our method enforces constraints by <italic>multiplying</italic> them:
+<disp-formula id="eqn19">
+<alternatives><graphic xlink:href="110817_eqn19.gif"/></alternatives></disp-formula> More generally, the first constraint attaches an <italic>AB</italic> index to every variable containing a <italic>D,</italic> and a <italic>D</italic> index to each variable with <italic>AB</italic> indices, and the second constraint adds a <italic>C</italic> index to every variable with a <italic>B</italic> index.</p>
+<p>Constraining our system and eliminating disused variables gives us
+<disp-formula id="eqn20">
+<alternatives><graphic xlink:href="110817_eqn20.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn21">
+<alternatives><graphic xlink:href="110817_eqn21.gif"/></alternatives></disp-formula>
+Our new equations require us to solve for another variable (while applying the constraints):
+<disp-formula id="eqn22">
+<alternatives><graphic xlink:href="110817_eqn22.gif"/></alternatives></disp-formula>
+The system is now closed (5 equations involving 5 variables), so if our goal is to produce a simulation (valid from time step 2 onwards) then we are done. However, if our objective is to find the attractors then we must remove another dependency that was unmasked by the last equation: <inline-formula><alternatives><inline-graphic xlink:href="110817_inline3.gif"/></alternatives></inline-formula></p>
+<p><italic>f<sub>E</sub></italic>, which implies three useful constraints.
+<disp-formula id="eqn23">
+<alternatives><graphic xlink:href="110817_eqn23.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn24">
+<alternatives><graphic xlink:href="110817_eqn24.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn25">
+<alternatives><graphic xlink:href="110817_eqn25.gif"/></alternatives></disp-formula>
+Each constraint reduces the size of the variable space: for example, the first eliminates all variables containing index A with no C, E or BC. We did not solve for <italic>x<sub>BC</sub></italic> because doing so would not eliminate any variables, because the <italic>x<sub>C</sub></italic> term does not attach any new indices.</p>
+<p>After applying the new constraints we obtain:<disp-formula id="eqn26">
+<alternatives><graphic xlink:href="110817_eqn26.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn27">
+<alternatives><graphic xlink:href="110817_eqn27.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn28">
+<alternatives><graphic xlink:href="110817_eqn28.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn29">
+<alternatives><graphic xlink:href="110817_eqn29.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn30">
+<alternatives><graphic xlink:href="110817_eqn30.gif"/></alternatives></disp-formula>
+This produces new dependencies: <inline-formula><alternatives><inline-graphic xlink:href="110817_inline4.gif"/></alternatives></inline-formula> and <inline-formula><alternatives><inline-graphic xlink:href="110817_inline5.gif"/></alternatives></inline-formula>, implying that
+<disp-formula id="eqn31">
+<alternatives><graphic xlink:href="110817_eqn31.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn32">
+<alternatives><graphic xlink:href="110817_eqn32.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn33">
+<alternatives><graphic xlink:href="110817_eqn33.gif"/></alternatives></disp-formula> With these constraints our example ends with the following equations:
+<disp-formula id="eqn34">
+<alternatives><graphic xlink:href="110817_eqn34.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn35">
+<alternatives><graphic xlink:href="110817_eqn35.gif"/></alternatives></disp-formula>
+The attractor is always reached at or before time step 3. The constraints map our original variables to linear combinations of variables in the final system: for example XA is mapped by constraint C4 to <italic>x<sub>AC</sub></italic> &#x002B; <italic>x<sub>AE</sub></italic> &#x2212; <italic>x<sub>ABC</sub></italic>, then mapped using constraints C1, C7 and C8 to <italic>x<sub>AC</sub></italic>, whose dynamics are given by the final time-evolution equations. The eigenvalues of this final system are (&#x2212; 1,1,1), implying a steady state along with a period-2 cycle.</p>
+</sec>
+</boxed-text>
+<p>Each dependency produces at least one constraint that permanently eliminates at least one of the dependent variables, and usually many other variables as well. <italic>Proof</italic>: if the dependency contains only one term then that variable is zero, eliminating it and all variables it factorizes. If there is more than one term in the dependency then each lowest-index variable (which may be <italic>x</italic><sub>&#x2205;</sub> &#x003D; 1) accumulates at least one index from any other variable in the dependency. Therefore each lowest-index variable is always eliminated. <italic>Corollary</italic>: the calculation eventually terminates because there are a finite number of variables, and each new linear dependency removes at least one further variable.</p>
+<p>Applying the equation-reduction method to each dependency in our linear system <italic>F</italic> &#x003D; &#x007B;<italic>f<sub>i</sub></italic>&#x007D; is guaranteed to eliminate the entire null space of <italic>F</italic>, simply because variables will be removed from the system until there are no more dependencies. On the other hand, our equation-reduction method does not affect the non-null eigenspace involving the variables of interest, because the constraints map those variables to variables in the final equations: <italic>X<sub>final</sub></italic> &#x003D; <italic>C&#x00B7;X<sub>interest</sub>.</italic> Therefore the long-time behavior is accurately modeled by <italic>F<sub>interest</sub></italic> &#x003D; <italic>C<sup>T</sup> F<sub>final</sub>C</italic>, which therefore contains all the persistent eigenmodes. All eigenvalues of <italic>F</italic> have modulus either 0 or 1 in a deterministic network, owing to the fact that a uniform population initialized with binary values for all variables stays binary for all time (this is obvious in the state-space basis, which by <xref ref-type="app" rid="app1">Appendix 1</xref> has the same eigenspectrum as our product-basis).</p>
+<sec id="s2b1">
+<title>Probabilistic and asynchronous Boolean networks</title>
+<p>Our method supports modeling large populations of probabilistic Boolean networks (PBNs) [<xref ref-type="bibr" rid="c21">21</xref>, <xref ref-type="bibr" rid="c25">25</xref>], in which several state transitions are possible at each time step, and the various transitions may have different probabilities. In the limit where the population of PBNs becomes infinite, each possible state transition occurs in a fraction of the population proportional to its likelihood in an individual. From the standpoint of our method, this implies that the coefficients in the <italic>f<sub>i</sub></italic> equations of a PBN become real-valued, but the process of building the <italic>f<sub>i</sub></italic> equations is unchanged.</p>
+<p>The time-evolution equations <italic>F</italic> of a PBN in general contain eigenmodes having real-valued eigenvalues whose modulus is on the interval [0,1]. (A modulus larger than 1 would represent a mode growing without bound, which is impossible because in the state-space basis the fraction of the population in each state <italic>b<sub>i</sub></italic> is restricted to the interval [0,1]). Therefore, unlike a deterministic network, a PBN can have slowly-decaying modes with eigenvalues between 0 and 1. For PBNs we generalize our equation-reduction method to identify decaying modes before all <italic>f<sub>i</sub></italic> have been solved (i.e. before <italic>F</italic> is a square matrix), by identifying modes m having the property <italic>m</italic>&#x00B7;<italic>F</italic> &#x003D; &#x03BB; [<italic>m</italic> 0]. We discard these modes after they have become sufficiently small, defined by <italic>e</italic><sup>&#x2212;&#x03BB;(<italic>t</italic>&#x2212;<italic>max<sub>m</sub></italic>(<italic>t<sub>f<sub>m</sub></sub></italic>))</sup> &#x003C; <italic>&#x2208;</italic> where <italic>t<sub>f<sub>m</sub></sub></italic> are the &#x2018;starting times&#x2019; of the involved equations and <italic>&#x2208;</italic> is a user-defined threshold.</p>
+<p>Large populations of asynchronous networks behave identically to large populations of PBNs [<xref ref-type="bibr" rid="c26">26</xref>] if we define a uniform time step: the likelihoods of the various possible updates give the state-transition weights in the corresponding synchronous PBN. Therefore our analysis also applies to large populations of asynchronous networks. The conversion of an asynchronous updating scheme to a PBN lowers some of the eigenvalues that would otherwise be of magnitude 1 in a synchronous version of the network, and therefore our equation-reduction method can prune asynchronous networks more aggressively than their synchronous counterparts.</p>
+</sec>
+<sec id="s2b2">
+<title>Calculational notes</title>
+<p>When we attempt to simplify a network by removing dependencies, the order in which we calculate the time evolution of new variables and look for new dependencies greatly influences the total number of variables that will be involved before the linear system closes. That is because the constraints coming from different dependencies simplify the system to different degrees. In general, constraints on variables having the fewest indices are most helpful, because they factorize the largest part of the variable space. Following this rule of thumb, our implementation solves only the fewest-index variables between each search for new dependencies. Additionally, we add low-index factors of new variables even if they were not directly involved in earlier equations. In our tests, this prioritization method greatly speeds up the calculation.</p>
+<p>Certain constraints can multiply the prefactors of some variables in such a way that the prefactors can exceed the integer limit if enough of these constraints are applied. For example, the constraint <italic>x</italic><sub>1</sub> &#x003D; <italic>x</italic><sub>2</sub> &#x002B; <italic>x</italic><sub>3</sub> takes <italic>x</italic><sub>123</sub> &#x2192; 2<italic>x</italic><sub>123</sub>. Typically the variable being multiplied would be found to be zero later in the calculation, so having a coefficient of 2 is not an error in the math, but it can make calculations impractical if the doubling happens repeatedly and the coefficient becomes very large. Our solution is to require the right-hand side <italic>R</italic> of the constraint equation to be binary when the left-hand side <italic>L</italic> is binary, implying that R<sup>2</sup> &#x2013; R &#x003D; 0 (see <xref ref-type="app" rid="app2">Appendix 2</xref>). This &#x2018;corollary constraint&#x2019; slows the calculation so we only use it with small constraint equations or equations containing many subscripts.</p>
+<p>To avoid rounding errors we perform most calculations using rational arithmetic, where each number <italic>a/b</italic> is represented using a pair of integers (<italic>a, b</italic>). However the singular values calculations (used to find fast-decaying modes) require real arithmetic, and we currently require the use of a rational approximation function to convert these realvalued singular values into fractions.</p>
+<p>Our product basis has the property that any product of variables is itself a variable in the basis, so that polynomials need never contain products of these variables. In the product basis, multiplication is interpreted as a <italic>union</italic> operation on the indices of the variables being multiplied. To place these rules in a mathematical context, this algebra is a commutative ring with an idempotent multiplication (<italic>x</italic><sub>i</sub><sup>2</sup> &#x003D; <italic>x<sub>i</sub></italic>).</p>
+</sec>
+</sec>
+</sec>
+<sec id="s3">
+<title>Discussion</title>
+<p>Our product-basis method allows the simulation of highly heterogeneous populations, including the transient processes that are generally ignored by analytic methods, as well as the steady states and limit cycles. This approach can be used to follow single variables of the system over time, as well as the correlations between these variables that are both necessary and sufficient to fully describe the dynamics of the population. It can account for the affect of mutations as well as variability in network state throughout the population, and can exactly model very rare occurrences or subpopulations. Our approach can be applied to simulate large populations of practically any sort of Boolean networks. An extension of the method allows the set of equations to be simplified while still capturing the long-term behavior.</p>
+<p>The advance in our method is to write the time-evolution equations as a linear system, but in a different basis than the usual state space basis. Our variables have several advantages. First, descriptors of a mixed population naturally use words that correspond more closely to our variables than to individual states. For example, we might specify that half the population starts with both genes <italic>A</italic> and <italic>B</italic> on, which implies that <italic>x<sub>AB</sub></italic> &#x003D; 0.5 but is agnostic about the state of other variables. Another advantage is that our equations often close using relatively few of our product variables for any mixed population, whereas the number of equations required in the state space basis scales with the heterogeneity of the population: the simulations we showed in <xref ref-type="fig" rid="fig1">Figure 1</xref> would require all 2<sup>40</sup> state space variables. Thus our choice of variables is superior for modeling very heterogeneous populations. Finally, our basis allows some variables to factorize others, allowing us to vastly simplify the calculation in many cases where we only care about the long-term behavior.</p>
+<p>We acknowledge that our method can become intractable for complicated networks due to the fact that the construction of these simulations is potentially an exponential problem. A full simulation can require up to <italic>2<sup>N</sup></italic> equations to model, and even the attractor analysis is known to be NP-hard [<xref ref-type="bibr" rid="c27">27</xref>]. Large size, complicated logic rules and certain types of feedback loop in particular seem to make the analysis difficult. These are fundamental limitations. However, the attractor analysis depends on an equation-reduction scheme that is somewhat of an art, and we anticipate that future work will greatly improve this part of the calculation for typical network models.</p>
+<p>Our method can be applied to any system involving heterogeneous populations, as long as the individuals in a population can be modeled using Boolean logic. Heterogeneity plays a major role in such varied systems as healthy and cancerous tissues, evolution at the organism scale, and the social dynamics of unique individuals [<xref ref-type="bibr" rid="c28">28</xref>]. In all of these cases, rare and unexpected dynamics are difficult to capture by simulations of individuals, while pure attractor analyses may miss important aspects of the dynamics. We believe that the methodology outlined here can help to capture these important but rare events.</p>
+</sec>
+</body>
+<back>
+<app-group>
+<title>Appendices</title>
+<app id="app1">
+<label>Appendix 1:</label>
+<title>correlation variables form a complete and independent basis</title>
+<p>For N Boolean variables there are 2<sup><italic>N</italic></sup> variables in the state space basis (<italic>b</italic> variables): this is just the number of states of the system. Likewise there are 2<sup><italic>N</italic></sup> variables in the product space basis (<italic>x</italic> variables) because there are 2<sup><italic>N</italic></sup> combinations of subscripts on these variables: each of <italic>N</italic> subscripts may be present or absent. Therefore the two spaces have the same number of variables, but this does not prove that the product-basis spans the entire Boolean space. In order to show that the <italic>x</italic>-variables form a complete basis in <italic>b</italic>-space, we imagine explicitly writing the transformation matrix from <italic>b</italic>-space to <italic>x</italic>-space. For example, for the case of three Boolean variables this matrix is:
+<disp-formula id="eqn36">
+<alternatives><graphic xlink:href="110817_eqn36.gif"/></alternatives></disp-formula>
+The transformation matrix is upper-triangular, with ones on the diagonal. The reason is that each <italic>x</italic>-variable is turned on by the <italic>b</italic>-variable having the same indices (hence the ones along the diagonal), and by any <italic>b-</italic> variables containing additional indices implying a higher position in the matrix (since the indices are arranged in binary order of their subscripts); however an <italic>x</italic>-variable is never turned on by a <italic>b</italic>-variable that is <italic>missing</italic> one of its indices, which is why the lower triangular block is empty. Since the matrix is triangular the eigenvalues are the ones on the diagonal, so the determinant is one, the transformation is non-degenerate (and volume-preserving) and therefore the <italic>x</italic>-space spans the <italic>b</italic>-space.</p>
+</app>
+<app id="app2">
+<label>Appendix 2:</label>
+<title>the corollary constraint</title>
+<p>Our starting equations are guaranteed to give <italic>f<sub>i</sub></italic>&#x003D; (0,1) for any possible state where all of the <italic>x<sub>i</sub></italic> are also 0 or 1, simply because the equations must work for every state of a single Boolean network. However, once we have applied constraint equations this is no longer true: certain combinations of the <italic>x<sub>i</sub></italic> forbidden by the constraint can lead to non-Boolean values for certain <italic>f<sub>i</sub></italic>. This can give us additional constraints.</p>
+<p>Each constraint begins with a degeneracy of the form
+<disp-formula id="eqn37">
+<alternatives><graphic xlink:href="110817_eqn37.gif"/></alternatives></disp-formula>
+where <italic>x<sub>a</sub></italic>, <italic>x<sub>b</sub></italic>, etc. each are variables having different combinations of indices (for example, <italic>x<sub>a</sub></italic> might be <italic>x<sub>BFJL</sub></italic>). From this degeneracy we get up to <italic>n</italic> constraints of the form
+<disp-formula id="eqn38">
+<alternatives><graphic xlink:href="110817_eqn38.gif"/></alternatives></disp-formula>
+Any instance of a variable <italic>x<sub>i</sub></italic>, or any variable <italic>x</italic>&#x2026;<italic>i</italic>&#x2026; of which <italic>x<sub>i</sub></italic> is a factor, will be multiplied by this polynomial to enforce the constraint.</p>
+<p>It turns out that each constraint may imply a set of &#x2018;corollary&#x2019; constraints that must hold in order for the constraint variable x&#x002A; to be Boolean. For example, if the constraint is <italic>x<sub>i</sub></italic> &#x003D; <italic>x<sub>i</sub></italic> &#x002B; <italic>x</italic><sub>2</sub> then our corollary is that <italic>x</italic><sub>12</sub> &#x003D; 0; otherwise <italic>x<sub>i</sub></italic> could become 2, which is impossible. To get the corollary constraints we require that each constraint variable <italic>x<sub>i</sub></italic> obey <italic>x<sub>i</sub></italic><sup>2</sup> &#x2013; <italic>x<sub>i</sub></italic> &#x003D; 0. Applied to the right-hand side of the constraint equation, our constraint implies that
+<disp-formula id="eqn39">
+<alternatives><graphic xlink:href="110817_eqn39.gif"/></alternatives></disp-formula>
+(Here <italic>x<sub>jk</sub></italic> is the variable having the subscripts of both <italic>x<sub>j</sub></italic> and <italic>x<sub>k</sub></italic>: in other words <italic>x<sub>jk</sub></italic> &#x003D; <italic>x<sub>j</sub></italic>&#x00B7;<italic>x<sub>k</sub></italic>.) To simplify, we note that our original degeneracy also implies that
+<disp-formula id="eqn40">
+<alternatives><graphic xlink:href="110817_eqn40.gif"/></alternatives></disp-formula>
+which we use to constrain <italic>x<sub>j</sub></italic>. Multiplying by <italic>c<sub>i</sub></italic>:
+<disp-formula id="eqn41">
+<alternatives><graphic xlink:href="110817_eqn41.gif"/></alternatives></disp-formula>
+where in the last step the double-summation ranges only over unique pairs&#x007C; of indices <italic>j</italic> and <italic>k</italic>.</p>
+</app>
+<app id="app3">
+<label>Appendix 3:</label>
+<title>algorithm and code</title>
+<p>Pseudocode is given in Algorithm 1. The full code is available at: <ext-link ext-link-type="uri" xlink:href="https://github.com/heltilda/ProBaBool">https://github.com/heltilda/ProBaBool</ext-link>.</p>
+</app>
+</app-group>
+<sec>
+<label>Algorithm 1</label>
+<title>build closed system of equations <italic>F</italic></title>
+<preformat preformat-type="dialog">
+1: Initialize set of unsolved variables with variables of interest: <italic>X &#x2190;</italic> &#x007B;<italic>x</italic><sub>1</sub>,<italic>x</italic><sub>2</sub>, <italic>&#x2026;</italic>,<italic>x<sub>n</sub></italic>&#x007D;
+2: Initialize set of update rules for variables <italic>X</italic>: F &#x2190; &#x2205;
+3: Initialize set of constraints: <italic>C</italic> &#x2190; &#x2205;
+4: Initialize simulation start time: <italic>t<sub>sim</sub> &#x2190;</italic> 1
+5: Initialize set of equation start times of &#x007C;<italic>F</italic>: <italic>T<sub>F</sub> &#x2190;</italic> &#x2205;
+6: Initialize set of constraint start times: <italic>T<sub>C</sub></italic> &#x2190; &#x2205;
+7: <bold>while <italic>X</italic></bold> is not empty <bold>do</bold>
+8:   &#x0025; Reduce equations if necessary
+9:   <bold>if</bold> <italic>size</italic>(<italic>F</italic>) &#x003E; <italic>equation_reduction_threshold</italic> <bold>then</bold>
+10:       <inline-formula><alternatives><inline-graphic xlink:href="110817_inline6.gif"/></alternatives></inline-formula>
+11:       <italic>D &#x2190;</italic> set of linear-dependencies within <inline-formula><alternatives><inline-graphic xlink:href="110817_inline7.gif"/></alternatives></inline-formula> using SVD/QR factorizing
+12:       <bold>if</bold> no linear dependencies found <bold>and</bold> <italic>size</italic> <inline-formula><alternatives><inline-graphic xlink:href="110817_inline8.gif"/></alternatives></inline-formula> <bold>then</bold>
+13:         <italic>D &#x2190;</italic> set of linear-dependencies within <italic>F</italic> using SVD/QR factorizing
+14:         <bold>if</bold> linear dependencies found <bold>then</bold>
+15:           <italic>t<sub>sim</sub></italic> &#x2190; <italic>t<sub>sim</sub></italic> &#x002B; 1
+16:         <bold>end if</bold>
+17:       <bold>end if</bold>
+18:       <bold>for</bold> each <italic>d<sub>i</sub></italic> &#x2208; <italic>D</italic> <bold>do</bold>
+19:           NewConstraints(<italic>d<sub>i</sub></italic>, <italic>t<sub>sim</sub></italic>)
+20:       <bold>end for</bold>
+21:       Sort <italic>C</italic> by number of indices
+22:       <italic>F &#x2190;</italic> Constrain(<italic>F</italic>, 1)
+23:       <italic>X &#x2190; X</italic> &#x22C3; lowest-index factors of <italic>X</italic>
+24:       <italic>F &#x2190;</italic> Constrain(<italic>F</italic>, 1)
+25:       Sort <italic>X</italic> by number of indices
+26:    <bold>end if</bold>
+27:    &#x0025; Add new equations
+28:    <bold>for</bold> each <italic>x<sub>i</sub></italic> &#x2208; <italic>X</italic> <bold>do</bold>
+29:       <italic>f<sub>i</sub></italic>&#x2190;1
+30:       <bold>for</bold> each Boolean factor <italic>x<sub>b</sub></italic> of <italic>x<sub>i</sub></italic> <bold>do</bold>
+31:           <italic>f<sub>i</sub></italic> &#x2190; <italic>f<sub>i</sub></italic> &#x00B7; <italic>f<sub>b</sub></italic>
+32:       <bold>end for</bold>
+33:       <italic>F &#x2190; F</italic> &#x22C3; <italic>fi</italic>
+34:       <italic>F</italic> &#x2190; Constrain(<italic>F</italic>, 1)
+35:    <bold>end for</bold>
+36: <bold>end while</bold>
+37: <bold>function</bold> NEWCONSTRAINTS(<italic>d</italic>, <italic>t<sub>c</sub></italic>)
+38:    <bold>for</bold> each <italic>x<sub>j</sub></italic> &#x2208; <italic>d</italic> <bold>do</bold>
+39:      <italic>RHS<sub>j</sub> &#x2190;</italic> solve (<italic>d</italic> &#x003D; 0) for <italic>x<sub>j</sub></italic>
+40:      <bold>if</bold> &#x007B;<italic>x<sub>j</sub></italic>&#x007D; &#x2260; Constrain (&#x007B;<italic>RHS<sub>j</sub></italic>&#x007D;,<italic>t<sub>c</sub></italic>)[<xref ref-type="bibr" rid="c1">1</xref>] <bold>then</bold>
+41:       NewConstraints(<inline-formula><alternatives><inline-graphic xlink:href="110817_inline9.gif"/></alternatives></inline-formula>)
+42:       <bold>for</bold> each <italic>x<sub>k</sub></italic> &#x003D; multiples of <italic>x<sub>j</sub></italic> <bold>do</bold>
+43:         <italic>X<sub>new</sub></italic> &#x2190; new terms in <italic>x<sub>k</sub></italic> &#x00B7; <italic>RHS<sub>k</sub></italic>
+44:         <italic>X</italic> &#x2190; <italic>X</italic> &#x22C3; <italic>X<sub>new</sub></italic>
+45:         <italic>A &#x2190;</italic> &#x007B;<italic>a<sub>l</sub></italic> &#x003D; coefficients of <italic>x<sub>k</sub></italic> in <italic>F</italic>&#x007D;
+46:         <italic>F</italic> &#x2190; <italic>F</italic> &#x002B; <italic>A</italic>&#x00B7;(<italic>RHS<sub>k</sub> &#x2014; x<sub>k</sub></italic>)
+47:         (<italic>t<sub>f</sub></italic><sub>l</sub> for all <italic>l</italic> such that <italic>a<sub>l</sub></italic> &#x003D; 0) &#x2190; <italic>t<sub>c</sub></italic>
+48:       <bold>end for</bold>
+49:       <bold>for</bold> each prior constraint (<italic>x<sub>p</sub></italic> &#x003D; <italic>RHS<sub>p</sub></italic>) <bold>do</bold>
+50:         <bold>if</bold> <italic>x<sub>p</sub></italic> is factorized by <italic>x<sub>j</sub></italic> <bold>and</bold> <italic>x<sub>p</sub></italic>&#x00B7;<italic>RHS<sub>j</sub></italic> &#x003D; <italic>RHS<sub>p</sub></italic> <bold>then</bold>
+51:           C &#x2190; <italic>C &#x2013;</italic> &#x007B;<italic>c<sub>p</sub></italic>&#x007D;
+52:         <bold>end if</bold>
+53:       <bold>end for</bold>
+54:       <italic>C</italic> &#x2190; <italic>C</italic> &#x22C3; &#x007B;<italic>x<sub>j</sub></italic> &#x003D; <italic>RHS<sub>j</sub></italic>&#x007D;
+55:     <bold>end if</bold>
+56:   <bold>end for</bold>
+57: <bold>end function</bold>
+58: <bold>function</bold> CONSTRAIN(<italic>Polys</italic>, <italic>t<sub>c</sub></italic>)
+59:   <bold>for</bold> each <italic>poly<sub>i</sub> &#x2208; Polys</italic> <bold>do</bold>
+60:     <bold>for</bold> each unconstrained variable <italic>x<sub>j</sub></italic> with coefficient <italic>a<sub>j</sub></italic> in <italic>poly<sub>i</sub></italic> <bold>do</bold>
+61:      <bold>for</bold> each constraint <italic>x<sub>p</sub></italic> &#x003D; <italic>RHS<sub>p</sub></italic> <bold>do</bold>
+62:       <bold>if</bold> <italic>x<sub>j</sub></italic> is factorized by <italic>x<sub>p</sub></italic> <bold>then</bold>
+63:        <italic>poly<sub>new</sub></italic> &#x2190; <italic>x<sub>j</sub></italic>&#x00B7;<italic>RHS<sub>p</sub></italic>
+64:        <bold>if</bold> <italic>x<sub>j</sub></italic> &#x2284; <italic>poly<sub>new</sub></italic> <bold>then</bold>
+65:          <italic>poly<sub>i</sub> &#x2190;</italic> (<italic>poly<sub>i</sub></italic> &#x2013; <italic>a<sub>j</sub>&#x00B7;x<sub>j</sub></italic>) &#x2284; <italic>poly<sub>new</sub></italic>
+66:          <italic>t<sub>f<sub>i</sub></sub></italic> &#x2190;<italic>t<sub>c</sub></italic>
+67:        <bold>end if</bold>
+68:       <bold>end if</bold>
+69:      <bold>end for</bold>
+70:    <bold>end for</bold>
+71:   <bold>end for</bold>
+72:  <bold>return</bold> <italic>Polys</italic>
+73: <bold>end function</bold>
+</preformat>
+</sec>
+<ack>
+<title>Acknowledgments</title>
+<p>This work is supported by the Boettcher Foundation (J.C.) and NIH grant 2T15LM009451 (B.R.).</p>
+</ack>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>[1]</label><mixed-citation publication-type="journal"><string-name><given-names>Istv&#x00E1;n</given-names> <surname>Albert</surname></string-name> <etal>et al.</etal> &#x201C;<article-title>Boolean network simulations for life scientists</article-title>&#x201D;. <source>Source code for biology and medicine</source> <volume>3.1</volume> (<year>2008</year>), p. <fpage>16</fpage>.</mixed-citation></ref>
+<ref id="c2"><label>[2]</label><mixed-citation publication-type="journal"><string-name><given-names>David J</given-names> <surname>Earl</surname></string-name> and <string-name><given-names>Michael W</given-names> <surname>Deem</surname></string-name>. &#x201C;<article-title>Monte Carlo simulations</article-title>&#x201D;. <source>Molecular modeling of proteins</source> (<year>2008</year>), pp. <fpage>25</fpage>&#x2013;<lpage>36</lpage>.</mixed-citation></ref>
+<ref id="c3"><label>[3]</label><mixed-citation publication-type="journal"><string-name><given-names>Jonathan R</given-names> <surname>Karr</surname></string-name> <etal>et al.</etal> &#x201C;<article-title>A whole-cell computational model predicts phenotype from genotype</article-title>&#x201D;. <source>Cell</source> <volume>150.2</volume> (<year>2012</year>), pp. <fpage>389</fpage>&#x2013;<lpage>401</lpage>.</mixed-citation></ref>
+<ref id="c4"><label>[4]</label><mixed-citation publication-type="journal"><string-name><given-names>Akshata R</given-names> <surname>Udyavar</surname></string-name> <etal>et al.</etal> &#x201C;<article-title>Novel hybrid phenotype revealed in Small Cell Lung Cancer by a transcription factor network model that can explain tumor heterogeneity</article-title>&#x201D;. <source>Cancer Research</source> (<year>2016</year>), can res&#x2013;<fpage>1467</fpage>.</mixed-citation></ref>
+<ref id="c5"><label>[5]</label><mixed-citation publication-type="journal"><string-name><given-names>Li</given-names> <surname>Ding</surname></string-name> <etal>et al.</etal> &#x201C;<article-title>Clonal evolution in relapsed acute myeloid leukaemia revealed by whole-genome sequencing</article-title>&#x201D;. <source>Nature</source> <volume>481.7382</volume> (<year>2012</year>), pp. <fpage>506</fpage>&#x2013;<lpage>510</lpage>.</mixed-citation></ref>
+<ref id="c6"><label>[6]</label><mixed-citation publication-type="journal"><string-name><given-names>Ash A</given-names> <surname>Alizadeh</surname></string-name> <etal>et al.</etal> &#x201C;<article-title>Toward understanding and exploiting tumor heterogeneity</article-title>&#x201D;. <source>Nature medicine</source> <volume>21.8</volume> (<year>2015</year>), pp. <fpage>846</fpage>&#x2013;<lpage>853</lpage>.</mixed-citation></ref>
+<ref id="c7"><label>[7]</label><mixed-citation publication-type="journal"><string-name><given-names>Brett E</given-names> <surname>Johnson</surname></string-name> <etal>et al.</etal> &#x201C;<article-title>Mutational analysis reveals the origin and therapy-driven evolution of recurrent glioma</article-title>&#x201D;. <source>Science</source> <volume>343.6167</volume> (<year>2014</year>), pp. <fpage>189</fpage>&#x2013;<lpage>193</lpage>.</mixed-citation></ref>
+<ref id="c8"><label>[8]</label><mixed-citation publication-type="book"><string-name><given-names>Jun S</given-names> <surname>Liu</surname></string-name>. <source>Monte Carlo strategies in scientific computing</source>. <publisher-name>Springer Science &#x0026; Business Media</publisher-name>, <year>2008</year>.</mixed-citation></ref>
+<ref id="c9"><label>[9]</label><mixed-citation publication-type="journal"><string-name><given-names>Jorge GT</given-names> <surname>Za&#x00F1;udo</surname></string-name> and <string-name><given-names>R&#x00E9;ka</given-names> <surname>Albert</surname></string-name>. &#x201C;<article-title>An effective network reduction approach to find the dynamical repertoire of discrete dynamic networks</article-title>&#x201D;. <source>Chaos: An Interdisciplinary Journal of Nonlinear Science</source> <volume>23.2</volume> (<year>2013</year>), p. <fpage>025111</fpage>.</mixed-citation></ref>
+<ref id="c10"><label>[10]</label><mixed-citation publication-type="journal"><string-name><given-names>Alan</given-names> <surname>Veliz-Cuba</surname></string-name> <etal>et al.</etal> &#x201C;<article-title>Steady state analysis of Boolean molecular network models via model reduction and computational algebra</article-title>&#x201D;. <source>BMC bioinformatics</source> <volume>15.1</volume> (<year>2014</year>), p. <fpage>1</fpage>.</mixed-citation></ref>
+<ref id="c11"><label>[11]</label><mixed-citation publication-type="book"><string-name><given-names>Aureli&#x00E9;n</given-names> <surname>Naldi</surname></string-name> <etal>et al.</etal> &#x201C;<chapter-title>A reduction of logical regulatory graphs preserving essential dynamical properties</chapter-title>&#x201D;. <source>International Conference on Computational Methods in Systems Biology</source>. <publisher-name>Springer</publisher-name>. <year>2009</year>, pp. <fpage>266</fpage>&#x2013;<lpage>280</lpage>.</mixed-citation></ref>
+<ref id="c12"><label>[12]</label><mixed-citation publication-type="journal"><string-name><given-names>Stefan</given-names> <surname>Bornholdt</surname></string-name>. &#x201C;<article-title>Boolean network models of cellular regulation: prospects and limitations</article-title>&#x201D;. <source>Journal of the Royal Society Interface</source> <volume>5</volume>.Suppl <issue>1</issue> (<year>2008</year>), <fpage>S85</fpage>&#x2013;<lpage>S94</lpage>.</mixed-citation></ref>
+<ref id="c13"><label>[13]</label><mixed-citation publication-type="journal"><string-name><given-names>Takeyuki</given-names> <surname>Tamura</surname></string-name> and <string-name><given-names>Tatsuya</given-names> <surname>Akutsu</surname></string-name>. &#x201C;<article-title>Detecting a singleton attractor in a Boolean network utilizing SAT algorithms</article-title>&#x201D;. <source>IEICE Transactions on Fundamentals of Electronics, Communications and Computer Sciences</source> <volume>92.2</volume> (<year>2009</year>), pp. <fpage>493</fpage>&#x2013;<lpage>501</lpage>.</mixed-citation></ref>
+<ref id="c14"><label>[14]</label><mixed-citation publication-type="journal"><string-name><given-names>Elena</given-names> <surname>Dubrova</surname></string-name> and <string-name><given-names>Maxim</given-names> <surname>Teslenko</surname></string-name>. &#x201C;<article-title>A SAT-based algorithm for finding attractors in synchronous boolean networks</article-title>&#x201D;. <source>IEEE/ACM transactions on computational biology and bioinformatics</source> <volume>8.5</volume> (<year>2011</year>), pp. <fpage>1393</fpage>&#x2013;<lpage>1399</lpage>.</mixed-citation></ref>
+<ref id="c15"><label>[15]</label><mixed-citation publication-type="journal"><string-name><given-names>Desheng</given-names> <surname>Zheng</surname></string-name> <etal>et al.</etal> &#x201C;<article-title>An efficient algorithm for computing attractors of synchronous and asynchronous Boolean networks</article-title>&#x201D;. <source>PloS one</source> <volume>8.4</volume> (<year>2013</year>), <fpage>e60593</fpage>.</mixed-citation></ref>
+<ref id="c16"><label>[16]</label><mixed-citation publication-type="journal"><string-name><given-names>Abhishek</given-names> <surname>Garg</surname></string-name> <etal>et al.</etal> &#x201C;<article-title>Synchronous versus asynchronous modeling of gene regulatory networks</article-title>&#x201D;. <source>Bioinformatics</source> <volume>24.17</volume> (<year>2008</year>), pp. <fpage>1917</fpage>&#x2013;<lpage>1925</lpage>.</mixed-citation></ref>
+<ref id="c17"><label>[17]</label><mixed-citation publication-type="journal"><string-name><given-names>Alan</given-names> <surname>Veliz-Cuba</surname></string-name>. &#x201C;<article-title>Reduction of Boolean network models</article-title>&#x201D;. <source>Journal of theoretical biology</source> <volume>289</volume> (<year>2011</year>), pp. <fpage>167</fpage>&#x2013;<lpage>172</lpage>.</mixed-citation></ref>
+<ref id="c18"><label>[18]</label><mixed-citation publication-type="journal"><string-name><given-names>Alan</given-names> <surname>Veliz-Cuba</surname></string-name>, <string-name><given-names>Abdul Salam</given-names> <surname>Jarrah</surname></string-name>, and <string-name><given-names>Reinhard</given-names> <surname>Laubenbacher</surname></string-name>. &#x201C;<article-title>Polynomial algebra of discrete models in systems biology</article-title>&#x201D;. <source>Bioinformatics</source> <volume>26.13</volume> (<year>2010</year>), pp. <fpage>1637</fpage>&#x2013;<lpage>1643</lpage>.</mixed-citation></ref>
+<ref id="c19"><label>[19]</label><mixed-citation publication-type="journal"><string-name><given-names>Vincent</given-names> <surname>Devloo</surname></string-name>, <string-name><given-names>Pierre</given-names> <surname>Hansen</surname></string-name>, and <string-name><given-names>Martine</given-names> <surname>Labb&#x00E9;</surname></string-name>. &#x201C;<article-title>Identification of all steady states in large networks by logical analysis</article-title>&#x201D;. <source>Bulletin of mathematical biology</source> <volume>65.6</volume> (<year>2003</year>), pp. <fpage>1025</fpage>&#x2013;<lpage>1051</lpage>.</mixed-citation></ref>
+<ref id="c20"><label>[20]</label><mixed-citation publication-type="book"><string-name><given-names>Aurelien</given-names> <surname>Naldi</surname></string-name>, <string-name><given-names>Denis</given-names> <surname>Thieffry</surname></string-name>, and <string-name><given-names>Claudine</given-names> <surname>Chaouiya</surname></string-name>. &#x201C;<chapter-title>Decision diagrams for the representation and analysis of logical models of genetic networks</chapter-title>&#x201D;. <source>International Conference on Computational Methods in Systems Biology</source>. <publisher-name>Springer</publisher-name>. <volume>2007</volume>, pp. <fpage>233</fpage>&#x2013;<lpage>247</lpage>.</mixed-citation></ref>
+<ref id="c21"><label>[21]</label><mixed-citation publication-type="journal"><string-name><given-names>Ilya</given-names> <surname>Shmulevich</surname></string-name> <etal>et al.</etal> &#x201C;<article-title>Probabilistic Boolean networks: a rule-based uncertainty model for gene regulatory networks</article-title>&#x201D;. <source>Bioinformatics</source> <volume>18.2</volume> (<year>2002</year>), pp. <fpage>261</fpage>&#x2013;<lpage>274</lpage>.</mixed-citation></ref>
+<ref id="c22"><label>[22]</label><mixed-citation publication-type="journal"><string-name><given-names>Roberto</given-names> <surname>Serra</surname></string-name>, <string-name><given-names>Marco</given-names> <surname>Villani</surname></string-name>, and <string-name><given-names>Anna</given-names> <surname>Salvemini</surname></string-name>. &#x201C;<article-title>Continuous genetic networks</article-title>&#x201D;. <source>Parallel computing</source> <volume>27.5</volume> (<year>2001</year>), pp. <fpage>663</fpage>&#x2013;<lpage>683</lpage>.</mixed-citation></ref>
+<ref id="c23"><label>[23]</label><mixed-citation publication-type="journal"><string-name><given-names>Steffen</given-names> <surname>Klamt</surname></string-name> <etal>et al.</etal> &#x201C;<article-title>A methodology for the structural and functional analysis of signaling and regulatory networks</article-title>&#x201D;. <source>BMC bioinformatics</source> <volume>7.1</volume> (<year>2006</year>), p. <fpage>56</fpage>.</mixed-citation></ref>
+<ref id="c24"><label>[24]</label><mixed-citation publication-type="journal"><string-name><given-names>Michael</given-names> <surname>Lynch</surname></string-name>. &#x201C;<article-title>Rate, molecular spectrum, and consequences of human mutation</article-title>&#x201D;. <source>Proceedings of the National Academy of Sciences</source> <volume>107.3</volume> (<year>2010</year>), pp. <fpage>961</fpage>&#x2013;<lpage>968</lpage>.</mixed-citation></ref>
+<ref id="c25"><label>[25]</label><mixed-citation publication-type="journal"><string-name><given-names>Panuwat</given-names> <surname>Trairatphisan</surname></string-name> <etal>et al.</etal> &#x201C;<article-title>Recent development and biomedical applications of probabilistic Boolean networks</article-title>&#x201D;. <source>Cell communication and signaling</source> <volume>11.1</volume> (<year>2013</year>), p. <fpage>46</fpage>.</mixed-citation></ref>
+<ref id="c26"><label>[26]</label><mixed-citation publication-type="journal"><string-name><given-names>Ilya</given-names> <surname>Shmulevich</surname></string-name> and <string-name><given-names>John D</given-names> <surname>Aitchison</surname></string-name>. &#x201C;<article-title>Deterministic and stochastic models of genetic regulatory networks</article-title>&#x201D;. <source>Methods in enzymology</source> <volume>467</volume> (<year>2009</year>), pp. <fpage>335</fpage>&#x2013;<lpage>356</lpage>.</mixed-citation></ref>
+<ref id="c27"><label>[27]</label><mixed-citation publication-type="journal"><string-name><given-names>Qianchuan</given-names> <surname>Zhao</surname></string-name>. &#x201C;<article-title>A remark on &#x201C;Scalar equations for synchronous Boolean networks with biological Applications&#x201D; by C. Farrow, J. Heidel, J. Maloney, and J. Rogers</article-title>&#x201D;. <source>IEEE Transactions on Neural Networks</source> <volume>16.6</volume> (<year>2005</year>), pp. <fpage>1715</fpage>&#x2013;<lpage>1716</lpage>.</mixed-citation></ref>
+<ref id="c28"><label>[28]</label><mixed-citation publication-type="book"><string-name><given-names>Jurek</given-names> <surname>Kolasa</surname></string-name> and <string-name><given-names>C David</given-names> <surname>Rollo</surname></string-name>. &#x201C;<chapter-title>Introduction: the heterogeneity of heterogeneity: a glossary</chapter-title>&#x201D;. <source>Ecological heterogeneity</source>. <publisher-name>Springer</publisher-name>, <year>1991</year>, pp. <fpage>1</fpage>&#x2013;<lpage>23</lpage>.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

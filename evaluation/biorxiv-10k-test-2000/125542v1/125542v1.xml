@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/125542</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Describing the Local Structure of Sequence Graphs</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author" corresp="no">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0002-3870-2169</contrib-id>
+<name>
+<surname>Rosen</surname>
+<given-names>Yohei</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<contrib contrib-type="author" corresp="no">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0001-8345-8356</contrib-id>
+<name>
+<surname>Eizenga</surname>
+<given-names>Jordan</given-names>
+</name>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<contrib contrib-type="author" corresp="no">
+<name>
+<surname>Paten</surname>
+<given-names>Benedict</given-names>
+</name>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>New York University School of Medicine</institution>, 550 1st Avenue, New York, NY 10016, United States <email>yohei.rosen@nyumc.org</email></aff>
+<aff id="a2"><label>2</label><institution>University of California Santa Cruz Genomics Institute</institution>, 1156 High Street, Mailstop CBSE, Santa Cruz, CA 95064, <country>United States</country> <email>benedict@soe.ucsc.edu</email></aff>
+</contrib-group>
+<pub-date pub-type="epub">
+<year>2017</year>
+</pub-date>
+<elocation-id>125542</elocation-id>
+<history>
+<date date-type="received">
+<day>12</day>
+<month>4</month>
+<year>2017</year>
+</date>
+<date date-type="accepted">
+<day>13</day>
+<month>4</month>
+<year>2017</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2017, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2017</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="125542.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>Analysis of genetic variation using graph structures is an emerging paradigm of genomics. However, defining genetic sites on sequence graphs remains an open problem. Paten&#x2019;s invention of the <italic>ultra-bubble</italic> and <italic>snarl</italic>, special subgraphs of sequence graphs which can identified with efficient algorithms, represents important first step to segregating graphs into genetic sites. We extend the theory of ultrabubbles to a special subclass where every detail of the ultrabubble can be described in a series and parallel arrangement of genetic sites. We furthermore introduce the concept of <italic>bundle</italic> structures, which allows us to recognize the graph motifs created by additional combinations of variation in the graph, including but not limited to runs of abutting single nucleotide variants. We demonstrate linear-time identification of bundles in a bidirected graph. These two advances build on initial work on ultrabubbles in bidirected graphs, and define a more granular concept of genetic site.</p>
+</abstract>
+<kwd-group kwd-group-type="author">
+<title>Keywords</title>
+<kwd>Sequence graphs</kwd>
+<kwd>genetic variants</kwd>
+</kwd-group>
+<counts>
+<page-count count="24"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<label>1</label>
+<title>Background</title>
+<p>The concept of the genetic site underpins both classical genetics and modern genomics. From a biological perspective, a site is a position at which mutations have occurred in different samples&#x2019; histories, leading to genetic variation. From an engineering perspective, a site is a subgraph with left and right endpoints where traversals by paths correspond to alleles. This is useful for indexing and querying variants in paths and for describing variants in a consistent and granular manner.</p>
+<p>Against a linear reference, it is trivial to define sites, provided that we disallow variants spanning overlapping positions. This is clearly demonstrated by VCF structure [<xref ref-type="bibr" rid="c1">1</xref>]. VCF sites, consisting of any number of possible alleles, are identified by their endpoints with respect to the linear reference.</p>
+<p>If we wish to analyze a set of variants containing structural variation, highly divergent sequences or nonlinear references structures, then a linear reference with only non-overlapping variants is no longer a sufficient model. Datasets with one or more of these properties are becoming more common [<xref ref-type="bibr" rid="c2">2</xref>, <xref ref-type="bibr" rid="c3">3</xref>], and sequence graphs [<xref ref-type="bibr" rid="c4">4</xref>] have been developed as a method of representing them. However, defining sites on graphs is considerably more difficult than on linear reference structures and the creation of methods to fully decompose sequence graphs into sites remains an unsolved problem.</p>
+</sec>
+<sec id="s2">
+<label>2</label>
+<title>The Challenges of Defining Sites on Graphs</title>
+<p>On a graph-based reference, the linear reference definition of a site as a position along the reference and a set of alleles fails to work for several reasons:
+<list list-type="order">
+<list-item><p>1.Sequences which are at the same location in linear position may not have comparable contexts. This is a consequence of having variants which cannot be represented as edits to the linear reference but rather as edits to another variant. We illustrate this with an example from <italic>1000 Genomes</italic> polymorphism data, visualized using Sequence Tube Maps [<xref ref-type="bibr" rid="c5">5</xref>].</p></list-item>
+<list-item><p>Elements of sequence may not be linearly ordered. Parallel structure of the graph (3.) is one sort of non-linearity. Graphs also allow repetitive, inverted or transposed elements of sequence. These all prevent linear ordering.</p></list-item>
+<list-item><p>The positions spanned by different elements of variation may partially over-lap. Therefore, multiple mutually exclusive segments of sequence in a region of the graph cannot be considered to be alternates to each other at a well-defined position without having to include extraneous sequence that is shared between some but not all of the &#x201C;alleles.&#x201D;</p></list-item>
+</list></p>
+<p>We can expect that the density of these graph structures will increase with increasing population sizes included in datasets.</p>
+<p>Our aim will be to recognize and fully decompose subgraphs resembling Example 1 into a notion of site, and isolate these from elements of the graph resembling Examples 2 and 3.</p>
+</sec>
+<sec id="s3">
+<label>3</label>
+<title>Mathematical Background</title>
+<sec id="s3a">
+<label>3.1</label>
+<title>Directed and Bidirected Sequence Graphs</title>
+<p>The graphs used to represent genetic information consist of labelled nodes and edges. Nodes are labelled with sequence fragments. Edges form paths whose labels spell out allowed sequences. Two types of graph are used.</p>
+<p>The more simple type is the directed graph. A directed graph (or &#x201C;digraph&#x201D;) <italic>G</italic> consists of a set <italic>V</italic> of nodes and a set <italic>E</italic> of directed edges. A directed edge is an ordered tuple (<italic>x, y</italic>), consisting of a <italic>head x</italic> &#x2208; <italic>V</italic> and <italic>tail y</italic> &#x2208; <italic>V</italic>. A directed path is a sequence of nodes joined by edges, followed head to tail. <italic>G</italic> is a <italic>directed acyclic graph</italic> (DAG) if it admits no directed path which revisits any node.</p>
+<p>A bidirected graph <italic>G</italic> [<xref ref-type="bibr" rid="c6">6</xref>] consists of a set <italic>V</italic> of vertices and a set <italic>E</italic> of edges. Each vertex <italic>&#x03C5;</italic> &#x2208;<italic>V</italic> consists of a pair of <italic>node-sides</italic> {<italic>&#x03C5;<sub>left</sub>, &#x03C5;<sub>right</sub></italic>} and each edge is an unordered tuple of node-sides. Bidirected graphs have the advantage of being able to represent inversion events.</p>
+<p>We write <italic>N</italic> for the set of node-sides in the bidirected graph <italic>G</italic>. The <italic>opposite</italic> <inline-formula><alternatives><inline-graphic xlink:href="125542_inline1.gif"/></alternatives></inline-formula> of a node-side <italic>n</italic> is the other node-side at the same vertex as <italic>n</italic>.</p>
+<p>A sequence <italic>p</italic> = <italic>x</italic><sub>1</sub>, <italic>x</italic><sub>2</sub>, &#x2026;, <italic>x<sub>k</sub></italic> of node-sides is a <italic>path</italic> if &#x2200;<italic>x<sub>i</sub></italic>,
+<list list-type="order">
+<list-item><p>if <inline-formula><alternatives><inline-graphic xlink:href="125542_inline2.gif"/></alternatives></inline-formula>, then <inline-formula><alternatives><inline-graphic xlink:href="125542_inline3.gif"/></alternatives></inline-formula>
+</p></list-item>
+<list-item><p>if <inline-formula><alternatives><inline-graphic xlink:href="125542_inline4.gif"/></alternatives></inline-formula>, then &#x007B;<italic>x</italic><sub><italic>i</italic>&#x2212;1</sub>, <italic>x<sub>i</sub></italic>&#x007D; &#x2208; <italic>E</italic></p></list-item>
+<list-item><p>any contiguous subsequence of <italic>p</italic> consisting of a node-side <italic>x</italic> alternating with its opposite <inline-formula><alternatives><inline-graphic xlink:href="125542_inline5.gif"/></alternatives></inline-formula> must either be even-numbered in length or must be a prefix or suffix of <italic>p</italic></p></list-item>
+</list></p>
+<p>Informally, this means that in a path, consecutive pairs forming edges alternate with pairs of opposite node-sides or, equivalently, that paths visit both node-sides of the vertices they pass through. They can however begin or on an isolated node-side.</p>
+<p>A bidirected graph <italic>G</italic> is <italic>cyclic</italic> if it admits a path visiting a node-side twice. Therefore the self-incident hairpin motif (below, right) is considered a cycle. A bidirected graph <italic>G</italic> is <italic>properly cyclic</italic> if it admits a path which visits a pair <inline-formula><alternatives><inline-graphic xlink:href="125542_inline6.gif"/></alternatives></inline-formula> twice in the same order.</p>
+<p>Some publications refer to biedged graphs. These are {<italic>black, grey</italic>}-edge-colored undirected graphs, where every node is paired with precisely one other by sharing a grey edge and paths in the graph must alternate between traversing black and grey edges. Paten elaborates on this construction in [<xref ref-type="bibr" rid="c7">7</xref>] and shows that it is equivalent to a bidirected graph. We will restrict our language to that of bidirected graphs, recognizing that these are equivalent to biedged graphs.</p>
+<p>Acyclic bidirected graphs are structurally equivalent to directed graphs in that</p>
+<statement>
+<label>Lemma 1.</label>
+<p><italic>If G is a bidirected acyclic graph, there exists an isomorphic directed acyclic graph D</italic>(<italic>G</italic>).</p>
+<p><italic>Proof. See [<xref ref-type="bibr" rid="c7">7</xref>]</italic></p>
+</statement>
+</sec>
+<sec id="s3b">
+<label>3.2</label>
+<title>Bubbles, Superbubbles, Ultrabubbles and Snarls</title>
+<p>The first use of local graph structure to identify variation was the detection of <italic>bubbles</italic> [<xref ref-type="bibr" rid="c8">8</xref>] in order to detect and remove sequencing errors from assembly graphs. Their bubble is the graph motif consisting of two paths which share a source and a sink but are disjoint between.</p>
+<p>The general concept of bubbles was extended by Onodera et al, who defined superbubbles in directed graphs [<xref ref-type="bibr" rid="c9">9</xref>]. Brankovic demonstrates an <inline-formula><alternatives><inline-graphic xlink:href="125542_inline7.gif"/></alternatives></inline-formula> algorithm to identify them [<xref ref-type="bibr" rid="c10">10</xref>], building off work of Sung [<xref ref-type="bibr" rid="c11">11</xref>].</p>
+<p>We restate the Onodera definition, modified slightly as to be subgraph-centric rather than boundary-centric: A subgraph <italic>S</italic> &#x2286; <italic>G</italic> of a directed graph is a <italic>super-bubble with boundaries</italic> (<italic>s, t</italic>) if
+<list list-type="order">
+<list-item><p>(reachability) <italic>t</italic> is reachable from <italic>s</italic> by a directed path in <italic>S</italic></p></list-item>
+<list-item><p>(matching) the set of vertices reachable from <italic>s</italic> without passing through <italic>t</italic> is equal to the set of vertices from which <italic>t</italic> is reachable without passing through <italic>s</italic>, and both are equal to <italic>S</italic></p></list-item>
+<list-item><p>(acyclicity) <italic>S</italic> is acyclic</p></list-item>
+<list-item><p>(minimality) there exists no <italic>t</italic>&#x2032; &#x2208; <italic>S</italic> such that boundaries (<italic>s, t</italic>&#x2032;) fulfil 1,2 and 3.There exists no <italic>s</italic>&#x2032; &#x2208; <italic>S</italic> such that (<italic>s</italic>&#x2032;, <italic>t</italic>) fulfil 1,2 and 3.</p></list-item>
+</list></p>
+<p>To motivate our definition of a superbubble equivalent on bidirected graphs, we prove some consequences of the matching property.</p>
+<statement>
+<label>Proposition 2.</label>
+<p><italic>Let S &#x2286; <italic>G</italic> be a subgraph of a directed graph. If S possesses the matching property relative to a pair</italic> (<italic>s,t</italic>), <italic>then it possesses the following three properties:</italic>
+<list list-type="order">
+<list-item><p><italic>(2-node separability) Deletion of all incoming edges of s and all outgoing edges of t disconnects S from the remainder of the graph</italic>.</p></list-item>
+<list-item><p><italic>(tiplessness) There exist no node n</italic> &#x2208; <italic>S</italic>\{<italic>s, t</italic>} <italic>such that n has either only incoming or outgoing edges</italic>.</p></list-item>
+<list-item><p><italic>S is weakly connected</italic></p></list-item>
+</list></p>
+<p><italic>Proof</italic>. (<italic>matching</italic> &#x21D2; <italic>separability</italic>) <italic>Suppose</italic> &#x018E; <italic>x</italic> &#x2209; <italic>S, y</italic> &#x2208; <italic>S</italic>\{<italic>s, t</italic>} <italic>such that there exists either an edge x</italic> &#x2192; <italic>y or an edge y</italic> &#x2192; <italic>x. Suppose wlog that</italic> &#x2203; <italic>an edge x</italic> &#x2192; <italic>y. By matching, there exists a path y</italic> &#x2192; &#x00B7; &#x00B7; &#x00B7; &#x2192; <italic>t without passing through s. We can then construct the path x &#x2192; y</italic> &#x2192; &#x00B7; &#x00B7; &#x00B7; &#x2192; <italic>t which does not pass through s. But by matching this implies that x</italic> &#x2208; <italic>S, which leads to a contradiction</italic>.</p>
+</statement>
+<p>The converse need not be true on directed graphs<sup><xref ref-type="fn" rid="fn1">3</xref></sup>. We define two structures on bidirected graphs. The first is the ultrabubble, which given Proposition 2, can be thought of as an analogue to a superbubble. The second, the snarl, is a more general object which preserves the property of 2-node separability from the larger graph without having strong guarantees on its internal structure. The following definitions are due to Paten [<xref ref-type="bibr" rid="c7">7</xref>]:</p>
+<p>A connected subgraph <italic>S</italic> &#x2286; <italic>G</italic> of a bidirected graph <italic>G</italic> is a <italic>snarl</italic> (<italic>S, s, t</italic>) with boundaries (<italic>s, t</italic>), if
+<list list-type="order">
+<list-item><p><inline-formula><alternatives><inline-graphic xlink:href="125542_inline8.gif"/></alternatives></inline-formula></p></list-item>
+<list-item><p>(2-node separability) every path between a pair of node-sides in <italic>x</italic> &#x2208; <italic>S, y</italic> &#x2208; <italic>G</italic>\<italic>S</italic> contains either <inline-formula><alternatives><inline-graphic xlink:href="125542_inline9.gif"/></alternatives></inline-formula> or <inline-formula><alternatives><inline-graphic xlink:href="125542_inline10.gif"/></alternatives></inline-formula> a subpath.</p></list-item>
+<list-item><p>(minimality) there exists no <italic>t</italic>&#x2032;&#x2208; <italic>S</italic> such that boundaries (<italic>s, t</italic>&#x2032;) fulfil 1 and 2.There exists no <italic>s</italic>&#x2032;&#x2208; <italic>S</italic> such that (<italic>s</italic>&#x2032;, <italic>t</italic>) fulfil 1 and 2</p>
+<p>The class of <italic>ultrabubbles</italic> is the subclass of snarls (<italic>S, s, t</italic>) furthermore fulfilling</p></list-item>
+<list-item><p>4. S is acyclic</p></list-item>
+<list-item><p>S contains no tips &#x2014; vertices having one node-side involved in no edges Three examples of ultrabubbles are shown below.</p></list-item>
+</list></p>
+<p>The following is important property of snarls.</p>
+<statement>
+<label>Proposition 3 (Non-overlapping property).</label>
+<p><italic>If two distinct snarls share a vertex (node-side pair) then either they share a boundary node or one snarl is included in the other&#x2019;s interior</italic>.</p>
+<p><italic>Proof. Let S be a snarl with boundaries s, t. Let T be another snarl, with bound-aries u, &#x03C5;</italic>. <italic>Suppose that u</italic> &#x2208; <italic>S</italic>\{<italic>s,t</italic>} but <italic>&#x03C5;</italic> &#x2209; <italic>S</italic>, and <italic>s</italic> &#x2209; <italic>T</italic>.</p>
+<p><italic>Consider the set <italic>S</italic> &#x2229; <italic>T</italic>. It is nonempty since it contains <italic>u</italic>. Let <italic>x</italic> &#x2208; <italic>S</italic> &#x2229; <italic>T</italic>. Let <italic>y</italic> &#x2209; <italic>S</italic> &#x2229; <italic>T</italic>. Suppose that there exists a path <italic>p</italic> = <italic>x</italic> &#x2194; &#x00B7; &#x00B7; &#x00B7; &#x2194; <italic>y</italic> which neither passes through u nor t</italic>.</p>
+<p><italic>Since y</italic> &#x2209; <italic>S</italic> &#x2229; <italic>T, either y</italic> &#x2209; <italic>S or y</italic> &#x2209; <italic>T. Wlog, assume y</italic> &#x2209; <italic>T. Then due to the separability of T, since the path p does not pass through u, it must pass through v before leaving T to visit y. But v</italic> &#x2209; <italic>S so p must also pass through s before leaving S to visit v since it does not pass through t. But it must pass through v before leaving T to visit s, which leads to an impossible sequence of events. Therefore any path x &#x2194; &#x00B7; &#x00B7; &#x00B7; &#x2194; y</italic> for x <italic>&#x2208;</italic> S <italic>&#x2229;</italic>T, y&#x2209; S<italic>&#x2229; T must pass through either u or t. This contradicts the minimality of both S and T</italic>.</p>
+</statement>
+<p>This non-overlapping property is also a nesting property. Observe that, due to Proposition 3, the relation <italic>U</italic> &#x2264; <italic>&#x03C5;</italic> on snarls <italic>U, V</italic> defined such that <italic>U</italic> &#x2264; <italic>V</italic> if <italic>U</italic> is entirely contained in <italic>V</italic> has the property that if <italic>U</italic> &#x2264; <italic>V</italic> and <italic>U</italic> &#x2264; <italic>W</italic>, then either <italic>V</italic> &#x2264; <italic>W</italic> or <italic>W</italic> &#x2264; <italic>V</italic>. Therefore the partial order on the snarls of <italic>G</italic> defined by the relation &#x2264; will always be equivalent to a tree diagram. A <italic>bottom level</italic> snarl is one which forms a leaf node of this tree.</p>
+<p>The equivalent of Proposition 3 for superbubbles was stated without proof by Onodera in [<xref ref-type="bibr" rid="c9">9</xref>]. Our proof also constitutes a proof of the statement for super-bubbles, due to the following proposition, proven by Paten in [<xref ref-type="bibr" rid="c7">7</xref>]:</p>
+<statement>
+<label>Proposition 4.</label>
+<p><italic>Every superbubble in a directed graph corresponds to an ultra-bubble in the equivalent (see Lemma 1) bidirected graph</italic>.</p>
+</statement>
+<p>Identifying all superbubbles in a directed graph or all snarls in a bidirected graph introduces a method of compartmentalizing a graph into partitions whose contents are all in some sense at the same position in the graph, and for which the possible internal paths are independent of what path they continue on beyond their boundaries. We will use this concept to define sites for certain specialized classes of graphs.</p>
+</sec></sec>
+<sec id="s4">
+<label>4</label>
+<title>Graphs which are Decomposable into Nested Simple Sites</title>
+<p>We will extend the theory of ultrabubbles to a theory of nested sites where the structure of certain graphs can be fully described in terms of combinations of linear orderign and ultrabubble nesting relationships. This is important for
+<list list-type="order">
+<list-item><p>Identifying nested variation</p></list-item>
+<list-item><p>Indexing traversals</p></list-item>
+</list></p>
+<sec id="s4a">
+<label>4.1</label>
+<title>Traversals and Subpaths</title>
+<p>An (<italic>s, t</italic>)-<italic>traversal</italic> of <italic>S</italic> is a path in <italic>S</italic> beginning with <italic>s</italic> and ending with <italic>t</italic>. An (<italic>s, s</italic>)<italic>-traversal</italic> and a (<italic>t</italic>,<italic>t</italic>)-<italic>traversal</italic> are analogously defined. Presence of an (<italic>s, s</italic>)- or (<italic>t, t</italic>)-traversal implies cyclicity. Two traversals of a snarl are <italic>disjoint</italic> if they are disjoint on <italic>S</italic>\{<italic>s</italic>,<italic>t</italic>}.</p>
+<p>Paten&#x2019;s [<xref ref-type="bibr" rid="c7">7</xref>] snarls and ultrabubbles are 2-node separable subgraphs whose paired boundary nodes isolate their traversals from the larger graph. We can state this with more mathematical rigor:</p>
+<p><italic>Claim</italic>. Consider a snarl (<italic>S, s</italic>,<italic>t</italic>) in a bidirected graph <italic>G</italic>. The set of all paths in <italic>G</italic> which contain a single (<italic>s, t</italic>)-traversal as contiguous a subpath is isomorphic to the set-theoretic product <italic>P</italic>(<italic>s</italic>) &#x00D7; <italic>Trav</italic>(<italic>s, t</italic>) &#x00D7; <italic>P</italic>(<italic>t</italic>) consisting of the three sets
+<list list-type="order">
+<list-item><p><italic>P</italic>(<italic>s</italic>) := {paths in <italic>G</italic>\<italic>S</italic> terminating in <inline-formula><alternatives><inline-graphic xlink:href="125542_inline11.gif"/></alternatives></inline-formula>}</p></list-item>
+<list-item><p><italic>Trav</italic>(<italic>s</italic>,<italic>t</italic>) := {(<italic>s, t</italic>)-traversals of <italic>S</italic>}</p></list-item>
+<list-item><p><italic>P</italic>(<italic>t</italic>) := {paths in <italic>G</italic>\<italic>S</italic> beginning <inline-formula><alternatives><inline-graphic xlink:href="125542_inline12.gif"/></alternatives></inline-formula>}</p></list-item>
+</list></p>
+<p>The isomorphism is the function mapping <italic>p</italic><sub>1</sub> &#x2208; <italic>P</italic>(<italic>s</italic>), <italic>p</italic><sub>2</sub> &#x2208; <italic>Trav</italic>(<italic>s</italic>,<italic>t</italic>), <italic>p</italic><sub>3</sub> &#x2208; <italic>P</italic>(<italic>t</italic>) to their concatenation <italic>p</italic><sub>1</sub><italic>p</italic><sub>2</sub><italic>p</italic><sub>3</sub>.</p>
+<p>This property is important because it allows us to express the set of all haplotypes traversing a given linear sequence of snarls in terms of combinations of alleles for which we do not need to check if certain combinations are valid.</p>
+</sec>
+<sec id="s4b">
+<label>4.2</label>
+<title>Simple Bubbles and Nested Simple Bubbles</title>
+<statement>
+<label>Definition 5.</label>
+<p><italic>An ultrabubble</italic> (<italic>S, s, t</italic>) <italic>is a simple bubble if all</italic> (<italic>s, t</italic>)<italic>-traversals are disjoint</italic>.</p>
+</statement>
+<p>Simple bubbles are structurally equivalent to (multiallelic) sites consisting of disjoint substitutions, insertions or deletions, with all alleles spanning the same boundaries.</p>
+<p>Proposition 7 below demonstrates that we can identify simple bubbles in <inline-formula><alternatives><inline-graphic xlink:href="125542_inline13.gif"/></alternatives></inline-formula> time given that we have found all snarl boundaries. Paten has shown [<xref ref-type="bibr" rid="c7">7</xref>] that identification of snarl boundaries is achieved in <inline-formula><alternatives><inline-graphic xlink:href="125542_inline14.gif"/></alternatives></inline-formula> time. To find the ultrabubbles among these, note that checking for acyclicity is <inline-formula><alternatives><inline-graphic xlink:href="125542_inline15.gif"/></alternatives></inline-formula> on account of the unbranching nature of these snarls&#x2019; interiors.</p>
+<p>Given a node-side <italic>n</italic>, write <italic>Nb</italic>(<italic>n</italic>) for the set of all neighbors of <italic>n</italic>. Note that <italic>a</italic> &#x2208; <italic>Nb</italic>(<italic>b</italic>) &#x21D4; <italic>b</italic> &#x2208; <italic>Nb</italic>(<italic>a</italic>).</p>
+<statement>
+<label>Lemma 6 (Nodes in an ultrabubble are orientable with respect to the ultrabubble boundaries).</label>
+<p><italic>Given an ultrabubble</italic> (<italic>S, s, t</italic>) <italic>and given n</italic> &#x2208; <italic>S\</italic>{<italic>s, t</italic>}, <italic>consider the set T of all</italic> (<italic>s,t</italic>)-<italic>traversals of S passing through n. Then either</italic>
+<list list-type="order">
+<list-item><p>&#x2200;<sub><italic>p</italic></sub> <italic>&#x2208; T</italic>, an element of <italic>Nb</italic>(<italic>n</italic>) <italic>precedes n in p</italic></p></list-item>
+<list-item><p>&#x2200;<sub><italic>p</italic></sub> <italic>&#x2208; T, an element of Nb</italic>(<italic>n</italic>) <italic>follows n in p</italic></p></list-item>
+</list></p>
+<p><italic>In the former case we call n s-sided, otherwise we call it t-sided</italic>.</p>
+<p><italic>Proof. This is a corollary to Lemma 1</italic>.</p>
+</statement>
+<statement>
+<label>Proposition 7 (Simple bubbles have unbranching interiors).</label>
+<p><italic>Let</italic> (<italic>S, s, t</italic>) <italic>be an ultrabubble. Then all traversals are disjoint iff every interior node-side has precisely one neighbor</italic>.</p>
+<p><italic>Proof</italic>. (&#x21D2;) <italic>Suppose that all</italic> (<italic>s, t</italic>)-<italic>traversals of S are disjoint. Suppose</italic> &#x018E; <italic>a node-side n</italic> &#x2208; <italic>S<italic>\{</italic>s, t<italic>}</italic> with multiple neighbors</italic>.</p>
+<p><italic>Since n is orientable with respect to</italic> (<italic>s, t</italic>), <italic>suppose, without loss of generality, that it is s-sided. Then there exist distinct paths from s to n passing through each of its neighbors. Continuing these with a path from n<sup>opp</sup> to t produces two nondisjoint traversals of S</italic>.</p>
+<p>(&#x21D0;) <italic>Suppose that every interior node-side has precisely one neighbor. Suppose that there exist two distinct nondisjoint traversals of S. For no node-side to have multiple neighbors, they must coincide at every node-side, contradicting the assumption that they are not the same traversal</italic>.</p>
+</statement>
+<p>We seek to extend this simple property to more complex graph structures. We will take advantage of the nesting of nondisjoint ultrabubbles proven in Proposition 3 to define another structure in which nondisjoint traversals are easily indexed.</p>
+<statement>
+<label>Definition 8.</label>
+<p><italic>An ultrabubble</italic> (<italic>S, s, t</italic>) &#x2286; <italic>G is decomposable into nested simple sites if either</italic>:
+<list list-type="order">
+<list-item><p><italic>S is a simple bubble</italic></p></list-item>
+<list-item><p><italic>if, for every ultrabubble S&#x2032; contained in the interior of S, you replace the ultrabubble with a single edge s &#x2014; t whenever S&#x2032; is decomposable into simple sites, then S becomes a simple bubble</italic></p>
+</list-item>
+</list></p>
+</statement>
+<p>The following figure demonstrates decomposability into nested simple sites.</p>
+<statement>
+<label>Proposition 9.</label>
+<p><italic>If an ultrabubble</italic> (<italic>U, s, t</italic>) <italic>is decomposable into nested simple sites, then the complete node sequence of any</italic> (<italic>s, t</italic>)-<italic>traversal can be determined only by specifying the path it takes inside those nested ultrabubbles within which the traversal does not visit any further nested ultrabubble</italic>.</p>
+<p><italic>Proof. Let p be a</italic> (<italic>s, t</italic>)<italic>-traversal of an ultrabubble U which is decomposable into nested simple sites. Let V be a nested ultrabubble inside U. If p traverses, V, write p|<sub>V</sub> for the traversal p restricted to V</italic></p>
+<p><italic>Suppose that t</italic>|<sub><italic>V</italic></sub> <italic>intersects no nested ultrabubbles within V. Then t</italic>|<sub><italic>V</italic></sub> <italic>is disjoint of all other traversals within V due to U begin decomposable into nested simple sites. Therefore specifying any node of t|V uniquely identifies it</italic>.</p>
+<p><italic>Suppose that t</italic>|<sub><italic>V</italic></sub> <italic>intersects some set of ultrabubbles nested within V. Since U is decomposable into nested simple sites, the nodes of t</italic>|<sub><italic>V</italic></sub> <italic>must be linear and disjoint of all other paths if we replace all ultrabubbles nested in V with edges joining their boundaries. Therefore specifying which ultrabubbles are crossed uniquely determines the nodes included in t</italic>|<sub><italic>V</italic></sub> <italic>which lie outside of the nested ultrabubbles in V</italic>.</p>
+<p><italic>The statement of the proposition follows from the two arguments above by induction</italic>.</p>
+</statement>
+<statement>
+<label>Proposition 10.</label>
+<p><italic>An ultrabubble is decomposable into nested simple sites iff every node side is either the interior ultrabubble boundary or has precisely one neighbor</italic>.</p>
+<p><italic>Proof. This can be established using Proposition 7</italic>.</p>
+</statement>
+<p>This property allows <inline-formula><alternatives><inline-graphic xlink:href="125542_inline16.gif"/></alternatives></inline-formula>evaluation of whether a graph is decomposable into nested simple sites, by arguments analogous to those for simple bubbles.</p>
+</sec>
+<sec id="s4c">
+<label>4.3</label>
+<title>A Partial Taxonomy of Graph Notifs which do not Admit Decomposition into Sites</title>
+<p>In <xref ref-type="sec" rid="s4c">section 4.3</xref>, we will show that we can decompose a graph into nested simple sites as defined in the previous section if it lacks a certain forbidden motif. We will begin with examples of three graph motifs, and the biological events which might produce them.</p>
+<p>We describe some graph features which prevent decomposition into nested sites below, and the sets of mutations which might have produced them.
+<list list-type="order">
+<list-item><p>Two (or more) substitutions or deletions against a linear sequence which overlap, but not completely.</p></list-item>
+<list-item><p>A substitution (or deletion) which spans elements of sequence on the interior of two disjoint ultrabubbles. Addition of such an edge joining two ultrabubbles which were decomposable into nested simple sites will consolidate the two into a single ultrabubble which is not decomposable into nested simple sites.</p></list-item>
+<list-item><p>Two SNVs or other simple elements of variation at adjacent positions. This will be the focus of our Section 5.</p></list-item>
+</list></p>
+</sec>
+<sec id="s4d">
+<label>4.4</label>
+<title>The Relationship Between Nested Simple Sites and Series Parallel Graphs</title>
+<p>The structure of ultrabubbles decomposable into nested simple sites, and their tree representation (see <xref ref-type="fig" rid="fig7">Fig 7</xref>) might be familiar to the graph theorist familiar with series-parallel digraphs. The fact that the digraphs equivalent to ultrabub-bles form a subclass of the two-terminal series-parallel digraphs is interesting due to the computational properties of the latter class of graphs.</p>
+<fig id="fig1" position="float" fig-type="figure">
+<label>Fig.1.</label>
+<caption>
+<p>The context of the single nucleotide variant shown does not exist in all variants spanning its linear position</p>
+</caption>
+<graphic xlink:href="125542_fig1.tif"/>
+</fig>
+<fig id="fig2" position="float" fig-type="figure">
+<label>Fig. 2.</label>
+<caption>
+<p>A cycle and an inversion in a graph</p>
+</caption>
+<graphic xlink:href="125542_fig2.tif"/>
+</fig>
+<fig id="fig3" position="float" fig-type="figure">
+<label>Fig. 3.</label>
+<caption>
+<p>Overlapping deletions, from 1000 Genomes polymorphism data</p>
+</caption>
+<graphic xlink:href="125542_fig3.tif"/>
+</fig>
+<fig id="fig4" position="float" fig-type="figure">
+<label>Fig. 4.</label>
+<caption>
+<p>(A) A directed acyclic graph (B) A cyclic directed graph (C) Graph B represented as a bidirected graph. This cycle is proper. (D) Graph C represented as a biedged graph</p>
+</caption>
+<graphic xlink:href="125542_fig4.tif"/>
+</fig>
+<fig id="fig5" position="float" fig-type="figure">
+<label>Fig. 5.</label>
+<caption>
+<p>(Left) A properly cyclic graph. (Right) The self-incident hairpin motif of a cyclic but not properly cyclic graph</p>
+</caption>
+<graphic xlink:href="125542_fig5.tif"/>
+</fig>
+<fig id="fig6" position="float" fig-type="figure">
+<label>Fig. 6.</label>
+<caption>
+<p>Three ultrabubbles, boundaries colored blue, pink and green. These illustrate the non-overlapping property</p>
+</caption>
+<graphic xlink:href="125542_fig6.tif"/>
+</fig>
+<fig id="fig7" position="float" fig-type="figure">
+<label>Fig. 7.</label>
+<caption>
+<p>The nesting tree diagram of the ultrabubbles from the previous figure. <italic>U</italic><sub>1</sub> and <italic>U</italic><sub>3</sub> are bottom-level</p>
+</caption>
+<graphic xlink:href="125542_fig7.tif"/>
+</fig>
+<statement>
+<label>Definition 11.</label>
+<p><italic>A directed graph G is two-terminal series parallel (<italic>TTSP</italic>) with source s and sink t if either</italic>
+<list list-type="order">
+<list-item><p><italic>G is the two-element graph with a single directed edge s <italic>&#x2192;</italic> t</italic></p></list-item>
+<list-item><p><italic>There exist TTSP graphs G</italic><sub>1</sub>, <italic>G</italic><sub>2</sub> <italic>with sources s</italic><sub>1</sub>, <italic>s</italic><sub>2</sub> and sinks <italic>t</italic><sub>1</sub>, <italic>t</italic><sub>2</sub> <italic>such that G is formed from G</italic><sub>1</sub>, <italic>G</italic><sub>2</sub> <italic>by identification of s</italic><sub>1</sub> <italic>with s</italic><sub>2</sub> <italic>as s and identification of t</italic><sub>1</sub> with <italic>t</italic><sub>2</sub> as <italic>t(Parallel addition)</italic></p></list-item>
+<list-item><p><italic>There exist TTSP graphs G</italic><sub>1</sub>, <italic>G</italic><sub>2</sub> with sources <italic>s</italic><sub>1</sub>, <italic>s</italic><sub>2</sub> and sinks <italic>t</italic><sub>1</sub>, <italic>t</italic><sub>2</sub> <italic>such that G is formed, from G</italic><sub>1</sub>, <italic>G</italic><sub>2</sub> <italic>by identification of <italic>t</italic><sub>1</sub> with <italic>s</italic><sub>2</sub> (Series addition)</italic></p></list-item>
+</list></p>
+</statement>
+<p>Two terminal series parallel digraphs have a useful forbidden subgraph characterization.</p>
+<statement>
+<label>Proposition 12 (From [<xref ref-type="bibr" rid="c12">12</xref>]).</label>
+<p><italic>A directed graph G is two terminal series parallel if and only if it contains no subgraph homeomorphic to the graph W shown below Proof: Refer to Valdes [<xref ref-type="bibr" rid="c12">12</xref>] and Duffin [<xref ref-type="bibr" rid="c13">13</xref>]</italic></p>
+</statement>
+<statement>
+<label>Proposition 13.</label>
+<p><italic>If an ultrabubble</italic> (<italic>U, s, t</italic>) <italic>is decomposable into nested simple sites, then the equivalent directed graph is TTSP with source s and sink t</italic>.</p>
+<p><italic>Proof. Suppose that the directed graph D</italic>(<italic>U</italic>) <italic>equivalent to U (which exists by Lemma 1) contains a subgraph homeomorphic to W. Then there must be a node-side u in U with two neighbours a</italic><sub>1</sub>, <italic>a</italic><sub>2</sub> <italic>which are the beginnings of disjoint paths p</italic><sub>1</sub>, <italic>p</italic><sub>2</sub> <italic>ending on node-sides b</italic><sub>1</sub>, <italic>b</italic><sub>2</sub> <italic>which are neighbours of a node-side v. By Proposition 10, u and v must be ultrabubble boundaries. Since p</italic><sub>1</sub>, <italic>p</italic><sub>2</sub> <italic>are disjoint, u and v must be opposing boundaries of the same ultrabubble. But the presence of a subgraph homeomorphic to W also implies that there exists a pair q</italic><sub>1</sub>, <italic>q</italic><sub>2</sub> <italic>of disjoint paths, one from a node x to</italic> <inline-formula><alternatives><inline-graphic xlink:href="125542_inline17.gif"/></alternatives></inline-formula> <italic>and the other from x to v, both not passing through</italic> <inline-formula><alternatives><inline-graphic xlink:href="125542_inline18.gif"/></alternatives></inline-formula>. <italic>But this is not possible since it would contradict 2-node separability of</italic> (<italic>u, &#x03C5;</italic>).</p>
+</statement>
+<p>We highlight the middle &#x201C;Z-arm&#x201D; of the <italic>W</italic>-motif in our first two examples of ultrabubbles which are not decomposable into nested simple sites.</p>
+</sec>
+</sec>
+<sec id="s5">
+<label>5</label>
+<title>Abutting Variants</title>
+<p>We wish to decompose the graph structure of sets of variants lying at adjacent positions such that there is no conserved sequence between them able to form an ultrabubble boundary. We will define a graph motif called the <italic>balanced recombination bundle</italic> which corresponds this graph structure, and can be rapidly detected.</p>
+<p>We observe examples abutting single nucleotide variants (SNVs) in the 1000 Genomes polymorphism data. It is a reasonable hypothesis that these should become more common as the population sizes of sequencing datasets increases, since, statistically, the distribution of variation across the genome should grow less sparse as the population increases.</p>
+<sec id="s5a">
+<label>5.1</label>
+<title>Bundles</title>
+<statement>
+<label>Definition 14.</label>
+<p><italic>An internal chain n</italic><sub>1</sub> <italic>&#x2192; n</italic><sub>2</sub> &#x2192; &#x00B7; &#x00B7; &#x00B7; &#x2192; <italic>n<sub>k</sub></italic> is a sequence of node-sides such that &#x2200;<italic>i</italic>, 2 &#x2264; <italic>i</italic> &#x2264; <italic>k, n<sub>i</sub></italic> &#x2208; <italic>Nb</italic>(<italic>n</italic><sub><italic>i</italic>&#x2212;1</sub>).</p>
+</statement>
+<statement>
+<label>Definition 15.</label>
+<p><italic>We say that a tuple</italic> (<italic>L, R</italic>) <italic>of sets of node-sides is a bundle if</italic>
+<list list-type="order">
+<list-item><p><italic>(Matching)</italic> &#x2200;<italic>&#x2113;</italic> &#x2208; <italic>L, Nb</italic>(<italic>&#x2113;</italic>) &#x2286; <italic>R and Nb</italic>(<italic>&#x2113;</italic>) &#x2260; &#x2205;; &#x2286; <sub>r</sub> &#x2208; <italic>R Nb</italic>(<italic>r</italic>)&#x2286; <italic>L and Nb</italic>(<italic>r</italic>) &#x2260; &#x2205;</p></list-item>
+<list-item><p><italic>(Connectedness)</italic> &#x2200;<italic>&#x2113;</italic> &#x2208; <italic>L, r</italic> &#x2208; <italic>R, there exists an internal chain &#x2113;</italic> &#x2192; <italic>r</italic><sub>1</sub> &#x2192; <italic>&#x2113;</italic><sub>1</sub> &#x2192; &#x00B7; &#x00B7; &#x00B7; &#x2192; <italic>r<sub>k</sub> &#x2192;&#x2113;<sub>k</sub> &#x2192;</italic> r such that <italic>&#x2200;i</italic>, 1 &#x2264; i &#x2264; <italic>k, r<sub>i</sub></italic> &#x2208; <italic>R and &#x2113;<sub>i</sub></italic> &#x2208; <italic>L</italic></p></list-item>
+</list></p>
+</statement>
+<statement>
+<label>Definition 16.</label>
+<p><italic>We say that a tuple (<italic>L, R</italic>) of sets of node-sides is a balanced recombination bundle (R-bundle for short) if</italic>
+<list list-type="order">
+<list-item><p><italic>(Complete matching)</italic> &#x2200;<italic>&#x2113; &#x2208; L, Nb</italic>(<italic>&#x2113;</italic>) = <italic>R and &#x2200;r</italic> &#x2208; <italic>R, Nb</italic>(<italic>r</italic>) = <italic>L</italic></p></list-item>
+<list-item><p><italic>(Acyclicity) L</italic> &#x2229; <italic>R</italic> = &#x2205;</p></list-item>
+</list></p>
+</statement>
+<statement>
+<label>Lemma 17.</label>
+<p><italic>A balanced recombination bundle is a bundle</italic>.</p>
+<p><italic>Proof. Complete matching &#x21D2; matching</italic>.</p>
+<p><italic>Complete matching <italic>&#x21D2;</italic> connectedness by the chain &#x2113; <italic>&#x2192;</italic>r for all &#x2113; <italic>&#x2208; L, r &#x2208;</italic> R</italic></p>
+</statement>
+<statement>
+<label>Definition 18.</label>
+<p><italic>An unbalanced bundle is a bundle which is not a balanced recombination bundle. An unbalanced bundle is acyclic if L<italic>&#x2229;</italic> R</italic> = &#x2205;</p>
+</statement>
+<statement>
+<label>Definition 19.</label>
+<p><italic>We say that two bundles</italic> (<italic>L</italic><sub>1</sub>, <italic>R</italic><sub>1</sub>), (<italic>L</italic><sub>2</sub>, <italic>R</italic><sub>2</sub>) <italic>are isomorphic if either L</italic><sub>1</sub> = <italic>L</italic><sub>2</sub> <italic>and R</italic><sub>1</sub> = <italic>R</italic><sub>2</sub> or <italic>L</italic><sub>1</sub> = <italic>R</italic><sub>2</sub> and <italic>R</italic><sub>1</sub> = <italic>L</italic><sub>2</sub>.</p>
+</statement>
+<p>We will describe a <inline-formula><alternatives><inline-graphic xlink:href="125542_inline19.gif"/></alternatives></inline-formula>algorithm to detect and categorize bundles exhaustively for all node-sides in a bidirected graph. To establish the validity of this algorithm, we need several preliminary results:</p>
+<statement>
+<label>Lemma 20.</label>
+<p><italic>Every q</italic> &#x2208; <italic>N is either a tip or an element of a bundle</italic>.</p>
+<p><italic>Proof. Suppose that q is not a tip. Define a function W that maps a tuple</italic> (<italic>L, R</italic>) <italic>of nonempty sets of node-sides to a tuple W</italic>(<italic>L</italic>), <italic>W</italic>(<italic>R</italic>) <italic>where</italic>
+<disp-formula><alternatives><graphic xlink:href="125542_ueqn1.gif"/></alternatives></disp-formula></p>
+<p><inline-formula><alternatives><inline-graphic xlink:href="125542_inline20.gif"/></alternatives></inline-formula> define
+<disp-formula><alternatives><graphic xlink:href="125542_ueqn2.gif"/></alternatives></disp-formula></p>
+<p><italic>W<sup>&#x221E;</sup> exists since W<sup>n</sup> is nondecreasing with respect to set inclusion and our graphs are finite. Now define</italic>, <inline-formula><alternatives><inline-graphic xlink:href="125542_inline21.gif"/></alternatives></inline-formula>, noting that Nb(<italic>q</italic>)&#x2260; &#x2205; <italic>since</italic>{<italic>q</italic>} <italic>is not a tip. Let us write <italic>L<sub>w</sub></italic>&#x221E; and R<sub>w</sub></italic>&#x221E; <italic>for the respective elements of. <inline-formula><alternatives><inline-graphic xlink:href="125542_inline22.gif"/></alternatives></inline-formula>. We claim that <inline-formula><alternatives><inline-graphic xlink:href="125542_inline23.gif"/></alternatives></inline-formula> <italic>is a bundle</italic></italic>.</p>
+<p><italic>Proof of matching: let &#x2113;</italic> &#x2208; <italic>L<sub>W<italic>&#x221E;</italic>,</sub></italic> r <italic>&#x2208;</italic> RW<italic>&#x221E;. By construction of W</italic>,
+<disp-formula><alternatives><graphic xlink:href="125542_ueqn3.gif"/></alternatives></disp-formula></p>
+<p><italic>Proof of connectedness</italic>: <italic>let &#x2113; &#x2208;</italic>L<sub>W</sub>&#x221E;, <italic>r</italic> &#x2208; <italic>R<sub>W</sub></italic>&#x221E;. <italic>We will show that for any r</italic> &#x2208; <italic>R<sub>W</sub></italic>&#x221E;, &#x2203; <italic>an internal chain q &#x2192; r<sub>1</sub> &#x2192;</italic> l<italic><sub>1</sub> &#x2192;&#x00B7; &#x00B7; &#x00B7;&#x2192;</italic>r<sub>k</sub> <italic>&#x2192;</italic> i<sub>k</sub> <italic>&#x2192; r such that</italic> &#x2200;<sub><italic>i</italic></sub>, 1 &#x2264; <italic>i &#x2264; k, r<sub>i</sub> &#x2208; R<sub>w</sub></italic>&#x221E; <italic>and</italic> &#x2113;<sub><italic>i</italic></sub> <italic>&#x2208;</italic> L<sub>W</sub><italic>&#x221E;</italic>.</p>
+<p><italic>Suppose that r &#x2208;</italic> Nb(<italic>q<italic>)</italic>, then we are done. Otherwise, since r <italic>&#x2208; Rw&#x221E;</italic>, there exists some minimal <inline-formula><alternatives><inline-graphic xlink:href="125542_inline24.gif"/></alternatives></inline-formula><italic>such that r</italic> &#x2208; the R-set RW <sup>n</sup> of some W <italic><sup>n</sup>(({q}</italic>, Nb(<italic>q</italic>)))</italic>. <italic>It is straightforward to see that we can then construct an internal chain q &#x2192; r<sub>0</sub> &#x2192;</italic> &#x2113;<italic><sub>1</sub> &#x2192; r</italic><sub>1</sub> &#x2192; &#x2026; &#x2113;<italic><sub>n&#x2212;1</sub> &#x2192;</italic> r such that &#x2200;i<italic>, 1 &#x2264;</italic> i <italic>&#x2264;</italic> n <italic>-</italic> 1, r<sub>i</sub> <italic>&#x2208;</italic> R<sub>W</sub><sup>i</sup>, &#x2113;<sub>i</sub> <italic>&#x2208;</italic> L<sub>W</sub><sup>i</sup>. <italic>By an analogous argument, we can do the same for an internal chain &#x2113; &#x2192;&#x00B7; &#x00B7; &#x00B7; &#x2192; r</italic>&#x2032; <italic>for some r</italic>&#x2032; &#x2208; <italic>Nb</italic>(<italic>q</italic>). <italic>Concatenation of the first chain with the reverse of the second gives our chain</italic> &#x2113; &#x2192; &#x00B7; &#x00B7; &#x00B7; &#x2192; <italic>r, proving connectedness</italic>.</p>
+</statement>
+<statement>
+<label>Proposition 21.</label>
+<p><italic>If q <italic>&#x2208;</italic> L for a bundle (<italic>L, R</italic>), <italic>then</italic> <inline-formula><alternatives><inline-graphic xlink:href="125542_inline25.gif"/></alternatives></inline-formula></italic></p>
+<p><italic>Proof. Suppose that <inline-formula><alternatives><inline-graphic xlink:href="125542_inline26.gif"/></alternatives></inline-formula>. <italic>Then either L &#x2260; L<sub>W</sub>&#x221E; or R</italic> &#x2260; <italic>R<sub>W</sub></italic>&#x221E; First, suppose the latter. Suppose that <italic>&#x018E;r &#x2208;</italic> R such that r&#x2209;RW<italic>&#x221E;</italic>. Since (<italic>L, R</italic>) is a bundle, we know that there is an internal chain q<italic>&#x2192;</italic> r<italic><sub>0</sub> &#x2192;</italic> &#x2113;<italic><sub>1</sub> &#x2192;</italic> r<italic><sub>1</sub> &#x2192; &#x00B7;&#x00B7;&#x00B7; &#x2192;</italic> r<sub>k</sub> <italic>&#x2192;</italic> i<sub>k</sub> <italic>&#x2192;</italic> r with all r<sub>i</sub> <italic>&#x2208;</italic> R, i<sub>i</sub> <italic>&#x20AC;</italic> L. But, using the same shorthand as before, it is also evident that r<sub>i</sub> <italic>&#x2208;</italic> R,W<sup>i</sup>, i<sub>i</sub> <italic>&#x2208;</italic> LW <sup>i</sup> &#x2200;i<italic>, 1 &#x2264;</italic> i <italic>&#x2264;</italic> k. But since i<sub>k</sub> Nb(<italic>r</italic>), we can deduce that r &#x2208;</italic> RW<italic><sup>k&#x002B;1</sup>, which leads to a contradiction since r &#x2208; R</italic><sub><italic>W</italic></sub>&#x221E;.</p>
+<p><italic>Suppose otherwise that</italic> &#x2203;<italic>r</italic> &#x2208; <italic>R<sub>W</sub>&#x221E; such that r &#x2209;R. Consider an internal chain c = q</italic> &#x2192; <italic>r</italic><sub>0</sub> &#x2192; &#x2113;<sub>1</sub> <italic>&#x2192; r</italic><sub>1</sub> &#x2192; &#x00B7; &#x00B7; &#x00B7; &#x2192; <italic>r<sub>k</sub> &#x2192;</italic> &#x2113;<sub><italic>k</italic></sub><italic>&#x2192; r fulfilling the conditions needed to prove connectedness of</italic>. <inline-formula><alternatives><inline-graphic xlink:href="125542_inline27.gif"/></alternatives></inline-formula>. Note that q <italic>&#x2208;</italic> L and by matching r<sub>0</sub> <italic>&#x2208; Nb</italic>(<italic>q</italic>). But r <italic>&#x2208; R, which leads to a contradiction since it means that there must exist two consecutive members somewhere in the chain c which cannot be neighbors</italic>.</p>
+</statement>
+<p>We say that a node-side <italic>n</italic> is <italic>involved in</italic> a bundle (<italic>L</italic>,<italic>R</italic>) if <italic>n &#x2208; L</italic> or <italic>n &#x2208;</italic> R.</p>
+<statement>
+<label>Corollary 22 (To Proposition 21).</label>
+<p><italic>Every non-tip node-side is involved in precisely one bundle</italic>.</p>
+</statement>
+</sec>
+<sec id="s5b">
+<label>5.2</label>
+<title>An Algorithm for Bundle-Finding</title>
+<p>The diagram in <xref ref-type="fig" rid="fig16">Fig 16</xref> demonstrates our algorithm for finding the balanced recombination bundle containing a query node-side <italic>q</italic> if it is contained in one, and discovering that it is not if it is not. The is written in pseudocode below, with an illustration following.</p>
+<fig id="fig8" position="float" fig-type="figure">
+<label>Fig. 8.</label>
+<caption>
+<p>Three examples of simple bubbles from the 1000 Genomes graph</p>
+</caption>
+<graphic xlink:href="125542_fig8.tif"/>
+</fig>
+<fig id="fig9" position="float" fig-type="figure">
+<label>Fig. 9.</label>
+<caption>
+<p>Left: A nesting of four ultrabubbles. Right: The tree structure to index traversals of <italic>U</italic> implied by Proposition 9</p>
+</caption>
+<graphic xlink:href="125542_fig9.tif"/>
+</fig>
+<fig id="fig10" position="float" fig-type="figure">
+<label>Fig. 10.</label>
+<caption>
+<p>Overlapping substitutions (or deletions)</p>
+</caption>
+<graphic xlink:href="125542_fig10.tif"/>
+</fig>
+<fig id="fig11" position="float" fig-type="figure">
+<label>Fig. 11.</label>
+<caption>
+<p>An edge crossing bubble boundaries.</p>
+</caption>
+<graphic xlink:href="125542_fig11.tif"/>
+</fig>
+<fig id="fig12" position="float" fig-type="figure">
+<label>Fig. 12.</label>
+<caption>
+<p>Top: parallel addition. Bottom: series addition</p>
+</caption>
+<graphic xlink:href="125542_fig12.tif"/>
+</fig>
+<fig id="fig13" position="float" fig-type="figure">
+<label>Fig. 13.</label>
+<caption><p>The W motif</p></caption>
+<graphic xlink:href="125542_fig13.tif"/>
+</fig>
+<fig id="fig14" position="float" fig-type="figure">
+<label>Fig. 14.</label>
+<caption>
+<p>Portions of the ultrabubbles 1. and 2. of <xref ref-type="sec" rid="s4b">section 4.2</xref>, showing the nodes which project to the forbidden subgraph <italic>W</italic></p>
+</caption>
+<graphic xlink:href="125542_fig14.tif"/>
+</fig>
+<fig id="fig15" position="float" fig-type="figure">
+<label>Fig. 15.</label>
+<caption>
+<p>Two examples of abutting SNVs in the 1000 Genomes graph</p>
+</caption>
+<graphic xlink:href="125542_fig15.tif"/>
+</fig>
+<fig id="fig16" position="float" fig-type="figure">
+<label>Fig. 16.</label>
+<caption><p>Illustration of Algorithm 1 returning a positive result</p></caption>
+<graphic xlink:href="125542_fig16.tif"/>
+</fig>
+<fig id="fig17" position="float" fig-type="figure">
+<label>Fig. 17.</label>
+<caption>
+<p>An ultrabubble decomposable into nested generalized sites; some sites marked</p>
+</caption>
+<graphic xlink:href="125542_fig17.tif"/>
+</fig>
+<fig id="fig18" position="float" fig-type="figure">
+<label>Fig. 18.</label>
+<caption><p>Two examples of deletion bundle-pairs</p></caption>
+<graphic xlink:href="125542_fig18.tif"/>
+</fig>
+<p>In order to prove that this is a valid algorithm for detection of balanced recombination bundles, we need the following lemma.</p>
+<statement>
+<label>Lemma 23.</label>
+<p><italic>Let</italic> (<italic>L, R</italic>) <italic>be a tuple of sets of node-sides</italic>. <italic>If</italic> &#x2203;<italic>q &#x2208; L such that</italic> &#x2200;a <italic>&#x2208; Nb</italic>(<italic>q</italic>), &#x2200;b <italic>&#x2208; Nb</italic>(<italic>a</italic>), <italic>Nb</italic>(<italic>b</italic>) &#x2286;&#x2286; <italic>Nb</italic>(<italic>q</italic>) <italic>but Nb</italic>(<italic>q</italic>) &#x2282; <italic>R, then</italic> (<italic>L, R</italic>) <italic>cannot be connected (in the sense of Definition 15)</italic>.</p>
+<p><italic>Proof. Let B</italic> = &#x222A;<sub><italic>a</italic>&#x2208;N<italic>b</italic></sub>(<sub><italic>q</italic></sub>) <italic>Nb</italic>(<italic>a</italic>). <italic>We know that</italic> &#x2200; <italic>b &#x2208; B</italic>, &#x2208; <italic>Nb</italic>(<italic>b</italic>) &#x2286; <italic>Nb</italic>(<italic>q</italic>). <italic>Suppose that</italic> (<italic>L,R</italic>) <italic>is connected. Choose r &#x2208; R</italic>\<italic>Nb</italic>(<italic>q</italic>). <italic>Then</italic> &#x2203; <italic>an internal chain c</italic> = <italic>q</italic> &#x2192; <italic>r</italic><sub>1</sub> &#x2192; <italic>&#x2113;</italic><sub>1</sub> &#x2192;&#x00B7; &#x00B7; &#x00B7; &#x2192; <italic>r<sub>k</sub></italic> &#x2192; <italic>&#x2113;<sub>k</sub> &#x2192;</italic> r with r<sub>i</sub> R, i<sub>i</sub> <italic>&#x2208;</italic> L&#x2200; i. Since q <italic>&#x2208;</italic> B, Nb(<italic>b</italic>) &#x2208; <italic>Nb</italic>(<italic>q</italic>) &#x2200; <italic>b</italic>&#x2208; B, <italic>and Nb</italic>(<italic>a</italic>) &#x2286; <italic>B</italic> &#x2208; <italic>Nb</italic>(<italic>q</italic>), <italic>it is impossible that the sequence of node-sides c is both a valid internal chain and ends with r. Therefore</italic> (<italic>L, R</italic>) <italic>cannot be connected</italic>.</p>
+</statement>
+<statement>
+<label>Algorithm 1: Balanced recombination bundle finding</label>
+<p><fig id="figAlg1" position="float" fig-type="figure">
+<graphic xlink:href="125542_figAlg1.tif"/>
+</fig></p>
+</statement>
+<statement>
+<label>Proposition 24 (Validity of Algorithm 1).</label>
+<p><italic>This algorithm detects all balanced recombination bundles, and rejects all unbalanced recombination bundles</italic>.</p>
+<p><italic>Proof. Suppose q is involved in a balanced recombination bundle</italic> (<italic>L, R</italic>). <italic>W.l.o.g. suppose that q</italic> &#x2208; <italic>L. Due to the complete matching property, the set Nb</italic>(<italic>q</italic>) <italic>in the algorithm is guaranteed to be equal to R. Due to the completeness property, the set Nb</italic>(<italic>R</italic>[0]) <italic>in the algorithm is guaranteed to be equal to L. It is evident that the algorithm directly verifies complete matching and acyclicity</italic>.</p>
+<p><italic>Suppose otherwise. Assuming we have eliminated all tips, which can be done in</italic> <inline-formula><alternatives><inline-graphic xlink:href="125542_inline28.gif"/></alternatives></inline-formula> <italic>time, Lemma 20 proves that q is involved in an unbalanced bundle B. If B fails acyclicity but not complete matching, then checking that A</italic> &#x2229; <italic>B</italic> = &#x2205; <italic>will correctly detect that L</italic> &#x2229; <italic>R</italic> =&#x2205;.</p>
+<p><italic>Otherwise, suppose that B fails complete matching. Suppose first that Nb</italic>(<italic>q</italic>) &#x2282; <italic>R. We assert that</italic> &#x2203;<italic>a</italic> &#x2208; <italic>Nb</italic>(<italic>q</italic>) <italic>such that</italic> &#x2203;<italic>b</italic> &#x2208; <italic>Nb</italic>(<italic>a</italic>) <italic>such that</italic> &#x2203;<italic>c</italic> &#x2208; <italic>Nb</italic>(<italic>b</italic>) <italic>such that</italic> &#x2203;c <italic>Nb</italic>(<italic>q</italic>). <italic>This event will be detected by the second loop of the algorithm. This follows from the connectedness of B and Lemma 23</italic>.</p>
+<p><italic>Suppose otherwise that Nb</italic>(<italic>q</italic>) = <italic>R but</italic> &#x2203;<italic>r</italic> &#x2208; <italic>R such that Nb</italic>(<italic>r</italic>) &#x2282; <italic>L. Let c</italic> &#x2208; <italic>L\Nb</italic>(<italic>r</italic>). <italic>By matching</italic>, &#x2203;<italic>r</italic>&#x2032; &#x2208; <italic>R such that r</italic>&#x2032; &#x2208; <italic>Nb</italic>(<italic>c</italic>). <italic>Therefore Nb</italic>(<italic>r</italic>) <italic>and Nb</italic>(<italic>r&#x2032;</italic>) <italic>will be found to be unequal in the first loop of the algorithm</italic>.</p>
+<p><italic>Suppose otherwise that Nb</italic>(<italic>q</italic>) = <italic>R, Nb</italic>(<italic>r</italic>) = <italic>L</italic>&#x2200;, <italic>but</italic> &#x2203; &#x2113; &#x2208;L <italic>such that Nb</italic>(<italic>&#x2113;</italic>) &#x2282;R. <italic>Then we will find in the second loop that Nb</italic>(<italic>&#x2113;</italic>) &#x2260; <italic>Nb</italic>(<italic>q</italic>).</p>
+</statement>
+<statement>
+<label>Proposition 25 (Speed of Algorithm 1).</label>
+<p><italic>We can identify all balanced recombination bundles, all unbalanced bundles and all tips in</italic> <inline-formula><alternatives><inline-graphic xlink:href="125542_inline29.gif"/></alternatives></inline-formula> <italic>time</italic>.</p>
+<p><italic>Proof. We depend on a neighbor index giving us</italic> <inline-formula><alternatives><inline-graphic xlink:href="125542_inline30.gif"/></alternatives></inline-formula> <italic>iteration across neighbors of a node-side n</italic>.</p>
+<p><italic>We begin by looping over all node-sides and identifying all tips, which is achieved in</italic> <inline-formula><alternatives><inline-graphic xlink:href="125542_inline31.gif"/></alternatives></inline-formula> <italic>time. We then loop again over all remaining node-sides. At each node-side q, we run the function describe above, which, if q is involved in a balanced recombination bundle, will return the bundle</italic> <inline-formula><alternatives><inline-graphic xlink:href="125542_inline32.gif"/></alternatives></inline-formula>. <italic>It is evident that this function runs in</italic> <inline-formula><alternatives><inline-graphic xlink:href="125542_inline33.gif"/></alternatives></inline-formula> <italic>time, seeing as it loops over each edge of B twice&#x2014;once from each side&#x2014;each time making an</italic> <inline-formula><alternatives><inline-graphic xlink:href="125542_inline34.gif"/></alternatives></inline-formula> <italic>set inclusion query. After B is built, all nodes are marked such that they are skipped when they are encountered in the global loop. This gives overall</italic> <inline-formula><alternatives><inline-graphic xlink:href="125542_inline35.gif"/></alternatives></inline-formula> <italic>exploration of B</italic>.</p>
+<p><italic>If q is involved in an unbalanced bundle</italic> <inline-formula><alternatives><inline-graphic xlink:href="125542_inline36.gif"/></alternatives></inline-formula>, <italic>this fact is detected by the same function in</italic> <inline-formula><alternatives><inline-graphic xlink:href="125542_inline37.gif"/></alternatives></inline-formula> <italic>time. In this case, we can find all nodes of B by performing a breadth-first search. Examination of the W-function will convince the reader that a breadth-first search will find all node-sides of B in</italic> <inline-formula><alternatives><inline-graphic xlink:href="125542_inline38.gif"/></alternatives></inline-formula> |<italic>V<sub>B</sub>|) time. We follow the same procedure of marking all these node-sides to be skipped in the global loop</italic>.</p>
+<p><italic>This proves that, after eliminating tips in</italic> <inline-formula><alternatives><inline-graphic xlink:href="125542_inline39.gif"/></alternatives></inline-formula>time, we can build the set <inline-formula><alternatives><inline-graphic xlink:href="125542_inline40.gif"/></alternatives></inline-formula> <italic>of all non-isomorphic bundles B, and decide whether they are balanced recombination bundles, in time proportional to</italic> <inline-formula><alternatives><inline-graphic xlink:href="125542_inline41.gif"/></alternatives></inline-formula> <italic>But Lemma 20 and Corollary 22 tell us that</italic> <inline-formula><alternatives><inline-graphic xlink:href="125542_inline42.gif"/></alternatives></inline-formula>. <italic>and that all elements of this union of node-sides are disjoint. Furthermore, due to the matching property of bundles</italic>, <inline-formula><alternatives><inline-graphic xlink:href="125542_inline43.gif"/></alternatives></inline-formula>, <italic>and all elements of this union of edges are disjoint. Therefore, our method is</italic> <inline-formula><alternatives><inline-graphic xlink:href="125542_inline44.gif"/></alternatives></inline-formula>.</p>
+</statement>
+</sec>
+<sec id="s5c">
+<label>5.3</label>
+<title>Bundles and Snarl Boundaries</title>
+<statement>
+<label>Definition 26.</label>
+<p><italic>Given a &#x201C;boundary&#x201D; node-side b</italic> = <italic>s or t of a snarl</italic> (<italic>S, s, t</italic>), <italic>we call the tuple</italic> (<italic>b, Nb</italic>(<italic>b</italic>)) <italic>a snarl comb. A snarl comb is called proper if</italic> &#x2200;<italic>n</italic> &#x2208; <italic>Nb</italic>(<italic>b</italic>), <italic>Nb</italic>(<italic>n</italic>) = {<italic>b</italic>} <italic>and b</italic> &#x2209; <italic>Nb</italic>(<italic>b</italic>).</p>
+</statement>
+<p>It is easy to verify that a <italic>proper snarl comb</italic> is a balanced recombination bundle. It is also easy to see that an improper snarl comb is, according to set inclusion of tuples, a proper subset of a unique bundle.</p>
+<statement>
+<label>Proposition 27 (Bundles do not cross snarl boundaries).</label>
+<p><italic>Let</italic> (<italic>S, s, t</italic>) <italic>be a snarl. Suppose that B</italic> = (<italic>L, R</italic>) <italic>is a bundle. Then either all node-sides involved in B are members of S, or no node-side involved in B is a member of S</italic>.</p>
+<p><italic>Proof. Suppose that there exists a bundle B</italic> = (<italic>L, R</italic>) <italic>with node-sides both within S and not within S. Let x,y be involved in B, with x &#x2208;S, y</italic> &#x2209; <italic>S. W.l.o.g., suppose x</italic> &#x2208; <italic>L, y</italic> &#x2208; <italic>R. This implies that there exists an internal chain p</italic> = <italic>x</italic> &#x2192;&#x00B7; &#x00B7; &#x00B7; &#x2192; <italic>y</italic>. <italic>But then this implies that there exists a</italic> &#x2208; <italic>S, b</italic> &#x2209; <italic>S such that a</italic> &#x2208; <italic>Nb</italic>(<italic>b</italic>), <italic>which would allow us to use the edge a</italic> &#x2192;<italic>b to create a path violating the 2-node separability of S</italic></p>
+</statement>
+</sec>
+<sec id="s5d">
+<label>5.4</label>
+<title>Defining Sites using Bundles</title>
+<statement>
+<label>Definition 28.</label>
+<p><italic>An ordered pair</italic> (<italic>B</italic><sub>1</sub>, <italic>B</italic><sub>2</sub>) <italic>of balanced recombination bundles is compatible if either</italic>
+<list list-type="order">
+<list-item><p><inline-formula><alternatives><inline-graphic xlink:href="125542_inline45.gif"/></alternatives></inline-formula> and <inline-formula><alternatives><inline-graphic xlink:href="125542_inline46.gif"/></alternatives></inline-formula></p></list-item>
+<list-item><p>&#x2203; <italic>a bijection f</italic> : <italic>L</italic><sub>1</sub> &#x2192; <italic>R</italic><sub>2</sub> <italic>such that</italic> &#x2200;<italic>x</italic> &#x2208;<italic>R</italic><sub>1</sub>, <italic>there exists a unique path p</italic>(<italic>x</italic>) <italic>from x</italic>&#x2192; &#x00B7; &#x00B7; &#x00B7; &#x2192; f (<italic>x</italic>), <italic>and all paths p</italic>(<italic>x</italic>) <italic>are disjoint</italic>.</p>
+</list-item></list></p></statement>
+<statement>
+<label>Definition 29.</label>
+<p><italic>If two recombination bundles are compatible, we define the set p</italic>(<italic>x</italic>) <italic>to be a bundled simple site P</italic>.</p></statement>
+<p><italic>Claim</italic>. Consider a bundled simple site <italic>P</italic> in a graph G, lying between compatible balanced recombination bundles <italic>B</italic><sub>1</sub>, <italic>B</italic><sub>2</sub>. The set of all paths in <italic>G</italic> which contain paths <italic>p</italic> &#x2208;<italic>P</italic> as contiguous subpaths is isomorphic to the set-theoretic product <italic>P</italic>(<italic>L</italic><sub>1</sub>) &#x00D7; <italic>P</italic> &#x00D7; <italic>P</italic>(<italic>R</italic><sub>2</sub>) consisting of the three sets
+<list list-type="order">
+<list-item><p><italic>P</italic>(<italic>L</italic><sub>1</sub>) := {paths in <italic>G\S</italic> terminating in <italic>x</italic>, for some <italic>x</italic>&#x2208; <italic>L</italic><sub>1</sub>}</p></list-item>
+<list-item><p><italic>P</italic></p></list-item>
+<list-item><p><italic>P</italic>(R<sub>2</sub>) := {paths in <italic>G\S</italic> beginning with <italic>y</italic>, for some <italic>y</italic> &#x2208; <italic>R</italic><sub>2</sub>}</p></list-item>
+</list> under the function mapping <italic>p<sub>1</sub></italic> &#x2208;<italic>P|</italic>(<italic>L<sub>1</sub></italic>),<italic>p</italic> &#x2208; <italic>P, p<sub>2</sub></italic> &#x2208; <italic>P</italic>(R<sub>2</sub>) to their concatenation.</p>
+<p>We will call a balanced recombination bundle <italic>B</italic> = (<italic>L, R</italic>) <italic>trivial</italic> if both <italic>L</italic> and <italic>R</italic> are singleton sets.</p>
+<statement>
+<label>Definition 30.</label>
+<p><italic>An ultrabubble</italic> (<italic>U, s, t</italic>) <italic>is a generalized simple bubble if</italic>
+<list list-type="order">
+<list-item><p>({<italic>s</italic>}, <italic>Nb</italic>(<italic>s</italic>)) <italic>and</italic> (<italic>Nb</italic>(<italic>t</italic>), {<italic>t</italic>}) <italic>are balanced recombination bundles</italic></p></list-item>
+<list-item><p><italic>The set of all non-trivial balanced recombination bundles admits a linear ordering X</italic> &#x2192; <italic>B</italic><sub>1</sub> &#x2192; &#x2026; <italic>B<sub>k</sub></italic> &#x2192; <italic>Y such that X and Y are either of</italic> ({<italic>s</italic>}, <italic>Nb</italic>(<italic>s</italic>)) <italic>and</italic> (<italic>Nb</italic>(<italic>t</italic>), {<italic>t</italic>}), <italic>X is compatible with B</italic><sub>1</sub>, <italic>every B</italic><sub><italic>i</italic></sub> <italic>is compatible with B<sub>i</sub></italic><sub>&#x002B;</sub><sub>1</sub>, <italic>and B<sub>k</sub> is compatible with Y</italic></p>
+</list-item>
+</list></p>
+</statement>
+<statement>
+<label>Definition 31.</label>
+<p><italic>An ultrabubble U is decomposable into nested generalized sites if either:</italic>
+<list list-type="order">
+<list-item><p><italic>It is a generalized simple bubble</italic></p></list-item>
+<list-item><p><italic>When each ultrabubble</italic> (<italic>V, u, &#x03C5;</italic>) <italic>nested in U which is a decomposable into nested generalized sites is replaced with a single edge spanning u and &#x03C5;, then U is a generalized simple bubble</italic></p></list-item>
+</list></p>
+</statement>
+<p>We sketch a linear-time method of building sites from a tree diagram of nested ultrabubbles. We run Algorithms 2 and 3 starting at bottom-level nested ultrabubbles. If ultrabubble has all nontrivial balanced recombination bundles paired, then, when we evaluate the ultrabubble containing it, we represent it as a single edge from its source to sink.</p>
+<p>In Algorithm 3, which follows below, we refer to the individual sets of node-sides forming the tuples (<italic>L, R</italic>) of a bundle as bundle-sides.</p>
+</sec>
+<sec id="s5e">
+<label>5.5</label>
+<title>Bundles Containing Deletions</title>
+<p>Our bundles&#x2014;and therefore our sites&#x2014;fail to detect the graph motifs formed by deletions spanning otherwise well-behaved variants. We define a special, well-behaved subclass of unbalanced bundle to address this.</p>
+<statement>
+<label>Definition 32.</label>
+<p><italic>A deletion bundle-pair is a tuple</italic> (<italic>L<sub>A</sub>, R<sub>A</sub>, L<sub>B</sub>, R<sub>B</sub></italic>) <italic>such that</italic>
+<list list-type="order">
+<list-item><p>&#x2200;&#x2113; &#x2208; <italic>L<sub>A</sub></italic>, &#x2200; <sub><italic>r</italic></sub> &#x2208; <italic>R<sub>A</sub></italic>, {<italic>&#x2113;, r</italic>} &#x2208; <italic>E</italic></p></list-item>
+<list-item><p>&#x2200; &#x2113;&#x2208; <italic>L<sub>A</sub></italic>, &#x2200;<sub><italic>r</italic></sub> &#x2208; <italic>R<sub>B</sub></italic>, {<italic>&#x2113;, r</italic>} &#x2208; <italic>E</italic></p></list-item>
+<list-item><p>&#x2200; &#x2113;&#x2208; <italic>L<sub>B</sub></italic>, &#x2200;<sub><italic>r</italic></sub> &#x2208; <italic>R<sub>B</sub></italic>, {<italic>&#x2113;, r</italic>} &#x2208; <italic>E</italic></p></list-item>
+<list-item><p>&#x2203; <italic>no other edge involving any node-side n</italic> &#x2208; <italic>L<sub>A</sub>, L<sub>B</sub>, R<sub>A</sub> or R<sub>B</sub></italic></p></list-item>
+</list></p></statement>
+<statement>
+<label>Algorithm 2: Finding spans connecting bundles</label>
+<p><fig id="figAlg2" position="float" fig-type="figure">
+<graphic xlink:href="125542_figAlg2.tif"/>
+</fig></p>
+</statement>
+<statement>
+<label>Algorithm 3: Finding compatible bundles</label>
+<p><fig id="figAlg3" position="float" fig-type="figure">
+<graphic xlink:href="125542_figAlg3.tif"/>
+</fig></p>
+</statement>
+<p>These structures occur when two balanced recombination bundles on either side of some span of graph are bridged by deletions. It remains necessary to check that there is graph structure joining the nodes of <italic>R<sub>A</sub></italic> to <italic>L<sub>B</sub></italic> for this to be the case.</p>
+<p>Algorithm 4 below will detect deletion bundle pairs from among the set of unbalanced bundles in linear time.</p>
+<statement>
+<label>Proposition 33.</label>
+<p><italic>Given a set of acyclic unbalanced bundles, this algorithm finds those among then which are deletion bundle pairs</italic>.</p>
+<p><italic>Proof. Suppose that q is involved in a deletion bundle pair</italic> (<italic>L<sub>A</sub>, R<sub>A</sub>, L<sub>B</sub>, R<sub>B</sub></italic>). <italic>W.l.o.g, either q</italic> &#x2208; <italic>L<sub>A</sub> or q</italic> &#x2208; <italic>L<sub>B</sub></italic>.</p>
+<p><italic>Suppose first that q</italic> &#x2208; <italic>L<sub>B</sub></italic> : <italic>In this case, Nb</italic>(<italic>q</italic>) = <italic>R<sub>B</sub></italic>. <italic>We then know that</italic> &#x2200;<italic>a &#x2208; RB, Nb</italic>(<italic>a</italic>) = <italic>LA&#x222A;LB. This will trigger the condition L</italic><sub>2</sub> = &#x2205;. <italic>The elements of a &#x2208; L</italic><sub>1</sub> <italic>will segregate into precisely two groups: one such that Nb</italic>(<italic>a</italic>) = <italic>R<sub>B</sub></italic> &#x2014; <italic>the elements a &#x2208; L<sub>B</sub>, and another group such that Nb</italic>(<italic>a</italic>) = <italic>RA</italic> &#x222A; <italic>RB</italic> &#x2014; <italic>the elements a</italic> &#x2208; <italic>L<sub>A</sub></italic>. <italic>If these conditions are fulfilled, we then build R<sub>A</sub> and R<sub>B</sub>. It remains to verify that</italic> &#x2200;<italic>b &#x2208; R<sub>A</sub>, Nb</italic>(<italic>b</italic>) = <italic>L<sub>A</sub>, and</italic> &#x2200; <sub>b</sub> <italic>&#x2208; R<sub>B</sub>, Nb</italic>(<italic>b</italic>) = <italic>L<sub>A</sub> &#x222A; L<sub>B</sub></italic>.</p>
+<p><italic>Suppose otherwise that q G L<sub>A</sub></italic>: <italic>In this case, Nb</italic>(<italic>q</italic>) = <italic>R<sub>A</sub></italic> &#x222A; <italic>R<sub>B</sub></italic>. <italic>This will trigger the condition L</italic><sub>2</sub> &#x2260;&#x2205; <italic>since the elements b</italic> &#x2208; <italic>Nb</italic>(<italic>q</italic>) <italic>will segregate into two groups: R<sub>A</sub>, where if b G R<sub>A</sub>, Nb</italic>(<italic>b</italic>) = <italic>L<sub>A</sub> and R<sub>B</sub>, where if b</italic> &#x2208; <italic>R<sub>A</sub>, Nb</italic>(<italic>b</italic>) = <italic>L<sub>A</sub></italic> &#x222A; <italic>L<sub>B</sub></italic>. <italic>If this condition is met, then it remains to check that</italic> &#x2200;<italic>a</italic> &#x2208; <italic>L<sub>A</sub>, Nb</italic>(<italic>a</italic>) = <italic>R<sub>A</sub></italic> &#x222A; <italic>R<sub>B</sub></italic> and &#x2200;<italic>a</italic> &#x2208; <italic>L<sub>B</sub>, Nb</italic>(<italic>a</italic>) = <italic>R<sub>B</sub></italic>.</p>
+<p><italic>Suppose otherwise that q is not involved in a deletion bundle pair. Suppose that Algorithm 4 does not fail, returning. &#x2205; There are two possibilities then for the nature of the unbalanced bundle</italic> (<italic>L, R</italic>) <italic>for which q</italic> &#x2208; <italic>L</italic>.</p>
+<p><italic>First, suppose the condition L</italic><sub>2</sub> = &#x2205; <italic>was triggered. The</italic> &#x2203;<italic>q</italic> &#x2208; <italic>L such that, where L</italic> &#x2032; := {<italic>l</italic> &#x2208; <italic>L</italic> |<italic>l</italic> &#x2208; <italic>Nb</italic>(<italic>a</italic>) <italic>for some a</italic> &#x2208; <italic>Nb</italic>(<italic>q</italic>)}, <italic>Nb</italic>(&#x2113;) <italic>C Nb</italic>(<italic>q</italic>) &#x2200; &#x2113;&#x2208; <italic>L</italic> &#x2032;. <italic>Then by Lemma 23, Nb</italic>(&#x2113;)&#x2265; <italic>Nb</italic>(<italic>q</italic>)&#x2200;&#x2113;&#x2208; <italic>L. Therefore it must be that Nb</italic>(<italic>q</italic>) = <italic>R. Furthermore, to pass the search for R<sub>A</sub>, there must</italic> &#x2203; <italic>R<sub>A</sub> such that if</italic> &#x2113;&#x2208; <italic>L and Nb</italic>(&#x2113;) &#x2260; <italic>R, then Nb</italic>(&#x2113;) = <italic>R<sub>A</sub>. Furthermore, to pass the conditions of the subsequent two loops, it must be that</italic> &#x2200;<italic>r</italic> &#x2208; <italic>R\RA, all Nb</italic>(<italic>r</italic>) <italic>are the same, and</italic> &#x2200;<italic>r</italic> &#x2032;&#x2208; <italic>R<sub>A</sub>, all Nb</italic>(<italic>r</italic>&#x2032;) <italic>are the same. Furthermore, to pass the last condition checked, must be that Nb</italic>(<italic>r</italic>&#x2032;>) <italic>from the latter group</italic> &#x2282;<italic>Nb</italic>(<italic>r</italic>). <italic>And since L<sub>A</sub></italic> :={&#x2113;&#x2208; <italic>L</italic> | <italic>Nb</italic>(&#x2113;) = <italic>R</italic>} <italic>and L<sub>B</sub></italic> := {<italic>&#x2113;&#x2208; L</italic> | <italic>Nb</italic>(&#x2113;) = <italic>R<sub>B</sub></italic>} <italic>are such that L<sub>A</sub> &#x2229;L<sub>B</sub></italic> = &#x2205; <italic>L<sub>A</sub></italic> &#x222A; <italic>L<sub>B</sub></italic> = <italic>L, these conditions all together ensure that</italic> (<italic>L, R</italic>) <italic>is a deletion bundle pair</italic>.</p>
+<p><italic>Otherwise, Nb</italic>(<italic>q</italic>) <italic>segregates into two disjoint subsets R<sub>A</sub></italic> := {<italic>r</italic> &#x2208; <italic>Nb</italic>(<italic>q</italic>)| <italic>Nb</italic>(<italic>r</italic>) = <italic>L<sub>A</sub></italic>}, <italic>R<sub>B</sub></italic> := {<italic>r</italic> &#x2208; <italic>Nb</italic>(<italic>q</italic>) | <italic>Nb</italic>(<italic>r</italic>) = <italic>L<sub>A</sub> &#x222A;L<sub>B</sub> for some L<sub>A</sub>, L<sub>B</sub> &#x2282;L such that L<sub>A</sub> &#x2229; L<sub>B</sub></italic> = &#x2205;. <italic>To pass further conditions, it is necessary that &#x2200; &#x2113;&#x2208; L<sub>B</sub>, Nb</italic>(<italic>l</italic>) = <italic>R<sub>B</sub> and</italic> &#x2200;<italic>&#x2113;</italic> &#x2208; <italic>LA, Nb</italic>(&#x2113;) = <italic>R<sub>A</sub></italic>&#x222A; <italic>R<sub>B</sub></italic>. <italic>It remains to show that LA &#x222A;L<sub>B</sub></italic> = <italic>L and R<sub>A</sub> &#x222A; R<sub>B</sub></italic> = <italic>R, these can be proven by application of Lemma 23. Therefore in this case, it must also be that</italic> (<italic>L, R</italic>) <italic>is a deletion bundle pair</italic>.</p></statement>
+<statement>
+<label>Algorithm 4: Deletion bundle pair finding</label>
+<p><fig id="figAlg4" position="float" fig-type="figure">
+<graphic xlink:href="125542_figAlg4.tif"/>
+</fig></p>
+</statement>
+<statement>
+<label>Proposition 34.</label>
+<p><italic>This algorithm finds deletion bundles in <inline-formula><alternatives><inline-graphic xlink:href="125542_inline47.gif"/></alternatives></inline-formula> time</italic>.</p>
+<p><italic>Proof. Note that a deletion bundle-pair is a special type of unbalanced bundle. Therefore, if, given an unbalanced bundle B, we can check whether it is a deletion bundle-pair in <inline-formula><alternatives><inline-graphic xlink:href="125542_inline48.gif"/></alternatives></inline-formula> time, by the arguments of Proposition 21, we can find all deletion bundle-pairs in <inline-formula><alternatives><inline-graphic xlink:href="125542_inline49.gif"/></alternatives></inline-formula>time</italic>.</p>
+<p><italic>Inspection of the algorithm shows that, like the algorithm for identifying balanced recombination bundles, it performs two <inline-formula><alternatives><inline-graphic xlink:href="125542_inline50.gif"/></alternatives></inline-formula> set-inclusion queries per edge, making it <inline-formula><alternatives><inline-graphic xlink:href="125542_inline51.gif"/></alternatives></inline-formula> overall</italic>.</p>
+</statement>
+</sec>
+</sec>
+<sec id="s6">
+<title>Discussion</title>
+<p>Graph formalism has the potential to revolutionize the discourse on genetic variations by creating a model and lexicon that more fully embraces the complexity of sequence change. This is vital: the current linear genome model of a reference sequence interval and alternates is insufficient. It fails to express nested variation and can not properly describe information about the breakpoints that comprise structural variations.</p>
+<p>The introduction, in order, of bubbles, superbubbles, ultrabubbles and snarls progressively generalizes the concept of a genetic site to accommodate more general types of variation using progressively more general graph types. In this paper we both review and build on these developments, showing how the recently introduced ultrabubbles can be furthered sub-classified using concepts from circuit theory. This expands the simple notion of proper nesting described in the original ultrabubble paper. Furthermore, we describe how we can extend the theory of ultrabubbles by generalizing ultrabubble boundaries to another sort of boundary structure&#x2014;the bundle&#x2014;which allows us to describe regions where variants are packed too closely to be segregated into separate ultrabubbles.</p>
+<p>Our methods are powerful in decomposing dense collections of nested or closely packed variation into meaningful genetic sites. We anticipate that these structures will become increasingly common in the analysis of variation using graph methods, as sequencing datasets containing variation from increasing numbers of individuals become available.</p>
+</sec>
+</body>
+<back>
+<ack>
+<title>Acknowledgements</title>
+<p>Y.R. is supported by a Howard Hughes Medical Institute Medical Research Fellowship. This work was also supported by the National Human Genome Research Institute of the National Institutes of Health under Award Number 5U54HG007990 and grants from the W.M. Keck foundation and the Simons Foundation. The content is solely the responsibility of the authors and does not necessarily represent the official views of the National Institutes of Health. We thank Wolfgang Beyer for his visualizations of 1000 Genomes data in a variation.</p>
+</ack>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>1.</label><mixed-citation publication-type="journal"><string-name><surname>Danecek</surname>, <given-names>P.</given-names></string-name>, <string-name><surname>Auton</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Abecasis</surname>, <given-names>G.</given-names></string-name>, <string-name><surname>Albers</surname>, <given-names>C.A.</given-names></string-name>, <string-name><surname>Banks</surname>, <given-names>E.</given-names></string-name>, <string-name><surname>DePristo</surname>, <given-names>M.A.</given-names></string-name>, <string-name><surname>Handsaker</surname>, <given-names>R.E.</given-names></string-name>, <string-name><surname>Lunter</surname>, <given-names>G.</given-names></string-name>, <string-name><surname>Marth</surname>, <given-names>G.T.</given-names></string-name>, <string-name><surname>Sherry</surname>, <given-names>S.T.</given-names></string-name>, <etal>et al.</etal>: <article-title>The variant call format and vcftools</article-title>. <source>Bioinformatics</source> <volume>27</volume> (<year>2011</year>) <fpage>2156</fpage>&#x2013;<lpage>2158</lpage></mixed-citation></ref>
+<ref id="c2"><label>2.</label><mixed-citation publication-type="journal"><collab>1000 Genomes Project Consortium</collab>, <etal>et al.</etal>: <article-title>A global reference for human genetic variation</article-title>. <source>Nature</source> <volume>526</volume> (<year>2015</year>) <fpage>68</fpage>&#x2013;<lpage>74</lpage></mixed-citation></ref>
+<ref id="c3"><label>3.</label><mixed-citation publication-type="journal"><string-name><surname>Sudmant</surname>, <given-names>P.H.</given-names></string-name>, <string-name><surname>Rausch</surname>, <given-names>T.</given-names></string-name>, <string-name><surname>Gardner</surname>, <given-names>E.J.</given-names></string-name>, <string-name><surname>Handsaker</surname>, <given-names>R.E.</given-names></string-name>, <string-name><surname>Abyzov</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Huddle-ston</surname>, <given-names>J.</given-names></string-name>, <string-name><surname>Zhang</surname>, <given-names>Y.</given-names></string-name>, <string-name><surname>Ye</surname>, <given-names>K.</given-names></string-name>, <string-name><surname>Jun</surname>, <given-names>G.</given-names></string-name>, <string-name><surname>Fritz</surname>, <given-names>M.H.Y.</given-names></string-name>, <etal>et al.</etal>: <article-title>An integrated map of structural variation in 2,504 human genomes</article-title>. <source>Nature</source> <volume>526</volume> (<year>2015</year>) <fpage>75</fpage>&#x2013;<lpage>81</lpage></mixed-citation></ref>
+<ref id="c4"><label>4.</label><mixed-citation publication-type="other"><string-name><surname>Novak</surname>, <given-names>A.M.</given-names></string-name>, <string-name><surname>Hickey</surname>, <given-names>G.</given-names></string-name>, <string-name><surname>Garrison</surname>, <given-names>E.</given-names></string-name>, <string-name><surname>Blum</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Connelly</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Dilthey</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Eizenga</surname>, <given-names>J.</given-names></string-name>, <string-name><surname>Elmohamed</surname>, <given-names>M.A.S.</given-names></string-name>, <string-name><surname>Guthrie</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Kahles</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Keenan</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Kelleher</surname>, <given-names>J.</given-names></string-name>, <string-name><surname>Kural</surname>, <given-names>D.</given-names></string-name>, <string-name><surname>Li</surname>, <given-names>H.</given-names></string-name>, <string-name><surname>Lin</surname>, <given-names>M.F.</given-names></string-name>, <string-name><surname>Miga</surname>, <given-names>K.</given-names></string-name>, <string-name><surname>Ouyang</surname>, <given-names>N.</given-names></string-name>, <string-name><surname>Rakocevic</surname>, <given-names>G.</given-names></string-name>, <string-name><surname>Smuga-Otto</surname>, <given-names>M.</given-names></string-name>, <string-name><surname>Zaranek</surname>, <given-names>A.W.</given-names></string-name>, <string-name><surname>Durbin</surname>, <given-names>R.</given-names></string-name>, <string-name><surname>McVean</surname>, <given-names>G.</given-names></string-name>, <string-name><surname>Haussler</surname>, <given-names>D.</given-names></string-name>, <string-name><surname>Paten</surname>, <given-names>B.</given-names></string-name>: <article-title>Genome graphs</article-title>. <source>bioRxiv</source> (<year>2017</year>)</mixed-citation></ref>
+<ref id="c5"><label>5.</label><mixed-citation publication-type="other"><string-name><surname>Beyer</surname>, <given-names>W.</given-names></string-name>: <source>Sequence tube maps</source>. <ext-link ext-link-type="uri" xlink:href="https://github.com/wolfib/sequenceTubeMap">https://github.com/wolfib/sequenceTubeMap</ext-link> (<year>2016</year>)</mixed-citation></ref>
+<ref id="c6"><label>6.</label><mixed-citation publication-type="journal"><string-name><surname>Medvedev</surname>, <given-names>P.</given-names></string-name>, <string-name><surname>Brudno</surname>, <given-names>M.</given-names></string-name>: <article-title>Maximum likelihood genome assembly</article-title>. <source>Journal of computational Biology</source> <volume>16</volume> (<year>2009</year>) <fpage>1101</fpage>&#x2013;<lpage>1116</lpage></mixed-citation></ref>
+<ref id="c7"><label>7.</label><mixed-citation publication-type="other"><string-name><surname>Paten</surname>, <given-names>B.</given-names></string-name>, <string-name><surname>Novak</surname>, <given-names>A.M.</given-names></string-name>, <string-name><surname>Garrison</surname>, <given-names>E.</given-names></string-name>, <string-name><surname>Hickey</surname>, <given-names>G.</given-names></string-name>: <article-title>Superbubbles, ultrabubbles and cacti</article-title>. <source>bioRxiv</source> (<year>2017</year>)</mixed-citation></ref>
+<ref id="c8"><label>8.</label><mixed-citation publication-type="journal"><string-name><surname>Zerbino</surname>, <given-names>D.R.</given-names></string-name>, <string-name><surname>Birney</surname>, <given-names>E.</given-names></string-name>: <article-title>Velvet: algorithms for de novo short read assembly using de bruijn graphs</article-title>. <source>Genome research</source> <volume>18</volume> (<year>2008</year>) <fpage>821</fpage>&#x2013;<lpage>829</lpage></mixed-citation></ref>
+<ref id="c9"><label>9.</label><mixed-citation publication-type="book"><string-name><surname>Onodera</surname>, <given-names>T.</given-names></string-name>, <string-name><surname>Sadakane</surname>, <given-names>K.</given-names></string-name>, <string-name><surname>Shibuya</surname>, <given-names>T.</given-names></string-name> <source>In: Detecting Superbubbles in Assembly Graphs</source>. <publisher-name>Springer Berlin Heidelberg</publisher-name>, <publisher-loc>Berlin, Heidelberg</publisher-loc> (<year>2013</year>) <fpage>338</fpage>&#x2013;<lpage>348</lpage></mixed-citation></ref>
+<ref id="c10"><label>10.</label><mixed-citation publication-type="journal"><string-name><surname>Brankovic</surname>, <given-names>L.</given-names></string-name>, <string-name><surname>Iliopoulos</surname>, <given-names>C.S.</given-names></string-name>, <string-name><surname>Kundu</surname>, <given-names>R.</given-names></string-name>, <string-name><surname>Mohamed</surname>, <given-names>M.</given-names></string-name>, <string-name><surname>Pissis</surname>, <given-names>S.P.</given-names></string-name>, <string-name><surname>Vayani</surname>, <given-names>F.</given-names></string-name>: <article-title>Linear-time superbubble identification algorithm for genome assembly</article-title>. <source>Theoretical Computer Science</source> <volume>609</volume>, Part 2 (<year>2016</year>) <fpage>374</fpage> &#x2013; <lpage>383</lpage></mixed-citation></ref>
+<ref id="c11"><label>11.</label><mixed-citation publication-type="journal"><string-name><surname>Sung</surname>, <given-names>W.K.</given-names></string-name>, <string-name><surname>Sadakane</surname>, <given-names>K.</given-names></string-name>, <string-name><surname>Shibuya</surname>, <given-names>T.</given-names></string-name>, <string-name><surname>Belorkar</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Pyrogova</surname>, <given-names>I.</given-names></string-name>: <article-title>An o(m log m)-time algorithm for detecting superbubbles. IEEE/ACM Trans</article-title>. <source>Comput. Biol. Bioinformatics</source> <volume>12</volume> (<year>2015</year>) <fpage>770</fpage>&#x2013;<lpage>777</lpage></mixed-citation></ref>
+<ref id="c12"><label>12.</label><mixed-citation publication-type="journal"><string-name><surname>Valdes</surname>, <given-names>J.</given-names></string-name>, <string-name><surname>Tarjan</surname>, <given-names>R.E.</given-names></string-name>, <string-name><surname>Lawler</surname>, <given-names>E.L.</given-names></string-name>: <article-title>The recognition of series parallel digraphs</article-title>. <source>SIAM Journal on Computing</source> <volume>11</volume> (<year>1982</year>) <fpage>298</fpage>&#x2013;<lpage>313</lpage></mixed-citation></ref>
+<ref id="c13"><label>13.</label><mixed-citation publication-type="journal"><string-name><surname>Duffin</surname>, <given-names>R.</given-names></string-name>: <article-title>Topology of series-parallel networks</article-title>. <source>Journal of Mathematical Analysis and Applications</source> <volume>10</volume> (<year>1965</year>) <fpage>303</fpage> &#x2013; <lpage>318</lpage></mixed-citation></ref>
+</ref-list>
+<fn-group>
+<fn id="fn1">
+<p>It is on bidirected graphs</p>
+</fn>
+</fn-group>
+</back>
+</article>

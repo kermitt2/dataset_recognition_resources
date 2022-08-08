@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/461996</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Ecology</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>species2vec: A novel method for species representation</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0001-5068-4234</contrib-id>
+<name>
+<surname>Angelov</surname>
+<given-names>Boyan</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="author-notes" rid="n1">&#x002A;</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>MindMatch GmbH</institution></aff>
+</contrib-group>
+<author-notes>
+<fn id="n1" fn-type="other"><label>&#x002A;</label><p><email>boyan.angelov@gmail.com</email></p></fn></author-notes>
+<pub-date pub-type="epub">
+<year>2018</year>
+</pub-date>
+<elocation-id>461996</elocation-id>
+<history>
+<date date-type="received">
+<day>04</day>
+<month>11</month>
+<year>2018</year>
+</date>
+<date date-type="rev-recd">
+<day>04</day>
+<month>11</month>
+<year>2018</year>
+</date>
+<date date-type="accepted">
+<day>05</day>
+<month>11</month>
+<year>2018</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2018, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2018</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="461996.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>Word embeddings are omnipresent in Natural Language Processing (NLP) tasks. The same technology which defines words by their context can also define biological species. This study showcases this new method - species embedding (species2vec). By proximity sorting of 6761594 mammal observations from the whole world (2862 different species), we are able to create a training corpus for the skip-gram model. The resulting species embeddings are tested in an environmental classification task. The classifier performance confirms the utility of those embeddings in preserving the relationships between species, and also being representative of species consortia in an environment.</p>
+</abstract>
+<counts>
+<page-count count="7"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<title>Introduction</title>
+<p>Species Distribution Models have historically been focused on the estimation of a potential ecological niche for a single species [<xref ref-type="bibr" rid="c5">5</xref>]. One of the largest drawbacks of this approach is that those models do not take into account any possible interactions between the organisms (which are, of course, commonplace in nature) [<xref ref-type="bibr" rid="c4">4</xref>]. Such interactions include mutualism, commensalism, predation, and symbiosis [<xref ref-type="bibr" rid="c7">7</xref>]. Thus there is a growing need for methods that include this valuable information. Such tools can improve our understanding of ecosystems and their communities and direct more efforts into conservation and assessment of climate change effects on the biosphere. Recent advances in other areas of machine learning, such as NLP open opportunities for cross-domain adoption. One technique that is very common in the industry is the generation of word embeddings [<xref ref-type="bibr" rid="c10">10</xref>]. The current study aims to implement this technique, prove its statistical and ecological significance, and provide the research community with a new concept for species and an associated tool to use. A similar project (but a different approach, focused on environmental data) was performed by Chen et. al [<xref ref-type="bibr" rid="c4">4</xref>], unfortunately, the code and model was not made publically available, so we could not compare the methods directly.</p>
+</sec>
+<sec id="s2">
+<title>Materials and Methods</title>
+<p>The data processing pipeline is shown on <xref ref-type="fig" rid="fig1">Figure 1</xref>, where the steps are in sequential order.</p>
+<fig id="fig1" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 1.</label>
+<caption>
+<p>Data processing pipeline.</p>
+</caption>
+<graphic xlink:href="461996_fig1.tif"/>
+</fig>
+<sec id="s2a">
+<title>Occurence data</title>
+<p>Species occurence data was obtained from Global Biodiversity Information Facility (GBIF) [<xref ref-type="bibr" rid="c6">6</xref>]. The data for the species composition of different environments is obtained by a custom data download [<xref ref-type="bibr" rid="c9">9</xref>]. For initial version of species2vec the subject are mammal species (class Mammalia), because the ecological interpretation for testing is easier (there is more descriptive data for them available, as compared to other groups such as insects etc.). 6761594 records from 1760 published datasets were obtained. 2862 unique species were present in the dataset. In order to test that the generated species2vec embeddings can ecologically characterize an environment, they were used to substitude occurence counts data for several mammal species in three different environment types (based on a study by Michael et al. [<xref ref-type="bibr" rid="c9">9</xref>]).</p>
+</sec>
+<sec id="s2b">
+<title>Geohashing</title>
+<p>Geohashing is computed by using the algorithm developed by Niemyer [<xref ref-type="bibr" rid="c11">11</xref>]. This technique allows for the conversion of geographic coordinates (lattitude and longitude) into hash codes. Those are then sorted alphanumerically, ordering the coordinate points by proximity.</p>
+</sec>
+<sec id="s2c">
+<title>Data processing and embeddings training</title>
+<p>Word embedding is a method for generating a vector (&#x201D;embedding&#x201D;) for each word based on its context. There are several different approaches to generating those, most of them relying on shallow neural networks. For this study the python fasttext library from Facebook Research [<xref ref-type="bibr" rid="c2">2</xref>] was used to generate the embeddings. fasttext relies on the extension of the continious skip-gram model by using subword information. The resulting embeddings are the sums of the n-gram vectors. For accessing and storing the embeddings the Gensim library was used [<xref ref-type="bibr" rid="c12">12</xref>]. In order for complete species names to be accurately predicted, the empty spaces were replaced by underscores (i.e. Grammomys ibeanus &#x2192; Grammomys ibeanus). Those names were placed inside a large corpus, ordered by proximity, and finally fed to fasttext. The basic objective of the Skip-gram model is to maximize the average log probability shown in <xref ref-type="disp-formula" rid="eqn1">Equation 1</xref>, where <italic>w</italic><sub>1</sub><italic>, w</italic><sub>2</sub><italic>, w</italic><sub>3</sub><italic>&#x2026;w<sub>T</sub></italic> are the training words and <italic>c</italic> is the training context.
+<disp-formula id="eqn1"><alternatives><graphic xlink:href="461996_eqn1.gif"/></alternatives></disp-formula></p>
+</sec>
+<sec id="s2d">
+<title>Machine learning</title>
+<p>Machine learning was performed by the mlr package [<xref ref-type="bibr" rid="c1">1</xref>]. The Random Forests algorithm was used because of its good out-of-the-box performance [<xref ref-type="bibr" rid="c3">3</xref>]. The dataset for model training was built by replacing the occurence counts for the several different mammal species by the generated embeddings. The vectors were weighted in order to account for the relative abundance (since it is not a presence-absence only dataset). A 300 5 matrix was created, split randomly into training and tests sets (50&#x0025; each) and a model was trained. In order to visualise the embeddings, the t-Distributed Stochastic Neighbor Embedding (t-SNE) method was used [<xref ref-type="bibr" rid="c8">8</xref>].</p>
+</sec>
+</sec>
+<sec id="s3">
+<title>Results</title>
+<sec id="s3a">
+<title>Species embeddings</title>
+<p>After training the species2vec model based on the steps in <xref ref-type="fig" rid="fig1">Figure 1</xref>, <italic>n</italic> &#x003D; 1987 unique species remain (69&#x0025; of the original dataset). For the lost 31&#x0025; not enough data points were available. The geohashing took &#x007E; 14 minutes on a 4 core 2.70GHz CPU 32GB RAM machine. The first step of investigating the embeddings performance is to use a function from the Gensim package which allows for the extraction of most similar species embeddings. The results are shown on <xref ref-type="fig" rid="fig2">Figure 2</xref>. The <italic>Grammomys ibeanus</italic> species was chosen for this, since it is one of the species in the environment dataset which is used to test the embeddings. All 10 most similar species are also rodents from central Africa.</p>
+<fig id="fig2" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 2.</label>
+<caption><title>Most similar species.</title>
+<p>All shown species are central african rodents.</p>
+</caption>
+<graphic xlink:href="461996_fig2.tif"/>
+</fig>
+<p>A second step in assessing the quality of the species embeddings is t-SNE visualisation. This result is shown on <xref ref-type="fig" rid="fig3">Figure 3</xref>. Samples of the data points are manually investigated to confirm that the clusters overlayed on top of the plot are correct. We can see that there is good separation between the continents, further confirming our hypothesis that the geohashing and subsequent embeddings have an ecological meaning. This large t-SNE plot has a lot of detail available for further interpretation. As an example we can zoom into one of the clusters to inspect the results deeper. This visualisation is shown on <xref ref-type="fig" rid="fig4">Figure 4</xref>. In the upper-left corner a mini cluster of the <italic>Leontocebus genus</italic> is present, showing that those several species of tamarins are closely related.</p>
+<fig id="fig3" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 3.</label>
+<caption><title>t-SNE plot of a sample of <italic>n</italic> &#x003D; 1000 different embeddings.</title>
+<p>The red dotted lines denote the different clusters.</p>
+</caption>
+<graphic xlink:href="461996_fig3.tif"/>
+</fig>
+<fig id="fig4" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 4.</label>
+<caption>
+<p>South American t-SNE cluster.</p>
+</caption>
+<graphic xlink:href="461996_fig4.tif"/>
+</fig>
+</sec>
+<sec id="s3b">
+<title>Predicting environment types</title>
+<p>The Random Forest classifier which was trained to predict the 3 different environments by using weighted <bold>species2vec</bold> embeddings achieved <italic>accuracy</italic> &#x003D; 87&#x0025; and <italic>mmce</italic> &#x003D; 0.13<sup><xref ref-type="fn" rid="fn1">1</xref></sup>. The decision boundaries are plotted on <xref ref-type="fig" rid="fig5">Figure 5</xref>, showing a clear separation between the environment types<sup><xref ref-type="fn" rid="fn2">2</xref></sup>.</p>
+<fig id="fig5" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 5.</label>
+<caption>
+<p>Classifier decision boundary.</p>
+</caption>
+<graphic xlink:href="461996_fig5.tif"/>
+</fig>
+</sec>
+</sec>
+<sec id="s4">
+<title>Discussion</title>
+<p>The results obtained in this study prove that the concept of generating species embeddings is meaningful statistically and ecologically. The initial observation of the most similar species (<xref ref-type="fig" rid="fig2">Figure 2</xref>) confirms that the vector generated for <italic>Grammomys ibeanus</italic> indeed represents it as occupying the same niche as the other listed species (<italic>Grammomys macmillani</italic> <sup><xref ref-type="fn" rid="fn3">3</xref></sup>, <italic>Praomys delectorum</italic>, <italic>Mastomys erythroleucus</italic> and others). The t-SNE visualisation (<xref ref-type="fig" rid="fig3">Figure 3</xref>) provides further evidence for this. Some information is lost by reducing the dimensions, but still the separation between different biotopes is clear. A potential future improvement of this plot is to generate an interactive 3D visualisation that would allow for even deeper exploration, since even more deeper patterns in local communities can be discovered (i.e. can we see a separation between sub-saharan african species and those to the north?). The high classification accuracy for the environment type classification dataset proves that a vector representation of a species can also represent its environment successfully. Environments represented by the weighted associated species vectors could be distunguished strongly, even with a low number of features (&#x2264;6) and having data from relatively similar environments.</p>
+<p><monospace><bold>species2vec</bold></monospace> as a method can be used in solving a variety of ecological problems and challenges. Domain experts in the field can benefit greatly from having a tool which can recommend which species are most likely to be encountered next in the environment. Related to this, researchers can assess and classify differences in habitats in a more accurate way by using the weighted vectorized species representations instead of simple raw counts. Those differences in habitats can have large ecological significance if they are caused by direct habitat descruction or climate change. Invasive species can also be classified by using their embeddings.</p>
+</sec>
+<sec id="s5">
+<title>Future work</title>
+<p>The embeddings are available in a GitHub repository (<ext-link ext-link-type="uri" xlink:href="https://github.com/boyanangelov/species2vec/">https://github.com/boyanangelov/species2vec/</ext-link>) and also archived on Zenodo (<ext-link ext-link-type="uri" xlink:href="https://zenodo.org/record/1477661">https://zenodo.org/record/1477661</ext-link>). The current version of species2vec (v1.0) provides embeddings for mammals only. It can be interesting and useful to generate embeddings of other separate groups of organisms (insects, birds) or to include all taxonomic groups available in GBIF (also flora). The aforementioned interactive exploration tool can also prove to be useful to domain experts.</p>
+</sec>
+</body>
+<back>
+<ack>
+<title>Acknowledgments</title>
+<p>The author wants to ackwowledge GBIF for providing the dataset used for the study.</p>
+</ack>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>1.</label><mixed-citation publication-type="journal"><string-name><given-names>B.</given-names> <surname>Bischl</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Lang</surname></string-name>, <string-name><given-names>L.</given-names> <surname>Kotthoff</surname></string-name>, <string-name><given-names>J.</given-names> <surname>Schiffner</surname></string-name>, <string-name><given-names>J.</given-names> <surname>Richter</surname></string-name>, <string-name><given-names>E.</given-names> <surname>Studerus</surname></string-name>, <string-name><given-names>G.</given-names> <surname>Casalicchio</surname></string-name>, and <string-name><given-names>Z. M.</given-names> <surname>Jones</surname></string-name>. <article-title>mlr: Machine learning in r</article-title>. <source>The Journal of Machine Learning Research</source>, <volume>17</volume>(<issue>1</issue>):<fpage>5938</fpage>&#x2013;<lpage>5942</lpage>, <year>2016</year>.</mixed-citation></ref>
+<ref id="c2"><label>2.</label><mixed-citation publication-type="journal"><string-name><given-names>P.</given-names> <surname>Bojanowski</surname></string-name>, <string-name><given-names>E.</given-names> <surname>Grave</surname></string-name>, <string-name><given-names>A.</given-names> <surname>Joulin</surname></string-name>, and <string-name><given-names>T.</given-names> <surname>Mikolov</surname></string-name>. <article-title>Enriching word vectors with subword information</article-title>. <source>arXiv</source> preprint arXiv:<pub-id pub-id-type="arxiv">1607.04606</pub-id>, <year>2016</year>.</mixed-citation></ref>
+<ref id="c3"><label>3.</label><mixed-citation publication-type="journal"><string-name><given-names>L.</given-names> <surname>Breiman</surname></string-name>. <article-title>Random forests</article-title>. <source>Machine learning</source>, <volume>45</volume>(<issue>1</issue>):<fpage>5</fpage>&#x2013;<lpage>32</lpage>, <year>2001</year>.</mixed-citation></ref>
+<ref id="c4"><label>4.</label><mixed-citation publication-type="journal"><string-name><given-names>D.</given-names> <surname>Chen</surname></string-name>, <string-name><given-names>Y.</given-names> <surname>Xue</surname></string-name>, <string-name><given-names>S.</given-names> <surname>Chen</surname></string-name>, <string-name><given-names>D.</given-names> <surname>Fink</surname></string-name>, and <string-name><given-names>C.</given-names> <surname>Gomes</surname></string-name>. <article-title>Deep multi-species embedding</article-title>. <source>arXiv</source> preprint arXiv:<pub-id pub-id-type="arxiv">1609.09353</pub-id>, <year>2016</year>.</mixed-citation></ref>
+<ref id="c5"><label>5.</label><mixed-citation publication-type="journal"><string-name><given-names>J.</given-names> <surname>Elith</surname></string-name> and <string-name><given-names>J. R.</given-names> <surname>Leathwick</surname></string-name>. <article-title>Species distribution models: ecological explanation and prediction across space and time</article-title>. <source>Annual review of ecology, evolution, and systematics</source>, <volume>40</volume>:<fpage>677</fpage>&#x2013;<lpage>697</lpage>, <year>2009</year>.</mixed-citation></ref>
+<ref id="c6"><label>6.</label><mixed-citation publication-type="journal"><collab>GBIF</collab>. (30th october 2018) <source>gbif occurrence download</source>, <year>2016</year>.</mixed-citation></ref>
+<ref id="c7"><label>7.</label><mixed-citation publication-type="book"><string-name><given-names>H. F.</given-names> <surname>Howe</surname></string-name>, <string-name><given-names>L. C.</given-names> <surname>Westley</surname></string-name>, <etal>et al.</etal> <source>Ecological relationships of plants and animals</source>. <publisher-name>Oxford University Press</publisher-name>, <year>1988</year>.</mixed-citation></ref>
+<ref id="c8"><label>8.</label><mixed-citation publication-type="journal"><string-name><given-names>L. v. d.</given-names> <surname>Maaten</surname></string-name> and <string-name><given-names>G.</given-names> <surname>Hinton</surname></string-name>. <article-title>Visualizing data using t-sne</article-title>. <source>Journal of machine learning research</source>, <volume>9</volume>(<issue>Nov</issue>):<fpage>2579</fpage>&#x2013;<lpage>2605</lpage>, <year>2008</year>.</mixed-citation></ref>
+<ref id="c9"><label>9.</label><mixed-citation publication-type="journal"><string-name><given-names>N.</given-names> <surname>Michael</surname></string-name>, <string-name><given-names>J.</given-names> <surname>Ringo</surname></string-name>, and <string-name><given-names>S.</given-names> <surname>Ratnayeke</surname></string-name>. <article-title>Diversity, Composition and Richness of Small Mammals in Natural and Agricultural Areas in Mbeya Region, Tanzania</article-title>. <source>Int. J. Modern Plant &#x0026; Anim. Sci</source>, <volume>4</volume>(<issue>1</issue>):<fpage>35</fpage>&#x2013;<lpage>46</lpage>, <year>2016</year>.</mixed-citation></ref>
+<ref id="c10"><label>10.</label><mixed-citation publication-type="journal"><string-name><given-names>T.</given-names> <surname>Mikolov</surname></string-name>, <string-name><given-names>I.</given-names> <surname>Sutskever</surname></string-name>, <string-name><given-names>K.</given-names> <surname>Chen</surname></string-name>, <string-name><given-names>G.</given-names> <surname>Corrado</surname></string-name>, and <string-name><given-names>J.</given-names> <surname>Dean</surname></string-name>. <article-title>Distributed representations of words and phrases and their compositionality</article-title>. <source>CoRR, abs/1310.4546</source>, <year>2013</year>.</mixed-citation></ref>
+<ref id="c11"><label>11.</label><mixed-citation publication-type="journal"><string-name><given-names>G.</given-names> <surname>Niemeyer</surname></string-name>. <source>Geohash</source>, <year>2008</year>.</mixed-citation></ref>
+<ref id="c12"><label>12.</label><mixed-citation publication-type="journal"><string-name><given-names>R.</given-names> <surname>Rehurek</surname></string-name> and <string-name><given-names>P.</given-names> <surname>Sojka</surname></string-name>. <article-title>Software framework for topic modelling with large corpora</article-title>. In <source>Proceedings of the LREC 2010 Workshop on New Challenges for NLP Frameworks</source>. Citeseer, <year>2010</year>.</mixed-citation></ref>
+</ref-list>
+<fn-group>
+<fn id="fn1"><label><sup>1</sup></label><p>Mean missclassification error.</p></fn>
+<fn id="fn2"><label><sup>2</sup></label><p>Here two species (features) plotted against each other.</p></fn>
+<fn id="fn3"><label><sup>3</sup></label><p>Note that there are two species from the same genus in the list.</p></fn>
+</fn-group>
+</back>
+</article>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/160606</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Axe: rapid, competitive sequence read demultiplexing using a trie</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0002-2466-1917</contrib-id>
+<name>
+<surname>Murray</surname>
+<given-names>Kevin D.</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0001-8408-3699</contrib-id>
+<name>
+<surname>Borevitz</surname>
+<given-names>Justin O.</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>ARC Centre of Excellence in Plant Energy Biology, Research School of Biology</institution>, ANU, Canberra, <country>Australia</country></aff>
+</contrib-group>
+<pub-date pub-type="epub">
+<year>2017</year>
+</pub-date>
+<elocation-id>160606</elocation-id>
+<history>
+<date date-type="received">
+<day>06</day>
+<month>7</month>
+<year>2017</year>
+</date>
+<date date-type="rev-recd">
+<day>06</day>
+<month>7</month>
+<year>2017</year>
+</date>
+<date date-type="accepted">
+<day>07</day>
+<month>7</month>
+<year>2017</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2017, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2017</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="160606.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>Here we implement a rapid algorithm for demultiplexing DNA sequence reads with in-read indices. Axe selects the optimal index present in a sequence read, even in the presence of sequencing errors. The algorithm is able to handle combinatorial indexing, indices of differing length, and several mismatches per index sequence.</p>
+</abstract>
+<counts>
+<page-count count="4"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<label>1</label>
+<title>Introduction</title>
+<p>The incredible yield of modern DNA sequencing technologies has enabled the multiplexing of DNA samples into a single sequencing unit. Multiplexing is achieved by the addition of short sequences (indices) to each molecule to be sequenced. When sequenced, these index sequences uniquely identify the sample to which a sequence read belongs.</p>
+<p>Many commercial protocols use platform specific features to add these DNA indices such that sequencing platforms can automatically demultiplex these samples. However, many custom sequencing protocols, including GBS [<xref rid="c2" ref-type="bibr">2</xref>], add indices which end users must themselves demultiplex. Combinatorial indexing schemes add independent index sequences to both pairs of a paired-end sequencing protocol, and samples are identified by the combination of these two index sequences.</p>
+<p>Many sequencing read demultiplexers have been published. For example, both Flexbar [<xref rid="c1" ref-type="bibr">1</xref>] and the Fastxtoolkit&#x2019;s <monospace>fastx_barcode_splitter.pl</monospace> [<xref rid="c3" ref-type="bibr">3</xref>] accept single- and paired-end reads, however they cannot demultiplex combinatorial indices. AdapterRemoval [<xref rid="c6" ref-type="bibr">6</xref>] can demultiplex combinatorial indices, but cannot demultiplex indexes which differ in length. We developed axe to address these shortcomings.</p>
+</sec>
+<sec id="s2">
+<label>2</label>
+<title>Methods</title>
+<sec id="s2a">
+<label>2.1</label>
+<title>Implementation</title>
+<p><monospace>Axe</monospace> matches the prefix of a sequence read against a pre-computed trie of index sequences. To do so, <monospace>axe</monospace> first calculates all sequences within a given hamming distance of each index sequence. Axe then associates each of these sequences with its respective sample identifier using a double-array trie. This data structure allows rapid lookup of variable length prefixes within a set of index sequences, an &#x1D4AA;(1) operation with respect to the number of indices.</p>
+<p>Reads are demultiplexed by finding the read&#x2019;s longest prefix, in the trie of index sequences, and assigning that read to its associated sample. This algorithm extends easily to combinatorial indexing, where two independent indices prefix each read of a read pair. Although this algorithm is agnostic as to which end of a sequencing read contains a index, only 5&#x2019; (prefix) index demultiplexing is currently implemented.</p>
+</sec>
+<sec id="s2b">
+<label>2.2</label>
+<title>Operation</title>
+<p>To demultiplex sequence reads, one uses the command <monospace>axe-demux</monospace>. This command takes input reads as FASTQ or FASTA files which may contain single- or paired-end reads. Paired-end reads may be interleaved, and output reads can be written in any of these formats.</p>
+<p>Axe is implemented in the C language, available at <ext-link ext-link-type="uri" xlink:href="https://github.com/kdmurray91/axe">https://github.com/kdmurray91/axe</ext-link>. It may be built from source code on any modern POSIX operating system (including GNU/Linux and Mac OS X). The only dependencies not bundled with the source distribution are <monospace>CMake</monospace> and <monospace>zlib</monospace>. It is available in the Debian and Ubuntu GNU/Linux distributions as the <monospace>axe-demultiplexer</monospace> software package.</p>
+</sec>
+<sec id="s2c">
+<label>2.3</label>
+<title>Validation experiments</title>
+<p>To quantify the performance of <monospace>axe</monospace> relative to similar tools, 10 million 100bp paired end reads were simulated from a random 1Mbp genome using Mason2 [<xref rid="c4" ref-type="bibr">4</xref>]. Sets of index sequences of various sizes (see results) were drawn from the set of all 8-mers with a minimum hamming distance of 3. Sample frequencies were drawn from a gamma distribution with a shape parameter of 2; read pairs are randomly assigned a sample from these sample frequencies. Index sequences are inserted into the 5&#x2019; end of sequences and errors added with a frequency of 10<sup>&#x2212;2.5</sup> (PHRED quality of 25). Combinatorial index sets were generated using the same process for each read.</p>
+<p>These datasets were used to benchmark all operational modes of <monospace>axe</monospace>, alongside previous read demultiplexing software <monospace>flexbar</monospace>, <monospace>fastx</monospace> and <monospace>AdapterRemoval</monospace>. The precise versions and parameters for these programs, and the workflow which performs the simulations reported here, are available at <ext-link ext-link-type="uri" xlink:href="https://github.com/kdmurray91/axe-experiments">https://github.com/kdmurray91/axe-experiments</ext-link>.</p>
+</sec>
+</sec>
+<sec id="s3">
+<label>3</label>
+<title>Results</title>
+<sec id="s3a">
+<label>3.1</label>
+<title>Demultiplexing accuracy</title>
+<p>We benchmark the speed and accuracy of <monospace>axe</monospace>, <monospace>flexbar</monospace>, <monospace>AdapterRemoval</monospace> and <monospace>fastx_barcode_splitter.pl</monospace> (hereafter &#x201C;<monospace>fastx</monospace>&#x201D;). When demultiplexing read pairs with an index sequence on one read only (single-end), both <monospace>axe</monospace> and <monospace>fastx</monospace> are able to perfectly demultiplex all reads, with no error and with no reads left unassigned. <monospace>AdapterRemoval</monospace> fails to assign a minuscule proportion of reads, while <monospace>flexbar</monospace> mis-assigns several percent of reads (<xref rid="fig1" ref-type="fig">Figure 1</xref>). When demultiplexing combinatorially indexed read pairs, <monospace>axe</monospace> again demultiplexes all reads perfectly, and <monospace>AdapterRemoval</monospace> fails to assign a small proportion. When demultiplexing reads with variable-length index sequences, <monospace>axe</monospace> performs perfectly, while <monospace>flexbar</monospace> mis-assigns several percent of reads. In all cases, <monospace>axe</monospace> is the fastest demultiplexer tested. <monospace>AdapterRemoval</monospace> performs several times slower than <monospace>axe</monospace>. <monospace>fastx</monospace> and <monospace>flexbar</monospace> perform hundreds of times slower than <monospace>axe</monospace> and <monospace>AdapterRemoval</monospace> (<xref rid="fig2" ref-type="fig">Figure 2</xref>).</p>
+<fig id="fig1" position="float" fig-type="figure">
+<label>Figure 1.</label>
+<caption><p>Accuracy of read assignment. <monospace>Axe</monospace> is able to perfectly demultiplex all reads, as is <monospace>fastx</monospace>. Only <monospace>flexbar</monospace> incorrectly assigns reads. Note: &#x201C;Comb.&#x201D; refers to combinatorial index sets, and &#x201C;Var.&#x201D; refers to index sets with variable length index sequences.</p></caption>
+<graphic xlink:href="160606_fig1.tif"/>
+</fig>
+<fig id="fig2" position="float" fig-type="figure">
+<label>Figure 2.</label>
+<caption><p>Computational performance of demultiplexers. <monospace>Axe</monospace> is the fastest in all cases, closely followed by <monospace>AdapterRemoval</monospace>. <monospace>fastx</monospace> and <monospace>flexbar</monospace> are appreciably slower, especially when the number of indices is large.</p></caption>
+<graphic xlink:href="160606_fig2.tif"/>
+</fig>
+</sec>
+</sec>
+<sec id="s4">
+<label>4</label>
+<title>Discussion</title>
+<p>Here we implement a rapid and accurate algorithm for demultiplexing 5&#x2019;-indexed reads. We show equal or improved accuracy and reduced computational cost compared to previous software developed to perform this task. In addition, more complex indexing schemes including combinatorial and/or variable length index sequences are supported.</p>
+<p>While in-read indexing is being phased out in some studies, it persists in protocols such as GBS[<xref rid="c2" ref-type="bibr">2</xref>] and RNAseq using unique molecular identifiers[<xref rid="c5" ref-type="bibr">5</xref>]. Additionally, <monospace>axe</monospace>&#x2019;s algorithm is applicable to demultiplexing out-of-read indexing schemes, though the implementation does not currently support this.</p>
+</sec>
+<sec id="s5" sec-type="data_availability">
+<label>5</label>
+<title>Software Availability</title>
+<sec id="s5a">
+<label>5.1</label>
+<title>Software available from</title>
+<list list-type="bullet">
+<list-item><p>Debian and Ubuntu GNU/Linux: available in the official software repositories, use <monospace>sudo apt-get install axe-demultiplexer</monospace> (for Debian/Ubuntu versions 9.0 and 16.04 or higher respectively).</p></list-item>
+<list-item><p>Other GNU/Linux: pre-compiled executables available from <ext-link ext-link-type="uri" xlink:href="https://github.com/kdmurray91/axe/releases">https://github.com/kdmurray91/axe/releases</ext-link></p></list-item>
+<list-item><p>Other operating systems: portable source available from <ext-link ext-link-type="uri" xlink:href="https://github.com/kdmurray91/axe/releases">https://github.com/kdmurray91/axe/releases</ext-link></p></list-item>
+</list>
+</sec>
+<sec id="s5b">
+<label>5.2</label>
+<title>Link to source code</title>
+<p><ext-link ext-link-type="uri" xlink:href="https://github.com/kdmurray91/axe">https://github.com/kdmurray91/axe</ext-link></p>
+</sec>
+</sec>
+<sec id="s6">
+<label>6</label>
+<title>Software License</title>
+<p>Copyright 2014-2017 Kevin Murray</p>
+<p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
+<p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</p>
+<p>You should have received a copy of the GNU General Public License along with this program. If not, see <ext-link ext-link-type="uri" xlink:href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</ext-link>.</p>
+</sec>
+</body>
+<back>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>[1]</label><mixed-citation publication-type="journal"><string-name><given-names>Matthias</given-names> <surname>Dodt</surname></string-name>, <string-name><given-names>Johannes</given-names> <surname>Roehr</surname></string-name>, <string-name><given-names>Rina</given-names> <surname>Ahmed</surname></string-name>, and <string-name><given-names>Christoph</given-names> <surname>Dieterich</surname></string-name>. <article-title>FLEXBAR: Flexible Barcode and Adapter</article-title> <source>Processing for Next-Generation Sequencing Platforms.</source> <volume>1</volume>(<issue>3</issue>):<fpage>895</fpage>&#x2013;<lpage>905</lpage>.</mixed-citation></ref>
+<ref id="c2"><label>[2]</label><mixed-citation publication-type="journal"><string-name><given-names>Robert J.</given-names> <surname>Elshire</surname></string-name>, <string-name><given-names>Jeffrey C.</given-names> <surname>Glaubitz</surname></string-name>, <string-name><given-names>Qi</given-names> <surname>Sun</surname></string-name>, <string-name><given-names>Jesse A.</given-names> <surname>Poland</surname></string-name>, <string-name><given-names>Ken</given-names> <surname>Kawamoto</surname></string-name>, <string-name><given-names>Edward S.</given-names> <surname>Buckler</surname></string-name>, and <string-name><given-names>Sharon E.</given-names> <surname>Mitchell</surname></string-name>. <article-title>A Robust</article-title>, <source>Simple Genotyping-by-Sequencing (GBS) Approach for High Diversity Species</source>. <volume>6</volume>(<issue>5</issue>):<fpage>e19379</fpage>.</mixed-citation></ref>
+<ref id="c3"><label>[3]</label><mixed-citation publication-type="other"><collab>Assaf Gordon. FASTX-Toolkit</collab>.</mixed-citation></ref>
+<ref id="c4"><label>[4]</label><mixed-citation publication-type="other"><string-name><given-names>M.</given-names> <surname>Holtgrewe</surname></string-name>. <source>Mason &#x2013; A Read Simulator for Second Generation Sequencing Data.</source></mixed-citation></ref>
+<ref id="c5"><label>[5]</label><mixed-citation publication-type="journal"><string-name><given-names>Teemu</given-names> <surname>Kivioja</surname></string-name>, <string-name><given-names>Anna</given-names> <surname>V&#x00E4;h&#x00E4;rautio</surname></string-name>, <string-name><given-names>Kasper</given-names> <surname>Karlsson</surname></string-name>, <string-name><given-names>Martin</given-names> <surname>Bonke</surname></string-name>, <string-name><given-names>Martin</given-names> <surname>Enge</surname></string-name>, <string-name><given-names>Sten</given-names> <surname>Linnarsson</surname></string-name>, and <string-name><given-names>Jussi</given-names> <surname>Taipale</surname></string-name>. <source>Counting absolute numbers of molecules using unique molecular identifiers.</source> <volume>9</volume>(<issue>1</issue>):<fpage>72</fpage>&#x2013;<lpage>74</lpage>.</mixed-citation></ref>
+<ref id="c6"><label>[6]</label><mixed-citation publication-type="journal"><string-name><given-names>Mikkel</given-names> <surname>Schubert</surname></string-name>, <string-name><given-names>Stinus</given-names> <surname>Lindgreen</surname></string-name>, and <string-name><given-names>Ludovic</given-names> <surname>Orlando</surname></string-name>. <source>AdapterRemoval v2: Rapid adapter trimming, identification, and read merging.</source> <volume>9</volume>:<fpage>88</fpage>.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/192856</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Extracting Evidence Fragments for Distant Supervision of Molecular Interactions</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0003-1493-865X</contrib-id>
+<name>
+<surname>Burns</surname>
+<given-names>Gully A</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<contrib contrib-type="author">
+<name>
+<surname>Dasigi</surname>
+<given-names>Pradeep</given-names>
+</name>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0002-3270-7903</contrib-id>
+<name>
+<surname>Hovy</surname>
+<given-names>Eduard H.</given-names>
+</name>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>USC Information Sciences Institute</institution>, Marina del Rey, CA 90292, <country>USA</country> <email>burns@isi.edu</email></aff>
+<aff id="a2"><label>2</label><institution>Language Technologies Institute &#x2013; Carnegie Mellon University</institution>, Pittsburgh, PA 15213, <country>USA</country> <email>pdasigi@cs.cmu.edu</email>, <email>hovy@cs.cmu.edu</email></aff>
+</contrib-group>
+<pub-date pub-type="epub">
+<year>2017</year>
+</pub-date>
+<elocation-id>192856</elocation-id>
+<history>
+<date date-type="received">
+<day>22</day>
+<month>9</month>
+<year>2017</year>
+</date>
+<date date-type="rev-recd">
+<day>22</day>
+<month>9</month>
+<year>2017</year>
+</date>
+<date date-type="accepted">
+<day>23</day>
+<month>9</month>
+<year>2017</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2017, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2017</copyright-year><license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="192856.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract.</title>
+<p>We describe a methodology for automatically extracting &#x2018;evidence fragments&#x2019; from a set of biomedical experimental research articles. These fragments provide the primary description of evidence that is presented in the papers&#x2019; figures. They elucidate the goals, methods, results and interpretations of experiments that support the original scientific contributions the study being reported. Within this paper, we describe our methodology and showcase an example data set based on the European Bioinformatics Institute&#x2019;s INTACT database (<ext-link ext-link-type="uri" xlink:href="http://www.ebi.ac.uk/intact/">http://www.ebi.ac.uk/intact/</ext-link>). Using figure codes as anchors, we linked evidence fragments to INTACT data records as an example of <italic>distant supervision</italic> so that we could use INTACT&#x2019;s preexisting, manually-curated structured interaction data to act as a gold standard for machine reading experiments. We report preliminary baseline event extraction measures from this collection based on a publicly available, machine reading system (REACH). We use semantic web standards for our data and provide open access to all source code.</p>
+</abstract>
+<kwd-group kwd-group-type="author">
+<title>Keywords</title>
+<kwd>Machine Reading</kwd>
+<kwd>Molecular Interactions</kwd>
+<kwd>Biomedical In-formatics</kwd>
+<kwd>Discourse Analysis</kwd>
+</kwd-group>
+<counts>
+<page-count count="8"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<label>1</label>
+<title>Introduction</title>
+<p>The biomedical literature consists of tens of millions of published articles [<xref rid="c1" ref-type="bibr">1</xref>] and there are thousands of informatics systems that catalog both published and unpublished scientific work [<xref rid="c2" ref-type="bibr">2</xref>]. These databases are typically constructed manually and there is therefore a very strong need to automate extraction of information from research articles using machine reading approaches. We are attempting to explore whether extracting and representing primary experimental evidence will provide a more accurate, and scoped target for machine reading than simply attempting to read all text in the body of a paper article with equal priority [<xref rid="c3" ref-type="bibr">3</xref>]. This report provides the starting point of our investigation by identifying which fragments of an experimental article&#x2019;s narrative specifically describe the experimental contribution of that article.</p>
+<p>In order to develop machine reading systems, we require training data that links the text of research papers to structured semantic representations of the knowledge content. We describe a general method for creating annotated corpora based on <italic>distant supervision</italic> to create links between text describing research evidence to previously-curated database records. We seek to use figure references in the text of articles to create a useful link between text and data (<xref rid="fig1" ref-type="fig">Figure 1</xref>).</p>
+<fig id="fig1" position="float" fig-type="figure">
+<label>Figure 1.</label>
+<caption><p>Figure references can link relevant fragments from full-text primary research articles to database records and derived semantic representations.</p></caption>
+<graphic xlink:href="192856_fig1.tif"/>
+</fig>
+<p>The European Bioinformatics Institute&#x2019;s (EBI) INTACT database describes molecular interactions (binding events where two molecules join to form a complex). INTACT links each figure reference (<italic>i.e.</italic>, 1a, 2b, 5f, <italic>etc.</italic>) directly to database records [<xref rid="c4" ref-type="bibr">4</xref>]. <xref rid="fig1" ref-type="fig">Figure 1</xref> illustrates how evidence fragments might then be linked to database records via their common figure reference.</p>
+<p>We automated this linkage between database records and evidence fragments to provide a cost-effective way of creating corpora. We applied an open-source event extraction method for signaling pathway events (REACH) [<xref rid="c5" ref-type="bibr">5</xref>] to develop a baseline for detailed semantic extraction of this text.</p>
+</sec>
+<sec id="s2">
+<label>2</label>
+<title>Related Work</title>
+<p>In biomedicine, distant supervision was originally used to facilitate entity and relation extraction from text using structured data [<xref rid="c6" ref-type="bibr">6</xref>]. Previous efforts center around record linkage between domain-specific biomedical entities (such as proteins and residues, see [<xref rid="c7" ref-type="bibr">7</xref>]). The method we use to tag discourse elements is simpler than general discourse parsing methods (such as Rhetorical Structure Theory (RST) [<xref rid="c8" ref-type="bibr">8</xref>]), which might be applied to open domain text. More precisely, our work mirrors that of Teufel <italic>et al.</italic> concerned with &#x201C;Argumentative Zoning&#x201D; where classifiers act on sentences across the entire narrative scope of a paper [<xref rid="c9" ref-type="bibr">9</xref>].We seek a more restricted focus in order to isolate a paper&#x2019;s primary experimental contribution for subsequent extraction, Aydin <italic>et al.</italic> describes a closely-related study in which they classify passages with experimental methods with PSI25-MI terms (the same terminology used in INTACT) [<xref rid="c10" ref-type="bibr">10</xref>]. They focus on methodological text and the size of their annotated corpus (30 papers) reflects the important role of annotated corpora in information extraction. We suggest that our use of distant supervision could increase the size of their working corpus.</p>
+</sec>
+<sec id="s3">
+<label>3</label>
+<title>Methods</title>
+<sec id="s3a">
+<label>3.1</label>
+<title>INTACT Data and Text Preprocessing</title>
+<p>We only used INTACT papers that had been designated as part of the open access subset of Pubmed Central&#x2019;s online digital collection. Our INTACT data contains 13,991 papers of which 1,063 were available for use. To split sentences into their constituent clauses, we computed dependency parses with the Stanford Lexicalized Parser. INTACT data was downloaded and cross referenced to the open access publications with figure references to yield 899 papers containing 6320 individual reported reactions of molecular interactions.</p>
+</sec>
+<sec id="s3b">
+<label>3.2</label>
+<title>Science Discourse Tagger Neural Net Classifier</title>
+<p>We used the <italic>Science Discourse Tagger</italic> (SciDT) [<xref rid="c11" ref-type="bibr">11</xref>] to annotate individual subsentence clauses from scientific papers with one of eight discourse tags including &#x2018;fact&#x2019;, &#x2018;&#x2019;problem&#x2019;, &#x2018;hypothesis&#x2019;, &#x2018;goal&#x2019;, &#x2018;&#x2019;method&#x2019;, &#x2018;&#x2019;result&#x2019;, and &#x2018;none&#x2019; [<xref rid="c12" ref-type="bibr">12</xref>]. Training data was manually compiled from 20 papers. We ran release v0.0.2 from the SciDT and SciDT Pipeline github repositories.</p>
+</sec>
+<sec id="s3c">
+<label>3.3</label>
+<title>Linking Figure References to Surrounding Text</title>
+<p>We used a rule-based approach to locate the sentence boundaries of text pertaining to specific subfigures. <xref rid="fig2" ref-type="fig">Figure 2</xref> shows an example from [<xref rid="c13" ref-type="bibr">13</xref>]. This shows the delineation of text passages pertaining to the evidence presented in subfigures 1A, 1B and the first sentence of the description of 1C. Color coding of sentences shows the discourse tags associated with each clause shown.</p>
+<fig id="fig2" position="float" fig-type="figure">
+<label>Figure 2.</label>
+<caption><p>Evidence text fragments referring to subfigures 1A, 1B and 1C of [<xref rid="c13" ref-type="bibr">13</xref>].</p></caption>
+<graphic xlink:href="192856_fig2.tif"/>
+</fig>
+<p>Informally, the algorithm to extract these fragments is as follows:</p>
+<p>For each subfigure reference in the text, we first scan backwards from clause containing a figure reference mention (<italic>e.g.</italic>, &#x2018;<xref rid="fig1" ref-type="fig">Fig. 1 A</xref>&#x2019;) for the start of the evidence fragment. We assert the presence of a fragment start boundary between consecutive sentences <italic>S</italic><sub>1</sub> and <italic>S</italic><sub>2</sub> (i.e., <italic>S</italic><sub>2</sub> is the first sentence of the evidence fragment) if the following conditions are met:</p>
+<p>Sentence <italic>S</italic><sub>1</sub> contains either</p>
+<list list-type="alpha-lower">
+<list-item><p>clauses that are tagged as &#x2018;hypotheses&#x2019;, &#x2018;problems&#x2019;, or &#x2018;facts&#x2019; or</p></list-item>
+<list-item><p>clauses that are tagged as &#x2018;results&#x2019; or &#x2018;implications&#x2019; that also contain external citations.</p>
+<p>and sentence <italic>S</italic><sub>2</sub> also contains either</p>
+<list list-type="alpha-lower">
+<list-item><p>clauses that are goals or methods</p>
+<p>or</p></list-item>
+<list-item><p>results/implications with no external citations.</p></list-item>
+</list></list-item>
+<list-item><p>both <italic>S</italic><sub>1</sub> and <italic>S</italic><sub>2</sub> contain references to subfigures that are entirely disjoint (i.e., <italic>S</italic><sub>1</sub> refers to &#x2018;<xref rid="fig1" ref-type="fig">Fig. 1C</xref>&#x2019; and <italic>S</italic><sub>2</sub> refers to &#x2018;<xref rid="fig1" ref-type="fig">Fig. 1D, 1E</xref> and <xref rid="fig1" ref-type="fig">1F</xref>&#x2019;).</p></list-item>
+<list-item><p><italic>S</italic><sub>2</sub> is a section heading, indicating that the <italic>S</italic><sub>1</sub>/<italic>S</italic><sub>2</sub> boundary marks a transition between sections.</p></list-item>
+</list>
+<p>Similarly, we repeated this process by scanning forward from the figure reference mention for the following conditions between consecutive sentences <italic>S</italic><sub>1</sub> and <italic>S</italic><sub>2</sub> indicating that <italic>S</italic><sub>1</sub> was the last sentence of the evidence fragment:</p>
+<list list-type="alpha-lower">
+<list-item><p>Sentence <italic>S</italic><sub>1</sub> contains only clauses that are tagged as as &#x2018;results&#x2019; or &#x2018;implications&#x2019; without citing external papers and Sentence <italic>S</italic><sub>2</sub> also contains only</p>
+<list list-type="alpha-lower">
+<list-item><p>clauses that are tagged as &#x2018;goals&#x2019;, &#x2018;methods&#x2019;, &#x2018;hypotheses&#x2019;, &#x2018;problems&#x2019;, &#x2018;facts&#x2019; or &#x2018;methods&#x2019;</p>
+<p>or</p></list-item>
+<list-item><p>clauses that are tagged as &#x2018;results&#x2019; or &#x2018;implications&#x2019; with external citations present.</p></list-item>
+</list></list-item>
+</list>
+<p>Conditions <italic>b.</italic> and <italic>c.</italic> headings were applied as before to detect the start of evidence fragments.</p>
+</sec>
+<sec id="s3d">
+<label>3.4</label>
+<title>Applying the REACH event extraction tool</title>
+<p>REACH is an event extraction engine for molecular signaling [<xref rid="c5" ref-type="bibr">5</xref>]. We applied REACH to INTACT open access papers and cross-referenced outputs to those linked to specific subfigures also referenced by INTACT data records. The only event type in REACH dealing with molecular interaction are &#x2018;Complex Assembly&#x2019; events which we compared to data specified by INTACT data records to generate baseline event-extraction statistics.</p>
+</sec>
+<sec id="s3e">
+<label>3.5</label>
+<title>Building the Molecular Interaction Evidence Fragment Corpus</title>
+<p>We developed an OWL-based implementation of the existing BioC formulation [<xref rid="c14" ref-type="bibr">14</xref>], extended the SciDT pipeline system to export linked data conforming to that model. Also, we used the &#x2018;Semantic Publishing and Referencing&#x2019; (SPAR) ontologies for bibliographic elements and references in both bioc and biopax linked data sets [<xref rid="c15" ref-type="bibr">15</xref>]. We used Paxtools [<xref rid="c16" ref-type="bibr">16</xref>] to convert INTACT PSI-MI2.5 data to BioPax (with a minor adaption to include figure references in the biopax representation of evidence).</p>
+</sec>
+</sec>
+<sec id="s4">
+<label>4</label>
+<title>Results</title>
+<sec id="s4a">
+<label>4.1</label>
+<title>Discourse Tagging</title>
+<p>In [<xref rid="c12" ref-type="bibr">12</xref>], Dasigi <italic>et al.</italic> evaluated 5-fold cross-validation Accuracies and F-Scores for SciDT based on a training set of 2,678 clauses over 263 paragraphs from results sections (Accuracy &#x003D; 0.75, F-Score &#x003D; 0.74). We extended this training data over all sections of the paper to yield 654 paragraphs with 6629 clauses. Of these, 253 paragraphs were from results sections yielding 2802 clauses.</p>
+</sec>
+<sec id="s4b">
+<label>4.2</label>
+<title>Computing Figure Spans within Documents</title>
+<p><xref rid="fig3" ref-type="fig">Figure 3</xref> illustrates the output of this procedure as a Gantt chart of the spans of subfigures over the clauses in a single paper&#x2019;s results section. This shows how experiment references punctuate the argument of the paper with factual evidence. It also shows explicitly how a single paper in this domain is structured around a large number of small-scale experiments (23 in this case). We evaluated our methodology on a mixed set of manually annotated 10 open access papers (involving 190 figure references). This evaluation (of correctly identifying a figure reference for a given clause) gave macro average Precision &#x003D; 0.66 <italic>&#x00B1;</italic> 0.02, Recall &#x003D; 0.87 <italic>&#x00B1;</italic> 0.02 and F-score &#x003D; 0.76 <italic>&#x00B1;</italic> 0.01.</p>
+<fig id="fig3" position="float" fig-type="figure">
+<label>Figure 3.</label>
+<caption><p>Gantt chart distribution of experimental spans for [<xref rid="c13" ref-type="bibr">13</xref>]. Red crosses show positions of subfigure references. Discourse type colors: &#x2018;fact&#x2019;/&#x2018;hypothesis&#x2019;/&#x2018;problem&#x2019; &#x003D; white; &#x2018;goal&#x2019; &#x003D; light gray; &#x2018;method&#x2019; &#x003D; gray; result &#x003D; &#x2018;light blue&#x2019;; &#x2018;implication&#x2019; &#x003D; light green.</p></caption>
+<graphic xlink:href="192856_fig3.tif"/>
+</fig>
+</sec>
+<sec id="s4c">
+<label>4.3</label>
+<title>The Molecular Interaction Evidence Fragment Corpus</title>
+<p>We have released all data associated with the study on FigShare [<xref rid="c17" ref-type="bibr">17</xref>]. The data consists of a compressed archive of individual files for papers&#x2019; evidence fragments and intact data records.</p>
+</sec>
+<sec id="s4d">
+<label>4.4</label>
+<title>REACH System Output</title>
+<p>We ran REACH over all available open source documents in INTACT. Of the 6320 INTACT records with associated figure references, we were able to identify a &#x2018;Complex Assembly&#x2019; event within the sentences our system designated as associated with each event 2747 times (43.47&#x0025; of records). The most precise measure of event extraction accuracy is based on matching the UNIPROT identifiers of any proteins described in the extracted REACH event to those of the INTACT data record. REACH was able to precisely reconstruct the INTACT data record to that level of accuracy in only 356 cases (5.6&#x0025; of records). This provides a baseline measurement for future work.</p>
+</sec>
+</sec>
+<sec id="s5">
+<label>5</label>
+<title>Discussion</title>
+<p>We have sought to instantiate a novel methodology for distant supervision in biomedical text mining and to provide the community access to a mid-sized text corpus for future use. Although our event extraction experiments showed poor performance, this provides a baseline for off-the-shelf tools that we expect to be able to improve upon straightforwardly. We would like to extend this to work with argumentation graphs where claims may be linked from other parts of papers [<xref rid="c18" ref-type="bibr">18</xref>,<xref rid="c19" ref-type="bibr">19</xref>]. Developing methods to automatically create such graphs <italic>across</italic> papers may provide powerful new ways of examining the literature.</p>
+<p>Machine reading depends on the natural redundancy of any scientific narrative where common assertions are stated and restated in different ways across papers. On aggregate, these systems extract structured data from sentences that cite other work. This is problematic, since when evaluated for correctness, citation statements are often inaccurate [<xref rid="c20" ref-type="bibr">20</xref>]. More seriously, citations are both retained and reused within the literature even after the work that they are citing has been retracted [<xref rid="c21" ref-type="bibr">21</xref>]. Thus, a key, original focus of this work is to focus on the assertions that summarize the primary findings of a given paper rather than seek to use any and all available language to use for machine reading tasks.</p>
+</sec>
+</body>
+<back>
+<ack>
+<title>Acknowledgments.</title>
+<p>This work was funded by DARPA Big Mechanism program under ARO contract W911NF-14-1-0436. We thank Anita de Waard, Mihai Surdeanu, Clay Morrison, and Hans Chalupsky for their contributions.</p>
+</ack>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>1.</label><mixed-citation publication-type="website"><collab>National Library of Medicine</collab> <year>2016</year> <source>MEDLINE/PubMed Baseline Database Distribution: File Names, Record Counts, and File Size</source>. <ext-link ext-link-type="uri" xlink:href="https://www.nlm.nih.gov/bsd/licensee/2016_stats/baseline_med_filecount.html">https://www.nlm.nih.gov/bsd/licensee/2016_stats/baseline_med_filecount.html</ext-link></mixed-citation></ref>
+<ref id="c2"><label>2.</label><mixed-citation publication-type="other"><string-name><surname>Galperin</surname>, <given-names>M.Y.</given-names></string-name>, <string-name><surname>Fernandez-Suarez</surname>, <given-names>X.M.</given-names></string-name>, and <string-name><surname>Rigden</surname>, <given-names>D.J.</given-names></string-name> (<year>2017</year>). <article-title>The 24th annual Nucleic Acids Research database issue: a look back and upcoming changes</article-title>. <source>Nucleic Acids Res</source>.</mixed-citation></ref>
+<ref id="c3"><label>3.</label><mixed-citation publication-type="website"><string-name><surname>Burns</surname>, <given-names>G.A.P.C.</given-names></string-name>, and <string-name><surname>Chalupsky</surname>, <given-names>H.</given-names></string-name> (<year>2014</year>). <article-title>Its All Made Up - Why we should stop building representations based on interpretive models and focus on experimental evidence instead</article-title>. <source>In Discovery Informatics: Scientific Discoveries Enabled by AI</source>, (<publisher-loc>Quebec City, Quebec</publisher-loc>), <ext-link ext-link-type="uri" xlink:href="https://www.nlm.nih.gov/bsd/licensee/2016_stats/baseline_med_filecount.html">https://www.nlm.nih.gov/bsd/licensee/2016_stats/baseline_med_filecount.html</ext-link></mixed-citation></ref>
+<ref id="c4"><label>4.</label><mixed-citation publication-type="journal"><string-name><surname>Orchard</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Ammari</surname>, <given-names>M.</given-names></string-name>, <string-name><surname>Aranda</surname>, <given-names>B.</given-names></string-name>, <string-name><surname>Breuza</surname>, <given-names>L.</given-names></string-name>, <string-name><surname>Briganti</surname>, <given-names>L.</given-names></string-name>, <string-name><surname>Broackes-Carter</surname>, <given-names>F.</given-names></string-name>, <string-name><surname>Campbell</surname>, <given-names>N.H.</given-names></string-name>, <string-name><surname>Chavali</surname>, <given-names>G.</given-names></string-name>, <string-name><surname>Chen</surname>, <given-names>C.</given-names></string-name>, <string-name><surname>del-Toro</surname>, <given-names>N.</given-names></string-name>, <etal>et al.</etal>: <article-title>The MIntAct project&#x2013;IntAct as a common curation platform for 11 molecular interaction databases</article-title>. <source>Nucleic Acids Res</source> <volume>42</volume>, <fpage>D358</fpage>&#x2013;<lpage>363</lpage> (<year>2014</year>).</mixed-citation></ref>
+<ref id="c5"><label>5.</label><mixed-citation publication-type="other"><string-name><surname>Valenzuela-Escrcega</surname>, <given-names>M.A.</given-names></string-name>, <string-name><surname>Hahn-Powell</surname>, <given-names>G.</given-names></string-name>, <string-name><surname>Hicks</surname>, <given-names>T.</given-names></string-name>, and <string-name><surname>Surdeanu</surname>, <given-names>M.</given-names></string-name>: <article-title>A Domain-independent Rule-based Framework for Event Extraction</article-title>. <source>In Proceedings of the 53rd Annual Meeting of the Association for Computational Linguistics and the 7th International Joint Conference on Natural Language Processing of the Asian Federation of Natural Language Processing: Software Demonstrations (ACLIJCNLP), (ACL-IJCNLP 2015)</source>, pp. <fpage>127</fpage>&#x2013;<lpage>132</lpage> (<year>2015</year>).</mixed-citation></ref>
+<ref id="c6"><label>6.</label><mixed-citation publication-type="confproc"><string-name><surname>Craven</surname>, <given-names>M.</given-names></string-name>, and <string-name><surname>Kumlien</surname>, <given-names>J.</given-names></string-name> (<year>1999</year>). <article-title>Constructing Biological Knowledge Bases by Extracting Information from Text Sources</article-title>. <conf-name>In Proceedings of the 7th International Conference on Intelligent Systems for Molecular Biology</conf-name>, (<publisher-name>AAAI Press</publisher-name>), pp. <fpage>7786</fpage>.</mixed-citation></ref>
+<ref id="c7"><label>7.</label><mixed-citation publication-type="journal"><string-name><surname>Ravikumar</surname>, <given-names>K.</given-names></string-name>, <string-name><surname>Liu</surname>, <given-names>H.</given-names></string-name>, <string-name><surname>Cohn</surname>, <given-names>J.D.</given-names></string-name>, <string-name><surname>Wall</surname>, <given-names>M.E.</given-names></string-name>, and <string-name><surname>Verspoor</surname>, <given-names>K.</given-names></string-name> (<year>2012</year>). <article-title>Literature mining of protein-residue associations with graph rules learned through distant supervision</article-title>. <source>J Biomed Semantics</source> 3 Suppl <issue>3</issue>, <fpage>S2</fpage>.</mixed-citation></ref>
+<ref id="c8"><label>8.</label><mixed-citation publication-type="book"><string-name><surname>Mann</surname>, <given-names>W.C.</given-names></string-name>, and <string-name><surname>Thompson</surname>, <given-names>S.A.</given-names></string-name> (<year>1987</year>). <source>Rhetorical structure theory: A theory of text organization</source> (<publisher-loc>USC</publisher-loc>, <publisher-name>Information Sciences Institute</publisher-name>).</mixed-citation></ref>
+<ref id="c9"><label>9.</label><mixed-citation publication-type="book"><string-name><surname>Teufel</surname>, <given-names>S.</given-names></string-name>, and <string-name><surname>Kan</surname>, <given-names>M.-Y.</given-names></string-name> (<year>2011</year>). <chapter-title>Robust argumentative zoning for sensemaking in scholarly documents</chapter-title>. <source>In Advanced Language Technologies for Digital Libraries</source>, (<publisher-name>Springer</publisher-name>), pp. <fpage>154170</fpage>.</mixed-citation></ref>
+<ref id="c10"><label>10.</label><mixed-citation publication-type="book"><string-name><surname>Aydin</surname>, <given-names>F.</given-names></string-name>, <string-name><surname>Husunbeyi</surname>, <given-names>Z.M.</given-names></string-name>, and <string-name><surname>Ozgur</surname>, <given-names>A.</given-names></string-name> (<year>2017</year>). <chapter-title>Automatic query generation using word embeddings for retrieving passages describing experimental methods</chapter-title>. <source>Database</source> (<publisher-loc>Oxford</publisher-loc>) 2017.</mixed-citation></ref>
+<ref id="c11"><label>11.</label><mixed-citation publication-type="website"><collab>Scientific Discourse Tagger Pipeline Release</collab>, <ext-link ext-link-type="uri" xlink:href="https://github.com/BMKEG/sciDT-pipeline/releases/tag/0.0.2">https://github.com/BMKEG/sciDT-pipeline/releases/tag/0.0.2</ext-link></mixed-citation></ref>
+<ref id="c12"><label>12.</label><mixed-citation publication-type="website"><string-name><surname>Dasigi</surname>, <given-names>P.</given-names></string-name>, <string-name><surname>Burns</surname>, <given-names>G.A.P.C.</given-names></string-name>, <string-name><surname>Hovy</surname>, <given-names>E.</given-names></string-name>, and <string-name><surname>Waard</surname>, <given-names>A. de</given-names></string-name> (<year>2017</year>). <source>Experiment Segmentation in Scientific Discourse as Clause-level Structured Prediction using Recurrent Neural Networks</source>. arXiv:<pub-id pub-id-type="arxiv">1702.05398</pub-id>, <ext-link ext-link-type="uri" xlink:href="https://arxiv.org/abs/1702.05398">https://arxiv.org/abs/1702.05398</ext-link></mixed-citation></ref>
+<ref id="c13"><label>13.</label><mixed-citation publication-type="journal"><string-name><surname>Innocenti</surname>, <given-names>M.</given-names></string-name>, <string-name><surname>Tenca</surname>, <given-names>P.</given-names></string-name>, <string-name><surname>Frittoli</surname>, <given-names>E.</given-names></string-name>, <string-name><surname>Faretta</surname>, <given-names>M.</given-names></string-name>, <string-name><surname>Tocchetti</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Di Fiore</surname>, <given-names>P.P.</given-names></string-name>, and <string-name><surname>Scita</surname>, <given-names>G.</given-names></string-name> (<year>2002</year>). <article-title>Mechanisms through which Sos-1 coordinates the activation of Ras and Rac</article-title>. <source>J Cell Biol</source> <volume>156</volume>, <fpage>125136</fpage>.</mixed-citation></ref>
+<ref id="c14"><label>14.</label><mixed-citation publication-type="other"><collab>BioC Linked Data</collab> <ext-link ext-link-type="uri" xlink:href="http://purl.org/bioc">http://purl.org/bioc</ext-link></mixed-citation></ref>
+<ref id="c15"><label>15.</label><mixed-citation publication-type="book"><string-name><surname>Peroni</surname>, <given-names>S.</given-names></string-name> (<year>2014</year>). <chapter-title>The Semantic Publishing and Referencing Ontologies</chapter-title>. <source>In Semantic Web Technologies and Legal Scholarly Publishing</source>, (<publisher-loc>Cham</publisher-loc>: <publisher-name>Springer International Publishing</publisher-name>), pp. <fpage>121193</fpage>.</mixed-citation></ref>
+<ref id="c16"><label>16.</label><mixed-citation publication-type="journal"><string-name><surname>Demir</surname>, <given-names>E.</given-names></string-name> <etal>et al.</etal> <article-title>Using biological pathway data with paxtools</article-title>. <source>PLoS Comput Biol</source> <volume>9</volume>, <fpage>e1003194</fpage> (<year>2013</year>).</mixed-citation></ref>
+<ref id="c17"><label>17.</label><mixed-citation publication-type="website"><string-name><surname>Burns</surname>, <given-names>G.</given-names></string-name>, <string-name><surname>Hovy</surname>, <given-names>E.H.</given-names></string-name>, and <string-name><surname>Dasigi</surname>, <given-names>P.</given-names></string-name> (<year>2017</year>). <source>Molecular Interaction Evidence Fragment Corpus</source>. <ext-link ext-link-type="uri" xlink:href="https://doi.org/10.6084/m9.figshare.5007992.v4">https://doi.org/10.6084/m9.figshare.5007992.v4</ext-link></mixed-citation></ref>
+<ref id="c18"><label>18.</label><mixed-citation publication-type="journal"><string-name><surname>Clark</surname>, <given-names>T.</given-names></string-name>, <string-name><surname>Ciccarese</surname>, <given-names>P.N.</given-names></string-name>, and <string-name><surname>Goble</surname>, <given-names>C.A.</given-names></string-name> (<year>2014</year>). <article-title>Micropublications: a semantic model for claims, evidence, arguments and annotations in biomedical communications</article-title>. <source>J Biomed Semantics</source> <volume>5</volume>, <fpage>28</fpage>.</mixed-citation></ref>
+<ref id="c19"><label>19.</label><mixed-citation publication-type="journal"><string-name><surname>Bolling</surname>, <given-names>C.</given-names></string-name>, <string-name><surname>Weidlich</surname>, <given-names>M.</given-names></string-name>, and <string-name><surname>Holzhutter</surname>, <given-names>H.-G.</given-names></string-name> (<year>2014</year>). <article-title>SEE: structured representation of scientific evidence in the biomedical domain using Semantic Web techniques</article-title>. <source>J Biomed Semantics</source> <volume>5</volume>, <fpage>S1</fpage>.</mixed-citation></ref>
+<ref id="c20"><label>20.</label><mixed-citation publication-type="journal"><string-name><surname>Lopresti</surname>, <given-names>R.</given-names></string-name> (<year>2010</year>). <article-title>Citation accuracy in environmental science journals</article-title>. <source>Scientometrics</source> <volume>85</volume>, <fpage>647655</fpage>.</mixed-citation></ref>
+<ref id="c21"><label>21.</label><mixed-citation publication-type="journal"><string-name><surname>Bustin</surname>, <given-names>S.A.</given-names></string-name> (<year>2014</year>). <article-title>The reproducibility of biomedical research: Sleepers awake!</article-title> <source>Biomolecular Detection and Quantification</source> <volume>2</volume>, <fpage>3542</fpage>.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

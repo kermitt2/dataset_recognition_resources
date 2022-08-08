@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/059170</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>A natural encoding of genetic variation in a Burrows-Wheeler Transform to enable mapping and genome inference</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<name><surname>Maciuca</surname><given-names>Sorina</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<contrib contrib-type="author">
+<name><surname>del Ojo Elias</surname><given-names>Carlos</given-names></name>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<contrib contrib-type="author">
+<name><surname>McVean</surname><given-names>Gil</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<contrib contrib-type="author" corresp="yes">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0001-8466-7547</contrib-id>
+<name><surname>Iqbal</surname><given-names>Zamin</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="corresp" rid="cor1">&#x002A;</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>Wellcome Trust Centre for Human Genetics, University of Oxford</institution>, Roosevelt Drive, OX3 7BM Oxford, <country>UK</country></aff>
+<aff id="a2"><label>2</label><institution>Nuffield Division of Medicine, University of Oxford</institution>, Oxford, Oxford.</aff>
+</contrib-group>
+<author-notes>
+<corresp id="cor1"><label>&#x002A;</label>Correspondence: <email xlink:type="simple">zam@well.ox.ac.uk</email></corresp>
+</author-notes>
+<pub-date pub-type="epub"><year>2016</year></pub-date>
+<elocation-id>059170</elocation-id>
+<history>
+<date date-type="received">
+<day>15</day>
+<month>6</month>
+<year>2016</year>
+</date>
+<date date-type="accepted">
+<day>15</day>
+<month>6</month>
+<year>2016</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2016, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2016</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="059170.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>We show how positional markers can be used to encode genetic variation within a Burrows-Wheeler Transform (BWT), and use this to construct a generalisation of the traditional &#x201C;reference genome&#x201D;, incorporating known variation within a species. Our goal is to support the inference of the closest mosaic of previously known sequences to the genome(s) under analysis.</p>
+<p>Our scheme results in an increased alphabet size, and by using a wavelet tree encoding of the BWT we reduce the performance impact on rank operations. We give a specialised form of the backward search that allows variation-aware exact matching. We implement this, and demonstrate the cost of constructing an index of the whole human genome with 8 million genetic variants is 25GB of RAM. We also show that inferring a closer reference can close large kilobase-scale coverage gaps in <italic>P. falciparum</italic>.</p>
+</abstract>
+<kwd-group kwd-group-type="author">
+<title>Keywords</title>
+<kwd>genomics</kwd>
+<kwd>Burrows-Wheeler Transform</kwd>
+<kwd>pan-genome</kwd>
+</kwd-group>
+<counts>
+<page-count count="10"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<label>1</label>
+<title>Introduction</title>
+<p>Genome sequencing involves breaking DNA into fragments, identifying substrings (called &#x201C;reads&#x201D;), and then inferring properties of the genome. Recently, it has become possible to study within-species genetic variation on a large scale [<xref rid="c6" ref-type="bibr">6</xref>, <xref rid="c7" ref-type="bibr">7</xref>], where the dominant approach is to match substrings to the canonical &#x201C;reference genome&#x201D; which is constructed from an arbitrary individual. This problem (&#x201C;mapping&#x201D;) has been heavily studied (see [<xref rid="c5" ref-type="bibr">5</xref>]) and the Burrows-Wheeler Transform (BWT) [<xref rid="c2" ref-type="bibr">2</xref>] underlies the two dominant mappers [<xref rid="c3" ref-type="bibr">3</xref>, <xref rid="c4" ref-type="bibr">4</xref>]. Mapping reads to a reference genome is a very effective way of detecting genetic variation caused by single character changes (SNPs - single nucleotide polymorphisms). However, this method becomes less effective the further the genome differs from the reference. This is an important problem to address since, in many organisms, biologically relevant genomic regions are highly diverse.</p>
+<p>For a given species, our goal is to build a compact representation of the genomes of N individuals, which we call a Population Reference Genome (PRG). This data structure facilitates the following inference: we take as input sequence data from a new sample, an estimate of how many genomes the sample contains and their relative proportions - e.g. a normal human sample would contain 2 genomes in a 1:1 ratio, a bacterial isolate would contain 1 genome and a malaria sample might contain 3 genomes in the ratio 10:3:1. We would then infer the sequence of the underlying genomes. In this paper we describe a method for encoding genetic variation designed to enable this approach.</p>
+<p>Genomes evolve mainly via two processes - mutation (changing a few characters) and recombination (either two chromosomes exchange a chunk of DNA, or one chromosome copies a chunk from another). Thus once we have seen many genomes of a given species, a new genome is likely to look like a mosaic of genomes we have seen before. If we can infer a close mosaic, we have found a &#x201C;personalised reference genome&#x201D;, and reads are more likely to match exactly. This approach was first described in [<xref rid="c8" ref-type="bibr">8</xref>], applied to the human MHC region. However their implementation was quite specific to the region and would not scale to the whole genome. Valenzuela <italic>et al.</italic> [<xref rid="c1" ref-type="bibr">1</xref>] have also espoused a find-the-closest-reference approach.</p>
+<p>Other &#x201C;reference graph&#x201D; methods have been published [<xref rid="c9" ref-type="bibr">9</xref>, <xref rid="c10" ref-type="bibr">10</xref>, <xref rid="c11" ref-type="bibr">11</xref>], generally approaching just the alignment step. Siren et <italic>al.</italic> developed a method (GCSA [<xref rid="c10" ref-type="bibr">10</xref>]), with construction costs for a whole human genome (plus mutations) of more than 1 Tb of RAM. Huang et <italic>al.</italic> [<xref rid="c11" ref-type="bibr">11</xref>] developed an FM-index [<xref rid="c13" ref-type="bibr">13</xref>] encoding of a reference genome-plus-variation (&#x201C;BWBBLE&#x201D;) by extending the genetic alphabet to encode single-character variants with new characters and then concatenating padded indel variants to the end of the reference genome. We do something similar, but treat all variation in an equivalent manner, and retain knowledge of allelism naturally. While completing this paper, the preprint for GCSA2 was published ([<xref rid="c12" ref-type="bibr">12</xref>]), which drops RAM usage of human genome index construction to &#x003C;100GB at the cost of &#x003E;1Tb of disk I/O.</p>
+<p>We show below how to encode a set of genomes, or a reference plus genetic variation, in an FM-index which naturally distinguishes alternate alleles. We extend the well known BWT backward search and show how read-mapping can be performed in a way that allows reads to cross multiple variants, allowing recombination to occur naturally. Our data structure supports bidirectional search (which underlies the Super Maximal Exact Match algorithms of bwa-mem [<xref rid="c3" ref-type="bibr">3</xref>]), but currently we have only implemented exact matching. We use empirical datasets to demonstrate low construction cost (human genome) and the value of inferring a personalised reference in <italic>P. falciparum</italic>.</p>
+</sec>
+<sec id="s2">
+<label>2</label>
+<title>Background: Compressed Text Indexes</title>
+<sec id="s2a">
+<label>2.0.1</label>
+<title>Burrows-Wheeler Transform</title>
+<p>The Burrows-Wheeler Transform (BWT) of a string is a reversible permutation of its characters. The BWT of a string <italic>T</italic> &#x003D; <italic>t</italic><sub>1</sub><italic>t</italic><sub>2</sub>&#x2026;<italic>t<sub>n</sub></italic> is constructed by sorting its <italic>n</italic> cyclic shifts <italic>t</italic><sub>1</sub><italic>t</italic><sub>2</sub>&#x2026;<italic>t<sub>n</sub></italic>, <italic>t</italic><sub>2</sub>&#x2026;<italic>t<sub>n</sub>t</italic><sub>1</sub>,&#x2026;,<italic>t<sub>n</sub>t</italic><sub>1</sub>&#x2026;<italic>t</italic><sub><italic>n</italic>&#x2212;1</sub> in lexicographic order. The matrix obtained is called the Burrows-Wheeler Matrix (BWM) and the sequence from its last column is the BWT.</p>
+</sec>
+<sec id="s2b">
+<label>2.0.2</label>
+<title>Suffix Arrays</title>
+<p>The suffix array of a string <italic>T</italic> is an array of integers that provides the starting position of <italic>T</italic>&#x2019;s suffixes, after they have been ordered lexicographically. Formally, if <italic>T<sub>i,j</sub></italic> is the substring <italic>t<sub>i</sub>t</italic><sub><italic>i</italic>&#x002B;1</sub>&#x2026;<italic>t<sub>j</sub></italic> of <italic>T</italic> and SA is the suffix array of <italic>T</italic>, then <italic>T<sub>SA[1],n</sub></italic> &#x003C; <italic>T<sub>SA[2],n</sub></italic> &#x003C; &#x2026; &#x003C; <italic>T<sub>SA[n],n</sub></italic>. It is related to the BWT, since looking at the substrings preceding the terminating character &#x0024; in the BWM rows gives the suffixes of <italic>T</italic> in lexicographical order.</p>
+</sec>
+<sec id="s2c">
+<label>2.0.3</label>
+<title>Backward search</title>
+<p>Any occurrence of a pattern <italic>P</italic> in text is a prefix for some suffix of <italic>T</italic>, so all occurrences will be adjacent in the suffix array of <italic>T</italic> since suffixes starting with <italic>P</italic> are sorted together in a SA-interval. Let <italic>C[a]</italic> be the total number of occurrences in <italic>T</italic> of characters smaller than <italic>a</italic> in the alphabet. If <italic>P</italic>&#x2032; is a suffix of the query <italic>P</italic> and [<italic>l(P&#x2032;),r(P&#x2032;)</italic>) is its corresponding SA-interval, then the search can be extended to <italic>aP</italic>&#x2032; by calculating the new SA-interval:
+<disp-formula id="eqn1"><alternatives><graphic xlink:href="059170_eqn1.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn2"><alternatives><graphic xlink:href="059170_eqn2.gif"/></alternatives></disp-formula> where the operation <italic>rank<sub>a</sub>(S,i)</italic> returns the number of occurrences of symbol <italic>a</italic> in <italic>S[1,i]</italic>. The search starts with the SA-interval of the empty string, [1,<italic>n</italic>] and successively adds one character of <italic>P</italic> in reverse order. When the search is completed, it returns a SA-interval [<italic>l, r</italic>) for the entire query <italic>P</italic>. If <italic>r</italic> &#x003E; <italic>l</italic>, there are <italic>r &#x2014; l</italic> matches for <italic>P</italic> and their locations in <italic>T</italic> are given by <italic>SA[i]</italic> for <italic>l &#x003C; i &#x003C; r</italic>. Otherwise, the pattern does not exist in <italic>T</italic>. If the <italic>C</italic>-array and the ranks have already been stored, the backward search can be performed in <italic>O(|P|)</italic> time in strings with DNA alphabet.</p>
+</sec>
+<sec id="s2d">
+<label>2.0.4</label>
+<title>Wavelet Trees</title>
+<p>Rank queries scale linearly with the alphabet size by default. The wavelet tree [<xref ref-type="bibr" rid="c14">14</xref>] is a data structure designed to store strings with large alphabets efficiently and provide rank calculations in logarithmic time. The tree is defined recursively: take the lexicographically ordered alphabet, split it into 2 equal halves; in the string corresponding to the current node (start with the original string at root), replace the first half of letters with 0 and the other half with 1; the left child node will contain the 0-encoded symbols and the right child node will contain the 1-encoded symbols, preserving their order from the original string; re-apply the first step for each child node recursively until the alphabet left in each node contains only one or two symbols (so a 0 or 1 determines which symbol it is).</p>
+<p>To answer a rank query over the original string with large alphabet, repeated rank queries over the bit vectors in the wavelet tree nodes are used to locate the subtree that contains the leaf where the queried symbol is non-ambiguously encoded. The rank of the queried symbol in this leaf is equal to its rank in the original string. The number of rank queries needed to reach the leaf is equal to the height of the tree, i.e. log<sub>2</sub> |&#x03A3;| if we let &#x03A3; be the set of symbols in the alphabet. Computing ranks over binary vectors can be done in constant time, so a rank query in a wavelet tree-encoded string has complexity <italic>O</italic>(log<sub>2</sub> |&#x03A3;|).</p>
+</sec>
+</sec>
+<sec id="s3">
+<label>3</label>
+<title>Encoding a variation-aware reference structure</title>
+<sec id="s3a">
+<label>3.1</label>
+<title>Terminology</title>
+<p>A <italic>variant site</italic> or <italic>site</italic> is a region of the chromosome where there are a number of alternative options for what sequence can be present. These alternatives are termed <italic>alleles</italic> and might be as short as a single character, or could be many hundreds of characters long. A <italic>pan-genome</italic> refers to a representation (with unspecified properties) of a number (greater than 1) of genomes within a species. A Population Reference Graph is an encoding of a pan-genome that enables matching of sequence data to the datastore, inference of nearest mosaic with the appropriate ploidy, and then discovery of new variants not present in the PRG.</p>
+<fig id="fig1" position="float" fig-type="figure">
+<label>Figure 1</label>
+<caption><p>Wavelet tree encoding of a string that is the same as the BWT in <xref ref-type="fig" rid="fig4">figure 4</xref>. Calculating the rank of the marked &#x201C;A&#x201D; is performed by repeated rank() calls moving down the binary tree until the alphabet remaining is just 2 characters. Note that only the bit vectors are stored in the tree, the corresponding strings are only shown here for clarity.</p></caption>
+<graphic xlink:href="059170_fig1.tif"/>
+</fig>
+<fig id="fig2" position="float" fig-type="figure">
+<label>Figure 2</label>
+<caption><p>A simple PRG linearised according to our encoding. The first site has 3 alleles, which do not here look at all similar, and the second is a SNP.</p></caption>
+<graphic xlink:href="059170_fig2.tif"/>
+</fig>
+</sec>
+<sec id="s3b">
+<label>3.2</label>
+<title>PRG Encoding</title>
+<p>We use a PRG conceptually equivalent to a directed, acyclic, partial order graph, that is generated from a reference sequence and a set of alternative sequences at given variation sites. The graph is linearised into a long string over an alphabet extended with new symbols marking the variants, for which the FM-index can be constructed. We call this string the <italic>linear PRG</italic>.</p>
+<p>Building this data structure requires multiple steps.
+<list list-type="order">
+<list-item><p>Corresponding regions of shared sequence between the input genomes must be identified. These must be of size <italic>k</italic> at least (where <italic>k</italic> is pre-defined), and act as anchors.</p></list-item>
+<list-item><p>For any site between two anchor regions, the set of possible alleles/haplotypes must be determined, but do not need to be aligned. Indels are supported by haplotypes of different lengths.</p></list-item>
+<list-item><p>Each variation site is assigned two unique numeric identifiers, one even and one odd, which we call variation markers. The odd identifiers will mark variation site boundaries and will sometimes be referred to as site markers. The even identifiers will mark alternative allele boundaries and will sometimes be referred to as allele boundary markers.</p></list-item>
+<list-item><p>For each variation site, its left anchor is added to the linear PRG, followed by its odd identifier. Then each sequence coming from that site, starting with the reference sequence, is successively added to the linear PRG, followed by the even site identifier, except the last sequence, which is followed by the odd identifier.</p></list-item>
+<list-item><p>Convert the linear PRG to integer alphabet (<italic>A</italic> &#x2192; 1, <italic>C</italic> &#x2192; 2, <italic>G</italic> &#x2192; 3, <italic>T</italic> &#x2192; 4, variation site identifiers &#x2192; 5,6,&#x2026;)</p></list-item>
+<list-item><p>The FM-index (suffix array, BWT, wavelet tree over BWT) of the linear PRG is constructed and we will call this the vBWT.</p></list-item>
+</list>
+</p>
+<fig id="fig3" position="float" fig-type="figure">
+<label>Figure 3</label>
+<caption><p>PRG graph structure. The sequences shown in <xref ref-type="fig" rid="fig3">Figure 3a</xref>) could be represented either as 3 separate mutations (shown in b)), or enumerated as 8 small haplotypes, shown in c). Both are supported by our encoding. Similarly, the sequences in d) could be represented in our implementation as shown in e). However, we do not support &#x201C;nesting&#x201D; of alleles, as shown in f).</p></caption>
+<graphic xlink:href="059170_fig3.tif"/>
+</fig>
+<p>An illustration of these steps on a toy example is given in <xref ref-type="fig" rid="fig2">Figure 2</xref>.</p>
+<p>Importantly, <bold>the markers force the ends of alternative sequences coming from the same site to be sorted together in a separate block in the Burrows-Wheeler matrix, even if they do not have high sequence similarity</bold>. Therefore, alternative alleles from each site can be queried concurrently.</p>
+</sec>
+<sec id="s3c">
+<label>3.3</label>
+<title>Graph structure: constraints</title>
+<p>We show in <xref ref-type="fig" rid="fig3">Figure 3a</xref>) two sequences which differ by 3 SNPs and give two graph encodings in 3b) and 3c). Both represent the sequence content equally well, and we allow both. In 3d) we have an example where a long deletion lies &#x201C;over&#x201D; two other alleles. We would encode this in our PRG as shown in 3e). This works but results in many alternate alleles. An alternative would be to allow &#x201C;nested&#x201D; variation, where variants lie on top of other alleles, as shown in <xref ref-type="fig" rid="fig3">Figure 3f</xref>). This could be encoded in our system, but we do not allow it for our initial implementation, as it would potentially impact mapping speed.</p>
+</sec>
+</sec>
+<sec id="s4">
+<label>4</label>
+<title>Variation-aware backward search in vBWT</title>
+<p>In this section, we present a modified backward search algorithm for exact matching against the vBWT that is aware of alternative sequence paths. Our implementation leverages the succinct data structures library SDSL [<xref rid="c18" ref-type="bibr">18</xref>] and is incorporated in our software called <bold>gramtools</bold>.</p>
+<fig id="fig4" position="float" fig-type="figure">
+<label>Figure 4</label>
+<caption><p>Backward search across the vBWT of the linear PRG in <xref ref-type="fig" rid="fig2">figure 2</xref>. We start at the right-hand end of the read GTTATTTAC, with the character C, and as we extend we hit the character 5, signalling the start or end of a variation site. We check the suffix array to get the coordinate in the linear PRG, and find it is the end. Therefore, the read must now continue into one of the alleles, signalled by the number 6. Continuing in this manner (the shorter arrows signify multiple intermediate steps not shown) we are able to align across the site.</p></caption>
+<graphic xlink:href="059170_fig4.tif"/>
+</fig>
+<p>When reads align to the non-variable part of the PRG or when an allele is long enough to enclose the entire read, the usual backward search algorithm can be used. Otherwise, when the read must cross variation site junctions, site identifiers and some alternative alleles must be ignored by the search. This means a read can align to multiple substrings of the linear PRG that may not be adjacent in the BWM, so the search can return multiple SA-intervals. We give pseudocode in Algorithm 1 below, and outline the idea in <xref ref-type="fig" rid="fig4">Figure 4</xref>.</p>
+<p>At each step in the backward search, before extending to the next character, we need to check whether the current matched read substring is preceded by a variation marker anywhere in the linear PRG. A scan for symbols larger than 4 (&#x201C;range_search_2d&#x201D; in the pseudocode) must be performed within the range given by the current SA-interval. With a wavelet tree this range search can be done in <italic>O</italic>(<italic>d</italic> log(|&#x03A3;|/<italic>d</italic>)) time, where <italic>d</italic> is the size of the output. If a variation marker is found and it is an odd number, the read is about to cross a site boundary. The suffix array can be queried to find the position of the two odd numbers (start/end of the site) in the linear PRG.</p>
+<p>If the search cursor is next to the start of the site, it is just the site marker that needs to be skipped, so the SA-interval (size 1) of the suffix starting with that marker needs to be added to the set of intervals that will be extended with the next character in the read. If the search cursor is next to the end of a site, all alternative alleles from that site need to be queried. Their ends are sorted together in the BWM because of the markers, so they can be queried concurrently by adding the SA-interval of suffixes starting with all numbers marking that site (even and odd).</p>
+<fig id="ufig1" position="float" fig-type="figure">
+<graphic xlink:href="059170_ufig1.tif"/>
+</fig>
+<p>If the variation marker found is even, the read is about to cross an allele boundary, which means its current suffix matches the beginning of an alternative allele and the read is about to walk out of a site, so the search cursor needs to jump to the start of site. The odd markers corresponding to that site can be found in the first column of the BWM, and then querying the suffix array decides which one marks the start of site. The SA-interval (size 1) for the BWM row starting with this odd marker is recorded. Once the check for variation markers is finished and all candidate SA-intervals have been added, each interval can be extended with the next character in the read by using <xref ref-type="disp-formula" rid="eqn1">equations 1</xref> and 2.</p>
+</sec>
+<sec id="s5">
+<label>5</label>
+<title>Experiments</title>
+<sec id="s5a">
+<label>5.1</label>
+<title>Construction cost: the human genome</title>
+<p>We constructed a PRG from the human reference genome (GRC37 without &#x201C;alt&#x201D; contigs) plus the 1000 genomes final VCF (12GB in size) [<xref rid="c6" ref-type="bibr">6</xref>]. We excluded variants without specified alleles, and those with allele frequency below 5&#x0025; (rare variation offers limited benefit - our goal is to maximise the proportion of reads mismatching the graph by at most 1 SNP). If two variants occurred at consecutive bases, they were merged, and all haplotypes enumerated. If the VCF contained two consecutive records which overlapped, the second was discarded. This resulted in a dataset of 7.4 million SNPs and 978000 indels. We give construction costs in <xref ref-type="table" rid="tbl1">Table 1</xref>, along with comparative figures for BWBBLE with identical input.</p>
+<p>For comparison, GCSA took over 1TB of RAM building chromosomes separately and pruning the graph in high diversity regions. GCSA2 reduces the memory footprint to below 128GB RAM, running in 13 hours with 32 cores, and using over 1Tb of I/O to fast disk. Our vBWT construction has a lower memory cost than GCSA, GCSA2 and BWBBLE, is faster than GCSA/GCSA2, has no (significant) I/O burden, but is significantly slower than BWBBLE.</p>
+<table-wrap id="tbl1" orientation="portrait" position="float">
+<label>Table 1</label>
+<caption><p>FM-index construction costs and final data structure size for human reference genome plus 1000 genomes variants</p></caption>
+<graphic xlink:href="059170_tbl1.tif"/>
+</table-wrap>
+<fig id="fig5" position="float" fig-type="figure">
+<label>Figure 5</label>
+<caption><p>Histogram of number of alleles at each site in MSP3.4 plotted above the chromosome coordinate.)</p></caption>
+<graphic xlink:href="059170_fig5.tif"/>
+</fig>
+</sec>
+<sec id="s5b">
+<label>5.2</label>
+<title>Inferring a Closer Reference Genome</title>
+<p><italic>P. falciparum</italic> is a haploid parasite that undergoes recombination. It has an unusual genome that contains more indels than SNPs [<xref rid="c15" ref-type="bibr">15</xref>]. The gene MSP3.4 is known to have two diverged lineages at high frequencies in multiple populations from across the world. The lineages differ by around 1 SNP every 3 bases over a 500bp region (the DBL domain) of the gene. We constructed a catalog of MSP3.4 variation from Cortex [<xref rid="c16" ref-type="bibr">16</xref>] variant calls from 650 <italic>P</italic>. <italic>falciparum</italic> samples and built a PRG just for that chromosome. We show in <xref ref-type="fig" rid="fig5">Figure 5</xref> the density of variants and number of alleles.</p>
+<p>We aligned Illumina 76bp reads from a well-studied sample that was not used in graph construction (named 7G8) to the PRG using backward search (exact matching, which took 3 mins), and collected counts on the number of reads supporting each allele. At each site we chose the allele with the highest coverage to extract the path through the graph with maximum support - this was our graph-inferred personalised reference for this sample. We then mapped the reads (using bwa_mem [<xref rid="c17" ref-type="bibr">17</xref>]) independently to the reference and to the inferred genome. As can be seen in <xref ref-type="fig" rid="fig6">Figures 6</xref> and 7, our method gives dramatically better pileup results over the MSP3.4 gene.</p>
+</sec>
+<sec id="s5c">
+<label>5.3</label>
+<title>Simulations, usability, future performance improvements</title>
+<p>We took 44,439 <italic>P</italic>. <italic>falciparum</italic> SNPs and indels called with Cortex from a single genetic cross (7G8&#x00D7;GB4) [<xref rid="c15" ref-type="bibr">15</xref>] and created a whole-genome PRG, and simulated 10,000 reads from one random haplotype. All reads were 150bp, error-free. We precalculate a hash of the SA intervals corresponding to all 9-mers in the PRG that overlap a variation site. This one-time precalculation was done in 1 hour 43 mins using 25 threads. In order to avoid unfairly slowing BWBBLE we constrained it to do exact matching only. All experiments were performed single-threaded on a machine with 64 processors Intel Xeon CPU E5-4620 v2 @ 2.60GHz and 1 TB of memory.</p>
+<fig id="fig6" position="float" fig-type="figure">
+<label>Figure 6</label>
+<caption><p>Mapping reads from sample 7G8 to <italic>P</italic>. <italic>falciparum</italic> 3D7 reference genome results in a gap covering the DBL domain</p></caption>
+<graphic xlink:href="059170_fig6.tif"/>
+</fig>
+<fig id="fig7" position="float" fig-type="figure">
+<label>Figure 7</label>
+<caption><p>Mapping reads from sample 7G8 to our vBWT-inferred genome removes the gap, leaving isolated variants easy to detect with standard methods</p></caption>
+<graphic xlink:href="059170_fig7.tif"/>
+</fig>
+<table-wrap id="tbl2" orientation="portrait" position="float">
+<label>Table 2</label>
+<caption><p>Simulation results</p></caption>
+<graphic xlink:href="059170_tbl2.tif"/>
+</table-wrap>
+<p>Gramtools mapping speed is notably slower than BWBBLE, although it is usable for megabase sized genomes - a 30x whole-genome dataset for <italic>P</italic>. <italic>falciparum</italic> would take 5.8 hours using 24 cores. However, the output is directly usable and interpretable by any bioinformatician - a reference genome close to the sample, and a standard SAM file. By comparison, BWBBLE outputs a SAM file with respect to an artificial reference with indels appended at the end - to use this in a normal pipeline requires software development and innovation.</p>
+<p>There are a number of performance improvements we can make. We store an integer array that allows us to determine if a position in the PRG is in a site, and if so, which allele; this is naively encoded (in std::vector). For the human example, this costs us around 12GB of RAM. This array, which contains a zero at every non-variable site in the chromosome, could be stored much more compactly. More significantly, there is one significant speed improvement which we have yet to implement - precalculating and storing an array of ranks at marker positions across the BWT - just as in a standard FM-index. This is not normally done for large alphabets, but we can store only for A,C,G,T.</p>
+</sec>
+</sec>
+<sec id="s6">
+<label>6</label>
+<title>Discussion</title>
+<p>We have described a whole-genome scale implementation of a PRG designed to enable inference of a within-graph mosaic reference close to that of a new individual, followed by discovery of novel variation as a &#x201C;delta&#x201D; from that. As with any reference graph approach, there is an implicit coupling between mapping and graph structure (for handling alternate alleles). By placing positional markers, we are able to ensure that alternate alleles sort together in the BWT matrix, allowing mapping across sites and recombination. For haploids we naturally infer a personalised reference genome. For other ploidies, our implementation readily lends itself to &#x201C;lightweight alignment&#x201D; [<xref rid="c19" ref-type="bibr">19</xref>, <xref rid="c20" ref-type="bibr">20</xref>, <xref rid="c21" ref-type="bibr">21</xref>] followed by an HMM to infer haplotypes, followed by full MEM-based graph alignment.</p>
+<sec id="s6a">
+<label>6.0.1</label>
+<title>Software</title>
+<p>Our software, gramtools, is available here: <ext-link ext-link-type="uri" xlink:href="http://github.com/iqbal-lab/gramtools">http://github.com/iqbal-lab/gramtools</ext-link>.</p>
+</sec>
+</sec>
+</body>
+<back>
+<ack>
+<title>Acknowledgments</title>
+<p>We would like to thank Jacob Almagro-Garcia, Phelim Bradley, Rayan Chikhi, Simon Gog, Lin Huang, Jerome Kelleher, Heng Li, Gerton Lunter, Rachel Norris, Victoria Popic, and Jouni Siren for discussions and help. We thank the SDSL developers for providing a valuable resource.</p>
+</ack>
+<sec sec-type="COI-statement">
+<title>Competing interest</title>
+<p>The authors declare that they have no competing interests.</p>
+</sec>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>1.</label><mixed-citation publication-type="journal"><string-name><surname>Valenzuela</surname>, <given-names>D.</given-names></string-name>, <string-name><surname>Valimaki</surname>, <given-names>N.</given-names></string-name>, <string-name><surname>Pitkanen</surname>, <given-names>E.</given-names></string-name>, <string-name><surname>Makinen</surname>, <given-names>V.</given-names></string-name> <article-title>On enhancing variation detection through pan-genome indexing</article-title>. <source>Biorxiv</source>. <ext-link ext-link-type="uri" xlink:href="http://dx.doi.org/10.1101/021444">http://dx.doi.org/10.1101/021444</ext-link></mixed-citation></ref>
+<ref id="c2"><label>2.</label><mixed-citation publication-type="journal"><string-name><surname>Burrows</surname>, <given-names>M.</given-names></string-name>, <string-name><surname>Wheeler</surname>, <given-names>D.J.</given-names></string-name>: <article-title>A block sorting lossless data compression algorithm</article-title>. <source>Digital Equipment Corporation, Tech. Rep.</source> <volume>124</volume>, <year>1994</year>.</mixed-citation></ref>
+<ref id="c3"><label>3.</label><mixed-citation publication-type="journal"><string-name><surname>Li</surname>, <given-names>H.</given-names></string-name>, <string-name><surname>Durbin</surname>, <given-names>R.</given-names></string-name>: <article-title>Fast and accurate short read alignment with Burrows-Wheeler transform</article-title>. <source>Bioinformatics</source> <volume>25</volume> (<issue>14</issue>): <fpage>1754</fpage>&#x2013;<lpage>1760</lpage> (<year>2009</year>)</mixed-citation></ref>
+<ref id="c4"><label>4.</label><mixed-citation publication-type="journal"><string-name><surname>Langmead</surname>, <given-names>B.</given-names></string-name>, <string-name><surname>Salzberg</surname>, <given-names>S.</given-names></string-name>: <article-title>Fast gapped-read alignment with Bowtie 2</article-title>. <source>Nature Methods</source>. <month>Mar</month> <day>4</day>;<volume>9</volume>(<issue>4</issue>):<fpage>357</fpage>&#x2013;<lpage>9</lpage> (<year>2012</year>)</mixed-citation></ref>
+<ref id="c5"><label>5.</label><mixed-citation publication-type="journal"><string-name><surname>Reinert</surname>, <given-names>K.</given-names></string-name>, <string-name><surname>Langmead</surname>, <given-names>B.</given-names></string-name>, <string-name><surname>Weese</surname>, <given-names>D.</given-names></string-name>, <etal>et al.</etal>: <article-title>Alignment of Next-Generation Sequencing Reads</article-title>. <source>Annu Rev Genomics Hum Genet</source>. <year>2015</year>;<volume>16</volume>:<fpage>133</fpage>&#x2013;<lpage>51</lpage></mixed-citation></ref>
+<ref id="c6"><label>6.</label><mixed-citation publication-type="journal"><article-title>The 1000 Genomes Project Consortium: A global reference for human genetic variation</article-title>. <source>Nature</source> <volume>526</volume>, <fpage>68</fpage>&#x2013;<lpage>74</lpage></mixed-citation></ref>
+<ref id="c7"><label>7.</label><mixed-citation publication-type="journal"><string-name><surname>Ossowski</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Schneeberger</surname>, <given-names>K.</given-names></string-name>, <string-name><surname>Clark</surname>, <given-names>R.M.</given-names></string-name>, <etal>et al.</etal>. <article-title>Sequencing of natural strains of Arabidopsis thaliana with short reads</article-title>. <source>Genome Research</source> <volume>18</volume>, <fpage>2024</fpage>&#x2013;<lpage>2033</lpage> (<year>2008</year>)</mixed-citation></ref>
+<ref id="c8"><label>8.</label><mixed-citation publication-type="journal"><string-name><surname>Dilthey</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Cox</surname>, <given-names>C.</given-names></string-name>, <string-name><surname>Iqbal</surname>, <given-names>Z.</given-names></string-name>, <etal>et al.</etal>: <article-title>Improved genome inference in the MHC using a population reference graph</article-title>. <source>Nature Genetics</source> <volume>47</volume>, <fpage>682</fpage>&#x2013;<lpage>688</lpage> (<year>2015</year>)</mixed-citation></ref>
+<ref id="c9"><label>9.</label><mixed-citation publication-type="journal"><string-name><surname>Schneeberger</surname>, <given-names>K.</given-names></string-name>,<string-name><surname>Hagmann</surname>, <given-names>J.</given-names></string-name>, <string-name><surname>Ossowski</surname>, <given-names>S.</given-names></string-name>, <etal>et al.</etal>. <article-title>Simultaneous alignment of short reads against multiple genomes</article-title>. <source>Genome Biol.</source> <volume>10</volume>, <fpage>R98</fpage> (<year>2009</year>).</mixed-citation></ref>
+<ref id="c10"><label>10.</label><mixed-citation publication-type="journal"><string-name><surname>Siren</surname>, <given-names>J.</given-names></string-name>, <string-name><surname>Valimaki</surname>, <given-names>N.</given-names></string-name>, <string-name><surname>Makinen</surname>, <given-names>V.</given-names></string-name> <article-title>Indexing Graphs for Path Queries with Applications in Genome Research</article-title>. <source>IEEE/ACM Trans Comput Biol Bioinform</source>. <year>2014</year> <month>Mar-Apr</month>;<volume>11</volume>(<issue>2</issue>):<fpage>375</fpage>&#x2013;<lpage>88</lpage></mixed-citation></ref>
+<ref id="c11"><label>11.</label><mixed-citation publication-type="journal"><string-name><surname>Huang</surname>, <given-names>L.</given-names></string-name>, <string-name><surname>Popic</surname>, <given-names>V.</given-names></string-name>, <string-name><surname>Batzoglou</surname>, <given-names>S.</given-names></string-name> <article-title>Short read alignment with populations of genomes</article-title>. <source>Bioinformatics</source>. <month>Jul</month> <day>1</day>;<volume>29</volume>(<issue>13</issue>):<fpage>i361</fpage>&#x2013;<lpage>70</lpage> (<year>2013</year>)</mixed-citation></ref>
+<ref id="c12"><label>12.</label><mixed-citation publication-type="journal"><string-name><surname>Siren</surname>, <given-names>J.</given-names></string-name> <source>Indexing Variation Graphs</source>. <ext-link ext-link-type="arxiv" xlink:href="http://arxiv.org/abs/arXiv:1307.2616v1">arXiv:1604.06605</ext-link></mixed-citation></ref>
+<ref id="c13"><label>13.</label><mixed-citation publication-type="confproc"><string-name><surname>Ferragina</surname>, <given-names>P.</given-names></string-name> and <string-name><surname>Manzini</surname>, <given-names>G.</given-names></string-name> <article-title>Opportunistic data structures with applications</article-title>. <conf-name>In Proceedings of the 41st Symposium on Foundations of Computer Science (FOCS 2000), IEEE Computer Society, Los Alamitos</conf-name>, <conf-loc>CA, USA</conf-loc>, pp. <fpage>390</fpage>&#x2013;<lpage>398</lpage> (<year>2000</year>)</mixed-citation></ref>
+<ref id="c14"><label>14.</label><mixed-citation publication-type="confproc"><string-name><surname>Grossi</surname>, <given-names>R.</given-names></string-name>, <string-name><surname>Gupta</surname>, <given-names>A.</given-names></string-name> and <string-name><surname>Vitter</surname>, <given-names>J.</given-names></string-name> <article-title>High-order entropy-compressed text indexes</article-title>. <conf-name>In Proceedings of the 14th annual ACM-SIAM symposium on Discrete Algorithms</conf-name>. <source>Society for Industrial and Applied Mathematics</source>, <year>2003</year>.</mixed-citation></ref>
+<ref id="c15"><label>15.</label><mixed-citation publication-type="journal"><string-name><surname>Miles</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Iqbal</surname>, <given-names>Z.</given-names></string-name>, <string-name><surname>Vauterin</surname>, <given-names>P.</given-names></string-name>, <etal>et al.</etal>: <source>Genome variation and meiotic recombination in Plasmodium falciparum: insights from deep sequencing of genetic crosses Biorxiv</source>. <ext-link ext-link-type="uri" xlink:href="http://dx.doi.org/10.1101/024182">http://dx.doi.org/10.1101/024182</ext-link> (<year>2015</year>)</mixed-citation></ref>
+<ref id="c16"><label>16.</label><mixed-citation publication-type="journal"><string-name><surname>Iqbal</surname>, <given-names>Z.</given-names></string-name>, <string-name><surname>Caccamo</surname>, <given-names>M.</given-names></string-name> <string-name><surname>Turner</surname>, <given-names>I.</given-names></string-name>, <etal>et al.</etal>: <article-title>De novo assembly and genotyping of variants using colored de Bruijn graphs</article-title>. <source>Nature Genetics</source> <volume>44</volume>, <fpage>226</fpage>&#x2013;<lpage>232</lpage> (<year>2012</year>)</mixed-citation></ref>
+<ref id="c17"><label>17.</label><mixed-citation publication-type="other"><string-name><surname>Li</surname>, <given-names>H.</given-names></string-name> <source>Aligning sequence reads, clone sequences and assembly contigs with BWA-MEM</source>. <ext-link ext-link-type="arxiv" xlink:href="http://arxiv.org/abs/arXiv:1303.3997">arXiv:1303.3997</ext-link></mixed-citation></ref>
+<ref id="c18"><label>18.</label><mixed-citation publication-type="confproc"><string-name><surname>Gog</surname>, <given-names>S.</given-names></string-name>, <string-name><surname>Beller</surname>, <given-names>T.</given-names></string-name>, <string-name><surname>Moffat</surname>, <given-names>A.</given-names></string-name> <etal>et al.</etal>. <article-title>From Theory to Practice: Plug and Play with Succinct Data Structures</article-title>. <conf-name>13th International Symposium on Experimental Algorithms</conf-name>, (<collab>SEA</collab> <conf-date>2014</conf-date>) <fpage>326</fpage>&#x2013;<lpage>337</lpage></mixed-citation></ref>
+<ref id="c19"><label>19.</label><mixed-citation publication-type="journal"><string-name><surname>Patro</surname>, <given-names>R.</given-names></string-name>, <string-name><surname>Mount</surname>, <given-names>S.M.</given-names></string-name>, <string-name><surname>Kingsford</surname>, <given-names>C.</given-names></string-name> <article-title>Sailfish enables alignment-free isoform quantification from RNA-seq reads using lightweight algorithms</article-title>. <source>Nature Biotechnology</source> <volume>32</volume>, <fpage>462</fpage>&#x2013;<lpage>464</lpage> (<year>2014</year>)</mixed-citation></ref>
+<ref id="c20"><label>20.</label><mixed-citation publication-type="journal"><string-name><surname>Srivastava</surname>, <given-names>A.</given-names></string-name>, <string-name><surname>Sarkar</surname>, <given-names>H.</given-names></string-name>, <string-name><surname>Gupta</surname>, <given-names>N.</given-names></string-name>, <string-name><surname>Patro</surname>, <given-names>R.</given-names></string-name>: <article-title>RapMap: a rapid, sensitive and accurate tool for mapping RNA-seq reads to transcriptomes</article-title>. <source>Bioinformatics</source> (<year>2016</year>) <volume>32</volume> (<issue>12</issue>): <fpage>i192</fpage>&#x2013;<lpage>i200</lpage>.</mixed-citation></ref>
+<ref id="c21"><label>21.</label><mixed-citation publication-type="journal"><string-name><surname>Bray</surname>, <given-names>N.</given-names></string-name>, <string-name><surname>Pimentel</surname>, <given-names>H.</given-names></string-name>, <string-name><surname>Melsted</surname>, <given-names>P.</given-names></string-name>, <string-name><surname>Pachter</surname>, <given-names>L.</given-names></string-name>: <article-title>Near-optimal probabilistic RNA-seq quantification</article-title>. <source>Nature Biotechnology</source> <volume>34</volume>, <fpage>525</fpage>&#x2013;<lpage>527</lpage> (<year>2016</year>)</mixed-citation></ref></ref-list>
+</back>
+</article>

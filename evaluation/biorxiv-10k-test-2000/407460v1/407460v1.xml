@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/407460</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Systems Biology</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>The Soft Vertex Classification for Active Module Identification Problem</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<name><surname>Alexeev</surname><given-names>Nikita</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<contrib contrib-type="author">
+<name><surname>Isomurodov</surname><given-names>Javlon</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<contrib contrib-type="author">
+<name><surname>Korotkevich</surname><given-names>Gennady</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<contrib contrib-type="author">
+<name><surname>Sergushichev</surname><given-names>Alexey</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>Computer Technologies Department, ITMO University</institution>, Saint-Petersburg, <country>Russia</country></aff>
+<aff id="a2"><label>2</label><institution>JetBrains Research, Saint-Petersburg</institution>, <country>Russia</country></aff>
+</contrib-group>
+<pub-date pub-type="epub">
+<year>2018</year>
+</pub-date>
+<elocation-id>407460</elocation-id>
+<history>
+<date date-type="received">
+<day>03</day>
+<month>9</month>
+<year>2018</year>
+</date>
+<date date-type="rev-recd">
+<day>03</day>
+<month>9</month>
+<year>2018</year>
+</date>
+<date date-type="accepted">
+<day>04</day>
+<month>9</month>
+<year>2018</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2018, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2018</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="407460.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<sec>
+<title>Motivation</title>
+<p>Integrative network methods are commonly used for interpretation of high-throughput experimental biological data: transcriptomics, proteomics, metabolomics and others. One of the common approaches consists in finding a connected subnetwork of a global interaction network that best encompasses significant individual changes in the data and represents a so-called active module. Usually methods implementing this approach find a single subnetwork and thus solve a hard classification problem for vertices. This subnetwork inherently contains erroneous vertices, while no instrument is provided to estimate the confidence level of any particular vertex inclusion. To address this issue, in the current study we consider the active module problem as a soft classification problem. We propose a method to estimate probabilities of each vertex to belong to the active module based on Markov chain Monte Carlo subnetwork sampling.</p></sec>
+<sec>
+<title>Results</title>
+<p>The proposed method allows to estimate the probability that an individual vertex belongs to the active module as well as the false discovery rate (FDR) for a given set of vertices. Given the estimated probabilities, it becomes possible to provide a connected subgraph in a consistent manner for any given FDR level: no vertex can disappear when the FDR level is relaxed. We show on simulated dataset that the proposed method has good computational performance and high classification accuracy. As an example of the performance of our method on real data, we run it on a protein-protein interaction network together with a gene expression DLBCL dataset. The results are consistent with the previous studies while, at the same time, the proposed approach is more flexible. Source code is available at <bold><ext-link ext-link-type="uri" xlink:href="https://github.com/ctlab/mcmcRanking">https://github.com/ctlab/mcmcRanking</ext-link></bold> under MIT licence.</p></sec>
+</abstract>
+<counts>
+<page-count count="20"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<label>1.</label>
+<title>Introduction</title>
+<p>Integrative network approaches are commonly used for interpretation of high-throughput data [<xref ref-type="bibr" rid="c13">13</xref>]. Such methods are applied in many different contexts: in genome-wide association studies [<xref ref-type="bibr" rid="c15">15</xref>], for elucidating mechanisms of metabolic regulation [<xref ref-type="bibr" rid="c10">10</xref>], for analysis of somatic mutations in cancer [<xref ref-type="bibr" rid="c12">12</xref>], etc. The main idea of these methods is that considering internal connections (for example, between proteins, metabolites or other entities) can lead to deeper understanding of the data and the corresponding biological processes.</p>
+<p>The connectivity information could be used in multiple ways. The simplest analysis could involve manual exploring of connections between the input signals [<xref ref-type="bibr" rid="c11">11</xref>]. More sophisticated methods include using connections for gene set enrichment analysis [<xref ref-type="bibr" rid="c1">1</xref>], comparing networks [<xref ref-type="bibr" rid="c7">7</xref>] and many others.</p>
+<p>One of the most well-developed and used approaches consists in selecting a connected subnetwork that best represents an <italic>active</italic> or <italic>functional</italic> module. This concept was initially suggested by Ideker et al [<xref ref-type="bibr" rid="c8">8</xref>]. The authors proposed a metric to score subnetworks based on gene expression data with a heuristic method to find top-scoring networks. Since then, multiple methods for solving this <italic>ac-tivemoduleidentificationproblem</italic> were developed. One of the most notable methods, called BioNet, was proposed by Dittrich <italic>etal.</italic> [<xref ref-type="bibr" rid="c4">4</xref>]. They suggested to use a maximum-likelihood-inspired subnetwork scoring scheme such that finding the best scoring subnetwork corresponds to solving the Maximum-Weight Connected Subgraph (MWCS) problem. While the problem is NP-hard, in the same paper a practical exact solver was proposed. Maximum-likelihood inspired formulation combined with an exact solver for the corresponding problem allowed to achieve great performance on both simulated and real data.</p>
+<p>A question that is not usually addressed in the existing methods for solving the active module identification problem is the level of confidence of individual vertex inclusion. By design, in the resulting networks vertices with high individual significance are connected via less significant vertices. This raises the question whether vertices included in the module are more important compared to vertices with similar individual significance that are not included in the module. This is particularly important when an individually non-significant vertex is included in the module. Uncertainty in this aspect can lead to misinterpretation of the data either by attributing importance to false vertices or missing key vertices.</p>
+<p>Previously Beisser et al [<xref ref-type="bibr" rid="c2">2</xref>] suggested a jackknife resampling approach where the active module problem is solved multiple times for resampled input data. It allows to introduce <italic>support</italic> values: how many times a particular vertex or edge was a part of the solution for the resampled data. The calculated support values can be then used to distinguish robust signals from noise in the resulting module. However, this method is limited to experiments with a large number of replicates and can not be applied for small-scale experiments.</p>
+<p>The way different module confidence thresholds are handled is another problem of binary methods like BioNet. For example, a module of higher confidence could contain vertices not present in a module of lower confidence. Since in a real-case scenario several confidence thresholds are considered, such inconsistencies impede the interpretation of the results. To address this issue, previously [<xref ref-type="bibr" rid="c9">9</xref>] we considered a problem of connectivity-preserving vertex ranking &#x2013; a ranking with the constraints that: 1) each prefix of the ranking should induce a connected subgraph, and 2) smaller induced subgraphs correspond to more confident modules. In that paper we proposed a semi-heuristic ranking method that was better (as measured by the area under the ROC curve, AUC ROC) compared to both baseline vertex ranking by individual input significance and ranking from multiple BioNet runs with different thresholds.</p>
+<p>In the current study we consider the active module identification problem as a soft vertex classification problem. In this case, instead of providing a hard classification of vertices into either being in the module or not, we estimate probabilities of each vertex to belong to the active module. To estimate these probabilities we propose a method that is based on Markov chain Monte Carlo (MCMC) module sampling from a posteriori distribution. First, by producing the vertex probabilities, this approach directly resolves the question of individual vertices confidence. Moreover, we show that the estimated probabilities can be used to calculate expected AUC ROC of any ranking and thus the problem of finding the best connectivity-preserving ranking can be defined constructively. We prove that this problem is NP-complete, but show that in practice it can be solved accurately and efficiently using a heuristic algorithm. Finally, we show that the method can achieve high classification accuracy on simulated data and works well on real data.</p>
+</sec>
+<sec id="s2">
+<label>2.</label>
+<title>Approach</title>
+<p>While the active module problem appears in many different contexts, for the sake of clarity we focus here on the example of protein-protein interaction networks together with gene expression data. We formalize the protein-protein interaction network as a graph <italic>G</italic>, where vertices correspond to protein-encoding genes, and two vertices are linked by an edge if the corresponding proteins interact. Gene expression data are given for sets of samples for two biological conditions of interest (e.g. control and treatment), so that differential expression <italic>p</italic>-values can be calculated for each gene. While for some genes the null hypothesis of having zero expression change between conditions is true, and so the corresponding <italic>p</italic>-values are uniformly distributed on [0, 1], <italic>p</italic>-values for &#x201C;interesting&#x201D; genes that exhibit a difference in expression would tend to be closer to zero. According to [<xref ref-type="bibr" rid="c8">8</xref>], those interesting genes form a connected subgraph in <italic>G</italic>, which is called an active (or functional) module.</p>
+<sec id="s2a">
+<label>2.1.</label>
+<title>Beta-uniform mixture model</title>
+<p>As shown in [<xref ref-type="bibr" rid="c14">14</xref>, <xref ref-type="bibr" rid="c4">4</xref>], the distribution of all <italic>p</italic>-values can be approximated by the so-called beta-uniform mixture (BUM) distribution, where the beta component corresponds to a signal in the data, and the uniform component corresponds to noise. Let us recall that the beta distribution has support [0, 1] and is defined by its density
+<disp-formula id="ueqn1">
+<alternatives><graphic xlink:href="407460_ueqn1.gif"/></alternatives>
+</disp-formula>
+where <italic>B</italic>(<italic>a,b</italic>) is the Beta function. The BUM distribution is a mixture of uniform and beta <italic>&#x03B2;</italic>(<italic>a,</italic> 1) distributions and is defined by its density
+<disp-formula id="ueqn2">
+<alternatives><graphic xlink:href="407460_ueqn2.gif"/></alternatives>
+</disp-formula>
+where <italic>&#x03BB;</italic> is the mixture weight of the uniform component and <italic>a</italic> is the shape parameter of the beta distribution.</p>
+<p>We assign a weight <italic>w</italic>(<italic>v</italic>) to each vertex <italic>v</italic> of the graph <italic>G</italic> equal to the <italic>p</italic>-value assigned to the corresponding gene. Thus, in our model we have: a connected graph <italic>G</italic> on <italic>n</italic> = <italic>&#x007C;G&#x007C;</italic> vertices, its connected subgraph <italic>M</italic>, a family of independent random variables <italic>W</italic><sub><italic>v</italic></sub>, <italic>v&#x2208;V</italic> (<italic>G</italic>)\<italic>V</italic> (<italic>M)</italic> with uniform distribution on [0, 1], and a family of independent random variables <italic>W</italic><sub><italic>v</italic></sub>, <italic>v&#x2208;V</italic> (<italic>M)</italic> with <italic>&#x03B2;</italic>(<italic>a,</italic> 1) distribution.</p>
+</sec>
+<sec id="s2b">
+<label>2.2.</label>
+<title>MCMC approach</title>
+<p>Our goal is to find out which vertices are likely to belong to the active module<italic>M</italic> :</p>
+<p><bold>Problem 1.</bold> <italic>GivenaconnectedgraphGandvertexweightsw</italic><sub><italic>v</italic></sub> <italic>&#x2208;</italic> [0, 1] <italic>findtheprobabilityP</italic> (<italic>v&#x2208;M&#x007C;W</italic> = <italic>w</italic>) <italic>foreachvertexvtobelongtothemoduleM.</italic></p>
+<p>We solve this problem in the following way. We generate a large sample S of random subgraphs <italic>S</italic> from conditional distribution <italic>P</italic> (<italic>S</italic> = <italic>M&#x007C;W</italic> = <italic>w</italic>) using the Metropolis&#x2013;Hastings algorithm (see <xref ref-type="sec" rid="s3">Section 3</xref>). While all the probabilities <italic>P</italic> (<italic>S</italic> = <italic>M&#x007C;W</italic> = <italic>w</italic>) are small and the multiplicity of each subgraph in S is small, the probabilities of each vertex to belong to the module are cumulative statistics and show robust behavior. The same holds for the probabilities <italic>P</italic> (<italic>V&#x2282;M&#x007C;W</italic> = <italic>w</italic>), where <italic>V</italic> are relatively small sets of vertices.</p>
+<p>The benefits of the soft classification approach are:</p>
+<list list-type="order">
+<list-item><p>it allows to estimate the level of confidence that a particular gene is expressed differently, which is the probability that a corresponding vertex belongs to the active module;</p></list-item>
+<list-item><p>it allows to analyze alternative complement pathways by studying probabilities of the form <italic>P</italic> ((<italic>V</italic><sub>1</sub> <italic>&#x2282;M)V</italic> (<italic>V</italic><sub>2</sub> <italic>&#x2282;M)&#x007C;W</italic> = <italic>w</italic>);</p></list-item>
+<list-item><p>for any set of genes <italic>V</italic> reported as differently expressed, our method allows to compute the false discovery rate (FDR) as <inline-formula><alternatives><inline-graphic xlink:href="407460_inline1.gif"/></alternatives></inline-formula>;</p></list-item>
+<list-item><p>it provides a vertex ranking that maximizes the area under the ROC curve (AUC ROC) (see <xref ref-type="sec" rid="s3c">Section 3.3</xref>);</p></list-item>
+<list-item><p>it allows to heuristically find a vertex <italic>connectivitypreserving</italic> ranking that maximizes the AUC ROC (see <xref ref-type="sec" rid="s3d">Section 3.4</xref>).</p></list-item>
+</list>
+</sec>
+</sec>
+<sec id="s3">
+<label>3.</label>
+<title>Methods</title>
+<sec id="s3a">
+<label>3.1.</label>
+<title>Markov chain Monte Carlo based method</title>
+<p>We solve Problem 1 in the following way: we sample a set &#x1D54A; of random subgraphs <italic>S</italic> from conditional distribution <italic>P</italic> (<italic>S</italic> = <italic>M&#x007C;W</italic> = <italic>w</italic>) using the Markov chain Monte Carlo (MCMC) approach, and estimate <italic>P</italic> (<italic>v&#x2208;M&#x007C;W</italic> = <italic>w</italic>) as
+<disp-formula id="ueqn3">
+<alternatives><graphic xlink:href="407460_ueqn3.gif"/></alternatives>
+</disp-formula></p>
+<p>First, we estimate the beta-uniform mixture parameters <inline-formula><alternatives><inline-graphic xlink:href="407460_inline2.gif"/></alternatives></inline-formula> with a maximum-likelihood estimator [<xref ref-type="bibr" rid="c3">3</xref>].</p>
+<p>For MCMC sampling we implement the Metropolis-Hastings algorithm [<xref ref-type="bibr" rid="c6">6</xref>]. It starts at a random subgraph <italic>S</italic><sub>0</sub> of order <italic>k</italic> = <italic>&#x007C;M&#x007C;</italic> = (1 <italic>-&#x03BB;</italic>)<italic>&#x007C;G&#x007C;</italic>. On each step <italic>i</italic> we choose a candidate subgraph <italic>S&#x00B4;</italic> by removing a vertex <italic>v</italic><sub><italic>-</italic></sub> from <italic>S</italic><sub><italic>i</italic></sub> and adding another vertex <italic>v</italic><sub>&#x002B;</sub> from the neighborhood of <italic>S</italic><sub><italic>i</italic></sub> (by neighborhood of a subgraph <italic>S</italic>
+<disp-formula id="ueqn4">
+<alternatives><graphic xlink:href="407460_ueqn4.gif"/></alternatives>
+</disp-formula>
+we mean the set of all vertices of <italic>G</italic> at distance 1 from <italic>S</italic>). We note that the subgraph <italic>S&#x00B4;</italic> always has the same number of vertices <italic>k</italic> as <italic>S</italic><sub>0</sub>. The proposal probability <italic>Q</italic>(<italic>S&#x00B4;&#x007C;S</italic><sub><italic>i</italic></sub>) is
+<disp-formula id="ueqn5">
+<alternatives><graphic xlink:href="407460_ueqn5.gif"/></alternatives>
+</disp-formula></p>
+<p>We set the acceptance probability in the Metropolis-Hastings algorithm as
+<disp-formula id="ueqn6">
+<alternatives><graphic xlink:href="407460_ueqn6.gif"/></alternatives>
+</disp-formula>
+where <italic>P</italic> (<italic>S&#x00B4;</italic> = <italic>MW</italic> = <italic>w</italic>) = 0 as soon as <italic>S&#x00B4;</italic> is not connected.</p>
+<p>For any connected subgraph <italic>S</italic> of <italic>G</italic> the value <italic>P</italic> (<italic>S&#x00B4;</italic> = <italic>M&#x007C;W</italic> = <italic>w</italic>) can be expressed in terms of probability density <italic>p</italic> of an absolutely continuous random vector variable <italic>W</italic> :
+<disp-formula id="eqn1">
+<alternatives><graphic xlink:href="407460_eqn1.gif"/></alternatives>
+</disp-formula>
+So,
+<disp-formula id="ueqn7a">
+<alternatives><graphic xlink:href="407460_ueqn7.gif"/></alternatives>
+</disp-formula></p>
+<p>The fraction <inline-formula><alternatives><inline-graphic xlink:href="407460_inline3.gif"/></alternatives></inline-formula> is equal to
+<disp-formula id="eqn2">
+<alternatives><graphic xlink:href="407460_eqn2.gif"/></alternatives>
+</disp-formula>
+where <italic>L</italic>(<italic>S</italic>) is the likelihood of the subgraph <italic>S</italic>. In our case
+<disp-formula id="ueqn8">
+<alternatives><graphic xlink:href="407460_ueqn8.gif"/></alternatives>
+</disp-formula>
+so, we have:
+<disp-formula id="eqn3">
+<alternatives><graphic xlink:href="407460_eqn3.gif"/></alternatives>
+</disp-formula></p>
+<p>Assuming that the prior distribution of choosing the module <italic>P</italic> (<italic>S</italic> = <italic>M)</italic> is uniform<xref ref-type="fn" rid="fn1"><sup>1</sup></xref> on the set of connected subgraphs <italic>S</italic> of the same order <italic>&#x007C;M&#x007C;</italic>, we get
+<disp-formula id="ueqn9">
+<alternatives><graphic xlink:href="407460_ueqn9.gif"/></alternatives>
+</disp-formula></p>
+<p>The proposed MCMC algorithm can visit all possible subgraphs <italic>S</italic>, and so it converges to the distribution <italic>P</italic> (<italic>S</italic> = <italic>M&#x007C;W</italic> = <italic>w</italic>).</p>
+<fig id="alg1" position="float" fig-type="figure">
+<label>Algorithm 1:</label>
+<caption><p>Metropolis-Hastings algorithm</p></caption>
+<graphic xlink:href="407460_alg1.tif"/>
+</fig>
+</sec>
+<sec id="s3b">
+<label>3.2</label>
+<title>Heuristic approach to arbitrary module order</title>
+<p>Since on the real data the estimated order of an active module has a tendency to be too large (1 <italic>&#x03BB;</italic> is up to 0.5), we adjust our method in order to allow to change the number of vertices in the subgraph during the MCMC process. In this approach on each step of the process one can either add one vertex to the subgraph or remove one vertex from it. In order to provide subgraphs of biologically relevant size, we penalize each additional vertex by a factor <italic>a&#x03C4;</italic> <sup><italic>a-</italic>1</sup>, where <italic>&#x03C4;</italic> is some confidence threshold as described in [<xref ref-type="bibr" rid="c4">4</xref>]. More formally, it means that we consider such a prior distribution on subgraphs that <inline-formula><alternatives><inline-graphic xlink:href="407460_inline4.gif"/></alternatives></inline-formula> where <italic>S</italic><sub>&#x002B;</sub> is an induced subgraph on the vertices <italic>V</italic> (<italic>S</italic>) <italic>&#x222A;</italic>{<italic>v</italic><sub>&#x002B;</sub>}. Thus our heuristic approach is very similar to Algorithm 1, but
+<disp-formula id="ueqn10">
+<alternatives><graphic xlink:href="407460_ueqn10.gif"/></alternatives>
+</disp-formula>
+Where
+<disp-formula id="ueqn11">
+<alternatives><graphic xlink:href="407460_ueqn11.gif"/></alternatives>
+</disp-formula></p>
+<fig id="alg2" position="float" fig-type="figure">
+<label>Algorithm 2:</label>
+<caption>
+<p>Metropolis-Hastings algorithm for subgraphs with an arbitrary number of vertices</p>
+</caption>
+<graphic xlink:href="407460_alg2.tif"/>
+</fig>
+<p>For estimating probabilities <italic>P</italic> (<italic>vM&#x007C;W</italic> = <italic>w</italic>) we need to choose a set of subgraph samples &#x1D54A;. Here we consider two ways of doing this. For both ways we need to estimate the mixing time <italic>T</italic> of the algorithm: the number of Markov chain iterations such that the distribution of <italic>S</italic><sub><italic>T</italic></sub> approximates the target distribution well. We note that theoretically the Markov chain converges to the desired distribution since it is ergodic: it is recurrent (since the number of states is finite), it is aperiodic (since there is a positive probability that the process stays at the same state), and it is irreducible since by construction it can reach any subgraph from any other subgraph. In practice, the mixing time depends on multiple parameters including the graph <italic>G</italic> order. The first way to choose S is to do a number of independent MCMC runs of <italic>T</italic> iterations and add each <italic>S</italic><sub><italic>T</italic></sub> to S. Here, all samples in S are independent, which can be used to calculate the accuracy of the vertex probabilities estimation. Another way consists in doing one long run of MCMC and putting all <italic>S</italic><sub><italic>i</italic></sub> for <italic>i&#x003E;T</italic> into S. Although consecutive samples are not independent, the probabilities that are estimated this way converge to the true probabilities given sufficiently long series (see <xref ref-type="sec" rid="s4a">Section 4.1</xref> for discussion of the converging time on the simulated data).</p>
+</sec>
+<sec id="s3c">
+<label>3.3</label>
+<title>Features of soft classification solution</title>
+<p>Having the set S of subgraphs sampled from the conditional distribution <italic>P</italic> (<italic>S</italic> = <italic>M&#x007C;W</italic> = <italic>w</italic>), one can easily answer the following questions. First, one can estimate for each vertex <italic>v</italic><sub><italic>i</italic></sub> the probability <italic>p</italic><sub><italic>i</italic></sub> that it belongs to the active module. In the case when the module size is not fixed, we can also estimate the conditional probabilities
+<disp-formula id="ueqn12">
+<alternatives><graphic xlink:href="407460_ueqn12.gif"/></alternatives>
+</disp-formula></p>
+<p>Second, for any boolean-valued function <italic>A</italic>(<italic>M)</italic> (for example, <italic>A</italic>(<italic>M)</italic> = (<italic>v</italic><sub>1</sub> <italic>&#x2208;M)</italic> (<italic>v</italic><sub>2</sub> <italic>M)&#x2227;</italic> &#x00AC; (<italic>v</italic><sub>3</sub> <italic>M)</italic>) one can estimate the probability <italic>P</italic> (<italic>A</italic>(<italic>M)&#x007C;W</italic> = <italic>w</italic>).</p>
+<p>Note, that if each <italic>S</italic> from &#x1D54A; was generated with an independent MCMC run, then each <italic>A</italic>(<italic>S</italic>) can be considered to be a result of a Bernoulli trial. Thus, all such probabilities can be estimated with a mean square error of the order <inline-formula><alternatives><inline-graphic xlink:href="407460_inline5.gif"/></alternatives></inline-formula>, where <italic>p</italic> = <italic>P</italic> (<italic>A</italic>(<italic>M)&#x007C;W</italic> = <italic>w</italic>).</p>
+<p>We also show how the probabilities of each vertex to belong to the active module are related to the expected AUC ROC for some vertex ranking. For a vertex ranking <italic>v</italic><sub>1</sub>, <italic>v</italic><sub>2</sub>,<italic>&#x2026;,v</italic><sub><italic>n</italic></sub>, where <italic>n</italic> = <italic>&#x007C;G&#x007C;</italic>, and a module <italic>M</italic> of order <italic>m</italic> the ROC curve is a step-curve in a square [0, 1] <italic>&#x00D7;</italic> [0, 1], which starts at(0, 0), and on the <italic>i</italic>-th step it goes either up <inline-formula><alternatives><inline-graphic xlink:href="407460_inline6.gif"/></alternatives></inline-formula> (if <italic>v</italic><sub><italic>i</italic></sub> <italic>&#x2208;M</italic>) or right <inline-formula><alternatives><inline-graphic xlink:href="407460_inline7.gif"/></alternatives></inline-formula> The AUC ROC shows how accurate the classification is.</p>
+<p>We prove the following lemma:</p>
+<statement id="l1">
+<label>Lemma 1.</label>
+<p><italic>Let n be the number of vertices in G, m be the number of vertices in the module M, v</italic><sub>1</sub>, <italic>v</italic><sub>2</sub>,<italic>&#x2026;</italic>, <italic>v</italic><sub><italic>n</italic></sub> <italic>be some vertex ranking and p</italic><sub><italic>i</italic></sub> <italic>be the probabilities p</italic><sub><italic>i</italic></sub> = <italic>P</italic> (<italic>v</italic><sub><italic>i</italic></sub> <italic>&#x2208;M&#x007C;W</italic> = <italic>w</italic>). <italic>Then the expected value of the AUC ROC is equal to</italic>
+<disp-formula id="ueqn13">
+<alternatives><graphic xlink:href="407460_ueqn13.gif"/></alternatives>
+</disp-formula></p>
+<p><italic>Proof.</italic> See Section S1 in Supplementary Materials.</p>
+</statement>
+<p><xref ref-type="statement" rid="l3">Lemma 3</xref> implies that the vertex ranking with the largest expected value of the AUC ROC is the ranking according to a descending order on <italic>p</italic><sub><italic>i</italic></sub> (for any particular module order <italic>m</italic>). If the number <italic>m</italic> of the vertices in the module is not known, the expected AUC ROC is equal to
+<disp-formula id="ueqn14">
+<alternatives><graphic xlink:href="407460_ueqn14.gif"/></alternatives>
+</disp-formula>
+Where
+<disp-formula id="ueqn15">
+<alternatives><graphic xlink:href="407460_ueqn15.gif"/></alternatives>
+</disp-formula>
+and &#x1D53C; stands for the expected value.</p>
+<p>We note that the probabilities <inline-formula><alternatives><inline-graphic xlink:href="407460_inline8.gif"/></alternatives></inline-formula> can be estimated based on the sample &#x1D54A; or approximated by <italic>p</italic><sub><italic>i</italic></sub>.</p>
+</sec>
+<sec id="s3d">
+<label>3.4</label>
+<title>Connectivity preserving ranking</title>
+<p>While we provide the best solution for the soft classification problem in terms of the expected AUC ROC, one can be interested in getting the solution for the hard classification problem as well. Our method is easily transformable into a hard classification method. Namely, our goal is to define a module <italic>M</italic> (<italic>q</italic>) for any FDR level <italic>q</italic> in a consistent manner. That is, we don&#x2019;t allow the situation when a vertex is included in a module with a small FDR level, but excluded from a module with a larger FDR (formally speaking, we demand that <italic>M</italic> (<italic>q</italic><sub>1</sub>) <italic>&#x2282;M</italic> (<italic>q</italic><sub>2</sub>) as soon as <italic>q</italic><sub>1</sub> <italic>&#x003C;q</italic><sub>2</sub>). Any such family of modules <italic>M</italic> (<italic>q</italic>) corresponds to a connectivity preserving ranking.</p>
+<p><bold>Definition 1.</bold> <italic>For a graph G with vertices v</italic><sub><italic>i</italic></sub> <italic>the</italic> connectivity preserving <italic>rank-ing is such a ranking of v</italic><sub><italic>i</italic></sub> <italic>that for any k-prefix v</italic><sub>1</sub>, <italic>v</italic><sub>2</sub>,<italic>&#x2026;,v</italic><sub><italic>k</italic></sub> <italic>the induced graph on this set of vertices is connected.</italic></p>
+<p>We want to choose the best connectivity preserving ranking in terms of the expected value of the AUC ROC. Since the expected AUC ROC depends only on <italic>p</italic><sub><italic>i</italic></sub> (or their modified version<inline-formula><alternatives><inline-graphic xlink:href="407460_inline8a.gif"/></alternatives></inline-formula>), we can formulate the following problem:</p>
+<p><bold>Problem 2</bold> (Optimal Connectivity Preserving Ranking, OCPR). <italic>GivenagraphGandthelistofitsverticesv</italic><sub><italic>i</italic></sub>, <italic>eachequippedwiththeprobabilityp</italic><sub><italic>i</italic></sub>, <italic>findthe</italic> connectivity preserving <italic>rankingmaximizingtheexpectedAUCROC.</italic></p>
+<statement id="l2">
+<label>Lemma 2.</label>
+<p><italic>OCPRproblemisNP-hard.</italic></p>
+<p><italic>Proof.</italic> See Section S2 in Supplementary Materials.</p>
+<p>As Problem 2 is NP-hard, here we provide a heuristic algorithm to solve it. On the <italic>k</italic>-th step of the algorithm we have an integer number <italic>r</italic><sub><italic>k</italic></sub> and <italic>G</italic><sub><italic>k</italic></sub> &#x2013; a connected subgraph of <italic>G</italic> (where <italic>r</italic><sub>1</sub> = <italic>n</italic> and <italic>G</italic><sub>1</sub> = <italic>G</italic>), and we define a connected subgraph <italic>G</italic><sub><italic>k</italic>&#x002B;1</sub> in the following way. For each vertex <italic>v</italic> we define a <italic>k</italic>&#x002B;1 <italic>k</italic>&#x002B;1 subgraph <inline-formula><alternatives><inline-graphic xlink:href="407460_inline9.gif"/></alternatives></inline-formula> as the largest connected component of <italic>G</italic><sub><italic>k</italic></sub> <italic>\</italic>{<italic>v</italic>} and <inline-formula><alternatives><inline-graphic xlink:href="407460_inline10.gif"/></alternatives></inline-formula> as <inline-formula><alternatives><inline-graphic xlink:href="407460_inline11.gif"/></alternatives></inline-formula>. Then we choose such a vertex <italic>v</italic> that maximizes average FDR in <inline-formula><alternatives><inline-graphic xlink:href="407460_inline12.gif"/></alternatives></inline-formula>, which is equal to <inline-formula><alternatives><inline-graphic xlink:href="407460_inline13.gif"/></alternatives></inline-formula>. Then we assign to all vertices in the subgraph <italic>H</italic> the rank <italic>r</italic><sub><italic>k</italic></sub> and assign to <italic>r</italic><sub><italic>k</italic>&#x002B;1</sub> = <italic>r</italic><sub><italic>k</italic></sub> <italic>&#x007C;H&#x007C;</italic></p>
+</statement>
+<p>Each step requires time <italic>O</italic>(<italic>n</italic><sup>2</sup>), so the performance time is <italic>O</italic>(<italic>n</italic><sup>3</sup>). On our real data example, the running time was 13 seconds on Intel(R) Core(TM) i5-7200U CPU @ 2.50GHz (implemented in C&#x002B;&#x002B;).</p>
+</sec>
+<sec id="s3e">
+<label>3.5</label>
+<title>Baseline ranking methods</title>
+<p>We compared our approach with three other ranking methods on simulated data in <xref ref-type="sec" rid="s4a">Section 4.1</xref>. The first method ranks vertices by the ascending order of their input weights <italic>w</italic><sub><italic>v</italic></sub>. In the second method vertices are ranked by the descending order of the number of occurrences in the modules as found by running the BioNet method with 20 different significance thresholds. The thresholds are selected to be distributed at equal intervals between maximum and minimum vertex log-likelihoods. The third method is a semi-heuristic ranking method from [<xref ref-type="bibr" rid="c9">9</xref>] developed for finding a good connectivity preserving ranking. To describe it briefly, it first finds the maximum-likelihood connected subgraph and recursively ranks a set of vertices inside and outside of the subgraph. The recursion step also involves finding a maximum-likelihood connected subgraph but with constraint on consistent connectivity with already defined ranking.</p>
+<p>Note that we do not compare our method with the jackknife resampling method [<xref ref-type="bibr" rid="c2">2</xref>] on simulated data as it requires simulating gene expression data, which can induce artificial biases in the evaluation. Instead, we compare our results with the results of this method on real data (see <xref ref-type="sec" rid="s4b">Section 4.2</xref>).</p>
+</sec>
+</sec>
+<sec id="s4">
+<label>4.</label>
+<title>Discussion</title>
+<sec id="s4a">
+<label>4.1.</label>
+<title>Experiments on simulated data</title>
+<p>First, we consider a toy example. We generated a random graph <italic>G</italic> on 30 vertices and 65 edges. Then we chose the active module <italic>M</italic> on 9 vertices randomly and generated the weights from the beta distribution <italic>&#x03B2;</italic>(0.2, 1) for the vertices in <italic>M</italic> and from the uniform distribution for all other vertices. For such a toy example we can both compute the probabilities <italic>P</italic> (<italic>v&#x2208;M&#x007C;W</italic> = <italic>w</italic>) directly from (1) and estimate them as <inline-formula><alternatives><inline-graphic xlink:href="407460_inline14.gif"/></alternatives></inline-formula> using our MCMC approach. We run 10<sup>6</sup> iterations of the Metropolis-Hastings algorithm. The estimations approximated the actual probabilities very accurately with root-mean-square error equal to 2 10<sup><italic>-</italic>3</sup> We also note that the ranking of vertices based on estimations <inline-formula><alternatives><inline-graphic xlink:href="407460_inline15.gif"/></alternatives></inline-formula> was the same as the ranking based on true probabilities. For both actual and estimated probabilities the AUC ROC is equal to 0.92.</p>
+<p>Second, we compared our MCMC-based connectivity preserving ranking method with three other ranking methods (see <xref ref-type="sec" rid="s3e">Section 3.5</xref>) on simulated data. Here we considered 50 random instances. For each instance a random scale-free graph on 100 vertices was generated. Then we generated active modules in two steps: 1) the number of the vertices in a module was uniformly selected from 5 to 25 and 2) a module was chosen uniformly at random from all connected subgraphs with the selected order. Vertex weights were generated from the beta-uniform mixture distribution with values of the <italic>a</italic> parameter selected from the [0.01, 0.5] interval. The AUC measures for rankings produced by four tested methods are shown on <xref rid="fig2" ref-type="fig">Fig. 2</xref>. For all values of <italic>a</italic> our approach shows significantly better performance compared to all three baseline methods.</p>
+<p>Next we considered MCMC performance on a real-world protein-protein interaction graph. We used a graph with 2,034 vertices and 8,399 edges as constructed in [<xref ref-type="bibr" rid="c4">4</xref>] for a diffuse large B-cell lymphoma dataset. We chose an active module uniformly at random from connected subgraphs on 200 vertices. Weights of the vertices in the active module were generated from the beta distribution <italic>&#x03B2;</italic>(0.25, 1).</p>
+<p>First, we considered the behavior of log-likelihood values for samples during one MCMC run (<xref rid="fig1" ref-type="fig">Fig. 1</xref>, green line). This plot shows that the log-likelihood value stabilizes after about 25,000 iterations. Thus, we can estimate the MCMC mixing time <italic>T</italic> as 25,000 for this case. Then we checked that 25,000 iterations is sufficient for estimating vertex probabilities. For different values of <italic>T&#x00B4;</italic> we calculated AUC values for rankings based on 1,000 independent runs of MCMC for <italic>T&#x00B4;</italic> iterations (<xref rid="fig1" ref-type="fig">Fig. 1</xref>, red line). The results show that indeed 25,000 iterations is enough to achieve high AUC values, and the saturation phase begins even earlier. Finally, we compared ranking for one long MCMC run and for 1,000 independent samples (<xref rid="fig1" ref-type="fig">Fig. 1</xref>, blue line). For one long run we estimated probabilities using all generated MCMC samples except the first 25,000. It can be seen that AUC values saturate after about 50,000 total MCMC iterations which justifies the usage of one long MCMC run. Practically, this means that good probability estimates can be achieved very fast, given that 100,000 MCMC iterations took about one minute on a laptop.</p>
+<fig id="fig1" position="float" fig-type="figure">
+<label>Figure 1:</label>
+<caption><p>Behavior of subgraph log-likelihood values and ranking AUCs depending on the number of MCMC iterations. Real protein-protein interaction graph of 2,034 vertices is used as <italic>G</italic>, module of 200 vertices is chosen uniformly at random. Green line: log-likelihood values for subgraphs <italic>S</italic><sub><italic>i</italic></sub> generated during one MCMC run. Red line: AUC values for rankings based on 1,000 independent MCMC samples depending on the chosen mixing time estimate. Blue line: AUC values for rankings based on one MCMC run calculated on all samples <italic>S</italic><sub><italic>i</italic></sub> for <italic>i &#x003E;</italic> 25,000.</p></caption>
+<graphic xlink:href="407460_fig1.tif"/>
+</fig>
+<fig id="fig2" position="float" fig-type="figure">
+<label>Figure 2:</label>
+<caption><p>Ranking AUC values for simulated instances for graphs on 100 vertices. The proposed MCMC method is compared with the following methods: ranking by input weights (left), BioNet-based ranking (middle) and semi-heuristic ranking from [<xref ref-type="bibr" rid="c9">9</xref>] (right). One arrow corresponds to one experiment. The head of each arrow points to the AUC score of the MCMC method, while the tail indicates the AUC score of the corresponding alternative method. Thus, upward arrows indicate instances in which the MCMC method has a higher AUC score. Dots indicate the instances for which the results are equal. Color depends on which method has better AUC.</p></caption>
+<graphic xlink:href="407460_fig2.tif"/>
+</fig>
+</sec>
+<sec id="s4b">
+<label>4.2</label>
+<title>Experimental results on real data</title>
+<p>We apply our method to the diffuse large B-cell lymphoma dataset and the protein-protein interaction graph constructed in [<xref ref-type="bibr" rid="c4">4</xref>]. The <italic>p</italic>-values in the DLBCL dataset are the result of a differential expression <italic>t</italic>-test between the two tumor subgroups: germinal center B-cell-like (GCB) DLBCL and activated B-cell-like (ABC) DLBCL. The estimated BUM distribution parameters are <italic>&#x03BB;</italic> = 0.48 and <italic>a</italic> = 0.18. As described in <xref ref-type="sec" rid="s3b">Section 3.2</xref>, we penalized the addition of a new vertex to the module using the confidence threshold <italic>&#x03C4;</italic> = 10<sup><italic>-</italic>7</sup>.</p>
+<p>The obtained module is shown on <xref rid="fig3" ref-type="fig">Fig. 3</xref>. The module shows the prefix of the ranking with FDR = 0.25. Additionally, we highlighted submodules of more strict FDR values: 0.15 and 0.05. Note that, by construction, a more strict module is a subgraph of a less strict one. The genes in the modules are mostly known to be associated with cancer. For example, genes BCL2, BMF, CASP3, PTK2 and WEE1 are involved in the cell apoptosis pathway. Some other genes, like LYN or KCNA3, are associated with proliferation and signalling in hematopoietic cells.</p>
+<fig id="fig3" position="float" fig-type="figure">
+<label>Figure 3:</label>
+<caption><p>The module for comparison of GCB and ABC types of diffuse large B-cell lymphoma (red vertices are up-regulated in ABC type, green ones are up-regulated in GCB). The vertices of the blue subgraph belong to the active module with very high confidence (FDR is 0.05). The vertices of the light blue subgraph belong to the active module very likely (FDR is 0.15). The number in each vertex means the frequency of the vertex presence in a sampled subgraph.</p></caption>
+<graphic xlink:href="407460_fig3.tif"/>
+</fig>
+<p>Additionally, we compared our result to one obtained by the jackknife resampling procedure as described in [<xref ref-type="bibr" rid="c2">2</xref>] with 100 resamples and the same threshold of <italic>&#x03C4;</italic> = 10<sup><italic>-</italic>7</sup>. Resampling support values are consistent with MCMC-based probabilities (see Supplementary material). However, compared to the resampling method [<xref ref-type="bibr" rid="c2">2</xref>] our approach has two major advantages. First, out method starts with <italic>p</italic>-values and can be used even for experiments with a small number of replicates, where resampling is not feasible. Second, calculating individual vertex probabilities does not involve solving NP-hard problems and can be easily done in practice without dependency on external solver libraries like IBM ILOG CPLEX. Even the NP-hard problem of finding the AUC ROC optimal connectivity preserving ranking can be solved well on real data with the heuristic algorithm.</p>
+</sec>
+</sec>
+<sec id="s5">
+<label>5.</label>
+<title>Conclusion</title>
+<p>While the active module identification problem was intensively studied in recent years, most of the approaches solve it as a hard classification problem. Here we study the question of assigning confidence values for individual vertices and thus consider a soft classification problem. All the hard classification methods could only provide a blackbox which tells us whether a particular gene belongs to the active module or not, and so, by design, they all have a flaw: they don&#x2019;t provide any way to distinguish between more and less confident inclusions. The soft classification approach addresses this issue.</p>
+<p>We propose a method to estimate probabilities of each vertex to belong to the active module based on Markov chain Monte Carlo sampling. Based on these probabilities, for any given FDR level we can provide a solution to the hard classification problem in a consistent manner: a module for a more strict FDR level is a subgraph of any module for a more relaxed FDR level. Overall, the proposed approach is very flexible: it starts with <italic>p</italic>-values, and thus can be used in many different contexts, and does not depend on external libraries for solving NP-hard problems.</p>
+</sec>
+</body>
+<back>
+<ack>
+<title>Acknowledgements</title>
+<p>The authors thank Artem Vasilyev for fruitful discussions.</p>
+</ack>
+<sec id="s6">
+<title>Funding</title>
+<p>The work of Javlon Isomurodov and Alexey Sergushichev was supported by the Ministry of Education and Science of the Russian Federation (agreement 2.3300.2017). The work of Nikita Alexeev was financially supported by the Government of the Russian Federation through the ITMO Fellowship and Professorship Program.</p>
+</sec>
+<sec id="s7" sec-type="supplementary-material">
+<title>Supplementary Materials S1</title>
+<p>In this section we prove <xref ref-type="statement" rid="l3">Lemma 3</xref>.</p>
+<statement id="l3">
+<label>Lemma 3.</label>
+<p><italic>Let n be the number of vertices in G, m be the number of vertices in the module M, v</italic><sub>1</sub>, <italic>v</italic><sub>2</sub>,<italic>&#x2026;</italic>, <italic>v</italic><sub><italic>n</italic></sub> <italic>be some vertex ranking and p</italic><sub><italic>i</italic></sub> <italic>be the probabilitie sp</italic><sub><italic>i</italic></sub> = <italic>P</italic> (<italic>v</italic><sub><italic>i</italic></sub> <italic>&#x2208;M&#x007C;W</italic> = <italic>w</italic>). <italic>Then the expected value of the AUC ROC is equal to</italic>
+<disp-formula id="ueqn16">
+<alternatives>
+<graphic xlink:href="407460_ueqn16.gif"/>
+</alternatives>
+</disp-formula></p>
+<p><italic>Proof.</italic> First of all, we introduce a rotated not-normalized ROC curve (<xref ref-type="fig" rid="fig4">Fig.4</xref>). On the <italic>i</italic>-th step this curve goes either up <inline-formula><alternatives><inline-graphic xlink:href="407460_inline16.gif"/></alternatives></inline-formula> (if <italic>v</italic><sub><italic>i</italic></sub> <italic>&#x2208;M)</italic> or down <inline-formula><alternatives><inline-graphic xlink:href="407460_inline17.gif"/></alternatives></inline-formula> (if <italic>v</italic><sub><italic>i</italic></sub> <italic>&#x2209;M)</italic></p>
+</statement>
+<p>This linear transformation of the ROC curve is a function, so one can find not only the expected value of the area under it, but its pointwise expected value as well. Let its height at the point <inline-formula><alternatives><inline-graphic xlink:href="407460_inline18.gif"/></alternatives></inline-formula> be <italic>h</italic><sub><italic>i</italic></sub>. Then the expected value of <italic>h</italic><sub><italic>i</italic>&#x002B;1</sub> <italic>-h</italic><sub><italic>i</italic></sub> is <inline-formula><alternatives><inline-graphic xlink:href="407460_inline19.gif"/></alternatives></inline-formula>. The area under the (original) ROC curve (up to the factor <italic>m</italic>(<italic>nm</italic>)) is equal to the area under the rotated ROC curve plus the area of the quadrilateral <italic>AECD</italic>. The area of <italic>AECD</italic> is equal to the area of <italic>ABCD</italic> (which is equal to <italic>m</italic>(<italic>n-m</italic>)) minus the area of <italic>ABF</italic> (which is equal to <inline-formula><alternatives><inline-graphic xlink:href="407460_inline20.gif"/></alternatives></inline-formula>) plus the area of <italic>CEF</italic> (which is equal to <inline-formula><alternatives><inline-graphic xlink:href="407460_inline21.gif"/></alternatives></inline-formula>. Thus, we obtian:
+<disp-formula id="ueqn17">
+<alternatives><graphic xlink:href="407460_ueqn17.gif"/></alternatives>
+</disp-formula></p>
+<p>After normalization we obtain
+<disp-formula id="ueqn18">
+<alternatives><graphic xlink:href="407460_ueqn18.gif"/></alternatives>
+</disp-formula></p>
+</sec>
+<sec id="s8">
+<title>S2</title>
+<p>In this section we prove <xref ref-type="statement" rid="l4">Lemma 4</xref>.</p>
+<statement id="l4">
+<label>Lemma 4.</label>
+<p><italic>TheOCPRproblemisNP-hard.</italic></p>
+<p><italic>Proof.</italic> To prove that OCPR is NP-complete, we will use a modification of the method for proving that the Steiner tree problem in graphs is NP-complete. The referenced method is described in [<xref ref-type="bibr" rid="c16">16</xref>].</p>
+<p>In decisional form, OCPR is equivalent to:</p>
+<p>OCPR (decisional). <italic>Given a graph G, the list of its vertices v</italic><sub><italic>i</italic></sub>, <italic>each equipped with the probability p</italic><sub><italic>i</italic></sub>, <italic>and a real numberk, determine if there is a</italic> connectivity preserving <italic>rankingv</italic><sub>1</sub>, <italic>v</italic><sub>2</sub>,<italic>&#x2026;</italic>, <italic>v</italic><sub><italic>n</italic></sub> <italic>such that<inline-formula><alternatives><inline-graphic xlink:href="407460_inline22.gif"/></alternatives></inline-formula></italic></p>
+</statement>
+<p>First, we need to show that OCPR is in NP. Given an hypothetic positive solution <italic>v</italic><sub>1</sub>, <italic>v</italic><sub>2</sub>,<italic>&#x2026;</italic>, <italic>v</italic><sub><italic>n</italic></sub>, it is trivial to check in polynomial time that this ranking is <italic>connectivity preserving</italic> and <inline-formula><alternatives><inline-graphic xlink:href="407460_inline23.gif"/></alternatives></inline-formula> holds.</p>
+<p>The Exact Cover by 3-Sets problem (X3C) is a well-known NP-complete problem mentioned in [<xref ref-type="bibr" rid="c5">5</xref>]:</p>
+<p>Problem X3C. <italic>Given a finite set X with &#x007C;X&#x007C;</italic> = 3<italic>q and a collection C of 3-element subsets of X (C</italic> = {<italic>C</italic><sub>1</sub>,<italic>&#x2026;</italic>, <italic>C</italic><sub><italic>n</italic></sub>}, <italic>C</italic><sub><italic>i</italic></sub>&#x2286; <italic>X,&#x007C;C</italic><sub><italic>i</italic></sub><italic>&#x007C;</italic> = 3 <italic>for</italic> 1 <italic>in), determine if C contains an</italic> exact cover <italic>for X, that is, a subcollection C</italic>&#x00B4; &#x2286; <italic>such that every element of X occurs in exactly one member of C</italic> &#x00B4;<italic>?</italic></p>
+<p>Let us propose a reduction from X3C to OCPR giving a set of rules to build an instance of OCPR starting from a generic instance of X3C. If we prove that this transformation is executable in polynomial time, we will also prove that OCPR is NP-complete.</p>
+<p>Given an instance of X3C, defined by the set <italic>X</italic> = {<italic>x</italic><sub>1</sub>,<italic>&#x2026;,x</italic><sub>3</sub> <sub>sub><italic>q</italic></sub>} and a collection of 3-element sets <italic>C</italic> = { <sub>1</sub>,<italic>&#x2026;,C</italic><sub><italic>n</italic></sub>}, we have to build an OCPR instance specifying the graph <italic>G</italic> = (<italic>V,E</italic>), the probabilities <italic>p</italic><sub><italic>i</italic></sub>, and the upper bound on the required sum <italic>k</italic>.</p>
+<p>The vertices of <italic>G</italic> are defined as:
+<disp-formula id="ueqn19">
+<alternatives><graphic xlink:href="407460_ueqn19.gif"/></alternatives>
+</disp-formula></p>
+<p>That is, we add a new node <italic>v</italic>, a node for each member of <italic>C</italic>, and a node for each element of <italic>X</italic>.</p>
+<p>The edges of <italic>G</italic> are defined as:
+<disp-formula id="ueqn20">
+<alternatives><graphic xlink:href="407460_ueqn20.gif"/></alternatives>
+</disp-formula></p>
+<p>That is, there is an edge from <italic>v</italic> to each node <italic>c</italic><sub><italic>i</italic></sub>, and an edge <italic>c</italic><sub><italic>i</italic></sub><italic>x</italic><sub><italic>j</italic></sub> if the element <italic>x</italic><sub><italic>j</italic></sub> belongs to the set <italic>C</italic><sub><italic>i</italic></sub> of the X3C instance.</p>
+<p>Let <inline-formula><alternatives><inline-graphic xlink:href="407460_inline24.gif"/></alternatives></inline-formula> The probabilities <italic>p</italic><sub><italic>i</italic></sub> are defined as:
+<disp-formula id="ueqn21">
+<alternatives><graphic xlink:href="407460_ueqn21.gif"/></alternatives>
+</disp-formula>
+and the upper bound on the required sum is defined as <inline-formula><alternatives><inline-graphic xlink:href="407460_inline25.gif"/></alternatives></inline-formula>.</p>
+<p>The reduction from X3C to OCPR is easy to do in polynomial time.</p>
+<p><bold>Proposition 1.</bold> <italic>There exists a connectivity preserving ranking with <inline-formula><alternatives><inline-graphic xlink:href="407460_inline26.gif"/></alternatives></inline-formula> if and only if there is an exact cover in the corresponding instance of X3C.</italic></p>
+<p><bold>Proof.</bold> We split the proof into two parts, one for each implication.</p>
+<list list-type="bullet">
+<list-item><p>X3C <italic>&#x21D2;</italic> OCPR</p>
+<p>Suppose there is an exact cover <italic>C&#x00B4;</italic> for the X3C problem. Clearly, <italic>C</italic><sup><italic>t</italic></sup> uses exactly <italic>q</italic> subsets. Without loss of generality suppose they are <italic>C</italic><sub>1</sub>,<italic>&#x2026;</italic>, <italic>C</italic><sub><italic>q</italic></sub> (if it is not the case, we just have to relabel them). Then a valid connectivity preserving ranking looks as follows:
+<disp-formula id="ueqn22">
+<alternatives>
+<graphic xlink:href="407460_ueqn22.gif"/>
+</alternatives>
+</disp-formula>
+where every <italic>C</italic><sub><italic>i</italic></sub> consists of elements <inline-formula><alternatives><inline-graphic xlink:href="407460_inline27.gif"/></alternatives></inline-formula>. Then:
+<disp-formula id="ueqn23">
+<alternatives>
+<graphic xlink:href="407460_ueqn23.gif"/>
+</alternatives>
+</disp-formula></p></list-item>
+<list-item><p>X3C <italic>&#x21D0;</italic> OCPR</p>
+<p>Suppose there is a connectivity preserving ranking with <inline-formula><alternatives><inline-graphic xlink:href="407460_inline28.gif"/></alternatives></inline-formula> Since <italic>k&#x003C;</italic> 2 and <italic>p</italic><sub><italic>v</italic></sub> = 1, the first vertex in this ranking must be <italic>v</italic>. Let <inline-formula><alternatives><inline-graphic xlink:href="407460_inline29.gif"/></alternatives></inline-formula> be the order the vertices corresponding to the X3C instance elements appear in this ranking. For every <italic>j</italic>, vertex <italic>v</italic> and at least <inline-formula><alternatives><inline-graphic xlink:href="407460_inline30.gif"/></alternatives></inline-formula> vertices corresponding to 3-element sets of the X3C instance must appear before vertex <inline-formula><alternatives><inline-graphic xlink:href="407460_inline31.gif"/></alternatives></inline-formula> in the ranking, since every vertex <italic>c</italic><sub><italic>i</italic></sub> appearing in the ranking opens the way for at most three new vertices <italic>x</italic><sub><italic>j</italic></sub> to appear afterwards. Hence, the earliest position vertex <inline-formula><alternatives><inline-graphic xlink:href="407460_inline32.gif"/></alternatives></inline-formula> might appear at in the ranking is <inline-formula><alternatives><inline-graphic xlink:href="407460_inline33.gif"/></alternatives></inline-formula>. But if every <inline-formula><alternatives><inline-graphic xlink:href="407460_inline34.gif"/></alternatives></inline-formula> does appear at its earliest possible position, then, like in the former case,
+<disp-formula id="ueqn24">
+<alternatives><graphic xlink:href="407460_ueqn24.gif"/></alternatives>
+</disp-formula></p>
+<p>If any vertex <inline-formula><alternatives><inline-graphic xlink:href="407460_inline35.gif"/></alternatives></inline-formula> appears at a later position, its index in the ranking will increase, the sum of <italic>ip</italic><sub><italic>i</italic></sub> will increase and exceed <italic>k</italic> (since the sum of <italic>ip</italic><sub><italic>i</italic></sub> is already equal to <italic>k</italic> and <inline-formula><alternatives><inline-graphic xlink:href="407460_inline36.gif"/></alternatives></inline-formula>). Therefore, every vertex <inline-formula><alternatives><inline-graphic xlink:href="407460_inline37.gif"/></alternatives></inline-formula> must appear at position <inline-formula><alternatives><inline-graphic xlink:href="407460_inline38.gif"/></alternatives></inline-formula>, and the ranking looks like in the former case, too:
+<disp-formula id="ueqn25">
+<alternatives><graphic xlink:href="407460_ueqn25.gif"/></alternatives>
+</disp-formula></p>
+<p>It&#x2019;s easy to prove that <inline-formula><alternatives><inline-graphic xlink:href="407460_inline39.gif"/></alternatives></inline-formula> and <inline-formula><alternatives><inline-graphic xlink:href="407460_inline40.gif"/></alternatives></inline-formula> belong to <italic>C</italic><sub><italic>i</italic></sub> using induction on <italic>i</italic> from 1 to <italic>q</italic>. Hence, <italic>C</italic><sup><italic>t</italic></sup> = <italic>C</italic><sub>1</sub>, <italic>C</italic><sub>2</sub>,<italic>&#x2026;</italic>, <italic>C</italic><sub><italic>q</italic></sub> is an exact cover for the X3C instance.</p></list-item>
+</list>
+<p>This concludes the proof.</p>
+</sec>
+<sec id="s9">
+<title>S3</title>
+<p>In this section we compare our method and the jackknife resampling method described in [<xref ref-type="bibr" rid="c3">3</xref>]. We apply our method and the jackknife resampling method to the diffuse large B-cell lymphoma dataset and the protein-protein interaction graph constructed in [<xref ref-type="bibr" rid="c4">4</xref>]. The <italic>p</italic>-values in the DLBCL dataset are the result of a differential expression <italic>t</italic>-test between the two tumor subgroups: germinal center B-cell-like (GCB) DLBCL and activated B-cell-like (ABC) DLBCL. In our method we penalized adding a new vertex to the module using the confidence threshold <italic>&#x03C4;</italic> = 10<sup><italic>-</italic>7</sup>. For the jackknife method the <italic>p</italic>-values are recalculated for each of 100 data resamples and then for each collection of the <italic>p</italic>-values the active module identification problem is solved with BioNet (with the same threshold <italic>&#x03C4;</italic> = 10<sup><italic>-</italic>7</sup>). As the result of this procedure, for each vertex the support value (the occurrence frequency of the vertex in the solution) is computed. As one can see (<xref rid="fig5" ref-type="fig">Fig. 5</xref>), the results of these two methods are consistent.</p>
+<fig id="fig4" position="float" fig-type="figure">
+<label>Figure 4:</label>
+<caption><p>Rotated ROC curve</p></caption>
+<graphic xlink:href="407460_fig4.tif"/>
+</fig>
+<fig id="fig5" position="float" fig-type="figure">
+<label>Figure 5:</label>
+<caption><p>The support values and the probabilities of each vertex to belong to the active module are highly correlated.</p></caption>
+<graphic xlink:href="407460_fig5.tif"/>
+</fig>
+</sec>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>[1]</label><mixed-citation publication-type="journal"><string-name><given-names>A.</given-names> <surname>Alexeyenko</surname></string-name>, <string-name><given-names>W.</given-names> <surname>Lee</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Pernemalm</surname></string-name>, <string-name><given-names>J.</given-names> <surname>Guegan</surname></string-name>, <string-name><given-names>P.</given-names> <surname>Dessen</surname></string-name>, <string-name><given-names>V.</given-names> <surname>Lazar</surname></string-name>, <string-name><given-names>J.</given-names> <surname>Lehtio</surname></string-name>, and <string-name><given-names>Y.</given-names> <surname>Pawitan</surname></string-name>. <article-title>Network enrichment analysis: extension of gene-set enrichment analysis to gene networks</article-title>. <source>BMC Bioinformatics</source>, <volume>13</volume>:<fpage>226</fpage>, <month>Sep</month> <year>2012</year>.</mixed-citation></ref>
+<ref id="c2"><label>[2]</label><mixed-citation publication-type="journal"><string-name><given-names>D.</given-names> <surname>Beisser</surname></string-name>, <string-name><given-names>S.</given-names> <surname>Brunkhorst</surname></string-name>, <string-name><given-names>T.</given-names> <surname>Dandekar</surname></string-name>, <string-name><given-names>G. W.</given-names> <surname>Klau</surname></string-name>, <string-name><given-names>M. T.</given-names> <surname>Dittrich</surname></string-name>, and <string-name><given-names>T.</given-names> <surname>Muller</surname></string-name>. <article-title>Robustness and accuracy of functional modules in integrated network analysis</article-title>. <source>Bioinformatics</source>, <volume>28</volume>(<issue>14</issue>):<fpage>1887</fpage>&#x2013;<lpage>1894</lpage>, <month>Jul</month> <year>2012</year>.</mixed-citation></ref>
+<ref id="c3"><label>[3]</label><mixed-citation publication-type="journal"><string-name><given-names>D.</given-names> <surname>Beisser</surname></string-name>, <string-name><given-names>G. W.</given-names> <surname>Klau</surname></string-name>, <string-name><given-names>T.</given-names> <surname>Dandekar</surname></string-name>, <string-name><given-names>T.</given-names> <surname>Muller</surname></string-name>, and <string-name><given-names>M. T.</given-names> <surname>Dittrich</surname></string-name>. <article-title>BioNet: an R-Package for the functional analysis of biological networks</article-title>. <source>Bioinformatics</source>, <volume>26</volume>(<issue>8</issue>):<fpage>1129</fpage>&#x2013;<lpage>1130</lpage>, <month>Apr</month> <year>2010</year>.</mixed-citation></ref>
+<ref id="c4"><label>[4]</label><mixed-citation publication-type="journal"><string-name><given-names>Marcus T</given-names> <surname>Dittrich</surname></string-name>, <string-name><given-names>Gunnar W</given-names> <surname>Klau</surname></string-name>, <string-name><given-names>Andreas</given-names> <surname>Rosenwald</surname></string-name>, <string-name><given-names>Thomas</given-names> <surname>Dandekar</surname></string-name>, and <string-name><given-names>Tobias</given-names> <surname>M&#x00FC;ller</surname></string-name>. <article-title>Identifying functional modules in protein-protein interaction networks: an integrated exact approach</article-title>. <source>Bioinformatics (Oxford, England)</source>, <volume>24</volume>(<issue>13</issue>):<fpage>i223</fpage>&#x2013;<lpage>31</lpage>, <year>2008</year>.</mixed-citation></ref>
+<ref id="c5"><label>[5]</label><mixed-citation publication-type="book"><string-name><given-names>Michael R.</given-names> <surname>Garey</surname></string-name> and <string-name><given-names>David S.</given-names> <surname>Johnson</surname></string-name>. <source>Computers and Intractability: A Guide to the Theory of NP-Completeness</source>. <publisher-name>W.H. Freeman and Company</publisher-name>, <publisher-loc>New York</publisher-loc>, <year>1979</year>.</mixed-citation></ref>
+<ref id="c6"><label>[6]</label><mixed-citation publication-type="journal">W <string-name><given-names>Keith</given-names> <surname>Hastings</surname></string-name>. <article-title>Monte Carlo sampling methods using Markov chains and their applications</article-title>. <source>Biometrika</source>, <volume>57</volume>(<issue>1</issue>):<fpage>97</fpage>&#x2013;<lpage>109</lpage>, <year>1970</year>.</mixed-citation></ref>
+<ref id="c7"><label>[7]</label><mixed-citation publication-type="journal"><string-name><given-names>T.</given-names> <surname>Ideker</surname></string-name> and <string-name><given-names>N. J.</given-names> <surname>Krogan</surname></string-name>. <article-title>Differential network biology</article-title>. <source>Mol. Syst. Biol</source>., <volume>8</volume>:<fpage>565</fpage>, <month>Jan</month> <year>2012</year>.</mixed-citation></ref>
+<ref id="c8"><label>[8]</label><mixed-citation publication-type="journal"><string-name><given-names>Trey</given-names> <surname>Ideker</surname></string-name>, <string-name><given-names>Owen</given-names> <surname>Ozier</surname></string-name>, <string-name><given-names>Benno</given-names> <surname>Schwikowski</surname></string-name>, and <string-name><given-names>Andrew F</given-names> <surname>Siegel</surname></string-name>. <article-title>Discovering regulatory and signalling circuits in molecular interaction networks</article-title>. <source>Bioinformatics (Oxford, England)</source>, <volume>18</volume> Suppl <issue>1</issue>:<fpage>S233</fpage>&#x2013;<lpage>S240</lpage>, <year>2002</year>.</mixed-citation></ref>
+<ref id="c9"><label>[9]</label><mixed-citation publication-type="book"><string-name><given-names>Javlon E</given-names> <surname>Isomurodov</surname></string-name>, <string-name><given-names>Alexander A</given-names> <surname>Loboda</surname></string-name>, and <string-name><given-names>Alexey A</given-names> <surname>Sergushichev</surname></string-name>. <chapter-title>Ranking vertices for active module recovery problem</chapter-title>. <source>In International Conference on Algorithms for Computational Biology</source>, pp. <fpage>75</fpage>&#x2013;<lpage>84</lpage>. <publisher-name>Springer</publisher-name>, <year>2017</year>.</mixed-citation></ref>
+<ref id="c10"><label>[10]</label><mixed-citation publication-type="journal"><string-name><given-names>A. K.</given-names> <surname>Jha</surname></string-name>, <string-name><given-names>S. C.</given-names> <surname>Huang</surname></string-name>, <string-name><given-names>A.</given-names> <surname>Sergushichev</surname></string-name>, <string-name><given-names>V.</given-names> <surname>Lampropoulou</surname></string-name>, <string-name><given-names>Y.</given-names> <surname>Ivanova</surname></string-name>, <string-name><given-names>E.</given-names> <surname>Loginicheva</surname></string-name>, <string-name><given-names>K.</given-names> <surname>Chmielewski</surname></string-name>, <string-name><given-names>K. M.</given-names> <surname>Stewart</surname></string-name>, <string-name><given-names>J.</given-names> <surname>Ashall</surname></string-name>, <string-name><given-names>B.</given-names> <surname>Everts</surname></string-name>, <string-name><given-names>E. J.</given-names> <surname>Pearce</surname></string-name>, <string-name><given-names>E. M.</given-names> <surname>Driggers</surname></string-name>, and <string-name><given-names>M. N.</given-names> <surname>Artyomov</surname></string-name>. <article-title>Network integration of parallel metabolic and transcriptional data reveals metabolic modules that regulate macrophage polarization</article-title>. <source>Immunity</source>, <volume>42</volume>(<issue>3</issue>):<fpage>419</fpage>&#x2013;<lpage>430</lpage>, <year>2015</year>.</mixed-citation></ref>
+<ref id="c11"><label>[11]</label><mixed-citation publication-type="journal"><string-name><given-names>A.</given-names> <surname>Karnovsky</surname></string-name>, <string-name><given-names>T.</given-names> <surname>Weymouth</surname></string-name>, <string-name><given-names>T.</given-names> <surname>Hull</surname></string-name>, <string-name><given-names>V. G.</given-names> <surname>Tarcea</surname></string-name>, <string-name><given-names>G.</given-names> <surname>Scardoni</surname></string-name>, <string-name><given-names>C.</given-names> <surname>Lau-danna</surname></string-name>, <string-name><given-names>M. A.</given-names> <surname>Sartor</surname></string-name>, <string-name><given-names>K. A.</given-names> <surname>Stringer</surname></string-name>, <string-name><given-names>H. V.</given-names> <surname>Jagadish</surname></string-name>, <string-name><given-names>C.</given-names> <surname>Burant</surname></string-name>, <string-name><given-names>B.</given-names> <surname>Athey</surname></string-name>, and <string-name><given-names>G. S.</given-names> <surname>Omenn</surname></string-name>. <article-title>Metscape 2 bioinformatics tool for the analysis and visualization of metabolomics and gene expression data</article-title>. <source>Bioinformatics</source>, <volume>28</volume>(<issue>3</issue>):<fpage>373</fpage>&#x2013;<lpage>380</lpage>, <month>Feb</month> <year>2012</year>.</mixed-citation></ref>
+<ref id="c12"><label>[12]</label><mixed-citation publication-type="journal"><string-name><given-names>M.D.</given-names> <surname>Leiserson</surname></string-name> and others. <article-title>Pan-cancer network analysis identifies combinations of rare somatic mutations across pathways and protein complexes</article-title>. <source>Nat. Genet</source>., <volume>47</volume>(<issue>2</issue>):<fpage>106</fpage>&#x2013;<lpage>114</lpage>, <month>Feb</month> <year>2015</year>.</mixed-citation></ref>
+<ref id="c13"><label>[13]</label><mixed-citation publication-type="journal"><string-name><given-names>K.</given-names> <surname>Mitra</surname></string-name>, <string-name><given-names>A. R.</given-names> <surname>Carvunis</surname></string-name>, <string-name><given-names>S. K.</given-names> <surname>Ramesh</surname></string-name>, and <string-name><given-names>T.</given-names> <surname>Ideker</surname></string-name>. <article-title>Integrative approaches for finding modular structure in biological networks</article-title>. <source>Nat. Rev. Genet</source>., <volume>14</volume>(<issue>10</issue>):<fpage>719</fpage>&#x2013;<lpage>732</lpage>, <month>Oct</month> <year>2013</year>.</mixed-citation></ref>
+<ref id="c14"><label>[14]</label><mixed-citation publication-type="journal"><string-name><given-names>S.</given-names> <surname>Pounds</surname></string-name> and <string-name><given-names>S. W.</given-names> <surname>Morris</surname></string-name>. <article-title>Estimating the occurrence of false positives and false negatives in microarray studies by approximating and partitioning the empirical distribution of p-values</article-title>. <source>Bioinformatics</source>, <volume>19</volume>(<issue>10</issue>):<fpage>1236</fpage>&#x2013;<lpage>1242</lpage>, <month>Jul</month> <year>2003</year>.</mixed-citation></ref>
+<ref id="c15"><label>[15]</label><mixed-citation publication-type="journal"><string-name><given-names>E. J.</given-names> <surname>Rossin</surname></string-name> and others. <article-title>Proteins encoded in genomic regions associated with immune-mediated disease physically interact and suggest underlying biology</article-title>. <source>PLoS Genet</source>., <volume>7</volume>(<issue>1</issue>):<fpage>e1001273</fpage>, <month>Jan</month> <year>2011</year>.</mixed-citation></ref>
+<ref id="c16"><label>[16]</label><mixed-citation publication-type="book"><string-name><given-names>Alessandro</given-names> <surname>Santuari</surname></string-name>. <chapter-title>Steiner tree np-completeness proof</chapter-title>. <source>Technical report</source>, <publisher-name>University of Trento</publisher-name>, <year>2003</year>.</mixed-citation></ref>
+</ref-list>
+<fn-group>
+<fn id="fn1">
+<label><sup>1</sup></label>
+<p>Since we do not make any additional assumptions about the module, the uniform distribution on subgraphs of equal order is the best choice of the prior distribution.</p></fn>
+</fn-group>
+</back>
+</article>

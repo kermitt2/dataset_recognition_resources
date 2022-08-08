@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/065177</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Systems Biology</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Introducing py_emra: the Python module for Ensemble Modeling Robustness Analysis</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author" corresp="yes">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0001-8469-9995</contrib-id>
+<name><surname>Theisen</surname><given-names>Matthew K</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>Department of Chemical and Biomolecular Engineering, University of California</institution>, Los Angeles</aff>
+<aff id="a2"><label>2</label><institution>Department of Bioengineering, University of California</institution>, Los Angeles</aff>
+</contrib-group>
+<author-notes>
+<corresp id="cor1"><label>&#x002B;</label>Send correspondence to: <email>mtheisen@ucla.edu</email></corresp>
+</author-notes>
+<pub-date pub-type="epub"><year>2016</year></pub-date>
+<elocation-id>065177</elocation-id>
+<history>
+<date date-type="received"><day>21</day><month>7</month><year>2016</year></date>
+<date date-type="accepted"><day>21</day><month>7</month><year>2016</year></date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2016, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2016</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/">
+<license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p>
+</license>
+</permissions>
+<self-uri xlink:href="065177.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>The py_emra module implements the Ensemble Modeling Robustness Analysis (EMRA) algorithm in Python. Previous implementations in MATLAB have been used to gain useful insights into metabolic dynamics and metabolic engineering strategies. The py_emra package performs favorably in comparison to MATLAB. Potential extensions and improvements are discussed.</p>
+</abstract>
+<counts>
+<page-count count="3"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<title>Introduction</title>
+<p>Kinetic simulation of metabolic systems requires realistic rate equations and parameters. Additionally, dynamic stability has been raised as an important issue in literature reports. Ensemble Modeling Robustness Analysis is a simulation framework addressing these issues.</p>
+<p>The py_emra module is available at: <ext-link ext-link-type="uri" xlink:href="https://github.com/theis188/py_emra">https://github.com/theis188/py_emra</ext-link>.</p>
+</sec>
+<sec id="s2">
+<title>MATLAB origins</title>
+<p>The Ensemble Modeling Robustness Analysis (EMRA) algorithm has most recently been implemented in MATLAB [<xref ref-type="bibr" rid="c1">1</xref>&#x2013;<xref ref-type="bibr" rid="c3">3</xref>]. Non-standardized MATLAB implementations of the EMRA algorithm are available at <ext-link ext-link-type="uri" xlink:href="https://github.com/theis188/Rivera-theisen-paper-code">https://github.com/theis188/Rivera-theisen-paper-code</ext-link> and <ext-link ext-link-type="uri" xlink:href="https://github.com/theis188/theisen-ploscomp-bio">https://github.com/theis188/theisen-ploscomp-bio</ext-link>. While MATLAB is a convenient and powerful computational environment, the open-source availability and larger user base of Python make it a favorable language for the application of the EMRA framework.</p>
+<p>The EMRA framework uses an ensemble of kinetic models to represent a metabolic system. While a single model may be preferable, it is usually not possible to obtain exact values for enzyme kinetic parameters. Additionally, the EMRA framework uses parameter-domain integration to determine the effect of changes in enzyme amount, with potential computational savings.</p>
+</sec>
+<sec id="s3">
+<title>Algorithm inputs</title>
+<list list-type="roman-lower">
+<list-item><p><bold>Stoichiometric matrix</bold></p>
+<p>The stoichiometric matrix is a matrix of connectivity for the reaction network of the system. The stoichiometric matrix should include exchange reactions (reactions to stand for input/output from the system). Each column represents a reaction and each row represents a metabolite. The matrix is sparse (most entries are 0). Negative entries (-1,-2, etc) represent substrate and positive entries represent products.</p></list-item>
+<list-item><p><bold>Enzyme reversibilities</bold></p>
+<p>Reversibilities are represented as 0 (irreversible), and 1 (reversible). The reversibility of the enzyme helps determine what rate law should be used.</p></list-item>
+<list-item><p><bold>Reference flux</bold></p>
+<p>The reference flux represents a specific steady state (dX/dt=0) of the system we&#x2019;re interested in. In some cases, the reference flux is completely determined by the steady state requirement. In other cases, determination of a relevant steady state constitutes a non-trivial portion of research work.</p></list-item>
+</list>
+</sec>
+<sec id="s4">
+<title>Algorithm Features</title>
+<list list-type="roman-lower">
+<list-item><p><bold>Automated rate law definition</bold></p>
+<p>The algorithm uses network information (i.e. number of products, number of reactants and reversibility) to determine a suitable rate law for each reaction. There are currently 10 reaction types available which support 0,1 or 2 products for each reaction with either reversible or irreversible kinetics.</p></list-item>
+<list-item><p><bold>Automated parameter value generation</bold></p>
+<p>The parameter sets are generated by constraining the parameter sets to the reference state and dynamic stability. The normalized affinity (K<sub>m</sub>) and equilibrium (K<sub>eq</sub>) parameters are sampled from the random uniform range [1,10]. The normalized affinity parameter is equal to K<sub>m</sub>/X<sub>ss</sub> where K <sub>m</sub>is the actual affinity parameter and X<sub>ss</sub> is the steady state metabolite concentration. Thus, the [1,10] range indicates an unsaturated enzyme. This represents a relatively flexible system, in which rates change dynamically with metabolite concentrations and has proven computationally useful, independent of physiological accuracy. [<xref ref-type="bibr" rid="c2">2</xref>]</p></list-item>
+<list-item><p><bold>Metabolite concentration normalization</bold></p>
+<p>The forms of the rate laws used for the algorithm allow for normalization of the metabolite concentration. Each place where the metabolite concentration appears in the rate law, it is divided by an affinity parameter (i.e. a K<sub>m</sub> value). The metabolite concentration and affinity parameter are normalized to the steady state metabolite concentration X<sub>ss</sub>. The fact that normalized values (affinity parameters and metabolite concentrations) ensures the normalization factor is always canceled out. The normalization simplifies the determination of metabolite concentration, since all values can be set to 1. [<xref ref-type="bibr" rid="c2">2</xref>]</p></list-item>
+</list>
+</sec>
+<sec id="s5">
+<title>Algorithm performance</title>
+<p>The algorithm uses the numpy, scipy and sympy packages extensively in its core functions. It also currently uses the xlrd package for import of the model inputs in .xls format.</p>
+<p>The integrates in parameter-space, constrained to steady state. In MATLAB implementations, the MATLAB integrator EventFunctions are used to terminate integrations where a metabolite concentration becomes negative, or the system becomes unstable (time-domain Jacobian becomes singular).</p>
+<p>The integrators available in the numpy package do not have EventFunction capability. The simple workaround is to perform the integration in steps. This allows the stability to be checked at each point. However, more steps slows the algorithm considerably. As the number of steps approaches 1, the algorithm improves dramatically over the MATLAB implementation. However, without a number of steps, the system will not be able to determine exactly where a system bifurcates. A custom integrator with EventFunction-like support could improve the performance of the integration and obviate the need to choose a StepNo parameter.</p>
+<p>The system was benchmarked on a simple metabolic system to show the effect of the StepNo parameter on performance. The system was tested on a simple system with an analytical solution and the numpy integrator showed good performance, within 0.01&#x0025; of the actual solution, even with StepNo=1. By default the &#x2018;lsoda&#x2019; integrator from scipy.integrate is used.</p>
+<table-wrap id="tbl1" orientation="portrait" position="float">
+<label>Table 1.</label>
+<caption><p>Comparison of Python and MATLAB m</p></caption>
+<graphic xlink:href="065177_tbl1.tif"/>
+</table-wrap>
+</sec>
+<sec id="s6">
+<title>Extensions and applications</title>
+<p>The modular rate law of Liebermeister [<xref ref-type="bibr" rid="c4">4</xref>] allows for arbitrary numbers of products and reactants, and for different types of substrate level regulation in rate laws. These rate laws have been previously implemented in a modular fashion in the MATLAB versions of the EMRA framework. Addition of these to py_emra could enhance its capabilities.</p>
+<p>Currently, import of reaction list is through a .xls file. The format is specified in a provided template. In principle, py_emra could be integrated with SBML-ready python packages like python-libsbml.</p>
+</sec>
+</body>
+<back>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>1.</label><mixed-citation publication-type="other"><string-name><surname>Lafontaine Rivera</surname> <given-names>JG</given-names></string-name>, <string-name><surname>Lee</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Liao</surname> <given-names>JC</given-names></string-name>. <article-title>An entropy-like index of bifurcational robustness for metabolic systems</article-title>. <source>Integr Biol</source>. <year>2015</year>; doi:<pub-id pub-id-type="doi">10.1039/C4IB00257A</pub-id></mixed-citation></ref>
+<ref id="c2"><label>2.</label><mixed-citation publication-type="other"><string-name><surname>Lee</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Lafontaine</surname> <given-names>Rivera JG</given-names></string-name>, <string-name><surname>Liao</surname> <given-names>JC</given-names></string-name>. <article-title>Ensemble Modeling for Robustness Analysis in engineering non-native metabolic pathways</article-title>. <source>Metab Eng. Elsevier</source>; <year>2014</year>; <fpage>1</fpage>&#x2013;<lpage>9</lpage>. doi:<pub-id pub-id-type="doi">10.1016/j.ymben.2014.06.006</pub-id></mixed-citation></ref>
+<ref id="c3"><label>3.</label><mixed-citation publication-type="journal"><string-name><surname>Theisen</surname> <given-names>MK</given-names></string-name>, <string-name><surname>Lafontaine</surname> <given-names>Rivera JG</given-names></string-name>, <string-name><surname>Liao</surname> <given-names>JC</given-names></string-name>. <article-title>Stability of Ensemble Models Predicts Productivity of Enzymatic Systems</article-title>. <source>PLOS Comput Biol</source>. <year>2016</year>;<volume>12</volume>: <fpage>e1004800</fpage>. doi:<pub-id pub-id-type="doi">10.1371/journal.pcbi.1004800</pub-id></mixed-citation></ref>
+<ref id="c4"><label>4.</label><mixed-citation publication-type="journal"><string-name><surname>Liebermeister</surname> <given-names>W</given-names></string-name>, <string-name><surname>Uhlendorf</surname> <given-names>J</given-names></string-name>, <string-name><surname>Klipp</surname> <given-names>E</given-names></string-name>. <article-title>Modular rate laws for enzymatic reactions: Thermodynamics, elasticities and implementation</article-title>. <source>Bioinformatics</source>. <year>2010</year>;<volume>26</volume>: <fpage>1528</fpage>&#x2013;<lpage>1534</lpage>. doi:<pub-id pub-id-type="doi">10.1093/bioinformatics/btq141</pub-id></mixed-citation></ref>
+</ref-list>
+</back>
+</article>

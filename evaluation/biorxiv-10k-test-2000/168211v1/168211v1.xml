@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/168211</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Text Mining of Disease&#x2013;Lifestyle Associations to Explain Comorbidities in Electronic Health Registries</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<name>
+<surname>Jensen</surname>
+<given-names>Lars Juhl</given-names>
+</name>
+</contrib>
+<aff><institution>Novo Nordisk Foundation Center for Protein Research, Faculty of Health and Medical Sciences, University of Copenhagen, Blegdamsvej 3b</institution>, Copenhagen N, 2200, <country>Denmark</country></aff>
+</contrib-group>
+<author-notes>
+<fn id="n1" fn-type="other"><p>Email: <email>lars.juhl.jensen@cpr.ku.dk</email></p></fn>
+</author-notes>
+<pub-date pub-type="epub">
+<year>2017</year>
+</pub-date>
+<elocation-id>168211</elocation-id>
+<history>
+<date date-type="received">
+<day>25</day>
+<month>7</month>
+<year>2017</year>
+</date>
+<date date-type="rev-recd">
+<day>25</day>
+<month>7</month>
+<year>2017</year>
+</date>
+<date date-type="accepted">
+<day>25</day>
+<month>7</month>
+<year>2017</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2017, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2017</copyright-year><license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license></permissions>
+<self-uri xlink:href="168211.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<p>Mining of electronic health registries can reveal vast numbers of disease correlations (from hereon referred to as comorbidities for simplicity). However, the underlying causes can be hard to identify, in part because health registries usually do not record important lifestyle factors such as diet, substance consumption, and physical activity. To address this challenge, I developed a text-mining approach that uses dictionaries of diseases and lifestyle factors for named entity recognition and subsequently for co-occurrence extraction of disease&#x2013;lifestyle associations from Medline. I show that this approach is able to extract many correct associations and provide proof-of-concept that these can provide plausible explanations for comorbidities observed in Swedish and Danish health registry data.</p>
+</abstract>
+<kwd-group kwd-group-type="author">
+<title>Keywords</title>
+<kwd>Text mining</kwd>
+<kwd>Lifestyle</kwd>
+<kwd>Disease</kwd>
+<kwd>Comorbidity</kwd>
+</kwd-group>
+<counts>
+<page-count count="9"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<label>1.</label>
+<title>Introduction</title>
+<p>In recent years, several groups have published systematic studies of simple comorbidities based on data from health registry data<sup><xref ref-type="bibr" rid="c1">1</xref>&#x2013;<xref ref-type="bibr" rid="c2">2</xref></sup> or text mining of the unstructured parts of electronic health records.<sup><xref ref-type="bibr" rid="c3">3</xref>&#x2013;<xref ref-type="bibr" rid="c4">4</xref></sup> More recent work has focused on taking into account the temporal ordering of the comorbid diseases and on combining pairwise comorbidities into longer disease trajectories.<sup><xref ref-type="bibr" rid="c5">5</xref>&#x2013;<xref ref-type="bibr" rid="c6">6</xref></sup></p>
+<p>Regardless of the source of data, lifestyle is a major source of confounding factors in analyses of comorbidities. It is well known that diet, substance consumption and physical activity all influence the risk of getting many different diseases, and correlation is to be expected between any two diseases that are subject to the same confounding factors. As lifestyle is usually not recorded for patients who are not explicitly part of a study cohort, it is not possible to explicitly correct for this in the statistical analysis. Many of the identified comorbidities identified in large-scale studies of healthcare data may thus be trivially explained the patients&#x2019; lifestyles rather than by genetics.</p>
+<p>It would be desirable to have a method to automatically identify the comorbidities most likely to be due to lifestyle before looking for a genetic explanation. This requires the construction of a knowledgebase of disease&#x2013;lifestyle relationships grounded in a vocabulary or ontology of lifestyle factors. There are many efforts to create ontologies that capture a variety of aspects of lifestyle, such as environments (Environment Ontology<sup><xref ref-type="bibr" rid="c7">7</xref></sup>), exposure to risk factors (Risk Ontology<sup><xref ref-type="bibr" rid="c8">8</xref></sup> and Exposome Explorer<sup><xref ref-type="bibr" rid="c9">9</xref></sup>), smoking (Cigarette Smoke Exposure Ontology<sup><xref ref-type="bibr" rid="c10">10</xref></sup>), and food (FoodOn, <ext-link ext-link-type="uri" xlink:href="http://foodontology.github.io/foodon/">http://foodontology.github.io/foodon/</ext-link>). However, even if one were to unify all of these, important disease-associated factors like physical activity and socioeconomic status would not be captured.</p>
+<p>Here, I provide initial proof-of-concept for text mining of disease&#x2013;lifestyle associations from the biomedical literature and use of such associations to explain comorbidities in electronic health registry data. To this end, I have developed a draft dictionary of lifestyle factors and used it in conjunction with an existing disease dictionary to extract disease&#x2013;lifestyle associations based on co-occurrences in Medline abstracts. By combining these associations with comorbidities found in electronic health registries, I show that this approach can identify plausible lifestyle-associated explanations for comorbidities. This suggests that text-mined disease&#x2013;lifestyle associations can be used as a filter to help uncover comorbidities that are likely to have genetic causes.</p>
+</sec>
+<sec id="s2">
+<label>2.</label>
+<title>Material and Methods</title>
+<sec id="s2a">
+<label>2.1.</label>
+<title>Compilation of a lifestyle dictionary</title>
+<p>To identify candidate words for a lifestyle dictionary, I queried PubMed for &#x201C;lifestyle[tiab] OR life-style[tiab]&#x201D; and downloaded the PMIDs of the 75,761 matching abstracts (in the following referred to as lifestyle abstracts). Using a local copy of Medline, I next performed case-insensitive counting of the number of occurrences of all words within the lifestyle abstracts and within all abstracts. All words matching more than one million abstracts were removed to eliminate common English words. The remaining words were ranked using a simplified version of the scoring scheme previously used in the STRING<sup><xref ref-type="bibr" rid="c11">11</xref></sup> and DISEASES<sup><xref ref-type="bibr" rid="c12">12</xref></sup> databases. Whereas the full version of the scoring scheme calculates a weighted count of co-occurrences at the sentence and abstract levels, the simplified version counts only at the abstract level.</p>
+<p>From the ranked list of candidate words, I manually compiled a lifestyle dictionary by first removing words such as lifestyle diseases and drugs, then grouping related words in a concept hierarchy, and finally adding additional word variants and synonyms. Whereas the resulting dictionary is by no means comprehensive, this approach should ensure that it includes most commonly used lifestyle descriptors and thereby that it is sufficient to provide proof-of-concept for disease&#x2013;lifestyle association mining. This draft lifestyle dictionary is available for download at <ext-link ext-link-type="uri" xlink:href="https://doi.org/10.6084/m9.figshare.5212603">https://doi.org/10.6084/m9.figshare.5212603</ext-link>.</p>
+</sec>
+<sec id="s2b">
+<label>2.2.</label>
+<title>Named entity recognition of lifestyles and diseases</title>
+<p>Next, I matched the dictionary of lifestyle terms against all Medline abstracts using an existing dictionary-based NER system, which is described in detail elsewhere<sup><xref ref-type="bibr" rid="c13">13</xref></sup> and is available under BSD license at <ext-link ext-link-type="uri" xlink:href="https://bitbucket.org/larsiuhliensen/tagger/">https://bitbucket.org/larsiuhliensen/tagger/</ext-link>. Briefly, the software is implemented in C&#x002B;&#x002B; and uses custom hashing and string-compare functions to perform flexible matching of dictionaries against text in a highly efficient manner. Good precision is ensured through the use of a manually curated, case-sensitive blacklist of unfortunate names, which would otherwise cause many false positives. To also identify disease names, I used the disease dictionary from the DISEASES<sup><xref ref-type="bibr" rid="c11">11</xref></sup> databases, which was based on Disease Ontology<sup><xref ref-type="bibr" rid="c14">14</xref></sup> and extended with mappings to the International Classification of Diseases (ICD) version 10.</p>
+</sec>
+<sec id="s2c">
+<label>2.3.</label>
+<title>Associating diseases with lifestyles</title>
+<p>To move from individual mentions of diseases and lifestyles to disease&#x2013;lifestyle associations, I used a co-mention scoring scheme also used in the STRING<sup><xref ref-type="bibr" rid="c11">11</xref></sup> and DISEASES<sup><xref ref-type="bibr" rid="c12">12</xref></sup> databases. For completeness, the scoring scheme is briefly reiterated below.</p>
+<p>The first step is to calculate a co-mention count of each disease with each lifestyle factor, using <xref ref-type="disp-formula" rid="eqn1">Eq. (1)</xref> to put more weight on co-mentions within sentences than across different sentences from the same abstract.</p>
+<disp-formula id="eqn1">
+<alternatives><graphic xlink:href="168211_eqn1.gif"/></alternatives>
+</disp-formula>
+<p>Here subscript <italic>i</italic> refers to a disease, subscript <italic>j</italic> to a lifestyle factor, and subscript <italic>k</italic> to an abstract. <italic>C<sub>tj</sub></italic> is the weighted co-mention count, <italic>w<sub>a</sub></italic> &#x003D; 3 is the abstract weight, and <italic>w<sub>s</sub></italic> &#x003D; 0.2 is the sentence weight. <italic>&#x03B4;<sub>aijk</sub></italic> and <italic>&#x03B4;<sub>sijk</sub></italic> are 1 if <italic>i</italic> and <italic>j</italic> are co-mentioned in <italic>k</italic> within the same abstract and sentence, respectively, and 0 otherwise. Note that two entities that co-occur within a sentence will receive a total weight of <italic>w<sub>a</sub></italic> &#x002B; <italic>w<sub>s</sub></italic>.</p>
+<p>The next step in the scoring is to compare the observed weighted co-mention count to what would be expected at random using <xref ref-type="disp-formula" rid="eqn2">Eq. (2)</xref>.</p>
+<disp-formula id="eqn2">
+<alternatives><graphic xlink:href="168211_eqn2.gif"/></alternatives>
+</disp-formula>
+<p>In this equation a subscript dots is shorthand for summing over all diseases or lifestyles. The parameter <italic>&#x03B1;</italic> &#x003D; 0.6 specifies the relative weight put on the raw observed count vs. the observed/expected ratio. In this study all parameters were left at the optimal values, which were identified when developing STRING<sup><xref ref-type="bibr" rid="c11">11</xref></sup> and found to perform well in DISEASES<sup><xref ref-type="bibr" rid="c12">12</xref></sup> too.</p>
+<p>The last step in the co-mention scoring is to normalize the <italic>S<sub>ij</sub></italic> scores to z-scores. This is done based on the global score distribution as previously published and filtered to retain only pairs with a z-score greater than 3.<sup><xref ref-type="bibr" rid="c12">12</xref></sup> Finally, I filtered the set of associations to include only disease terms from ICD-10 level 3, because this is the level at which comorbidities were analyzed. The resulting sets of 1702 associations between ICD-10 codes and lifestyle factors are available for download at <ext-link ext-link-type="uri" xlink:href="https://doi.org/10.6084/m9.figshare.5224501">https://doi.org/10.6084/m9.figshare.5224501</ext-link>.</p>
+</sec>
+<sec id="s2d">
+<label>2.4.</label>
+<title>Retrieval of comorbidities from electronic health records</title>
+<p>To explore if the text-mined disease&#x2013;lifestyle associations can explain comorbidities, I compared them to two published sets of comorbidities between ICD-10 codes from Swedish and Danish health registry data, respectively. Comorbidities from the HuDiNe study<sup><xref ref-type="bibr" rid="c2">2</xref></sup> were not used because they are coded in ICD-9-CM, which cannot be easily mapped to ICD-10.</p>
+<p>The first set consists of comorbidities identified by Dalianis and coworkers in the Stockholm Electronic Patient Record (SEPR) corpus.<sup><xref ref-type="bibr" rid="c1">1</xref></sup> To avoid sex as a confounding factor, the female- and male-specific comorbidity data were retrieved from <ext-link ext-link-type="uri" xlink:href="https://www2.dsv.su.se/comorbidityview-demo">https://www2.dsv.su.se/comorbidityview-demo</ext-link>/. However, the age distributions of ICD-10 codes were not corrected for, as sufficiently finely resolved data were not available. I calculated the relative risk of each comorbidity from the raw count data for each sex, and kept only pairs of level-3 ICD-10 codes which for at least one sex showed a relative risk greater than 10 and were supported by more than 20 patients. This resulted in a set of 902 comorbidities in total.</p>
+<p>The second set consists of directional comorbidities identified by Jensen and coworkers in the Danish National Patient Registry (NPR).<sup><xref ref-type="bibr" rid="c4">4</xref></sup> In contrast to the SEPR dataset, both the sex and age distributions of the codes were explicitly corrected for in the published statistical analysis and combined results, including relative risk, were reported. Other important differences are that the NPR comorbidities were tested for statistical significance, both for the correlation between codes and for their temporal directionality. Filtering the dataset to consider only pairs with relative risk greater than 10 supported by at least 20 patients yielded 328 directional comorbidities between level-3 ICD-10 codes.</p>
+</sec>
+<sec id="s1e">
+<label>2.5.</label>
+<title>Visualization of the disease&#x2013;lifestyle network</title>
+<p>To visualize the complex interplay of diseases and lifestyle factors I imported both comorbidity networks and the disease&#x2013;lifestyle associations into Cytoscape. I next extracted a module around each life style factor in the network, including only diseases that were comorbid with at least one other disease associated with the same lifestyle factor according to the SEPR or NPR data.</p>
+</sec>
+</sec>
+<sec id="s3">
+<label>3.</label>
+<title>Results and Discussion</title>
+<sec id="s3a">
+<label>3.1.</label>
+<title>Assessment of extracted disease&#x2013;lifestyle associations</title>
+<p>An important step after performing text mining of disease&#x2013;lifestyle associations is to assess if the approach succeeds in extracting known associations. However, in the absence of a manually curated resource of such associations, this is difficult to do in a formal manner. Instead, I opted to inspect the top diseases associated with each of ten lifestyle factors. These include consumption of substances (alcohol, caffeine, recreational drugs, and tobacco), eating habits (binge eating, dieting, and snacking), macronutrients (carbohydrates and fats), and physical activity. The top-10 diseases (i.e. ICD-10 codes) for each of these lifestyle factors are shown in <xref ref-type="table" rid="tbl1">Table 1</xref>.</p>
+<table-wrap id="tbl1" orientation="portrait" position="float">
+<label>Table 1.</label>
+<caption><p>Top-10 diseases associated with each of ten lifestyle factors.</p></caption>
+<graphic xlink:href="168211_tbl1.tif"/>
+</table-wrap>
+<p>The first thing that stands out is a set of five diseases that are all related to consumption of alcohol, caffeine, recreational drugs, tobacco, carbohydrate, and fat as well as to physical activity. The codes fall into two groups, namely unspecified cancers/neoplasms and broad metabolic disorders: malignant neoplasm, without specification of site (C80), neoplasm of uncertain or unknown behavior of other and unspecified sites (D48), other disorders of carbohydrate metabolism (E74), other metabolic disorders (E88), and nutritional and metabolic disorders in diseases classified elsewhere (E90). While not very informative, these codes are consistent with the extensive literature on the impact of lifestyle on the risk of developing cancer and metabolic disorders. However, these will not be discussed further below due to their unspecific nature.</p>
+<p>Binge eating and dieting are both exclusively associated with eating disorders (F50). Only two diseases were found to be associated with snacking, namely dental caries (K02) and other diseases of hard tissues of teeth (K03), both of which have obvious associations with eating candy. Dental caries also associates with carbohydrate intake, which is furthermore linked to diabetes mellitus (E11 and E14) and other diseases related to the pancreas (E16) and other endocrine glands (E35). Fat intake and (lack of) physical exercise are linked to many of the same diseases as well as to atherosclerosis (I70) and vascular diseases (I51 and I63), respectively. The link between physical activity and disorders of central nervous system (G96) can be viewed as a false positive, as the comentioning is primarily due to cerebrospinal diseases that prevent physical activity.</p>
+<p>In addition to the five unspecific ICD-10 codes mentioned above, including cancer, tobacco consumption is specifically associated with pulmonary disorders (J44, J45, J85, and J98). Recreational drug use was found to associate with a wide range of mental and behavioral disorders (F20, F41, F60, and F90). Again, disorders of central nervous system (G96) showed up as what can be viewed as a false positive, the reason being medical uses of cannabinoids. Finally, caffeine is co-mentioned with cancers, metabolic disorders, and central nervous system disorders (G96); however, inspection of the underlying abstracts revealed that most studies found caffeine to have no influence on disease risk.</p>
+<p>This inspection of the diseases most strongly associated with ten lifestyle factors suggests that the simple text-mining approach presented here is able to extract many correct disease&#x2013;lifestyle associations from literature with a modest error rate.</p>
+</sec>
+<sec id="s3b">
+<label>3.2.</label>
+<title>Explaining comorbidities through shared lifestyle factors</title>
+<p>The next step is to combine the text-mined disease&#x2013;lifestyle associations with comorbidity data to see if the former can explain the latter. A small network exemplifying this is shown in <xref ref-type="fig" rid="fig1">Fig. 1</xref>.</p>
+<fig id="fig1" position="float" fig-type="figure">
+<label>Fig. 1.</label>
+<caption><p>The network shows the text-mined associations (gray lines) between two lifestyle factors and six diseases, namely alcoholic liver disease (K70), liver fibrosis/cirrhosis (K74), other liver diseases (K76), liver cancer (C22), anxiety disorders (F41), and personality disorders (F60). The blue lines are undirected comorbidities from the Swedish SEPR data, the red arrows are directed comorbidities from the Danish NPR data, and the purple arrow is a comorbidity found in both.</p></caption>
+<graphic xlink:href="168211_fig1.tif"/>
+</fig>
+<p>To quantify if the lifestyle factors can indeed explain comorbidities, I counted the number of comorbidities that could be explained by one or more lifestyle terms, not considering the four broadest terms (lifestyle, physical fitness, sociodemographic factor, and substance consumption). Of the 902 undirected comorbidities from the SEPR data, 46 could be explained by one or more lifestyle factors that are strongly associated with both diseases, which is exactly twice as many as in a randomized network (P &#x003C; 1&#x0025;, Fisher&#x2019;s exact test). This shows that comorbid diseases are indeed tend to be associated with common lifestyle factors, although the proof-of-concept approach presented here only finds such explanations for a small percentage of disease pairs.</p>
+<p>Performing the same analysis on the 328 temporally directed comorbidities from NPR data explained 32 disease pairs in the real network and 26 in the randomized network (P &#x003E; 10&#x0025;, Fisher&#x0027;s exact test). This suggests the requirement of temporal directionality eliminates many of the comorbidities between diseases with common lifestyle factors.</p>
+</sec>
+<sec id="s3c">
+<label>3.3.</label>
+<title>Future work</title>
+<p>Since the work presented here is only intended to show the feasibility and utility of text mining disease&#x2013;lifestyle associations, there is obviously room for improvement on all fronts. Even then, the results at hand show sufficient promise to warrant taking on the many open challenges.</p>
+<p>To capture lifestyle factors in a structured manner, it would clearly be preferable ground the dictionary in one or more ontologies; however, doing so will be a very time-consuming endeavor compared to the <italic>ad hoc</italic> approach used here. Once accomplished, the NER approach needs to be benchmarked on a manually annotated text corpus, the construction of will again involve a nontrivial amount of work. The latter will also allow training of machine-learning-based NER methods and comparison of their performance to the dictionary-based approach used here.</p>
+<p>Many of the same considerations apply to the subsequent relation extraction task. Without a manually curated corpus or database of disease&#x2013;lifestyle associations, it is difficult to quantify how well a method works or say if a different approach would be better. As noted earlier, the disease&#x2013;lifestyle associations extracted here are a mix of factors that increase and decrease the risk of getting certain diseases as well as factors that have been extensively studied but found to have no impact (e.g. caffeine). Ideally, one would want to also benchmark how well the indirect disease&#x2013;lifestyle&#x2013;disease associations explain the observed comorbidities, which will likely prove even more challenging. Finally, although I expect one can enrich for comorbidities with a genetic cause by filtering out those that are likely explained by lifestyle, this remains to be demonstrated.</p>
+</sec>
+</sec>
+<sec id="s4">
+<label>4.</label>
+<title>Conclusions</title>
+<p>Data mining of electronic health registries shows great promise for improving our understanding of comorbidities and disease progression. However, it remains a major challenge to account for the numerous confounding factors, many of which relate to the lifestyles of patients. As the registries do generally not record such patient-level information, this cannot be corrected for in the statistical analyses. The result is that comorbidities with genetic explanations become buried among vast numbers of trivial comorbidities that are explainable by lifestyle. Being able to separate the two would be an important step towards being able to act upon discovered comorbidities in a clinical setting.</p>
+<p>The lifestyle factors implicated in many individual diseases are well known and described in the biomedical literature, but have not been systematically recorded in a structured, searchable database. Here, I present a proof-of-concept that such a resource can be constructed through text mining of biomedical abstracts. Through comparison with published analyses of Swedish and Danish medical registries, I also show that disease&#x2013;lifestyle associations can provide plausible explanations for comorbidities observed in Swedish and Danish health registry data. The approach described in this work may help improve our understanding of disease trajectories and explain lifestyle causes for comorbidities in individual patients.</p>
+</sec>
+</body>
+<back>
+<ack>
+<title>Acknowledgments</title>
+<p>This work was supported by the Novo Nordisk Foundation (grant agreement NNF14CC0001) and the European Research Council under the European Union&#x2019;s Horizon 2020 research and innovation programme (grant agreement 668031).</p>
+</ack>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>1.</label><mixed-citation publication-type="journal"><string-name><given-names>H.</given-names> <surname>Dalianis</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Hassel</surname></string-name> and <string-name><given-names>S.</given-names> <surname>Velupillai</surname></string-name>, <source>Proc. ISHIMR</source> <volume>219</volume>, <fpage>243</fpage> (<year>2009</year>).</mixed-citation></ref>
+<ref id="c2"><label>2.</label><mixed-citation publication-type="journal"><string-name><given-names>C.A.</given-names> <surname>Hidalgo</surname></string-name>, <string-name><given-names>N.</given-names> <surname>Blumm</surname></string-name>, <string-name><given-names>A.-L.</given-names> <surname>Barab&#x00E1;si</surname></string-name> and <string-name><given-names>N.A.</given-names> <surname>Christakis</surname></string-name>, <source>PLOS Comput. Biol.</source> <volume>5</volume>, <fpage>e1000353</fpage> (<year>2009</year>).</mixed-citation></ref>
+<ref id="c3"><label>3.</label><mixed-citation publication-type="journal"><string-name><given-names>F.S.</given-names> <surname>Roque</surname></string-name>, <string-name><given-names>P.B.</given-names> <surname>Jensen</surname></string-name>, <string-name><given-names>H.</given-names> <surname>Schmock</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Dalgaard</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Andreatta</surname></string-name>, <string-name><given-names>T.</given-names> <surname>Hansen</surname></string-name>, <string-name><given-names>K.</given-names> <surname>S&#x00F8;eby</surname></string-name>, <string-name><given-names>S.</given-names> <surname>Bredkj&#x00E6;r</surname></string-name>, <string-name><given-names>A.</given-names> <surname>Juul</surname></string-name>, <string-name><given-names>T.</given-names> <surname>Werge</surname></string-name>, <string-name><given-names>L.J.</given-names> <surname>Jensen</surname></string-name> and <string-name><given-names>S.</given-names> <surname>Brunak</surname></string-name>, <source>PLOS Comput. Biol.</source> <volume>7</volume>, <fpage>e1002141</fpage> (<year>2011</year>).</mixed-citation></ref>
+<ref id="c4"><label>4.</label><mixed-citation publication-type="journal"><string-name><given-names>S.G.</given-names> <surname>Finlayson</surname></string-name>, <string-name><given-names>P.</given-names> <surname>LePendu</surname></string-name> and <string-name><given-names>N.H</given-names> <surname>Shah</surname></string-name>, <source>Sci. Data</source> <volume>1</volume>, <fpage>140032</fpage> (<year>2014</year>).</mixed-citation></ref>
+<ref id="c5"><label>5.</label><mixed-citation publication-type="journal"><string-name><given-names>A.B.</given-names> <surname>Jensen</surname></string-name>, <string-name><given-names>P.L.</given-names> <surname>Moseley</surname></string-name>, <string-name><given-names>T.</given-names> <surname>Oprea</surname></string-name>, <string-name><given-names>S.G.</given-names> <surname>Elles&#x00F8;e</surname></string-name>, <string-name><given-names>R.</given-names> <surname>Eriksson</surname></string-name>, <string-name><given-names>H.</given-names> <surname>Schmock</surname></string-name>, <string-name><given-names>P.B.</given-names> <surname>Jensen</surname></string-name>, <string-name><given-names>L.J.</given-names> <surname>Jensen</surname></string-name> and <string-name><given-names>S.</given-names> <surname>Brunak</surname></string-name>, <source>Nat. Commun.</source> <volume>5</volume>, <fpage>4022</fpage> (<year>2014</year>).</mixed-citation></ref>
+<ref id="c6"><label>6.</label><mixed-citation publication-type="journal"><string-name><given-names>M.K.</given-names> <surname>Beck</surname></string-name>, <string-name><given-names>D.</given-names> <surname>Westergaard</surname></string-name>, <string-name><given-names>A.B.</given-names> <surname>Jensen</surname></string-name>, <string-name><given-names>L.</given-names> <surname>Groop</surname></string-name> and <string-name><given-names>S.</given-names> <surname>Brunak</surname></string-name>, <source>Proc. Pac. Symp. Biocomput.</source> <volume>22</volume>, <fpage>380</fpage> (<year>2017</year>).</mixed-citation></ref>
+<ref id="c7"><label>7.</label><mixed-citation publication-type="journal"><string-name><given-names>P.L.</given-names> <surname>Buttigieg</surname></string-name>, <string-name><given-names>E.</given-names> <surname>Pafilis</surname></string-name>, <string-name><given-names>S.E.</given-names> <surname>Lewis</surname></string-name>, <string-name><given-names>M.P.</given-names> <surname>Schildhauer</surname></string-name>, <string-name><given-names>R.L.</given-names> <surname>Walls</surname></string-name> and <string-name><given-names>C.J.</given-names> <surname>Mungall</surname></string-name>, <source>J. Biomed Semantics</source> <volume>7</volume>, <fpage>57</fpage> (<year>2016</year>).</mixed-citation></ref>
+<ref id="c8"><label>8.</label><mixed-citation publication-type="journal"><string-name><given-names>T.E.</given-names> <surname>McKone</surname></string-name> and <string-name><given-names>L.</given-names> <surname>Feng</surname></string-name>, <source>Risk Anal.</source> <volume>35</volume>, <fpage>2087</fpage> (<year>2015</year>).</mixed-citation></ref>
+<ref id="c9"><label>9.</label><mixed-citation publication-type="journal"><string-name><given-names>V.</given-names> <surname>Neveu</surname></string-name>, <string-name><given-names>A.</given-names> <surname>Moussy</surname></string-name>, <string-name><given-names>H.</given-names> <surname>Rouaix</surname></string-name>, <string-name><given-names>R.</given-names> <surname>Wedekind</surname></string-name>, <string-name><given-names>A.</given-names> <surname>Pon</surname></string-name>, <string-name><given-names>C.</given-names> <surname>Knox</surname></string-name>, <string-name><given-names>D.S.</given-names> <surname>Wishart</surname></string-name> and <string-name><given-names>A.</given-names> <surname>Scalbert</surname></string-name>, <source>Nucleic Acids Res.</source> <volume>45</volume>, <fpage>D979</fpage> (<year>2017</year>).</mixed-citation></ref>
+<ref id="c10"><label>10.</label><mixed-citation publication-type="journal"><string-name><given-names>E.</given-names> <surname>Younesi</surname></string-name>, <string-name><given-names>S.</given-names> <surname>Ansari</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Guendel</surname></string-name>, <string-name><given-names>S.</given-names> <surname>Ahmadi</surname></string-name>, <string-name><given-names>C.</given-names> <surname>Coggins</surname></string-name>, <string-name><given-names>J.</given-names> <surname>Hoeng</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Hofmann-Apitius</surname></string-name> and <string-name><given-names>M.C.</given-names> <surname>Peitsch</surname></string-name>, <source>J. Biomed. Semantics</source> <volume>5</volume>, <fpage>31</fpage> (<year>2014</year>).</mixed-citation></ref>
+<ref id="c11"><label>11.</label><mixed-citation publication-type="journal"><string-name><given-names>D.</given-names> <surname>Szklarczyk</surname></string-name>, <string-name><given-names>J.H.</given-names> <surname>Morris</surname></string-name>, <string-name><given-names>H.</given-names> <surname>Cook</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Kuhn</surname></string-name>, <string-name><given-names>S.</given-names> <surname>Wyder</surname></string-name>, <string-name><given-names>M.</given-names> <surname>Simonovic</surname></string-name>, <string-name><given-names>A.</given-names> <surname>Santos</surname></string-name>, <string-name><given-names>N.T.</given-names> <surname>Doncheva</surname></string-name>, <string-name><given-names>A.</given-names> <surname>Roth</surname></string-name>, <string-name><given-names>P.</given-names> <surname>Bork</surname></string-name>, <string-name><given-names>L.J.</given-names> <surname>Jensen</surname></string-name> and <string-name><given-names>C.</given-names> <surname>von Mering</surname></string-name>, <source>Nucleic Acids Res.</source> <volume>45</volume>, <fpage>D362</fpage> (<year>2017</year>).</mixed-citation></ref>
+<ref id="c12"><label>12.</label><mixed-citation publication-type="journal"><string-name><given-names>S.</given-names> <surname>Pletscher-Frankild</surname></string-name>, <string-name><given-names>A.</given-names> <surname>Pallej&#x00E0;</surname></string-name>, <string-name><given-names>K.</given-names> <surname>Tsafou</surname></string-name>, <string-name><given-names>J.X.</given-names> <surname>Binder</surname></string-name> and <string-name><given-names>L.J.</given-names> <surname>Jensen</surname></string-name>, <source>Methods</source> <volume>74</volume>, <fpage>83</fpage> (<year>2015</year>).</mixed-citation></ref>
+<ref id="c13"><label>13.</label><mixed-citation publication-type="journal"><string-name><given-names>E.</given-names> <surname>Pafilis</surname></string-name>, <string-name><given-names>S.P.</given-names> <surname>Pletscher-Frankild</surname></string-name>, <string-name><given-names>L.</given-names> <surname>Fanini</surname></string-name>, <string-name><given-names>S.</given-names> <surname>Faulwetter</surname></string-name>, <string-name><given-names>C.</given-names> <surname>Pavloudi</surname></string-name>, <string-name><given-names>A.</given-names> <surname>Vasileiadou</surname></string-name>, <string-name><given-names>C.</given-names> <surname>Arvanitidis</surname></string-name> and <string-name><given-names>L.J</given-names> <surname>Jensen</surname></string-name>, <source>PLOS ONE</source> <volume>8</volume>, <fpage>e65390</fpage> (<year>2013</year>).</mixed-citation></ref>
+<ref id="c14"><label>14.</label><mixed-citation publication-type="journal"><string-name><given-names>W.A.</given-names> <surname>Kibbe</surname></string-name>, <string-name><given-names>C.</given-names> <surname>Arze</surname></string-name>, <string-name><given-names>V.</given-names> <surname>Felix</surname></string-name>, <string-name><given-names>E.</given-names> <surname>Mitraka</surname></string-name>, <string-name><given-names>E.</given-names> <surname>Bolton</surname></string-name>, <string-name><given-names>G.</given-names> <surname>Fu</surname></string-name>, <string-name><given-names>C.J.</given-names> <surname>Mungall</surname></string-name>, <string-name><given-names>J.X.</given-names> <surname>Binder</surname></string-name>, <string-name><given-names>J.</given-names> <surname>Malone</surname></string-name>, <string-name><given-names>D.</given-names> <surname>Vasant</surname></string-name>, <string-name><given-names>H.</given-names> <surname>Parkinson</surname></string-name> and <string-name><given-names>L.M.</given-names> <surname>Schriml</surname></string-name>, <source>Nucleic Acids Res.</source> <volume>43</volume>, <fpage>D1071</fpage> (<year>2015</year>).</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

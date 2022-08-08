@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/322396</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>An average-case sublinear exact Li and Stephens forward algorithm</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0002-3870-2169</contrib-id>
+<name><surname>Rosen</surname><given-names>Yohei M.</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<contrib contrib-type="author">
+<name><surname>Paten</surname><given-names>Benedict J.</given-names></name>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>University of California, Santa Cruz, California New York University School of Medicine</institution>, New York, New York, <email>yohei@ucsc.edu</email></aff>
+<aff id="a2"><label>2</label><institution>University of California</institution>, Santa Cruz, California, <email>bpaten@ucsc.edu</email></aff>
+</contrib-group>
+<pub-date pub-type="epub"><year>2018</year></pub-date>
+<elocation-id>322396</elocation-id>
+<history>
+<date date-type="received">
+<day>14</day>
+<month>5</month>
+<year>2018</year>
+</date>
+<date date-type="rev-recd">
+<day>14</day>
+<month>5</month>
+<year>2018</year>
+</date>
+<date date-type="accepted">
+<day>15</day>
+<month>5</month>
+<year>2018</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2018, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2018</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="322396.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>Hidden Markov models of haplotype inheritance such as the Li and Stephens model allow for computationally tractable probability calculations using the forward algorithms as long as the representative reference panel used in the model is sufficiently small. Specifically, the monoploid Li and Stephens model and its variants are linear in reference panel size unless heuristic approximations are used. However, sequencing projects numbering in the thousands to hundreds of thousands of individuals are underway, and others numbering in the millions are anticipated.</p>
+<p>To make the Li and Stephens forward algorithm for these datasets computationally tractable, we have created a numerically exact version of the algorithm with observed average case &#x1D4AA;(<italic>nk</italic><sup>0.35</sup>) runtime, avoiding any tradeoff between runtime and model complexity. We demonstrate that our approach also provides a succinct data structure for general purpose haplotype data storage. We discuss generalizations of our algorithmic techniques to other hidden Markov models.</p>
+<sec>
+<title>2012 ACM Subject Classification</title>
+<p>Theory of computation &#x27F6; Streaming, sublinear and near linear time algorithms; Applied computing &#x27F6; Bioinformatics</p>
+</sec>
+<sec>
+<title>Supplement Material</title>
+<p><ext-link ext-link-type="uri" xlink:href="https://github.com/yoheirosen/sublinear-Li-Stephens">https://github.com/yoheirosen/sublinear-Li-Stephens</ext-link>.</p>
+</sec>
+<sec>
+<title>Funding</title>
+<p>This work was supported by the National Human Genome Research Institute of the National Institutes of Health under Award Number 5U54HG007990, the National Heart, Lung, and Blood Institute of the National Institutes of Health under Award Number 1U01HL137183-01, and grants from the W.M. Keck foundation and the Simons Foundation.</p>
+</sec>
+<sec>
+<title>Acknowledgements</title>
+<p>We would like to thank Jordan Eizenga for his helpful discussions throughout the development of this work.</p>
+</sec>
+</abstract>
+<kwd-group kwd-group-type="author">
+<title>Keywords and phrases</title>
+<kwd>Haplotype</kwd>
+<kwd>Hidden Markov Model</kwd>
+<kwd>Forward Algorithm</kwd>
+<kwd>Lazy Evaluation</kwd>
+</kwd-group>
+<counts>
+<page-count count="12"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<label>1</label>
+<title>Introduction</title>
+<p>Probabilistic models of haplotypes describe how variation is shared in a population. One application of these models is to calculate the probability <italic>P</italic>(<italic>o</italic>|<italic>H</italic>) of a haplotype <italic>o</italic> given the assumption that it is a member of a population represented by a <italic>reference panel</italic> of haplotypes <italic>H</italic>. This computation has been used in estimating recombination rates [<xref ref-type="bibr" rid="c8">8</xref>], a problem of interest in genetics and in medicine. It may also be used to detect errors in genotype calls.</p>
+<p>Early approaches to haplotype modeling used coalescent [<xref ref-type="bibr" rid="c7">7</xref>] models which were accurate but computationally complex, especially when including recombination. Li and Stephens wrote the foundational computationally tractable haplotype model [<xref ref-type="bibr" rid="c8">8</xref>] with recombination. Under their model, the probability <italic>P</italic>(<italic>o</italic>|<italic>H</italic>) can be calculated using the forward algorithm for hidden Markov models. Generalizations of their model have been used for haplotype phasing and genotype imputation. Most of these algorithms [<xref ref-type="bibr" rid="c10">10</xref>, <xref ref-type="bibr" rid="c1">1</xref>, <xref ref-type="bibr" rid="c14">14</xref>, <xref ref-type="bibr" rid="c3">3</xref>, <xref ref-type="bibr" rid="c12">12</xref>] use the <italic>forward probabilities</italic> calculated as intermediate values in the forward algorithm.</p>
+<sec id="s1a">
+<label>1.1</label>
+<title>The Li and Stephens model</title>
+<p>Consider a <italic>reference panel H</italic> of <italic>k</italic> haplotypes sampled from some population. Each haplotype <italic>h</italic><sub><italic>j</italic></sub> &#x2208; <italic>H</italic> is a sequence (<italic>h</italic><sub><italic>j</italic>,1</sub>,&#x2026;,<italic>h</italic><sub><italic>j</italic></sub><sub>,<italic>n</italic></sub>) of alleles at a contiguous sequence 1,&#x2026;,<italic>n</italic> of genetic sites. Classically [<xref ref-type="bibr" rid="c8">8</xref>], the sites are biallelic, but the model extends to multiallelic sites. [<xref ref-type="bibr" rid="c11">11</xref>]</p>
+<p>Consider an observed sequence of alleles <italic>o</italic> &#x003D; (<italic>o</italic><sub>1</sub>,&#x2026;,<italic>o</italic><sub><italic>n</italic></sub>) representing another haplotype. The monoploid Li and Stephens model (LS) [<xref ref-type="bibr" rid="c8">8</xref>] specifies a probability that <italic>o</italic> is descended from the population represented by <italic>H</italic>. LS can be written as a hidden Markov model wherein the haplotype <italic>o</italic> is assembled by copying (with possible error) consecutive contiguous subsequences of haplotypes <italic>h<sub>j</sub></italic> &#x2208; <italic>H</italic>.</p>
+<statement>
+<label>&#x25B8;</label>
+<title>Definition 1</title>
+<p>(Li and Stephens HMM). Define <italic>x</italic><sub><italic>j,i</italic></sub> as the event that the allele <italic>o</italic><sub><italic>i</italic></sub> at site <italic>i</italic> of the haplotype <italic>o</italic> was copied from the allele <italic>h</italic><sub><italic>j,i</italic></sub> of haplotype <italic>h</italic><sub><italic>j</italic></sub> &#x2208; <italic>H</italic>. Take parameters
+<disp-formula id="eqn1"><alternatives><graphic xlink:href="322396_eqn1.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn2"><alternatives><graphic xlink:href="322396_eqn2.gif"/></alternatives></disp-formula>
+and from them define the transition and recombination probabilities
+<disp-formula id="eqn3"><alternatives><graphic xlink:href="322396_eqn3.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn4"><alternatives><graphic xlink:href="322396_eqn4.gif"/></alternatives></disp-formula>
+</p>
+<p>The forward algorithm for hidden Markov models allows calculation of <italic>P</italic>(<italic>o</italic>|<italic>H</italic>) in &#x1D4AA;(<italic>nk</italic><sup>2</sup>) time using an <italic>n</italic> &#x00D7; <italic>k</italic> dynamic programming matrix of <italic>forward states</italic>
+<disp-formula id="eqn5"><alternatives><graphic xlink:href="322396_eqn5.gif"/></alternatives></disp-formula></p>
+<p>In practice, the Li and Stephens forward algorithm is &#x1D4AA;(<italic>nk</italic>). (See &#x00A7;3)</p>
+</statement>
+</sec>
+<sec id="s1a1">
+<label>1.1.1</label>
+<title>Li and Stephens like algorithms for large populations</title>
+<p>The &#x1D4AA;(<italic>nk</italic>) time complexity of the forward algorithm is intractable for reference panels with large size <italic>k</italic>. The UK Biobank has amassed <italic>k</italic>&#x003D; 500, 000 array samples. Whole genome sequencing projects, with a denser distribution of sites, are catching up. Major sequencing projects with <italic>k</italic> &#x003D; 100, 000 or more samples are nearing completion. Others numbering <italic>k</italic> in the millions have been announced. These large population datasets have significant potential benefits: They are statistically likely to more accurately represent population frequencies and those employing genome sequencing can provide phasing information for rare variants.</p>
+<p>In order to handle datasets with size <italic>k</italic> even fractions of these sizes, modern haplotype inference algorithms depend on models which are simpler than the Li and Stephens model or which sample subsets of the data. For example, the common tools Eagle-2, Beagle, HAPI-UR and Shapeit-2 and &#x002D;3 [<xref ref-type="bibr" rid="c10">10</xref>, <xref ref-type="bibr" rid="c1">1</xref>, <xref ref-type="bibr" rid="c14">14</xref>, <xref ref-type="bibr" rid="c3">3</xref>, <xref ref-type="bibr" rid="c12">12</xref>] either restrict where recombination can occur, fail to model mutation, model long-range phasing approximately or sample subsets of the reference panel.</p>
+<p>Lunter&#x2019;s &#x201C;fastLS&#x201D; algorithm [<xref ref-type="bibr" rid="c11">11</xref>] demonstrated that haplotypes models which include all <italic>k</italic> reference panel haplotype could find the Viterbi maximum likelihood path in time sublinear in <italic>k</italic>, using preprocessing to reduce redundant information in the algorithm&#x2019;s input. However, his techniques do not extend to the forward and forward-backward algorithms.</p>
+</sec>
+<sec id="s1b">
+<label>1.2</label>
+<title>Our contributions</title>
+<p>We have developed an arithmetically exact forward algorithm whose expected time complexity is a function of the expected allele distribution of the reference panel. This expected time complexity proves to be &#x1D4AA;(<italic>k</italic><sup>0.35</sup>) in reference panel size. We have also developed a technique for succinctly representing large panels of haplotypes whose size also scales as a sublinear function of the expected allele distribution.</p>
+<p>Our forward algorithm contains three optimizations, all of which might be generalized to other bioinformatics algorithms. In (&#x00A7;2), we rewrite the reference panel as a sparse matrix containing the minimum information necessary to directly infer all allele values. In (&#x00A7;3), we define recurrence relations which are numerically equivalent to the forward algorithm but use minimal arithmetic operations. In (&#x00A7;4), we delay computation of forward states using a lazy evaluation algorithm which benefits from blocks of common sequence. Our methods apply to other models which share certain properties with the monoploid Li and Stephens model.</p>
+</sec>
+</sec>
+<sec id="s2">
+<label>2</label>
+<title>Sparse representation of haplotypes</title>
+<p>The forward algorithm to calculate the probability <italic>P</italic>(<italic>o</italic>|<italic>H</italic>) takes as input a length <italic>n</italic> vector <italic>o</italic> and a <italic>k</italic> &#x00D7; <italic>n</italic> matrix of haplotypes <italic>H</italic>. Therefore time complexity better than &#x1D4AA;(<italic>nk</italic>) is impossible unless there is preprocessing of its input. However, such preprocessing can be amortized over many queries <italic>o</italic>.</p>
+<sec id="s2a">
+<label>2.1</label>
+<title>Information content of a reference panel</title>
+<p>Recall that <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="322396_inline1.gif"/></alternatives></inline-formula> is the allele sequence of the emitted haplotype <italic>o</italic>. (&#x00A7;3) will show that <italic>&#x03D5;</italic><sub><italic>i</italic></sub>(<italic>o</italic><sub><italic>i</italic></sub>, <italic>H</italic>), 1 &#x2264; <italic>i</italic> &#x2264; <italic>n</italic> defined below are sufficient data to calculate <italic>P</italic>(<italic>o</italic>|<italic>H</italic>).</p>
+<statement>
+<label>&#x25B8;</label>
+<title>Definition 2</title>
+<p>The information content <italic>&#x03D5;</italic> of <italic>H</italic> for allele &#x03B1; at site <italic>i</italic> is defined as
+<disp-formula id="eqn6"><alternatives><graphic xlink:href="322396_eqn6.gif"/></alternatives></disp-formula></p></statement>
+</sec>
+<sec id="s2b">
+<label>2.2</label>
+<title>Relation of information content to allele frequency spectrum</title>
+<p>Our sparse representation of the haplotype reference panel benefits from the recent finding [<xref ref-type="bibr" rid="c6">6</xref>] that the distribution over sites of minor allele frequencies is biased towards low frequencies<sup><xref ref-type="fn" rid="fn2">2</xref></sup></p>
+<p>We will compute the expected time sum of the information content over all sites assuming first that all sites are biallelic<sup><xref ref-type="fn" rid="fn3">3</xref></sup>. In the biallelic case <italic>&#x03D5;</italic><sub><italic>i</italic></sub>(&#x00B7;) is always the set of haplotypes displaying the minor allele at site <italic>i</italic> and the distribution of <italic>&#x03D5;</italic><sub><italic>i</italic></sub>(<italic>a</italic>) is the allele frequency spectrum.</p>
+<statement>
+<label>&#x25B8;</label>
+<title>Lemma 3</title>
+<p><italic>Let</italic> <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="322396_inline2.gif"/></alternatives></inline-formula> <italic>be the expected mean minor allele frequency for k genotypes. Then</italic></p></statement>
+<disp-formula id="eqn7"><alternatives><graphic xlink:href="322396_eqn7.gif"/></alternatives></disp-formula>
+<statement>
+<label>&#x25B8;</label>
+<title>Corollary 4</title>
+<p><italic>if</italic> <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="322396_inline3.gif"/></alternatives></inline-formula>, then &#x1D4AA;(&#x2211;<sub><italic>i</italic></sub>|&#x03D5;<sub><italic>i</italic></sub>(<italic>a</italic>|) &#x003C; &#x1D4AA;(<italic>k</italic>) <italic>in expected value</italic>.</p></statement>
+</sec>
+<sec id="s2c">
+<label>2.3</label>
+<title>Implementation</title>
+<p>For biallelic sites, we store our <italic>&#x03D5;</italic><sub><italic>i</italic></sub>&#x2019;s using a length-<italic>n</italic> vector of length |<italic>&#x03D5;</italic><sub><italic>i</italic></sub>| vectors containing the indices <italic>j</italic> of the haplotypes <italic>h</italic><sub><italic>j</italic></sub> &#x2208; <italic>&#x03D5;</italic><sub><italic>i</italic></sub> and a length-<italic>n</italic> vector listing the major allele at each site. (See <xref ref-type="fig" rid="fig1">Figure 1</xref> panel iii) Random access by key <italic>i</italic> to iterators to the first elements of sets <italic>&#x03D5;</italic><sub><italic>i</italic></sub>(<italic>a</italic>) is &#x1D4AA;(1) and iteration across these <italic>&#x03D5;</italic><sub><italic>i</italic></sub>(<italic>a</italic>) is linear in the size of <italic>&#x03D5;</italic><sub><italic>i</italic></sub>(<italic>a</italic>). For multiallelic sites, the data structure uses slightly more space but has the same speed guarantees.</p>
+<fig id="fig1" position="float" fig-type="figure">
+<label>Figure 1.</label>
+<caption><p><bold>i)</bold> Reference panel {<italic>h</italic><sub>1</sub>,&#x2026;, <italic>h</italic><sub>5</sub>} with mismatches to haplotype <italic>o</italic> shown in yellow. <bold>ii)</bold> Elements of <italic>&#x03D5;</italic><sub><italic>i</italic></sub>(<italic>o</italic><sub><italic>i</italic></sub>) in black. <bold>iii)</bold> Vectors to encode <italic>&#x03D5;</italic><sub><italic>i</italic></sub>(<italic>o</italic><sub><italic>i</italic></sub>) at each site.</p></caption>
+<graphic xlink:href="322396_fig1.tif"/>
+</fig>
+<p>Generating these data structures takes &#x1D4AA;(<italic>nk</italic>) time but is embarrassingly parallel in <italic>n</italic>. Our &#x201C;&#x002A;.slls&#x201D; data structure doubles as a succinct haplotype index which could be distributed instead of a large vcf record. A vcf &#x2192; slls conversion tool is found in our github repository. Adding or rewriting a haplotype is average case constant time per site per haplotype.</p>
+</sec>
+</sec>
+<sec id="s3">
+<label>3</label>
+<title>Efficient dynamic programming</title>
+<p>We begin with the recurrence relation of the &#x1D4AA;(<italic>nk</italic>) Li and Stephens forward algorithm [<xref ref-type="bibr" rid="c8">8</xref>]:
+<disp-formula id="eqn8"><alternatives><graphic xlink:href="322396_eqn8.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn9"><alternatives><graphic xlink:href="322396_eqn9.gif"/></alternatives></disp-formula>
+</p>
+<p>We will reduce the number of summands in (9) and reduce the number indices <italic>j</italic> for which (8) is evaluated, using the <bold>information content</bold> defined in (&#x00A7;2.1).</p>
+<statement>
+<label>&#x25B8;</label>
+<title>Lemma 5</title>
+<p><italic>The summation (9) is calculable using strictly fewer than k summands.</italic></p>
+<p><bold>Proof.</bold>
+<disp-formula id="eqn10"><alternatives><graphic xlink:href="322396_eqn10.gif"/></alternatives></disp-formula>
+where
+<disp-formula id="eqn11"><alternatives><graphic xlink:href="322396_eqn11.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn12"><alternatives><graphic xlink:href="322396_eqn12.gif"/></alternatives></disp-formula></p>
+</statement>
+<fig id="fig2" position="float" fig-type="figure">
+<label>Figure 2.</label>
+<caption><p>Illustration, with one line per operation, of arithmetic for <bold>i)</bold> conventional &#x1D4AA;(<italic>nk</italic>) Li and Stephens recurrence relations <bold>ii)</bold> Our procedure specified in equation (10). Sums in yellow.</p></caption>
+<graphic xlink:href="322396_fig2.tif"/>
+</fig>
+<statement>
+<label>&#x25B8;</label>
+<title>Lemma 6</title>
+<p><italic>If j</italic> &#x2209; <italic>&#x03D5;</italic><sub><italic>i</italic></sub>(o<sub><italic>i</italic></sub>) <italic>and j</italic> &#x2209; <italic>&#x03D5;</italic><sub><italic>i</italic>&#x2212;1</sub>(o<sub><italic>i</italic>&#x2212;1</sub>), then <italic>S</italic><sub><italic>i</italic></sub> <italic>can be calculated without knowing p</italic><sub><italic>i</italic>&#x2212;1</sub>[<italic>j</italic>] <italic>and p</italic><sub><italic>i</italic></sub>[<italic>j</italic>], <italic>as can p</italic><sub>i</sub>[<italic>j</italic>&#x2032;]<italic>for j</italic>&#x2032; &#x2260; <italic>j</italic>.</p>
+<p><bold>Proof.</bold> By inspection of <xref ref-type="disp-formula" rid="eqn10">equation (10)</xref>.</p>
+</statement>
+<statement>
+<label>&#x25B8;</label>
+<title>Corollary 7</title>
+<p><italic>The recurrences (<xref ref-type="disp-formula" rid="eqn9">9</xref>) and the minimum set of recurrences (<xref ref-type="disp-formula" rid="eqn8">8</xref>) needed to compute (<xref ref-type="disp-formula" rid="eqn9">9</xref>) can be evaluated in</italic> &#x1D4AA;(&#x2502;<italic>&#x03D5;</italic>&#x2502;) <italic>time, assuming that p</italic><sub><italic>i&#x2212;</italic>1</sub>[<italic>j</italic>]<italic>have been computed</italic> &#x2A5D; <italic>j</italic>&#x220A;&#x03D5;<sub><italic>i</italic></sub>(<italic>o</italic><sub><italic>i</italic></sub>).</p>
+<p>We address the assumption on prior calculation of the necessary <italic>p</italic><sub><italic>i</italic>&#x2212;1</sub>[<italic>j</italic>]&#x2019;s in <xref ref-type="sec" rid="s4">section 4</xref>.</p>
+</statement>
+<sec id="s3a">
+<label>3.1</label>
+<title>Time complexity</title>
+<p>Recall that we defined <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="322396_inline4.gif"/></alternatives></inline-formula> as the expected mean minor allele frequency in a sample of ize <italic>k</italic>. By Corollary 7 the procedure in <xref ref-type="disp-formula" rid="eqn10">eq. (10)</xref> has expected time complexity &#x1D4AA; <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="322396_inline5.gif"/></alternatives></inline-formula>.</p>
+</sec></sec>
+<sec id="s4">
+<label>4</label>
+<title>Lazy evaluation of dynamic programming rows</title>
+<p>Corollary 7 was conditioned on the assumption that specific forward probabilities had already been evaluated. We will describe a second algorithm which performs this task efficiently by avoiding arithmetic which will prove unnecessary at future steps.<sup><xref ref-type="fn" rid="fn4">4</xref></sup></p>
+<sec id="s4a">
+<label>4.1</label>
+<title>Eliminating redundant recurrence evaluations</title>
+<p>The recurrence relations (8) are linear maps <italic>r</italic><sub><italic>i</italic></sub>[<italic>j</italic>] : &#x211D; &#x2192; &#x211D; of the form
+<disp-formula id="eqn13"><alternatives><graphic xlink:href="322396_eqn13.gif"/></alternatives></disp-formula>
+From these, define the linear maps</p>
+<statement>
+<label>&#x25B8;</label>
+<title>Definition 8</title>
+<p>For any <italic>i</italic><sub>1</sub> &#x003C; <italic>i</italic><sub>2</sub>, <italic>define the update map</italic><inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="322396_inline6.gif"/></alternatives></inline-formula> This update map is defined such that <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="322396_inline7.gif"/></alternatives></inline-formula>.
+</p></statement>
+<statement>
+<label>&#x25B8;</label>
+<title>Lemma 9</title>
+<p><italic>At each i there exist only two unique maps among the r<sub><italic>i</italic></sub>[<italic>j</italic>].</italic></p>
+<p><bold>Proof</bold>. Define <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="322396_inline8.gif"/></alternatives></inline-formula> and <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="322396_inline9.gif"/></alternatives></inline-formula> if <italic>&#x03D5;</italic><sub><italic>i</italic></sub>(<italic>a</italic>) &#x003D; Match<sub><italic>i</italic></sub>(<italic>a</italic>) and vice versa otherwise. Then
+<disp-formula id="eqn14"><alternatives><graphic xlink:href="322396_eqn14.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn15"><alternatives><graphic xlink:href="322396_eqn15.gif"/></alternatives></disp-formula></p>
+<p>This lemma allows us to rewrite each <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="322396_inline10.gif"/></alternatives></inline-formula> as a binary vector of the form (&#x25CB;,&#x25CB;,&#x2022;,&#x2026;,&#x25CB;,&#x2022;,&#x25CB;).</p>
+<p>Our basic delayed evaluation rule is:
+<fig id="ufig1" position="float" fig-type="figure">
+<graphic xlink:href="322396_ufig1.tif"/>
+</fig>
+When Algorithm 1 is applied independently to all <italic>h</italic><sub><italic>j</italic></sub>, the aggregate algorithm has &#x1D4AA;(<italic>nk</italic>) time complexity, so we will share work between haplotypes <italic>j</italic> using equivalence classes segregated by runs of homology.</p></statement></sec>
+<sec id="s4b">
+<label>4.2</label>
+<title>Equivalence classes of update map prefixes</title>
+<p>Under the conditions of Algorithm 1, if, at step <italic>i</italic>, <italic>p</italic><sub>(&#x00B7;)</sub>[<italic>j</italic><sub>1</sub>] and <italic>p</italic><sub>(&#x00B7;)</sub>[<italic>j</italic><sub>1</sub>] were both last calculated at the same index &#x2113; &#x003C; <italic>i</italic>, then the sequences of <italic>h</italic><sub><italic>j</italic>1</sub> and <italic>h</italic><sub><italic>j</italic>2</sub> are identical between &#x2113; and <italic>i</italic>, so
+<disp-formula id="eqn16"><alternatives><graphic xlink:href="322396_eqn16.gif"/></alternatives></disp-formula>
+</p>
+<p>We put <italic>j</italic><sub>1</sub> and <italic>j</italic><sub>2</sub> into an equivalence class <italic>J</italic>[&#x2113;] to avoid recalcuating <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="322396_inline11.gif"/></alternatives></inline-formula></p>
+<p>It is also inefficient to construct <italic>r</italic><sub>&#x2113;&#x2192;<italic>i</italic></sub> independently for each 1 &#x003C; &#x2113; &#x003C; i. Observe:
+</p>
+<statement>
+<label>&#x25B8;</label>
+<title>Remark</title>
+<p>If <italic>J</italic>[&#x2113;] is empty we need not calculate <italic>r</italic><sub>&#x2113;&#x2192;<italic>i</italic></sub>.</p>
+</statement>
+<statement>
+<label>&#x25B8;</label>
+<title>Lemma 10</title>
+<p>If <italic>i</italic><sub>1</sub> &#x003C; <italic>i</italic><sub>2</sub> &#x003C; <italic>i</italic>; then <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="322396_inline12.gif"/></alternatives></inline-formula></p>
+<p>Lemma 10 allows us to calculate intermediate prefixes of the maps <italic>r</italic><sub>&#x2113;&#x2212;<italic>i</italic></sub> and extend them at a later time. To make this concrete, suppose that we have an index &#x25C2;<sub>&#x2113;</sub> where &#x2113; &#x003C;&#x25C2;<sub>&#x2113;</sub>&#x003C;<italic>i</italic>.</p>
+<p>Then we can evaluate the prefix <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="322396_inline13.gif"/></alternatives></inline-formula> of <italic>r</italic><sub>&#x2113;&#x2192;<italic>i</italic></sub> knowing that <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="322396_inline14.gif"/></alternatives></inline-formula> can be evaluated at a later time.</p>
+</statement>
+</sec>
+<sec id="s4c">
+<label>4.3</label>
+<title>The lazy evaluation algorithm</title>
+<p>The data below specifies the state at each step <italic>i</italic> of our lazy evaluation algorithm. The algorithm initialization is described in Algorithm 2 and the recurrence in Algorithm 3.</p>
+<list list-type="simple">
+<list-item><p>The maps <italic>j</italic> &#x21A6; J[&#x2113;];&#x2113;defined as the index at which <italic>p</italic><sub>(&#x00B7;)</sub>[<italic>j</italic>] was most recently calculated</p></list-item>
+<list-item><p>The maps <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="322396_inline15.gif"/></alternatives></inline-formula> defined as the prefix of <italic>r</italic><sub>&#x2113;&#x2192;<italic>i</italic></sub> which was most recently calculated</p></list-item>
+<list-item><p>The maps <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="322396_inline16.gif"/></alternatives></inline-formula> defined as the index up to which a prefix of <italic>r</italic><sub>&#x2113;&#x2192;<italic>i</italic></sub> which was most recently calculated</p></list-item>
+<list-item><p>The maps <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="322396_inline17.gif"/></alternatives></inline-formula></p></list-item>
+</list>
+<fig id="ufig2" position="float" fig-type="figure">
+<graphic xlink:href="322396_ufig2.tif"/>
+</fig>
+<fig id="ufig3" position="float" fig-type="figure">
+<graphic xlink:href="322396_ufig3.tif"/>
+</fig>
+<fig id="fig3" position="float" fig-type="figure">
+<label>Figure 3.</label>
+<caption><p><bold>Top:</bold> Example of lazy evaluation state. <bold>Bottom</bold>: Example of update step as described in Algorithm 3</p></caption>
+<graphic xlink:href="322396_fig3.tif"/>
+</fig>
+<p>Calculating a closed form expression for the time complexity of the lazy evaluation algorithm 3 is not straightforward. It is easy to show that it bounded by &#x1D4AA;(<italic>nk</italic>), since the first loop is worst-case &#x1D4AA;(<italic>k</italic>). However, we find experimentally that asymptotically, this lazy evaluation component does not contribute to overall computational complexity. (See <xref ref-type="fig" rid="fig6">Fig. 6</xref>)</p>
+</sec></sec>
+<sec id="s5">
+<label>5</label>
+<title>Results</title>
+<sec id="s5a">
+<label>5.1</label>
+<title>Implementation</title>
+<p>Our algorithm was implemented as a C&#x002B;&#x002B; library located at <ext-link ext-link-type="uri" xlink:href="https://github.com/yoheirose/sublinear-Li-Stephens">https://github.com/yoheirose/sublinear-Li-Stephens</ext-link> Details of 3 will be found there.</p>
+<p>We also implemented the linear time monoploid Li and Stephens forward algorithm in C&#x002B;&#x002B; as to evaluate it on identical footing. Profiling was performed using a single Intel Xeon X7560 core running at 2.3 GHz on a shared memory machine. Our reference panels <italic>H</italic> were the phased haplotypes from the 1000 Genomes [<xref ref-type="bibr" rid="c2">2</xref>] phase 3 vcf records for chromosome 22 and subsamples thereof. Haplotypes <italic>o</italic> were randomly generated simulated descendants.</p>
+</sec>
+<sec id="s5b">
+<label>5.2</label>
+<title>Minor allele frequency distribution for the 1000 Genomes dataset</title>
+<p>We simulated haplotypes <italic>o</italic> of 1,000,000 bp length on chromosome 22 and recorded the sizes of the sets <italic>&#x03D5;</italic><sub><italic>i</italic></sub>(<italic>o</italic><sub><italic>i</italic></sub>) for <italic>k</italic> &#x003D; 5008. These data produced a mean &#x2502;<italic>&#x03D5;</italic><sub><italic>i</italic></sub>(<italic>o</italic><sub><italic>i</italic></sub>)&#x2502; of 59.9 <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="322396_inline18.gif"/></alternatives></inline-formula> for <italic>k</italic> &#x003D; 5008.) The distribution (<xref ref-type="fig" rid="fig4">Fig. 4</xref>) is skewed toward low frequencies; the minor allele is unique at 71&#x0025; of sites, and it is below 1&#x0025; frequency at 92&#x0025; of sites.</p>
+<fig id="fig4" position="float" fig-type="figure">
+<label>Figure 4</label>
+<caption><p>Biallelic site minor allele frequency distribution from 1000 Genomes chromosome 22</p></caption>
+<graphic xlink:href="322396_fig4.tif"/>
+</fig>
+</sec>
+<sec id="s5c">
+<label>5.3</label>
+<title>Comparison of our algorithm with the linear time forward algorithm</title>
+<p>For <italic>k</italic> &#x003D; 5008, on average, time per site is 37 <italic>&#x03BC;s</italic> for our algorithm and 1308 <italic>&#x03BC;s</italic> for the linear LS algorithm. For the forthcoming 100,000 Genomes Project, these numbers can be extrapolated to 251 <italic>&#x03BC;s</italic> for our algorithm and 260,760 <italic>&#x03BC;s</italic> for the linear LS algorithm.</p>
+<fig id="fig5" position="float" fig-type="figure">
+<label>Figure 5</label>
+<caption>
+<p>Runtime per site as a function of haplotype reference panel size k for our algorithm (blue) as compared to the classical linear time algorithm (black)</p></caption>
+<graphic xlink:href="322396_fig5.tif"/>
+</fig>
+<sec id="s5c1">
+<label>5.3.1</label>
+<title>Lazy evaluation of dynamic programming rows</title>
+<p>In the average case, the time complexity of our lazy evaluation algorithm does not contribute to the overall time complexity of the algorithm. (<xref ref-type="fig" rid="fig6">Fig. 6</xref>, right) The lazy evaluation runtime also contributes minimally to the total runtime of our algorithm. (<xref ref-type="fig" rid="fig6">Fig. 6</xref>, left)</p>
+<fig id="fig6" position="float" fig-type="figure">
+<label>Figure 6</label>
+<caption><p>Time per site for the lazy evaluation subalgorithm (yellow) vs. the full algorithm (blue)</p></caption>
+<graphic xlink:href="322396_fig6.tif"/>
+</fig>
+</sec></sec>
+<sec id="s5d">
+<label>5.4</label>
+<title>Sparse haplotype encoding</title>
+<sec id="s5d1">
+<label>5.4.1</label>
+<title>Generating our sparse vectors</title>
+<p>We generated the haplotype panel data structures from (&#x00A7;2) using the vcf-encoding tool vcf2slls which we provide. We built indices with multiallelic sites, which increases their time and memory profile relative to the results in (&#x00A7;5.2) but allows direct comparison to vcf records. Encoding of chromosome 22 was completed in 38 minutes on a single CPU core. Use of <italic>M</italic> CPU cores will reduce runtime proportional to <italic>M</italic>.</p>
+</sec>
+<sec id="s5d2">
+<label>5.4.2</label>
+<title>Size of sparse haplotype index</title>
+<p>In uncompressed form, our whole genome &#x002A;.slls index for chromosome 22 of the 1000 genomes dataset was 285 MB in size versus 11 GB for the vcf record using <monospace>uint16_t</monospace>&#x2019;s to encode haplotype ranks. When compressed with gzip, the same index was 67 MB in size versus 205 MB for the vcf record.</p>
+<p>In the interest of speed (both for our algorithm and the &#x1D4AA;(<italic>nk</italic>) algorithm) our experiments loaded entire chromosome sparse matrices into memory and stored haplotype indices as <monospace>uint64_t</monospace>&#x2019;s. This requires on the order of 1 GB memory for chromosome 22. For long chromosomes or larger reference panels on low memory machines, algorithm can operate on sequential chunks of the reference panel.</p>
+</sec></sec></sec>
+<sec id="s6">
+<label>6</label>
+<title>Discussion and significance</title>
+<p>To the best of our knowledge, ours is the first forward algorithm for any haplotype model to attain sublinear time complexity with respect to reference panel size. Our algorithms could be incorporated into haplotype inference strategies by interfacing with our C&#x002B;&#x002B; library. This opens the potential for tools which are tractable on haplotype reference panels at the scale of current 100,000 to 1,000,000&#x002B; sample sequencing projects.</p>
+<sec id="s6a">
+<label>6.1</label>
+<title>Applications which use individual forward probabilities</title>
+<p>Our algorithm attains its runtime specifically for the problem of calculating the single overall probability <italic>P</italic>(<italic>o</italic>&#x007C;<italic>H</italic>, <italic>&#x03C1;</italic>, <italic>&#x03BC;</italic>) and does not compute all <italic>nk</italic> forward probabilities. We can prove that if <italic>m</italic> many specific forward probabilities are also required as output, and if the time complexity of our algorithm is &#x1D4AA;(&#x03A3;<sub><italic>i</italic></sub>&#x2502;<italic>&#x03D5;</italic><sub><italic>i</italic></sub>&#x2502;), then the time complexity of the algorithm which also returns the <italic>m</italic> forward probabilities is &#x1D4AA;(&#x03A3;<sub><italic>i</italic></sub>&#x2502;<italic>&#x03D5;</italic><sub><italic>i</italic></sub>&#x2502;&#x002B; <italic>m</italic>).</p>
+<p>In general, haplotype phasing or genotype imputation tools use stochastic traceback or other similar sampling algorithms. The standard algorithm for stochastic traceback samples states from the full posterior distribution and therefore requires all forward probabilities. The algorithm output and lower bound of its speed is therefore &#x1D4AA;(<italic>nk</italic>). The same is true for many applications of the forward-backward algorithm.</p>
+<p>There are two possible approaches which might allow runtime sublinear in <italic>k</italic> for these applications. Using stochastic traceback as an example, first is to devise an &#x1D4AA;(<italic>f</italic>(<italic>m</italic>)) sampling algorithm which uses <italic>m</italic> &#x003D; <italic>g</italic>(<italic>k</italic>) forward probabilities such that &#x1D4AA;(<italic>f</italic> &#x25CB; <italic>g</italic>(<italic>k</italic>)) &#x003C; &#x1D4AA;(<italic>k</italic>). The second is to succinctly represent forward probabilities such that nested sums of the <italic>nk</italic> forward probabilities can be queried from &#x1D4AA;(<italic>&#x03D5;</italic>) &#x003C; &#x1D4AA;(<italic>nk</italic>) data. This should be possible, perhaps using the positional Burrows-Wheeler transform [<xref ref-type="bibr" rid="c5">5</xref>] as in [<xref ref-type="bibr" rid="c11">11</xref>], since we have already devised a forward algorithm with this property for a different model in [<xref ref-type="bibr" rid="c13">13</xref>].</p>
+</sec>
+<sec id="s6b">
+<label>6.2</label>
+<title>Generalizability of algorithm</title>
+<p>The optimizations which we have made are not strictly specific to the monoploid Li and Stephens algorithm. Necessary conditions for our reduction in the time complexity of the recurrence relations are</p>
+<list list-type="simple">
+<list-item><label>&#x25B8;</label><p>Condition 1. The number of distinct transition probabilities is bounded.</p></list-item>
+<list-item><label>&#x25B8;</label><p>Condition 2. The number of distinct emission probabilities is bounded.</p>
+<p>Favourable conditions for efficient time complexity of the lazy evaluation algorithm are</p></list-item>
+<list-item><label>&#x25B8;</label><p>Condition 1. The number of unique update maps added per step is bounded.</p></list-item>
+<list-item><label>&#x25B8;</label><p>Condition 2. The update map extension operation is composition of matrices of bounded size. This can be generalized to a broad algebraic class<sup><xref ref-type="fn" rid="fn5">5</xref></sup> of update operations provided that they have bounded runtime.</p></list-item></list>
+<p>The reduction in time complexity of the recurrence relations depends on the Markov property, however we hypothesize that the delayed evaluation needs only the semi-Markov property.</p>
+</sec>
+<sec id="s6b1">
+<label>6.2.1</label>
+<title>Other haplotype forward algorithms</title>
+<p>Our optimizations are of immediate interest for other haplotype copying models. The following related algorithms have been explored without implementation.</p>
+<p>&#x25B8; Example (Diploid Li and Stephens). We have yet to implement this model but expect average runtime at least subquadratic in reference panel size <italic>k</italic>. We build on the statement of the model and its optimizations in [<xref ref-type="bibr" rid="c9">9</xref>]. We have found the following recurrences which may be combined with a system of lazy evaluation algorithms:</p>
+<statement>
+<label>&#x25B8;</label>
+<title>Lemma 11</title>
+<p><italic>The diploid Li and Stephens HMM may be expressed using the recurrences</italic>
+<disp-formula id="eqn17"><alternatives><graphic xlink:href="322396_eqn17.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn18"><alternatives><graphic xlink:href="322396_eqn18.gif"/></alternatives></disp-formula>
+<disp-formula id="eqn19"><alternatives><graphic xlink:href="322396_eqn19.gif"/></alternatives></disp-formula>
+<italic>where &#x03B1;</italic><sub>(&#x00B7;)</sub>,<italic>&#x03B1;</italic><sub>(&#x00B7;)</sub>,<italic>&#x03B1;</italic><sub>(&#x00B7;)</sub> <italic>depend only on the diploid genotype o</italic><sub><italic>i</italic></sub>.</p>
+<p>&#x25B8; Example (Multipopulation Li and Stephens). [<xref ref-type="bibr" rid="c4">4</xref>] We maintain separate sparse haplotype panel representations <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="322396_inline19.gif"/></alternatives></inline-formula> and <inline-formula><alternatives><inline-graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="322396_inline20.gif"/></alternatives></inline-formula> and separate lazy evaluation mechanisms for the two populations <italic>A</italic> and <italic>B</italic>. Expected runtime guarantees are similar.</p>
+<p>This model, and versions for &#x003E; 2 populations, will be important in large sequencing cohorts (such as NHLBI TOPMed) where assuming a single related population is unrealistic.</p>
+<p>&#x25B8; Example (More detailed mutation model). It may also be desirable to model distinct mutation probabilities for different pairs of alleles at multiallelic sites. Runtime is worse than the biallelic model but remains average case sublinear.</p>
+<p>&#x25B8; Example (Sequence graph Li and Stephens analogue). In [<xref ref-type="bibr" rid="c13">13</xref>] we described a hidden Markov model for a haplotype-copying with recombination but not mutation in the context of sequence graphs. Assuming we can decompose our graph into nested sites then we can achieve a fast forward algorithm with mutation.</p>
+<p>&#x25B8; Example (Semi-Markovian recombination model). The lazy evaluation algorithm 3 may efficiently allow time-since-recombination dependent transition probabilities.</p>
+</statement>
+</sec>
+</sec>
+</body>
+<back>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>1</label><mixed-citation publication-type="journal"><string-name><given-names>Brian L</given-names> <surname>Browning</surname></string-name> and <string-name><given-names>Sharon R</given-names> <surname>Browning</surname></string-name>. <article-title>A unified approach to genotype imputation and haplotype-phase inference for large data sets of trios and unrelated individuals</article-title>. <source>The American Journal of Human Genetics</source>, <volume>84</volume>(<issue>2</issue>):<fpage>210</fpage>&#x2013;<lpage>223</lpage>, <year>2009</year>.</mixed-citation></ref>
+<ref id="c2"><label>2</label><mixed-citation publication-type="journal"><collab>1000 Genomes Project Consortium</collab> <etal>et al.</etal> <article-title>A global reference for human genetic variation</article-title>. <source>Nature</source>, <volume>526</volume>(<issue>7571</issue>):<fpage>68</fpage>, <year>2015</year>.</mixed-citation></ref>
+<ref id="c3"><label>3</label><mixed-citation publication-type="journal"><string-name><given-names>Olivier</given-names> <surname>Delaneau</surname></string-name>, <string-name><given-names>Jean-Francois</given-names> <surname>Zagury</surname></string-name>, and <string-name><given-names>Jonathan</given-names> <surname>Marchini</surname></string-name>. <article-title>Improved whole-chromosome phasing for disease and population genetic studies</article-title>. <source>Nature methods</source>, <volume>10</volume>(<issue>1</issue>):<fpage>5</fpage>, <year>2013</year>.</mixed-citation></ref>
+<ref id="c4"><label>4</label><mixed-citation publication-type="website"><string-name><surname>Peter</surname><given-names>Donnelly</given-names></string-name> and <string-name><given-names>Stephen</given-names> <surname>Leslie</surname></string-name>. <article-title>The coalescent and its descendants</article-title>. arXiv preprint <ext-link ext-link-type="arxiv" xlink:href="http://arxiv.org/abs/arXiv:1006.1514">arXiv:1006.1514</ext-link>, <year>2010</year>.</mixed-citation></ref>
+<ref id="c5"><label>5</label><mixed-citation publication-type="journal"><string-name><given-names>Richard</given-names> <surname>Durbin</surname></string-name>. <article-title>Efficient haplotype matching and storage using the positional burrows-wheeler transform (pbwt)</article-title>. <source>Bioinformatics</source>, <volume>30</volume>(<issue>9</issue>):<fpage>1266</fpage>&#x2013;<lpage>1272</lpage>, <year>2014</year>.</mixed-citation></ref>
+<ref id="c6"><label>6</label><mixed-citation publication-type="journal"><string-name><given-names>Alon</given-names> <surname>Keinan</surname></string-name> and <string-name><given-names>Andrew G</given-names> <surname>Clark</surname></string-name>. <article-title>Recent explosive human population growth has resulted in an excess of rare genetic variants</article-title>. <source>science</source>, <volume>336</volume>(<issue>6082</issue>):<fpage>740</fpage>&#x2013;<lpage>743</lpage>, <year>2012</year>.</mixed-citation></ref>
+<ref id="c7"><label>7</label><mixed-citation publication-type="journal"><string-name><given-names>John Frank</given-names> <surname>Charles Kingman</surname></string-name>. <article-title>The coalescent</article-title>. <source>Stochastic processes and their applications</source>, <volume>13</volume>(<issue>3</issue>):<fpage>235</fpage>&#x2013;<lpage>248</lpage>, <year>1982</year>.</mixed-citation></ref>
+<ref id="c8"><label>8</label><mixed-citation publication-type="journal"><string-name><given-names>Na</given-names> <surname>Li</surname></string-name> and <string-name><given-names>Matthew</given-names> <surname>Stephens</surname></string-name>. <article-title>Modeling linkage disequilibrium and identifying recombination hotspots using single-nucleotide polymorphism data</article-title>. <source>Genetics</source>, <volume>165</volume>(<issue>4</issue>):<fpage>2213</fpage>&#x2013;<lpage>2233</lpage>, <year>2003</year>.</mixed-citation></ref>
+<ref id="c9"><label>9</label><mixed-citation publication-type="journal"><string-name><given-names>Yun</given-names> <surname>Li</surname></string-name>, <string-name><given-names>Cristen J</given-names> <surname>Willer</surname></string-name>, <string-name><given-names>Jun</given-names> <surname>Ding</surname></string-name>, <string-name><given-names>Paul</given-names> <surname>Scheet</surname></string-name>, and <string-name><given-names>Gon&#x00E7;alo R</given-names> <surname>Abecasis</surname></string-name>. <article-title>Mach: using sequence and genotype data to estimate haplotypes and unobserved genotypes</article-title>. <source>Genetic epidemiology</source>, <volume>34</volume>(<issue>8</issue>):<fpage>816</fpage>&#x2013;<lpage>834</lpage>, <year>2010</year>.</mixed-citation></ref>
+<ref id="c10"><label>10</label><mixed-citation publication-type="journal"><string-name><given-names>Po-Ru</given-names> <surname>Loh</surname></string-name>, <string-name><given-names>Petr</given-names> <surname>Danecek</surname></string-name>, <string-name><given-names>Pier Francesco</given-names> <surname>Palamara</surname></string-name>, <string-name><given-names>Christian</given-names> <surname>Fuchsberger</surname></string-name>, <string-name><given-names>Yakir A</given-names> <surname>Reshef</surname></string-name>, <string-name><given-names>Hilary K</given-names> <surname>Finucane</surname></string-name>, <string-name><given-names>Sebastian</given-names> <surname>Schoenherr</surname></string-name>, <string-name><given-names>Lukas</given-names> <surname>Forer</surname></string-name>, <string-name><given-names>Shane</given-names> <surname>McCarthy</surname></string-name>, <string-name><given-names>Goncalo R</given-names> <surname>Abecasis</surname></string-name>, <etal>et al.</etal> <article-title>Reference-based phasing using the haplotype reference consortium panel</article-title>. <source>Nature genetics</source>, <volume>48</volume>(<issue>11</issue>):<fpage>1443</fpage>, <year>2016</year>.</mixed-citation></ref>
+<ref id="c11"><label>11</label><mixed-citation publication-type="other"><string-name><given-names>G</given-names> <surname>Lunter</surname></string-name>. <article-title>Fast haplotype matching in very large cohorts using the Li and Stephens model</article-title>. <source>biorxiv</source> (<year>2016</year>).</mixed-citation></ref>
+<ref id="c12"><label>12</label><mixed-citation publication-type="journal"><string-name><given-names>Jared</given-names> <surname>O&#x2019;Connell</surname></string-name>, <string-name><given-names>Kevin</given-names> <surname>Sharp</surname></string-name>, <string-name><given-names>Nick</given-names> <surname>Shrine</surname></string-name>, <string-name><given-names>Louise</given-names> <surname>Wain</surname></string-name>, <string-name><given-names>Ian</given-names> <surname>Hall</surname></string-name>, <string-name><given-names>Martin</given-names> <surname>Tobin</surname></string-name>, <string-name><given-names>Jean-Francois</given-names> <surname>Zagury</surname></string-name>, <string-name><given-names>Olivier</given-names> <surname>Delaneau</surname></string-name>, and <string-name><given-names>Jonathan</given-names> <surname>Marchini</surname></string-name>. <article-title>Haplotype estimation for biobank-scale data sets</article-title>. <source>Nature genetics</source>, <volume>48</volume>(<issue>7</issue>):<fpage>817</fpage>, <year>2016</year>.</mixed-citation></ref>
+<ref id="c13"><label>13</label><mixed-citation publication-type="journal"><string-name><given-names>Yohei</given-names> <surname>Rosen</surname></string-name>, <string-name><given-names>Jordan</given-names> <surname>Eizenga</surname></string-name>, and <string-name><given-names>Benedict</given-names> <surname>Paten</surname></string-name>. <article-title>Modelling haplotypes with respect to reference cohort variation graphs</article-title>. <source>Bioinformatics</source>, <volume>33</volume>(<issue>14</issue>):<fpage>i118</fpage>&#x2013;<lpage>i123</lpage>, <year>2017</year>.</mixed-citation></ref>
+<ref id="c14"><label>14</label><mixed-citation publication-type="journal"><string-name><given-names>Amy L</given-names> <surname>Williams</surname></string-name>, <string-name><given-names>Nick</given-names> <surname>Patterson</surname></string-name>, <string-name><given-names>Joseph</given-names> <surname>Glessner</surname></string-name>, <string-name><given-names>Hakon</given-names> <surname>Hakonarson</surname></string-name>, and <string-name><given-names>David</given-names> <surname>Reich</surname></string-name>.<article-title>Phasing of many thousands of genotyped samples</article-title>. <source>The American Journal of Human Genetics</source>, <volume>91</volume>(<issue>2</issue>):<fpage>238</fpage>&#x2013;<lpage>251</lpage>, <year>2012</year>.</mixed-citation></ref>
+</ref-list>
+<fn-group>
+<fn id="fn1"><label><sup>1</sup></label><p>Yohei Rosen was supported in part by a Howard Hughes Medical Institute Medical Research Fellowship.</p></fn>
+<fn id="fn2"><label><sup>2</sup></label><p>We confirm these results in <xref ref-type="sec" rid="s5b">section 5.2</xref>.</p></fn>
+<fn id="fn3"><label><sup>3</sup></label><p>The generalization is trivial</p></fn>
+<fn id="fn4"><label><sup>4</sup></label><p>This approach is known as <italic>lazy evaluation</italic>.</p></fn>
+<fn id="fn5"><label><sup>5</sup></label><p>Specifically, any collection of operations forming a <italic>category</italic> in the sense of category theory</p></fn>
+</fn-group>
+</back>
+</article>

@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/370304</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>Confirmatory Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Biophysics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Modifying Reaction Diffusion: A Numerical Model for Turing Morphogenesis, Ben-Jacob Patterns, and Cancer Growth</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0002-8672-6317</contrib-id>
+<name>
+<surname>Trepka</surname>
+<given-names>Kai</given-names>
+</name>
+</contrib>
+</contrib-group>
+<pub-date pub-type="epub">
+<year>2018</year>
+</pub-date>
+<elocation-id>370304</elocation-id>
+<history>
+<date date-type="received">
+<day>16</day>
+<month>7</month>
+<year>2018</year>
+</date>
+<date date-type="rev-recd">
+<day>16</day>
+<month>7</month>
+<year>2018</year>
+</date>
+<date date-type="accepted">
+<day>16</day>
+<month>7</month>
+<year>2018</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2018, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2018</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="370304.pdf" content-type="pdf" xlink:role="full-text"/>
+<counts>
+<page-count count="10"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<title>Background</title>
+<sec id="s1a">
+<title>The Diffusion Equation</title>
+<p>Given a collection of small particles (for example bacterial nutrients, or oxygen in water) and a heterogeneous concentration profile, over time the particles will be pushed by random thermal fluctuations into a more homogeneous (i.e. uniform profile). This gives us a flux, j, that scales with the diffusion constant, D, and the concentration gradient.
+<disp-formula><alternatives><graphic xlink:href="370304_ueqn1.gif"/></alternatives></disp-formula></p>
+<p>This tells us that the flux of particles is higher near &#x201C;pointier&#x201D; places in the concentration profile (causing us to expect fractal-like growth in certain systems). Plugging this into Fick&#x2019;s law, we obtain the final diffusion equation of a collection of particle concentrations C over time, i.e.
+<disp-formula><alternatives><graphic xlink:href="370304_ueqn2.gif"/></alternatives></disp-formula></p>
+<p>A few more equations will be useful to know. We may be interested in the characteristic length, x, that a particle can diffuse over a given time, dt, as well as the continuous concentration profile at a given timepoint, which is defined by Green&#x2019;s function. These are as follows:
+<disp-formula><alternatives><graphic xlink:href="370304_ueqn3.gif"/></alternatives></disp-formula></p>
+</sec>
+<sec id="s1b">
+<title>Diffusion Numerically</title>
+<p>It is not very complicated to implement a discrete version this in Matlab &#x2013; we just need a matrix that keeps track of where each diffusing species is at a given timepoint, and then update each timepoint based on the previous timepoint, the diffusion constant, and a discretized version of the Laplacian. This discretized Laplacian will take all the concentration from a given point, divide it into 4 parts (for 2D), and move all the concentrations &#x201C;next door.&#x201D; Edge cases are handled differently for different models &#x2013; for animal morphology and bacterial growth models, nutrients are not allowed to leave the frame of interest (which one could think of like an agar plate), whereas for the cancer model, nutrients can diffuse &#x201C;off the screen&#x201D; and to the rest of the body.</p>
+</sec>
+<sec id="s1c">
+<title>Adding Reaction and Growth</title>
+<p>There are a variety of phenomena that we might be interested in that are limited by diffusion, but also are influenced by factors outside of diffusion. In this case, we need to modify our equation for the change in concentration with respect to time to incorporate these outside factors. In general,
+<disp-formula><alternatives><graphic xlink:href="370304_ueqn4.gif"/></alternatives></disp-formula>
+where F is some function of x<sub>i</sub>&#x2019;s, the local concentrations of factors, cells, and the like.</p>
+<p>Beyond just modeling how diffusing factors behave, we may be interested in other objects in a medium (cells come to mind). These objects can interact with diffusing factors in a variety of ways &#x2013;secreting them, absorbing them, dividing or dying depending on whether the concentration passes certain thresholds, etc. Adding these kinds of interactions is challenging to do in general mathematically, but not that complicated numerically &#x2013; one just defines a set of equations for how particles interact with objects in solution, and keeps track of where everything is at each discretized timepoint.</p>
+</sec>
+</sec>
+<sec id="s2">
+<title>System Validation</title>
+<sec id="s2a">
+<title>Gaussian Fitting</title>
+<p>As a basis of this project, I wrote a 2D Laplacian operator in Matlab and verified that the concentration profile of a diffusing point source fits to the appropriate Gaussian (as it should &#x2013; we see Green&#x2019;s function gives a Gaussian concentration profile.) The concentration profile after 1000 timesteps is shown in <xref ref-type="fig" rid="fig1">Figure 1</xref>.</p>
+<fig id="fig1" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 1:</label>
+<caption><p>System Validation</p></caption>
+<graphic xlink:href="370304_fig1.tif"/>
+</fig>
+</sec>
+</sec>
+<sec id="s3">
+<title>Animal Morphology</title>
+<sec id="s3a">
+<title>Model: Small Fluctuations around Equilibrium</title>
+<p>How do animals get their shapes? Although various complicated signaling pathways are involved (Fgf, Bmp, Hedgehog, and Notch, for example [<xref ref-type="bibr" rid="c1">1</xref>]), Alan Turing proposed that complex pattern formation can be described by a reaction diffusion system with at least two factors, with minor random or directed fluctuations from a homogeneous equilibrium resulting in a very heterogeneous final distribution, for example leopard spots and zebra stripes [<xref ref-type="bibr" rid="c2">2</xref>]. Turing solved this system by linearizing around the steady state, which yields interesting patterns in and of itself, but has important limitations in that we can&#x2019;t know the behavior as t goes to infinity.</p>
+<p>To model this numerically, I adopted the following system using two dummy morphogens A and B:
+<list list-type="bullet">
+<list-item><p>Suppose the diffusion coefficients of A and B are 0.5 and 4.5, respectively, in arbitrary units. Also suppose that the change in concentrations over time are defined by
+<disp-formula><alternatives><graphic xlink:href="370304_ueqn5.gif"/></alternatives></disp-formula>
+</p></list-item>
+<list-item><p>Initialize a uniform system at a steady state (i.e. with no perturbations, there will be no changes). Consider the case
+<disp-formula><alternatives><graphic xlink:href="370304_ueqn6.gif"/></alternatives></disp-formula>
+</p></list-item>
+<list-item><p>Define the numerical value of a small fluctuation,
+<disp-formula><alternatives><graphic xlink:href="370304_ueqn7.gif"/></alternatives></disp-formula>
+</p></list-item>
+<list-item><p>Randomly generate pairs of fluctuations, where the first element in the pair has concentrations A<sub>1</sub>, B<sub>1</sub>, and the second has concentrations A<sub>2</sub>, B<sub>2</sub>, where
+<disp-formula><alternatives><graphic xlink:href="370304_ueqn8.gif"/></alternatives></disp-formula>
+</p></list-item>
+</list></p>
+<p>I then investigated the behavior by varying a-d, as well as the locations of pairs relative to each other (i.e. are the points in the pairs right next to each other, one apart from each other, or in totally random locations entirely).</p>
+</sec>
+<sec id="s3b">
+<title>Results and Conclusions</title>
+<p>Varying a-d results in changes in the density of heterogenous defects/lines in the steady state &#x2013; higher (absolute) values result in more dense patterns (see <xref ref-type="fig" rid="fig2">Figure 2</xref>). This means the difference between an animal with very complicated patterns everywhere and one with larger spots/defects may be varying reaction rates based on local concentrations.</p>
+<fig id="fig2" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 2:</label>
+<caption><p>Steady state patterns of systems with 1000 randomly located point pairs. In the left image, a &#x003D; 100000, b &#x003D; &#x2212;100001, c &#x003D; 100001, d &#x003D; &#x2212;1000002. In the right image a &#x003D; 5, b &#x003D; &#x2212;6, c &#x003D; 6, and d &#x003D; 7.</p></caption>
+<graphic xlink:href="370304_fig2.tif"/>
+</fig>
+<p>Pair location has little effect &#x2013; if each point is randomly located (i.e. each point is not next to its corresponding point, A1 defect is not next to the A2 defect), it produces the same patterns as if each point in the pair is one apart (i.e. A1-normal-A2 in a row). However, if each pair is <italic>right</italic> next to each other, i.e. the point with the A1 defect is directly adjacent to the point with the A2 defect, the changes, the defects end up canceling each other out in the long-run, resulting in homogeneity once again.</p>
+<p>This is just one example of the failure of the linearization approximation (i.e. long-term stability even with predicted short-term non-equilibrium perturbations). Turing&#x2019;s approximation is useful for some patterns, but over time some smaller aspects of these patterns disappear &#x2013; this is why it is useful to numerically model the full timescale of pattern formation so we know the behavior at equilibrium, rather than just the behavior after short-term perturbations (see <xref ref-type="fig" rid="fig3">Figure 3</xref>).</p>
+<fig id="fig3" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 3:</label>
+<caption><p>Short-term (linear) approximation (left) vs long-term steady-state (right)</p>
+</caption>
+<graphic xlink:href="370304_fig3.tif"/>
+</fig>
+<p>These pattern formations are more than just mathematical curiosities &#x2013; by varying the number of random defects, constants, locations of initial defects (as organisms do during their development), and looking at different morphogens, we can get patterns resembling complicated patterns such as giraffe spots and even drosophila embryo segmentation (see <xref ref-type="fig" rid="fig4">Figures 4</xref> and <xref ref-type="fig" rid="fig5">5</xref>). Embryo segmentation was caused by point defect pairs occurring on the same line.</p>
+<fig id="fig4" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 4:</label>
+<caption><p>&#x201C;Giraffe Spots&#x201D; and &#x201C;Drosophila Segments,&#x201D; modeled</p></caption>
+<graphic xlink:href="370304_fig4.tif"/>
+</fig>
+<fig id="fig5" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 5:</label>
+<caption><p>Giraffe and Drosophila Segments, real (from Creative Commons)</p>
+</caption>
+<graphic xlink:href="370304_fig5.tif"/>
+</fig>
+</sec>
+<sec id="s3c">
+<title>Future Directions</title>
+<p>We have shown it is possible to numerically model Turing pattern formation, the effects of tweaking parameters such as number of defect and governing constants, and potential developmental relevance. To improve on this model and understand arbitrary patterns, it would be useful to consider increased numbers of morphogens (rather than just using Turing&#x2019;s simplified system with two morphogens linearized around the steady state), as well as considering more complicated reactions.</p>
+</sec>
+</sec>
+<sec id="s4">
+<title>Modeling Bacteria in Non-Equilibrium Growth</title>
+<sec id="s4a">
+<title>Model: Adding Growth</title>
+<p>While reaction diffusion on its own leads to interesting patterns and conclusions, it is instructive to incorporate growth into the model, given that cells do not exist in a static environment and are constantly considering whether to synthesize a new copy of their DNA and divide of the conditions are right. Ben-Jacob observed interesting growth regimes when growing bacteria on agar with different peptone concentrations (see <xref ref-type="fig" rid="fig6">Figure 6</xref>) [<xref ref-type="bibr" rid="c3">3</xref>,<xref ref-type="bibr" rid="c4">4</xref>]. Our goal was to see if we could simulate and obtain the same patterns mathematically, using reasonable physical constants.</p>
+<fig id="fig6" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 6:</label>
+<caption><p>Bacterial Patterns from [<xref ref-type="bibr" rid="c6">6</xref>] (Empirical). Peptone concentrations of 0.1, 1, 3, and 10 g/l, respectively.</p></caption>
+<graphic xlink:href="370304_fig6.tif"/>
+</fig>
+<p>To model bacterial growth, we assumed each pixel represents one bacteria &#x2013; a bacterial radius is about 5 um, so a pixel is about 10&#x00D7;10 um, and each pixel is one bacteria. Each bacterium has a certain uptake rate of nutrients, and will divide when the nutrient concentration inside exceeds a certain threshold, and each resulting bacterium will have half the nutrients of the initial bacteria. In this model, there is no diffusion of bacteria themselves, and no death if a nutrient threshold is passed.</p>
+<p>In addition, recall that
+<disp-formula><alternatives><graphic xlink:href="370304_ueqn9.gif"/></alternatives></disp-formula>
+</p>
+<p>For reasonable physical constants, we have D &#x003D; 10<sup>&#x2212;7</sup> cm<sup>2</sup>/s, and delta x is 10 um, so the timestep we use is dt &#x003D; 5 seconds. Additionally, let the amount of nutrient a bacterium needs before division be 3&#x002A;10<sup>&#x2212;12</sup> g/bacterium (which is per pixel). Finally, we run through a range of nutrient (peptone) concentrations from 10<sup>&#x2212;6</sup> to 2&#x002A;10<sup>&#x2212;6</sup> g/cm<sup>2</sup>.</p>
+</sec>
+<sec id="s4b">
+<title>Results and Conclusions</title>
+<fig id="fig7" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 7:</label>
+<caption><p><italic>Bacterial Patterns (modeled). Peptone concentrations of 10<sup>&#x2212;6</sup>, 1.25&#x002A;10-6, 1.5&#x002A;</italic>10<sup>&#x2212;6</sup><italic>, and 2&#x002A;10<sup>&#x2212;6</sup> g/cm<sup>2</sup>, respectively.</italic></p>
+</caption>
+<graphic xlink:href="370304_fig7.tif"/>
+</fig>
+<p>Using even this simple model of growth, we can roughly reproduce the four growth regimes observed by Ben-Jacob&#x2019;s groups &#x2013; at low peptone concentration, there is a circle in the center, and some small radial branching. At intermediate peptone concentration, there is radial branching and fractal-like growth on these branches. At high peptone concentration, there is radial &#x201C;finger&#x201D; growth, and at very high peptone concentrations, there is just a bacterial blob.</p>
+<p>In other words, we have shown numerically that bacterial growth is diffusion limited and can be modeled as such. One interesting thing to note is these fractal-like patterns emerge because the flux through points is locally higher than the flux through a large surface, resulting in increased growth and branching from branches that already exist rather than from the center.</p>
+<p>The utility of this result is we can determine what patterns we expect based on certain nutrient concentrations and rates of growth, compare it to empirical patterns, and use this to determine the accuracy of our constants. Additionally, this has applications to other fractal-like processes, such as crystal growth via physical vapor deposition at high temperatures (flux is highest through points).</p>
+</sec>
+<sec id="s4c">
+<title>Future Directions</title>
+<p>To improve the model and give even more accurate patterns, we should consider the doubling time of bacteria (which is 1500 seconds for all 4 stages of the cell cycle, rather than the 5 second timesteps we used), account for bacterial motility (for example swarming or the &#x201C;run and tumble&#x201D; model), and add a parameter for cell death if nutrient concentration around the bacteria is too low for cell maintenance.</p>
+</sec>
+</sec>
+<sec id="s5">
+<title>Reaction Diffusion and Cancer</title>
+<sec id="s5a">
+<title>Model: Incorporating Multiple Factors</title>
+<p>One particularly interesting application of reaction diffusion models is diffusion-limited cancer growth [<xref ref-type="bibr" rid="c5">5</xref>]. For example, the following tumor morphologies from [<xref ref-type="bibr" rid="c5">5</xref>] can be roughly modeled using a reaction diffusion model:</p>
+<fig id="fig8" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 8:</label>
+<caption><p>Example observed plasmacytoma and trichoblastoma morphologies, respectively</p></caption>
+<graphic xlink:href="370304_fig8.tif"/>
+</fig>
+<p>Cancer cells are often mutated such that growth factor networks are out of control &#x2013; they require less growth factor than normal cells to divide, and can often produce more, resulting in a positive feedback loop of growth and risks metastasis [<xref ref-type="bibr" rid="c6">6</xref>,<xref ref-type="bibr" rid="c7">7</xref>]. Cancer cells also kill surrounding tissue, either by outcompeting it for nutrients or secreting a &#x201C;death factor&#x201D; that kill surrounding WT cells [<xref ref-type="bibr" rid="c8">8</xref>].</p>
+<p>We will model cancer cells by considering a system in which there are a network of blood vessels that constantly replenish nutrients (especially since the speed of blood, 0.1 m/s, is much faster than the speed of oxygen diffusion through tissue, which is under 10<sup>-4</sup> m/s, so we can say the vessel locations constantly replenish all nutrients in each timestep.) Nutrients diffuse from the blood vessel, cells grow if above a certain nutrient threshold and no surrounding cells (if WT) or even through surrounding cells (if a cancer cell), cells die below a certain nutrient threshold, cells produce and consume growth factors at certain rates, and growth factors and nutrients diffuse according to the diffusion equation. Cancer cells have a lower threshold of growth factor to divide in all of our models, as found in [<xref ref-type="bibr" rid="c6">6</xref>,<xref ref-type="bibr" rid="c7">7</xref>]; however, we also set the model so that cancer cells produce far less growth factor than normal cells, effectively depending on normal cells for their own division. We then investigate a variety of starting conditions (possibility of detachment from basal lamina, effect of different nutrient demands and uptake from cancer cells, effect of cancer cells making more growth factors, and growth along different blood vessel locations.</p>
+</sec>
+<sec id="s5b">
+<title>Results and Conclusions</title>
+<fig id="fig9" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 9(a-e):</label>
+<caption><p>Simulation Results &#x2013; Steady State Profiles of Cancer Cells</p></caption>
+<graphic xlink:href="370304_fig9.tif"/>
+</fig>
+<p>Above are the images of cancer cell steady state locations for different initial parameters. Note that in each of them, there were 50 randomly generated cancer cells at different points, and certain ones survived and then grew into the above morphologies. For figures 9a-9d, there are 7 parallel vertical blood vessels; for 9e, there is a grid of such blood vessels instead. For most simulations, cancer cells can diffuse across the nutrient source; for 9a, they cannot (presumes basal lamina provides some protection against metastasis).</p>
+<table-wrap id="utbl1" orientation="portrait" position="float">
+<graphic xlink:href="370304_utbl1.tif"/>
+</table-wrap>
+<p>From this, we can see that</p>
+<list list-type="bullet">
+<list-item><p>Diffusion can limit tumor growth &#x2013; these models reached a steady state past which the cancer cells could no longer grow. This has relevance for therapies that attempt to prevent formation of blood vessels in tumors in order to starve them of nutrients.</p></list-item>
+<list-item><p>Differences in rates of growth factor <italic>production</italic> have a huge influence on whether a tumor stays benign or undergoes a feedback expansion.</p></list-item></list>
+</sec>
+<sec id="s5c">
+<title>Future Directions</title>
+<p>To improve this model, more realistic rather than arbitrary diffusion and reaction coefficients could be used, as well as a 3D generalization, and considering different initial locations of blood vessels and cancer cells. Further questions to be investigated via similar means include comparing a nutrient competition vs death factor secretion model, as well as modeling drugs that inhibit growth factors as a method to treat tumors and what expected morphology changes are.</p>
+</sec>
+</sec>
+<sec id="s6">
+<title>Conclusions and Future Directions</title>
+<sec id="s6a">
+<title>Conclusions</title>
+<p>Often, complex systems of development or signaling pathways can be explained and modeled to a high degree of accuracy with only a few simplifying assumptions &#x2013; we don&#x2019;t need to understand every gene expressed in every pathway to get a good idea of what will happen. Complex systems such as pattern development, bacterial growth, and tumor formation can be modeled numerically and with relatively few factors and still give interesting and roughly accurate results, which obviates the need for a lot of complicated math and lets us find the eventual <italic>t</italic> &#x003D; &#x221E; solution.</p>
+<p>Although not very optimized as presented here, a reaction-diffusion-growth model of cancer is particularly interest. If you can set up an accurate system (i.e. appropriate diffusion coefficients, rates of growth factor production/consumption, blood vessel locations), you can predict how you expect cancer to grow normally. Further, you can predict how certain diffusion-limited treatments (chemotherapy) should affect tumor morphology, and compare predicted results to MRI to see if we understand drug mechanism.</p>
+<p>Outside of biology, this work has interesting applications in determining non-equilibrium or interesting steady-state solutions to physical systems such as fluid flow and the heat equation.</p>
+</sec>
+<sec id="s6b">
+<title>Future Model Improvements</title>
+<p>To improve on the work presented, the model could be expanded to 3D (which is not very challenging conceptually &#x2013; it&#x2019;s just setting up a different Laplacian and tracking across a 4D rather than 3D array, but is annoying with edge cases and visualization), and compared to the continuous case (where we use Green&#x2019;s function convolved with the distribution at each step, rather than just discretizing the Laplacian).</p>
+<p>Further, models of cells should consider cell motility, as well as allow for arbitrary factors and cell types. The challenge is to determine the appropriate constants to use, as well as which factors are relevant &#x2013; for any given pathway, there could be dozens of genes involved, but the morphology of the result can be predicted with far fewer components in the model (as we showed in the case of bacterial growth).</p>
+</sec>
+</sec>
+</body>
+<back>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>[1]</label><mixed-citation publication-type=""><string-name><surname>Cooper</surname>, <given-names>GM</given-names></string-name>. <article-title>The Cell: A Molecular Approach</article-title>. <edition>2</edition>nd edition. <publisher-loc>Sunderland (MA): Sinauer Associates</publisher-loc>; <year>2000</year>. <source>Signaling in Development and Differentiation</source>.</mixed-citation></ref>
+<ref id="c2"><label>[2]</label><mixed-citation publication-type=""><string-name><surname>Turing</surname>, <given-names>A. M.</given-names></string-name> (<year>1952</year>). <article-title>The chemical basis of morphogensis</article-title>, <source>Phil. Trans. Roy. Soc. B</source>, <volume>237</volume>, <fpage>37</fpage>&#x2013;<lpage>72</lpage>.</mixed-citation></ref>
+<ref id="c3"><label>[3]</label><mixed-citation publication-type=""><string-name><surname>Ben-Jacob</surname>, <given-names>Eshel</given-names></string-name>, and <string-name><given-names>Peter</given-names> <surname>Garik</surname></string-name>. "<article-title>The formation of patterns in non-equilibrium growth</article-title>." <source>Nature</source> <volume>343.6258</volume> (<year>1990</year>): <fpage>523</fpage>-<lpage>530</lpage>.</mixed-citation></ref>
+<ref id="c4"><label>[4]</label><mixed-citation publication-type=""><string-name><surname>Golding</surname>, <given-names>Ido</given-names></string-name>, <etal>et al.</etal> "<article-title>Studies of bacterial branching growth using reaction&#x2013;diffusion models for colonial development</article-title>." <source>Physica A: Statistical Mechanics and its Applications</source> <volume>260.3</volume> (<year>1998</year>): <fpage>510</fpage>-<lpage>554</lpage>.</mixed-citation></ref>
+<ref id="c5"><label>[5]</label><mixed-citation publication-type=""><string-name><surname>Ferreira</surname> <suffix>Jr</suffix>, <given-names>S. C.</given-names></string-name>, <string-name><given-names>M. L.</given-names> <surname>Martins</surname></string-name>, and <string-name><given-names>M. J.</given-names> <surname>Vilela</surname></string-name>. "<article-title>Reaction-diffusion model for the growth of avascular tumor</article-title>." <source>Physical Review E</source> <volume>65.2</volume> (<year>2002</year>): <fpage>021907</fpage>.</mixed-citation></ref>
+<ref id="c6"><label>[6]</label><mixed-citation publication-type=""><string-name><surname>Jechlinger</surname>, <given-names>Martin</given-names></string-name>, <etal>et al.</etal> "<article-title>Autocrine PDGFR signaling promotes mammary cancer metastasis</article-title>." <source>The Journal of clinical investigation</source> <volume>116.6</volume> (<year>2006</year>): <fpage>1561</fpage>.</mixed-citation></ref>
+<ref id="c7"><label>[7]</label><mixed-citation publication-type=""><string-name><surname>Demoulin</surname>, <given-names>Jean-Baptiste</given-names></string-name>, and <string-name><given-names>Ahmed</given-names> <surname>Essaghir</surname></string-name>. "<article-title>PDGF receptor signaling networks in normal and cancer cells</article-title>." <source>Cytokine &#x0026; growth factor reviews</source> <volume>25.3</volume> (<year>2014</year>): <fpage>273</fpage>-<lpage>283</lpage>.</mixed-citation></ref>
+<ref id="c8"><label>[8]</label><mixed-citation publication-type=""><string-name><surname>Suijkerbuijk</surname>, <given-names>Saskia JE</given-names></string-name>, <etal>et al.</etal> "<article-title>Cell competition drives the growth of intestinal adenomas in Drosophila</article-title>." <source>Current Biology</source> <volume>26.4</volume> (<year>2016</year>): <fpage>428</fpage>-<lpage>438</lpage>.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

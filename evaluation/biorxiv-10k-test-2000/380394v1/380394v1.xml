@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/380394</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Link Your Sites (LYS.py): Coupling your PAML codeml results and homologous protein structures in PyMOL</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author" corresp="yes">
+<name>
+<surname>Moreta</surname>
+<given-names>Lys Sanz</given-names>
+</name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<contrib contrib-type="author">
+<name>
+<surname>da Fonseca</surname>
+<given-names>Rute Andreia Rodrigues</given-names>
+</name>
+<xref ref-type="aff" rid="a2">2</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>K&#x00F8;benhavn Universitet. Bioinformatics Center</institution></aff>
+<aff id="a2"><label>2</label><institution>Natural History Museum of Denmark- Statens naturhistoriske museum</institution></aff>
+</contrib-group>
+<author-notes>
+<corresp id="cor1">Corresponding author: Lys Sanz Moreta <email>lys336633@hotmail.com</email> / <email>lys.moreta@bio.ku.dk</email></corresp>
+</author-notes>
+<pub-date pub-type="epub"><year>2018</year></pub-date>
+<elocation-id>380394</elocation-id>
+<history>
+<date date-type="received">
+<day>30</day>
+<month>7</month>
+<year>2018</year>
+</date>
+<date date-type="rev-recd">
+<day>30</day>
+<month>7</month>
+<year>2018</year>
+</date>
+<date date-type="accepted">
+<day>30</day>
+<month>7</month>
+<year>2018</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2018, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2018</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="380394.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>ABSTRACT</title>
+<p>The visualization of the molecular context of an amino acid mutation in a protein structure is crucial for the assessment of its functional impact and to understand its evolutionary implications. Currently, searches for fast evolving amino acid positions using codon substitution models like those implemented in PAML (Z. <xref ref-type="bibr" rid="c1">Yang, 2000</xref>) are done in almost complete proteomes, generating large numbers of candidate proteins that require individual structural analyses. Here I present a python wrapper script that integrates the output of PAML with the PyMOL visualization tool to automate the generation of protein structure models where positively selected sites are mapped along with the location of putative functional domains.</p>
+</abstract>
+<counts>
+<page-count count="6"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<title>INTRODUCTION</title>
+<p>Studies in genetic evolution infer positive selection occurring at specific codons (amino acids) in the DNA (protein) sequence thanks to models, such as PAML site models (Z. <xref ref-type="bibr" rid="c1">Yang, 2000</xref>), that evaluate positive selection occurring at certain sites. PAML branch-site models (J. <xref ref-type="bibr" rid="c6">Zhang, 2005</xref>) can also identify clades or branches in the tree that are evolving under stronger positive selection conditions than the rest of the tree.</p>
+<p>Positive selection is evaluated through the &#x03C9; value that calculates the ratio between the amount of non-synonymous mutations per non-synonymous site and the amount of synonymous mutations per synonymous site. Non-synonymous mutations can be relevant if the amino acid switch introduced generates a change in the physico-chemical properties of the residue and consequently affects the protein 3D structure. An approach to evaluate the impact of these mutations in the structure is to observe them in homologous protein structures and analyze if they are located within the functional domain residues. Mutations in the functional domain are more likely to affect the protein&#x2019;s function than if they are located in other parts of the structure.</p>
+<p>Proteins structures are highly conserved due to their direct association with the protein&#x2019;s function. Protein structure is defined by the amino acid chain derived from the DNA sequence transcription and translation. The amino acids form a backbone that is folded into a specific conformation regarding its interactions with the external medium, mainly aqueous, in which is submerged. The folding patterns are dictated by a series of non-covalent bonds <italic>(hydrogen bonds, ionic bonds</italic> and <italic>van der Waals attractions)</italic> directed by the residue&#x2019;s side chains. If the residues in the functional domain are exchanged with an amino acid with different properties, these interactions will be modified together with the structure and its binding attributes will be affected (<xref ref-type="bibr" rid="c2">Alberts B, Johnson A, Lewis J, 2002</xref>).</p>
+<p>PAML codeml models estimate the impact of the non-synonymous mutations as equal throughout the protein structure. It is important then to differentiate which mutations are affecting the key regions in the protein, resulting into a need of a visual analysis of the location of these mutations in the protein. A python script that reads several files, including the output file from M8 codeml model, and combines them to create a visualization in PyMOL and assess the significance of the selective pressure on the protein domains has been consequently created and presented in this article.</p>
+</sec>
+<sec id="s2">
+<title>ALGORITHM DESIGN</title>
+<p>The main algorithm behind the script finds the correspondent positions among the gene and the PDB sequences and works in the following manners:
+<list list-type="order">
+<list-item><p>Creates 2 lists, list A containing the positions in the alignment (local or global alignment in biopython, 2009) where both sequences don&#x2019;t have a gap, and list B, which has the length of the gene sequence, filled with &#x2018;nan&#x2019; values.</p></list-item>
+<list-item><p>Counts the amount of gaps (-, which include not aligned residues) between each segment, bounded by the <italic>i</italic> and <italic>i &#x002B;1</italic> positions contained in list A, in the aligned sequences (this step is performed in both aligned sequences (aligned chain A and aligned chain B)). This step outputs 2 lists (C and D) with the reciprocal correspondence of the positions where there is not gaps in the alignment of chain A and B.</p></list-item>
+<list-item><p>Lists C and D are used to fill in List B taking into account all the indexing issues, PDB (PDB parser, <xref ref-type="bibr" rid="c4">Hamelryck, 2003</xref>) and python work in index 1 and 0 respectively, and correspondence. In this step is very easy to substitute the correspondent positions of the gene in the PDB by the actual residues IDs numbers in the PDB structure, which follow their own numbering settings.</p></list-item>
+</list></p>
+</sec>
+<sec id="s3">
+<title>INPUT DATA</title>
+<p>The python script requires several input files and counts with several arguments.</p>
+</sec>
+<sec id="s4">
+<title>PERSONALIZATION OF PYMOL FEATURES</title>
+<p>In order to change and modify the visual aspects of the proteins the script can be easily modified in the PyMOL () function, this are some of the more distinctive features:</p>
+<sec id="s4a">
+<title>Graphical User Interface (GUI)</title>
+<p>The previously described python script has been also embedded into a GUI to facilitate the introduction of input data. The arguments are exactly the same, and the script can be modified internally in the same manners. There are two versions of the script, one of them allows to generate small modifications and remembering the previous file paths given by the user (LYS&#x005F;PyMOL&#x005F;GUI&#x005F;with&#x005F;temporary&#x005F;memory.py) due to a loop configuration. The other script (LYS&#x005F;PyMOL&#x005F;GUI.py) requires input information every time it is run. LYS&#x005F;GUI.py only generates the position correlation dataframe, without calling Pymol.</p>
+</sec>
+</sec>
+<sec id="s5">
+<title>OUTPUTS</title>
+<p>The program will output a 3 column data-frame of the corresponding positions among the gene and the residues IDs in the PDB file. The gene&#x2019;s positions are organized in a range starting at index 1 and finishing at the length of the sequence (aligned or not). The third column classifies the position according to its belonging to a functional domain (&#x2018;Domain&#x2019;), a selected site(&#x2018;Selected&#x2019;), both (&#x2018;Selected&#x005F;and&#x005F;Domain&#x2019;) or none of the previous ones (&#x2018;Not&#x2019;).</p>
+<p>This data-frame is given to PyMOL to generate a visualization on the protein from the PDB file information, where the amino acids are colored according to their assigned label.</p>
+<sec id="s5a">
+<title>Python Script installation requirements</title>
+<p>PyMOL installation for the scripts that call PyMOL (Link&#x005F;Your&#x005F;Sites&#x005F;in&#x005F;PyMOL&#x005F;Updated.py and LYS&#x005F;PyMOL&#x005F;GUI.py), both in python and external (GUI) environments. All the scripts require the python 3 version packages for data manipulation pandas, biopython and numpy. Finally, tkinter for scripts that provide a GUI (LYS&#x005F;GUI.py and LYS&#x005F;PyMOL&#x005F;GUI.py). The scripts are found under <ext-link ext-link-type="uri" xlink:href="https://github.com/artistworking/Master">https://github.com/artistworking/Master</ext-link> Thesis Scripts</p>
+</sec>
+<sec id="sb">
+<title>List of versions of scripts</title>
+<list list-type="bullet">
+<list-item><p><bold>Link&#x005F;Your&#x005F;Sites&#x005F;python&#x005F;3&#x005F;Updated.py:</bold> Generates only the text file with the dataframe stating the correspondence of the gene residues positions to the PDB residues positions (according to the PDB special numeration), as seen in <xref ref-type="table" rid="tbl3">Table 3</xref>.</p></list-item>
+<list-item><p><bold>LYS&#x005F;GUI.py:</bold> Same as Link&#x005F;Your&#x005F;Sites&#x005F;python&#x005F;3&#x005F;Updated.py but with the GUI version.</p></list-item>
+<list-item><p><bold>PyMOL&#x005F;and&#x005F;LYS&#x005F;input&#x005F;dataframe.py:</bold> Simpler script that combines an external dataframe with the same format as the one produced by Link&#x005F;Your&#x005F;Sites&#x005F;python&#x005F;3&#x005F;Updated.py (<xref ref-type="table" rid="tbl3">Table 3</xref>) and uses it to generate the visualization in PyMOL (<xref ref-type="fig" rid="fig3">Figure 3</xref>).</p></list-item>
+<list-item><p><bold>Link&#x005F;Your&#x005F;Sites&#x005F;in&#x005F;PyMOL&#x005F;Updated.py:</bold> Creates the dataframe in <xref ref-type="table" rid="tbl3">Table 3</xref> and conveys it to PyMOL to generate the visualization in <xref ref-type="fig" rid="fig3">Figure 3</xref>.</p></list-item>
+<list-item><p><bold>LYS&#x005F;PyMOL&#x005F;GUI&#x005F;Final.py:</bold> The most sophisticated script that does the same as Link&#x005F;Your&#x005F;Sites&#x005F;in&#x005F;PyMOL&#x005F;Updated.py but with a GUI. See the tutorial at <ext-link ext-link-type="uri" xlink:href="https://www.youtube.com/watch?v&#x003D;v3MawxHLGSo">https://www.youtube.com/watch?v&#x003D;v3MawxHLGSo</ext-link></p></list-item>
+</list>
+<fig id="fig1" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 1:</label>
+<caption><p>Graphical explanation of the algorithm that matches the coordinates of 2 sequences by using their unaligned and aligned versions (local or global alignment in biopython, 2009). The numbers indicate the residues positions in the chain/sequence.</p></caption>
+<graphic xlink:href="380394_fig1.tif"/>
+</fig>
+<fig id="fig2" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 2:</label>
+<caption><p>LYS.py interface. The compulsory files for the GUI to work are marked with a &#x002A;. Check an introductory tutorial at <ext-link ext-link-type="uri" xlink:href="https://www.youtube.com/watch?v&#x003D;v3MawxHLGSo">https://www.youtube.com/watch?v&#x003D;v3MawxHLGSo</ext-link></p></caption>
+<graphic xlink:href="380394_fig2.tif"/>
+</fig>
+<fig id="fig3" position="float" orientation="portrait" fig-type="figure">
+<label>Figure 3.</label>
+<caption><p>LYS.py visual output example of protein coloured according to its evolutionary positively selected amino acid residues and domain positions.</p></caption>
+<graphic xlink:href="380394_fig3.tif"/>
+</fig>
+<table-wrap id="tbl1" orientation="portrait" position="float">
+<label>Table 1.</label>
+<caption><p>LYS.py script list of arguments.</p></caption>
+<graphic xlink:href="380394_tbl1.tif"/>
+</table-wrap>
+<table-wrap id="tbl2" orientation="portrait" position="float">
+<label>Table 2:</label>
+<caption><p>LYS.py customizable features in the script.</p></caption>
+<graphic xlink:href="380394_tbl2.tif"/>
+</table-wrap>
+<table-wrap id="tbl3" orientation="portrait" position="float">
+<label>Table 3:</label>
+<caption><p>LYS.py table output of correspondence among the coordinates/residues of the studied sequences</p></caption>
+<graphic xlink:href="380394_tbl3.tif"/>
+</table-wrap>
+</sec>
+</sec>
+</body>
+<back>
+<ref-list>
+<title>REFERENCES</title>
+<ref id="c1"><label>1.</label><mixed-citation publication-type="journal"><string-name><surname>Yang</surname>, <given-names>Z.</given-names></string-name> &#x0026; <string-name><surname>Nielsen</surname>, <given-names>R.</given-names></string-name> <article-title>Estimating synonymous and nonsynonymous substitution rates under realistic evolutionary models</article-title>. <source>Mol. Biol. Evol</source>. <volume>17</volume>, <fpage>32</fpage>&#x2013;<lpage>43</lpage> (<year>2000</year>).</mixed-citation></ref>
+<ref id="c2"><label>2.</label><mixed-citation publication-type="website"><string-name><surname>Alberts</surname> <given-names>B</given-names></string-name>, <string-name><surname>Johnson</surname> <given-names>A</given-names></string-name>, <string-name><surname>Lewis</surname> <given-names>J</given-names></string-name>, <etal>et al.</etal> <article-title>Molecular Biology of the Cell</article-title>. <edition>4th</edition> edition. <source>Gardland Science</source> (<year>2002</year>). Available at: <ext-link ext-link-type="uri" xlink:href="https://www.ncbi.nlm.nih.gov/books/nbk26830/">https://www.ncbi.nlm.nih.gov/books/NBK26830/</ext-link>.</mixed-citation></ref>
+<ref id="c3"><label>3.</label><mixed-citation publication-type="journal"><string-name><surname>Cock</surname>, <given-names>P. J. A.</given-names></string-name> <etal>et al.</etal> <article-title>Biopython: Freely available Python tools for computational molecular biology and bioinformatics</article-title>. <source>Bioinformatics</source> <volume>25</volume>, <fpage>1422</fpage>&#x2013;<lpage>1423</lpage> (<year>2009</year>).</mixed-citation></ref>
+<ref id="c4"><label>4.</label><mixed-citation publication-type="journal"><string-name><surname>Hamelryck</surname>, <given-names>T.</given-names></string-name> &#x0026; <string-name><surname>Manderick</surname>, <given-names>B.</given-names></string-name> <article-title>PDB file parser and structure class implemented in Python</article-title>. <source>Bioinformatics</source> <volume>19</volume>, <fpage>2308</fpage>&#x2013;<lpage>2310</lpage> (<year>2003</year>).</mixed-citation></ref>
+<ref id="c5"><label>5.</label><mixed-citation publication-type="journal"><string-name><surname>Yang</surname>, <given-names>Z.</given-names></string-name> <article-title>PAML 4: Phylogenetic analysis by maximum likelihood</article-title>. <source>Mol. Biol. Evol</source>. <volume>24</volume>, <fpage>1586</fpage>&#x2013;<lpage>1591</lpage> (<year>2007</year>).</mixed-citation></ref>
+<ref id="c6"><label>6.</label><mixed-citation publication-type="journal"><string-name><surname>Zhang</surname>, <given-names>J.</given-names></string-name>, <string-name><surname>Nielsen</surname>, <given-names>R.</given-names></string-name> &#x0026; <string-name><surname>Yang</surname>, <given-names>Z.</given-names></string-name> <article-title>Evaluation of an improved branch-site likelihood method for detecting positive selection at the molecular level</article-title>. <source>Mol. Biol. Evol</source>. <volume>22</volume>, <fpage>2472</fpage>&#x2013;<lpage>2479</lpage> (<year>2005</year>).</mixed-citation></ref>
+<ref id="c7"><label>7.</label><mixed-citation publication-type="other"><collab>The PyMOL Molecular Graphics System</collab>, Version 2.0. Schr&#x00F6;dinger</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

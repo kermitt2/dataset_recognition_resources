@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/296806</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Pathology</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>Improving Accuracy of Nuclei Segmentation by Reducing Histological Image Variability BMI 260 - Spring 2017</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<name><surname>Roohani</surname><given-names>Yusuf</given-names></name>
+<xref ref-type="author-notes" rid="n1">&#x002A;</xref>
+</contrib>
+<contrib contrib-type="author">
+<name><surname>Kiss</surname><given-names>Eric</given-names></name>
+<xref ref-type="author-notes" rid="n2">&#x002A;&#x002A;</xref>
+</contrib>
+<aff><institution>Stanford University</institution></aff>
+</contrib-group>
+<author-notes>
+<fn fn-type="fn" id="n1"><label>&#x002A;</label><p><email>yroohani@stanford.edu</email></p></fn>
+<fn fn-type="fn" id="n2"><label>&#x002A;&#x002A;</label><p><email>erickiss@stanford.edu</email></p></fn>
+</author-notes>
+<pub-date pub-type="epub">
+<year>2018</year>
+</pub-date>
+<elocation-id>296806</elocation-id>
+<history>
+<date date-type="received">
+<day>06</day>
+<month>4</month>
+<year>2018</year>
+</date>
+<date date-type="rev-recd">
+<day>06</day>
+<month>4</month>
+<year>2018</year>
+</date>
+<date date-type="accepted">
+<day>06</day>
+<month>4</month>
+<year>2018</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2018, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2018</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="296806.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>Cancer is the second leading cause of death in United States. Early diagnosis of this disease is essential for many types of treatment. Cancer is most accurately observed by pathologists using tissue biopsy. In the past, evaluation of tissue samples was done manually, but to improve efficiency and ensure consistent quality, there has been a push to evaluate these algorithmically. One important task in histological analysis is the segmentation and evaluation of nuclei. Nuclear morphology is important to understand the grade and progression of cancer. Convolutional neural networks (CNN) were used to segment train models for nuclei segmentation. Stains are used to highlight cellular features. However, there is significant variability in imaging of stained slides due to differences in stain, slide preparation and slide storage. This make automated methods challenging to implement across different datasets. This paper evaluates four stain normalization methods to reduce the variability between slides. Nuclear segmentation accuracy was evaluated for each normalized method. Baseline segmentation accuracy was improved by more than 50&#x0025; of its base value as measured by the AUC and Recall. We believe this is the first study to look at the impact of four stain normalization approaches (histogram equalization, Reinhart, Macenko, Khan) on segmentation accuracy.</p>
+</abstract>
+<kwd-group kwd-group-type="author">
+<title>Keywords</title>
+<kwd>histopathology</kwd>
+<kwd>CNN</kwd>
+<kwd>machine learning</kwd>
+<kwd>stain normalization</kwd>
+<kwd>nuclei segmentation</kwd>
+</kwd-group>
+<counts>
+<page-count count="15"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1"><label>1</label>
+<title>Introduction</title>
+<p>Diagnoses made by pathologists using tissue biopsy images are central for many tasks such as the detection of cancer and estimation of its current stage [<xref ref-type="bibr" rid="c2">2</xref>]. Known as histopathology, it is defined as the study of disease using microscopic examination of a specimen processed with methods like dehydration, sectioning, staining and fixed to a glass slide [<xref ref-type="bibr" rid="c6">6</xref>]. Recently, this analysis has become digital with Whole Slide Imaging (WSI) allowing users to capture entire slides as colored high resolution images [<xref ref-type="bibr" rid="c6">6</xref>]. It is important to note that color is especially important in histopathology, since different stains are used to highlight cell structures. The intensities of the stains give different information due to interactions with the cell components and metabolic processes.</p>
+<p>One routine yet important step within histological analyses is the segmentation of nuclei. Nuclear morphology is an important indicator of the grade of cancer and the stage of its progression [<xref ref-type="bibr" rid="c3">3</xref>]. It has also been shown to be a pre-dictor of cancer outcome [<xref ref-type="bibr" rid="c4">4</xref>] and counting mitosis events in nuclei is a useful marker of cancerous growth. [<xref ref-type="bibr" rid="c2">2</xref>] Currently, histological analysis such as these are done manually, with pathologists counting and evaluating cells by inspection. Developing automated methods to perform this analysis will help pathologists maintain consistent quality, allow for greater use of histological analysis by reducing cost and throughput - particularly in longitudinal studies, and allow for integration of results in electronic decision support systems.</p>
+<p>However, automating nuclei detection is not a trivial task and can be challenging for a number of reasons. To fully understand the challenges, it is useful to detail the image creation process. Tissue biopsies are taken from an area of interest. The tissue is dehydrated, sectioned, stained, and photographed under a high magnification microscope (20X-40X). A light source illuminates the bottom of the sample and a sensor reads the relative absorption of the light through the sample. Cell samples are typically clear, that is, they allow light to pass through unaltered so stains are applied to the samples to allow for better differentiation of key cellular features. Eosin and hematoxylin are commonly used stains with the first staining nucleic acids a purple-blue and the latter staining proteins pink.</p>
+<p>There are sources of error at each stage in the process. The tissue sample itself may have clumped nuclei or dividing those that overlap. Stain manufacturing and aging can lead to differences in applied color. It could also be the result of variation in tissue preparation (dye concentration, evenness of the cut, presence of foreign artifacts or damage to the tissue sample), stain reactivity or image acquisition (image compression artifacts, presence of digital noise, specific features of the slide scanner). Each stain has different absorption characteristics(sometimes overlapping) which impact the resulting slide color. Finally, storage of the slide samples can have aging effects that alter the color content. However, unlike medical fields like radiology, digital approaches to histological evaluation are fairly new so there isn&#x2019;t always the same level of maturity in comparing scans of different origin. [<xref ref-type="bibr" rid="c2">2</xref>] [<xref ref-type="bibr" rid="c5">5</xref>]</p>
+<p>Radiologists have established standards (such as DICOM) to ensure consistency between scans from different origins and time. Most relevant to this project, DICOM data files, contain metadata that allow users to easily manipulate raw image values to standard units based on specific machine characteristics. Ideally, histopathology would also work within a framework like DICOM where images can be standardized against experimental condition to ensure consistency across datasets.</p>
+<p>The impact of such a standardization would be great. Aside from clinical and research applications, standardizing image analysis solutions to handle histological data from a variety of sources would also be valuable to the pharmaceutical industry. Recently, there has been considerable interest in the application of novel machine learning tools such as deep learning to aid in segmentation. Some have used grayscale images to perform automated slide analysis, but this ignores a deep source of data available from the stains. Color-based models generally work on raw pixel values, but could achieve greater accuracy through reducing the variance contributed by slide and stain specific variables. However, the approach must not be too general or else false positives will occur through reduction or altering the image signal. [<xref ref-type="bibr" rid="c1">1</xref>] [<xref ref-type="bibr" rid="c3">3</xref>]</p>
+</sec>
+<sec id="s2"><label>2</label>
+<title>Methods</title>
+<p>The aim of this project is to address the impact of variability in histological images on the accuracy of segmentation algorithms. Image statistics were found on the raw images, and a CNN for nuclei segmentation was trained and tested to get a baseline. Four stain normalization techniques, histogram equalization, Reinhard, Macenko, and Kahn were then applied as means to reduce color variability of the raw images. The CNN was trained and tested again to get a final segmentation accuracy. This paper is unique in that it employs a wide variety of normalization methods, uses nuclei segmentation accuracy a metric, and tests the model on a different dataset to understand model generalizability.</p>
+<fig id="fig1" position="float" fig-type="figure"><label>Fig. 1.</label>
+<caption><p>This is a schematic overview of our overall approach. We first used a direct histogram analysis to analyze the impact of stain normalization. We then trained a deep learning model on one dataset and tested it on another. We performed segmentation both before and after stain normalization to assess impact</p></caption>
+<graphic xlink:href="296806_fig1.tif"/>
+</fig>
+</sec>
+<sec id="s3"><label>3</label>
+<title>Dataset</title>
+<p>Multiple publicly available datasets were used in this analysis. 58 histological breast images were taken from the UCSB Bio-segmentation benchmark dataset. Each RGB image is 896x768 pixels was H&#x0026;E stained and included a corresponding malignant or benign label. Manually annotated segmentation masks are also provided as a ground truth. 143 breast images were also used from the Case Western Reserve digital pathology dataset. Each RGB image was 2000x2000 pixels and was H&#x0026;E stained. Manually annotated masks were provided for over 12000 nuclei.</p>
+<p>These datasets were chosen because there were large differences in the resolution, color profile, and slide preparation quality. Obtaining such different images highlighted the problem facing automation, but also offered an opportunity to evaluate whether the segmentation classifier is generalizable outside of its training and validation set.</p>
+</sec>
+<sec id="s4"><label>4</label>
+<title>Stain Color Normalization</title>
+<p>Stain normalization techniques involve transforming image pixel values. There are a wide array of techniques in literature, but most involve statistical transformations of images in various color spaces. This paper provides an overview of the four techniques used.</p>
+<p>University of Warwick&#x2019;s normalization Matlab toolbox contained example implementations of many of these techniques and served as the foundation for processing the training and test datasets. A training image was selected for training and test processing by inspection.</p>
+<sec id="s4a"><label>4.1</label>
+<title>Histogram equalization</title>
+<p>Histogram equalization is a commonly used image processing technique that transforms one histogram by spreading out its distribution to increase image contrast. In this analysis, histogram equalization was performed on each RGB channel in Matlab, effectively normalizing the color intensities frequencies between two images. However, histogram equalization is known to increase the contrast of noise and introduce artifacts since the assumption that the proportion of stains is constant between the images[kahn].</p>
+</sec>
+<sec id="s4b"><label>4.2</label>
+<title>Macenko color normalization</title>
+<p>The Macenko color normalization method transforms the images to a stain color space by estimating the stain vectors then normalizes the stain intensities. Quantifying the stain color vectors (the RGB contribution of each stain) provides a more robust means of manipulating color information. However, due to the variability of stains discussed previously, an automated method to determine the stain vectors is advised.</p>
+<p>Macenko implements a method for automatic stain vector creation by considering images in the OD (optical density) space. Resulting OD values are a linear combination of the stain vectors. Low OD values are also thresholded to improve performance since background is considered to have an OD of 0. The largest OD values are found via a single value decomposition (SVD). A plane is calculated from the largest maximum values found, and the remainder of OD pixels are projected onto this plane with their vector lengths normalized to unit length. The angle of each point with respect to the first stain vector is calculated. To account for noise, the 1st and 99th percentile of pixels for each value are used to ensure a valid extremes. The extremes are then converted back to OD space. Intensity variation is corrected for each stain. An intensity histogram is plotted and the 99th percentile used as the maximum to account for noise. The target image stain intensity histograms are then scaled to the source maximum.</p>
+<p>This method has been criticized for altering fully saturated and empty OD values during transformation and for altering the OD of both source and target images[kahn].</p>
+</sec>
+<sec id="s4c"><label>4.3</label>
+<title>Reinhard color normalization</title>
+<p>Reinhard color normalization aims to make one image &#x2018;feel&#x2019; like another by transforming one image distribution to be closer to another. Reinhard transforms the target and source images into l&#x201D; color space. In RGB color space, color channels typically have a high degree of correlation (ie. if there is blue there is likely green). Thus, any modifications to pixel values should have some impact on the other channels. L&#x201D; color space was created to minimize the correlation between channels for natural scenes. L is an achromatic channel and while&#x201D; are opposing Yellow-Blue and Red-Green channels.</p>
+<p>After the source and target images are in L&#x201D; colorspace, descriptive statistics are used to transform the target image&#x2019;s&#x2019; colorspace. For each channel, the mean value is subtracted from the data points and the data points are scaled by the std of the target/std of the source. Finally, the average channel values of the source are added back to the data points. For images that are very different(a lot of sky vs a lot of grass), the above method does not produce accurate results. Reinhard suggests additional statistical methods to deal with widely varying images.</p>
+<p>Instead of computing mean and standard deviation for on each channel for the entire image, the statistics are calculated for scene swatches or clusters (ie sky and grass). The distances are calculated to each cluster and divided by the standard deviation. The transformed pixels for each cluster are weighted by the normalized distances to produce a final output color. The technique easily scales if there are greater than two clusters. After the color transformation in L&#x201D; color space, it is transformed back to RGB colorspace.</p>
+</sec>
+<sec id="s4d"><label>4.4</label>
+<title>Kahn color normalization</title>
+<p>Conceptually, the Kahn normalization technique is similar to the Macenko technique in that it estimates the stain vectors, deconvolve the image, maps the stain intensity to a target image, before reconstructing back in RGB colorspace. Kahn makes contributions in automatic stain vector calculation using a classifier with global and local pixel value information, and a non-linear stain normalization method.</p>
+<p>The stain classifier uses SCD to split up image into color batches using octtree quantization. The SCD has its dimensionality reduced via principal component analysis as a color description of the full image, encompassing information on the stains. A relevance vector machine (RVM) supervised classifier had the best performance. It was also found that without the global SCD information, the classifier assigned significant probability to only weakly stained classes.</p>
+<p>Optical density values are analyzed for each channel after being separated by the classifier (stains, and background). Statistics were calculated for the stain channel distributions with OD outliers excluded. A spline function was then created to map the channel statistics of one image to another. The spline ensures was created to ensure that the maximum and minimum OD remain unchanged through the mapping. After the transformation the image is converted by the RGB colorspace.</p>
+<fig id="fig2" position="float" fig-type="figure"><label>Fig. 2.</label>
+<caption><p>Comparison of stain normalization techniques on a sample training image. Source image was normalized to reference image using histogram equalization, Reinhard, Macenko, and Kahn methods respectively</p></caption>
+<graphic xlink:href="296806_fig2.tif"/>
+</fig>
+</sec>
+</sec>
+<sec id="s5"><label>5</label>
+<title>Stain Normalization</title>
+<p>Stain normalization techniques involve transforming image pixel values. There are a wide array of techniques in literature, but most involve statistical transformations of images in various color spaces. This paper provides an overview of the four techniques used. University of Warwick&#x2019;s normalization Matlab toolbox contained example implementations of many of these techniques and served as the foundation for processing the training and test datasets.</p>
+<fig id="fig3" position="float" fig-type="figure"><label>Fig. 3.</label>
+<caption><p>Comparison of stain normalization techniques on Case Western Reserve training set. Mean pixel value and standard deviation was calculated for each color channel demonstrating a quantitative change in color composition and increased variance.</p></caption>
+<graphic xlink:href="296806_fig3.tif"/>
+</fig>
+</sec>
+<sec id="s6"><label>6</label>
+<title>Image segmentation using CNNs</title>
+<p>This section describes the methods used to generate classifier models. The goal was to train a model using one dataset and to test using another. We aimed to perform this approach using different normalization strategies to narrow down on an approach that best reduced variability and improved performance</p>
+<sec id="s6a"><label>6.1</label>
+<title>Model selection</title>
+<p>We first trained and validated the model on the same dataset to make sure that our training procedure was working correctly. For this we used breast tissue slices from [<xref ref-type="bibr" rid="c3">3</xref>]. We split the dataset into 70&#x0025; train and 30&#x0025; validation. We then tried a number of different network architectures, dataset augmentation techniques and patch selection strategies to narrow down on a working approach. These efforts have been briefly outlined in Table X. We chose to use a fully convolutional network instead of a regular fully connected network to enhance throughput and quickly retune the network based on results. We used the Caffe deep learning framework to design these models. The final architecture that was chosen after the validation procedure for this problem was (Conv-BNorm-ReLU)x6 - (Full ConV) - Softmax [<xref ref-type="bibr" rid="c3">3</xref>]. It has extra convolutional layers as compared to a regular Alexnet but only one &#x2018;fully connected&#x2019; layer (that has in this case been transformed into a fully convolutional layer).</p>
+</sec>
+<sec id="s6b"><label>6.2</label>
+<title>Training Dataset</title>
+<p>The training dataset consisted of histological sections of breast tissue. These were all standardized at a resolution of 2000x2000 and a magnification of 20x. We sampled patches from these images in order to develop a pixel level classifier. Patch sizes of 32x32 and 64x64 were experimented with, and we found that a patch size of 64x64 worked best for training. Some of the models experimented with have been listed in Table X.</p>
+<p>However, on training we realized that randomly sampling from non-nuclear regions as defined by the hand annotations was not sufficient. This is because the annotation mask only accounted for a subset of all the nuclei in the image. Thus, there was a significant probability of sampling unannotated nuclei while developing patches for the training set. To address this problem, we used the approach outlined by [<xref ref-type="bibr" rid="c3">3</xref>]. Nuclei are known to absorb greater levels of the eosin (red) stain and so the red channel in the images was enhanced. A negative mask was thus generated defining regions outside of these enhanced red zones that were deemed safe for non-nuclei class patch selection. We also made sure to allocated a third of the non-nuclei patches to boundaries around the nuclei. This ensured that the algorithm was careful to clearly mark out these boundaries and not club nuclei together. The model prediction accuracy benefitted from both these approaches.</p>
+<p>The test set was composed also of breast tissue slices from a dataset provided by the BioImaging lab at UCSB [link]. These were of a much smaller resolution (896 x 768) and are referred to as the the BioSegmentation benchmark. This dataset proved to be exceptionally useful for this problem because the images were quite different from our training set both in terms of image quality and resolution and also in terms of the staining used (more eosin content). This was ideal for our approach since we could see how well the features learnt on a moderately different dataset could transfer to this problem, and most importantly how we could augment that process through better normalization and standardization.</p>
+<p>Patching was not required for the test set because we were using a fully convolutional network. This meant that our model could simply process an entire image in one pass instead of needing it to be broken down into pixelwise patches which involves a lot of redundant and time consuming computation. We used the approach first described by [<xref ref-type="bibr" rid="c15">15</xref>].</p>
+</sec>
+<sec id="s6c"><label>6.3</label>
+<title>Training</title>
+<p>Once our model architecture and dataset generation approach had been finalized, we began to train separate model for each of the normalization scenarios as shown in <xref rid="fig4" ref-type="fig">Fig 4</xref>. We used a batch size of 1000 because that could fit comfortably in our memory (P100 GPU 16GB x 2) and also leave enough room for sharing with other runs. Any further increases in batch size would not result in a performance increase because of memory bandwidth limitations. We initially tested architectures with a considerably large dataset of 2,500,000 images. However, we soon realized that there was a critical flaw in how the binary LMDB databases were being generated which was corrupting all those values, thus we chose to use a slower I/O procedure and a smaller dataset. Since the images from which patching was performed were still the same, we did not feel that the results would be adversely affected by this. From previous experience, the authors expect that merely oversampling from the same dataset would have improved accuracy by not more than a few percentage points, whereas more structured sampling like generating a negative annotation mask as described previously can have a more significant impact.</p>
+<fig id="fig4" position="float" fig-type="figure"><label>Fig. 4.</label>
+<caption><p>Outline of model validation and testing procedure</p></caption>
+<graphic xlink:href="296806_fig4.tif"/>
+</fig>
+<fig id="fig5" position="float" fig-type="figure"><label>Fig. 5.</label>
+<caption><p>Comparison of normalized and unnormalized models</p></caption>
+<graphic xlink:href="296806_fig5.tif"/>
+</fig>
+<p>Most of the models would quickly converge within 5-10 epochs. We allowed each normalization model to run up to 25 epochs just to be sure. There were four models - these corresponded to the four techniques outlined previously: Histogram Equalization (SH), Macenko (MM), Reinhard (RH), Spline Mapping (SM). There was a also of course a model for the unnormalized (Unnorm) case</p>
+</sec>
+</sec>
+<sec id="s7"><label>7</label>
+<title>Results</title>
+<p>Results from the segmentation model were analyzed both visually and using quantitative metrics.</p>
+<sec id="s7a"><label>7.1</label>
+<title>Visual inspection</title>
+<p>The top row in <xref rid="fig6" ref-type="fig">Fig 6</xref> shows the original images after being transformed using the four different stain normalization approaches. We can see that all four images appear different in some respect. For example, HE and RH, which involve stain normalization through working directly with the color values show a noticeable blue tint. This is more pronounced in HE, where non-nuclear regions in the top right of the cell get quite heavily stained with hematoxylin. On the other hand, SM and RH, which both use stain vectors to map an input image to a target space, don&#x2019;t show a blue-ish tint and provide a much more robust transformation that is true to the semantic information of the parent image (eg: treating nuclei and background regions distinctly)</p>
+<fig id="fig6" position="float" fig-type="figure"><label>Fig. 6.</label>
+<caption><p>Comparison of different stain normalization procedures on model performance on test set</p></caption>
+<graphic xlink:href="296806_fig6.tif"/>
+</fig>
+<p>The bottom row looks at the class probability for nuclear regions as predicted by models trained on datasets that were each stain normalized differently. Clearly all four normalized sets perform far better than the unnormalized dataset where almost no nuclei were detected due to the drastic change in staining as compared to what the model had been trained on. HE does pick up most of the nuclei but also a lot of background noise due to its inability to differentiate clearly between different types of staining. RH is also more sensitive to noise but does a better and clearer detection of nuclei as is visible in the clear boundaries. SM clearly performs the best at segmenting nuclei while also being most robust to false positives.</p>
+</sec>
+<sec id="s7b"><label>7.2</label>
+<title>Quantitative assessment</title>
+<p>To perform a more rigorous quantitative assessment, we looked at a range of different metrics calculated over a randomly selected set of 15 test images. This was essential because simply calculating classification accuracy would be insufficient for this sort of segmentation problem. For instance, even if a classifier were to only classify pixels as non-nuclear regions it would still be around 85-90&#x0025; accurate because the vast majority of pixels don&#x2019;t lie within nuclei. Thus, the range of metrics that we calculated helped to characterize model performance from many different perspectives.</p>
+<p>Given the set of all nuclear pixels in the set, recall tells us what fraction of those were picked up by the model. Clearly SM does a great job in this area. SH and RH also do well but when we look at their precision values they are not as high as those for SM. Precision measures how many of the positives that you picked up were actually relevant. This indicates the tendency of SH and RH to pick up more false positives than SM. This trade-off between true and false positives is best captured by the ROC curve (<xref rid="fig7" ref-type="fig">Fig 7</xref>). Here, we see that the unnormalized case doesn&#x2019;t add any value at all while all the normalization scenarios show improved prediction accuracies. SM is the clear winner showing an excellent range of operation at a TPR of &#x00BF;80/90&#x0025; while only allowing an FPR of 50&#x0025;. This is very impressive considering how the model was trained on a staining visually very different from the one in the test data. This difference is quantiatively captured by the AUC. Finally, the F-score is another attempt to capture segmentation accuracy without getting bogged down by all the true negatives. It calculates the intersection of pixels that have been classified as nuclei in both the prediction and the ground truth and it divides that over the union of all pixels classified as nuclei by either set. Again, SM is seen to be the best at improving accuracy of the algorithm.</p>
+<fig id="fig7" position="float" fig-type="figure"><label>Fig. 7.</label>
+<caption><p>ROC Curve for models trained using different stain normalization schemes</p></caption>
+<graphic xlink:href="296806_fig7.tif"/>
+</fig>
+<p>While we aimed to run the same number of epochs for the same images for all the (4&#x002B;1) normalization scenario models that we were testing, due to time constraints before the presentation we ran a few models for lesser than 25 epochs. As we attempted to update the accuracy numbers with newer figures, it led to an interesting finding that the accuracy tended to decrease with increasing number of epochs. This is quite possible given that increased number of epochs leads to a greater chance of overfitting to the training dataset. The goal of our approach is to develop a generalizable approach to move across datasets and so it would be more sensitive to overfitting than a regular model that works on similar looking images.</p>
+<fig id="fig8" position="float" fig-type="figure"><label>Fig. 8.</label>
+<caption><p>Quantitative comparison of model performance where training data has undergone different stain normalization procedures</p></caption>
+<graphic xlink:href="296806_fig8.tif"/>
+</fig>
+</sec>
+</sec>
+<sec id="s8"><label>8</label>
+<title>Discussion</title>
+<p>Through this study, we have explored several stain normalization approaches that were all shown to reduce inter slide variability. The results (particularly AUC, F-score) clearly indicate that using a stain normalization approach increases the performance of the deep learning based segmentation algorithm. We found that SM performed better than all other approaches. We believe this is because it use a non-linear mapping function that is more accurate than the other approaches. It is able to delineate between different regions and map them appropriately to the target space.</p>
+<p>We also noticed that the model seems to perform more poorly in case of normalizations that tend to be biased more towards the eosin channel. In future, it may make sense to normalize the stain of the training dataset using two different approaches. This would push the model to become robust to these subtle changes and be less dependent on any one channel. In fact, this could also be looked at as a regularization approach to enhance generalizability of deep learning based models in this space and prevent overfitting. On the other hand, we must remain conscious of the fact that staining color is a very valuable source of information in histological analyses and reducing the model&#x2019;s recognition of critical differences would prove detrimental. Thus, there is a balance to be achieved here.</p>
+</sec>
+</body>
+<back>
+<sec id="s9"><label>9</label>
+<title>Conclusion</title>
+<p>In this study, we looked at the impact of stain normalization as a means of reducing inter-dataset variability in histological sections and also as a way to improve the accuracy of segmentation algorithms across datasets. We were able to quantify improvements in both domains. To the best of our knowledge, this is the first study that looks at all four of these techniques and assesses their usability in the context of deep learning based segmentation models.</p>
+</sec>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>1.</label><mixed-citation publication-type="journal"><string-name><surname>Ghaznavi</surname>, <given-names>Farzad</given-names></string-name>, <etal>et al.</etal> <article-title>&#x201D;Digital imaging in pathology: whole-slide imaging and beyond.&#x201D;</article-title> <source>Annual Review of Pathology: Mechanisms of Disease</source> <volume>8</volume> (<year>2013</year>): <fpage>331</fpage>&#x2013;<lpage>359</lpage>.</mixed-citation></ref>
+<ref id="c2"><label>2.</label><mixed-citation publication-type="journal"><string-name><surname>Irshad</surname>, <given-names>Humayun</given-names></string-name>, <etal>et al.</etal> <article-title>&#x201D;Methods for nuclei detection, segmentation, and classification in digital histopathology: a review&#x2019;current status and future potential.&#x201D;</article-title> <source>IEEE reviews in biomedical engineering</source> <volume>7</volume> (<year>2014</year>): <fpage>97</fpage>&#x2013;<lpage>114</lpage>.</mixed-citation></ref>
+<ref id="c3"><label>3.</label><mixed-citation publication-type="journal"><string-name><surname>Janowczyk</surname>, <given-names>Andrew</given-names></string-name>, and <string-name><surname>Anant</surname> <given-names>Madabhushi</given-names></string-name>. <article-title>&#x201D;Deep learning for digital pathology image analysis: A comprehensive tutorial with selected use cases.&#x201D;</article-title> <source>Journal of pathology informatics</source> <volume>7</volume> (<year>2016</year>).</mixed-citation></ref>
+<ref id="c4"><label>4.</label><mixed-citation publication-type="journal"><string-name><surname>Basavanhally</surname> <given-names>A</given-names></string-name>, <string-name><surname>Feldman</surname> <given-names>M</given-names></string-name>, <string-name><surname>Shih</surname> <given-names>N</given-names></string-name>, <etal>et al.</etal> <article-title>Multi-field-of-view strategy for image-based outcome prediction of multi-parametric estrogen receptor-positive breast cancer histopathology: Comparison to Oncotype DX</article-title>. <source>Journal of Pathology Informatics</source>. <year>2011</year>;<volume>2</volume>:<fpage>S1</fpage>. doi:<pub-id pub-id-type="doi">10.4103/2153-3539.92027</pub-id>.</mixed-citation></ref>
+<ref id="c5"><label>5.</label><mixed-citation publication-type="journal"><string-name><surname>Khan</surname>, <given-names>Adnan Mujahid</given-names></string-name>, <etal>et al.</etal> <article-title>&#x201D;A nonlinear mapping approach to stain normalization in digital histopathology images using image-specific color deconvolution.&#x201D;</article-title> <source>IEEE Transactions on Biomedical Engineering</source> <volume>61</volume>.<issue>6</issue> (<year>2014</year>): <fpage>1729</fpage>&#x2013;<lpage>1738</lpage>.</mixed-citation></ref>
+<ref id="c6"><label>6.</label><mixed-citation publication-type="website"><string-name><surname>Sabeena Beevi</surname>, <given-names>K.</given-names></string-name>; <string-name><surname>Bindu</surname>, <given-names>G. R.</given-names></string-name>. <article-title>Analysis of Nuclei Detection with Stain Normalization in Histopathology Images</article-title>. <source>Indian Journal of Science and Technology</source>, [S.l.], sep. 2015. ISSN <issn>0974-5645</issn>. Available at: <ext-link ext-link-type="uri" xlink:href="http://www.indjst.org/index.php/indjst/article/view/85321">http://www.indjst.org/index.php/indjst/article/view/85321</ext-link>&#x00BF;. Date accessed: <date-in-citation content-type="access-date">20 May. 2017</date-in-citation>. doi:<pub-id pub-id-type="doi">10.17485/ijst/2015/v8i23/85321</pub-id>.</mixed-citation></ref>
+<ref id="c7"><label>7.</label><mixed-citation publication-type="journal"><string-name><surname>Reinhard</surname>, <given-names>E.</given-names></string-name>, <string-name><surname>Ashikhmin</surname>, <given-names>M.</given-names></string-name>, <string-name><surname>Gooch</surname>, <given-names>B.</given-names></string-name>, &#x0026; <string-name><surname>Shirley</surname>, <given-names>P.</given-names></string-name> (<year>2001</year>). <article-title>Color transfer between images</article-title>. <source>IEEE Computer graphics and applications</source>, <volume>21</volume>(<issue>5</issue>):<fpage>34</fpage>&#x2013;<lpage>41</lpage>.</mixed-citation></ref>
+<ref id="c8"><label>8.</label><mixed-citation publication-type="journal"><string-name><surname>Macenko</surname>, <given-names>M.</given-names></string-name>, <string-name><surname>Niethammer</surname>, <given-names>M.</given-names></string-name>, <string-name><surname>Marron</surname>, <given-names>J. S.</given-names></string-name>, <string-name><surname>Borland</surname>, <given-names>D.</given-names></string-name>, <string-name><surname>Woosley</surname>, <given-names>J. T.</given-names></string-name>, <string-name><surname>Guan</surname>, <given-names>X.</given-names></string-name>, <string-name><surname>Schmitt</surname>, <given-names>XC.</given-names></string-name>, &#x0026; <string-name><surname>Thomas</surname>, <given-names>N. E</given-names></string-name>. (<year>2009</year>, <month>June</month>). <article-title>A Method for Normalizing Histology Slides for Quantitative Analysis</article-title>. In <source>ISBI</source> (Vol. <volume>9</volume>, pp. <fpage>1107</fpage>&#x2013;<lpage>1110</lpage>).</mixed-citation></ref>
+<ref id="c9"><label>9.</label><mixed-citation publication-type="journal"><string-name><surname>Sethi</surname>, <given-names>Amit</given-names></string-name> <etal>et al.</etal> <article-title>&#x2019;Empirical Comparison of Color Normalization Methods for Epithelial-Stromal Classification in H and E Images.&#x2019;</article-title> <source>Journal of Pathology Informatics</source> <volume>7</volume> (<issue>2016</issue>): <fpage>17</fpage>. PMC. Web. 20 May <year>2017</year>.</mixed-citation></ref>
+<ref id="c10"><label>10.</label><mixed-citation publication-type="website"><ext-link ext-link-type="uri" xlink:href="https://www.math.uci.edu/icamp/courses/math77c/demos/histeq.pdf">https://www.math.uci.edu/icamp/courses/math77c/demos/histeq.pdf</ext-link></mixed-citation></ref>
+<ref id="c11"><label>11.</label><mixed-citation publication-type="website"><ext-link ext-link-type="uri" xlink:href="http://www2.warwick.ac.uk/fac/sci/dcs/research/tia/software/sntoolbox">http://www2.warwick.ac.uk/fac/sci/dcs/research/tia/software/sntoolbox</ext-link></mixed-citation></ref>
+<ref id="c12"><label>12.</label><mixed-citation publication-type="website"><ext-link ext-link-type="uri" xlink:href="http://bioimage.ucsb.edu/research/bio-segmentation">http://bioimage.ucsb.edu/research/bio-segmentation</ext-link></mixed-citation></ref>
+<ref id="c13"><label>13.</label><mixed-citation publication-type="website"><string-name><surname>Paramanandam</surname> <given-names>M</given-names></string-name>, <string-name><surname>O&#x2019;Byrne</surname> <given-names>M</given-names></string-name>, <string-name><surname>Ghosh</surname> <given-names>B</given-names></string-name>, <string-name><surname>Mammen</surname> <given-names>JJ</given-names></string-name>, <string-name><surname>Manipadam</surname> <given-names>MT</given-names></string-name>, <string-name><surname>Thamburaj</surname> <given-names>R</given-names></string-name>, <etal>et al.</etal> (<year>2016</year>) <article-title>Automated Segmentation of Nuclei in Breast Cancer Histopathology Images</article-title>. <source>PLoS ONE</source> <volume>11</volume>(<issue>9</issue>): <fpage>e0162053</fpage>. <ext-link ext-link-type="uri" xlink:href="https://doi.org/10.1371/journal.pone.0162053">https://doi.org/10.1371/journal.pone.0162053</ext-link></mixed-citation></ref>
+<ref id="c14"><label>14.</label><mixed-citation publication-type="journal"><string-name><given-names>T. W</given-names>. <surname>Freer</surname></string-name> and <string-name><given-names>M. J</given-names>. <surname>Ulissey</surname></string-name>, <article-title>&#x2019;Screening Mammography with Computer-aided Detection: Prospective Study of 12,860 Patients in a Community Breast Center,&#x2019;</article-title> <source>Radiology</source>, vol. <volume>220</volume>, no. <issue>3</issue>, pp. <fpage>781</fpage>&#x2019;<lpage>786</lpage>, <month>Sep</month>. <year>2001</year>.</mixed-citation></ref>
+<ref id="c15"><label>15.</label><mixed-citation publication-type="book"><string-name><surname>Long</surname>, <given-names>J.</given-names></string-name>, <string-name><surname>Shelhamer</surname>, <given-names>E.</given-names></string-name>, &#x0026; <string-name><surname>Darrell</surname>, <given-names>T.</given-names></string-name> (<year>2015</year>). <chapter-title>Fully convolutional networks for semantic segmentation</chapter-title>. In <publisher-name>Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition</publisher-name> (pp. <fpage>3431</fpage>&#x2013;<lpage>3440</lpage>).</mixed-citation></ref>
+</ref-list>
+</back>
+</article>

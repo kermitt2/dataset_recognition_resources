@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Archiving and Interchange DTD v1.2d1 20170631//EN" "JATS-archivearticle1.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" article-type="article" dtd-version="1.2d1" specific-use="production" xml:lang="en">
+<front>
+<journal-meta>
+<journal-id journal-id-type="publisher-id">BIORXIV</journal-id>
+<journal-title-group>
+<journal-title>bioRxiv</journal-title>
+<abbrev-journal-title abbrev-type="publisher">bioRxiv</abbrev-journal-title>
+</journal-title-group>
+<publisher>
+<publisher-name>Cold Spring Harbor Laboratory</publisher-name>
+</publisher>
+</journal-meta>
+<article-meta>
+<article-id pub-id-type="doi">10.1101/477885</article-id>
+<article-version>1.1</article-version>
+<article-categories>
+<subj-group subj-group-type="author-type">
+<subject>Regular Article</subject>
+</subj-group>
+<subj-group subj-group-type="heading">
+<subject>New Results</subject>
+</subj-group>
+<subj-group subj-group-type="hwp-journal-coll">
+<subject>Bioinformatics</subject>
+</subj-group>
+</article-categories>
+<title-group>
+<article-title>DeepCapTail: A Deep Learning Framework to Predict Capsid and Tail Proteins of Phage Genomes</article-title>
+</title-group>
+<contrib-group>
+<contrib contrib-type="author">
+<contrib-id contrib-id-type="orcid">http://orcid.org/0000-0002-9072-7777</contrib-id>
+<name><surname>Abid</surname><given-names>Dhoha</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<contrib contrib-type="author">
+<name><surname>Zhang</surname><given-names>Liqing</given-names></name>
+<xref ref-type="aff" rid="a1">1</xref>
+</contrib>
+<aff id="a1"><label>1</label><institution>Affiliation Department of Computer Science, Virginia Tech</institution>, Blacksburg, VA, <country>USA</country></aff>
+</contrib-group>
+<pub-date pub-type="epub"><year>2018</year></pub-date>
+<elocation-id>477885</elocation-id>
+<history>
+<date date-type="received">
+<day>23</day>
+<month>11</month>
+<year>2018</year>
+</date>
+<date date-type="rev-recd">
+<day>23</day>
+<month>11</month>
+<year>2018</year>
+</date>
+<date date-type="accepted">
+<day>23</day>
+<month>11</month>
+<year>2018</year>
+</date>
+</history>
+<permissions>
+<copyright-statement>&#x00A9; 2018, Posted by Cold Spring Harbor Laboratory</copyright-statement>
+<copyright-year>2018</copyright-year>
+<license license-type="creative-commons" xlink:href="http://creativecommons.org/licenses/by/4.0/"><license-p>This pre-print is available under a Creative Commons License (Attribution 4.0 International), CC BY 4.0, as described at <ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/4.0/">http://creativecommons.org/licenses/by/4.0/</ext-link></license-p></license>
+</permissions>
+<self-uri xlink:href="477885.pdf" content-type="pdf" xlink:role="full-text"/>
+<abstract>
+<title>Abstract</title>
+<p>The capsid and tail proteins are considered the main structural proteins for phages and also their footprint since they exist only in phage genomes. These proteins are known to lack sequence conservation, making them extremely diverse and thus posing a major challenge to identify and annotate them in genomic sequences. In this study, we aim to overcome this challenge and predict these proteins by using deep neural networks with composition-based features. We develop two models trained with <italic>k</italic>-mer features to predict capsid and tail proteins respectively. Evaluating the models on two different testing sets shows that they outperform state-of-the-art methods with improved F-1 scores.</p>
+</abstract>
+<counts>
+<page-count count="14"/>
+</counts>
+</article-meta>
+</front>
+<body>
+<sec id="s1">
+<title>Introduction</title>
+<p>Phages or bacteriophages are viruses that infect bacteria. These microorganisms can reproduce through two different life cycles, lysogeny and lytic. For the lysogeny cycle, the phage integrates its genome with the bacteria genome and stays there. In this cycle, the phage becomes part of the bacterial genome and replicates together with the bacteria; whereas for the lytic cycle, the phage enters the bacterial cell, uses its machinery to replicate, reproduce new phages, and then lyses the cell membrane to disperse into the environment, resulting in death of the invaded bacterium [<xref rid="c1" ref-type="bibr">1</xref>].</p>
+<p>Phages are getting increasing attention primarily due to the advent of the shotgun metagenomic sequencing. This technology enables comprehensive sampling of the genomes that are present in a given environmental sample, such as soil and seawater, while circumventing the culture of the microorganisms, which is both labor intensive and often infeasible [<xref rid="c2" ref-type="bibr">2</xref>]. Furthermore, there is increasing interest in characterizing the interactions between phages and their bacterial hosts. Understanding the interactions has important implications, one of which is in combating antibiotic resistance in bacteria where phages can be introduced to infect and kill pathogenic bacteria or induced into lytic stage if already integrated in bacteria [<xref rid="c3" ref-type="bibr">3</xref>].</p>
+<p>However, uncovering viral sequences has been challenging. Despite being the most abundant organisms on earth with an estimate of more than 10<sup>30</sup> [<xref rid="c4" ref-type="bibr">4</xref>], only 8108 complete virus genomes are curated at NCBI currently. Consequently, methods for predicting/annotating viral sequences that rely heavily on reference databases, such as the alignment-based methods, are not effective in detecting novel viruses and phages. Indeed, if the input sequence does not align to any sequence in the reference database, it would be annotated as unknown sequences. This problem is further exacerbated by the lack of well established taxonomic and phylogenetic relationships in viruses and phages as they do not have the ribosomal genes that are conserved universal markers in other organisms for phylogenetic classifications [<xref rid="c5" ref-type="bibr">5</xref>].</p>
+<p>To overcome these challenges, composition-based methods were introduced to circumvent the requirement of universal or markers genes [<xref rid="c6" ref-type="bibr">6</xref>&#x2013;<xref rid="c8" ref-type="bibr">8</xref>]. The composition-based methods use the composition of the sequence, such as <italic>k</italic>-mers, as features to train machine learning models and then use the trained models to predict the taxonomy of new sequences. The composition-based prediction methods can make prediction on any sequence even if it does not align to the reference database.</p>
+<p>Many studies built machine learning models to classify a given sequence to either viral or nonviral sequences. For example, Feng et al. trained a naive Bayes classifier with amino acid composition and dipeptide composition as features [<xref rid="c9" ref-type="bibr">9</xref>]. Later, Ding et al. developed PVPred that uses SVM with g-gap dipeptide composition as features and selects the most significant features by analyzing the variance [<xref rid="c10" ref-type="bibr">10</xref>]. Subsequently, Zhang et al. developed a random forest ensemble method with a set of features that include pseudo-amino acid composition (PseAAC) and position-specific scoring matrix (PSSM) [<xref rid="c11" ref-type="bibr">11</xref>]. Recently, Manavalan et al. used SVM with feature selection of amino acid composition to classify sequences as viral or nonviral proteins [<xref rid="c6" ref-type="bibr">6</xref>].</p>
+<p>Other studies focus on models that classify phage protein sequences to either structural or nonstructural proteins. Structural proteins can be either capsid or tail proteins, and nonstructural proteins can be anything else such as viral binding or even bacterial proteins. Capsid and tail proteins are considered the footprint of the phage genome. The tail protein encodes a tail shape protein that acts as a mediator for the phage to attach onto the membrane of the bacteria during infection. The capsid protein encodes a shell structure that encapsulates the phage genetic material. The capsid is known to exist in all sequenced viruses and phages; it protects the phage/virus from degradation by the host enzymes. The capsid also acts as a mediator to infect bacteria by attaching the phage to its host and enabling its penetration through the host membrane.</p>
+<p>These vital roles of capsid and tail proteins motivated Seguritan et al. [<xref rid="c7" ref-type="bibr">7</xref>] to develop iVIREONS to predict them. iVIREONS consists of a set of 30 artificial neural network models that use amino acid frequency and isoelectric as features. However, the set of models can output different predictions for the same input, which challenges the user to determine the correct prediction. More recently, another machine learning model VIRALpro was developed to also predict capsid and tail sequences [<xref rid="c8" ref-type="bibr">8</xref>] using SVM with amino acid frequency and HMM models. VIRALpro outperforms iVIREONS [<xref rid="c8" ref-type="bibr">8</xref>], but is remarkably slower since it uses HMM.</p>
+<p>In this study, we built two machine learning models that also predict capsid and tail proteins respectively. For this purpose, we used the deep neural network models; these models are considered the most modern machine learning models to date, known for their exceptional performance that outperform their predecessors [<xref rid="c12" ref-type="bibr">12</xref>]. They have been extensively used in the fields of computer vision and natural language processing [<xref rid="c12" ref-type="bibr">12</xref>], and only recently gained attention in the field of genomics [<xref rid="c13" ref-type="bibr">13</xref>]. However, to our knowledge, there has not been any study that harnesses the power of these models to predict capsid and tail proteins.</p>
+<p>We propose two distinct deep neural network models that predict capsid and tail phage protein respectively. We trained the models using <italic>k</italic>-mer frequency as features and examined different <italic>k</italic>-mer sizes ranging from one to four. We evaluated the models with two test data sets and compared our models with iVIREONS [<xref rid="c7" ref-type="bibr">7</xref>] and VIRALpro [<xref rid="c8" ref-type="bibr">8</xref>].</p>
+</sec>
+<sec id="s2">
+<title>Materials and Methods</title>
+<sec id="s2a">
+<title>Data Collection</title>
+<p>We collected all the phage and prophage sequences from Phaster [<xref rid="c14" ref-type="bibr">14</xref>]. The Phaster database consists of curated phage and prophage proteins taken from NCBI and the prophage database [<xref rid="c15" ref-type="bibr">15</xref>]. This database is publicly available and regularly updated.</p>
+<p>As of May 2018, Phaster included a total of 260, 403 phage and prophage protein sequences. Redundant sequences (i.e., sequences are identical to each other) were removed, leaving 187, 670 unique sequences. <xref rid="fig1" ref-type="fig">Figure 1</xref> shows the distribution of the protein sequences of Phaster after removing the redundant sequences: 66.38&#x0025; are hypothetical or putative proteins, 9&#x0025; are enzymes, and 16.31&#x0025; are hard to categorize with no clear description. The remaining 8&#x0025; consist of capsid, tail, and nonstructural proteins, and are used in this study.</p>
+<fig id="fig1" position="float" fig-type="figure">
+<label>Fig 1.</label>
+<caption><title>Distribution of protein sequences in Phaster database</title></caption>
+<graphic xlink:href="477885_fig1.tif"/>
+</fig>
+<p>The capsid, tail, and nonstructural proteins were annotated similarly to iVIREONS [<xref rid="c7" ref-type="bibr">7</xref>] and VIRALpro [<xref rid="c8" ref-type="bibr">8</xref>], that is, the description of the fasta files was used to annotate the proteins. For example, if the description contains the word &#x2018;capsid&#x2019;, the corresponding sequence was labeled as capsid protein. Hypothetical or putative sequences were not included to ensure data quality. A comprehensive list of the words used for the annotation is provided in <xref rid="tbl1" ref-type="table">Table 1</xref> of the supplemental material. Thus the annotated proteins include 3, 401 unique capsid proteins, 6, 442 unique tail proteins, and 5, 654 unique nonstructural proteins. These proteins are divided into training and testing sets, as detailed in the next section.</p>
+<table-wrap id="tbl1" orientation="portrait" position="float">
+<label>Table 1.</label>
+<caption><title>Distribution of capsid, tail, and nonstructural protein sequences in the training and testing sets for capsid and tail models.</title></caption>
+<graphic xlink:href="477885_tbl1.tif"/>
+</table-wrap>
+</sec>
+<sec id="s2b">
+<title>Training &#x0026; Testing sets</title>
+<p>The capsid, tail, and nonstructural proteins were split into three sets, one training set and two testing set. The three sets are mutually exclusive, the same protein sequence does not exist in more than one set. The training set is used to train the deep learning models and the two testing sets are used to validate the trained models. We call the first testing set the <italic>representative</italic> testing set because it includes sequences that are similar to the training set. <xref rid="fig2" ref-type="fig">Figures 2a</xref> and <xref rid="fig2" ref-type="fig">2b</xref> show the identity of the best-hits of the representative testing set against the training set. These figures show that the majority of sequences in the representative testing set are highly similar to the training set: 80&#x0025; of these sequences have an identity between 40&#x0025; and 100&#x0025;. The second testing set is the <italic>independent</italic> testing set, including proteins that are less similar to the training set. <xref rid="fig2" ref-type="fig">Figures 2c</xref> and <xref rid="fig2" ref-type="fig">2d</xref> show the identity of the best-hits of the independent testing set against the training set: 60&#x0025; of the sequences in the independent testing set have an identity of less than 20&#x0025;, and more than 30&#x0025; have an identity between 20&#x0025; and 40&#x0025;. These best-hits are generated by blastp: the testing set, whether the representative or the independent set, is the query, and the training set is the subject.</p>
+<fig id="fig2" position="float" fig-type="figure">
+<label>Fig 2.</label>
+<caption><title>Distribution of identity of the best-hits of the testing and training sets.</title>
+<p>Figures 2a and 2b present the best-hits of the representative set against the training set for capsid and tail models respectively, and Figure 2c and 2d show the best-hits of the independent set against the training set for capsid and tail models respectively.</p></caption>
+<graphic xlink:href="477885_fig2.tif"/>
+</fig>
+<p><xref rid="tbl1" ref-type="table">Table 1</xref> shows the number of sequences used in the training and testing sets for capsid and tail models. The training and testing sets are selected randomly (see supplemental Figure 1 for details on how we built these sets).</p>
+</sec>
+<sec id="s2c">
+<title>Extraction of <italic>k</italic>-mer Features</title>
+<p><italic>K</italic>-mer frequencies of the protein sequences were used as features to train the different deep learning models. Various <italic>k</italic>-mer sizes were examined ranging from one to four. <xref rid="tbl2" ref-type="table">Table 2</xref> shows the number of features for every <italic>k</italic>-mer size (e.g., for <italic>k</italic>-mer size &#x2264; 2, we would have 420 features with 20 features for <italic>k</italic>-mer size one and 400 features for <italic>k</italic>-mer size two).</p>
+<table-wrap id="tbl2" orientation="portrait" position="float">
+<label>Table 2.</label>
+<caption><title>number of features based on the <italic>k</italic>-mer size.</title></caption>
+<graphic xlink:href="477885_tbl2.tif"/>
+</table-wrap>
+</sec>
+<sec id="s2d">
+<title>Training Deep Neural Network Models</title>
+<p>Four different deep learning architectures with varying numbers of layers and nodes were investigated: the first model has two layers with 12 and 8 nodes respectively; the second model has four layers with 400, 200, 100, and 50 nodes respectively; the third model has four layers with 600, 300, 150, and 60 nodes respectively; the fourth and most complex model has four layers with 800, 400, 200, and 100 nodes respectively.</p>
+<p>For all models, the following parameters were used: &#x201C;relu&#x201D; as activation function, &#x201C;adam&#x201D; as optimizer, and &#x201C;binary crossentropy&#x201D; as loss function. The models were trained using 150 epochs with a batch size of 10. The architectures as well as the parameters used were determined through extensive experimentation.</p>
+<p>We provide a naming convention for these models in <xref rid="fig3" ref-type="fig">Figure 3</xref>. For example, &#x2018;<italic>Capsid:12:8</italic>&#x2019; predicts capsid proteins and has two layers: 12 nodes in the first layer and eight nodes in the second layer. &#x2018;<italic>Tail:400:200:100:50</italic>&#x2019; predicts tail proteins and has four layers: 400 nodes in the first layer, 200 nodes in the second layer, 100 nodes in the third layer, and 50 nodes in the forth layer.</p>
+<fig id="fig3" position="float" fig-type="figure">
+<label>Fig 3.</label>
+<caption><title>Naming convention of the implemented deep neural network models.</title></caption>
+<graphic xlink:href="477885_fig3.tif"/>
+</fig>
+</sec>
+<sec id="s2e">
+<title>Validation of The Trained Models</title>
+<sec id="s2e1">
+<title>Two Different Testing sets</title>
+<p>To validate the trained models, two different testing sets were used: the representative and independent testing sets. The representative testing set assesses the models when the input sequence is similar to the training set. On the other hand, the independent testing set evaluates the models when the predicted sequence is considerably different from the training set, which mimics the real-world problem of virus annotation where a significant number of new sequences are not similar to the reference database sequences.</p>
+</sec>
+<sec id="s2e2">
+<title>Performance Criteria</title>
+<p>Accuracy, F1-score, Recall, and Precision were used to assess the prediction of the trained models. We present the formula of Accuracy, F1-score, Recall, and Precision in <xref ref-type="disp-formula" rid="eqn1">Equations 1</xref>, <xref ref-type="disp-formula" rid="eqn2">2</xref>, <xref ref-type="disp-formula" rid="eqn3">3</xref>, and <xref ref-type="disp-formula" rid="eqn4">4</xref> respectively:</p>
+<disp-formula id="eqn1">
+<alternatives><graphic xlink:href="477885_eqn1.gif"/></alternatives>
+</disp-formula>
+<disp-formula id="eqn2">
+<alternatives><graphic xlink:href="477885_eqn2.gif"/></alternatives>
+</disp-formula>
+<disp-formula id="eqn3">
+<alternatives><graphic xlink:href="477885_eqn3.gif"/></alternatives>
+</disp-formula>
+<disp-formula id="eqn4">
+<alternatives><graphic xlink:href="477885_eqn4.gif"/></alternatives>
+</disp-formula>
+<p>TP is the number of capsid or tail sequences that are classified correctly, TN is the number of the nonstructural sequences that are classified correctly, FP is the number of the nonstructural sequences that are classified incorrectly (as either capsid or tail), FN is the number of capsid or tail sequences that are classified incorrectly (as nonstructural).</p>
+</sec>
+</sec>
+</sec>
+<sec id="s3">
+<title>Results</title>
+<sec id="s3a">
+<title>Framework of The Proposed Predictor</title>
+<p>DeepCapTail is a publicly available framework that predicts capsid and tail proteins. This framework can be downloaded at <ext-link ext-link-type="uri" xlink:href="https://github.com/Dhooha/DeepCapTail">https://github.com/Dhooha/DeepCapTail</ext-link>. This framework consists of a machine learning project written in Python and uses the scikit-learn library [<xref rid="c16" ref-type="bibr">16</xref>]. <xref rid="fig4" ref-type="fig">Figure 4</xref> shows the steps followed to build DeepCapTail: (1) different deep neural network architectures were investigated with different <italic>k</italic>-mer sizes in order to decide on the most effective architectures as well as <italic>k</italic>-mer sizes; (2) the most effective deep neural networks were used to train capsid and tail models using the training set; (3) these models were tested using two distinct testing sets, dubbed representative and independent testing sets; (4) the best capsid and tail models were selected based on the F1-score.</p>
+<fig id="fig4" position="float" fig-type="figure">
+<label>Fig 4.</label>
+<caption><title>The four steps of DeepCapTail pipeline.</title>
+<p>(1) decide on the most effective deep neural network architecture and <italic>k</italic>-mer features using the performance of 10-fold cross validation; (2) use these most effective architectures and features to train capsid and tail models using the training set; (3) validate these models using two different testing sets: representative and independent testing sets; (4) select the best capsid and tail models based on the F1-score.</p></caption>
+<graphic xlink:href="477885_fig4.tif"/>
+</fig>
+</sec>
+<sec id="s3b">
+<title>Performance of Capsid and Tail Models on The Training set</title>
+<p>Initially it was unclear what would be an applicable deep learning architecture for this problem. For this reason, different deep learning architectures were examined and compared on the training set with 10-fold cross-validation. First, an extremely small deep learning architecture with two layers of 8 and 12 nodes was examined; then, the number of layers as well as the number of nodes was increased until observing an improvement in capsid and tail predictions with the architecture 400:200:100:50 that has four layers. From this, we kept increasing the number of nodes to have the architectures 600:300:150:60 and 800:400:200:100. We also increased the number of layers to five and six, but the performance dropped and therefore we stopped at the architectures with four layers.</p>
+<p><xref rid="fig5" ref-type="fig">Figures 5a</xref> and <xref rid="fig5" ref-type="fig">5b</xref> show the F1-scores of capsid and tail models trained using 10-fold cross-validation on the training set. These models are not exceedingly large, and thus training was done in a timely fashion (e.g., training &#x2018;Capsid 400:200:100:50, &#x2264; 3&#x2019; with 10-fold cross-validation took less than 30 minutes using a high performance computing system: Intel&#x2019;s Broadwell processors (2 x E5-2683v4 2.1GHz) with 128 GB of memory (2400 MHz) and 32 cores). F1-score was reported instead of the accuracy because F1-score is more reliable when the positive and negative classes are imbalanced, which is the case of our data. The next sections show the performance analysis of all the models presented in <xref rid="fig5" ref-type="fig">Figures 5a</xref> and <xref rid="fig5" ref-type="fig">5b</xref>.</p>
+<fig id="fig5" position="float" fig-type="figure">
+<label>Fig 5.</label>
+<caption><title>Box-plots of F1-scores of the capsid and tail models using different</title>
+<p><italic>k</italic><bold>-mer features.</bold> <italic>k</italic>-mer features are not mutually exclusive, in other words, a model trained with <italic>k</italic>-mer &#x2264; 2 has a total of <italic>k</italic>-mer features equal to 420 coming from a total of 20 <italic>k</italic>-mers of size one and 400 <italic>k</italic>-mer of size two. (a) for capsid models and (b) for tail models.</p></caption>
+<graphic xlink:href="477885_fig5.tif"/>
+</fig>
+<p>All the models that use <italic>k</italic>-mer size &#x2264; 4 have either the same or lower F1-scores compared to at least one of the models that use lower <italic>k</italic>-mer sizes and therefore were not considered further for the remaining study (e.g., <xref rid="fig5" ref-type="fig">Figure 5a</xref> indicates that the F1-score median of &#x2018;Capsid 400:200:100:50, &#x2264; 3&#x2019; is 92&#x0025;, whereas, the F1-score median of &#x2018;Capsid 400:200:100:50, &#x2264; 4&#x2019; drops by 3&#x0025;. For tail models, <xref rid="fig5" ref-type="fig">Figures 5b</xref> shows that the F1-score median of &#x2018;Tail:400:200:100:50, &#x2264; 4&#x2019; drops by 1&#x0025; compared to &#x2018;Tail:400:200:100:50, &#x2264; 3&#x2019;). Similarly, the models that have architecture of 12:8 provide the lowest F1-scores compared to all other models and therefore were also not considered in the remaining study (e.g., <xref rid="fig5" ref-type="fig">Figure 5a</xref> shows that the F1-score median of &#x2018;Capsid 12:8, &#x2264; 3&#x2019; is 88&#x0025; compared to 91&#x0025; for &#x2018;Capsid 400:200:100:50, &#x2264; 3&#x2019;. For tail prediction, <xref rid="fig5" ref-type="fig">Figure 5b</xref> indicates that &#x2018;Tail 12:8, &#x2264; 3&#x2019; has an F1-score median of 90&#x0025; compared to 92&#x0025; for the model &#x2018;Tail 400:200:100:50, &#x2264; 3&#x2019;). One can argue that the complexity of the models 400:200:100:50 compared to 12:8 may not justify the little improvement of F1-scores. However, although the models 400:200:100:50 have a higher number of nodes compared to 12:8, they still can be trained in minutes. It takes less than 30 minutes to train &#x2018;Capsid 400:200:100:50, &#x2264; 3&#x2019;. The training step is performed once, then the model is saved to predict capsid proteins in just a few milliseconds. Overall, the models 800:400:200:100 have either similar or lower performance than the smaller models 600:300:150:60 and 400:200:100:50 and therefore were not considered further in the remaining study.</p>
+<p>To summarize, the models 400:200:100:50 and 600:300:150:60 performed better than 12:8 and 800:400:200:100 as well as the models that use <italic>k</italic>-mer size &#x2264; 4. For this reason, models with the architectures 400:200:100:50 and 600:300:150:60 using <italic>k</italic>-mer sizes &#x2264; 1, &#x2264; 2, and &#x2264; 3 were further analyzed. In the next section, these models were evaluated using two different testing sets: the representative and independent testing sets.</p>
+</sec>
+<sec id="s3c">
+<title>Performance of Capsid and Tail models on The Testing sets</title>
+<p>In this part of the study, we trained the deep neural network architectures 400:200:100:50 and 600:300:150:60 with different <italic>k</italic>-mer sizes &#x2264; 1, &#x2264; 2, and &#x2264; 3. Then we evaluated these trained models with two different testing sets: the representative and independent testing sets.</p>
+<sec id="s3c1">
+<title>Using The Representative Testing set</title>
+<p>The representative testing set includes sequences that are highly identical to the training set. It assesses the capsid and tail models when the input sequence happens to be similar to the training sequences. <xref rid="fig6" ref-type="fig">Figures 6a</xref> and <xref rid="fig6" ref-type="fig">6b</xref> show the ROC curves of capsid and tail models using the representative testing set.</p>
+<fig id="fig6" position="float" fig-type="figure">
+<label>Fig 6.</label>
+<caption><title>ROC curves of capsid and tail models using the representative and independent testing sets.</title>
+<p>Figures 6a and 6b are for the evaluation of capsid and tail models using the representative testing set. Figures 6c and 6d are for the evaluation of capsid and tail models using the independent testing set.</p></caption>
+<graphic xlink:href="477885_fig6.tif"/>
+</fig>
+<p><xref rid="fig6" ref-type="fig">Figure 6a</xref> shows that the ROC curves of the different capsid models are extremely similar: their AUCs are between 96&#x0025; and 97&#x0025;. <xref rid="fig6" ref-type="fig">Figure 6b</xref> shows that the ROC curves of the tail models are similar as well: their AUCs are between 93&#x0025; and 97&#x0025;. The AUCs of capsid and tail models using the representative testing set are both greater than 90&#x0025;. A cut-off of 0.5 was used to compute the accuracy, F1-score, recall, and precision of these models; <xref rid="tbl3" ref-type="table">Table 3</xref> shows the results.</p>
+<table-wrap id="tbl3" orientation="portrait" position="float">
+<label>Table 3.</label>
+<caption><title>Evaluation of Accuracy, F1-score, Recall, Precision, and AUC of capsid and tail models using the representative testing set</title></caption>
+<graphic xlink:href="477885_tbl3.tif"/>
+</table-wrap>
+<p><xref rid="tbl3" ref-type="table">Table 3</xref> shows that the capsid and tail models performed exceptionally well on the represented testing set (e.g., F1-scores are equal or higher than 89&#x0025;). The models that use <italic>k</italic>-mer size &#x2264; 2 or &#x2264; 3 outperformed the models that use <italic>k</italic>-mer size &#x2264; 1 (e.g., the F1-score of Capsid 400:200:100:50 using <italic>k</italic>-mer size &#x2264; 2 and &#x2264; 3 is 92&#x0025; compared to 90&#x0025; for the same architecture using <italic>k</italic>-mer size &#x2264; 1). However, it is difficult to know if the models that use <italic>k</italic>-mer size &#x2264; 3 are better than the models that use <italic>k</italic>-mer size &#x2264; 2 since they have the same F1-score. These observations are valid for both capsid and tail models. The next section shows the details on how these models performed differently on the independent testing set.</p>
+</sec>
+<sec id="s3c2">
+<title>Using The Independent Testing set</title>
+<p>The independent testing set is another testing set used to assess the capsid and tail models. Contrarily to the representative testing set, the independent testing set is substantially different from the training set. It evaluates the capsid and tail models when the input sequence happens to be highly divergent from the training sequences, which might be the case of many newly sequenced phage proteins.</p>
+<p><xref rid="fig6" ref-type="fig">Figures 6c</xref> and <xref rid="fig6" ref-type="fig">6d</xref> show the ROC curves of capsid and tail models using the independent testing set. The performance of these models dropped, which is expected because the sequences of the independent testing set are highly divergent from the sequences of the training set (e.g., the AUC of &#x2018;Capsid 400:200:100:50, &#x2264; 3&#x2019; dropped from 97&#x0025; to 81&#x0025;. The AUC of &#x2018;Tail 600:300:150:60, &#x2264; 3&#x2019; dropped from 93&#x0025; to 82&#x0025;). Both capsid and tail AUCs are above 80&#x0025;.</p>
+<p>We compute the accuracy, F1-score, recall, and precision of these models using a cut-off of 0.5. <xref rid="tbl4" ref-type="table">Table 4</xref> shows the results.</p>
+<table-wrap id="tbl4" orientation="portrait" position="float">
+<label>Table 4.</label>
+<caption><title>Evaluation of Accuracy, F1-score, Recall, Precision, AUC of capsid and tail models using the independent set.</title></caption>
+<graphic xlink:href="477885_tbl4.tif"/>
+</table-wrap>
+<p>Contrary to the results of the representative testing set, it is easier to distinguish the best models for capsid and tail predictions using the independent testing set. The best capsid model is &#x2018;Capsid 400:200:100:50, &#x2264; 3&#x2019;, with an accuracy and F1-score of 76&#x0025; and 66&#x0025; respectively. The best tail model is &#x2018;Tail 600:300:150:60, &#x2264; 3&#x2019;, with an accuracy and F1-score of 76&#x0025;. We compare our best models with state-of-the-art prediction programs in the next section.</p>
+</sec>
+</sec>
+<sec id="s3d">
+<title>Performance Comparison of Our Best Capsid and Tail Models with State-Of-The-Art using Two Different Testing sets</title>
+<p>We compare our best capsid model &#x2018;Capsid 400:200:100:50, &#x2264; 3&#x2019; and our best tail model &#x2018;Tail 600:300:150:60, &#x2264; 3&#x2019; with two state-of-the-art programs, iVIREONS [<xref rid="c7" ref-type="bibr">7</xref>] and VIRALpro [<xref rid="c8" ref-type="bibr">8</xref>]. To this end, the representative and independent testing sets were used and results are shown in <xref rid="fig7" ref-type="fig">Figure 7</xref>.</p>
+<fig id="fig7" position="float" fig-type="figure">
+<label>Fig 7.</label>
+<caption><title>Barplot of the accuracy, F1score, recall, and precision of our best capsid and tail models as well as iVIREONS and VIRALpro.</title>
+<p>Figures 7a and 7b evaluate the capsid and tail models using the representative testing set. Figures 7c and 7d evaluate the capsid and tail models using the independent testing.</p></caption>
+<graphic xlink:href="477885_fig7.tif"/>
+</fig>
+<p>Our capsid model &#x2018;Capsid 400:200:100:50, &#x2264; 3&#x2019; and our tail model &#x2018;Tail 600:300:150:60, &#x2264; 3&#x2019; outperform iVIREONS [<xref rid="c7" ref-type="bibr">7</xref>] and VIRALpro [<xref rid="c8" ref-type="bibr">8</xref>] with both the representative and independent testing sets. Using the representative testing set, our capsid model &#x2018;Capsid 400:200:100:50, &#x2264; 3&#x2019; has a F1-score of 92&#x0025; compared to 0&#x0025; and 40&#x0025;, and our tail model &#x2018;Tail 600:300:150:60, &#x2264; 3&#x2019; records a F1-score of 92&#x0025; compared to 73&#x0025; and 0.03&#x0025; for iVIREONS and VIRALpro respectively.</p>
+<p>The successful prediction of most of the sequences in the representative testing set is expected as our models were trained on similar sequences. However, iVIREONS and VIRALpro were trained on sequences that are different from the representative testing set. Supplemental Figure 2 shows that more than 60&#x0025; of the training set of the two models have an identity less than 40&#x0025; to the representative testing set, which can be the reason why they were unable to perform as well as our models.</p>
+<p>However, using the independent testing set, the performance of our models dropped, but still performed better than iVIREONS and VIRALpro. Our capsid model &#x2018;Capsid 400:200:100:50, &#x2264; 3&#x2019; outperforms iVIREONS and VIRALpro with an F1-score of 67&#x0025; compared to 0&#x0025; and 57&#x0025; respectively, and our tail model &#x2018;Tail 600:300:150:60, &#x2264; 3&#x2019; presents an F1-score equal to 76&#x0025; compared to 67&#x0025; and 72&#x0025; for iVIREONS and VIRALpro respectively.</p>
+<p>The performance of our models dropped with the independent testing set because the testing set is substantially different from the sequences used to train the models. The independent testing set is also different from the training set used by both iVIREONS and VIRALpro.</p>
+<p>Supplemental Figure 3 shows that more than 70&#x0025; of the training set used by these models have an identity less than 40&#x0025; to this testing set. This means all of these models are tested on sequences that are different from their training sequences, and for this reason, we consider the independent testing set unbiased compared to the representative testing set.</p>
+</sec>
+<sec id="s3e">
+<title>Performance Comparison of Our Best Capsid and Tail Models with State-Of-The-Art using Viral Metagenomic Data</title>
+<p>We compare the performance of &#x2018;Capsid 400:200:100:50, &#x2264; 3&#x2019; and &#x2018;Tail 600:300:150:60, 3&#x2019; with iVIREONS [<xref rid="c7" ref-type="bibr">7</xref>] and VIRALpro [<xref rid="c8" ref-type="bibr">8</xref>] using viral metagenomic data. We use the same viral metagenomic data that were employed by VIRALpro [<xref rid="c8" ref-type="bibr">8</xref>] to assess their capsid and tail predictors. This data consists of five different metagnomic datasets with no homology to known proteins. These five datasets do not have any capsid or tail annotation, and this is why we cannot compute F1-scores on this dataset. We present relevant details about these datasets in <xref rid="tbl5" ref-type="table">Table 5</xref> (more details on these datasets can be found in [<xref rid="c8" ref-type="bibr">8</xref>]).</p>
+<table-wrap id="tbl5" orientation="portrait" position="float">
+<label>Table 5.</label>
+<caption><title>Overview of the 5 metagenomic datasets that we use to compare our capsid and tail models with the iVIREONS and VIRALpro.</title></caption>
+<graphic xlink:href="477885_tbl5.tif"/>
+</table-wrap>
+<p>We present in <xref rid="fig8" ref-type="fig">Figure 8</xref> the Venn Diagram of capsid and tail predictions using the metagenomic dataset of Oresund Struct. As we detailed in <xref rid="tbl5" ref-type="table">Table 5</xref>, this dataset is identified as structural viral proteins by MS-based proteomics [<xref rid="c8" ref-type="bibr">8</xref>]. For tail prediction, our model as well as iVIREONS and VIRALpro agreed on the prediction of most of the tail sequences: 33 sequences were identified by all these models as tail sequences.</p>
+<fig id="fig8" position="float" fig-type="figure">
+<label>Fig 8.</label>
+<caption><title>Venn Diagram of the capsid and tail predictions of our models as well as iVIREONS and VIRALpro using the metagenomic dataset &#x2018;Oresund Struct&#x2019;.</title>
+<p>Figure 8a presents the number of predicted capsid proteins, and Figure 8b presents the number of predicted tail proteins</p></caption>
+<graphic xlink:href="477885_fig8.tif"/>
+</fig>
+<p>However, for the capsid prediction, our model and the iVIREONS and VIRALpro agreed on the prediction of only two capsid sequences. It is difficult to know if these predictions are correct, since we do not have the annotation of capsid and tail proteins for this metagenomic dataset. The Venm Diagram of the prediction of capsid and tail proteins for the four remaining of metagenomic datasets is shown in the supplemental material.</p>
+</sec>
+</sec>
+<sec id="s4">
+<title>Conclusion</title>
+<p>We proposed the deep learning models &#x2018;Capsid 400:200:100:50, &#x2264; 3&#x2019; and &#x2018;Tail 600:300:150:60, &#x2264; 3&#x2019; that predicts capsid and tail proteins of phages. We evaluated these models using two different testing sets. Our models outperformed the state-of-the-art iVIREONS and VIRALpro, which suggests that our models are more accurate in prediction. We also compared the performance of our models, iVIREONS and VIRALpro using five different viral metagenomic datasets. All of these models agreed on the annotation of some of the capsid and tail proteins; however, it is difficult to assess the accuracy of these models since the correct answer is not known.</p>
+</sec>
+</body>
+<back>
+<ref-list>
+<title>References</title>
+<ref id="c1"><label>1.</label><mixed-citation publication-type="journal"><string-name><surname>Clokie</surname> <given-names>MR</given-names></string-name>, <string-name><surname>Millard</surname> <given-names>AD</given-names></string-name>, <string-name><surname>Letarov</surname> <given-names>AV</given-names></string-name>, <string-name><surname>Heaphy</surname> <given-names>S.</given-names></string-name> <article-title>Phages in nature</article-title>. <source>Bacteriophage</source>. <year>2011</year>;<volume>1</volume>(<issue>1</issue>):<fpage>31</fpage>&#x2013;<lpage>45</lpage>.</mixed-citation></ref>
+<ref id="c2"><label>2.</label><mixed-citation publication-type="journal"><string-name><surname>Thomas</surname> <given-names>T</given-names></string-name>, <string-name><surname>Gilbert</surname> <given-names>J</given-names></string-name>, <string-name><surname>Meyer</surname> <given-names>F.</given-names></string-name> <article-title>Metagenomics-a guide from sampling to data analysis</article-title>. <source>Microbial informatics and experimentation</source>. <year>2012</year>;<volume>2</volume>(<issue>1</issue>):<fpage>3</fpage>.</mixed-citation></ref>
+<ref id="c3"><label>3.</label><mixed-citation publication-type="book"><string-name><surname>Chan</surname> <given-names>BK</given-names></string-name>, <string-name><surname>Abedon</surname> <given-names>ST.</given-names></string-name> <chapter-title>Phage therapy pharmacology: phage cocktails</chapter-title>. In: <source>Advances in applied microbiology</source>. vol. <volume>78</volume>. <publisher-name>Elsevier</publisher-name>; <year>2012</year>. p. <fpage>1</fpage>&#x2013;<lpage>23</lpage>.</mixed-citation></ref>
+<ref id="c4"><label>4.</label><mixed-citation publication-type="journal"><string-name><surname>Suttle</surname> <given-names>CA.</given-names></string-name> <article-title>Marine viruses&#x2014;major players in the global ecosystem</article-title>. <source>Nature Reviews Microbiology</source>. <year>2007</year>;<volume>5</volume>(<issue>10</issue>):<fpage>801</fpage>.</mixed-citation></ref>
+<ref id="c5"><label>5.</label><mixed-citation publication-type="journal"><string-name><surname>Edwards</surname> <given-names>RA</given-names></string-name>, <string-name><surname>Rohwer</surname> <given-names>F.</given-names></string-name> <article-title>Viral metagenomics</article-title>. <source>Nature Reviews Microbiology</source>. <year>2005</year>;<volume>3</volume>(<issue>6</issue>):<fpage>504</fpage>.</mixed-citation></ref>
+<ref id="c6"><label>6.</label><mixed-citation publication-type="journal"><string-name><surname>Manavalan</surname> <given-names>B</given-names></string-name>, <string-name><surname>Shin</surname> <given-names>TH</given-names></string-name>, <string-name><surname>Lee</surname> <given-names>G.</given-names></string-name> <article-title>PVP-SVM: sequence-based prediction of phage virion proteins using a support vector machine</article-title>. <source>Frontiers in microbiology</source>. <year>2018</year>;<volume>9</volume>:<fpage>476</fpage>.</mixed-citation></ref>
+<ref id="c7"><label>7.</label><mixed-citation publication-type="journal"><string-name><surname>Seguritan</surname> <given-names>V</given-names></string-name>, <string-name><surname>Alves</surname> <prefix>Jr</prefix> <given-names>N</given-names></string-name>, <string-name><surname>Arnoult</surname> <given-names>M</given-names></string-name>, <string-name><surname>Raymond</surname> <given-names>A</given-names></string-name>, <string-name><surname>Lorimer</surname> <given-names>D</given-names></string-name>, <string-name><surname>Burgin</surname> <prefix>Jr</prefix> <given-names>AB</given-names></string-name>, <etal>et al.</etal> <article-title>Artificial neural networks trained to detect viral and phage structural proteins</article-title>. <source>PLoS computational biology</source>. <year>2012</year>;<volume>8</volume>(<issue>8</issue>):<fpage>e1002657</fpage>.</mixed-citation></ref>
+<ref id="c8"><label>8.</label><mixed-citation publication-type="journal"><string-name><surname>Galiez</surname> <given-names>C</given-names></string-name>, <string-name><surname>Magnan</surname> <given-names>CN</given-names></string-name>, <string-name><surname>Coste</surname> <given-names>F</given-names></string-name>, <string-name><surname>Baldi</surname> <given-names>P.</given-names></string-name> <article-title>VIRALpro: a tool to identify viral capsid and tail sequences</article-title>. <source>Bioinformatics</source>. <year>2016</year>;<volume>32</volume>(<issue>9</issue>):<fpage>1405</fpage>&#x2013;<lpage>1407</lpage>.</mixed-citation></ref>
+<ref id="c9"><label>9.</label><mixed-citation publication-type="journal"><string-name><surname>Feng</surname> <given-names>PM</given-names></string-name>, <string-name><surname>Ding</surname> <given-names>H</given-names></string-name>, <string-name><surname>Chen</surname> <given-names>W</given-names></string-name>, <string-name><surname>Lin</surname> <given-names>H.</given-names></string-name> <article-title>Naive Bayes classifier with feature selection to identify phage virion proteins</article-title>. <source>Computational and mathematical methods in medicine</source>. <year>2013</year>;<volume>2013</volume>.</mixed-citation></ref>
+<ref id="c10"><label>10.</label><mixed-citation publication-type="journal"><string-name><surname>Ding</surname> <given-names>H</given-names></string-name>, <string-name><surname>Feng</surname> <given-names>PM</given-names></string-name>, <string-name><surname>Chen</surname> <given-names>W</given-names></string-name>, <string-name><surname>Lin</surname> <given-names>H.</given-names></string-name> <article-title>Identification of bacteriophage virion proteins by the ANOVA feature selection and analysis</article-title>. <source>Molecular BioSystems</source>. <year>2014</year>;<volume>10</volume>(<issue>8</issue>):<fpage>2229</fpage>&#x2013;<lpage>2235</lpage>.</mixed-citation></ref>
+<ref id="c11"><label>11.</label><mixed-citation publication-type="journal"><string-name><surname>Zhang</surname> <given-names>L</given-names></string-name>, <string-name><surname>Zhang</surname> <given-names>C</given-names></string-name>, <string-name><surname>Gao</surname> <given-names>R</given-names></string-name>, <string-name><surname>Yang</surname> <given-names>R.</given-names></string-name> <article-title>An ensemble method to distinguish bacteriophage virion from non-virion proteins based on protein sequence characteristics</article-title>. <source>International journal of molecular sciences</source>. <year>2015</year>;<volume>16</volume>(<issue>9</issue>):<fpage>21734</fpage>&#x2013;<lpage>21758</lpage>.</mixed-citation></ref>
+<ref id="c12"><label>12.</label><mixed-citation publication-type="journal"><string-name><surname>LeCun</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Bengio</surname> <given-names>Y</given-names></string-name>, <string-name><surname>Hinton</surname> <given-names>G.</given-names></string-name> <article-title>Deep learning</article-title>. <source>nature</source>. <year>2015</year>;<volume>521</volume>(<issue>7553</issue>):<fpage>436</fpage>.</mixed-citation></ref>
+<ref id="c13"><label>13.</label><mixed-citation publication-type="journal"><string-name><surname>Arango-Argoty</surname> <given-names>G</given-names></string-name>, <string-name><surname>Garner</surname> <given-names>E</given-names></string-name>, <string-name><surname>Pruden</surname> <given-names>A</given-names></string-name>, <string-name><surname>Heath</surname> <given-names>LS</given-names></string-name>, <string-name><surname>Vikesland</surname> <given-names>P</given-names></string-name>, <string-name><surname>Zhang</surname> <given-names>L.</given-names></string-name> <article-title>DeepARG: a deep learning approach for predicting antibiotic resistance genes from metagenomic data</article-title>. <source>Microbiome</source>. <year>2018</year>;<volume>6</volume>(<issue>1</issue>):<fpage>23</fpage>.</mixed-citation></ref>
+<ref id="c14"><label>14.</label><mixed-citation publication-type="journal"><string-name><surname>Arndt</surname> <given-names>D</given-names></string-name>, <string-name><surname>Grant</surname> <given-names>JR</given-names></string-name>, <string-name><surname>Marcu</surname> <given-names>A</given-names></string-name>, <string-name><surname>Sajed</surname> <given-names>T</given-names></string-name>, <string-name><surname>Pon</surname> <given-names>A</given-names></string-name>, <string-name><surname>Liang</surname> <given-names>Y</given-names></string-name>, <etal>et al.</etal> <article-title>PHASTER: a better, faster version of the PHAST phage search tool</article-title>. <source>Nucleic acids research</source>. <year>2016</year>;<volume>44</volume>(<issue>W1</issue>):<fpage>W16</fpage>&#x2013;<lpage>W21</lpage>.</mixed-citation></ref>
+<ref id="c15"><label>15.</label><mixed-citation publication-type="book"><string-name><surname>Srividhya</surname> <given-names>K</given-names></string-name>, <string-name><surname>Rao</surname> <given-names>GV</given-names></string-name>, <string-name><surname>Raghavenderan</surname> <given-names>L</given-names></string-name>, <string-name><surname>Mehta</surname> <given-names>P</given-names></string-name>, <string-name><surname>Prilusky</surname> <given-names>J</given-names></string-name>, <string-name><surname>Manicka</surname> <given-names>S</given-names></string-name>, <etal>et al.</etal> <chapter-title>Database and comparative identification of prophages</chapter-title>. In: <source>Intelligent Control and Automation</source>. <publisher-name>Springer</publisher-name>; <year>2006</year>. p. <fpage>863</fpage>&#x2013;<lpage>868</lpage>.</mixed-citation></ref>
+<ref id="c16"><label>16.</label><mixed-citation publication-type="journal"><string-name><surname>Pedregosa</surname> <given-names>F</given-names></string-name>, <string-name><surname>Varoquaux</surname> <given-names>G</given-names></string-name>, <string-name><surname>Gramfort</surname> <given-names>A</given-names></string-name>, <string-name><surname>Michel</surname> <given-names>V</given-names></string-name>, <string-name><surname>Thirion</surname> <given-names>B</given-names></string-name>, <string-name><surname>Grisel</surname> <given-names>O</given-names></string-name>, <etal>et al.</etal> <article-title>Scikit-learn: Machine Learning in Python</article-title>. <source>Journal of Machine Learning Research</source>. <year>2011</year>;<volume>12</volume>:<fpage>2825</fpage>&#x2013;<lpage>2830</lpage>.</mixed-citation></ref>
+</ref-list>
+</back>
+</article>
