@@ -1,0 +1,1546 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD Journal Archiving and Interchange DTD v3.0 20080202//EN" "archivearticle3.dtd">
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML" article-type="research-article">
+  <?DTDIdentifier.IdentifierValue article.dtd?>
+  <?DTDIdentifier.IdentifierType system?>
+  <?SourceDTD.DTDName article.dtd?>
+  <?SourceDTD.Version 1.0?>
+  <?ConverterInfo.XSLTName bmc2nlmx2.xsl?>
+  <?ConverterInfo.Version 2?>
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="nlm-ta">BioData Min</journal-id>
+      <journal-title-group>
+        <journal-title>BioData Mining</journal-title>
+      </journal-title-group>
+      <issn pub-type="epub">1756-0381</issn>
+      <publisher>
+        <publisher-name>BioMed Central</publisher-name>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="pmc">3108918</article-id>
+      <article-id pub-id-type="publisher-id">1756-0381-4-11</article-id>
+      <article-id pub-id-type="pmid">21545716</article-id>
+      <article-id pub-id-type="doi">10.1186/1756-0381-4-11</article-id>
+      <article-categories>
+        <subj-group subj-group-type="heading">
+          <subject>Research</subject>
+        </subj-group>
+      </article-categories>
+      <title-group>
+        <article-title>The effects of linkage disequilibrium in large scale SNP datasets for MDR</article-title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author" id="A1">
+          <name>
+            <surname>Grady</surname>
+            <given-names>Benjamin J</given-names>
+          </name>
+          <xref ref-type="aff" rid="I1">1</xref>
+          <email>benjamin.j.grady@vanderbilt.edu</email>
+        </contrib>
+        <contrib contrib-type="author" id="A2">
+          <name>
+            <surname>Torstenson</surname>
+            <given-names>Eric S</given-names>
+          </name>
+          <xref ref-type="aff" rid="I1">1</xref>
+          <email>torstenson@chgr.mc.vanderbilt.edu</email>
+        </contrib>
+        <contrib contrib-type="author" corresp="yes" id="A3">
+          <name>
+            <surname>Ritchie</surname>
+            <given-names>Marylyn D</given-names>
+          </name>
+          <xref ref-type="aff" rid="I1">1</xref>
+          <email>ritchie@chgr.mc.vanderbilt.edu</email>
+        </contrib>
+      </contrib-group>
+      <aff id="I1"><label>1</label>Center for Human Genetics Research, Vanderbilt University Medical Center, Nashville, TN 37232, USA</aff>
+      <pub-date pub-type="collection">
+        <year>2011</year>
+      </pub-date>
+      <pub-date pub-type="epub">
+        <day>5</day>
+        <month>5</month>
+        <year>2011</year>
+      </pub-date>
+      <volume>4</volume>
+      <fpage>11</fpage>
+      <lpage>11</lpage>
+      <history>
+        <date date-type="received">
+          <day>13</day>
+          <month>1</month>
+          <year>2011</year>
+        </date>
+        <date date-type="accepted">
+          <day>5</day>
+          <month>5</month>
+          <year>2011</year>
+        </date>
+      </history>
+      <permissions>
+        <copyright-statement>Copyright &#xA9;2011 Grady et al; licensee BioMed Central Ltd.</copyright-statement>
+        <copyright-year>2011</copyright-year>
+        <copyright-holder>Grady et al; licensee BioMed Central Ltd.</copyright-holder>
+        <license license-type="open-access" xlink:href="http://creativecommons.org/licenses/by/2.0">
+          <license-p>This is an Open Access article distributed under the terms of the Creative Commons Attribution License (<ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/2.0">http://creativecommons.org/licenses/by/2.0</ext-link>), which permits unrestricted use, distribution, and reproduction in any medium, provided the original work is properly cited.</license-p>
+        </license>
+      </permissions>
+      <self-uri xlink:href="http://www.biodatamining.org/content/4/1/11"/>
+      <abstract>
+        <sec>
+          <title>Background</title>
+          <p>In the analysis of large-scale genomic datasets, an important consideration is the power of analytical methods to identify accurate predictive models of disease. When trying to assess sensitivity from such analytical methods, a confounding factor up to this point has been the presence of linkage disequilibrium (LD). In this study, we examined the effect of LD on the sensitivity of the Multifactor Dimensionality Reduction (MDR) software package.</p>
+        </sec>
+        <sec>
+          <title>Results</title>
+          <p>Four relative amounts of LD were simulated in multiple one- and two-locus scenarios for which the position of the functional SNP(s) within LD blocks varied. Simulated data was analyzed with MDR to determine the sensitivity of the method in different contexts, where the sensitivity of the method was gauged as the number of times out of 100 that the method identifies the correct one- or two-locus model as the best overall model. As the amount of LD increases, the sensitivity of MDR to detect the correct functional SNP drops but the sensitivity to detect the disease signal and find an indirect association increases.</p>
+        </sec>
+        <sec>
+          <title>Conclusions</title>
+          <p>Higher levels of LD begin to confound the MDR algorithm and lead to a drop in sensitivity with respect to the identification of a direct association; it does not, however, affect the ability to detect indirect association. Careful examination of the solution models generated by MDR reveals that MDR can identify loci in the correct LD block; though it is not always the functional SNP. As such, the results of MDR analysis in datasets with LD should be carefully examined to consider the underlying LD structure of the dataset.</p>
+        </sec>
+      </abstract>
+    </article-meta>
+  </front>
+  <body>
+    <sec>
+      <title>Introduction</title>
+      <p>Linkage disequilibrium (LD) is defined as the nonrandom association of alleles at two or more loci [<xref ref-type="bibr" rid="B1">1</xref>]. The concept of LD and the statistics used to measure it relate directly to the frequency of ancestral recombination events which have separated the loci between which calculations are made. Frequent recombination between loci of genetic variation will result in linkage equilibrium. Thus it is often the case that when there is LD, it is due to physically linked genetic variants. LD can also result from population genetic events such as admixture and natural selection. GWAS take advantage of LD to be able to identify indirect associations but also suffer from strong LD over large genomic regions. The problem with LD in genomic data and its ability to confound analysis is illustrated by the human leukocyte antigen (HLA) locus, which was at the heart of several early spurious associations with susceptibility to immunological and infectious diseases as a result of 3 cM of high LD around the locus [<xref ref-type="bibr" rid="B2">2</xref>]. This example shows how long-range LD can confound analysis methods in their attempt to precisely identify loci associated with risk for disease.</p>
+      <p>While there are multiple statistics which can be used to measure the degree of LD between alleles at two genetic variants, the two which have become most popular in genetic epidemiology are r<sup>2 </sup>and D'. Both statistics are based around D, the coefficient of disequilibrium. The value of D is the product of the frequencies of the alleles of interest at loci A and B subtracted from the frequency of chromosomes or gametes carrying both alleles (Figure <xref ref-type="fig" rid="F1">1</xref>) [<xref ref-type="bibr" rid="B1">1</xref>]. D' is the value of D divided by the absolute value of the maximum possible value D could take on given the allele frequencies and is thus a normalized statistic comparable between allelic pairs. The r<sup>2 </sup>statistic is a correlation coefficient between the two alleles and will only be large if both are similar in frequency. For D, D' and r<sup>2</sup>, a value of zero is expected under the null hypothesis of no allelic association. While D can be negative or positive, both D' and r<sup>2 </sup>range between zero and one. A value of one for D' indicates perfect disequilbrium as it relates to the absence of at least one of the expected haplotypes which would be possible given the alleles at the two loci. If r<sup>2 </sup>takes the value of one, it means that the alleles at the two loci are perfectly correlated and are thus also in perfect disequilibrium. It is possible to have r<sup>2 </sup>&lt; 1 given D' = 1 but not the reciprocal. While the concept of linkage disequilibrium and the statistics used to describe it are specific to genetics, the phenomenon can more generally be considered as the presence of correlation between variables when thought of in regards to data mining and analysis methods.</p>
+      <fig id="F1" position="float">
+        <label>Figure 1</label>
+        <caption>
+          <p><bold>Statistics used to measure LD</bold>. Equations to calculate statistics commonly used to measure the degree of LD in genetic data.</p>
+        </caption>
+        <graphic xlink:href="1756-0381-4-11-1"/>
+      </fig>
+      <p>Multifactor Dimensionality Reduction (MDR) is an analysis method designed to detect multi-locus interactions in large datasets. The MDR algorithm searches exhaustively among a set of categorical variables such as genotypes for interactions up to a specified order of degree (e.g. 2-way, 3-way). For each interaction model up to the specified level of complexity, each intersection of the potential values for the variables in the model is labeled as high risk or low risk based on the ratio of cases to controls who possess the intersection of values for the variables under examination (e.g. the AABB multi-locus genotype). The accuracy of this classification is then used as a metric of model importance, including the predictive value of the model in unseen data through the use of N-fold cross validation [<xref ref-type="bibr" rid="B3">3</xref>]. The design of the MDR algorithm renders it capable of detecting even those interactions for which the categorical variables have no detectable marginal effects. MDR has been used frequently in the field of genetic epidemiology - in the study of diseases such as Breast Cancer [<xref ref-type="bibr" rid="B3">3</xref>-<xref ref-type="bibr" rid="B5">5</xref>], Schizophrenia [<xref ref-type="bibr" rid="B6">6</xref>], and Type 2 Diabetes [<xref ref-type="bibr" rid="B7">7</xref>] - to search for interactions between single nucleotide polymorphisms (SNPs) implicating biological interactions of etiological significance. The performance of MDR has been examined in the presence of genetic heterogeneity, phenocopy and missing data but not in the presence of LD [<xref ref-type="bibr" rid="B8">8</xref>]. The goal of this study was to determine the sensitivity of MDR to detect the disease signal of functional loci in varying amounts of LD. Data ranging from low to high LD amounts were simulated using a forward-time genomic simulator (Figure <xref ref-type="fig" rid="F2">2</xref>). Cases and controls were subsequently drawn to by taking two chromosomes from a pool of simulated chromosomes and applying a penetrance function describing the probability of disease given the single- or multi-locus genotype present at the functional variant(s). The functional variants responsible for disease etiology were chosen to satisfy requirements of LD structure with surrounding SNPs and allele frequency (Figure <xref ref-type="fig" rid="F3">3</xref>). One hundred datasets with 1000 cases and 1000 controls were generated for each model. The resulting datasets were then analyzed with MDR and the sensitivity of the method was measured.</p>
+      <fig id="F2" position="float">
+        <label>Figure 2</label>
+        <caption>
+          <p><bold>Data pools of differing LD amounts</bold>. The four different data pools used to generate data. A) 40% LD B) 60% LD C) 80% LD D) 95% LD.</p>
+        </caption>
+        <graphic xlink:href="1756-0381-4-11-2"/>
+      </fig>
+      <fig id="F3" position="float">
+        <label>Figure 3</label>
+        <caption>
+          <p><bold>Description of functional locus scenarios</bold>. The five types of scenarios utilized in each population, where the green arrow indicates the disease susceptibility locus (or loci) and called LD blocks are outlined in black. A) One SNP in the middle of an LD block. B) One SNP in the center of a block of LD. C) Two SNPs in an epistatic interaction in separate LD blocks. D) Two interacting SNPs, one in a block of LD and one outside. E) Two interacting SNPs in the same block of LD.</p>
+        </caption>
+        <graphic xlink:href="1756-0381-4-11-3"/>
+      </fig>
+    </sec>
+    <sec>
+      <title>Results</title>
+      <sec>
+        <title>Analysis of One-Locus Models</title>
+        <p>Two single-locus models each with three effect sizes were simulated with genomeSIMLA and analyzed with MDR. Due to the presence of only small differences in sensitivity between the three effect sizes tested, the mean sensitivity across the effect sizes is used for comparison. The scenario in which the functional SNP is removed from the dataset prior to analysis was also examined. Results of these analyses are shown in Table <xref ref-type="table" rid="T1">1</xref>. In all amounts of LD, the signal sensitivity did not differ largely between model types or amounts of LD and was usually above 90 for all effect sizes. The exact sensitivity, however, varied highly depending on the amount of LD. When 40% or 60% of the SNPs in the dataset were in high LD with at least one other SNP, the exact sensitivity was nearly equivalent to the signal sensitivity and was greater than 90. When there was a greater amount of LD, as in the 80% LD and 95% LD cases, the exact sensitivity dropped far below the signal sensitivity. The difference in exact sensitivities between the one-locus models also became more pronounced. In 80% LD, the signal sensitivity was 91 over the effect sizes for the case with a SNP at the edge of a block of LD and 91.7 when the SNP was in the middle of the block. The exact sensitivities for these same models were 24.3 and 70 respectively. For one-locus models in 95% LD, the signal sensitivity was 88.7 with a SNP at the edge of a block and 89.3 for a SNP in the middle of a block while the exact sensitivities were 21 and 0 respectively. The trends present in the one-locus models are illustrated in Figure <xref ref-type="fig" rid="F4">4</xref>. In general, the inaccuracies that detracted from the sensitivity scores in MDR were due to two-locus models being chosen in place of a one-locus model which was not counted towards detection sensitivity even if the functional locus was in this model.</p>
+        <table-wrap id="T1" position="float">
+          <label>Table 1</label>
+          <caption>
+            <p>Sensitivity of MDR to detect one-locus disease models</p>
+          </caption>
+          <table frame="hsides" rules="groups">
+            <thead>
+              <tr>
+                <th align="center">Scenario</th>
+                <th align="center">Relative LD</th>
+                <th align="center">Effect Size</th>
+                <th align="center">Exact Sensitivity</th>
+                <th align="center">Signal Sensitivity</th>
+                <th align="center">Signal Sensitivity when Functional SNP Dropped</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td align="center">SNP at Edge of LD Block</td>
+                <td align="center">40%</td>
+                <td align="center">1.5 OR</td>
+                <td align="center">86</td>
+                <td align="center">87</td>
+                <td align="center">4</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="4">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">2.0 OR</td>
+                <td align="center">96</td>
+                <td align="center">96</td>
+                <td align="center">7</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="4">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">3.0 OR</td>
+                <td align="center">94</td>
+                <td align="center">94</td>
+                <td align="center">10</td>
+              </tr>
+              <tr>
+                <td/>
+                <td colspan="5">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td align="center">60%</td>
+                <td align="center">1.5 OR</td>
+                <td align="center">85</td>
+                <td align="center">93</td>
+                <td align="center">71</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="4">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">2.0 OR</td>
+                <td align="center">97</td>
+                <td align="center">99</td>
+                <td align="center">67</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="4">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">3.0 OR</td>
+                <td align="center">96</td>
+                <td align="center">96</td>
+                <td align="center">49</td>
+              </tr>
+              <tr>
+                <td/>
+                <td colspan="5">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td align="center">80%</td>
+                <td align="center">1.5 OR</td>
+                <td align="center">23</td>
+                <td align="center">90</td>
+                <td align="center">90</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="4">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">2.0 OR</td>
+                <td align="center">22</td>
+                <td align="center">91</td>
+                <td align="center">91</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="4">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">3.0 OR</td>
+                <td align="center">28</td>
+                <td align="center">92</td>
+                <td align="center">92</td>
+              </tr>
+              <tr>
+                <td/>
+                <td colspan="5">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td align="center">95%</td>
+                <td align="center">1.5 OR</td>
+                <td align="center">14</td>
+                <td align="center">82</td>
+                <td align="center">84</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="4">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">2.0 OR</td>
+                <td align="center">25</td>
+                <td align="center">90</td>
+                <td align="center">90</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="4">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">3.0 OR</td>
+                <td align="center">24</td>
+                <td align="center">94</td>
+                <td align="center">95</td>
+              </tr>
+              <tr>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td align="center">SNP in Middle of LD Block</td>
+                <td align="center">40%</td>
+                <td align="center">1.5 OR</td>
+                <td align="center">76</td>
+                <td align="center">80</td>
+                <td align="center">14</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="4">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">2.0 OR</td>
+                <td align="center">92</td>
+                <td align="center">92</td>
+                <td align="center">10</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="4">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">3.0 OR</td>
+                <td align="center">95</td>
+                <td align="center">95</td>
+                <td align="center">5</td>
+              </tr>
+              <tr>
+                <td/>
+                <td colspan="5">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td align="center">60%</td>
+                <td align="center">1.5 OR</td>
+                <td align="center">58</td>
+                <td align="center">90</td>
+                <td align="center">92</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="4">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">2.0 OR</td>
+                <td align="center">75</td>
+                <td align="center">99</td>
+                <td align="center">99</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="4">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">3.0 OR</td>
+                <td align="center">73</td>
+                <td align="center">93</td>
+                <td align="center">94</td>
+              </tr>
+              <tr>
+                <td/>
+                <td colspan="5">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td align="center">80%</td>
+                <td align="center">1.5 OR</td>
+                <td align="center">54</td>
+                <td align="center">88</td>
+                <td align="center">87</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="4">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">2.0 OR</td>
+                <td align="center">72</td>
+                <td align="center">93</td>
+                <td align="center">96</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="4">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">3.0 OR</td>
+                <td align="center">84</td>
+                <td align="center">94</td>
+                <td align="center">93</td>
+              </tr>
+              <tr>
+                <td/>
+                <td colspan="5">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td align="center">95%</td>
+                <td align="center">1.5 OR</td>
+                <td align="center">0</td>
+                <td align="center">92</td>
+                <td align="center">92</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="4">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">2.0 OR</td>
+                <td align="center">0</td>
+                <td align="center">83</td>
+                <td align="center">83</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="4">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">3.0 OR</td>
+                <td align="center">0</td>
+                <td align="center">93</td>
+                <td align="center">93</td>
+              </tr>
+            </tbody>
+          </table>
+          <table-wrap-foot>
+            <p>The exact sensitivity, signal sensitivity and sensitivity with functional SNP removed, for MDR to identify a disease signal in data with 40% to 95% LD under two one-locus scenarios.</p>
+          </table-wrap-foot>
+        </table-wrap>
+        <fig id="F4" position="float">
+          <label>Figure 4</label>
+          <caption>
+            <p><bold>Sensitivity of MDR for one-locus disease models</bold>. The sensitivity of MDR to detect the functional one-locus model exactly, indirectly, and in the absence of the functional SNP when analyzing data with 40% LD, 60% LD, 80% LD or 95% LD and attempting to identify a signal in different positions of a block of LD.</p>
+          </caption>
+          <graphic xlink:href="1756-0381-4-11-4"/>
+        </fig>
+        <p>When the functional SNP was removed prior to MDR analysis, the results changed primarily for the models in populations with lower amounts of LD. With this functional SNP removed, it was no longer possible to measure the exact sensitivity and so only the signal sensitivity was examined. For the 40% LD situation, the mean sensitivity was 7 and 9.7 respectively when the SNP was located at the edge and middle of an LD block. In the 60% datasets, signal sensitivities of 62.3 and 95 were observed for detecting a SNP at the edge and middle of a block respectively. When the functional SNP was removed in 80% LD and 95% LD instances, the signal sensitivities remained the same as with the susceptibility locus in place with few small exceptions. With the functional locus dropped before analysis, the reason for decreased sensitivity in low LD models is due mostly to detection of SNPs with LD to the functional SNP below the 0.90 D' threshold.</p>
+      </sec>
+      <sec>
+        <title>Analysis of Two-Locus Models</title>
+        <p>Three types of two-locus epistatic interactions were examined: two SNPs in different blocks of LD, two SNPs in the same block of LD, two SNPs with one SNP inside an LD block and the other outside of any called block of LD. The instance in which two SNPs were in the same block of LD was not possible to simulate from the 40% LD data pool due to the lack of sufficiently large LD blocks. For each model, effect sizes of 5%, 10% and 15% broad-sense heritability were simulated. Each disease model was purely epistatic, meaning that there should be no detectable marginal effect from either functional SNP. For all two-locus models, analysis was run as described followed by a progression of removing one, the other, and finally both functional SNPs. The goal of this series of experiments is to determine whether or not MDR can detect the underlying genetic signal using LD (i.e. indirect association), or if it is limited in sensitivity to do so. The results of these MDR analyses are shown in Table <xref ref-type="table" rid="T2">2</xref> and trends in the data are illustrated in Figure <xref ref-type="fig" rid="F5">5</xref>. The case in which two functional SNPs were separated in two different LD blocks and the case where only one functional SNP resided in an LD block displayed similar trends. First, the sensitivity of MDR for most models increased proportionally with effect size from 5% to 15% heritability but not significantly between 15% and 25% heritability. MDR had high signal sensitivity in both low and high LD while exact sensitivity dropped in high LD datasets with two loci in separate LD blocks or only one locus in an LD block. In addition, the ability to detect the disease signals in absence of the actual functional SNPs increased with the amount of LD in the dataset. Surprisingly, when the SNP not in an LD block (SNP1) was dropped from high LD datasets before analysis, there was still considerable signal sensitivity. This phenomenon is most likely the result of patterns of long-range LD (not necessarily considered part of an LD block). With the exception of the models with lowest LD amounts, there was little difference in the signal sensitivities between analyses with one or both functional SNPs removed. Interestingly in some instances, there was more sensitivity with both SNPs removed than with the removal of only the second SNP. Once again, in many cases the drop in signal sensitivity with functional SNPs dropped results from selection of SNPs in LD below the threshold with the functional SNPs.</p>
+        <table-wrap id="T2" position="float">
+          <label>Table 2</label>
+          <caption>
+            <p>Sensitivity of MDR to detect two-locus disease models</p>
+          </caption>
+          <table frame="hsides" rules="groups">
+            <thead>
+              <tr>
+                <th align="center">Scenario</th>
+                <th align="center">Relative LD</th>
+                <th align="center">Broad-Sense Heritability</th>
+                <th align="center">Exact Sensitivity</th>
+                <th align="center">Signal Sensitivity</th>
+                <th align="center">Signal Sensitivity when SNP1 Dropped</th>
+                <th align="center">Signal Sensitivity when SNP2 Dropped</th>
+                <th align="center">Signal Sensitivity when both SNPs Dropped</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td align="center">One SNP in LD Block and One Outside</td>
+                <td align="center">40%</td>
+                <td align="center">5%</td>
+                <td align="center">77</td>
+                <td align="center">81</td>
+                <td align="center">22</td>
+                <td align="center">44</td>
+                <td align="center">7</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">15%</td>
+                <td align="center">100</td>
+                <td align="center">100</td>
+                <td align="center">3</td>
+                <td align="center">31</td>
+                <td align="center">1</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">25%</td>
+                <td align="center">100</td>
+                <td align="center">100</td>
+                <td align="center">0</td>
+                <td align="center">23</td>
+                <td align="center">0</td>
+              </tr>
+              <tr>
+                <td/>
+                <td colspan="7">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td align="center">60%</td>
+                <td align="center">5%</td>
+                <td align="center">83</td>
+                <td align="center">96</td>
+                <td align="center">91</td>
+                <td align="center">100</td>
+                <td align="center">97</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">15%</td>
+                <td align="center">97</td>
+                <td align="center">100</td>
+                <td align="center">98</td>
+                <td align="center">100</td>
+                <td align="center">97</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">25%</td>
+                <td align="center">99</td>
+                <td align="center">100</td>
+                <td align="center">100</td>
+                <td align="center">100</td>
+                <td align="center">100</td>
+              </tr>
+              <tr>
+                <td/>
+                <td colspan="7">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td align="center">80%</td>
+                <td align="center">5%</td>
+                <td align="center">11</td>
+                <td align="center">65</td>
+                <td align="center">63</td>
+                <td align="center">60</td>
+                <td align="center">63</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">15%</td>
+                <td align="center">77</td>
+                <td align="center">97</td>
+                <td align="center">99</td>
+                <td align="center">84</td>
+                <td align="center">86</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">25%</td>
+                <td align="center">86</td>
+                <td align="center">98</td>
+                <td align="center">99</td>
+                <td align="center">83</td>
+                <td align="center">86</td>
+              </tr>
+              <tr>
+                <td/>
+                <td colspan="7">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td align="center">95%</td>
+                <td align="center">5%</td>
+                <td align="center">0</td>
+                <td align="center">80</td>
+                <td align="center">63</td>
+                <td align="center">80</td>
+                <td align="center">63</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">15%</td>
+                <td align="center">0</td>
+                <td align="center">95</td>
+                <td align="center">88</td>
+                <td align="center">95</td>
+                <td align="center">88</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">25%</td>
+                <td align="center">0</td>
+                <td align="center">89</td>
+                <td align="center">87</td>
+                <td align="center">89</td>
+                <td align="center">87</td>
+              </tr>
+              <tr>
+                <td colspan="8">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td align="center">Two SNPs in Separa te LD Blocks</td>
+                <td align="center">40%</td>
+                <td align="center">5%</td>
+                <td align="center">91</td>
+                <td align="center">97</td>
+                <td align="center">8</td>
+                <td align="center">52</td>
+                <td align="center">1</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">15%</td>
+                <td align="center">100</td>
+                <td align="center">100</td>
+                <td align="center">3</td>
+                <td align="center">34</td>
+                <td align="center">1</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">25%</td>
+                <td align="center">100</td>
+                <td align="center">100</td>
+                <td align="center">2</td>
+                <td align="center">26</td>
+                <td align="center">0</td>
+              </tr>
+              <tr>
+                <td/>
+                <td colspan="7">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td align="center">60%</td>
+                <td align="center">5%</td>
+                <td align="center">88</td>
+                <td align="center">98</td>
+                <td align="center">100</td>
+                <td align="center">95</td>
+                <td align="center">96</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">15%</td>
+                <td align="center">91</td>
+                <td align="center">96</td>
+                <td align="center">100</td>
+                <td align="center">97</td>
+                <td align="center">100</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">25%</td>
+                <td align="center">94</td>
+                <td align="center">97</td>
+                <td align="center">100</td>
+                <td align="center">95</td>
+                <td align="center">99</td>
+              </tr>
+              <tr>
+                <td/>
+                <td colspan="7">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td align="center">80%</td>
+                <td align="center">5%</td>
+                <td align="center">6</td>
+                <td align="center">64</td>
+                <td align="center">67</td>
+                <td align="center">64</td>
+                <td align="center">67</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">15%</td>
+                <td align="center">36</td>
+                <td align="center">89</td>
+                <td align="center">92</td>
+                <td align="center">87</td>
+                <td align="center">92</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">25%</td>
+                <td align="center">49</td>
+                <td align="center">93</td>
+                <td align="center">96</td>
+                <td align="center">93</td>
+                <td align="center">96</td>
+              </tr>
+              <tr>
+                <td/>
+                <td colspan="7">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td align="center">95%</td>
+                <td align="center">5%</td>
+                <td align="center">19</td>
+                <td align="center">79</td>
+                <td align="center">79</td>
+                <td align="center">79</td>
+                <td align="center">79</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">15%</td>
+                <td align="center">23</td>
+                <td align="center">91</td>
+                <td align="center">91</td>
+                <td align="center">92</td>
+                <td align="center">92</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">25%</td>
+                <td align="center">28</td>
+                <td align="center">93</td>
+                <td align="center">93</td>
+                <td align="center">94</td>
+                <td align="center">94</td>
+              </tr>
+              <tr>
+                <td colspan="8">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td align="center">Two SNPs in Same LD Block</td>
+                <td align="center">60%</td>
+                <td align="center">5%</td>
+                <td align="center">96</td>
+                <td align="center">96</td>
+                <td align="center">96</td>
+                <td align="center">97</td>
+                <td align="center">99</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">15%</td>
+                <td align="center">97</td>
+                <td align="center">97</td>
+                <td align="center">98</td>
+                <td align="center">96</td>
+                <td align="center">100</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">25%</td>
+                <td align="center">98</td>
+                <td align="center">98</td>
+                <td align="center">98</td>
+                <td align="center">96</td>
+                <td align="center">100</td>
+              </tr>
+              <tr>
+                <td/>
+                <td colspan="7">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td align="center">80%</td>
+                <td align="center">5%</td>
+                <td align="center">78</td>
+                <td align="center">95</td>
+                <td align="center">95</td>
+                <td align="center">95</td>
+                <td align="center">93</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">15%</td>
+                <td align="center">17</td>
+                <td align="center">72</td>
+                <td align="center">72</td>
+                <td align="center">72</td>
+                <td align="center">77</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">25%</td>
+                <td align="center">54</td>
+                <td align="center">91</td>
+                <td align="center">91</td>
+                <td align="center">91</td>
+                <td align="center">93</td>
+              </tr>
+              <tr>
+                <td/>
+                <td colspan="7">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td align="center">95%</td>
+                <td align="center">5%</td>
+                <td align="center">57</td>
+                <td align="center">91</td>
+                <td align="center">91</td>
+                <td align="center">91</td>
+                <td align="center">91</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">15%</td>
+                <td align="center">29</td>
+                <td align="center">86</td>
+                <td align="center">86</td>
+                <td align="center">86</td>
+                <td align="center">86</td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td colspan="6">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td/>
+                <td/>
+                <td align="center">25%</td>
+                <td align="center">41</td>
+                <td align="center">94</td>
+                <td align="center">94</td>
+                <td align="center">94</td>
+                <td align="center">94</td>
+              </tr>
+            </tbody>
+          </table>
+          <table-wrap-foot>
+            <p>Detection sensitivity of MDR to identify functional SNPs from 40% to 95% LD amounts in epistatic two-locus models.</p>
+          </table-wrap-foot>
+        </table-wrap>
+        <fig id="F5" position="float">
+          <label>Figure 5</label>
+          <caption>
+            <p><bold>Sensitivity of MDR for two-locus disease models</bold>. The detection sensitivity of MDR when analyzing data with 40% LD, 60% LD, 80% LD or 95% LD and attempting to identify purely epistatic two-locus models.</p>
+          </caption>
+          <graphic xlink:href="1756-0381-4-11-5"/>
+        </fig>
+        <p>MDR analysis of epistatic models in which both functional loci were in the same block of LD yielded significantly different results and lead to a change in the constraints for measuring sensitivity, specifically for this type of model. Even though the two-locus interactions simulated were purely epistatic and had no main effects, MDR chose mostly one-locus models as the most accurate predictors. The signal sensitivity and exact sensitivity were almost always zero as a result (MDR failed to identify the exact two-locus model or two-locus model from the same LD block). We modified the constraints so that these one-locus choices were considered a positive signal towards exact sensitivity if they contained one of the functional loci and signal sensitivity if they were in LD with one of the functional SNPs with a D' of greater than or equal to 0.90; so MDR was not required to simultaneously detect both functional loci in the model. Models in which a false positive SNP was included in the model were not counted towards detection sensitivity, however. With this taken into account, the trends observed in the data are similar to those described for the other two model types. The signal sensitivity of MDR was high in all levels of LD while the exact sensitivity decreased with increasing LD as was seen before. For the most part, no increase in detection sensitivity was experienced with higher heritability. The detection sensitivity for all levels of LD was lower for 15% heritability than for 5% and 25%, which results from the more frequent selection of two-locus models with a false positive result in these 15% heritability results. The mean signal sensitivity based on all effect sizes ranged from 97 in 60% LD to 86 and 90.3 in 80% and 95% LD respectively. The exact sensitivity, however, decreased from 97 in 60% LD to 49.7 and 42.3 in 80% and 95% LD. Removing one of the functional SNPs before analysis did not strongly impact sensitivity.</p>
+      </sec>
+    </sec>
+    <sec>
+      <title>Discussion</title>
+      <p>Linkage disequilibrium (LD) often plays a significant role in guiding both the design and analysis of genome-wide association studies (GWAS). It is an implicit assumption of the GWAS that LD exists between a SNP typed in the genotyping assay and the functional variant causing disease. As a result, GWAS benefits from strong amounts of LD distributed throughout the genome. On the other hand, excessive LD can lead to the detection of statistical associations over large genomic regions and preclude easily narrowing the region surrounding a susceptibility locus. The presence of LD has been shown to be beneficial to the detection capabilities of certain data mining methods such as grammatical evolution neural networks [<xref ref-type="bibr" rid="B9">9</xref>]. This follows logically from the need to find signal peaks when not all potential models are tested. As MDR tests all possible N-way interaction models and does not rely on signal peaks to guide the search, the circumstances induced by LD are not equivalent. We have found that there are general trends associated with increasing strength of LD when analyzing data with MDR. These trends extend to the specific type of model being analyzed and although the type of model cannot be discerned before analyzing non-simulated data, it is important to be cognizant of these trends.</p>
+      <p>Firstly, the detection ability of MDR to identify the correct functional loci decreases proportionally to the amount of LD surrounding that locus. As the correlation between the disease susceptibility loci and SNPs surrounding it increases, the surrounding SNPs are able to predict disease status as well as the functional loci; thus there is equal probability that any of these loci will be selected by MDR. The result is that the embedded functional loci are not chosen as many times out of the one hundred datasets. This phenomenon also explains why higher sensitivity for detecting the disease loci when they are not directly genotyped is achieved as LD increases. High amounts of LD around causative loci result in SNPs that effectively tag the functional loci and allow the signal to be detected. This shows that MDR performs well when detecting the indirect association expected in a GWAS.</p>
+      <p>It was initially surprising to observe that MDR would use a one-locus model to predict disease status in some cases where the underlying etiology was a two-locus epistatic interaction. It made sense, however, that this phenomenon was only observed in instances of extensive LD. In such a case, the two functional SNPs were so highly correlated that the epistatic multi-locus interaction presents as a single-locus effect during analysis. The result is that only the genotype at one of the two loci is necessary to accurately predict disease status. Although it seems unlikely that two functional loci would be so highly correlated in practice, this is an interesting scenario to consider.</p>
+    </sec>
+    <sec>
+      <title>Conclusions</title>
+      <p>In drawing conclusions from the research presented in this paper, we wish to make recommendations about the future use of MDR in performing gene-gene interaction analysis in data with significant amounts of LD among the SNPs. We propose that the linkage disequilibrium structure surrounding MDR results should be carefully considered before undertaking a follow-up study. This includes both patterns of D' and r<sup>2</sup>. It has been discovered that MDR will sometimes select SNPs which possess a high D' with the functional SNP even if the r<sup>2 </sup>would not be considered to be of significant strength (Figure <xref ref-type="fig" rid="F6">6</xref>, <xref ref-type="fig" rid="F7">7</xref>). Figure <xref ref-type="fig" rid="F6">6</xref> shows the r<sup>2 </sup>and D' of the single embedded disease SNP with all single-locus best models chosen during MDR analysis. Figure <xref ref-type="fig" rid="F7">7</xref> displays the r<sup>2 </sup>and D' of both functional SNPs participating in epistatic interactions with each of the SNPs selected by MDR only when the best model chosen was a two-locus model. SNPs selected with disproportionate D' and r<sup>2 </sup>values tend to have a minor allele frequency (MAF) within 0.1 of the functional locus but the low resulting r<sup>2 </sup>might preclude the follow-up of the functional locus these SNPs are tagging. This scenario is seen much more often as the size of the genetic effect increases. In such a case, MDR has a higher probability of selecting tagging SNPs with lower r<sup>2 </sup>LD values. We recommend as a result that it might be wise to consider the area around the significant SNPs found which have high D' as well as those areas with high r<sup>2</sup>, at least for the purposes of replication. In addition, it might be useful to pick a tagging SNP for regions with extremely high levels of LD (r<sup>2 </sup>&gt; 0.90) when performing gene-gene interaction analysis with MDR, as this high level of LD could result in different best models being chosen in separate cross-validation intervals during the MDR process. This would in turn lower the cross-validation consistency of each of the models containing loci tagging the disease signal and reduce the detection sensitivity from MDR. While the current large-scale genetic association studies benefit from segments of linkage disequilibrium across the genome, it is important during quality control and analysis to consider possible detrimental effects of this disequilibrium.</p>
+      <fig id="F6" position="float">
+        <label>Figure 6</label>
+        <caption>
+          <p><bold>D' and r<sup>2 </sup>for one-locus models chosen by MDR</bold>. D' and r<sup>2 </sup>between models selected by MDR and the functional locus in cases where MDR picked a one-locus model. Points with no transparency indicate a count of at least 20 models.</p>
+        </caption>
+        <graphic xlink:href="1756-0381-4-11-6"/>
+      </fig>
+      <fig id="F7" position="float">
+        <label>Figure 7</label>
+        <caption>
+          <p><bold>D' and r<sup>2 </sup>for two-locus models chosen by MDR</bold>. D' and r<sup>2 </sup>between each locus in models selected by MDR and each of the functional loci in cases where MDR picked a two-locus model. Solid points indicate a count of at least 20 models.</p>
+        </caption>
+        <graphic xlink:href="1756-0381-4-11-7"/>
+      </fig>
+    </sec>
+    <sec sec-type="methods">
+      <title>Methods</title>
+      <sec>
+        <title>The genomeSIMLA Simulation Process</title>
+        <p>The genomeSIMLA data simulation package is a forward-time genomic simulator that allows for the creation of genomic data with realistic patterns of LD [<xref ref-type="bibr" rid="B10">10</xref>,<xref ref-type="bibr" rid="B11">11</xref>]. The simulator works by first creating a definition for the layout of the chromosome with a template. It is from this chromosome template whereby specific instantiations will be drawn to create the population. The chromosomes used in genomeSIMLA consist of blocks of biallelic SNPs and are defined by the user, with variables such as the number of blocks, the number of variants within each block, and the recombination frequency within and between such blocks. In this way, a user can establish the number of SNPs in a chromosome as well as how often crossovers occur between SNPs. A population of chromosomes is created by initializing chromosomes with randomized values within the parameter specifications of the template chromosome. Subsequent to initialization, the population of chromosomes is advanced through a user-defined number of generations (usually 1000-1500) with population data being dropped at specified points along the way and changes to the population occurring based on the growth and recombination functions. Finally, a penetrance table is applied while drawing chromosomes from the one of the population-data drops to create case-control datasets. Two chromosomes are drawn from the population to determine each individual's genetic makeup and designations of case or control are given based on the disease probability function in the penetrance table. The drawing process continues until the required number of cases and controls are produced.</p>
+      </sec>
+      <sec>
+        <title>Data Simulation</title>
+        <p>In order to make data pools with varying amounts of LD, genomeSIMLA was recursively run with varying recombination frequency and growth parameters. These recursive runs varied the growth rate of the Richards' growth curve [<xref ref-type="bibr" rid="B12">12</xref>] between 0.02 and 0.04 and the generation of maximum growth between 250 and 900. Recombination rate within a block of SNPs was also modified between 1 &#xD7; 10<sup>-7 </sup>and 1 &#xD7; 10<sup>-4</sup>. The result was a group of 60 data pools, where each pool represents a population of simulated chromosomes. Each chromosome simulated in this study contained approximately 600 SNPs. Data pools representing 40%, 60%, 80%, and 95% relative LD (heretofore referred to as 40% LD, 60% LD, 80% LD and 95% LD) were selected for use in an MDR sensitivity analysis (Figure <xref ref-type="fig" rid="F2">2</xref>). Relative LD, in this case, is the ratio of SNPs in LD with at least one other SNP to the total number of polymorphic SNPs. All definitions of LD blocks utilized the block-calling algorithm innate to the genomeSIMLA software. SNPs in these representative data pools were chosen on the basis of meeting requirements of specified allele frequency and the following LD structures (as shown in Figure <xref ref-type="fig" rid="F3">3</xref>):</p>
+        <p>&#x2022; One-locus with the functional SNP at the beginning of an LD block</p>
+        <p>&#x2022; One-locus with the functional SNP in the middle of an LD block</p>
+        <p>&#x2022; Two-locus with one functional SNP in a block of LD and the other outside of a called block</p>
+        <p>&#x2022; Two-locus with both functional SNPs in separate blocks of LD</p>
+        <p>&#x2022; Two-locus with both functional SNPs in the same LD block (N/A for 40% relative LD)</p>
+        <p>Penetrance functions with effect sizes of 5, 15 and 25% broad-sense heritability were applied to two-locus models while additive functions with per-allele odds ratios of 1.5, 2.0 and 3.0 were applied to one-locus models. Based upon the probability of disease at single- and multi-locus genotypes of the chosen functional SNPs given by the penetrance functions applied, 100 datasets containing 1000 cases and 1000 controls were drawn for each disease model and each scenario. To then assess MDR's potential to detect the signal of a functional SNP through LD, the functional SNP was removed from one-locus model datasets and both SNPs were removed in turn, and then together, from the two-locus disease datasets. Removal of functional loci was conducted subsequent to application of the penetrance function and prior to analysis. This can be thought of as simulating an indirect association. In total 18,000 datasets were simulated, including those which were generated by removing functional SNPs.</p>
+      </sec>
+      <sec>
+        <title>Data Analysis</title>
+        <p>Multifactor Dimensionality Reduction (MDR) [<xref ref-type="bibr" rid="B3">3</xref>] was used to analyze simulated data. MDR utilizes a 4-step algorithm designed to detect gene-gene or gene-environment interactions by reducing the dimensionality of the interaction space. In step 1, a set of <italic>n </italic>genetic and/or discrete environmental factors is selected from the pool of all factors. In step 2, the <italic>n </italic>factors and their possible multifactor classes or cells are represented in <italic>n</italic>-dimensional space; for example, in the case of two biallelic markers with three possible genotypes, there are nine two-locus-genotype combinations. The ratio of the number of cases to the number of controls is estimated for each multifactor cell. In step 3, each multifactor cell in <italic>n</italic>-dimensional space is labeled either as "high-risk" if the case-control ratio meets or exceeds some threshold - usually the case-control ratio for the combined study population - or as "low-risk" if that threshold is not exceeded. In this way, a model for both cases and controls (or for affected and unaffected sibs) is formed by pooling high-risk cells into one group and low-risk cells into another group. This reduces the <italic>n</italic>-dimensional model to a one-dimensional model (i.e., having one variable with two multifactor classes--high risk and low risk). In step 4, the prediction error of each model is estimated by N-fold cross-validation. Here, the data (i.e., subjects) are randomly divided into N equal parts. The MDR model is iteratively developed for each possible N-1 partitions of the subjects and then is used to make predictions about the disease status for the partition of the subjects excluded. The proportion of subjects for which an incorrect prediction was made is an estimation of the prediction error.</p>
+        <p>Our simulated data was analyzed with MDR using 10-fold cross-validation exhaustively analyzing all one- and two-locus models. The resulting models were ranked by cross-validation consistency and balanced accuracy - a metric of the classification and prediction accuracy averaged over all cross-validation intervals - and the single best model was chosen. The exact sensitivity of MDR was judged by the number of times out of the 100 datasets in which the best model contained all embedded functional loci. In addition, the signal sensitivity was determined by the number of times which MDR chose a best model in which the loci were in D' greater than or equal to 0.90 with the functional loci. The signal sensitivity refers to the ability of MDR to detect the disease signal, even if the algorithm was unable to pick up the exact functional loci.</p>
+      </sec>
+    </sec>
+    <sec>
+      <title>Competing interests</title>
+      <p>The authors declare that they have no competing interests.</p>
+    </sec>
+    <sec>
+      <title>Authors' contributions</title>
+      <p>BJG designed the study, carried out simulations, performed MDR analysis and drafted the manuscript. EST scripted the parallelization of simulations and MDR analyses. MDR assisted with study design and helped in the drafting of the manuscript. All authors read and approved the final manuscript.</p>
+    </sec>
+  </body>
+  <back>
+    <sec>
+      <title>Acknowledgements</title>
+      <p>The authors would like to acknowledge the help of Stephen Turner, William Bush and Todd Edwards for assistance with questions and issues which arose during the study.</p>
+    </sec>
+    <ref-list>
+      <ref id="B1">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Slatkin</surname>
+            <given-names>M</given-names>
+          </name>
+          <article-title>Linkage disequilibrium--understanding the evolutionary past and mapping the medical future</article-title>
+          <source>Nat Rev Genet</source>
+          <year>2008</year>
+          <volume>9</volume>
+          <fpage>477</fpage>
+          <lpage>485</lpage>
+          <pub-id pub-id-type="pmid">18427557</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B2">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Cardon</surname>
+            <given-names>LR</given-names>
+          </name>
+          <name>
+            <surname>Bell</surname>
+            <given-names>JI</given-names>
+          </name>
+          <article-title>Association study designs for complex diseases</article-title>
+          <source>Nat Rev Genet</source>
+          <year>2001</year>
+          <volume>2</volume>
+          <fpage>91</fpage>
+          <lpage>99</lpage>
+          <pub-id pub-id-type="pmid">11253062</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B3">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Ritchie</surname>
+            <given-names>MD</given-names>
+          </name>
+          <name>
+            <surname>Hahn</surname>
+            <given-names>LW</given-names>
+          </name>
+          <name>
+            <surname>Roodi</surname>
+            <given-names>N</given-names>
+          </name>
+          <name>
+            <surname>Bailey</surname>
+            <given-names>LR</given-names>
+          </name>
+          <name>
+            <surname>Dupont</surname>
+            <given-names>WD</given-names>
+          </name>
+          <name>
+            <surname>Parl</surname>
+            <given-names>FF</given-names>
+          </name>
+          <name>
+            <surname>Moore</surname>
+            <given-names>JH</given-names>
+          </name>
+          <article-title>Multifactor-dimensionality reduction reveals high-order interactions among estrogen-metabolism genes in sporadic breast cancer</article-title>
+          <source>Am J Hum Genet</source>
+          <year>2001</year>
+          <volume>69</volume>
+          <fpage>138</fpage>
+          <lpage>147</lpage>
+          <pub-id pub-id-type="doi">10.1086/321276</pub-id>
+          <pub-id pub-id-type="pmid">11404819</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B4">
+        <mixed-citation publication-type="other">
+          <name>
+            <surname>Naushad</surname>
+            <given-names>SM</given-names>
+          </name>
+          <name>
+            <surname>Pavani</surname>
+            <given-names>A</given-names>
+          </name>
+          <name>
+            <surname>Digumarti</surname>
+            <given-names>RR</given-names>
+          </name>
+          <name>
+            <surname>Gottumukkala</surname>
+            <given-names>SR</given-names>
+          </name>
+          <name>
+            <surname>Kutala</surname>
+            <given-names>VK</given-names>
+          </name>
+          <article-title>Epistatic interactions between loci of one-carbon metabolism modulate susceptibility to breast cancer</article-title>
+          <source>Mol Biol Rep</source>
+          <year>2010</year>
+        </mixed-citation>
+      </ref>
+      <ref id="B5">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Nordgard</surname>
+            <given-names>SH</given-names>
+          </name>
+          <name>
+            <surname>Ritchie</surname>
+            <given-names>MD</given-names>
+          </name>
+          <name>
+            <surname>Jensrud</surname>
+            <given-names>SD</given-names>
+          </name>
+          <name>
+            <surname>Motsinger</surname>
+            <given-names>AA</given-names>
+          </name>
+          <name>
+            <surname>Alnaes</surname>
+            <given-names>GI</given-names>
+          </name>
+          <name>
+            <surname>Lemmon</surname>
+            <given-names>G</given-names>
+          </name>
+          <name>
+            <surname>Berg</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Geisler</surname>
+            <given-names>S</given-names>
+          </name>
+          <name>
+            <surname>Moore</surname>
+            <given-names>JH</given-names>
+          </name>
+          <name>
+            <surname>Lonning</surname>
+            <given-names>PE</given-names>
+          </name>
+          <name>
+            <surname>Borresen-Dale</surname>
+            <given-names>AL</given-names>
+          </name>
+          <name>
+            <surname>Kristensen</surname>
+            <given-names>VN</given-names>
+          </name>
+          <article-title>ABCB1 and GST polymorphisms associated with TP53 status in breast cancer</article-title>
+          <source>Pharmacogenet Genomics</source>
+          <year>2007</year>
+          <volume>17</volume>
+          <fpage>127</fpage>
+          <lpage>136</lpage>
+          <pub-id pub-id-type="doi">10.1097/FPC.0b013e328011abaa</pub-id>
+          <pub-id pub-id-type="pmid">17301692</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B6">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Gasso</surname>
+            <given-names>P</given-names>
+          </name>
+          <name>
+            <surname>Mas</surname>
+            <given-names>S</given-names>
+          </name>
+          <name>
+            <surname>Alvarez</surname>
+            <given-names>S</given-names>
+          </name>
+          <name>
+            <surname>Trias</surname>
+            <given-names>G</given-names>
+          </name>
+          <name>
+            <surname>Bioque</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Oliveira</surname>
+            <given-names>C</given-names>
+          </name>
+          <name>
+            <surname>Bernardo</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Lafuente</surname>
+            <given-names>A</given-names>
+          </name>
+          <article-title>Xenobiotic metabolizing and transporter genes: gene-gene interactions in schizophrenia and related disorders</article-title>
+          <source>Pharmacogenomics</source>
+          <year>2010</year>
+          <volume>11</volume>
+          <fpage>1725</fpage>
+          <lpage>1731</lpage>
+          <pub-id pub-id-type="doi">10.2217/pgs.10.158</pub-id>
+          <pub-id pub-id-type="pmid">21142916</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B7">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Yang</surname>
+            <given-names>JK</given-names>
+          </name>
+          <name>
+            <surname>Zhou</surname>
+            <given-names>JB</given-names>
+          </name>
+          <name>
+            <surname>Xin</surname>
+            <given-names>Z</given-names>
+          </name>
+          <name>
+            <surname>Zhao</surname>
+            <given-names>L</given-names>
+          </name>
+          <name>
+            <surname>Yu</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Feng</surname>
+            <given-names>JP</given-names>
+          </name>
+          <name>
+            <surname>Yang</surname>
+            <given-names>H</given-names>
+          </name>
+          <name>
+            <surname>Ma</surname>
+            <given-names>YH</given-names>
+          </name>
+          <article-title>Interactions among related genes of renin-angiotensin system associated with type 2 diabetes</article-title>
+          <source>Diabetes Care</source>
+          <year>2010</year>
+          <volume>33</volume>
+          <fpage>2271</fpage>
+          <lpage>2273</lpage>
+          <pub-id pub-id-type="doi">10.2337/dc10-0349</pub-id>
+          <pub-id pub-id-type="pmid">20592051</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B8">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Ritchie</surname>
+            <given-names>MD</given-names>
+          </name>
+          <name>
+            <surname>Hahn</surname>
+            <given-names>LW</given-names>
+          </name>
+          <name>
+            <surname>Moore</surname>
+            <given-names>JH</given-names>
+          </name>
+          <article-title>Power of multifactor dimensionality reduction for detecting gene-gene interactions in the presence of genotyping error, missing data, phenocopy, and genetic heterogeneity</article-title>
+          <source>Genet Epidemiol</source>
+          <year>2003</year>
+          <volume>24</volume>
+          <fpage>150</fpage>
+          <lpage>157</lpage>
+          <pub-id pub-id-type="doi">10.1002/gepi.10218</pub-id>
+          <pub-id pub-id-type="pmid">12548676</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B9">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Turner</surname>
+            <given-names>SD</given-names>
+          </name>
+          <name>
+            <surname>Ritchie</surname>
+            <given-names>MD</given-names>
+          </name>
+          <name>
+            <surname>Bush</surname>
+            <given-names>WS</given-names>
+          </name>
+          <article-title>Conquering the Needle-in-a-Haystack: How Correlated Input Variables Beneficially Alter the Fitness Landscape for Neural Networks</article-title>
+          <source>Lect Notes Comput Sci</source>
+          <year>2009</year>
+          <volume>5483</volume>
+          <fpage>80</fpage>
+          <lpage>91</lpage>
+          <pub-id pub-id-type="doi">10.1007/978-3-642-01184-9_8</pub-id>
+          <pub-id pub-id-type="pmid">19578549</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B10">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Dudek</surname>
+            <given-names>S</given-names>
+          </name>
+          <name>
+            <surname>Motsinger</surname>
+            <given-names>AA</given-names>
+          </name>
+          <name>
+            <surname>Velez</surname>
+            <given-names>D</given-names>
+          </name>
+          <name>
+            <surname>Williams</surname>
+            <given-names>SM</given-names>
+          </name>
+          <name>
+            <surname>Ritchie</surname>
+            <given-names>MD</given-names>
+          </name>
+          <article-title>Data simulation software for whole-genome association and other studies in human genetics</article-title>
+          <source>Pac Symp Biocomput</source>
+          <year>2006</year>
+          <volume>11</volume>
+          <fpage>499</fpage>
+          <lpage>510</lpage>
+        </mixed-citation>
+      </ref>
+      <ref id="B11">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Edwards</surname>
+            <given-names>TL</given-names>
+          </name>
+          <name>
+            <surname>Bush</surname>
+            <given-names>WS</given-names>
+          </name>
+          <name>
+            <surname>Turner</surname>
+            <given-names>SD</given-names>
+          </name>
+          <name>
+            <surname>Dudek</surname>
+            <given-names>SM</given-names>
+          </name>
+          <name>
+            <surname>Torstenson</surname>
+            <given-names>ES</given-names>
+          </name>
+          <name>
+            <surname>Schmidt</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Martin</surname>
+            <given-names>E</given-names>
+          </name>
+          <name>
+            <surname>Ritchie</surname>
+            <given-names>MD</given-names>
+          </name>
+          <article-title>Generating Linkage Disequilibrium Patterns in Data Simulations Using genomeSIMLA</article-title>
+          <source>Lecture Notes in Computer Science</source>
+          <year>2008</year>
+          <volume>4793</volume>
+          <fpage>24</fpage>
+          <lpage>35</lpage>
+        </mixed-citation>
+      </ref>
+      <ref id="B12">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Richards</surname>
+            <given-names>FJ</given-names>
+          </name>
+          <article-title>A flexible growth function for empirical use</article-title>
+          <source>J Exp Bot</source>
+          <year>1959</year>
+          <volume>10</volume>
+          <fpage>290</fpage>
+          <lpage>300</lpage>
+          <pub-id pub-id-type="doi">10.1093/jxb/10.2.290</pub-id>
+        </mixed-citation>
+      </ref>
+    </ref-list>
+  </back>
+</article>

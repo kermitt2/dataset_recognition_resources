@@ -1,0 +1,650 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD Journal Archiving and Interchange DTD v3.0 20080202//EN" "archivearticle3.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" article-type="research-article">
+  <?properties open_access?>
+  <?DTDIdentifier.IdentifierValue -//Springer-Verlag//DTD A++ V2.4//EN?>
+  <?DTDIdentifier.IdentifierType public?>
+  <?SourceDTD.DTDName A++V2.4.dtd?>
+  <?SourceDTD.Version 2.4?>
+  <?ConverterInfo.XSLTName springer2nlmx2.xsl?>
+  <?ConverterInfo.Version 2?>
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="nlm-ta">Nat Comput</journal-id>
+      <journal-title-group>
+        <journal-title>Natural Computing</journal-title>
+      </journal-title-group>
+      <issn pub-type="ppub">1567-7818</issn>
+      <issn pub-type="epub">1572-9796</issn>
+      <publisher>
+        <publisher-name>Springer Netherlands</publisher-name>
+        <publisher-loc>Dordrecht</publisher-loc>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="pmc">3063507</article-id>
+      <article-id pub-id-type="pmid">21475663</article-id>
+      <article-id pub-id-type="publisher-id">9106</article-id>
+      <article-id pub-id-type="doi">10.1007/s11047-008-9106-8</article-id>
+      <article-categories>
+        <subj-group subj-group-type="heading">
+          <subject>Article</subject>
+        </subj-group>
+      </article-categories>
+      <title-group>
+        <article-title>When to use bit-wise neutrality</article-title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Friedrich</surname>
+            <given-names>Tobias</given-names>
+          </name>
+          <xref ref-type="aff" rid="Aff1"/>
+        </contrib>
+        <contrib contrib-type="author" corresp="yes">
+          <name>
+            <surname>Neumann</surname>
+            <given-names>Frank</given-names>
+          </name>
+          <address>
+            <email>fne@mpi-inf.mpg.de</email>
+          </address>
+          <xref ref-type="aff" rid="Aff1"/>
+        </contrib>
+        <aff id="Aff1">Max-Planck-Institut f&#xFC;r Informatik, Saarbrucken, Germany </aff>
+      </contrib-group>
+      <pub-date pub-type="epub">
+        <day>26</day>
+        <month>10</month>
+        <year>2008</year>
+      </pub-date>
+      <pub-date pub-type="pmc-release">
+        <day>26</day>
+        <month>10</month>
+        <year>2008</year>
+      </pub-date>
+      <pub-date pub-type="ppub">
+        <month>3</month>
+        <year>2010</year>
+      </pub-date>
+      <volume>9</volume>
+      <issue>1</issue>
+      <fpage>283</fpage>
+      <lpage>294</lpage>
+      <history>
+        <date date-type="received">
+          <day>7</day>
+          <month>2</month>
+          <year>2008</year>
+        </date>
+        <date date-type="accepted">
+          <day>6</day>
+          <month>10</month>
+          <year>2008</year>
+        </date>
+      </history>
+      <permissions>
+        <copyright-statement>&#xA9; Springer Science+Business Media B.V. 2008</copyright-statement>
+      </permissions>
+      <abstract id="Abs1">
+        <p>Representation techniques are important issues when designing successful evolutionary algorithms. Within this field the use of neutrality plays an important role. We examine the use of bit-wise neutrality introduced by Poli and L&#xF3;pez (<xref ref-type="bibr" rid="CR12">2007</xref>) from a theoretical point of view and show that this mechanism only enhances mutation-based evolutionary algorithms if not the same number of genotypic bits for each phenotypic bit is used. Using different numbers of genotypic bits for the bits in the phenome we point out by rigorous runtime analyses that it may reduce the optimization time significantly.</p>
+      </abstract>
+      <kwd-group>
+        <title>Keywords</title>
+        <kwd>Evolutionary algorithms</kwd>
+        <kwd>Neutrality</kwd>
+        <kwd>Representations</kwd>
+        <kwd>Running time analysis</kwd>
+        <kwd>Theory</kwd>
+      </kwd-group>
+      <custom-meta-group>
+        <custom-meta>
+          <meta-name>issue-copyright-statement</meta-name>
+          <meta-value>&#xA9; Springer Science+Business Media B.V. 2010</meta-value>
+        </custom-meta>
+      </custom-meta-group>
+    </article-meta>
+  </front>
+  <body>
+    <sec id="Sec1">
+      <title>Introduction</title>
+      <p>Evolutionary algorithms (EAs) are randomized search heuristics that are inspired by the evolution process in nature. From biology it is known that many mutations in the genotype do not have any effect on the phenotype, i.e., they are neutral. This form of redundancy was first observed by Kimura (<xref ref-type="bibr" rid="CR10">1968</xref>) when he tried to explain the high levels of polymorphism found within natural populations. The benefits of such neutral mutations have widely been discussed in the context of natural evolution (see e.g., Huynen <xref ref-type="bibr" rid="CR7">1996</xref>; Huynen et&#xA0;al. <xref ref-type="bibr" rid="CR8">1996</xref>; Schuster <xref ref-type="bibr" rid="CR14">2002</xref>). Such results from biology motivate the use of neutrality in evolutionary algorithms. Using neutrality in an evolutionary algorithm implies that additional redundancy is introduced into the considered search space. This research topic has attracted substantial interest in recent years. Several experimental studies have investigated whether redundancy can significantly help to come up with better algorithms (Collins <xref ref-type="bibr" rid="CR1">2005</xref>; Rothlauf <xref ref-type="bibr" rid="CR13">2003</xref>; Toussaint and Igel <xref ref-type="bibr" rid="CR16">2003</xref>; Weicker and Weicker <xref ref-type="bibr" rid="CR18">2001</xref>).</p>
+      <p>We examine the use of neutrality from a theoretical point of view and take a closer look on bit-wise neutrality which has been introduced by Poli and L&#xF3;pez (<xref ref-type="bibr" rid="CR12">2007</xref>). Bit-wise neutrality is perhaps the most simple and natural way to use neutrality when working with binary strings. In this model of neutrality the value of a phenotypic bit depends on a specific number of bits in the genome. The value of a phenotypic bit is determined by the corresponding genotypic bits and a chosen encoding function.</p>
+      <p>Our investigations point out that there is a direct correlation between the mutation probability in the genotype and the phenotype for the different encoding functions investigated by Poli and L&#xF3;pez (<xref ref-type="bibr" rid="CR12">2007</xref>). Therefore working with this kind of neutrality in mutation-based evolutionary algorithms has only the effect of changing mutation probability. Due to this result it seems to be unnecessary to use bit-wise neutrality for such algorithms as the effect can also be obtained by changing the mutation probability directly in the phenotype.</p>
+      <p>Later on, we point out that the use of bit-wise neutrality is useful when considering different numbers of genotypic bits to encode the phenotypic bits. The reason for this is that the number of genotypic bits used for a phenotypic bit determines the mutation probability for this bit in the different encodings. We consider simple evolutionary algorithms and analyze the effect of bit-wise neutrality with different numbers of genotypic bits by carrying out rigorous runtime analyses. Analyzing the runtime time of evolutionary algorithms has become an important topic in the theoretical analysis of evolutionary algorithms (see e.g. Droste et&#xA0;al. <xref ref-type="bibr" rid="CR3">2002</xref>; He and Yao <xref ref-type="bibr" rid="CR6">2001</xref>) Using this kind of analysis, we point out that bit-wise neutrality can indeed help to speed up the computation of evolutionary algorithms. In particular, we examine plateau and deceptive functions and show that the proposed model of bit-wise neutrality can help to speed up the optimization process significantly if different numbers of genotypic bits are used to encode the bits in the phenome.</p>
+      <p>The outline of the paper is as follows. In Sect.&#xA0;<xref rid="Sec2" ref-type="sec">2</xref>, we introduce the model of bit-wise neutrality together with the different encodings we examine in the paper. Section&#xA0;<xref rid="Sec3" ref-type="sec">3</xref> shows the correlation between the genotypic and phenotypic mutation rates. Optimal genotypic mutation rates are discussed in Sect.&#xA0;<xref rid="Sec4" ref-type="sec">4</xref> and example functions where bit-wise neutrality using different numbers of genotypic bits is provably useful are presented in Sect.&#xA0;<xref rid="Sec5" ref-type="sec">5</xref>. Finally, we finish with some concluding remarks.</p>
+    </sec>
+    <sec id="Sec2">
+      <title>Model of neutrality</title>
+      <p>We are considering the search space {0,1}<sup>&#x2113;</sup>, i.e., each phenotype is a bitstring of length &#x2113;. We examine bitwise neutrality based on a genotype-phenotype mapping in the evolutionary process. In this form of neutrality each phenotypic bit is obtained from a group of genotypic bits via some encoding function. We consider three different kinds of genotype-phenotype encodings and assume the <italic>i</italic>-th phenotypic bit is encoded using a number of <italic>n</italic><sub><italic>i</italic></sub> genotypic bits. The encodings are defined as follows.
+<list list-type="bullet"><list-item><p><bold>Parity encoding:</bold><italic>x</italic><sub><italic>i</italic></sub> is set to 1 if the number of ones among the <italic>n</italic><sub><italic>i</italic></sub> corresponding genotypic bits is even, otherwise <italic>x</italic><sub><italic>i</italic></sub> is set to 0.</p></list-item><list-item><p><bold>Truth Table encoding:</bold> A truth table is generated and the outcome is chosen randomly. <inline-formula id="IEq1"><alternatives><tex-math id="M1">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$2^{n_i-1}$$\end{document}</tex-math><inline-graphic xlink:href="11047_2008_9106_Article_IEq1.gif"/></alternatives></inline-formula> randomly chosen assignments get output 0 and the other <inline-formula id="IEq2"><alternatives><tex-math id="M2">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$2^{n_i-1}$$\end{document}</tex-math><inline-graphic xlink:href="11047_2008_9106_Article_IEq2.gif"/></alternatives></inline-formula> assignments get an output of 1. Considering <italic>n</italic><sub><italic>i</italic></sub> genotypic bits the phenotypic bit is chosen according to the corresponding output of the truth table.</p></list-item><list-item><p><bold>Majority encoding:</bold><italic>x</italic><sub><italic>i</italic></sub> is set to 1 if the number of ones among the <italic>n</italic><sub><italic>i</italic></sub> corresponding genotypic bits is at least <italic>n</italic><sub><italic>i</italic></sub>/2, otherwise <italic>x</italic><sub><italic>i</italic></sub> is set to 0. We will only allow odd <italic>n</italic> to avoid draws.</p></list-item></list></p>
+      <p>In Poli and L&#xF3;pez (<xref ref-type="bibr" rid="CR12">2007</xref>) these concepts of neutrality have been examined using the same number of <italic>n</italic> genotypic bits for each phenotypic bit, i.e., <italic>n</italic><sub><italic>i</italic></sub>&#xA0;=&#xA0;<italic>n</italic> for all 1 &#x2264;&#xA0;<italic>i</italic> &#x2264;&#xA0;&#x2113;. In this case, one table is chosen that is used for each genotype-phenotype mapping in the Truth Table encoding.</p>
+      <p>Our aim is to examine the correspondence between the genotypic and phenotypic mutation rate in greater detail. Later on, we will examine in which situations it is useful to have different numbers of genotypic bits for the bits of the phenotype. This is motivated by neutrality observed in nature where different kind of information is encoded by parts of a DNA strand of different length.</p>
+    </sec>
+    <sec id="Sec3">
+      <title>Correspondence between phenotypic and genotypic mutation rates</title>
+      <p>We are interested in the relation between the genotypic mutation rate <italic>p</italic><sub><italic>ge</italic></sub> and the phenotypic mutation rate <italic>p</italic><sub><italic>ph</italic></sub> depending on the applied genotype-phenotype encoding. The understanding of this relation in important since the performance of an evolutionary process depends greatly on the right choice of the mutation rate. Poli and L&#xF3;pez (<xref ref-type="bibr" rid="CR12">2007</xref>) already discovered that there is a direct correspondence between the genotypic and phenotypic mutation rate. In this section, we make this relation more comprehensible by deriving simple explicit equations mapping one to the other.</p>
+      <p><bold>Parity encoding:</bold> For this encoding, Poli and L&#xF3;pez (<xref ref-type="bibr" rid="CR12">2007</xref>) have pointed out that the mutation rate at phenotype level for the Parity encoding is given by<disp-formula id="Equa"><alternatives><tex-math id="M3">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ p_{ph} = {\sum\limits_{\begin{array}{l}0\leq i\leq n\\ i \, \equiv \, 1 (\rm mod{2})\end{array}}}\left({\begin{array}{l}n\\i\end{array}}\right)p_{ge}^i(1-p_{ge})^{n-1}.$$\end{document}</tex-math><graphic xlink:href="11047_2008_9106_Article_Equa.gif" position="anchor"/></alternatives></disp-formula></p>
+      <p>In the following, we give a closed equation for this relationship that enables us to increase insight into the correspondence between the mutation rates in the genome and phenome.<disp-formula id="Equ1"><label>1</label><alternatives><tex-math id="M4">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \begin{aligned} p_{ph} =&amp; \sum\limits_{i=0}^{\lceil n/2\rceil+1}\left(\begin{array}{l}n\\ 2i+1\end{array}\right) {p_{ge}}^{2\,i+1} (1-p_{ge}) ^{n-2\,i-1}\\ =&amp; \sum\limits_{i=0}^{\lceil n/2\rceil+1} \sum\limits_{j=0}^{n-2\,j-1}{\left(\begin{array}{l}n-2\,j-1\\j\end{array}\right)} {\left(\begin{array}{l}n\\2\,i+1\end{array}\right)}{p_{ge}}^{2\,i+1} (-\,p_{ge})^j\\ =&amp; \sum_{i=1}^{n} {\left(\begin{array}{l}n\\i\end{array}\right)} (-2)^{i-1} {p_{ge}}^{i}\\ =&amp; \frac{1-\sum  _{i=0}^{n}{\left(\begin{array}{l}n\\i\end{array}\right)} (-2\,p_{ge})^i}{2}\\ =&amp; \frac{1-(1-2p_{ge})^n}{2}. \end{aligned} $$\end{document}</tex-math><graphic xlink:href="11047_2008_9106_Article_Equ1.gif" position="anchor"/></alternatives></disp-formula>To illustrate the correspondence between the mutation rates the function is shown in Fig.&#xA0;<xref rid="Fig1" ref-type="fig">1</xref>a and b for <italic>n</italic>&#xA0;=&#xA0;5 and <italic>n</italic>&#xA0;=&#xA0;10, respectively. Equation 1 and the two figures show that there is a direct mapping between the genotypic and phenotypic mutation rate if the number of bits used in the genome is fixed. Note that <italic>p</italic><sub><italic>ph</italic></sub>(<italic>p</italic><sub><italic>ge</italic></sub>) is symmetric, i.e., <italic>p</italic><sub><italic>ph</italic></sub>(<italic>p</italic><sub><italic>ge</italic></sub>)&#xA0;=&#xA0;<italic>p</italic><sub><italic>ph</italic></sub>(1&#xA0;&#x2212;&#xA0;<italic>p</italic><sub><italic>ge</italic></sub>), for even <italic>n</italic> and antisymmetric, i.e., <italic>p</italic><sub><italic>ph</italic></sub>(<italic>p</italic><sub><italic>ge</italic></sub>)&#xA0;=&#xA0;1&#xA0;&#x2212;&#xA0;<italic>p</italic><sub><italic>ph</italic></sub>(1&#xA0;&#x2212;&#xA0;<italic>p</italic><sub><italic>ge</italic></sub>), for odd <italic>n</italic>. The simple closed form of Eq. 1 allows us to derive the inverse function easily. That is, for odd <italic>n</italic> we get<disp-formula id="Equ2"><label>2</label><alternatives><tex-math id="M5">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ p_{ge} = \left\{ \begin{aligned} \frac{1- (1-2\,p_{ph})^{1/n}}2 &amp; \quad\hbox{ for } p_{ph}\leq 1/2\\ \frac{1+ (2\,p_{ph}-1)^{1/n}}2 &amp; \quad\hbox{ for } 1/2\leq p_{ph} &lt; 1.\\ \end{aligned}\right. $$\end{document}</tex-math><graphic xlink:href="11047_2008_9106_Article_Equ2.gif" position="anchor"/></alternatives></disp-formula><fig id="Fig1"><label>Fig.&#xA0;1</label><caption><p>Mapping from genotypic mutation rate to phenotypic mutation rate for different encodings</p></caption><graphic xlink:href="11047_2008_9106_Fig1_HTML" id="MO1"/></fig>As the mapping from <italic>p</italic><sub><italic>ge</italic></sub> to <italic>p</italic><sub><italic>ph</italic></sub> is not unique for even <italic>n</italic>, there are two inverse solutions for even <italic>n</italic>:<disp-formula id="Equ3"><label>3</label><alternatives><tex-math id="M6">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ p_{ge} \in \left\{ \frac{1- (1-2\,p_{ph})^{1/n}}2, \frac{1+ (1-2\,p_{ph})^{1/n}}2 \right\} $$\end{document}</tex-math><graphic xlink:href="11047_2008_9106_Article_Equ3.gif" position="anchor"/></alternatives></disp-formula></p>
+      <p>Equations 2 and 3 are very useful when the optimal phenotypic mutation rate is known and we want to choose the corresponding genotypic mutation rate. Such an example is given in Sect.&#xA0;<xref rid="Sec4" ref-type="sec">4</xref>.</p>
+      <p><bold>Truth Table encoding:</bold> When the Truth Table encoding is used, the phenotypic mutation rate is given by<disp-formula id="Equ4"><label>4</label><alternatives><tex-math id="M7">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ p_{ph}=\frac{1-(1-p_{ge})^n}2. $$\end{document}</tex-math><graphic xlink:href="11047_2008_9106_Article_Equ4.gif" position="anchor"/></alternatives></disp-formula>For <italic>n</italic>&#xA0;=&#xA0;5 and <italic>n</italic>&#xA0;=&#xA0;10 this function is shown in Fig.&#xA0;<xref rid="Fig1" ref-type="fig">1</xref>c and d, respectively. Note that the phenotypic mutation rate is upper bounded by 1/2 independent of the genotypic mutation rate.</p>
+      <p>It is also interesting to observe that for <italic>p</italic><sub><italic>ge</italic></sub>&#xA0;&#x2264;&#xA0;1/2, the phenotypic mutation rate for the Truth Table encoding (cf. Eq. 4) is equal to the phenotypic mutation rate for the Parity encoding (cf. Eq. 1) if we half the genotypic mutation rate <italic>p</italic><sub><italic>ge</italic></sub>. Hence, both encodings result in the same phenotypic behavior if the Parity encoding uses half the mutation rate of the Truth Table encoding.</p>
+      <p>As Eq. 4 essentially describes the lower branch <italic>p</italic><sub><italic>ge</italic></sub>&#xA0;&#x2264;&#xA0;1/2 of Eq. 1, it easy to find its inverse function:<disp-formula id="Equ5"><label>5</label><alternatives><tex-math id="M8">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ p_{ge} = 1 - (1-2\,p_{ph})^{1/n}. $$\end{document}</tex-math><graphic xlink:href="11047_2008_9106_Article_Equ5.gif" position="anchor"/></alternatives></disp-formula>Again, this can be used to obtain optimal genotypic mutation rates if the optimal phenotypic mutation rates are known.</p>
+      <p><bold>Majority encoding:</bold> The Majority encoding is much harder to analyze as its effect on the phenotypic mutation rate depends on the current number of ones in the genotype. We can, however, obtain numerical estimates. To understand the mapping from the genotypic mutation rate to the phenotypic mutation rate, we have empirically examined the phenotypic effect of different genotypic mutation rates.</p>
+      <p>We approximate the resulting phenotypic mutation rate <italic>p</italic><sub><italic>ph</italic></sub> for a fixed genotypic mutation rate <italic>p</italic><sub><italic>ge</italic></sub> with the relative number of phenotypic changes for a sequence of 10<sup>6</sup> genotype mutations with mutation rate <italic>p</italic><sub><italic>ge</italic></sub>. That is, we start with a random genome and mutate each bit of the genome 10<sup>6</sup> times with mutation rate <italic>p</italic><sub><italic>ge</italic></sub>. Each time we count the number of zeros and ones in the genome. As the genome must have an odd number of genes, either the zeros or the ones hold the majority in the genome. We count the number the majority changes and set the resulting empiric phenotypic mutation rate to the number of majority changes divided by the number of runs (here 10<sup>6</sup>).</p>
+      <p>The resulting functions are shown in Fig.&#xA0;<xref rid="Fig1" ref-type="fig">1</xref>e and f. The calculated mappings give a very good approximation of the dependence of the phenotypic mutation rate on the genotypic mutation rate. This can be used to calculate the phenotypic mutation rate given the genotypic mutation rate and vice versa.</p>
+    </sec>
+    <sec id="Sec4">
+      <title>Optimal genotypic mutation rates</title>
+      <p>For many test functions the optimal phenotypic mutation rates are known. In this section, we derive the respective genotypic mutation rates for such cases.</p>
+      <p>For the <sc>onemax</sc>-function on &#x2113; bits, it is well known that the optimization time is minimized at a phenotypic mutation rate of <italic>p</italic><sub><italic>ph</italic></sub>&#xA0;=&#xA0;1/&#x2113; (see e.g. Droste et&#xA0;al. <xref ref-type="bibr" rid="CR2">1998</xref>). When the Parity encoding is used, the optimal genotypic mutation rate is therefore (for &#x2113;&#xA0;&#x2265;&#xA0;2)<disp-formula id="Equb"><alternatives><tex-math id="M9">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ p_{ge} = \frac{1-\left(\frac{\ell-2}{\ell}\right)^{1/n}}{2}. $$\end{document}</tex-math><graphic xlink:href="11047_2008_9106_Article_Equb.gif" position="anchor"/></alternatives></disp-formula>Asymptotic in the problem size &#x2113;, this is<disp-formula id="Equc"><alternatives><tex-math id="M10">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ p_{ge} = \frac{1}{n\ell} + O\left(\frac1{\ell^2}\right). $$\end{document}</tex-math><graphic xlink:href="11047_2008_9106_Article_Equc.gif" position="anchor"/></alternatives></disp-formula></p>
+      <p>Since <italic>p</italic><sub><italic>ge</italic></sub> doubles when using the Truth Table encoding instead of the Parity encoding, we get for the Truth Table encoding<disp-formula id="Equd"><alternatives><tex-math id="M11">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \begin{aligned} p_{ge} &amp;= 1-\left(\frac{\ell-2}{\ell}\right)^{1/n}\\ &amp;= \frac{2}{n\ell} + O\left(\frac1{\ell^2}\right). \end{aligned} $$\end{document}</tex-math><graphic xlink:href="11047_2008_9106_Article_Equd.gif" position="anchor"/></alternatives></disp-formula></p>
+      <p>Poli and L&#xF3;pez (<xref ref-type="bibr" rid="CR12">2007</xref>) have examined the runtime behavior of mutation-based EAs on <sc>onemax</sc> depending on <italic>p</italic><sub><italic>ge</italic></sub> for &#x2113;&#xA0;=&#xA0;14 bits. With the above derived theory we can now calculate the optimal genotypic mutation rate for the <sc>onemax</sc> problem. For &#x2113;&#xA0;=&#xA0;14 the optimal <italic>p</italic><sub><italic>ge</italic></sub> for the three different encodings and choice of <italic>n</italic> used by Poli and L&#xF3;pez (<xref ref-type="bibr" rid="CR12">2007</xref>) are shown in Table&#xA0;<xref rid="Tab1" ref-type="table">1</xref>. Using this table the experimental results given in Table 4 of Poli and L&#xF3;pez (<xref ref-type="bibr" rid="CR12">2007</xref>) can be easily explained as it gets clear which genotypic mutation rate is close to the optimal mutation rate when considering the function <sc>onemax</sc>.<table-wrap id="Tab1"><label>Table&#xA0;1</label><caption><p>Optimal genotypic mutation rates for the <sc>onemax</sc>-function on &#x2113;&#xA0;=&#xA0;14 bits</p></caption><table frame="hsides" rules="groups"><thead><tr><th align="left">Encoding</th><th align="left">Optimal <italic>p</italic><sub><italic>ge</italic></sub></th></tr></thead><tbody><tr><td align="left">Parity (<italic>n</italic>&#xA0;=&#xA0;5):</td><td align="left"><italic>p</italic><sub><italic>ge</italic></sub>&#x2248;0.0152</td></tr><tr><td align="left">Parity (<italic>n</italic>&#xA0;=&#xA0;6):</td><td align="left"><italic>p</italic><sub><italic>ge</italic></sub>&#x2248;0.0127</td></tr><tr><td align="left">Parity (<italic>n</italic>&#xA0;=&#xA0;7):</td><td align="left"><italic>p</italic><sub><italic>ge</italic></sub>&#x2248;0.0109</td></tr><tr><td align="left">Parity (<italic>n</italic>&#xA0;=&#xA0;8):</td><td align="left"><italic>p</italic><sub><italic>ge</italic></sub>&#x2248;0.0095</td></tr><tr><td align="left">Majority (<italic>n</italic>&#xA0;=&#xA0;5):</td><td align="left"><italic>p</italic><sub><italic>ge</italic></sub>&#x2248;0.0425</td></tr><tr><td align="left">Majority (<italic>n</italic>&#xA0;=&#xA0;7):</td><td align="left"><italic>p</italic><sub><italic>ge</italic></sub>&#x2248;0.0377</td></tr><tr><td align="left">Truth Table (<italic>n</italic>&#xA0;=&#xA0;5):</td><td align="left"><italic>p</italic><sub><italic>ge</italic></sub>&#x2248;0.0304</td></tr><tr><td align="left">Truth Table (<italic>n</italic>&#xA0;=&#xA0;6):</td><td align="left"><italic>p</italic><sub><italic>ge</italic></sub>&#x2248;0.0254</td></tr><tr><td align="left">Truth Table (<italic>n</italic>&#xA0;=&#xA0;7):</td><td align="left"><italic>p</italic><sub><italic>ge</italic></sub>&#x2248;0.0218</td></tr><tr><td align="left">Truth Table (<italic>n</italic>&#xA0;=&#xA0;8):</td><td align="left"><italic>p</italic><sub><italic>ge</italic></sub>&#x2248;0.0191</td></tr></tbody></table></table-wrap></p>
+    </sec>
+    <sec id="Sec5">
+      <title>Benefits of bit-wise neutrality</title>
+      <p>In the following, we examine the case where the phenotypic bits may be encoded by a different number of genotypic bits. As pointed out in the previous sections, the mutation probability in the phenome depends on the genotypic mutation probability and the number of bits used to encode one phenotypic bit. Considering evolutionary algorithms, one usually works with a mutation probability that is the same for all bits. Hence, it seems to be natural to keep the genotypic mutation probability <italic>p</italic><sub><italic>ge</italic></sub> fixed and examine the effect of using different numbers of bits in the genome for the corresponding bits in the phenome.</p>
+      <p>We show that two popular evolutionary algorithms can only optimize certain functions in polynomial time if the phenotypic mutation rate is <italic>not</italic> fixed for all bits. We also prove that for fixed genotypic mutation rates this can be achieved by using different numbers of bits in the genome for each phenotypic bit. This shows a natural setting in which using neutrality improves the asymptotic runtime of an evolutionary algorithm.</p>
+      <p>An interesting example of different mutation rates in nature has been investigated by Stephens and Waelbroeck (<xref ref-type="bibr" rid="CR15">1999</xref>). They observed that in the RNA sequences of the HI virus the mutability is lower in functionally important areas than in areas that tend to be recognized by a host&#x2019;s immune system. This is implemented by typically using different nucleotide triplets to encode the same amino acids in the two areas. In areas with high mutability the codons are likely to undergo non-synonymous mutations as only a few neighbors of the used codons are mapped to the same amino acid. On the other hand, in areas with low mutability codons with high neutral degree, that is, with a large fraction of neighboring codons that are mapped to the same amino acid, are used.</p>
+      <p>First, we investigate the function NH-<sc>onemax</sc> defined by Gutjahr and Sebastiani (<xref ref-type="bibr" rid="CR5">2008</xref>). It has been used for the analysis of evolutionary algorithms and ant colony optimization (Gutjahr and Sebastiani <xref ref-type="bibr" rid="CR5">2008</xref>; Neumann et&#xA0;al. <xref ref-type="bibr" rid="CR11">2007</xref>). The function is defined as<disp-formula id="Eque"><alternatives><tex-math id="M12">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \hbox{NH}-\hbox{O{\sc ne}M{\sc ax}}(x) = \left(\prod_{i=1}^k x_i\right) \left(\sum\limits_{i=k+1}^n x_i\right) $$\end{document}</tex-math><graphic xlink:href="11047_2008_9106_Article_Eque.gif" position="anchor"/></alternatives></disp-formula>and consists of a N<sc>eedle</sc>-function on <italic>k</italic> bits and a <sc>onemax</sc>-function on <italic>n</italic>&#xA0;&#x2212;&#xA0;<italic>k</italic> bits. The <sc>onemax</sc>-part can only be optimized if the needle has been found beforehand. We call the first <italic>k</italic> bits the N<sc>eedle</sc>-part and the remaining <italic>n</italic>&#xA0;&#x2212;&#xA0;<italic>k</italic> bits the <sc>onemax</sc>-part of a bitstring <italic>x</italic>. We consider the case <italic>k</italic>&#xA0;=&#xA0;ln<italic> n</italic> bits.</p>
+      <p>Gutjahr and Sebastiani considered the behavior of a simple evolutionary algorithm known as (1&#xA0;+&#xA0;1) EA* in the literature (Jansen and Wegener <xref ref-type="bibr" rid="CR9">2001</xref>) on this function. The algorithm can be defined as follows.<table-wrap id="Tab2"><table frame="hsides" rules="groups"><thead><tr><th align="left"><bold>Algorithm 1</bold> (1&#xA0;+&#xA0;1) EA*</th></tr></thead><tbody><tr><td align="left">&#x2003; Choose an initial solution <italic>x</italic> &#x2208; {0,1}<sup><italic>n</italic></sup> uniformly at random.</td></tr><tr><td align="left">&#x2003; 
+                                          <bold>repeat</bold></td></tr><tr><td align="left">&#x2003; &#x2003; Create <italic>x</italic>&#x2032; by flipping each bit of <italic>x</italic> with probability <italic>p</italic><sub><italic>ph</italic></sub>.</td></tr><tr><td align="left">&#x2003; &#x2003; 
+                                          <bold>if</bold><italic>f</italic>(<italic>x</italic>&#x2032;) &gt;&#xA0; <italic>f</italic>(<italic>x</italic>) <bold>then</bold> set <italic>x</italic>&#xA0;:=&#xA0;<italic>x</italic>&#x2032;.</td></tr><tr><td align="left">&#x2003; 
+                                          <bold>until</bold> stop</td></tr></tbody></table></table-wrap></p>
+      <p>The optimization time of an evolutionary algorithm is defined as the number of fitness evaluations until an optimal search point has been obtained for the first time. Often the expectation of this value is considered and called the expected optimization time.</p>
+      <p>Gutjahr and Sebastiani showed a superpolynomial lower bound on the expected optimization time of the (1&#xA0;+&#xA0;1) EA* on NH-O<sc>ne</sc>M<sc>ax</sc> when the standard choice <italic>p</italic><sub><italic>ph</italic></sub>&#xA0;=&#xA0;1/&#x2113; is used. We generalize this result and show a superpolynomial lower bound that holds for each fixed choice of <italic>p</italic><sub><italic>ph</italic></sub>.</p>
+      <p><bold><bold>Theorem 1</bold></bold><italic>The optimization time of the (1&#xA0;+&#xA0;1) EA* for each fixed choice of p</italic><sub><italic>ph</italic></sub><italic> on </italic> NH-O<sc>ne</sc>M<sc>ax</sc><italic> is superpolynomial with probability 1&#xA0;&#x2212;&#xA0;o(1).</italic></p>
+      <p><bold><italic>Proof</italic></bold> We distinguish two cases and show that for <italic>p</italic><sub><italic>ph</italic></sub>&#xA0;&#x2264;&#xA0; <italic>n</italic><sup>&#x2212;1/2</sup> the (1&#xA0;+&#xA0;1) EA is not able to optimize the N<sc>eedle</sc>-part while for <italic>p</italic><sub><italic>ph</italic></sub> &#x2265;&#xA0;<italic>n</italic><sup>&#x2212;1/2</sup> the <sc>onemax</sc>-part can not be optimize.</p>
+      <p>We consider the case <italic>p</italic><sub><italic>ph</italic></sub> &#x2264;&#xA0;<italic>n</italic><sup>&#x2212;1/2</sup> first. The initial solution has at most <italic>k</italic>&#xA0;&#x2212;&#xA0;(ln <italic>n</italic>)/3 ones in the N<sc>eedle</sc>-part with probability 1&#xA0;&#x2212;&#xA0;<italic>o</italic>(1) due to Chernoff bounds. As long as the needle has been found steps no other solutions is accepted. The probability to produce from a solution with at most <italic>k</italic>&#xA0;&#x2212;&#xA0;(ln <italic>n</italic>)/3 ones in the N<sc>eedle</sc>-part the needle is upper bounded by <inline-formula id="IEq3"><alternatives><tex-math id="M13">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$(\frac{1}{\sqrt{n}})^{(\ln n)/3} = n^{-(\ln n)/6}$$\end{document}</tex-math><inline-graphic xlink:href="11047_2008_9106_Article_IEq3.gif"/></alternatives></inline-formula> which implies that the optimization is superpolynomial with probability 1&#xA0;&#x2212;&#xA0;<italic>o</italic>(1) in this case.</p>
+      <p>For the case <italic>p</italic><sub><italic>ph</italic></sub> &#x2265;&#xA0;<italic>n</italic><sup>&#x2212;1/2</sup> holds we consider the <sc>onemax</sc>-part. Let <inline-formula id="IEq4"><alternatives><tex-math id="M14">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$r = \sum_{i=k+1}^n x_i$$\end{document}</tex-math><inline-graphic xlink:href="11047_2008_9106_Article_IEq4.gif"/></alternatives></inline-formula> be the number of ones in the <sc>onemax</sc>-part of the current solution <italic>x</italic>. For the initial solution <italic>n</italic>/3&#xA0;&lt;&#xA0;<italic>r</italic>&#xA0;&lt;&#xA0;(2/3)<italic>n</italic> holds with probability 1&#xA0;&#x2212;&#xA0;<italic>e</italic><sup>&#x2212;&#x3A9;(<italic>n</italic>)</sup> using Chernoff bounds. For the next accepted solution the needle has to be found as otherwise no improvement can be achieved. The expected number of ones that are turned into zeros in the <sc>onemax</sc>-part is <italic>r</italic>&#xA0;&#xB7;&#xA0;<italic>p</italic><sub><italic>ph</italic></sub> and the expected number of zeros turned into ones is (<italic>n</italic>&#xA0;&#x2212;&#xA0;<italic>r</italic>) &#xB7; <italic>p</italic><sub><italic>ph</italic></sub>. This implies that the number of ones that are turned into zeros is with probability <inline-formula id="IEq5"><alternatives><tex-math id="M15">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$1 - e^{-\Upomega(\sqrt{n})}$$\end{document}</tex-math><inline-graphic xlink:href="11047_2008_9106_Article_IEq5.gif"/></alternatives></inline-formula> at least <inline-formula id="IEq6"><alternatives><tex-math id="M16">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$\Upomega(\sqrt{n})$$\end{document}</tex-math><inline-graphic xlink:href="11047_2008_9106_Article_IEq6.gif"/></alternatives></inline-formula> using Chernoff bounds once more. Hence, an optimal solution has not been achieved with probability exponentially close to 1 when the needle has been found for the first time.</p>
+      <p>We consider the point of time where <italic>r</italic> &#x2265;&#xA0;(3/4)&#xA0;&#xB7;&#xA0;<italic>n</italic> holds for the first time. Note, that an optimal solution has not been reached at this time as <inline-formula id="IEq7"><alternatives><tex-math id="M17">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$\Upomega(\sqrt{n})$$\end{document}</tex-math><inline-graphic xlink:href="11047_2008_9106_Article_IEq7.gif"/></alternatives></inline-formula> 1-bits flip with <inline-formula id="IEq8"><alternatives><tex-math id="M18">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$1 - e^{-\Upomega(\sqrt{n})}$$\end{document}</tex-math><inline-graphic xlink:href="11047_2008_9106_Article_IEq8.gif"/></alternatives></inline-formula> in a step that leads to this situation. After having achieved <italic>r</italic> &#x2265;&#xA0;(3/4)&#xA0;&#xB7;&#xA0;<italic>n</italic>, expected number of ones turned into zeros is at least (3/4) <italic>p</italic><sub><italic>ph</italic></sub><italic>n</italic> and at least (2/3) <italic>p</italic><sub><italic>ph</italic></sub><italic>n</italic> with probability <inline-formula id="IEq9"><alternatives><tex-math id="M19">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$1 - e^{-\Upomega(\sqrt{n})}$$\end{document}</tex-math><inline-graphic xlink:href="11047_2008_9106_Article_IEq9.gif"/></alternatives></inline-formula> using Chernoff bounds. Similarly, the expected number of zeros turned into ones is at most (1/4) <italic>p</italic><sub><italic>ph</italic></sub><italic>n</italic> and most (1/3) <italic>p</italic><sub><italic>ph</italic></sub><italic>n</italic> with probability <inline-formula id="IEq10"><alternatives><tex-math id="M20">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$1 - e^{-\Upomega(\sqrt{n})}$$\end{document}</tex-math><inline-graphic xlink:href="11047_2008_9106_Article_IEq10.gif"/></alternatives></inline-formula> using Chernoff bounds. Therefore, the number of ones in the <sc>onemax</sc>-part decreases by at least <inline-formula id="IEq11"><alternatives><tex-math id="M21">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$(1/3) p_{ph} n \geq \sqrt{n}/3$$\end{document}</tex-math><inline-graphic xlink:href="11047_2008_9106_Article_IEq11.gif"/></alternatives></inline-formula> with probability <inline-formula id="IEq12"><alternatives><tex-math id="M22">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$1 - e^{-\Upomega(\sqrt{n})}$$\end{document}</tex-math><inline-graphic xlink:href="11047_2008_9106_Article_IEq12.gif"/></alternatives></inline-formula> which implies that the number of steps needed to increase the number of ones in the <sc>onemax</sc>-part is exponential with probability exponentially close 1 after having reaching a search point that has at least (3/4)&#xA0;&#xB7;&#xA0;<italic>n</italic> ones in <sc>onemax</sc>-part. &#x25A1;</p>
+      <p>In the following, we point out how bit-wise neutrality using different number of genotypic bits for the phenotypic bits may help to reduce the runtime of the (1&#xA0;+&#xA0;1) EA* significantly.</p>
+      <p>We investigate a model of bit-wise neutrality using the parity encoding although the result can also be shown for other models of bit-wise neutrality. The mutation rate is <italic>p</italic><sub><italic>ge</italic></sub>&#xA0;=&#xA0;1/&#x2113; for each genotypic bit but different numbers of genotypic bits for the bits in the phenome are used. We choose <italic>n</italic><sub><italic>i</italic></sub>&#xA0;=&#xA0;2&#x2113; for 1 &#x2264;&#xA0;<italic>i</italic> &#x2264;&#xA0; <italic>k</italic> and <italic>n</italic><sub><italic>i</italic></sub>&#xA0;=&#xA0;1 for <italic>k</italic>&#xA0;+&#xA0;1 &#x2264;&#xA0;<italic>i</italic> &#x2264;&#xA0;&#x2113;. Hence, the number of bits in the genome is 2&#x2113;<italic>k</italic>&#xA0;+&#xA0;&#x2113;&#xA0;&#x2212;&#xA0;<italic>k</italic> and we apply the evolutionary algorithm to the search space {0,1}<sup>2&#x2113; <italic>k</italic>+&#x2113;&#x2212;<italic>k</italic></sup>. Note, that the fitness evaluation still takes place on the basis of the corresponding phenotypic bits, i.e., a genotype is decoded before fitness evaluation.</p>
+      <p>The resulting mutation probabilities for the bits in the phenome can be computed using Eq. 1. It holds<disp-formula id="Equf"><alternatives><tex-math id="M23">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ p_{ph}(x_i)=\frac{1-(1-2/\ell)^{2\ell}}{2} \geq 1/e, \quad 1 \leq i \leq k $$\end{document}</tex-math><graphic xlink:href="11047_2008_9106_Article_Equf.gif" position="anchor"/></alternatives></disp-formula>and<disp-formula id="Equg"><alternatives><tex-math id="M24">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ p_{ph}(x_i) = \frac{1-(1-2/\ell)^1}{2} = 1/\ell, \quad k+1 \leq i \leq \ell. $$\end{document}</tex-math><graphic xlink:href="11047_2008_9106_Article_Equg.gif" position="anchor"/></alternatives></disp-formula></p>
+      <p>Using this setting we can prove that the runtime behavior of the (1&#xA0;+&#xA0;1) EA* changes significantly. In particular the expected optimization time on NH-O<sc>ne</sc>M<sc>ax</sc> becomes a polynomial of small degree.</p>
+      <p><bold><bold>Theorem 2</bold></bold><italic>Using the (1&#xA0;+&#xA0;1) EA* with p</italic><sub><italic>ge</italic></sub><italic>&#xA0;=&#xA0;1/&#x2113; together with the parity encoding where for each x</italic><sub><italic>i</italic></sub><italic>, 1&#xA0;&#x2264;&#xA0;i</italic><italic> &#x2264;&#xA0;k</italic><italic>, of the phenotype 2&#x2113; genotypic bits and for each x</italic><sub><italic>j</italic></sub><italic>, k</italic><italic>&#xA0;+&#xA0;1 &#x2264;&#xA0;j</italic><italic> &#x2264;&#xA0;n</italic>,<italic> of the phenotype 1 genotypic bit is used, the expected optimization time on </italic>NH-O<sc>ne</sc>M<sc>ax</sc><italic> is O</italic><italic>(n</italic><sup>2</sup><italic> log n</italic>).</p>
+      <p><bold><italic>Proof</italic></bold> Each bit on the N<sc>EEDLE</sc>-part in the phenotype is flipped with probability at least 1/<italic>e</italic>. The probability that a specific bit in the phenotype is not flipped is at least 1/2. Hence, a solution <italic>x</italic> with <italic>k</italic> leading ones is produced with probability at least (1/<italic>e</italic>)<sup>ln</sup><italic>n</italic> in the next step. This means that the expected number of steps to produce a search point consisting of <italic>k</italic> leading ones is <italic>O</italic>(<italic>n</italic>) and holds independently of the current solution. Each solution with <italic>k</italic> leading ones that has at least one 1-bit in the <sc>onemax</sc>-part is accepted. Assuming that all bits in the <sc>onemax</sc>-part are zeros the expected waiting time to flip one of these bits is <inline-formula id="IEq13"><alternatives><tex-math id="M25">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$O(\frac{n-k}{n}) = O(1).$$\end{document}</tex-math><inline-graphic xlink:href="11047_2008_9106_Article_IEq13.gif"/></alternatives></inline-formula> Hence, the expected time to produce an accepted solution where the needle is found and the number of ones in the <sc>onemax</sc>-part is at least 1 is <italic>O</italic>(<italic>n</italic>). After this the needle will not be lost and the number of ones in the <sc>onemax</sc>-part can only increase until an optimal solution has been found.</p>
+      <p>The (1&#xA0;+&#xA0;1) EA* with mutation rate 1/&#x2113; optimizes the function <sc>onemax</sc> in an expected number of <italic>O</italic>(<italic>n</italic> log <italic>n</italic>) steps (Droste et&#xA0;al. <xref ref-type="bibr" rid="CR3">2002</xref>). As the needle is re-sampled after an expected number of <italic>O</italic>(<italic>n</italic>) steps the <italic>O</italic>(<italic>n</italic><sup>2</sup> log <italic>n</italic>) bound on the expected optimization time follows.&#x25A1;</p>
+      <p>Often EAs replace equally good search points in the selection steps. In this case, they are able to deal with plateaus of moderate size. The following algorithm called (1&#xA0;+&#xA0;1) EA uses this selection methods and is frequently used for the runtime analysis.<table-wrap id="Tab3"><table frame="hsides" rules="groups"><thead><tr><th align="left"><bold>Algorithm 2</bold> (1&#xA0;+&#xA0;1) EA</th></tr></thead><tbody><tr><td align="left">&#x2003; Choose an initial solution <italic>x</italic> &#x2208; {0,1}<sup><italic>n</italic></sup> uniformly at random.</td></tr><tr><td align="left">&#x2003; 
+                                          <bold>repeat</bold></td></tr><tr><td align="left">&#x2003; &#x2003; Create <italic>x</italic>&#x2032; by flipping each bit of <italic>x</italic> with probability <italic>p</italic><sub><italic>ph</italic></sub>.</td></tr><tr><td align="left">&#x2003; &#x2003; 
+                                          <bold>if</bold><italic>f</italic>(<italic>x</italic>&#x2032;)&#xA0;&#x2265;&#xA0;<italic>f</italic>(<italic>x</italic>) <bold>then</bold> set <italic>x</italic>&#xA0;:=&#xA0;<italic>x</italic>&#x2032;.</td></tr><tr><td align="left">&#x2003; 
+                                          <bold>until</bold> stop</td></tr></tbody></table></table-wrap></p>
+      <p>It is not to hard to show that the (1&#xA0;+&#xA0;1)&#xA0;EA with <italic>p</italic><sub><italic>ph</italic></sub>&#xA0;=&#xA0;1/&#x2113; optimizes the function NH-O<sc>ne</sc>M<sc>ax</sc> in expected polynomial time by using results of the optimization of the 1&#xA0;+&#xA0;1&#xA0;EA on N<sc>eedle</sc> (see e.g. Garnier et&#xA0;al. <xref ref-type="bibr" rid="CR4">1999</xref>; Wegener and Witt <xref ref-type="bibr" rid="CR17">2005</xref>). However, this algorithm has difficulties when replacing the N<sc>eedle</sc>-part by a T<sc>rap</sc>-part that makes the problem deceptive.</p>
+      <p>The function T<sc>rap</sc>-O<sc>ne</sc>M<sc>ax</sc> differs from NH-O<sc>ne</sc>M<sc>ax</sc> by the role of the first <italic>k</italic> bits. It is defined as<disp-formula id="Equh"><alternatives><tex-math id="M26">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \hbox{T}\hbox{{\sc rap}-O{\sc ne}M{\sc ax}}(x) = \left( \prod_{i=1}^k x_i\right) \left( \sum\limits_{i=k+1}^n x_i\right) + \sum\limits_{i=1}^k (1- x_i). $$\end{document}</tex-math><graphic xlink:href="11047_2008_9106_Article_Equh.gif" position="anchor"/></alternatives></disp-formula></p>
+      <p>Similar to NH-O<sc>ne</sc>M<sc>ax</sc>, we call the first <italic>k</italic> bits the T<sc>rap</sc>-part and the remaining <italic>n</italic>&#xA0;&#x2212;&#xA0;<italic>k</italic> bits the <sc>onemax</sc>-part of a bitstring <italic>x</italic> and consider the case <italic>k</italic>&#xA0;=&#xA0;ln <italic>n</italic>. We first investigate the case where each phenotypic bit has the same mutation rate <italic>p</italic><sub><italic>ph</italic></sub> and show that the (1&#xA0;+&#xA0;1)&#xA0;EA is not efficient on T<sc>rap</sc>-O<sc>ne</sc>M<sc>ax</sc> in this case.</p>
+      <p><bold><bold>Theorem 3</bold></bold><italic>The optimization time of the (1&#xA0;+&#xA0;1) &#xA0;EA for each fixed choice of p</italic><sub><italic>ph</italic></sub><italic> on </italic>T<sc>rap</sc>-O<sc>ne</sc>M<sc>ax</sc><italic> is superpolynomial with probability 1&#xA0;&#x2212;&#xA0;o(1).</italic></p>
+      <p><bold><italic>Proof</italic></bold> Again, we distinguish two cases and show that for <italic>p</italic><sub><italic>ph</italic></sub> &#x2264;&#xA0;<italic>n</italic><sup>&#x2212;1/2</sup> the (1&#xA0;+&#xA0;1)&#xA0;EA is not able to optimize the T<sc>rap</sc>-part while for <italic>p</italic><sub><italic>ph</italic></sub> &#x2265;&#xA0;<italic>n</italic><sup>&#x2212;1/2</sup> the <sc>onemax</sc>-part cannot be optimize.</p>
+      <p>We consider the case <italic>p</italic><sub><italic>ph</italic></sub> &#x2264;&#xA0;<italic>n</italic><sup>&#x2212;1/2</sup> first. The initial solution has at most <italic>k</italic>&#xA0;&#x2212;&#xA0;(ln <italic>n</italic>)/3 in the T<sc>rap</sc>-part with probability 1&#xA0;&#x2212;&#xA0;<italic>o</italic>(1) due to Chernoff bounds. As long as no solution with <italic>k</italic> leading ones has been found, steps that increase the number of ones in the T<sc>rap</sc>-part are not accepted. Hence, the probability to produce a solution with <italic>k</italic> leading ones is upper bounded by <inline-formula id="IEq14"><alternatives><tex-math id="M27">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$(\frac{1}{\sqrt{n}})^{(\ln n)/3}= n^{-(\ln n)/6}$$\end{document}</tex-math><inline-graphic xlink:href="11047_2008_9106_Article_IEq14.gif"/></alternatives></inline-formula> which implies that the optimization time is superpolynomial with probability 1&#xA0;&#x2212;&#xA0;<italic>o</italic>(1) in this case.</p>
+      <p>For the case <italic>p</italic><sub><italic>ph</italic></sub> &#x2265;&#xA0;<italic>n</italic><sup>&#x2212;1/2</sup> holds we consider the <sc>onemax</sc>-part. Thereby, we neglect the time needed to reach the optimum on the T<sc>rap</sc>-part. Note that as long as the optimum has not been found on the T<sc>rap</sc>-part the optimization process is completely independent of the <sc>onemax</sc>-part. As each bit is flipped with the same probability, we may assume that the bits on the <sc>onemax</sc>-part are uniformly distributed when the optimum on the T<sc>rap</sc>-part has been found for the first time.</p>
+      <p>Let <inline-formula id="IEq15"><alternatives><tex-math id="M28">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$r = \sum_{i=k+1}^n x_i$$\end{document}</tex-math><inline-graphic xlink:href="11047_2008_9106_Article_IEq15.gif"/></alternatives></inline-formula> be the number of ones in the <sc>onemax</sc>-part of the current solution <italic>x</italic>. For the solution <italic>x</italic> where the optimum of the T<sc>rap</sc>-part has been found for the first time <italic>n</italic>/3&#xA0;&lt;&#xA0;<italic>r</italic>&#xA0;&lt;&#xA0;(2/3)<italic>n</italic> holds with probability 1&#xA0;&#x2212;&#xA0;<italic>e</italic><sup>&#x2212;&#x3A9;(<italic>n</italic>)</sup>. This implies that this solution is accepted by the algorithm. Later on, only solutions that are optimal with respect to the T<sc>rap</sc>-part are accepted and we can follow the ideas in the proof of Theorem 1 to complete the proof. &#x25A1;</p>
+      <p>The optimization time of the (1&#xA0;+&#xA0;1) EA on T<sc>rap</sc>-O<sc>ne</sc>M<sc>ax</sc> can be reduced significantly using bit-wise neutrality with different numbers of genotypic bits. We use the setting already investigated for the (1&#xA0;+&#xA0;1) EA* on NH-O<sc>ne</sc>M<sc>ax</sc> and show that this can also help to speed up the computation of the (1&#xA0;+&#xA0;1) EA on T<sc>rap</sc>-O<sc>ne</sc>M<sc>ax</sc>.</p>
+      <p><bold><bold>Theorem 4</bold></bold><italic>Using the (1&#xA0;+&#xA0;1) EA with p</italic><sub><italic>ge</italic></sub><italic>&#xA0;=&#xA0;1/&#x2113; together with the parity encoding where for each x</italic><sub><italic>i</italic></sub><italic>, 1&#xA0;&#x2264;&#xA0;i</italic><italic> &#x2264;&#xA0;k</italic><italic>, of the phenotype 2&#x2113; genotypic bits and for each x</italic><sub><italic>j</italic></sub><italic>, k</italic><italic>&#xA0;+&#xA0;1 &#x2264;&#xA0;j</italic><italic> &#x2264;&#xA0;n, of the phenotype one genotypic bit is used, the expected optimization time on </italic>T<sc>rap</sc>-O<sc>ne</sc>M<sc>ax</sc><italic> is O</italic><italic>(n</italic><sup>2</sup><italic> log n).</italic></p>
+      <p><bold><italic>Proof</italic></bold> Each bit on the T<sc>rap</sc>-part is flipped with probability at least 1/<italic>e</italic> and with probability at most 1/2. Hence, a solution <italic>x</italic> with <italic>k</italic> leading ones is found after an expected number of <italic>e</italic><sup>ln <italic>n</italic></sup>&#xA0;=&#xA0;<italic>O</italic>(<italic>n</italic>) steps for the first time. To reach an improvement the number of one in the <sc>onemax</sc>-part has to be at least <italic>k</italic>&#xA0;+&#xA0;1. As long the number of ones in the <sc>onemax</sc>-part is not at least <italic>k</italic>&#xA0;+&#xA0;1 the probability that the number of ones in this part increases by at least ln <italic>n</italic> +&#xA0;1 is at least <italic>e</italic><sup>&#x2212;<italic>O</italic>(ln <italic>n</italic>+1)</sup>&#xA0;=&#xA0;&#x3A9;(1/<italic>n</italic>) as the number of flipping bits on the <sc>onemax</sc>-part is asymptotically Poisson distributed with parameter &#x3BB;&#xA0;=&#xA0;1. Hence, the expected waiting time to produce an optimal solution on the T<sc>rap</sc>-part with at least <italic>k</italic>&#xA0;+&#xA0;1 ones in the <sc>onemax</sc>-part is <italic>O</italic>(<italic>n</italic><sup>2</sup>).</p>
+      <p>The reach the optimum a search point with <italic>k</italic> leading ones has to be re-sampled which means that non of the bits in the needle trap flip. The expected waiting time for the event is again <italic>e</italic><sup>ln <italic>n</italic></sup>&#xA0;=&#xA0;<italic>O</italic>(<italic>n</italic>). Using the <italic>O</italic>(<italic>n</italic> log <italic>n</italic>) runtime bound for (1&#xA0;+&#xA0;1) EA with mutation rate 1/&#x2113; on <sc>onemax</sc> (Droste et&#xA0;al. <xref ref-type="bibr" rid="CR3">2002</xref>) the <italic>O</italic>(<italic>n</italic><sup>2</sup> log <italic>n</italic>) bound follows. &#x25A1;</p>
+    </sec>
+    <sec id="Sec6">
+      <title>Conclusions</title>
+      <p>We have examined the use of bit-wise neutrality in evolutionary algorithms. In our investigations we have pointed out that there is a direct mapping between genotypic and phenotypic mutation rates and derived simple closed equations for two encodings. Hence, using for each phenotypic bit the same number of genotypic bits only changes the overall mutation rate in the phenotype which can also be achieved by doing this directly without using neutrality. Later on, we have shown that using different numbers of genotypic bits for each phenotypic bit can help to speed up computation. These results are obtained by rigorous runtime analyses on plateau and trap functions that point out that bit-wise neutrality may be useful for hard problems in this case.</p>
+      <p>A topic for future work is to examine the effect of neutrality for dynamic problems. In such problems neutrality might have different effects that are helpful for the adaptation process. In particular, it may help the algorithm to detect which components of the problem change over time and adapt the mutation rates accordingly.</p>
+    </sec>
+  </body>
+  <back>
+    <ack>
+      <title>Acknowledgement</title>
+      <p>We thank Riccardo Poli for an interesting discussion on the topic of this paper.</p>
+    </ack>
+    <ref-list id="Bib1">
+      <title>References</title>
+      <ref id="CR1">
+        <mixed-citation publication-type="other">Collins M (2005) Finding needles in haystacks is harder with neutrality. In: Proceedings of the annual conference on genetic and evolutionary computation (GECCO &#x2019;05). ACM Press, pp 1613&#x2013;1618</mixed-citation>
+      </ref>
+      <ref id="CR2">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Droste</surname>
+              <given-names>S</given-names>
+            </name>
+            <name>
+              <surname>Jansen</surname>
+              <given-names>T</given-names>
+            </name>
+            <name>
+              <surname>Wegener</surname>
+              <given-names>I</given-names>
+            </name>
+          </person-group>
+          <article-title>A rigorous complexity analysis of the (1&#xA0;+&#xA0;1) evolutionary algorithm for separable functions with boolean inputs</article-title>
+          <source>Evol Comput</source>
+          <year>1998</year>
+          <volume>6</volume>
+          <issue>2</issue>
+          <fpage>185</fpage>
+          <lpage>196</lpage>
+          <pub-id pub-id-type="doi">10.1162/evco.1998.6.2.185</pub-id>
+          <pub-id pub-id-type="pmid">10021746</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR3">
+        <mixed-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Droste</surname><given-names>S</given-names></name><name><surname>Jansen</surname><given-names>T</given-names></name><name><surname>Wegener</surname><given-names>I</given-names></name></person-group><article-title>On the analysis of the (1&#xA0;+&#xA0;1) evolutionary algorithm</article-title><source>Theor Comput Sci</source><year>2002</year><volume>276</volume><fpage>51</fpage><lpage>81</lpage>1002.68037<pub-id pub-id-type="doi">10.1016/S0304-3975(01)00182-7</pub-id>1896347</mixed-citation>
+      </ref>
+      <ref id="CR4">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Garnier</surname>
+              <given-names>J</given-names>
+            </name>
+            <name>
+              <surname>Kallel</surname>
+              <given-names>L</given-names>
+            </name>
+            <name>
+              <surname>Schoenauer</surname>
+              <given-names>M</given-names>
+            </name>
+          </person-group>
+          <article-title>Rigorous hitting times for binary mutations</article-title>
+          <source>Evol Comput</source>
+          <year>1999</year>
+          <volume>7</volume>
+          <issue>2</issue>
+          <fpage>173</fpage>
+          <lpage>203</lpage>
+          <pub-id pub-id-type="doi">10.1162/evco.1999.7.2.173</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR5">
+        <mixed-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Gutjahr</surname><given-names>WJ</given-names></name><name><surname>Sebastiani</surname><given-names>G</given-names></name></person-group><article-title>Runtime analysis of ant colony optimization with best-so-far reinforcement</article-title><source>Methodol Comput Appl Probab</source><year>2008</year><volume>10</volume><issue>3</issue><fpage>409</fpage><lpage>433</lpage>05646338<pub-id pub-id-type="doi">10.1007/s11009-007-9047-1</pub-id>2415126</mixed-citation>
+      </ref>
+      <ref id="CR6">
+        <mixed-citation publication-type="journal"><person-group person-group-type="author"><name><surname>He</surname><given-names>J</given-names></name><name><surname>Yao</surname><given-names>X</given-names></name></person-group><article-title>Drift analysis and average time complexity of evolutionary algorithms</article-title><source>Artif Intell</source><year>2001</year><volume>127</volume><issue>1</issue><fpage>57</fpage><lpage>85</lpage>0971.68129<pub-id pub-id-type="doi">10.1016/S0004-3702(01)00058-3</pub-id>1831761</mixed-citation>
+      </ref>
+      <ref id="CR7">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Huynen</surname>
+              <given-names>MA</given-names>
+            </name>
+          </person-group>
+          <article-title>Exploring phenotype space through neutral evolution</article-title>
+          <source>J Mol Evol</source>
+          <year>1996</year>
+          <volume>43</volume>
+          <fpage>165</fpage>
+          <lpage>169</lpage>
+          <pub-id pub-id-type="doi">10.1007/BF02338823</pub-id>
+          <pub-id pub-id-type="pmid">8703081</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR8">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Huynen</surname>
+              <given-names>MA</given-names>
+            </name>
+            <name>
+              <surname>Stadler</surname>
+              <given-names>P</given-names>
+            </name>
+            <name>
+              <surname>Fontana</surname>
+              <given-names>W</given-names>
+            </name>
+          </person-group>
+          <article-title>Smoothness within ruggedness: The role of neutrality in adaptation</article-title>
+          <source>Proc Natl Acad Sci USA</source>
+          <year>1996</year>
+          <volume>93</volume>
+          <fpage>397</fpage>
+          <lpage>401</lpage>
+          <pub-id pub-id-type="doi">10.1073/pnas.93.1.397</pub-id>
+          <pub-id pub-id-type="pmid">8552647</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR9">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Jansen</surname>
+              <given-names>T</given-names>
+            </name>
+            <name>
+              <surname>Wegener</surname>
+              <given-names>I</given-names>
+            </name>
+          </person-group>
+          <article-title>Evolutionary algorithms&#x2014;how to cope with plateaus of constant fitness and when to reject strings of the same fitness</article-title>
+          <source>IEEE Trans Evol Comput</source>
+          <year>2001</year>
+          <volume>5</volume>
+          <issue>6</issue>
+          <fpage>589</fpage>
+          <lpage>599</lpage>
+          <pub-id pub-id-type="doi">10.1109/4235.974841</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR10">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Kimura</surname>
+              <given-names>M</given-names>
+            </name>
+          </person-group>
+          <article-title>Evolutionary rate at the molecular level</article-title>
+          <source>Nature</source>
+          <year>1968</year>
+          <volume>217</volume>
+          <fpage>624</fpage>
+          <lpage>626</lpage>
+          <pub-id pub-id-type="doi">10.1038/217624a0</pub-id>
+          <pub-id pub-id-type="pmid">5637732</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR11">
+        <mixed-citation publication-type="other">Neumann F, Sudholt D, Witt C (2007) Comparing variants of MMAS ACO algorithms on pseudo-boolean functions. In: Proceedings of engineering stochastic local search algorithms (SLS &#x2019;07), LNCS, vol 4638. Springer, pp 61&#x2013;75</mixed-citation>
+      </ref>
+      <ref id="CR12">
+        <mixed-citation publication-type="other">Poli R, L&#xF3;pez EG (2007) On the effects of bit-wise neutrality on fitness distance correlation, phenotypic mutation rates and problem hardness. In: Proceedings of foundations of genetic algorithms (FOGA &#x2019;07), pp. 138&#x2013;164</mixed-citation>
+      </ref>
+      <ref id="CR13">
+        <mixed-citation publication-type="other">Rothlauf F (2003) Population sizing for the redundant trivial voting mapping. In: Proceedings of the annual conference on genetic and evolutionary computation (GECCO &#x2019;03), LNCS, vol 2724. Springer, pp 618&#x2013;627</mixed-citation>
+      </ref>
+      <ref id="CR14">
+        <mixed-citation publication-type="other">Schuster P (2002) Molecular insights into evolution of phenotypes. In: Crutchfield JP, Schuster P (eds) Evolutionary dynamics&#x2014;exploring the interplay of accident, selection, neutrality and function. Santa Fe Institute Series in the Science of Complexity. Oxford University Press, Oxford</mixed-citation>
+      </ref>
+      <ref id="CR15">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Stephens</surname>
+              <given-names>C</given-names>
+            </name>
+            <name>
+              <surname>Waelbroeck</surname>
+              <given-names>H</given-names>
+            </name>
+          </person-group>
+          <article-title>Codon bias and mutability in HIV sequences</article-title>
+          <source>J Mol Evol</source>
+          <year>1999</year>
+          <volume>48</volume>
+          <fpage>390</fpage>
+          <lpage>397</lpage>
+          <pub-id pub-id-type="doi">10.1007/PL00006483</pub-id>
+          <pub-id pub-id-type="pmid">10079277</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR16">
+        <mixed-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Toussaint</surname><given-names>M</given-names></name><name><surname>Igel</surname><given-names>C</given-names></name></person-group><article-title>Neutrality and self-adaptation</article-title><source>Nat Comput</source><year>2003</year><volume>2</volume><issue>2</issue><fpage>117</fpage><lpage>132</lpage>1059.68088<pub-id pub-id-type="doi">10.1023/A:1024906105255</pub-id>2001038</mixed-citation>
+      </ref>
+      <ref id="CR17">
+        <mixed-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Wegener</surname><given-names>I</given-names></name><name><surname>Witt</surname><given-names>C</given-names></name></person-group><article-title>On the optimization of monotone polynomials by simple randomized search heuristics</article-title><source>Combin Probab Comput</source><year>2005</year><volume>14</volume><fpage>225</fpage><lpage>247</lpage>1062.68049<pub-id pub-id-type="doi">10.1017/S0963548304006650</pub-id>2128091</mixed-citation>
+      </ref>
+      <ref id="CR18">
+        <mixed-citation publication-type="other">Weicker K, Weicker N (2001) Burden and benefits of redundancy. In: Proceedings of foundations of genetic algorithms (FOGA &#x2019;00). Morgan Kaufmann, pp 313&#x2013;333</mixed-citation>
+      </ref>
+    </ref-list>
+    <fn-group>
+      <fn>
+        <p>A preliminary version of this article appeared in<italic> Proceedings of the IEEE Congress on Evolutionary Computation 2008.</italic></p>
+      </fn>
+    </fn-group>
+  </back>
+</article>

@@ -1,0 +1,2277 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD Journal Archiving and Interchange DTD v3.0 20080202//EN" "archivearticle3.dtd">
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML" article-type="research-article">
+  <?DTDIdentifier.IdentifierValue article.dtd?>
+  <?DTDIdentifier.IdentifierType system?>
+  <?SourceDTD.DTDName article.dtd?>
+  <?SourceDTD.Version 1.0?>
+  <?ConverterInfo.XSLTName bmc2nlmx2.xsl?>
+  <?ConverterInfo.Version 2?>
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="nlm-ta">BMC Bioinformatics</journal-id>
+      <journal-title-group>
+        <journal-title>BMC Bioinformatics</journal-title>
+      </journal-title-group>
+      <issn pub-type="epub">1471-2105</issn>
+      <publisher>
+        <publisher-name>BioMed Central</publisher-name>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="pmc">3098182</article-id>
+      <article-id pub-id-type="publisher-id">1471-2105-12-141</article-id>
+      <article-id pub-id-type="pmid">21554720</article-id>
+      <article-id pub-id-type="doi">10.1186/1471-2105-12-141</article-id>
+      <article-categories>
+        <subj-group subj-group-type="heading">
+          <subject>Methodology Article</subject>
+        </subj-group>
+      </article-categories>
+      <title-group>
+        <article-title>Inferring functional modules of protein families with probabilistic topic models</article-title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author" id="A1">
+          <name>
+            <surname>Konietzny</surname>
+            <given-names>Sebastian GA</given-names>
+          </name>
+          <xref ref-type="aff" rid="I1">1</xref>
+          <email>konietz@mpi-inf.mpg.de</email>
+        </contrib>
+        <contrib contrib-type="author" id="A2">
+          <name>
+            <surname>Dietz</surname>
+            <given-names>Laura</given-names>
+          </name>
+          <xref ref-type="aff" rid="I3">3</xref>
+          <email>dietz@mpi-inf.mpg.de</email>
+        </contrib>
+        <contrib contrib-type="author" corresp="yes" id="A3">
+          <name>
+            <surname>McHardy</surname>
+            <given-names>Alice C</given-names>
+          </name>
+          <xref ref-type="aff" rid="I1">1</xref>
+          <xref ref-type="aff" rid="I2">2</xref>
+          <email>mchardy@mpi-inf.mpg.de</email>
+        </contrib>
+      </contrib-group>
+      <aff id="I1"><label>1</label>Max Planck Research Group for Computational Genomics and Epidemiology, Max Planck Institute for Informatics, University Campus E1 4, 66123 Saarbr&#xFC;cken, Germany</aff>
+      <aff id="I2"><label>2</label>Department for Algorithmic Bioinformatics, Heinrich Heine University D&#xFC;sseldorf, 40225 D&#xFC;sseldorf, Germany</aff>
+      <aff id="I3"><label>3</label>Department of Databases and Information Systems, Max Planck Institute for Informatics, University Campus E1 4, 66123 Saarbr&#xFC;cken, Germany</aff>
+      <pub-date pub-type="collection">
+        <year>2011</year>
+      </pub-date>
+      <pub-date pub-type="epub">
+        <day>9</day>
+        <month>5</month>
+        <year>2011</year>
+      </pub-date>
+      <volume>12</volume>
+      <fpage>141</fpage>
+      <lpage>141</lpage>
+      <history>
+        <date date-type="received">
+          <day>24</day>
+          <month>9</month>
+          <year>2010</year>
+        </date>
+        <date date-type="accepted">
+          <day>9</day>
+          <month>5</month>
+          <year>2011</year>
+        </date>
+      </history>
+      <permissions>
+        <copyright-statement>Copyright &#xA9;2011 Konietzny et al; licensee BioMed Central Ltd.</copyright-statement>
+        <copyright-year>2011</copyright-year>
+        <copyright-holder>Konietzny et al; licensee BioMed Central Ltd.</copyright-holder>
+        <license license-type="open-access" xlink:href="http://creativecommons.org/licenses/by/2.0">
+          <license-p>This is an Open Access article distributed under the terms of the Creative Commons Attribution License (<ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/2.0">http://creativecommons.org/licenses/by/2.0</ext-link>), which permits unrestricted use, distribution, and reproduction in any medium, provided the original work is properly cited.</license-p>
+        </license>
+      </permissions>
+      <self-uri xlink:href="http://www.biomedcentral.com/1471-2105/12/141"/>
+      <abstract>
+        <sec>
+          <title>Background</title>
+          <p>Genome and metagenome studies have identified thousands of protein families whose functions are poorly understood and for which techniques for functional characterization provide only partial information. For such proteins, the genome context can give further information about their functional context.</p>
+        </sec>
+        <sec>
+          <title>Results</title>
+          <p>We describe a Bayesian method, based on a probabilistic topic model, which directly identifies functional modules of protein families. The method explores the co-occurrence patterns of protein families across a collection of sequence samples to infer a probabilistic model of arbitrarily-sized functional modules.</p>
+        </sec>
+        <sec>
+          <title>Conclusions</title>
+          <p>We show that our method identifies protein modules - some of which correspond to well-known biological processes - that are tightly interconnected with known functional interactions and are different from the interactions identified by pairwise co-occurrence. The modules are not specific to any given organism and may combine different realizations of a protein complex or pathway within different taxa.</p>
+        </sec>
+      </abstract>
+    </article-meta>
+  </front>
+  <body>
+    <sec>
+      <title>Background</title>
+      <p>Cells are complex dynamic systems capable of performing a variety of biochemical processes, many of which are of medical or industrial relevance, such as antibiotic biosynthesis or pathways for plant biomass degradation [<xref ref-type="bibr" rid="B1">1</xref>]. Despite the large number of sequenced genomes and metagenomes that are becoming available, our knowledge of the biological processes encoded therein is still limited and process-level genome annotation is far from complete [<xref ref-type="bibr" rid="B2">2</xref>-<xref ref-type="bibr" rid="B4">4</xref>]. Thus, the lack of high quality functional annotation or knowledge of the functional context for the majority of genes in any given genome/metagenome represents one of the biggest obstacles to obtaining quantitative insights into the relevant biological systems [<xref ref-type="bibr" rid="B5">5</xref>,<xref ref-type="bibr" rid="B6">6</xref>].</p>
+      <p>The functional units of signal transduction pathways, metabolic or gene regulatory networks are the products of individual genes, and the analysis of biological processes starts with their identification and characterization. A class of methods known as genome context methods are commonly used to infer the functional relationships between genes. One such method is pairwise co-occurrence (or phylogenetic) profiling [<xref ref-type="bibr" rid="B7">7</xref>]. This technique is based on the 'guilt by association' principle [<xref ref-type="bibr" rid="B8">8</xref>], which states that genes whose products are functionally coupled are likely to co-evolve and show similar evolutionary histories, resulting in conserved co-occurrence patterns across genomes [<xref ref-type="bibr" rid="B9">9</xref>]. The phylogenetic profile of a gene defines the organisms in which orthologs can be found, usually encoded as a binary or a real-valued vector with a length corresponding to the number of genomes considered [<xref ref-type="bibr" rid="B7">7</xref>,<xref ref-type="bibr" rid="B10">10</xref>,<xref ref-type="bibr" rid="B11">11</xref>]. A functional linkage between a pair of genes is predicted if their phylogenetic profiles show pairwise similarity. Commonly used similarity or distance measures are the Hamming distance, Pearson's correlation coefficient, the mutual information and the Jaccard coefficient (for a summary, see [<xref ref-type="bibr" rid="B11">11</xref>]). Furthermore, functional coupling is frequently seen in genes that are in spatial proximity to each other in the genome [<xref ref-type="bibr" rid="B12">12</xref>]. This can be due to their organization in operons, which allows the joint expression and regulation of functionally related genes. Therefore, conserved gene neighborhoods are a strong predictor for functional coupling [<xref ref-type="bibr" rid="B12">12</xref>]. Other genome context methods search for gene fusion events [<xref ref-type="bibr" rid="B13">13</xref>], similar expression patterns [<xref ref-type="bibr" rid="B14">14</xref>] or shared transcription factor binding sites [<xref ref-type="bibr" rid="B15">15</xref>]. In particular, gene fusion events, in which two genes with linked functions have been fused into one gene during evolution, provide substantial evidence for functional linkage. An obvious strategy to improve functional linkage prediction is to combine these methods [<xref ref-type="bibr" rid="B16">16</xref>]. This approach is realized in the STRING database [<xref ref-type="bibr" rid="B17">17</xref>].</p>
+      <sec>
+        <title>Functional module detection</title>
+        <p>A functional module is defined as a set of proteins that jointly participate in a biological process [<xref ref-type="bibr" rid="B18">18</xref>,<xref ref-type="bibr" rid="B19">19</xref>]. As such, it is likely to be rich in proteins that are functionally coupled in a pairwise manner. If not all proteins, at least some subsets of a module's proteins are likely to be tightly coupled in their function. Accordingly, the proteins involved may map to densely connected subgraphs of protein-protein interaction networks.</p>
+        <p>A three step approach for detecting functional modules is common practice: First, genome context methods are used to identify pairwise interactions between proteins. Subsequently, the predicted interactions are combined into a functional linkage graph, in which the nodes represent the proteins, and the weighted edges represent the combined evidence for a functional relationship [<xref ref-type="bibr" rid="B16">16</xref>,<xref ref-type="bibr" rid="B20">20</xref>,<xref ref-type="bibr" rid="B21">21</xref>]. Finally, graph-based clustering techniques are used to identify communities of proteins that are likely to be functionally related [<xref ref-type="bibr" rid="B22">22</xref>,<xref ref-type="bibr" rid="B23">23</xref>]. Many definitions for communities in graphs exist [<xref ref-type="bibr" rid="B24">24</xref>]; however, the detection of functional modules essentially corresponds to identification of highly connected subgraphs [<xref ref-type="bibr" rid="B25">25</xref>]. Graph-based clustering and problems related to graph partitioning are often NP-hard, but can be tackled by approximate methods with good (though not optimal) results [<xref ref-type="bibr" rid="B24">24</xref>].</p>
+        <p>Watanabe <italic>et al</italic>. [<xref ref-type="bibr" rid="B26">26</xref>] used the Bond Energy Algorithm to find clusters of functionally coupled proteins, based on pairwise co-occurrence patterns, without constructing a graph. Their method uses pairwise distances between gene occurrence profiles, measured with the Hamming distance, to identify (disjoint) groups and is able to detect first-order transitive relationships between proteins. However, biological modules need not be disjoint, in general, and a potential limitation of this approach is the greedy nature of the algorithm, which makes the results sensitive to the order of the input data [<xref ref-type="bibr" rid="B26">26</xref>].</p>
+        <p>Besides the aforementioned unsupervised methods, supervised methods such as support vector machines have been applied to identify the proteins of metabolic and signal transduction pathways [<xref ref-type="bibr" rid="B27">27</xref>-<xref ref-type="bibr" rid="B29">29</xref>]. Note that the selection of genomes may be a critical factor for context analyses, because of phylogenetically conserved signals in the annotation data and a taxonomic bias in the determined genome sequences [<xref ref-type="bibr" rid="B30">30</xref>]. Jothi <italic>et al</italic>. studied the influence of genome selection on the results of co-occurrence profiling and suggested to use phylogenetically diverse, non-redundant sets of genomes [<xref ref-type="bibr" rid="B10">10</xref>].</p>
+        <p>Using genome context information in combination with state-of-the-art machine learning approaches is one of the most promising avenues to make progress in functional inference and has not been greatly explored at present [<xref ref-type="bibr" rid="B31">31</xref>]. Here, we demonstrate the utility of this approach for functional context inference. In particular, we use a Bayesian method known as Latent Dirichlet Allocation (LDA), which is based on a probabilistic topic model [<xref ref-type="bibr" rid="B32">32</xref>]. Topic models are used in text mining applications to reveal statistical relationships between words in collections of text documents, because it was observed that strong relationships usually correlate well with semantic agreement of words. The LDA model has previously been applied to identify protein relationships from MEDLINE abstracts of scientific articles [<xref ref-type="bibr" rid="B33">33</xref>,<xref ref-type="bibr" rid="B34">34</xref>] and to identify genes with similar behavior in multiple chemo-genomic experiments with <italic>Saccharomyces cerevisiae </italic>[<xref ref-type="bibr" rid="B35">35</xref>]. In contrast to this, our method processes large collections of genome annotations to detect functional modules of biological processes with heterogeneous sizes, which allows both small and large processes to be captured. Furthermore, a Bayesian model like LDA promises a robust performance with respect to common noise present in genome annotations, which greatly vary in quality, and may in part be incomplete or incorporate false functional assignments [<xref ref-type="bibr" rid="B36">36</xref>]. We applied our technique to a large collection of microbial genome annotations and compared the results with a state-of-the-art pairwise co-occurrence method. Our method identified a largely distinct set of predictions, many of which are supported by known functional interactions from STRING. The set of inferred modules partially maps to known KEGG pathways and the modules indicate a functional context for many protein families of currently unknown function. Our results thus represent a novel source of functional context assignments for protein families.</p>
+      </sec>
+    </sec>
+    <sec>
+      <title>Results and discussion</title>
+      <sec>
+        <title>A Bayesian method for functional module inference</title>
+        <p>Our method uses Latent Dirichlet Allocation (Methods) for inferring functional modules of biological processes as follows: A set of genome annotations serves as the document corpus, with individual genome annotations representing the documents. We define a fixed-sized vocabulary of words based on the gene annotations, such that words correspond to functional descriptors for gene products, as for instance orthologous groups (OGs) of genes [<xref ref-type="bibr" rid="B37">37</xref>], FIGfams [<xref ref-type="bibr" rid="B38">38</xref>], Pfam terms [<xref ref-type="bibr" rid="B39">39</xref>], EC numbers or other commonly used functional identifiers. Genes that are annotated with a certain functional descriptor represent single instances of the respective word. Note that our method treats genome annotations as a 'bag of functional descriptors', meaning that the order of genes in the genome sequence is not considered.</p>
+        <p>The collection of functional descriptors, grouped into genome documents, serves as input to LDA, and Gibbs Sampling is used for model inference (Methods). So-called topics represent the latent variables of the LDA model and their values are inferred from the collection of genome annotations (Figure <xref ref-type="fig" rid="F1">1</xref>). Each inferred LDA topic defines a probability distribution ('topic distribution') over the chosen vocabulary. Functional descriptors with high probabilities show similar co-occurrence patterns within the collection of annotations. According to the 'guilt by association' principle, the inferred topics are likely to represent functional modules - sets of protein domains or orthologous groups of genes that are functionally linked to each other.</p>
+        <fig id="F1" position="float">
+          <label>Figure 1</label>
+          <caption>
+            <p><bold>The LDA model assumes a hidden generative process that can be inversed for statistical inference</bold>. In our approach, topics are assumed to represent the unknown biological modules that have shaped the contents of genomes. As a simplifying example, the influence of two modules on the contents of three genome annotations is considered. <bold><italic>Panel A: </italic></bold>Functional descriptors (<italic>FD </italic>terms) are associated with proteins in the modules, and each module is represented by a probability distribution over <italic>FD </italic>terms. <bold><italic>Panel B: </italic></bold>The hidden generative process: Genome annotations are assumed to be generated from weighted mixtures of the probability distributions. The two clouds show the <italic>FD </italic>term set with the highest probabilities for each module. Note that the second genome annotation is equally shaped by both modules, whereas the other two annotations are solely shaped by one module. <bold><italic>Panel C</italic></bold>: The input data as seen by our method. No <italic>a priori </italic>knowledge about the underlying modules is necessary. The potential functional modules are latent variables of the model that will be inferred from the collection. The identified modules are not necessarily specific to any given microbe, but potentially combine different realizations of a complex or pathway from different organisms.</p>
+          </caption>
+          <graphic xlink:href="1471-2105-12-141-1"/>
+        </fig>
+        <p>We used the <italic>k </italic>obtained topic distributions to define potential functional modules (PF-modules): Each PF-module is defined by a single topic and comprises the set of functional descriptors selected from the topic distribution by applying a threshold value <italic>C</italic>. For our experiments, we used <italic>C </italic>= 0.01. This choice of <italic>C </italic>was guided by visual inspection of the topic distributions, in accordance with [<xref ref-type="bibr" rid="B35">35</xref>]. In this study, identifiers for orthologous groups (OGs) of genes, i.e. COG and NOG terms from the eggNOG database [<xref ref-type="bibr" rid="B37">37</xref>], were used as input vocabulary for LDA. As such, the inferred potential functional modules correspond to groups of conserved gene families.</p>
+      </sec>
+      <sec>
+        <title>Functional module inference from prokaryotic genomes</title>
+        <p>We applied our method to 575 prokaryotic genome annotations from the STRING database, and tested it for different settings of <italic>k </italic>(<italic>k </italic>= 100 - 500), with three independent runs for each setting. We achieved the best results for <italic>k </italic>= 200 and <italic>k </italic>= 400 (see discussion below), and discuss results for <italic>k </italic>= 200 in more detail. To obtain a reliable estimate of model stability for <italic>k </italic>= 200, we performed six additional runs and averaged numerical results over the PF-module sets of all nine runs.</p>
+        <p>The largest PF-module consists of 61 (standard deviation (s.d.) 6.34) OGs; the average module size is 19.4 (s.d. 0.26). Based on the module sizes, we would expect approximately 3,880 OGs to be associated with the modules. However, the inferred modules overlap in OG content, as only 1,554.3 (s.d. 38.2) distinct OGs on average are forming the set of modules of a run. In total, 868 OGs were consistently associated with the modules for all nine runs. These are likely to represent a core of conserved gene families with strong co-occurrence patterns in the data.</p>
+        <p>In accordance to the similar module size distributions over the nine runs, we also observed little variation over runs based on other evaluation criteria, discussed below. In the following, we therefore discuss the results from a randomly chosen, exemplary run with <italic>k </italic>set to 200. In this run, 198 non-empty PF-modules were identified (Additional file <xref ref-type="supplementary-material" rid="S1">1</xref>, Tables S1-198); for two topic distributions, no OGs exceeded the probability threshold <italic>C</italic>. Of these 198 modules, 70 particularly stable PF-modules could be tracked over all nine runs (Additional file <xref ref-type="supplementary-material" rid="S1">1</xref>, Tables S1-70). The average size of the 70 stable modules is 15 OGs, and of the 1,532 OGs associated with all 198 modules of the exemplary run, 43.9% are part of these stable modules. Note that the tracking of topic identities over runs follows a greedy heuristic strategy and may underestimate the true number of stable PF-modules (Methods).</p>
+        <p>We analyzed the functional consistency of the 198 modules in terms of their enrichment in COG functional categories [<xref ref-type="bibr" rid="B40">40</xref>]. On average, the most frequent functional category present in a module (with a minimum module size of seven OGs) is associated with 35% of the contained OGs (41.1% for the stable modules). This implies that modules are heterogeneous, but often include a significant portion of OGs from the same functional category. Interestingly, one of the most abundant categories is general function prediction only (histograms in Additional file <xref ref-type="supplementary-material" rid="S2">2</xref>), which contains OGs with insufficiently characterized functions. Thus, placement in a functional module might further indicate the functionalities for these gene families.</p>
+        <p>We could map 15 of the stable modules (Table <xref ref-type="table" rid="T1">1</xref>) and 49 of all modules of the exemplary run (Additional file <xref ref-type="supplementary-material" rid="S3">3</xref>, Table S1) to KEGG pathways, based on six or more matched KO terms in the respective pathway. Overall, the modules contained many interactions annotated in the KEGG database. However, this only explained a part of the PF-modules, so we evaluated the functional coherence of the identified groups by means of additional quantitative measures.</p>
+        <table-wrap id="T1" position="float">
+          <label>Table 1</label>
+          <caption>
+            <p>Profile of KEGG pathways with at least six matches to one of the stable modules</p>
+          </caption>
+          <table frame="hsides" rules="groups">
+            <thead>
+              <tr>
+                <th align="center">KEGG name</th>
+                <th align="center">Modules</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td align="center">ABC transporters</td>
+                <td align="center">5</td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td align="center">Flagellar assembly</td>
+                <td align="center">1</td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td align="center">Porphyrin and chlorophyll metabolism</td>
+                <td align="center">1</td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td align="center">Oxidative phosphorylation</td>
+                <td align="center">1</td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td align="center">Bacterial secretion system</td>
+                <td align="center">2</td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td align="center">Two-component system</td>
+                <td align="center">2</td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td align="center">Phenylalanine, tyrosine and tryptophan biosynthesis</td>
+                <td align="center">1</td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td align="center">Phenylalanine metabolism</td>
+                <td align="center">1</td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td align="center">Starch and sucrose metabolism</td>
+                <td align="center">1</td>
+              </tr>
+            </tbody>
+          </table>
+          <table-wrap-foot>
+            <p>The modules were identified as being stable across nine independent runs of our method with <italic>k </italic>= 200.</p>
+          </table-wrap-foot>
+        </table-wrap>
+      </sec>
+      <sec>
+        <title>Functional coherence of modules</title>
+        <p>For the analyzed genomes, the STRING database provides evidence for pairwise functional couplings of OGs related to different types of functional modules, such as metabolic and signal transduction pathways, as well as protein complexes. The data include predictions from several genome context methods, as well as functional relationships from public protein-protein interaction and metabolic pathway databases. For our evaluation, we exclusively selected pairs of OGs that were sufficiently supported by evidence other than co-occurrence profiling (Methods). Overall, the reference dataset with this restriction comprised 60,880 distinct OG pairs. To evaluate the functional coherence of a module, we considered all possible pairs of OGs within the module, and determined the percentage of these found in the reference set. Module derived OG pairs that are part of the reference are referred to as <italic>verified pairwise functional couplings </italic>(verified-PWF-couplings). A high proportion of verified pairs then indicate the functional coherence of a module.</p>
+        <p>The average percentage of verified pairwise functional couplings for all 198 modules of the exemplary run is 14.9% (Figure <xref ref-type="fig" rid="F2">2</xref>), and the individual results for the modules are highly significant according to an estimate based on the hypergeometric distribution (Methods). Given the size of the input vocabulary (10,431 OG terms), the probability of an arbitrary OG pair matching a pair from the reference set by chance is <italic>P<sub>hit </sub></italic>= 0.0011. For an average-sized functional module, which consists of 19 OGs and 171 OG pairs, one would expect to observe less than one match by chance (<italic>E</italic>[<italic>h</italic>] = 0.19). Thus, even small numbers of verified couplings are highly significant.</p>
+        <fig id="F2" position="float">
+          <label>Figure 2</label>
+          <caption>
+            <p><bold>Overview of the STRING-based evaluation of 198 modules</bold>. We evaluated 198 PF-modules from a randomly chosen run with <italic>k </italic>= 200. Coverage values for the modules serve to assess their functional coherence. A coverage value of 100% means that the complete OG set of a module is interconnected within the reference functional network and forms a single cluster therein. If the coverage is 50%, then the same holds for half of the OGs of a module. The plot shows coverage values for all 198 modules of the exemplary run (modules 'ChemoTax', 'Flagell' and 'VitB12' are discussed in detail in the Results section). '<italic>Verified-PWF-couplings</italic>': The percentage of <italic>verified pairwise functional couplings </italic>with respect to all tested OG pairs of a module. '<italic>Verified-PWF-couplings + Verified-TRF-couplings</italic>': The percentage of a module's OG pairs that are either verified pairwise couplings or <italic>verified first-order transitive functional couplings</italic>. '<italic>Expected verified F-couplings</italic>': The expected percentage of verified pairwise couplings to be found by chance for the OG set of a module. For an average-sized module, we expect to obtain less than one (<italic>E</italic>[<italic>h</italic>] = 0.19) verified pairwise functional coupling by chance. The dashed lines indicate mean values, and the averaged mean coverage over all nine runs is 57.9% (1.3% s.d.). Finally, we determined the fraction of OG pairs within a module which are verified and have also been predicted by the pairwise co-occurrence method used by STRING.</p>
+          </caption>
+          <graphic xlink:href="1471-2105-12-141-2"/>
+        </fig>
+        <p>The proteins of a functional module may not directly interact, but be transitively linked to each other instead. Therefore, we also searched for indirect relationships. The OG pairs in the reference set correspond to edges in a functional network defined by high confidence interactions in STRING. We matched the OG pairs of a module against this network. If a pair exists in this reference network, it may either be an isolated edge or an edge connected to other matched edges. Ideally, all OGs of a module are functionally related and form a single connected component within the network. This would mean that they are either directly or indirectly functionally linked to each other. We denote the fraction of a module's OGs that are part of the largest connected component in the reference set as the module's <italic>coverage </italic>(Methods; Figure <xref ref-type="fig" rid="F3">3</xref>). Thus, if a module has coverage of 75%, this means that three-fourths of the module's OGs are either directly or indirectly linked to each other.</p>
+        <fig id="F3" position="float">
+          <label>Figure 3</label>
+          <caption>
+            <p><bold>Evaluation scheme for the inferred potential functional modules</bold>. <bold><italic>Panel A: </italic></bold>A group of 18 OGs, representing an average-sized module. To assess the functional coherence of the module, all possible OG pairs of the module (153 pairs, illustrated as <italic>purple </italic>lines) are matched against a high confidence reference set of OG pairs from STRING. <bold><italic>Panel B: </italic></bold>The functional network spanned by the reference OG pairs. Pairwise interactions in the network that are matched by OG pairs of the module are marked as <italic>blue </italic>edges. In contrast, the majority of linkages in the reference network are marked in <italic>gray</italic>, indicating that they are not matched by any pair from the module. In each case where three module OGs are exclusively connected by two blue edges, we presume evidence for a transitive relationship (<italic>green </italic>edges), even though the third edge that completes the triangular relationship is not contained in the reference set. Thus, given the 153 tested pairs, the module yields nine verified pairwise interactions, plus four additional (first-order) transitive interactions. Note that in this case, the module covers three connected components in the network. The five OGs marked with <italic>red </italic>boundaries are part of the largest connected subcomponent, resulting in a coverage value of 5/18 = 27.8%.</p>
+          </caption>
+          <graphic xlink:href="1471-2105-12-141-3"/>
+        </fig>
+        <p>In total, we found 132 modules with an average size of 20.8 OGs and coverage of more than 50%. We also evaluated the first-order transitive relationships (<italic>verified-TRF-couplings</italic>), for which the total fraction of verified pairs rose from 14.9% to 29.9% (Figure <xref ref-type="fig" rid="F2">2</xref>).</p>
+        <p>We subsequently investigated how the validated pairs of the modules are dispersed within the reference network, i.e. whether they form isolated edges or highly-connected components. To this end, for each module, we determined the number of its connected components within the reference network. More than half of the modules map to only one such component; the average is less than two (1.67) components per module. Thus, the majority of modules represent large clusters within the reference network, with only a few isolated edges.</p>
+      </sec>
+      <sec>
+        <title>Modules with matches to KEGG pathways</title>
+        <p>We found three interesting modules (named 'ChemoTax', 'Flagell' and 'VitB12') among the stable modules in all nine LDA runs. These have a COG category functional enrichment of more than 50%. The first two modules are related to chemotaxis and the flagellar apparatus. 'ChemoTax' consists of 16 OGs and is very rich in signal transduction genes (OGs in the category T, 50%; Additional file <xref ref-type="supplementary-material" rid="S1">1</xref>, Table S1). Strikingly, this module achieves a coverage of 100%. Of the 67 verified OG pairs (39 verified pairwise couplings + 28 verified transitive couplings), only 10 were also detected by co-occurrence profiling. The larger 'Flagell' module consists of 35 OGs and is rich in cell motility genes (category N, 86%; Additional file <xref ref-type="supplementary-material" rid="S1">1</xref>, Table S2). This module has a coverage value of 91%. In the 'Flagell' module, we identified 355 verified pairwise and 140 verified transitive functional couplings, whereas pairwise co-occurrence profiling identified 301 of these 495 couplings. Interestingly, 'ChemoTax' and 'Flagell' share two gene families (<italic>COG0835 </italic>and <italic>COG2201</italic>), which are both assigned to the functional categories for signal transduction (category T) and cell motility (category N). 'ChemoTax' and 'Flagell' thus may capture different aspects of a biological network related to chemotaxis and cell motility. While 'ChemoTax' does not correspond to a KEGG pathway and mainly consists of the OGs responsible for signal transduction, 'Flagell' comprises structural components of the flagellar apparatus and contains most of the elements of the respective KEGG map (Figure <xref ref-type="fig" rid="F4">4</xref>). Indeed, the relationship between the flagellar apparatus and chemotaxis is well known [<xref ref-type="bibr" rid="B41">41</xref>,<xref ref-type="bibr" rid="B42">42</xref>].</p>
+        <fig id="F4" position="float">
+          <label>Figure 4</label>
+          <caption>
+            <p><bold>Mapping of the 'Flagell' module to the KEGG map 'flagellar assembly'</bold>. OGs of the 'Flagell' module are mapped to the KEGG map. Matched items are highlighted in <italic>red</italic>. This image is adapted from the original KEGG map.</p>
+          </caption>
+          <graphic xlink:href="1471-2105-12-141-4"/>
+        </fig>
+        <p>Furthermore, we identified a module comprising 32 gene families (Additional file <xref ref-type="supplementary-material" rid="S1">1</xref>, Table S3) that largely maps to the KEGG pathway 'Porphyrin and chlorophyll metabolism' (24 matches, KEGG map in Additional file <xref ref-type="supplementary-material" rid="S4">4</xref>). The module almost completely covers the process of synthesis from precorrin-2 to the vitamin B12 coenzyme, and we therefore refer to this module as 'VitB12'. The module has a coverage of 93.8%, while pairwise co-occurrence only predicted 29.8% of the 245 verified pairwise or transitive functional couplings. It should be noted that 'VitB12' clearly represents a meaningful module, although its 118 OG pairs with direct matches in the reference set cover only 23.8% of the tested pairs. Most supported pairs for this module originate from the 'database' and 'neighborhood' channels of STRING.</p>
+        <p>Another interesting stable module of 66 OGs that comprises ribosome-related gene families was found for <italic>k </italic>= 400 in all nine runs (Additional file <xref ref-type="supplementary-material" rid="S5">5</xref>, Table S1; the module was not found in all runs for <italic>k </italic>= 200; however, a corresponding module found in the exemplary run with <italic>k </italic>= 200 is presented in Additional file <xref ref-type="supplementary-material" rid="S1">1</xref>, Table S123). The module maps to the KEGG reference pathways 'Ribosome' (29 OGs, KEGG map in Additional file <xref ref-type="supplementary-material" rid="S6">6</xref>) and 'Aminoacyl-tRNA biosynthesis' (13 OGs). The functional enrichment for category translation and ribosomal structure (J) is 73%, and four gene families represent translation factors. Thus, our method is capable of identifying modules with a larger functional context than a single KEGG pathway. Interestingly, the module has a coverage value of 97% and none of the interactions were found by pairwise co-occurrence. Note that this module is not the only module related to the ribosome KEGG pathway. Several other modules map to pathways that are involved in protein biosynthesis. The number of verified pairs for all presented modules was highly significant according to our significance estimate (<italic>P<sub>mult</sub></italic>_<italic><sub>hit</sub></italic>&#x2264;0.001).</p>
+      </sec>
+      <sec>
+        <title>Functional coherence of the modules in dependence of LDA parameter k</title>
+        <p>We evaluated the impact of <italic>k</italic>, the number of topics to be inferred, in a series of experiments with <italic>k </italic>set to 100, 200, 300, 400 and 500 (Table <xref ref-type="table" rid="T2">2</xref>). Each experiment comprised three independent runs. The mean module size increased notably from <italic>k </italic>= 100 (13.82) to <italic>k </italic>= 200 (19.47), whereas it remained similar for <italic>k </italic>= 200, 300, 400 and 500. Interestingly, the functional coverage values only varied slightly for different settings of <italic>k</italic>, although the number of modules and their sizes steadily increased. This suggests that most of the identified modules for different settings of <italic>k </italic>were supported by evidence from STRING. The number of stable modules is larger for <italic>k </italic>= 400 and <italic>k </italic>= 500 than for runs with smaller values of <italic>k</italic>, and these modules also contain more distinct OGs. Thus, for larger values of <italic>k</italic>, a larger part of the STRING reference interaction network is identified. We additionally matched the stable modules from each experiment to the KEGG database to identify pathways with six or more hits to any one of the modules. For <italic>k </italic>= 200 and <italic>k </italic>= 400, this resulted in the most diverse profiles with matches to 20 different KEGG pathways. We decided to use a setting of <italic>k </italic>= 200 for a further detailed analysis, which included six additional runs, because this setting showed good results with respect to identified KEGG pathways and the largest support by known functional interactions; in terms of the fraction of identified stable modules with a coverage of at least 50% (Table <xref ref-type="table" rid="T2">2</xref>). Further details of this comparison are discussed in a Supplementary note in Additional file <xref ref-type="supplementary-material" rid="S7">7</xref>.</p>
+        <table-wrap id="T2" position="float">
+          <label>Table 2</label>
+          <caption>
+            <p>Comparison of results for varying numbers of inferred topics</p>
+          </caption>
+          <table frame="hsides" rules="groups">
+            <thead>
+              <tr>
+                <th align="center">
+                  <italic>k</italic>
+                </th>
+                <th align="center" colspan="2">Mean # OGs associated with the modules</th>
+                <th align="center" colspan="2">Mean module size</th>
+                <th align="center" colspan="2">Mean coverage for <italic>k </italic>modules</th>
+                <th align="center">Stable modules with &#x2265;5 OGs and coverage &#x2265;50%</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td/>
+                <td align="center">
+                  <bold>Average</bold>
+                </td>
+                <td align="center"><bold>s.d</bold>.</td>
+                <td align="center">
+                  <bold>Average</bold>
+                </td>
+                <td align="center"><bold>s.d</bold>.</td>
+                <td align="center">
+                  <bold>Average</bold>
+                </td>
+                <td align="center"><bold>s.d</bold>.</td>
+                <td/>
+              </tr>
+              <tr>
+                <td colspan="8">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td align="center">100</td>
+                <td align="center">635</td>
+                <td align="center">28.6</td>
+                <td align="center">13.82</td>
+                <td align="center">0.27</td>
+                <td align="center">64%</td>
+                <td align="center">1%</td>
+                <td align="center">33 (33%)</td>
+              </tr>
+              <tr>
+                <td colspan="8">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td align="center">200</td>
+                <td align="center">1560</td>
+                <td align="center">24.9</td>
+                <td align="center">19.47</td>
+                <td align="center">0.11</td>
+                <td align="center">58%</td>
+                <td align="center">1%</td>
+                <td align="center">66 (33%)</td>
+              </tr>
+              <tr>
+                <td colspan="8">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td align="center">300</td>
+                <td align="center">2009</td>
+                <td align="center">31.1</td>
+                <td align="center">21.76</td>
+                <td align="center">0.9</td>
+                <td align="center">56.7%</td>
+                <td align="center">0.6%</td>
+                <td align="center">68 (22.7%)</td>
+              </tr>
+              <tr>
+                <td colspan="8">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td align="center">400</td>
+                <td align="center">2223</td>
+                <td align="center">33.9</td>
+                <td align="center">22.9</td>
+                <td align="center">0.42</td>
+                <td align="center">53%</td>
+                <td align="center">1%</td>
+                <td align="center">102 (25.5%)</td>
+              </tr>
+              <tr>
+                <td colspan="8">
+                  <hr/>
+                </td>
+              </tr>
+              <tr>
+                <td align="center">500</td>
+                <td align="center">2378</td>
+                <td align="center">7</td>
+                <td align="center">22.34</td>
+                <td align="center">0.19</td>
+                <td align="center">49%</td>
+                <td align="center">0%</td>
+                <td align="center">97 (19.4%)</td>
+              </tr>
+            </tbody>
+          </table>
+          <table-wrap-foot>
+            <p>We performed 5 experiments to test different settings of <italic>k</italic>. The reported numbers for each experiment are averaged mean values of three runs. We used a greedy approach to track module identities across the runs for each setting of <italic>k</italic>, and refer to the modules identified in all three runs as the stable modules. The last column gives the number of stable modules with sufficient evidence for functional coherence based on the STRING analysis (in parentheses, we denote the fraction of stable modules satisfying the conditions, with respect to <italic>k</italic>).</p>
+          </table-wrap-foot>
+        </table-wrap>
+      </sec>
+      <sec>
+        <title>Comparison with pairwise co-occurrence profiling</title>
+        <p>We compared our method with the state-of-the-art pairwise co-occurrence profiling method used in STRING. Pairwise co-occurrence identified a small fraction of the verified pairwise or first-order transitive couplings of the modules (Figure <xref ref-type="fig" rid="F2">2</xref>, Figure <xref ref-type="fig" rid="F5">5</xref>). The Venn diagram in Figure <xref ref-type="fig" rid="F5">5</xref> shows the overlap with the reference set for both methods. Overall, both methods detected a small subset of the 60,880 reference pairs, resulting in recall rates of 8.4% for the modules and 2.4% for pairwise co-occurrence. These rates suggest that, in general, co-occurrence patterns contribute different evidence for functional linkage than other available sources of information about functional linkages. The PF-modules cover a largely distinct set of interactions, which includes 66.1% of the validated predictions of the pairwise method. The 4,174 validated functional couplings exclusive to the PF-modules exceed the overall number of linkages predicted by pairwise profiling. We mapped these 4,174 pairs to KEGG and found matches for 34.6% of them. The most abundant KEGG pathways were 'Ribosome', 'Two-component system' and 'Oxidative phosphorylation'.</p>
+        <fig id="F5" position="float">
+          <label>Figure 5</label>
+          <caption>
+            <p><bold>Pairwise predictions deduced from 198 modules compared with predictions of the co-occurrence baseline method</bold>. The Venn diagram visualizes the overlaps between the different OG pair sets. The partitions are defined over OG pairs. For each section of the Venn diagram, the number of distinct OG terms defined as parts of the pairs is noted. Note that the OG sets of the single sections are not necessarily disjoint. A large total of 5,123 pairs have been validated for the modules. Additionally, 7,603 first-order transitive relationships could be validated based on the reference set (not included in the Venn diagram). Based on our estimate <italic>E</italic>[<italic>h</italic>] for the expected number <italic>h </italic>of random matches for a single module, we would expect less than 50 matches to the reference set for the 42,695 tested pairs of the modules by chance.</p>
+          </caption>
+          <graphic xlink:href="1471-2105-12-141-5"/>
+        </fig>
+        <p>For a complete evaluation, the precision, i.e. the fraction of correct assignments of all predicted linkages should be determined. However, this is complicated by the fact that non-existing interactions (according to the reference set) may reflect incomplete knowledge rather than the absence of interaction. Furthermore, solely for the sake of comparison with pairwise co-occurrence, all possible pairs were enumerated as functional linkage candidates within each module, which is not an assumption warranted by our method and results in a large number of pairwise interactions being tested. With these restrictions being applied, precision values for both methods are 35.8% (pairwise co-occurrence) and 11.9% (functional module inference). This value may serve as an estimate of the lower bound of the actual precision for functional module inference. As pairs of gene families in a module may also interact indirectly with each other, they may not directly match a pair of the reference set. When taking these indirect interactions in the reference set into consideration (verified-TRF-couplings), we found evidence for 7,603 OG pairs that represented further functional relationships implicitly verified by STRING. Combined with the 5,123 directly verified pairs, this corresponds to 29.6% of the tested 42,965 pairs and may serve as a second estimator of precision for the presented functional module inference.</p>
+        <p>The capacity to identify indirect relationships highlights an important advantage of directly inferring groups of functionally related OGs. Of the identified transitively linked pairs, 828 could be mapped to KEGG pathways. Interestingly, the fraction of verified-TRF-couplings also serves as an indicator for meaningful relationships revealed by the modules that are not directly identified by any of the pairwise operating genome context methods used in STRING. As such OG pairs are not explicitly part of the reference set, none of the prediction methods in STRING provided sufficient evidence for their direct coupling. However, as demonstrated, a transitive relationship exists in the reference.</p>
+        <p>The modules cover parts of the reference network that tend to be tightly interconnected. Figure <xref ref-type="fig" rid="F6">6</xref> visualizes the densely connected core of the functional network defined by the reference set, showing the embedded prediction sets of both methods (a picture of the complete network is provided in Additional file <xref ref-type="supplementary-material" rid="S8">8</xref>). The modules that we have discussed are embedded in this network, showing that our method is capable of identifying meaningful groups of OGs in a dense interaction network.</p>
+        <fig id="F6" position="float">
+          <label>Figure 6</label>
+          <caption>
+            <p><bold>Visualization of the functional network spanned by the OG pairs of the reference set</bold>. The figure shows the pairwise functional interactions defined by the reference set as edges between OGs in a network graph. The subset of verified pairwise predictions from the modules is shown in <italic>green</italic>, whereas the subset of verified predictions by pairwise co-occurrence profiling is shown in <italic>blue</italic>. Functional interactions that are predicted by both methods are colored in <italic>red</italic>, and those not detected by any of the methods are shown in <italic>gray</italic>.</p>
+          </caption>
+          <graphic xlink:href="1471-2105-12-141-6"/>
+        </fig>
+      </sec>
+    </sec>
+    <sec>
+      <title>Conclusions</title>
+      <p>We proposed and evaluated a new probabilistic method for directly identifying functional modules of gene or protein families using co-occurrence patterns in a collection of annotated sequence samples. In our analysis, we used orthologous groups of genes (OGs), which are considered to be a reliable estimator for isofunctional groups of genes [<xref ref-type="bibr" rid="B38">38</xref>,<xref ref-type="bibr" rid="B40">40</xref>]. However, one could also use terms such as FIGfams, which incorporate careful manual curation by experts [<xref ref-type="bibr" rid="B38">38</xref>], KO terms, Pfam domains, TIGRfam terms or EC numbers [<xref ref-type="bibr" rid="B39">39</xref>,<xref ref-type="bibr" rid="B43">43</xref>].</p>
+      <p>The presented method is capable of simultaneously processing a large number of genome or metagenome annotations. We tested our methodology on a comprehensive set of microbial genomes; but certainly a targeted selection of a suitable collection of genome annotations for input will be a major key to the detection of further interesting PF-modules in the future.</p>
+      <p>Our method returns a soft clustering of functional annotation terms, in which a term can be assigned to multiple modules. This is well suited for the problem of assigning gene families to biological processes, given the multiplicity of roles and functionalities associated with some gene families, which may depend, for instance, on the genomic context [<xref ref-type="bibr" rid="B3">3</xref>]. Furthermore, processes may appear in multiple, slightly different variants across genomes. Such process variations arise, for instance, through alternative branches in metabolic pathways, or through reactions that can be realized by structurally different proteins [<xref ref-type="bibr" rid="B44">44</xref>,<xref ref-type="bibr" rid="B45">45</xref>]. The topic model that we use accounts for this phenomenon adequately. LDA topics are globally defined for the analyzed collection of genomes and therefore generalize over slightly different variants of a process, instead of splitting them into multiple modules. Thus, a functional module may combine multiple isofunctional but non-orthologous gene families, which fulfill similar roles in different organisms.</p>
+      <p>LDA is an unsupervised method, which requires no <italic>a priori </italic>knowledge about the structures it identifies. This gives us the opportunity to detect previously unknown functional modules. However, this also means that the nature of the biological entities captured by these modules is uncertain. For instance, metabolic and signal transduction pathways, protein complexes or mixtures of these might be the underlying biological signals.</p>
+      <p>We evaluated the biological significance of the identified modules using functional interactions from STRING, which integrate different sources of biological information about functional modules. As a result, we found that PF-modules cover diverse biological signals, such as protein complexes ('Ribosome' and 'Flagell'), signal transduction components ('ChemoTax') and metabolic pathways ('VitB12'). A convenient property of the method is that the input data are represented as 'bags of gene families' and thus no knowledge of the neighboring genes is required. Therefore, it can also be applied to highly fragmented metagenomes with many short fragments, for which there is currently a shortage of analysis techniques [<xref ref-type="bibr" rid="B5">5</xref>,<xref ref-type="bibr" rid="B46">46</xref>,<xref ref-type="bibr" rid="B47">47</xref>].</p>
+      <p>In our study, we observed that the identified potential functional modules are significantly enriched with high confidence functional interactions and capture well-known biological processes, such as chemotaxis. Moreover, the majority of the modules' high confidence interactions were not detected by a state-of-the-art pairwise co-occurrence method.</p>
+      <p>Notably, a great number of newly implied OG interactions, derived from the PF-modules, could not be verified as pairwise interactions, but received reasonable support as first-order transitive relationships from STRING instead. And many of these interactions could also be mapped to KEGG pathways. In summary, this shows that an approach of direct inference of functional modules reveals further information about biological processes. We believe that the direct inference of groups of genes is well suited for the discovery of functional context, as biological processes incorporate many indirect functional couplings between the encoded proteins. For instance, proteins may serve as network hubs that link two or more processes. In this case, proteins from the processes involved will be directly coupled to the hub and only indirectly to the proteins of the other processes. Finally, in many cases, the proteins of a particular process vary between different organisms [<xref ref-type="bibr" rid="B44">44</xref>,<xref ref-type="bibr" rid="B45">45</xref>]. These scenarios result in proteins that are only transitively linked to each other via other proteins of a process.</p>
+      <p>The inference procedure of the LDA model is based on a Markov Chain Monte Carlo method. With a limited number of iterations, such methods are non-deterministic, i.e. a series of LDA runs will not produce exactly the same sets of PF-modules. At the chosen stop point of iterations, we observed that the size distribution as well as the degree of functional coherence over the module sets varied only slightly between runs, indicating that there is sufficient convergence of the Markov chain. Our heuristic search strategy allowed us to identify 70 stable modules across the nine runs we performed. However, many of the other PF-modules also occur in more than one run. We investigated the relationship between stability and functional coherence. The average coverage over all 198 PF-modules was 59.3%, while the 128 less stable PF-modules showed an average coverage of 61.1%. Thus, also the less stable modules contribute significantly to the overall estimate of functional coherence.</p>
+      <p>An interesting future direction for research will be the use of the genome-specific topic-weights to investigate how the gene family content of a functional module varies in individual genomes (Supplementary note in Additional file <xref ref-type="supplementary-material" rid="S7">7</xref>, heatmap in Additional file <xref ref-type="supplementary-material" rid="S9">9</xref>). We found that the OGs of the modules are associated with almost all the COG functional categories and that OGs with no specific functional assignment (category R) are frequent. Therefore, we could use modules to refine gene annotations in the following way: Assuming that a given module shows evidence for being related to a specific biological process and that the module is assigned a high weight for a genome of interest. Then, poorly characterized genes of this genome, whose gene families are associated with the module, could be tentatively associated with this biological process. Methods for assessing the function of poorly characterized genes from putative interaction partners are currently being investigated [<xref ref-type="bibr" rid="B31">31</xref>]. Another interesting research direction will be to analyze the evolution of functional groups, based on the presence or absence of (parts of) a module across taxa.</p>
+      <p>Prediction methods for functional relationships that rely on conserved genomic context are prone to false positive predictions if pseudo-genes are involved [<xref ref-type="bibr" rid="B48">48</xref>,<xref ref-type="bibr" rid="B49">49</xref>]. Pseudo-genes are functionally disabled copies of genes, which typically occur in at least 1-5% of gene-like sequences in prokaryotic genomes [<xref ref-type="bibr" rid="B50">50</xref>]. We found several PF-modules that integrate different transposable elements. In these cases, pseudo-genes might have had an impact on the inferred modules. LDA, like other co-occurrence techniques, could principally be misguided in cases where multiple copies of an OG reside in the same genome by chance without being retained by selection for a certain functionality, e.g. due to repeats of a genomic sequence.</p>
+      <p>We compared results for different choices of the number of topics to be inferred, and suggest choosing a setting for <italic>k </italic>between 200 and 400 for the analyzed set of genomes. Finding an optimal choice for the number of topics corresponds to the problem of model selection in latent class cluster analysis [<xref ref-type="bibr" rid="B51">51</xref>]. Blei <italic>et al</italic>. [<xref ref-type="bibr" rid="B52">52</xref>] proposed tackling this problem by modeling a hierarchy of topics and embedding LDA into a Hierarchical Dirichlet Process [<xref ref-type="bibr" rid="B52">52</xref>,<xref ref-type="bibr" rid="B53">53</xref>]. However, the additional level of complexity in these models is likely to cause the inference process to be more time-consuming, and convergence of the process has to be carefully monitored.</p>
+      <p>In summary, we found that our method allows identification of well-known biological processes, as well as the discovery of new modules supported by high confidence functional interactions. It furthermore places many gene families of currently poorly characterized function within a functional context. The presented technique could thus help to enhance our knowledge of the biological processes governing microbial life and reveal new functional connections for many microbial genes.</p>
+    </sec>
+    <sec sec-type="methods">
+      <title>Methods</title>
+      <sec>
+        <title>Technical aspects of the LDA model</title>
+        <p>LDA assumes the existence of a fixed number <italic>k </italic>of underlying 'topics' that define the essential semantics of the whole text corpus. Each topic <italic>t<sub>i </sub></italic>(with <italic>i</italic>&#x2208;{1,...,<italic>k</italic>}) defines a probability distribution ('topic distribution') over the vocabulary <italic>V </italic>of words: <italic>P</italic>(<italic>w</italic>|<italic>t<sub>i</sub></italic>) for <italic>w</italic>&#x2208;<italic>V</italic>. Words with high probabilities under a topic distribution are statistically linked to each other, i.e. they have similar co-occurrence patterns with respect to the document collection. This way, each topic defines a specific grouping of words that are thought to be semantically related. However, the topics represent latent variables of the LDA model that need to be inferred from the input data.</p>
+        <p>LDA uses <italic>k </italic>multinomial distributions with Dirichlet priors to model the topics. These distributions are globally defined for all documents of the collection, but the model assigns weights to the individual topics for each document. For each document <italic>d<sub>j </sub></italic>(with <italic>j</italic>&#x2208;{1,... <italic>D</italic>}), a set of probabilities <italic>P</italic>(<italic>t<sub>i</sub></italic>|<italic>d<sub>j</sub></italic>) exists for <italic>i</italic>&#x2208;{1,... <italic>k</italic>}, which represent the weights. The underlying assumption is that the documents are the result of a hidden generative process, in which the observed word frequencies have been generated from a document-specific, weighted mixture of the topic distributions. This relationship between observed word frequencies and the topic distributions is reflected in <italic>P</italic>(<italic>w</italic>|<italic>d<sub>j</sub></italic>), which is the probability of observing a certain word <italic>w</italic>&#x2208;<italic>V </italic>as part of document <italic>d<sub>j</sub></italic>:<disp-formula><graphic xlink:href="1471-2105-12-141-i1.gif"/></disp-formula></p>
+        <p>The word content of a single document <italic>d<sub>j </sub></italic>mainly corresponds to a set of words contributed by the subset of topics with the highest probabilities <italic>P</italic>(<italic>t<sub>i</sub></italic>|<italic>d</italic>). Note that words may have high probabilities in multiple topic distributions. Such ambiguous words are thus related to more than one topic. However, depending on the document in which an instance of a word appears, one may assess the word's correct topic affiliation based on the document-specific weighting of topics. To this end, LDA also offers a probabilistic framework that enables the user to estimate the probabilities for assigning a word instance to certain topics, depending on the document in which it occurs.</p>
+        <p>For inference of the latent model parameters, Markov Chain Monte Carlo (MCMC) techniques [<xref ref-type="bibr" rid="B54">54</xref>], such as Gibbs sampling, can be applied [<xref ref-type="bibr" rid="B55">55</xref>]. At the end of the inference process, one obtains the topic distributions and document-specific probability weights for the topics.</p>
+        <sec>
+          <title>Monitoring stability of the inferred model</title>
+          <p>MCMC sampling techniques efficiently estimate the posterior distribution over model parameters [<xref ref-type="bibr" rid="B54">54</xref>]. However, the actual time needed for convergence cannot be estimated precisely, and the efficiency of the sampling depends on the complexity of the model and the analyzed data. To assess the convergence of the inference process, a commonly used approach is to compare the results from a number of runs. We used the symmetrized version of the Kullback-Leibler divergence (KL divergence):<disp-formula><graphic xlink:href="1471-2105-12-141-i2.gif"/></disp-formula></p>
+          <p>defined for two distributions, <italic>p </italic>and <italic>q</italic>, to assess the stability of the inferred topic distributions across the final results from different runs [<xref ref-type="bibr" rid="B56">56</xref>]. Using KL divergence, we performed an all-against-all similarity comparison between the topics of two different runs. Then, topics that showed the smallest distances from each other were mapped between runs with a greedy best first search. Note that this easy to implement algorithm identifies a local optimum which does not necessarily represent a globally optimal solution in terms of the minimal KL divergences between the topics in all formed pairs. A best first search strategy may disregard suboptimal choices of pairs that would allow an improved overall mapping, due to improved mappings of other topics. If a mapping was circularly closed over <italic>N </italic>different runs (i.e. topic <italic>i </italic>of run 1 mapped to topic <italic>j </italic>of run 2, topic <italic>j </italic>mapped to topic <italic>k </italic>of run 3, and so on, until topic <italic>l </italic>of run <italic>N </italic>mapped back to topic <italic>i </italic>of run 1), we say the topic behaved consistently across these runs. We refer to topics that we could track consistently across all performed runs as stable topics.</p>
+        </sec>
+      </sec>
+      <sec>
+        <title>Input data and preprocessing</title>
+        <p>Genome annotations for 575 prokaryotic genome sequences were downloaded from the STRING database (version 8.2) [<xref ref-type="bibr" rid="B17">17</xref>]. The number of distinct OGs (COG/NOG terms) in this dataset is 47,993. We removed all terms appearing in less than 10 genomes, which reduced the vocabulary to 10,431 distinct OGs. This filtering step facilitated evaluation with respect to the computational requirements. In subsequent experiments, we found that removing this restriction does not significantly change the results (data not shown).</p>
+        <sec>
+          <title>Parameter settings for LDA runs and availability of the LDA implementation</title>
+          <p>Our method uses the LDA implementation available at <ext-link ext-link-type="uri" xlink:href="http://gibbslda.sourceforge.net/">http://gibbslda.sourceforge.net/</ext-link>, which relies on Gibbs sampling [<xref ref-type="bibr" rid="B55">55</xref>]. The LDA model defines two hyperparameters, <italic>&#x3B1; </italic>and <italic>&#x3B2;</italic>, which specify the underlying Dirichlet prior distributions. LDA was run with 2,500 iterations and the following parameter settings: <italic>k </italic>= 200 (the number of topics), <italic>&#x3B1; </italic>= 0.5, <italic>&#x3B2; </italic>= 0.01. The experiments were repeated nine times to ensure stability of the results.</p>
+        </sec>
+      </sec>
+      <sec>
+        <title>Evaluation</title>
+        <sec>
+          <title>Construction of a STRING-based reference set of high confidence interactions</title>
+          <p>The STRING database provides information about pairwise functional couplings of OGs for the analyzed set of genomes. Supporting evidence for each OG pair can stem from seven sources (channels): 'neighborhood', 'fusion', 'co-occurence', 'coexpression', 'experimental', 'database' and 'textmining'. For each evidence channel, a score quantifies its reliability. These reliability estimates were derived by benchmarking the predictive performance of the individual channels against a reference set of protein associations from the KEGG database [<xref ref-type="bibr" rid="B16">16</xref>]. STRING also provides a 'combined score' as an integrated measure of support from all evidence channels [<xref ref-type="bibr" rid="B17">17</xref>].</p>
+          <p>The STRING data (version 8.2) define 6,007,943 distinct pairs of OGs as being functionally coupled, based on a combined evidence score of 0.15 or more. Combined scores in the range of [0.4-0.7] represent a medium level of confidence, whereas the range of [0.7-1.0] denotes a high level of confidence [<xref ref-type="bibr" rid="B17">17</xref>]. We followed the procedure described in [<xref ref-type="bibr" rid="B17">17</xref>] to combine information from the different channels without co-occurrence information into a combined score, using a script provided by the database maintainers <ext-link ext-link-type="uri" xlink:href="http://bitbucket.org/mkuhn/stringtools/src/tip/prior_correction/discard_channels_cogs.py">http://bitbucket.org/mkuhn/stringtools/src/tip/prior_correction/discard_channels_cogs.py</ext-link>. Thus, the modified combined scores represent evidence for pairwise functional coupling independent of co-occurrence. This procedure resulted in 2,472,604 remaining pairs, because discarding information from one channel decreases the overall combined scores, and, as a result, some fell below the threshold of 0.15. We used the modified combined scores to define a high confidence reference set of known pairwise functional couplings. Our reference comprises all OG pairs from STRING for which <italic>(i) </italic>both OGs are present in the input vocabulary <italic>V </italic>and <italic>(ii) </italic>the modified combined score is at least 0.7. The resulting reference set consisted of 60,880 unique OG pairs (Additional file <xref ref-type="supplementary-material" rid="S10">10</xref>).</p>
+        </sec>
+        <sec>
+          <title>Assessing the functional coherence of the potential functional modules</title>
+          <p>For each PF-module, we determined the set <italic>S<sub>PFM </sub></italic>of all possible unique OG pairs. For a PF-module of size <italic>l</italic>, the number of pairs is <italic>m</italic>=|<italic>S<sub>PFM</sub></italic>| = (<italic>l</italic>&#xB7;(<italic>l</italic>-1))/2. We then tried to identify as many of these pairs as possible within the reference set of pairs and refer to matches as <italic>verified pairwise functional couplings </italic>(verified-PWF-couplings). Furthermore, for each OG pair of a PF-module without a direct match to the reference set, we searched for a third OG from the respective module with a verified-PWF-coupling to both OGs of the original pair. OG pairs that were validated by this approach are referred to as <italic>verified first-order transitive functional couplings </italic>(verified-TRF-coupling). Additionally, we computed the transitive closure for each module with respect to the functional network spanned by the OG pairs of the reference set. Therefore, we determined the set of verified pairwise functional couplings for the OG set of the respective module, and used this set of pairs as edges between OG nodes to construct an undirected graph. Finally, we determined the connected sub-components of the graph, and used the percentage of the module's OGs that were part of the largest connected component as an estimate for the module's functional coherence. We refer to this value as the module's <italic>coverage</italic>.</p>
+        </sec>
+        <sec>
+          <title>Significance estimation</title>
+          <p>The data from STRING allow us to verify pairwise OG interactions. We assessed the statistical significance of finding <italic>h </italic>OG pairs with matches to the reference set of interactions among the pairs of a PF-module. We used the hypergeometric distribution to estimate the probability of observing this result by chance:</p>
+          <p>Let <italic>D </italic>be the set of all possible unique pairs of OGs for the input vocabulary <italic>V</italic>. Given a vocabulary of size |<italic>V</italic>|, the number of pairs in <italic>D </italic>is |<italic>D</italic>| = (|<italic>V</italic>|&#xB7;(|<italic>V</italic>|-1))/2. Further, let <italic>U </italic>be the reference set of OG pairs. |<italic>U</italic>| denotes the size of the set. Due to the construction rules of the reference set, <italic>U </italic>&#x2286; <italic>D </italic>holds and therefore a random pair in <italic>D </italic>will also be part of <italic>U </italic>with probability <inline-formula><inline-graphic xlink:href="1471-2105-12-141-i3.gif"/></inline-formula>. If we count the observation of a match to the reference set as a success, matching a random OG pair against the reference can be regarded as a Bernoulli experiment with the success probability <italic>P<sub>hit</sub></italic>.</p>
+          <p>Now, since <italic>S<sub>PFM </sub></italic>represents the set of unique OG pairs of a PF-module, let <italic>m </italic>= |<italic>S<sub>PFM</sub></italic>| be the size of this set. We used the hypergeometric distribution to assess the probability of achieving <italic>h </italic>verified-PWF-couplings for <italic>S<sub>PFM </sub></italic>by chance. The subset <italic>U </italic>of <italic>D</italic>, comprising the OG pairs defined in the reference, represents the set of possible successes if we randomly draw from the population <italic>D</italic>. Thus, the probability <italic>P<sub>hyper </sub></italic>(<italic>X </italic>= <italic>h</italic>) of observing <italic>h </italic>successes by chance, given that we draw <italic>m </italic>times from the population <italic>D </italic>without replacement is:<disp-formula><graphic xlink:href="1471-2105-12-141-i4.gif"/></disp-formula></p>
+          <p>This gives the expected number of random matches for a set <italic>S<sub>PFM </sub></italic>as <inline-formula><inline-graphic xlink:href="1471-2105-12-141-i5.gif"/></inline-formula>.</p>
+          <p>Finally, the cumulative distribution function <italic>P</italic>(<italic>X</italic>&#x2264;<italic>x) </italic>of the hypergeometric distribution was used to estimate the probability of observing <italic>h </italic>or more hits among <italic>m </italic>randomly formed query pairs. This is <italic>P<sub>mult_hit</sub></italic>(<italic>h</italic>) = <italic>P</italic>(<italic>X</italic>&#x2265;<italic>h</italic>) = 1-<italic>P</italic>(X&#x2264;<italic>h</italic>-1).</p>
+        </sec>
+        <sec>
+          <title>Comparison with a state-of-the-art co-occurrence method</title>
+          <p>The pairwise co-occurrence profiling method of STRING evaluates the mutual information between OG profiles and also accounts for biases in the data caused by phylogenetic relationships between genomes [<xref ref-type="bibr" rid="B16">16</xref>]. We determined the predictions of the pairwise profiling method for our comparison as follows: Starting with all OG pairs provided by STRING, we first removed all pairs containing OGs which were not part of the vocabulary <italic>V </italic>in our analysis. Then, we determined all OG pairs with a score of at least 0.4 from the 'co-occurrence' channel. This score threshold corresponds to the lower bound of the medium confidence interval for STRING scores.</p>
+        </sec>
+        <sec>
+          <title>Mapping OG identifiers to KEGG pathway maps</title>
+          <p>KEGG pathway maps are defined for orthologous groups of genes. However, these maps are based on KEGG-specific identifiers for such groups, known as KO (KEGG Orthology) terms [<xref ref-type="bibr" rid="B57">57</xref>]. To map OG identifiers from the eggNOG database to KO identifiers of the KEGG maps, a mapping table from KEGG was used. Note that these mappings are not defined for NOG terms.</p>
+        </sec>
+      </sec>
+    </sec>
+    <sec>
+      <title>List of abbreviations</title>
+      <p>KL divergence: Kullback-Leibler divergence; KO: KEGG Orthology; LDA: Latent Dirichlet Allocation; MCMC: Markov Chain Monte Carlo; OG: Orthologous group (of genes); PF-module: Potential functional module; Verified-PWF-coupling (VPWFC): Verified pairwise functional coupling; Verified-TRF-coupling (VTRFC): Verified (first-order) transitive functional coupling;</p>
+    </sec>
+    <sec>
+      <title>Authors' contributions</title>
+      <p>SGAK designed the evaluation setup and performed the experiments; LD provided technical advice on Latent Dirichlet Allocation; SGAK and ACM wrote the manuscript; ACM devised the project and gave conceptual advice. All authors read and approved the final manuscript.</p>
+    </sec>
+    <sec sec-type="supplementary-material">
+      <title>Supplementary Material</title>
+      <supplementary-material content-type="local-data" id="S1">
+        <caption>
+          <title>Additional file 1</title>
+          <p><bold>A list of 198 potential functional modules</bold>. The Supplementary Tables <bold>S1-198 </bold>show 198 potential functional modules that were identified in a randomly chosen, exemplary run of the presented method (<italic>k </italic>= 200). Tables <bold>S1-70 </bold>represent the subset of particularly stable modules that could be tracked consistently across nine independent runs of the method.</p>
+        </caption>
+        <media xlink:href="1471-2105-12-141-S1.PDF" mimetype="application" mime-subtype="pdf">
+          <caption>
+            <p>Click here for file</p>
+          </caption>
+        </media>
+      </supplementary-material>
+      <supplementary-material content-type="local-data" id="S2">
+        <caption>
+          <title>Additional file 2</title>
+          <p><bold>Comparison of histograms over COG functional categories</bold>. Comparison of two histograms over COG functional categories for (<bold><italic>A</italic></bold>) 70 stable modules and (<bold><italic>B</italic></bold>) modules that could not be tracked across all nine runs.</p>
+        </caption>
+        <media xlink:href="1471-2105-12-141-S2.PDF" mimetype="application" mime-subtype="pdf">
+          <caption>
+            <p>Click here for file</p>
+          </caption>
+        </media>
+      </supplementary-material>
+      <supplementary-material content-type="local-data" id="S3">
+        <caption>
+          <title>Additional file 3</title>
+          <p><bold>Profile of KEGG pathways with at least six matches to one of the 198 modules</bold>. Supplementary Table <bold>S1</bold>: List of KEGG pathways with at least six matches of their KO terms to one of the 198 potential functional modules inferred in the exemplary run with <italic>k </italic>= 200.</p>
+        </caption>
+        <media xlink:href="1471-2105-12-141-S3.PDF" mimetype="application" mime-subtype="pdf">
+          <caption>
+            <p>Click here for file</p>
+          </caption>
+        </media>
+      </supplementary-material>
+      <supplementary-material content-type="local-data" id="S4">
+        <caption>
+          <title>Additional file 4</title>
+          <p><bold>Visualized matches to the KEGG pathway 'Porphyrin and chlorophyll metabolism'</bold>. KO terms that are matched by the OGs of the respective potential functional module are highlighted in <italic>pink</italic>.</p>
+        </caption>
+        <media xlink:href="1471-2105-12-141-S4.PDF" mimetype="application" mime-subtype="pdf">
+          <caption>
+            <p>Click here for file</p>
+          </caption>
+        </media>
+      </supplementary-material>
+      <supplementary-material content-type="local-data" id="S5">
+        <caption>
+          <title>Additional file 5</title>
+          <p><bold>'Ribosome'-related functional module</bold>. Supplementary Table <bold>S1</bold>: OGs of the 'Ribosome'-related functional module that was identified in nine runs with <italic>k </italic>= 400.</p>
+        </caption>
+        <media xlink:href="1471-2105-12-141-S5.PDF" mimetype="application" mime-subtype="pdf">
+          <caption>
+            <p>Click here for file</p>
+          </caption>
+        </media>
+      </supplementary-material>
+      <supplementary-material content-type="local-data" id="S6">
+        <caption>
+          <title>Additional file 6</title>
+          <p><bold>Visualized matches to the KEGG pathway 'Ribosome'</bold>. KO terms that are matched by the OGs of the respective potential functional module are highlighted in <italic>pink</italic>.</p>
+        </caption>
+        <media xlink:href="1471-2105-12-141-S6.PDF" mimetype="application" mime-subtype="pdf">
+          <caption>
+            <p>Click here for file</p>
+          </caption>
+        </media>
+      </supplementary-material>
+      <supplementary-material content-type="local-data" id="S7">
+        <caption>
+          <title>Additional file 7</title>
+          <p><bold>Supplementary note</bold>. This document includes additional details of the comparison of results for different settings of <italic>k</italic>, and a discussion on the distribution of the probability weights of the modules across the analyzed genomes.</p>
+        </caption>
+        <media xlink:href="1471-2105-12-141-S7.PDF" mimetype="application" mime-subtype="pdf">
+          <caption>
+            <p>Click here for file</p>
+          </caption>
+        </media>
+      </supplementary-material>
+      <supplementary-material content-type="local-data" id="S8">
+        <caption>
+          <title>Additional file 8</title>
+          <p><bold>Visualization of the functional network spanned by the OG pairs of the reference set</bold>. Pairwise functional interactions are defined by the reference set as edges between OGs in a network graph. The subset of verified pairwise predictions from the modules is shown in <italic>green</italic>, whereas the subset of verified predictions by pairwise co-occurrence profiling is shown in <italic>blue</italic>. Functional interactions that are predicted by both methods are colored <italic>red</italic>, and those not detected by any of the methods are shown in <italic>gray</italic>.</p>
+        </caption>
+        <media xlink:href="1471-2105-12-141-S8.PNG" mimetype="image" mime-subtype="png">
+          <caption>
+            <p>Click here for file</p>
+          </caption>
+        </media>
+      </supplementary-material>
+      <supplementary-material content-type="local-data" id="S9">
+        <caption>
+          <title>Additional file 9</title>
+          <p><bold>Visualization of the distribution of probability weights of the modules across the analyzed genomes</bold>. The unclustered heatmap indicates the strengths of probability weights of the 198 modules across the genomes. Rows represent the genomes, whereas columns represent the weights of the modules. The brighter the color of a cell, the larger is the probability weight for the respective PF-module. We re-scaled the values of each row, using minimum and maximum values, to fit values to the interval [0,1]. A discussion of this heatmap is part of the Supplementary note in Additional file <xref ref-type="supplementary-material" rid="S7">7</xref>.</p>
+        </caption>
+        <media xlink:href="1471-2105-12-141-S9.PDF" mimetype="application" mime-subtype="pdf">
+          <caption>
+            <p>Click here for file</p>
+          </caption>
+        </media>
+      </supplementary-material>
+      <supplementary-material content-type="local-data" id="S10">
+        <caption>
+          <title>Additional file 10</title>
+          <p><bold>Reference set of high confidence pairwise OG interactions</bold>. List of high confidence interactions with evidence support values from the individual STRING channels, and modified combined scores.</p>
+        </caption>
+        <media xlink:href="1471-2105-12-141-S10.ZIP" mimetype="application" mime-subtype="x-zip-compressed">
+          <caption>
+            <p>Click here for file</p>
+          </caption>
+        </media>
+      </supplementary-material>
+    </sec>
+  </body>
+  <back>
+    <sec>
+      <title>Acknowledgements</title>
+      <p>We would like to thank M. Foster, C. Tusche, L. Steinbr&#xFC;ck, K. Patil, I. Sommer, D. Emig, B. Kneissl, D. St&#xF6;ckl and L. Feuerbach for discussion and comments.</p>
+    </sec>
+    <ref-list>
+      <ref id="B1">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Rubin</surname>
+            <given-names>EM</given-names>
+          </name>
+          <article-title>Genomics of cellulosic biofuels</article-title>
+          <source>Nature</source>
+          <year>2008</year>
+          <volume>454</volume>
+          <fpage>841</fpage>
+          <lpage>845</lpage>
+          <pub-id pub-id-type="doi">10.1038/nature07190</pub-id>
+          <pub-id pub-id-type="pmid">18704079</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B2">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Osterman</surname>
+            <given-names>A</given-names>
+          </name>
+          <name>
+            <surname>Overbeek</surname>
+            <given-names>R</given-names>
+          </name>
+          <article-title>Missing genes in metabolic pathways: a comparative genomics approach</article-title>
+          <source>Curr Opin Chem Biol</source>
+          <year>2003</year>
+          <volume>7</volume>
+          <fpage>238</fpage>
+          <lpage>251</lpage>
+          <pub-id pub-id-type="doi">10.1016/S1367-5931(03)00027-9</pub-id>
+          <pub-id pub-id-type="pmid">12714058</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B3">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Reed</surname>
+            <given-names>JL</given-names>
+          </name>
+          <name>
+            <surname>Famili</surname>
+            <given-names>I</given-names>
+          </name>
+          <name>
+            <surname>Thiele</surname>
+            <given-names>I</given-names>
+          </name>
+          <name>
+            <surname>Palsson</surname>
+            <given-names>BO</given-names>
+          </name>
+          <article-title>Towards multidimensional genome annotation</article-title>
+          <source>Nat Rev Genet</source>
+          <year>2006</year>
+          <volume>7</volume>
+          <fpage>130</fpage>
+          <lpage>141</lpage>
+          <pub-id pub-id-type="doi">10.1038/nrg1769</pub-id>
+          <pub-id pub-id-type="pmid">16418748</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B4">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Stein</surname>
+            <given-names>L</given-names>
+          </name>
+          <article-title>Genome annotation: from sequence to biology</article-title>
+          <source>Nat Rev Genet</source>
+          <year>2001</year>
+          <volume>2</volume>
+          <fpage>493</fpage>
+          <lpage>503</lpage>
+          <pub-id pub-id-type="pmid">11433356</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B5">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Yooseph</surname>
+            <given-names>S</given-names>
+          </name>
+          <name>
+            <surname>Sutton</surname>
+            <given-names>G</given-names>
+          </name>
+          <name>
+            <surname>Rusch</surname>
+            <given-names>DB</given-names>
+          </name>
+          <name>
+            <surname>Halpern</surname>
+            <given-names>AL</given-names>
+          </name>
+          <name>
+            <surname>Williamson</surname>
+            <given-names>SJ</given-names>
+          </name>
+          <name>
+            <surname>Remington</surname>
+            <given-names>K</given-names>
+          </name>
+          <name>
+            <surname>Eisen</surname>
+            <given-names>JA</given-names>
+          </name>
+          <name>
+            <surname>Heidelberg</surname>
+            <given-names>KB</given-names>
+          </name>
+          <name>
+            <surname>Manning</surname>
+            <given-names>G</given-names>
+          </name>
+          <name>
+            <surname>Li</surname>
+            <given-names>W</given-names>
+          </name>
+          <name>
+            <surname>Jaroszewski</surname>
+            <given-names>L</given-names>
+          </name>
+          <name>
+            <surname>Cieplak</surname>
+            <given-names>P</given-names>
+          </name>
+          <name>
+            <surname>Miller</surname>
+            <given-names>CS</given-names>
+          </name>
+          <name>
+            <surname>Li</surname>
+            <given-names>H</given-names>
+          </name>
+          <name>
+            <surname>Mashiyama</surname>
+            <given-names>ST</given-names>
+          </name>
+          <name>
+            <surname>Joachimiak</surname>
+            <given-names>MP</given-names>
+          </name>
+          <name>
+            <surname>van Belle</surname>
+            <given-names>C</given-names>
+          </name>
+          <name>
+            <surname>Chandonia</surname>
+            <given-names>JM</given-names>
+          </name>
+          <name>
+            <surname>Soergel</surname>
+            <given-names>DA</given-names>
+          </name>
+          <name>
+            <surname>Zhai</surname>
+            <given-names>Y</given-names>
+          </name>
+          <name>
+            <surname>Natarajan</surname>
+            <given-names>K</given-names>
+          </name>
+          <name>
+            <surname>Lee</surname>
+            <given-names>S</given-names>
+          </name>
+          <name>
+            <surname>Raphael</surname>
+            <given-names>BJ</given-names>
+          </name>
+          <name>
+            <surname>Bafna</surname>
+            <given-names>V</given-names>
+          </name>
+          <name>
+            <surname>Friedman</surname>
+            <given-names>R</given-names>
+          </name>
+          <name>
+            <surname>Brenner</surname>
+            <given-names>SE</given-names>
+          </name>
+          <name>
+            <surname>Godzik</surname>
+            <given-names>A</given-names>
+          </name>
+          <name>
+            <surname>Eisenberg</surname>
+            <given-names>D</given-names>
+          </name>
+          <name>
+            <surname>Dixon</surname>
+            <given-names>JE</given-names>
+          </name>
+          <name>
+            <surname>Taylor</surname>
+            <given-names>SS</given-names>
+          </name>
+          <etal/>
+          <article-title>The Sorcerer II Global Ocean Sampling expedition: expanding the universe of protein families</article-title>
+          <source>PLoS Biol</source>
+          <year>2007</year>
+          <volume>5</volume>
+          <fpage>e16</fpage>
+          <pub-id pub-id-type="doi">10.1371/journal.pbio.0050016</pub-id>
+          <pub-id pub-id-type="pmid">17355171</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B6">
+        <mixed-citation publication-type="other">
+          <article-title>CAFA Challenge: Critical Assessment of Function Annotations</article-title>
+          <year>2011</year>
+          <ext-link ext-link-type="uri" xlink:href="http://biofunctionprediction.org/">http://biofunctionprediction.org/</ext-link>
+        </mixed-citation>
+      </ref>
+      <ref id="B7">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Pellegrini</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Marcotte</surname>
+            <given-names>EM</given-names>
+          </name>
+          <name>
+            <surname>Thompson</surname>
+            <given-names>MJ</given-names>
+          </name>
+          <name>
+            <surname>Eisenberg</surname>
+            <given-names>D</given-names>
+          </name>
+          <name>
+            <surname>Yeates</surname>
+            <given-names>TO</given-names>
+          </name>
+          <article-title>Assigning protein functions by comparative genome analysis: protein phylogenetic profiles</article-title>
+          <source>Proc Natl Acad Sci USA</source>
+          <year>1999</year>
+          <volume>96</volume>
+          <fpage>4285</fpage>
+          <lpage>4288</lpage>
+          <pub-id pub-id-type="doi">10.1073/pnas.96.8.4285</pub-id>
+          <pub-id pub-id-type="pmid">10200254</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B8">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Aravind</surname>
+            <given-names>L</given-names>
+          </name>
+          <article-title>Guilt by association: contextual information in genome analysis</article-title>
+          <source>Genome Res</source>
+          <year>2000</year>
+          <volume>10</volume>
+          <fpage>1074</fpage>
+          <lpage>1077</lpage>
+          <pub-id pub-id-type="doi">10.1101/gr.10.8.1074</pub-id>
+          <pub-id pub-id-type="pmid">10958625</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B9">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Goh</surname>
+            <given-names>CS</given-names>
+          </name>
+          <name>
+            <surname>Bogan</surname>
+            <given-names>AA</given-names>
+          </name>
+          <name>
+            <surname>Joachimiak</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Walther</surname>
+            <given-names>D</given-names>
+          </name>
+          <name>
+            <surname>Cohen</surname>
+            <given-names>FE</given-names>
+          </name>
+          <article-title>Co-evolution of proteins with their interaction partners</article-title>
+          <source>J Mol Biol</source>
+          <year>2000</year>
+          <volume>299</volume>
+          <fpage>283</fpage>
+          <lpage>293</lpage>
+          <pub-id pub-id-type="doi">10.1006/jmbi.2000.3732</pub-id>
+          <pub-id pub-id-type="pmid">10860738</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B10">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Jothi</surname>
+            <given-names>R</given-names>
+          </name>
+          <name>
+            <surname>Przytycka</surname>
+            <given-names>TM</given-names>
+          </name>
+          <name>
+            <surname>Aravind</surname>
+            <given-names>L</given-names>
+          </name>
+          <article-title>Discovering functional linkages and uncharacterized cellular pathways using phylogenetic profile comparisons: a comprehensive assessment</article-title>
+          <source>BMC Bioinformatics</source>
+          <year>2007</year>
+          <volume>8</volume>
+          <fpage>173</fpage>
+          <pub-id pub-id-type="doi">10.1186/1471-2105-8-173</pub-id>
+          <pub-id pub-id-type="pmid">17521444</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B11">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Kensche</surname>
+            <given-names>PR</given-names>
+          </name>
+          <name>
+            <surname>van Noort</surname>
+            <given-names>V</given-names>
+          </name>
+          <name>
+            <surname>Dutilh</surname>
+            <given-names>BE</given-names>
+          </name>
+          <name>
+            <surname>Huynen</surname>
+            <given-names>MA</given-names>
+          </name>
+          <article-title>Practical and theoretical advances in predicting the function of a protein by its phylogenetic distribution</article-title>
+          <source>J R Soc Interface</source>
+          <year>2008</year>
+          <volume>5</volume>
+          <fpage>151</fpage>
+          <lpage>170</lpage>
+          <pub-id pub-id-type="doi">10.1098/rsif.2007.1047</pub-id>
+          <pub-id pub-id-type="pmid">17535793</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B12">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Overbeek</surname>
+            <given-names>R</given-names>
+          </name>
+          <name>
+            <surname>Fonstein</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>D'Souza</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Pusch</surname>
+            <given-names>GD</given-names>
+          </name>
+          <name>
+            <surname>Maltsev</surname>
+            <given-names>N</given-names>
+          </name>
+          <article-title>The use of gene clusters to infer functional coupling</article-title>
+          <source>Proc Natl Acad Sci USA</source>
+          <year>1999</year>
+          <volume>96</volume>
+          <fpage>2896</fpage>
+          <lpage>2901</lpage>
+          <pub-id pub-id-type="doi">10.1073/pnas.96.6.2896</pub-id>
+          <pub-id pub-id-type="pmid">10077608</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B13">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Enright</surname>
+            <given-names>AJ</given-names>
+          </name>
+          <name>
+            <surname>Iliopoulos</surname>
+            <given-names>I</given-names>
+          </name>
+          <name>
+            <surname>Kyrpides</surname>
+            <given-names>NC</given-names>
+          </name>
+          <name>
+            <surname>Ouzounis</surname>
+            <given-names>CA</given-names>
+          </name>
+          <article-title>Protein interaction maps for complete genomes based on gene fusion events</article-title>
+          <source>Nature</source>
+          <year>1999</year>
+          <volume>402</volume>
+          <fpage>86</fpage>
+          <lpage>90</lpage>
+          <pub-id pub-id-type="doi">10.1038/47056</pub-id>
+          <pub-id pub-id-type="pmid">10573422</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B14">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>van Noort</surname>
+            <given-names>V</given-names>
+          </name>
+          <name>
+            <surname>Snel</surname>
+            <given-names>B</given-names>
+          </name>
+          <name>
+            <surname>Huynen</surname>
+            <given-names>MA</given-names>
+          </name>
+          <article-title>Predicting gene function by conserved co-expression</article-title>
+          <source>Trends Genet</source>
+          <year>2003</year>
+          <volume>19</volume>
+          <fpage>238</fpage>
+          <lpage>242</lpage>
+          <pub-id pub-id-type="doi">10.1016/S0168-9525(03)00056-8</pub-id>
+          <pub-id pub-id-type="pmid">12711213</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B15">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>McGuire</surname>
+            <given-names>AM</given-names>
+          </name>
+          <name>
+            <surname>Church</surname>
+            <given-names>GM</given-names>
+          </name>
+          <article-title>Predicting regulons and their cis-regulatory motifs by comparative genomics</article-title>
+          <source>Nucleic Acids Res</source>
+          <year>2000</year>
+          <volume>28</volume>
+          <fpage>4523</fpage>
+          <lpage>4530</lpage>
+          <pub-id pub-id-type="doi">10.1093/nar/28.22.4523</pub-id>
+          <pub-id pub-id-type="pmid">11071941</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B16">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>von Mering</surname>
+            <given-names>C</given-names>
+          </name>
+          <name>
+            <surname>Zdobnov</surname>
+            <given-names>EM</given-names>
+          </name>
+          <name>
+            <surname>Tsoka</surname>
+            <given-names>S</given-names>
+          </name>
+          <name>
+            <surname>Ciccarelli</surname>
+            <given-names>FD</given-names>
+          </name>
+          <name>
+            <surname>Pereira-Leal</surname>
+            <given-names>JB</given-names>
+          </name>
+          <name>
+            <surname>Ouzounis</surname>
+            <given-names>CA</given-names>
+          </name>
+          <name>
+            <surname>Bork</surname>
+            <given-names>P</given-names>
+          </name>
+          <article-title>Genome evolution reveals biochemical networks and functional modules</article-title>
+          <source>Proc Natl Acad Sci USA</source>
+          <year>2003</year>
+          <volume>100</volume>
+          <fpage>15428</fpage>
+          <lpage>15433</lpage>
+          <pub-id pub-id-type="doi">10.1073/pnas.2136809100</pub-id>
+          <pub-id pub-id-type="pmid">14673105</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B17">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>von Mering</surname>
+            <given-names>C</given-names>
+          </name>
+          <name>
+            <surname>Jensen</surname>
+            <given-names>LJ</given-names>
+          </name>
+          <name>
+            <surname>Snel</surname>
+            <given-names>B</given-names>
+          </name>
+          <name>
+            <surname>Hooper</surname>
+            <given-names>SD</given-names>
+          </name>
+          <name>
+            <surname>Krupp</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Foglierini</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Jouffre</surname>
+            <given-names>N</given-names>
+          </name>
+          <name>
+            <surname>Huynen</surname>
+            <given-names>MA</given-names>
+          </name>
+          <name>
+            <surname>Bork</surname>
+            <given-names>P</given-names>
+          </name>
+          <article-title>STRING: known and predicted protein-protein associations, integrated and transferred across organisms</article-title>
+          <source>Nucleic Acids Res</source>
+          <year>2005</year>
+          <volume>33</volume>
+          <fpage>D433</fpage>
+          <lpage>D437</lpage>
+          <pub-id pub-id-type="pmid">15608232</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B18">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Hartwell</surname>
+            <given-names>LH</given-names>
+          </name>
+          <name>
+            <surname>Hopfield</surname>
+            <given-names>JJ</given-names>
+          </name>
+          <name>
+            <surname>Leibler</surname>
+            <given-names>S</given-names>
+          </name>
+          <name>
+            <surname>Murray</surname>
+            <given-names>AW</given-names>
+          </name>
+          <article-title>From molecular to modular cell biology</article-title>
+          <source>Nature</source>
+          <year>1999</year>
+          <volume>402</volume>
+          <fpage>C47</fpage>
+          <lpage>C52</lpage>
+          <pub-id pub-id-type="doi">10.1038/35011540</pub-id>
+          <pub-id pub-id-type="pmid">10591225</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B19">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Pereira-Leal</surname>
+            <given-names>JB</given-names>
+          </name>
+          <name>
+            <surname>Enright</surname>
+            <given-names>AJ</given-names>
+          </name>
+          <name>
+            <surname>Ouzounis</surname>
+            <given-names>CA</given-names>
+          </name>
+          <article-title>Detection of functional modules from protein interaction networks</article-title>
+          <source>Proteins</source>
+          <year>2004</year>
+          <volume>54</volume>
+          <fpage>49</fpage>
+          <lpage>57</lpage>
+          <pub-id pub-id-type="pmid">14705023</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B20">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Marcotte</surname>
+            <given-names>EM</given-names>
+          </name>
+          <name>
+            <surname>Pellegrini</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Thompson</surname>
+            <given-names>MJ</given-names>
+          </name>
+          <name>
+            <surname>Yeates</surname>
+            <given-names>TO</given-names>
+          </name>
+          <name>
+            <surname>Eisenberg</surname>
+            <given-names>D</given-names>
+          </name>
+          <article-title>A combined algorithm for genome-wide prediction of protein function</article-title>
+          <source>Nature</source>
+          <year>1999</year>
+          <volume>402</volume>
+          <fpage>83</fpage>
+          <lpage>86</lpage>
+          <pub-id pub-id-type="doi">10.1038/47048</pub-id>
+          <pub-id pub-id-type="pmid">10573421</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B21">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Rentzsch</surname>
+            <given-names>R</given-names>
+          </name>
+          <name>
+            <surname>Orengo</surname>
+            <given-names>CA</given-names>
+          </name>
+          <article-title>Protein function prediction - the power of multiplicity</article-title>
+          <source>Trends Biotechnol</source>
+          <year>2009</year>
+          <volume>27</volume>
+          <fpage>210</fpage>
+          <lpage>219</lpage>
+          <pub-id pub-id-type="doi">10.1016/j.tibtech.2009.01.002</pub-id>
+          <pub-id pub-id-type="pmid">19251332</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B22">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Navlakha</surname>
+            <given-names>S</given-names>
+          </name>
+          <name>
+            <surname>Schatz</surname>
+            <given-names>MC</given-names>
+          </name>
+          <name>
+            <surname>Kingsford</surname>
+            <given-names>C</given-names>
+          </name>
+          <article-title>Revealing biological modules via graph summarization</article-title>
+          <source>J Comput Biol</source>
+          <year>2009</year>
+          <volume>16</volume>
+          <fpage>253</fpage>
+          <lpage>264</lpage>
+          <pub-id pub-id-type="doi">10.1089/cmb.2008.11TT</pub-id>
+          <pub-id pub-id-type="pmid">19183002</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B23">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Zhang</surname>
+            <given-names>KX</given-names>
+          </name>
+          <name>
+            <surname>Ouellette</surname>
+            <given-names>BFF</given-names>
+          </name>
+          <article-title>Pandora, a pathway and network discovery approach based on common biological evidence</article-title>
+          <source>Bioinformatics</source>
+          <year>2010</year>
+          <volume>26</volume>
+          <fpage>529</fpage>
+          <lpage>535</lpage>
+          <pub-id pub-id-type="doi">10.1093/bioinformatics/btp701</pub-id>
+          <pub-id pub-id-type="pmid">20031970</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B24">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Fortunato</surname>
+            <given-names>S</given-names>
+          </name>
+          <article-title>Community detection in graphs</article-title>
+          <source>Phys Rep</source>
+          <year>2010</year>
+          <volume>486</volume>
+          <fpage>75</fpage>
+          <lpage>174</lpage>
+          <pub-id pub-id-type="doi">10.1016/j.physrep.2009.11.002</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B25">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Brohee</surname>
+            <given-names>S</given-names>
+          </name>
+          <name>
+            <surname>van Helden</surname>
+            <given-names>J</given-names>
+          </name>
+          <article-title>Evaluation of clustering algorithms for protein-protein interaction networks</article-title>
+          <source>BMC Bioinformatics</source>
+          <year>2006</year>
+          <volume>7</volume>
+          <fpage>488</fpage>
+          <pub-id pub-id-type="doi">10.1186/1471-2105-7-488</pub-id>
+          <pub-id pub-id-type="pmid">17087821</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B26">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Watanabe</surname>
+            <given-names>RLA</given-names>
+          </name>
+          <name>
+            <surname>Morett</surname>
+            <given-names>E</given-names>
+          </name>
+          <name>
+            <surname>Vallejo</surname>
+            <given-names>EE</given-names>
+          </name>
+          <article-title>Inferring modules of functionally interacting proteins using the Bond Energy Algorithm</article-title>
+          <source>BMC Bioinformatics</source>
+          <year>2008</year>
+          <volume>9</volume>
+          <fpage>285</fpage>
+          <pub-id pub-id-type="doi">10.1186/1471-2105-9-285</pub-id>
+          <pub-id pub-id-type="pmid">18559112</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B27">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Bostan</surname>
+            <given-names>B</given-names>
+          </name>
+          <name>
+            <surname>Greiner</surname>
+            <given-names>R</given-names>
+          </name>
+          <name>
+            <surname>Szafron</surname>
+            <given-names>D</given-names>
+          </name>
+          <name>
+            <surname>Lu</surname>
+            <given-names>P</given-names>
+          </name>
+          <article-title>Predicting homologous signaling pathways using machine learning</article-title>
+          <source>Bioinformatics</source>
+          <year>2009</year>
+          <volume>25</volume>
+          <fpage>2913</fpage>
+          <lpage>2920</lpage>
+          <pub-id pub-id-type="doi">10.1093/bioinformatics/btp532</pub-id>
+          <pub-id pub-id-type="pmid">19736253</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B28">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Dale</surname>
+            <given-names>JM</given-names>
+          </name>
+          <name>
+            <surname>Popescu</surname>
+            <given-names>L</given-names>
+          </name>
+          <name>
+            <surname>Karp</surname>
+            <given-names>PD</given-names>
+          </name>
+          <article-title>Machine learning methods for metabolic pathway prediction</article-title>
+          <source>BMC Bioinformatics</source>
+          <year>2010</year>
+          <volume>11</volume>
+          <fpage>15</fpage>
+          <pub-id pub-id-type="doi">10.1186/1471-2105-11-15</pub-id>
+          <pub-id pub-id-type="pmid">20064214</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B29">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Fr&#xF6;hlich</surname>
+            <given-names>H</given-names>
+          </name>
+          <name>
+            <surname>Fellmann</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>S&#xFC;ltmann</surname>
+            <given-names>H</given-names>
+          </name>
+          <name>
+            <surname>Poustka</surname>
+            <given-names>A</given-names>
+          </name>
+          <name>
+            <surname>Beissbarth</surname>
+            <given-names>T</given-names>
+          </name>
+          <article-title>Predicting pathway membership via domain signatures</article-title>
+          <source>Bioinformatics</source>
+          <year>2008</year>
+          <volume>24</volume>
+          <fpage>2137</fpage>
+          <lpage>2142</lpage>
+          <pub-id pub-id-type="doi">10.1093/bioinformatics/btn403</pub-id>
+          <pub-id pub-id-type="pmid">18676972</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B30">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Sun</surname>
+            <given-names>J</given-names>
+          </name>
+          <name>
+            <surname>Xu</surname>
+            <given-names>J</given-names>
+          </name>
+          <name>
+            <surname>Liu</surname>
+            <given-names>Z</given-names>
+          </name>
+          <name>
+            <surname>Liu</surname>
+            <given-names>Q</given-names>
+          </name>
+          <name>
+            <surname>Zhao</surname>
+            <given-names>A</given-names>
+          </name>
+          <name>
+            <surname>Shi</surname>
+            <given-names>T</given-names>
+          </name>
+          <name>
+            <surname>Li</surname>
+            <given-names>Y</given-names>
+          </name>
+          <article-title>Refined phylogenetic profiles method for predicting protein-protein interactions</article-title>
+          <source>Bioinformatics</source>
+          <year>2005</year>
+          <volume>21</volume>
+          <fpage>3409</fpage>
+          <lpage>3415</lpage>
+          <pub-id pub-id-type="doi">10.1093/bioinformatics/bti532</pub-id>
+          <pub-id pub-id-type="pmid">15947018</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B31">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Janga</surname>
+            <given-names>SC</given-names>
+          </name>
+          <name>
+            <surname>Diaz-Mejia</surname>
+            <given-names>JJ</given-names>
+          </name>
+          <name>
+            <surname>Moreno-Hagelsieb</surname>
+            <given-names>G</given-names>
+          </name>
+          <article-title>Network-based function prediction and interactomics: The case for metabolic enzymes</article-title>
+          <source>Metab Eng</source>
+          <year>2010</year>
+          <volume>13</volume>
+          <fpage>1</fpage>
+          <lpage>10</lpage>
+          <pub-id pub-id-type="pmid">20654726</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B32">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Blei</surname>
+            <given-names>DM</given-names>
+          </name>
+          <name>
+            <surname>Ng</surname>
+            <given-names>AY</given-names>
+          </name>
+          <name>
+            <surname>Jordan</surname>
+            <given-names>MI</given-names>
+          </name>
+          <article-title>Latent Dirichlet Allocation</article-title>
+          <source>J Mach Learn Res</source>
+          <year>2003</year>
+          <volume>3</volume>
+          <fpage>993</fpage>
+          <lpage>1022</lpage>
+          <pub-id pub-id-type="doi">10.1162/jmlr.2003.3.4-5.993</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B33">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Aso</surname>
+            <given-names>T</given-names>
+          </name>
+          <name>
+            <surname>Eguchi</surname>
+            <given-names>K</given-names>
+          </name>
+          <article-title>Predicting protein-protein relationships from literature using latent topics</article-title>
+          <source>Genome Inform</source>
+          <year>2009</year>
+          <volume>23</volume>
+          <fpage>3</fpage>
+          <lpage>12</lpage>
+          <pub-id pub-id-type="pmid">20180257</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B34">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Zheng</surname>
+            <given-names>B</given-names>
+          </name>
+          <name>
+            <surname>McLean</surname>
+            <given-names>DC</given-names>
+          </name>
+          <name>
+            <surname>Lu</surname>
+            <given-names>X</given-names>
+          </name>
+          <article-title>Identifying biological concepts from a protein-related corpus with a probabilistic topic model</article-title>
+          <source>BMC Bioinformatics</source>
+          <year>2006</year>
+          <volume>7</volume>
+          <fpage>58</fpage>
+          <pub-id pub-id-type="doi">10.1186/1471-2105-7-58</pub-id>
+          <pub-id pub-id-type="pmid">16466569</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B35">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Flaherty</surname>
+            <given-names>P</given-names>
+          </name>
+          <name>
+            <surname>Giaever</surname>
+            <given-names>G</given-names>
+          </name>
+          <name>
+            <surname>Kumm</surname>
+            <given-names>J</given-names>
+          </name>
+          <name>
+            <surname>Jordan</surname>
+            <given-names>MI</given-names>
+          </name>
+          <name>
+            <surname>Arkin</surname>
+            <given-names>AP</given-names>
+          </name>
+          <article-title>A latent variable model for chemogenomic profiling</article-title>
+          <source>Bioinformatics</source>
+          <year>2005</year>
+          <volume>21</volume>
+          <fpage>3286</fpage>
+          <lpage>3293</lpage>
+          <pub-id pub-id-type="doi">10.1093/bioinformatics/bti515</pub-id>
+          <pub-id pub-id-type="pmid">15919724</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B36">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Friedberg</surname>
+            <given-names>I</given-names>
+          </name>
+          <article-title>Automated protein function prediction - the genomic challenge</article-title>
+          <source>Brief Bioinform</source>
+          <year>2006</year>
+          <volume>7</volume>
+          <fpage>225</fpage>
+          <lpage>242</lpage>
+          <pub-id pub-id-type="doi">10.1093/bib/bbl004</pub-id>
+          <pub-id pub-id-type="pmid">16772267</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B37">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Muller</surname>
+            <given-names>J</given-names>
+          </name>
+          <name>
+            <surname>Szklarczyk</surname>
+            <given-names>D</given-names>
+          </name>
+          <name>
+            <surname>Julien</surname>
+            <given-names>P</given-names>
+          </name>
+          <name>
+            <surname>Letunic</surname>
+            <given-names>I</given-names>
+          </name>
+          <name>
+            <surname>Roth</surname>
+            <given-names>A</given-names>
+          </name>
+          <name>
+            <surname>Kuhn</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Powell</surname>
+            <given-names>S</given-names>
+          </name>
+          <name>
+            <surname>von Mering</surname>
+            <given-names>C</given-names>
+          </name>
+          <name>
+            <surname>Doerks</surname>
+            <given-names>T</given-names>
+          </name>
+          <name>
+            <surname>Jensen</surname>
+            <given-names>LJ</given-names>
+          </name>
+          <name>
+            <surname>Bork</surname>
+            <given-names>P</given-names>
+          </name>
+          <article-title>eggNOG v2.0: extending the evolutionary genealogy of genes with enhanced non-supervised orthologous groups, species and functional annotations</article-title>
+          <source>Nucleic Acids Res</source>
+          <year>2010</year>
+          <volume>38</volume>
+          <fpage>D190</fpage>
+          <lpage>D195</lpage>
+          <pub-id pub-id-type="doi">10.1093/nar/gkp951</pub-id>
+          <pub-id pub-id-type="pmid">19900971</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B38">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Meyer</surname>
+            <given-names>F</given-names>
+          </name>
+          <name>
+            <surname>Overbeek</surname>
+            <given-names>R</given-names>
+          </name>
+          <name>
+            <surname>Rodriguez</surname>
+            <given-names>A</given-names>
+          </name>
+          <article-title>FIGfams: yet another set of protein families</article-title>
+          <source>Nucleic Acids Res</source>
+          <year>2009</year>
+          <volume>37</volume>
+          <fpage>6643</fpage>
+          <lpage>6654</lpage>
+          <pub-id pub-id-type="doi">10.1093/nar/gkp698</pub-id>
+          <pub-id pub-id-type="pmid">19762480</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B39">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Bateman</surname>
+            <given-names>A</given-names>
+          </name>
+          <name>
+            <surname>Birney</surname>
+            <given-names>E</given-names>
+          </name>
+          <name>
+            <surname>Cerruti</surname>
+            <given-names>L</given-names>
+          </name>
+          <name>
+            <surname>Durbin</surname>
+            <given-names>R</given-names>
+          </name>
+          <name>
+            <surname>Etwiller</surname>
+            <given-names>L</given-names>
+          </name>
+          <name>
+            <surname>Eddy</surname>
+            <given-names>SR</given-names>
+          </name>
+          <name>
+            <surname>Griffiths-Jones</surname>
+            <given-names>S</given-names>
+          </name>
+          <name>
+            <surname>Howe</surname>
+            <given-names>KL</given-names>
+          </name>
+          <name>
+            <surname>Marshall</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Sonnhammer</surname>
+            <given-names>ELL</given-names>
+          </name>
+          <article-title>The Pfam protein families database</article-title>
+          <source>Nucleic Acids Res</source>
+          <year>2002</year>
+          <volume>30</volume>
+          <fpage>276</fpage>
+          <lpage>280</lpage>
+          <pub-id pub-id-type="doi">10.1093/nar/30.1.276</pub-id>
+          <pub-id pub-id-type="pmid">11752314</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B40">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Tatusov</surname>
+            <given-names>RL</given-names>
+          </name>
+          <name>
+            <surname>Galperin</surname>
+            <given-names>MY</given-names>
+          </name>
+          <name>
+            <surname>Natale</surname>
+            <given-names>DA</given-names>
+          </name>
+          <name>
+            <surname>Koonin</surname>
+            <given-names>EV</given-names>
+          </name>
+          <article-title>The COG database: a tool for genome-scale analysis of protein functions and evolution</article-title>
+          <source>Nucleic Acids Res</source>
+          <year>2000</year>
+          <volume>28</volume>
+          <fpage>33</fpage>
+          <lpage>36</lpage>
+          <pub-id pub-id-type="doi">10.1093/nar/28.1.33</pub-id>
+          <pub-id pub-id-type="pmid">10592175</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B41">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Pereira</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Parente</surname>
+            <given-names>JA</given-names>
+          </name>
+          <name>
+            <surname>Bataus</surname>
+            <given-names>LAM</given-names>
+          </name>
+          <name>
+            <surname>das Dores de Paula Cardoso</surname>
+            <given-names>D</given-names>
+          </name>
+          <name>
+            <surname>Soares</surname>
+            <given-names>RBA</given-names>
+          </name>
+          <name>
+            <surname>de Almeida Soares</surname>
+            <given-names>CM</given-names>
+          </name>
+          <article-title>Chemotaxis and flagellar genes of <italic>Chromobacterium violaceum</italic></article-title>
+          <source>Genet Mol Res</source>
+          <year>2004</year>
+          <volume>3</volume>
+          <fpage>92</fpage>
+          <lpage>101</lpage>
+          <pub-id pub-id-type="pmid">15100991</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B42">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Rajagopala</surname>
+            <given-names>SV</given-names>
+          </name>
+          <name>
+            <surname>Titz</surname>
+            <given-names>B</given-names>
+          </name>
+          <name>
+            <surname>Goll</surname>
+            <given-names>J</given-names>
+          </name>
+          <name>
+            <surname>Parrish</surname>
+            <given-names>JR</given-names>
+          </name>
+          <name>
+            <surname>Wohlbold</surname>
+            <given-names>K</given-names>
+          </name>
+          <name>
+            <surname>McKevitt</surname>
+            <given-names>MT</given-names>
+          </name>
+          <name>
+            <surname>Palzkill</surname>
+            <given-names>T</given-names>
+          </name>
+          <name>
+            <surname>Mori</surname>
+            <given-names>H</given-names>
+          </name>
+          <name>
+            <surname>Finley</surname>
+            <given-names>RL</given-names>
+          </name>
+          <name>
+            <surname>Uetz</surname>
+            <given-names>P</given-names>
+          </name>
+          <article-title>The protein network of bacterial motility</article-title>
+          <source>Mol Syst Biol</source>
+          <year>2007</year>
+          <volume>3</volume>
+          <fpage>128</fpage>
+          <pub-id pub-id-type="pmid">17667950</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B43">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Haft</surname>
+            <given-names>DH</given-names>
+          </name>
+          <name>
+            <surname>Loftus</surname>
+            <given-names>BJ</given-names>
+          </name>
+          <name>
+            <surname>Richardson</surname>
+            <given-names>DL</given-names>
+          </name>
+          <name>
+            <surname>Yang</surname>
+            <given-names>F</given-names>
+          </name>
+          <name>
+            <surname>Eisen</surname>
+            <given-names>JA</given-names>
+          </name>
+          <name>
+            <surname>Paulsen</surname>
+            <given-names>IT</given-names>
+          </name>
+          <name>
+            <surname>White</surname>
+            <given-names>O</given-names>
+          </name>
+          <article-title>TIGRFAMs: a protein family resource for the functional identification of proteins</article-title>
+          <source>Nucleic Acids Res</source>
+          <year>2001</year>
+          <volume>29</volume>
+          <fpage>41</fpage>
+          <lpage>43</lpage>
+          <pub-id pub-id-type="doi">10.1093/nar/29.1.41</pub-id>
+          <pub-id pub-id-type="pmid">11125044</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B44">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Koonin</surname>
+            <given-names>EV</given-names>
+          </name>
+          <name>
+            <surname>Mushegian</surname>
+            <given-names>AR</given-names>
+          </name>
+          <name>
+            <surname>Bork</surname>
+            <given-names>P</given-names>
+          </name>
+          <article-title>Non-orthologous gene displacement</article-title>
+          <source>Trends Genet</source>
+          <year>1996</year>
+          <volume>12</volume>
+          <fpage>334</fpage>
+          <lpage>336</lpage>
+          <pub-id pub-id-type="pmid">8855656</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B45">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Morett</surname>
+            <given-names>E</given-names>
+          </name>
+          <name>
+            <surname>Korbel</surname>
+            <given-names>JO</given-names>
+          </name>
+          <name>
+            <surname>Rajan</surname>
+            <given-names>E</given-names>
+          </name>
+          <name>
+            <surname>Saab-Rincon</surname>
+            <given-names>G</given-names>
+          </name>
+          <name>
+            <surname>Olvera</surname>
+            <given-names>L</given-names>
+          </name>
+          <name>
+            <surname>Olvera</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Schmidt</surname>
+            <given-names>S</given-names>
+          </name>
+          <name>
+            <surname>Snel</surname>
+            <given-names>B</given-names>
+          </name>
+          <name>
+            <surname>Bork</surname>
+            <given-names>P</given-names>
+          </name>
+          <article-title>Systematic discovery of analogous enzymes in thiamin biosynthesis</article-title>
+          <source>Nat Biotechnol</source>
+          <year>2003</year>
+          <volume>21</volume>
+          <fpage>790</fpage>
+          <lpage>795</lpage>
+          <pub-id pub-id-type="doi">10.1038/nbt834</pub-id>
+          <pub-id pub-id-type="pmid">12794638</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B46">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Harrington</surname>
+            <given-names>ED</given-names>
+          </name>
+          <name>
+            <surname>Singh</surname>
+            <given-names>AH</given-names>
+          </name>
+          <name>
+            <surname>Doerks</surname>
+            <given-names>T</given-names>
+          </name>
+          <name>
+            <surname>Letunic</surname>
+            <given-names>I</given-names>
+          </name>
+          <name>
+            <surname>von Mering</surname>
+            <given-names>C</given-names>
+          </name>
+          <name>
+            <surname>Jensen</surname>
+            <given-names>LJ</given-names>
+          </name>
+          <name>
+            <surname>Raes</surname>
+            <given-names>J</given-names>
+          </name>
+          <name>
+            <surname>Bork</surname>
+            <given-names>P</given-names>
+          </name>
+          <article-title>Quantitative assessment of protein function prediction from metagenomics shotgun sequences</article-title>
+          <source>Proc Natl Acad Sci USA</source>
+          <year>2007</year>
+          <volume>104</volume>
+          <fpage>13913</fpage>
+          <lpage>13918</lpage>
+          <pub-id pub-id-type="doi">10.1073/pnas.0702636104</pub-id>
+          <pub-id pub-id-type="pmid">17717083</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B47">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Turnbaugh</surname>
+            <given-names>PJ</given-names>
+          </name>
+          <name>
+            <surname>Gordon</surname>
+            <given-names>JI</given-names>
+          </name>
+          <article-title>An invitation to the marriage of metagenomics and metabolomics</article-title>
+          <source>Cell</source>
+          <year>2008</year>
+          <volume>134</volume>
+          <fpage>708</fpage>
+          <lpage>713</lpage>
+          <pub-id pub-id-type="doi">10.1016/j.cell.2008.08.025</pub-id>
+          <pub-id pub-id-type="pmid">18775300</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B48">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Rogozin</surname>
+            <given-names>IB</given-names>
+          </name>
+          <name>
+            <surname>Makarova</surname>
+            <given-names>KS</given-names>
+          </name>
+          <name>
+            <surname>Wolf</surname>
+            <given-names>YI</given-names>
+          </name>
+          <name>
+            <surname>Koonin</surname>
+            <given-names>EV</given-names>
+          </name>
+          <article-title>Computational approaches for the analysis of gene neighbourhoods in prokaryotic genomes</article-title>
+          <source>Brief Bioinform</source>
+          <year>2004</year>
+          <volume>5</volume>
+          <fpage>131</fpage>
+          <lpage>149</lpage>
+          <pub-id pub-id-type="doi">10.1093/bib/5.2.131</pub-id>
+          <pub-id pub-id-type="pmid">15260894</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B49">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Suhre</surname>
+            <given-names>K</given-names>
+          </name>
+          <name>
+            <surname>Claverie</surname>
+            <given-names>JM</given-names>
+          </name>
+          <article-title>FusionDB: a database for in-depth analysis of prokaryotic gene fusion events</article-title>
+          <source>Nucleic Acids Res</source>
+          <year>2004</year>
+          <volume>32</volume>
+          <fpage>D273</fpage>
+          <lpage>276</lpage>
+          <pub-id pub-id-type="doi">10.1093/nar/gkh053</pub-id>
+          <pub-id pub-id-type="pmid">14681411</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B50">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Liu</surname>
+            <given-names>Y</given-names>
+          </name>
+          <name>
+            <surname>Harrison</surname>
+            <given-names>PM</given-names>
+          </name>
+          <name>
+            <surname>Kunin</surname>
+            <given-names>V</given-names>
+          </name>
+          <name>
+            <surname>Gerstein</surname>
+            <given-names>M</given-names>
+          </name>
+          <article-title>Comprehensive analysis of pseudogenes in prokaryotes: widespread gene decay and failure of putative horizontally transferred genes</article-title>
+          <source>Genome Biol</source>
+          <year>2004</year>
+          <volume>5</volume>
+          <fpage>R64</fpage>
+          <pub-id pub-id-type="doi">10.1186/gb-2004-5-9-r64</pub-id>
+          <pub-id pub-id-type="pmid">15345048</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B51">
+        <mixed-citation publication-type="book">
+          <name>
+            <surname>Vermunt</surname>
+            <given-names>JKMJ</given-names>
+          </name>
+          <source>Latent Class Cluster Analysis</source>
+          <year>2002</year>
+          <publisher-name>Cambridge University Press, Cambridge</publisher-name>
+        </mixed-citation>
+      </ref>
+      <ref id="B52">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Blei</surname>
+            <given-names>DM</given-names>
+          </name>
+          <name>
+            <surname>Griffiths</surname>
+            <given-names>TL</given-names>
+          </name>
+          <name>
+            <surname>Jordan</surname>
+            <given-names>MI</given-names>
+          </name>
+          <article-title>The nested Chinese restaurant process and Bayesian nonparametric inference of topic hierarchies</article-title>
+          <source>J Acm</source>
+          <year>2010</year>
+          <volume>57</volume>
+          <fpage>1</fpage>
+          <lpage>30</lpage>
+        </mixed-citation>
+      </ref>
+      <ref id="B53">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Teh</surname>
+            <given-names>YW</given-names>
+          </name>
+          <name>
+            <surname>Jordan</surname>
+            <given-names>MI</given-names>
+          </name>
+          <name>
+            <surname>Beal</surname>
+            <given-names>MJ</given-names>
+          </name>
+          <name>
+            <surname>Blei</surname>
+            <given-names>DM</given-names>
+          </name>
+          <article-title>Hierarchical Dirichlet processes</article-title>
+          <source>J Am Stat Assoc</source>
+          <year>2006</year>
+          <volume>101</volume>
+          <fpage>1566</fpage>
+          <lpage>1581</lpage>
+          <pub-id pub-id-type="doi">10.1198/016214506000000302</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B54">
+        <mixed-citation publication-type="book">
+          <name>
+            <surname>Gilks</surname>
+            <given-names>WR</given-names>
+          </name>
+          <name>
+            <surname>Richardson</surname>
+            <given-names>S</given-names>
+          </name>
+          <name>
+            <surname>Spiegelhalter</surname>
+            <given-names>DJ</given-names>
+          </name>
+          <source>Markov Chain Monte Carlo In Practice</source>
+          <year>1999</year>
+          <publisher-name>Chapman &amp; Hall, CRC Interdisciplinary Statistics Series</publisher-name>
+        </mixed-citation>
+      </ref>
+      <ref id="B55">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Griffiths</surname>
+            <given-names>TL</given-names>
+          </name>
+          <name>
+            <surname>Steyvers</surname>
+            <given-names>M</given-names>
+          </name>
+          <article-title>Finding scientific topics</article-title>
+          <source>Proc Natl Acad Sci USA</source>
+          <year>2004</year>
+          <volume>101</volume>
+          <issue>Suppl 1</issue>
+          <fpage>5228</fpage>
+          <lpage>5235</lpage>
+          <pub-id pub-id-type="pmid">14872004</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B56">
+        <mixed-citation publication-type="book">
+          <name>
+            <surname>Steyvers</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Griffiths</surname>
+            <given-names>T</given-names>
+          </name>
+          <person-group person-group-type="editor">Landauer T, McNamara D, Dennis S, Kintsch W</person-group>
+          <source>Latent semantic analysis: a road to meaning</source>
+          <year>2006</year>
+          <publisher-name>Laurence Erlbaum</publisher-name>
+        </mixed-citation>
+      </ref>
+      <ref id="B57">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Kanehisa</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Goto</surname>
+            <given-names>S</given-names>
+          </name>
+          <name>
+            <surname>Hattori</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Aoki-Kinoshita</surname>
+            <given-names>KF</given-names>
+          </name>
+          <name>
+            <surname>Itoh</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Kawashima</surname>
+            <given-names>S</given-names>
+          </name>
+          <name>
+            <surname>Katayama</surname>
+            <given-names>T</given-names>
+          </name>
+          <name>
+            <surname>Araki</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Hirakawa</surname>
+            <given-names>M</given-names>
+          </name>
+          <article-title>From genomics to chemical genomics: new developments in KEGG</article-title>
+          <source>Nucleic Acids Res</source>
+          <year>2006</year>
+          <volume>34</volume>
+          <fpage>D354</fpage>
+          <lpage>D357</lpage>
+          <pub-id pub-id-type="doi">10.1093/nar/gkj102</pub-id>
+          <pub-id pub-id-type="pmid">16381885</pub-id>
+        </mixed-citation>
+      </ref>
+    </ref-list>
+  </back>
+</article>
