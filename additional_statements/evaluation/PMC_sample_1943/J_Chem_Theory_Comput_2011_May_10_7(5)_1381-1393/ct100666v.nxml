@@ -1,0 +1,954 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD Journal Archiving and Interchange DTD v3.0 20080202//EN" "archivearticle3.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" article-type="research-article" xml:lang="EN">
+  <?properties open_access?>
+  <?DTDIdentifier.IdentifierValue -//ACS//DTD ACS Journal DTD v1.02 20061031//EN?>
+  <?DTDIdentifier.IdentifierType public?>
+  <?SourceDTD.DTDName ACSJournal-v102.dtd?>
+  <?SourceDTD.Version 1.02?>
+  <?ConverterInfo.XSLTName acs2nlmx2.xsl?>
+  <?ConverterInfo.Version 2?>
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="nlm-ta">J Chem Theory Comput</journal-id>
+      <journal-id journal-id-type="publisher-id">ct</journal-id>
+      <journal-id journal-id-type="coden">jctcce</journal-id>
+      <journal-title-group>
+        <journal-title>Journal of Chemical Theory and Computation</journal-title>
+      </journal-title-group>
+      <issn pub-type="ppub">1549-9618</issn>
+      <issn pub-type="epub">1549-9626</issn>
+      <publisher>
+        <publisher-name>American Chemical Society</publisher-name>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="pmc">3091370</article-id>
+      <article-id pub-id-type="pmid">21566696</article-id>
+      <article-id pub-id-type="doi">10.1021/ct100666v</article-id>
+      <article-categories>
+        <subj-group>
+          <subject>Article</subject>
+        </subj-group>
+      </article-categories>
+      <title-group>
+        <article-title>Keep It Flexible: Driving Macromolecular Rotary Motions in Atomistic Simulations with GROMACS</article-title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author" corresp="yes" id="ath1">
+          <name>
+            <surname>Kutzner</surname>
+            <given-names>Carsten</given-names>
+          </name>
+          <xref rid="cor1" ref-type="author-notes">*</xref>
+        </contrib>
+        <contrib contrib-type="author" id="ath2">
+          <name>
+            <surname>Czub</surname>
+            <given-names>Jacek</given-names>
+          </name>
+        </contrib>
+        <contrib contrib-type="author" id="ath3">
+          <name>
+            <surname>Grubm&#xFC;ller</surname>
+            <given-names>Helmut</given-names>
+          </name>
+        </contrib>
+        <aff id="aff1">Department of Theoretical and Computational Biophysics, Max Planck Institute for Biophysical Chemistry, Am Fassberg 11, 37077 G&#xF6;ttingen, Germany</aff>
+      </contrib-group>
+      <author-notes>
+        <corresp id="cor1"><label>*</label>E-mail: <email>ckutzne@gwdg.de</email>.</corresp>
+      </author-notes>
+      <pub-date pub-type="epub">
+        <day>31</day>
+        <month>03</month>
+        <year>2011</year>
+      </pub-date>
+      <pub-date pub-type="ppub">
+        <day>10</day>
+        <month>05</month>
+        <year>2011</year>
+      </pub-date>
+      <volume>7</volume>
+      <issue>5</issue>
+      <fpage>1381</fpage>
+      <lpage>1393</lpage>
+      <history>
+        <date date-type="received">
+          <day>17</day>
+          <month>11</month>
+          <year>2010</year>
+        </date>
+        <date date-type="asap">
+          <day>31</day>
+          <month>03</month>
+          <year>2011</year>
+        </date>
+        <date date-type="issue-pub">
+          <day>10</day>
+          <month>05</month>
+          <year>2011</year>
+        </date>
+      </history>
+      <permissions>
+        <copyright-statement>Copyright &#xA9; 2011 American Chemical Society</copyright-statement>
+        <copyright-year>2011</copyright-year>
+        <copyright-holder>American Chemical Society</copyright-holder>
+        <license xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://pubs.acs.org" license-type="open-access">
+          <license-p>This is an open-access article distributed under the ACS AuthorChoice Terms &amp; Conditions.  Any use of this article, must conform to the terms of that license which are available at <uri xlink:href="http://pubs.acs.org">http://pubs.acs.org</uri>.</license-p>
+        </license>
+      </permissions>
+      <abstract>
+        <p>We describe a versatile method to enforce the rotation of subsets of atoms, e.g., a protein subunit, in molecular dynamics (MD) simulations. In particular, we introduce a &#x201C;flexible axis&#x201D; technique that allows realistic flexible adaptions of both the rotary subunit as well as the local rotation axis during the simulation. A variety of useful rotation potentials were implemented for the GROMACS 4.5 MD package. Application to the molecular motor F<sub>1</sub>-ATP synthase demonstrates the advantages of the flexible axis approach over the established fixed axis rotation technique.</p>
+      </abstract>
+      <custom-meta-group>
+        <custom-meta>
+          <meta-name>document-id-old-9</meta-name>
+          <meta-value>ct100666v</meta-value>
+        </custom-meta>
+        <custom-meta>
+          <meta-name>document-id-new-14</meta-name>
+          <meta-value>ct-2010-00666v</meta-value>
+        </custom-meta>
+        <custom-meta>
+          <meta-name>ccc-price</meta-name>
+          <meta-value/>
+        </custom-meta>
+      </custom-meta-group>
+    </article-meta>
+  </front>
+  <body>
+    <!--with a head-->
+    <sec id="sec1">
+      <label>1</label>
+      <title>Introduction</title>
+      <p>Biomolecular function often rests on or is performed through motions of subunits. Rotary motions, in particular, are essential for the function of many motor proteins. These nanomotors use the free energy of chemical reactions or ion concentration gradients to generate mechanical torque. Rotary mechanisms were unequivocally demonstrated for three molecular engines, the F<sub>o</sub> and F<sub>1</sub> motors in F-ATP synthase (F-ATPase)<sup><xref ref-type="bibr" rid="ref1">1</xref>,<xref ref-type="bibr" rid="ref2">2</xref></sup> and the bacterial flagellar motor.(<xref ref-type="bibr" rid="ref3">3</xref>) Recently, rotary motion was also shown for the V<sub>1</sub> portion of the prokaryotic homologue of the vacuolar ATPase (V-ATPase).(<xref ref-type="bibr" rid="ref4">4</xref>) Other motor proteins that are assumed to be rotary include DNA helicases(<xref ref-type="bibr" rid="ref5">5</xref>) and proteins that translocate viral DNA into preformed capsids.<sup><xref ref-type="bibr" rid="ref6">6</xref>&#x2212;<xref ref-type="bibr" rid="ref8">8</xref></sup></p>
+      <p>The molecular mechanisms by which chemical reactions or transmembrane gradients drive protein rotary motions are in most cases not understood in full detail.(<xref ref-type="bibr" rid="ref9">9</xref>) Also, these often quite complex motions are typically too slow or infrequent to be accessible to equilibrium molecular dynamics (MD) simulations. To overcome this limitation, techniques have been developed to exert external forces<sup><xref ref-type="bibr" rid="ref10">10</xref>&#x2212;<xref ref-type="bibr" rid="ref12">12</xref></sup> or torques<sup><xref ref-type="bibr" rid="ref13">13</xref>&#x2212;<xref ref-type="bibr" rid="ref15">15</xref></sup> to certain subunits to induce rotation and/or to increase its rate without severely perturbing the nature of the involved structural changes. This approach has also been used to simulate experiments in which biomolecules, such as proteins or DNA, are mechanically driven to rotate by externally applied torques by single molecule manipulation techniques.(<xref ref-type="bibr" rid="ref16">16</xref>) In one impressive example, the F<sub>1</sub> portion of ATP synthase (F<sub>1</sub>-ATPase) has been shown to produce ATP when the &#x3B3; subunit is enforced to rotate using magnetic tweezers.(<xref ref-type="bibr" rid="ref17">17</xref>)</p>
+      <p>With exceptions,(<xref ref-type="bibr" rid="ref18">18</xref>) in most simulations involving external torque, a fixed, &#x201C;stiff&#x201D; rotation axis has been used so far<sup><xref ref-type="bibr" rid="ref15">15</xref>,<xref ref-type="bibr" rid="ref19">19</xref>,<xref ref-type="bibr" rid="ref20">20</xref></sup> (dashed line in Figure <xref rid="fig1" ref-type="fig">1</xref>A). As shown in the figure, this approach does not properly describe situations such as F<sub>1</sub>-ATPase, where the rotating part flexibly adapts (dotted lines) to the steric restraints set by the bearing (gray). To more realistically describe biomolecular rotations, we have therefore developed a flexible axis rotation technique that (i) exerts torque with a curved axis that flexibly fits the shape of an arbitrarily shaped cavity (Figure <xref rid="fig1" ref-type="fig">1</xref>A), (ii) avoids any impact or bias previously introduced by the necessary choice of the pivot for the axis, (iii) perturbs the internal dynamics and flexibility of the rotated structure as little as possible, and (iv) allows the curvature of the axis to adapt to structural changes of the bearing. In summary, a rotated fragment such as the &#x3B3; subunit inside the ATPase &#x3B1;<sub>3</sub>&#x3B2;<sub>3</sub> stator should deform like a rotating pipe-cleaner.</p>
+      <fig id="fig1" position="float">
+        <label>Figure 1</label>
+        <caption>
+          <p>Comparison of fixed and flexible axis rotation. (A) Rotating the sketched shape inside the white tubular cavity creates severe artifacts when a conventional fixed rotation axis (dashed) is used. More realistically, the shape would revolve like a flexible pipe-cleaner (dotted) inside the bearing (gray). (B) Fixed rotation around an axis <bold>v</bold> with a pivot point specified by the vector <bold>u</bold>. (C) Subdividing the rotating fragment into slabs with separate rotation axes (&#x2191;) and pivot points (&#x2022;) for each slab allows for the required flexibility. The distance between two slabs with indices <italic>n</italic> and <italic>n</italic> + 1 is &#x394;<italic>x</italic>.</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_0001" id="gr1" position="float"/>
+      </fig>
+      <p>To clarify notation and to explain the basic ingredients needed for the flexible technique, we start with a recapitulation of the established fixed axis rotation, as implemented, e.g., in NAMD(<xref ref-type="bibr" rid="ref21">21</xref>) or EGO.(<xref ref-type="bibr" rid="ref22">22</xref>) From these notions, several more complex potentials will be developed and characterized, and the resulting forces will be derived. We will then motivate and describe in detail the flexible axis approach, for which we present two different variants. After outlining details of our GROMACS<sup><xref ref-type="bibr" rid="ref23">23</xref>,<xref ref-type="bibr" rid="ref24">24</xref></sup> implementation, we will apply flexible axis rotation to the F<sub>1</sub>-ATPase molecular motor and test if our approach is indeed capable of providing more accurate torque or free energy profiles.</p>
+    </sec>
+    <!--with a head-->
+    <sec id="sec2">
+      <label>2</label>
+      <title>Fixed Axis Rotation</title>
+      <!--with a head-->
+      <sec id="sec2.1">
+        <title>Stationary Axis with an Isotropic Potential</title>
+        <p>In the established fixed axis approach<sup><xref ref-type="bibr" rid="ref15">15</xref>,<xref ref-type="bibr" rid="ref19">19</xref>&#x2212;<xref ref-type="bibr" rid="ref22">22</xref></sup> (Figure <xref rid="fig1" ref-type="fig">1</xref>B), torque on a group of <italic>N</italic> atoms with positions <bold>x</bold><sub><italic>i</italic></sub> (denoted &#x201C;rotation group&#x201D;) is applied by rotating a reference set of atomic positions&#x2014;usually their initial positions <bold>y</bold><sub><italic>i</italic></sub><sup arrange="stack">0</sup>&#x2014;at a constant angular velocity &#x3C9; around an axis defined by a direction vector <bold>v&#x302;</bold> and a pivot point <bold>u</bold>. To that aim, each atom with position <bold>x</bold><sub><italic>i</italic></sub> is attracted by a &#x201C;virtual spring&#x201D; potential to its moving reference position <bold>y</bold><sub><italic>i</italic></sub> = &#x3A9;(<italic>t</italic>) (<bold>y</bold><sub><italic>i</italic></sub><sup arrange="stack">0</sup> &#x2212; <bold>u</bold>), where &#x3A9;(<italic>t</italic>) is a matrix that describes the rotation around the axis. In the simplest case, the &#x201C;springs&#x201D; are described by a harmonic potential<disp-formula id="eq1"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m001" position="anchor"/></disp-formula>with optional mass-weighted prefactors <italic>w</italic><sub><italic>i</italic></sub> = <italic>Nm</italic><sub><italic>i</italic></sub>/<italic>M</italic> with total mass <italic>M</italic> = &#x2211;<sub><italic>i</italic>=1</sub><sup arrange="stack"><italic>N</italic></sup><italic>m</italic><sub><italic>i</italic></sub>. The rotation matrix &#x3A9;(<italic>t</italic>) is<disp-formula id="ueq1"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m002" position="anchor"/></disp-formula>where <italic>v</italic><sub><italic>x</italic></sub>, <italic>v</italic><sub><italic>y</italic></sub>, and <italic>v</italic><sub><italic>z</italic></sub> are the components of the normalized rotation vector <bold>v&#x302;</bold> and &#x3BE; := 1 &#x2212; cos (&#x3C9;<italic>t</italic>). As illustrated in Figure <xref rid="fig2" ref-type="fig">2</xref>A for a single atom <italic>j</italic>, the rotation matrix &#x3A9;(<italic>t</italic>) operates on the initial reference positions <bold>y</bold><sub><italic>j</italic></sub><sup arrange="stack">0</sup> = <bold>x</bold><sub><italic>j</italic></sub>(<italic>t</italic><sub>0</sub>) of atom <italic>j</italic> at <italic>t</italic> = <italic>t</italic><sub>0</sub>. At a later time <italic>t</italic>, the reference position has rotated away from its initial place (along the blue dashed line), resulting in the force<disp-formula id="eq2"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m003" position="anchor"/></disp-formula>which is directed toward the reference position.</p>
+        <fig id="fig2" position="float">
+          <label>Figure 2</label>
+          <caption>
+            <p>Selection of different rotation potentials discussed in the text and definition of notation. All four potentials <italic>V</italic> (color coded) are shown for a single atom at position <bold>x</bold><sub><italic>j</italic></sub>(<italic>t</italic>). (A) Isotropic potential <italic>V</italic><sup>iso</sup>, (B) radial motion potential <italic>V</italic><sup>rm</sup> and flexible potential <italic>V</italic><sup>flex</sup>, (C,D) radial motion 2 potential <italic>V</italic><sup>rm2</sup> and flexible 2 potential <italic>V</italic><sup>flex2</sup> for &#x3B5;&#x2032; = 0 nm<sup>2</sup> (C) and &#x3B5;&#x2032; = 0.01 nm<sup>2</sup> (D). The rotation axis is perpendicular to the plane and marked by &#x2297;. The light gray contours indicate Boltzmann factors e<sup>&#x2212;<italic>V</italic>/(<italic>k</italic><sub>B</sub><italic>T</italic>)</sup> in the <bold>x</bold><sub><italic>j</italic></sub> plane for <italic>T</italic> = 300 K and <italic>k</italic> = 200 kJ/(mol&#xB7;nm<sup>2</sup>). The green arrow shows the direction of the force <bold>F</bold><sub><italic>j</italic></sub> acting on atom <italic>j</italic>; the blue dashed line indicates the motion of the reference position.</p>
+          </caption>
+          <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_0002" id="gr2" position="float"/>
+        </fig>
+      </sec>
+      <!--with a head-->
+      <sec id="sec2.2">
+        <title>Pivot Free Isotropic Potential</title>
+        <p>We first address the bias introduced by an arbitrary choice of the pivot vector <bold>u</bold>. This arbitrariness is avoided by defining as the pivot the center of mass <bold>x</bold><sub>c</sub> of the rotation group<disp-formula id="eq3"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m004" position="anchor"/></disp-formula>which yields the &#x201C;pivot-free&#x201D; potential<disp-formula id="eq4"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m005" position="anchor"/></disp-formula>with forces<disp-formula id="eq5"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m006" position="anchor"/></disp-formula>Without mass-weighting, the pivot <bold>x</bold><sub>c</sub> is the geometrical center of the group.</p>
+      </sec>
+      <!--with a head-->
+      <sec id="sec2.3">
+        <title>Parallel Motion Potential Variant</title>
+        <p>Obviously, the forces generated by the isotropic potentials (eqs <xref rid="eq1" ref-type="disp-formula">1</xref> and <xref rid="eq4" ref-type="disp-formula">4</xref>) also contain components parallel to the rotation axis and thereby restrain motions along the axis of either the whole rotation group (in case of <italic>V</italic><sup>iso</sup>) or within the rotation group (in case of <italic>V</italic><sup>iso-pf</sup>). For cases where unrestrained motion along the axis is preferred, we have implemented a &#x201C;parallel motion&#x201D; variant by eliminating all components parallel to the rotation axis for the potential. This is achieved by projecting the distance vectors between reference and actual positions:<disp-formula id="eq6"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m007" position="anchor"/></disp-formula>onto the plane perpendicular to the rotation vector<disp-formula id="eq7"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m008" position="anchor"/></disp-formula>yielding<disp-formula id="eq8"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m009" position="anchor"/></disp-formula>and similarly<disp-formula id="eq9"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m010" position="anchor"/></disp-formula></p>
+      </sec>
+      <!--with a head-->
+      <sec id="sec2.4">
+        <title>Pivot-Free Parallel Motion Potential</title>
+        <p>Replacing in eq <xref rid="eq8" ref-type="disp-formula">8</xref> the fixed pivot <bold>u</bold> with the center of mass <bold>x</bold><sub>c</sub> yields the pivot-free variant of the parallel motion potential. With<disp-formula id="eq10"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m011" position="anchor"/></disp-formula>the respective potential and forces are<disp-formula id="eq11"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m012" position="anchor"/></disp-formula><disp-formula id="eq12"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m013" position="anchor"/></disp-formula></p>
+      </sec>
+      <!--with a head-->
+      <sec id="sec2.5">
+        <title>Radial Motion Potential</title>
+        <p>In the above variants, the minimum of the rotation potential is either a single point at the reference position <bold>y</bold><sub><italic>i</italic></sub> (for the isotropic potentials) or a single line through <bold>y</bold><sub><italic>i</italic></sub> parallel to the rotation axis (for the parallel motion potentials). As a result, radial forces restrict radial motions of the atoms. The two subsequent types of rotation potentials, <italic>V</italic><sup>rm</sup> and <italic>V</italic><sup>rm2</sup>, drastically reduce or even eliminate this effect. The first variant, <italic>V</italic><sup>rm</sup> (Figure <xref rid="fig2" ref-type="fig">2</xref>B), eliminates all force components parallel to the vector connecting the reference atom and the rotation axis<disp-formula id="eq13"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m014" position="anchor"/></disp-formula>with<disp-formula id="eq14"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m015" position="anchor"/></disp-formula>This variant depends only on the distance <bold>p</bold><sub><italic>i</italic></sub>&#xB7;(<bold>x</bold><sub><italic>i</italic></sub>&#x2212;<bold>u</bold>) of atom <italic>i</italic> from the plane spanned by <bold>v&#x302;</bold> and &#x3A9;(<italic>t</italic>)(<bold>y</bold><sub><italic>i</italic></sub><sup arrange="stack">0</sup>&#x2212;<bold>u</bold>). The resulting force is<disp-formula id="eq15"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m016" position="anchor"/></disp-formula></p>
+      </sec>
+      <!--with a head-->
+      <sec id="sec2.6">
+        <title>Pivot-Free Radial Motion Potential</title>
+        <p>Proceeding similar to the pivot-free isotropic potential yields a pivot-free version of the above potential. With<disp-formula id="eq16"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m017" position="anchor"/></disp-formula>the potential and force for the pivot free variant of the radial motion potential read<disp-formula id="eq17"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m018" position="anchor"/></disp-formula><disp-formula id="eq18"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m019" position="anchor"/></disp-formula></p>
+      </sec>
+      <!--with a head-->
+      <sec id="sec2.7">
+        <title>Radial Motion 2 Alternative Potential</title>
+        <p>As seen in Figure <xref rid="fig2" ref-type="fig">2</xref>B, the force resulting from <italic>V</italic><sup>rm</sup> still contains a small, second-order radial component. In most cases, this perturbation is tolerable; if not, the following alternative, <italic>V</italic><sup>rm2</sup>, fully eliminates the radial contribution to the force, as depicted in Figure <xref rid="fig2" ref-type="fig">2</xref>C,<disp-formula id="eq19"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m020" position="anchor"/></disp-formula>where a small parameter &#x3B5;&#x2032; has been introduced to avoid singularities. For &#x3B5;&#x2032; = 0 nm<sup>2</sup>, the equipotential planes are spanned by <bold>x</bold><sub><italic>i</italic></sub> &#x2212; <bold>u</bold> and <bold>v&#x302;</bold>, yielding a force perpendicular to <bold>x</bold><sub><italic>i</italic></sub> &#x2212; <bold>u</bold>, thus not contracting or expanding structural parts that moved away from or toward the rotation axis.</p>
+        <p>We note that this variant is particularly suitable for free energy calculations via umbrella sampling techniques,(<xref ref-type="bibr" rid="ref25">25</xref>) because the radial orientation of the equipotential planes shown in Figure <xref rid="fig2" ref-type="fig">2</xref>C guarantees statistically consistent sampling of adjacent umbrella windows, as required for a consistent definition of the free energy profile via subspace projection. To see why this is actually the case, note that consistent umbrella sampling requires that for adjacent umbrella windows the &#x201C;stack&#x201D; of (3<italic>N</italic> &#x2212; 1 dimensional) configurational subspaces defined by the values of the chosen reaction coordinate agrees, subspace by subspace, with the one defined by the values of the umbrella potential. This in turn requires that the equipotential planes shown in Figure <xref rid="fig2" ref-type="fig">2</xref> coincide with those of a rotated potential, which is obviously the case for Figure <xref rid="fig2" ref-type="fig">2</xref>C, but not for Figure <xref rid="fig2" ref-type="fig">2</xref>A or B.</p>
+        <p>Choosing a small positive &#x3B5;&#x2032; (e.g., &#x3B5;&#x2032; = 0.01 nm<sup>2</sup>, Figure <xref rid="fig2" ref-type="fig">2</xref>D) in the denominator of eq <xref rid="eq19" ref-type="disp-formula">19</xref> yields a well-defined potential and continuous forces also close to the rotation axis, which is not the case for &#x3B5;&#x2032; = 0 nm<sup>2</sup> (Figure <xref rid="fig2" ref-type="fig">2</xref>C). With<disp-formula id="eq20"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m021" position="anchor"/></disp-formula><disp-formula id="eq21"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m022" position="anchor"/></disp-formula><disp-formula id="eq22"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m023" position="anchor"/></disp-formula>the force on atom <italic>j</italic> reads<disp-formula id="eq23"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m024" position="anchor"/></disp-formula></p>
+      </sec>
+      <!--with a head-->
+      <sec id="sec2.8">
+        <title>Pivot-Free Radial Motion 2 Potential</title>
+        <p>The pivot free variant of the above potential is<disp-formula id="eq24"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m025" position="anchor"/></disp-formula>with<disp-formula id="eq25"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m026" position="anchor"/></disp-formula><disp-formula id="eq26"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m027" position="anchor"/></disp-formula><disp-formula id="eq27"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m028" position="anchor"/></disp-formula>the force on atom <italic>j</italic> reads<disp-formula id="eq28"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m029" position="anchor"/></disp-formula></p>
+      </sec>
+    </sec>
+    <!--with a head-->
+    <sec id="sec3">
+      <label>3</label>
+      <title>Flexible Axis Rotation</title>
+      <p>As sketched in Figure <xref rid="fig1" ref-type="fig">1</xref>A,B, the rigid body behavior of the fixed axis rotation scheme is a drawback for many applications. In particular, deformations of the rotation group are suppressed when the equilibrium atom positions directly depend on the reference positions. To avoid this limitation, eqs <xref rid="eq18" ref-type="disp-formula">18</xref> and <xref rid="eq24" ref-type="disp-formula">24</xref> will now be generalized toward a &#x201C;flexible axis&#x201D;, as sketched in Figure <xref rid="fig1" ref-type="fig">1</xref>C. This will be achieved by subdividing the rotation group into a set of equidistant slabs perpendicular to the rotation vector, and by applying a separate rotation potential to each of these slabs. Figure <xref rid="fig1" ref-type="fig">1</xref>C shows the midplanes of the slabs as dotted straight lines and the centers as thick black dots.</p>
+      <p>To avoid discontinuities in the potential and in the forces, we define &#x201C;soft slabs&#x201D; by weighing the contributions of each slab <italic>n</italic> to the total potential function <italic>V</italic><sup>flex</sup> by a Gaussian function<disp-formula id="eq29"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m030" position="anchor"/></disp-formula>centered at the midplane of the <italic>n</italic>th slab. Here, &#x3C3; is the width of the Gaussian function, &#x394;<italic>x</italic> the distance between adjacent slabs, and<disp-formula id="eq30"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m031" position="anchor"/></disp-formula></p>
+      <p>A most convenient choice is &#x3C3; = 0.7&#x394;<italic>x</italic> and<disp-formula id="ueq2"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m032" position="anchor"/></disp-formula>which yields a nearly constant sum, essentially independent of <bold>x</bold><sub><italic>i</italic></sub> (dashed line in Figure <xref rid="fig3" ref-type="fig">3</xref>), i.e.,<disp-formula id="eq31"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m033" position="anchor"/></disp-formula>with |&#x3B5;(<bold>x</bold><sub><italic>i</italic></sub>)| &lt; 1.3 &#xD7; 10<sup>&#x2212;4</sup>. This choice also implies that the individual contributions to the force from the slabs add up to unity such that no further normalization is required.</p>
+      <fig id="fig3" position="float">
+        <label>Figure 3</label>
+        <caption>
+          <p>Gaussian functions <italic>g</italic><sub><italic>n</italic></sub> centered at <italic>n</italic>&#x394;<italic>x</italic> for a slab distance &#x394;<italic>x</italic> = 1.5 nm and <italic>n</italic> &#x2265; &#x2212;2. Gaussian function <italic>g</italic><sub>0</sub> is highlighted in bold; the dashed line depicts the sum of the shown Gaussian functions.</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_0003" id="gr3" position="float"/>
+      </fig>
+      <p>To each slab center <bold>x</bold><sub>c</sub><sup arrange="stack"><italic>n</italic></sup>, all atoms contribute by their Gaussian-weighted (optionally also mass-weighted) position vectors <italic>g</italic><sub><italic>n</italic></sub>(<bold>x</bold><sub><italic>i</italic></sub>)<bold>x</bold><sub><italic>i</italic></sub>. The instantaneous slab centers <bold>x</bold><sub>c</sub><sup arrange="stack"><italic>n</italic></sup> are calculated from the current positions <bold>x</bold><sub><italic>i</italic></sub><disp-formula id="eq32"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m034" position="anchor"/></disp-formula>while the reference centers <bold>y</bold><sub>c</sub><sup arrange="stack"><italic>n</italic></sup> are calculated from the reference positions <bold>y</bold><sub><italic>i</italic></sub><sup arrange="stack">0</sup><disp-formula id="eq33"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m035" position="anchor"/></disp-formula>Due to the rapid decay of <italic>g</italic><sub><italic>n</italic></sub>, each slab will essentially involve contributions from atoms located within &#x223C;3&#x394;<italic>x</italic> from the slab center only.</p>
+      <!--with a head-->
+      <sec id="sec3.1">
+        <title>Flexible Axis Potential</title>
+        <p>We consider two flexible axis variants. For the first variant, the slab segmentation procedure with Gaussian weighting is applied to the radial motion potential (eq <xref rid="eq18" ref-type="disp-formula">18</xref>/Figure <xref rid="fig2" ref-type="fig">2</xref>B), yielding as the contribution of slab <italic>n</italic><disp-formula id="ueq3"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m036" position="anchor"/></disp-formula>and a total potential function<disp-formula id="eq34"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m037" position="anchor"/></disp-formula>Note that the global center of mass <bold>x</bold><sub>c</sub> used in eq <xref rid="eq18" ref-type="disp-formula">18</xref> is now replaced by <bold>x</bold><sub>c</sub><sup arrange="stack"><italic>n</italic></sup>, the center of mass of the slab. With<disp-formula id="eq35"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m038" position="anchor"/></disp-formula><disp-formula id="eq36"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m039" position="anchor"/></disp-formula>the resulting force on atom <italic>j</italic> reads<disp-formula id="eq37"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m040" position="anchor"/></disp-formula>Note that for <italic>V</italic><sup>flex</sup>, as defined, the slabs are fixed in space and so are the reference centers <bold>y</bold><sub>c</sub><sup arrange="stack"><italic>n</italic></sup>. If during the simulation the rotation group moves too far in the <bold>v</bold> direction, it may enter a region where&#x2014;due to the lack of nearby reference positions&#x2014;no reference slab centers are defined, rendering the potential evaluation impossible. We therefore have included a slightly modified version of this potential that avoids this problem by attaching the midplane of slab <italic>n</italic> = 0 to the center of mass of the rotation group, yielding slabs that move with the rotation group. This is achieved by subtracting the center of mass <bold>x</bold><sub>c</sub> of the group from the positions<disp-formula id="eq38"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m041" position="anchor"/></disp-formula>such that<disp-formula id="eq39"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m042" position="anchor"/></disp-formula></p>
+        <p>To simplify the force derivation, and for efficiency reasons, we here assume <bold>x</bold><sub>c</sub> to be constant, and thus &#x2202;<bold>x</bold><sub>c</sub>/&#x2202;<italic>x</italic> = &#x2202;<bold>x</bold><sub><italic>c</italic></sub>/&#x2202;<italic>y</italic> = &#x2202;<bold>x</bold><sub>c</sub>/&#x2202;<italic>z</italic> = 0. The resulting force error is small (on the order of <italic>O</italic>(1/<italic>N</italic>) or <italic>O</italic>(<italic>m</italic><sub><italic>j</italic></sub>/<italic>M</italic>) if mass-weighting is applied) and can therefore be tolerated. With this assumption, the forces <bold>F</bold><sup>flex-t</sup> have the same form as eq <xref rid="eq37" ref-type="disp-formula">37</xref>.</p>
+      </sec>
+      <!--with a head-->
+      <sec id="sec3.2">
+        <title>Flexible Axis 2 Alternative Potential</title>
+        <p>In our second variant, slab segmentation is applied to <italic>V</italic><sup>rm2</sup> (eq <xref rid="eq24" ref-type="disp-formula">24</xref>), resulting in a flexible axis potential without radial force contributions (Figure <xref rid="fig2" ref-type="fig">2</xref>C)<disp-formula id="eq40"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m043" position="anchor"/></disp-formula>with<disp-formula id="eq41"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m044" position="anchor"/></disp-formula><disp-formula id="eq42"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m045" position="anchor"/></disp-formula><disp-formula id="eq43"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m046" position="anchor"/></disp-formula><disp-formula id="eq44"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m047" position="anchor"/></disp-formula><disp-formula id="eq45"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m048" position="anchor"/></disp-formula>the force on atom <italic>j</italic> reads<disp-formula id="eq46"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m049" position="anchor"/></disp-formula></p>
+        <p>Applying transformation <xref rid="eq38" ref-type="disp-formula">38</xref> yields a translation-tolerant version of the flexible 2 potential, <italic>V</italic><sup>flex2-<italic>t</italic></sup>. Again, assuming that &#x2202;<bold>x</bold><sub>c</sub>/&#x2202;<italic>x</italic>, &#x2202;<bold>x</bold><sub>c</sub>/&#x2202;<italic>y</italic>, and &#x2202;<bold>x</bold><sub>c</sub>/&#x2202;<italic>z</italic> are small, the resulting equations for <italic>V</italic><sup>flex2-<italic>t</italic></sup> and <bold>F</bold><sup>flex2-<italic>t</italic></sup> are similar to those of <italic>V</italic><sup>flex2</sup> and <bold>F</bold><sup>flex2</sup>.</p>
+      </sec>
+    </sec>
+    <!--with a head-->
+    <sec id="sec4">
+      <label>4</label>
+      <title>GROMACS Implementation</title>
+      <p>For an efficient implementation, the following issues were taken into account. GROMACS 4 distributes the atoms among the parallel processors by domain-decomposing(<xref ref-type="bibr" rid="ref24">24</xref>) the simulation box and assigning each domain to a processor. Depending on van der Waals and Coulomb cutoff settings, positions of atoms near the domain boundaries are communicated such that each processor can compute the forces assigned to its domain. However, the calculation of some of the proposed potentials and forces requires atom positions not present on the local processor. For instance, the pivot free potentials require the center of mass of the rotation group, while the flexible potentials require all <italic>N</italic> positions of the rotation group. The required coordinates are therefore distributed to all processors before the force calculations, which entails one extra communication step in the rotation module. Further, repeated expressions such as the last terms in eqs <xref rid="eq18" ref-type="disp-formula">18</xref> and <xref rid="eq28" ref-type="disp-formula">28</xref> are precalculated whenever possible. For the efficient computation of the forces <bold>F</bold><sup>flex</sup>, the inner sum of the last term of eq <xref rid="eq37" ref-type="disp-formula">37</xref><disp-formula id="eq47"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m050" position="anchor"/></disp-formula>is rewritten as<disp-formula id="eq48"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m051" position="anchor"/></disp-formula>such that the repeated terms<disp-formula id="eq49"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m052" position="anchor"/></disp-formula>are also precomputed for each relevant slab <italic>n</italic> and then used for the calculation of each <bold>F</bold><sub><italic>j</italic></sub> term. Likewise, for <bold>F</bold><sup>flex2</sup>, the terms <bold>S</bold><sup><italic>n</italic></sup> (eq <xref rid="eq45" ref-type="disp-formula">45</xref>) of eq <xref rid="eq46" ref-type="disp-formula">46</xref> are precalculated.</p>
+      <p>Moreover, for the flexible potentials, only significant contributions to <italic>V</italic> and <bold>F</bold> are computed, defined by a cutoff value of <italic>g</italic><sub><italic>n</italic></sub>(<bold>x</bold>) &#x2265; <italic>g</italic><sub><italic>n</italic></sub><sup arrange="stack">min</sup> with a default value <italic>g</italic><sub><italic>n</italic></sub><sup arrange="stack">min</sup> = 0.001, which is checked according to a simple distance criterion. Also, the atoms of the rotation group are sorted according to their position along the rotation vector such that for each slab <italic>n</italic>, a first and a last index <italic>i</italic> between <italic>g</italic><sub><italic>n</italic></sub>(<bold>x</bold><sub><italic>i</italic></sub>) &#x2265; <italic>g</italic><sub><italic>n</italic></sub><sup arrange="stack">min</sup> &#x2200;<italic>i</italic> &#x2208; [<italic>i</italic><sub>first</sub>...<italic>i</italic><sub>last</sub>] is stored, and all contributions outside that range can safely be ignored.</p>
+      <p>Special care has been taken for periodic boundary conditions. Here, the appropriate periodic image for each of the particles of the rotation group has to be chosen such that groups are not split. For fixed axis rotation, each atom is put closest to its current reference position. For the flexible and pivot-free radial motion potentials, each atom is put next to its position at the previous time step, thereby ensuring the integrity of all rotation fragments.</p>
+    </sec>
+    <!--with a head-->
+    <sec id="sec5">
+      <label>5</label>
+      <title>Application to F<sub>1</sub>-ATP Synthase</title>
+      <p>As a sample application of our flexible axis approach, and to compare results obtained by fixed and flexible axis rotation, a series of all-atom MD simulations was performed in which the &#x3B3; subunit of F<sub>1</sub>-ATPase was enforced to rotate with respect to its stator part, &#x3B1;<sub>3</sub>&#x3B2;<sub>3</sub> (Figure <xref rid="fig4" ref-type="fig">4</xref>).</p>
+      <fig id="fig4" position="float">
+        <label>Figure 4</label>
+        <caption>
+          <p>F<sub>1</sub>-ATPase structure. In the upper left (right) corners, the full protein structure (&#x3B1;<sub>3</sub>&#x3B2;<sub>3</sub>&#x3B4;&#x3B5;) is shown in a side (top) view. Subunit color-coding is &#x3B1;, red; &#x3B2;, green; &#x3B3;, cyan; &#x3B4;, magenta; and &#x3B5;, orange. The central panel illustrates the initial orientation of the rotor domain (&#x3B3;&#x3B4;&#x3B5;) with respect to the stator (&#x3B1;<sub>3</sub>&#x3B2;<sub>3</sub>); for the sake of simplicity, only the &#x3B3; and two &#x3B2; subunits are shown. The 3-fold symmetry axis of &#x3B1;<sub>3</sub>&#x3B2;<sub>3</sub> that was used as a rotation axis in <italic>V</italic><sup>iso</sup> is shown in magenta. The red spheres and yellow arrows depict slab centers and local rotation axes as used by the flexible potentials. The left and right side panels show the orientation of the rotor after 120&#xB0; of enforced rotation using <italic>V</italic><sup>iso</sup> and <italic>V</italic><sup>flex2</sup>, respectively. The two orange spheres denote harmonic restraints applied to the N-terminal tags of the &#x3B2; subunits. This is to prevent co-rotation of the &#x3B1;<sub>3</sub>&#x3B2;<sub>3</sub> stator in close resemblance to single-molecule force probe experiments, in which the stator is immobilized by attaching the protein to the surface via His tags attached to one subunit type (usually the &#x3B2; chains). Figure prepared with VMD.(<xref ref-type="bibr" rid="ref38">38</xref>)</p>
+        </caption>
+        <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_0004" id="gr4" position="float"/>
+      </fig>
+      <p>F<sub>1</sub>-ATPase is the soluble domain of the F<sub>o</sub>F<sub>1</sub>-ATP synthase, a rotary motor protein that synthesizes ATP from ADP using the electrochemical proton gradient across the membrane as its energy source.(<xref ref-type="bibr" rid="ref26">26</xref>) The mitochondrial F<sub>1</sub>-ATPase is an oligomeric protein consisting of nine polypeptide chains, &#x3B1;<sub>3</sub>&#x3B2;<sub>3</sub>&#x3B3;&#x3B4;&#x3B5;.(<xref ref-type="bibr" rid="ref27">27</xref>) In synthesis direction, F<sub>1</sub>-ATPase is driven by the membrane-embedded proton-translocating F<sub>o</sub> motor while the F<sub>1</sub> mobile subunit, &#x3B3;&#x3B4;&#x3B5;, rotates clockwise (seen from the membrane) within the bearing formed by the hexagonally arranged &#x3B1; and &#x3B2; chains.<sup><xref ref-type="bibr" rid="ref28">28</xref>,<xref ref-type="bibr" rid="ref26">26</xref></sup> The energy transmitted mechanically via the rotating subunit is subsequently used at the catalytic sites of &#x3B1;<sub>3</sub>&#x3B2;<sub>3</sub> for ATP synthesis. To prevent co-rotation, the &#x3B1;<sub>3</sub>&#x3B2;<sub>3</sub> hexamer is connected to the membrane-embedded F<sub>o</sub> motor by a peripheral linker stalk. Despite numerous theoretical<sup><xref ref-type="bibr" rid="ref29">29</xref>&#x2212;<xref ref-type="bibr" rid="ref31">31</xref></sup> and simulation studies,<sup><xref ref-type="bibr" rid="ref15">15</xref>,<xref ref-type="bibr" rid="ref32">32</xref>&#x2212;<xref ref-type="bibr" rid="ref36">36</xref></sup> the molecular mechanism of energy transmission between the rotor subunit and the ligand binding sites in the stator is still not fully understood.(<xref ref-type="bibr" rid="ref37">37</xref>)</p>
+      <!--with a head-->
+      <sec id="sec5.1">
+        <title>Simulation Setup</title>
+        <p>The initial configuration of the F<sub>1</sub> motor was based on the X-ray structure of bovine F<sub>1</sub>-ATPase determined at 2.4 &#xC5; resolution(<xref ref-type="bibr" rid="ref39">39</xref>) (Protein Data Bank entry <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pdb" xlink:href="1E79">1E79</ext-link>). The covalently bound inhibitor as well as the glycerol and sulfate molecules were removed, leaving only Mg&#xB7;ATP and Mg&#xB7;ADP ligands in their respective binding sites. All crystal water molecules were retained. Two five-residue-long loops missing from the &#x3B3; subunit were modeled with tCONCOORD.(<xref ref-type="bibr" rid="ref40">40</xref>) Protonation states of ionizable groups were set according to the p<italic>K</italic><sub>a</sub> shifts calculated with the DelPhi(<xref ref-type="bibr" rid="ref41">41</xref>) interface of WhatIf.(<xref ref-type="bibr" rid="ref42">42</xref>) The protein structure was solvated with 87&#x2009;321 water molecules in a 16.7 &#xD7; 13.8 &#xD7; 13.8 nm rectangular unit cell. To neutralize the system and to obtain physiological ionic strength, 261 Na<sup>+</sup> and 216 Cl<sup>&#x2212;</sup> ions were added. The system was energy-minimized using the steepest descent method in two stages. First, all heavy atoms of the protein and the protein&#x2019;s ligands were kept fixed; subsequently, all atoms in the system were allowed to relax.</p>
+        <p>All simulations were performed with GROMACS 4.0(<xref ref-type="bibr" rid="ref24">24</xref>) in which the potentials <italic>V</italic><sup>iso</sup>, <italic>V</italic><sup>flex</sup>, and <italic>V</italic><sup>flex2</sup> were implemented. For convenience, we here also describe the newer 4.5 version, which produces the same results for the <italic>V</italic><sup>iso</sup>, <italic>V</italic><sup>flex</sup>, and <italic>V</italic><sup>flex2</sup> potentials but includes nine additional rotation potentials.</p>
+        <p>For the protein as well as its ligands and ions, the OPLS/AA force field<sup><xref ref-type="bibr" rid="ref43">43</xref>,<xref ref-type="bibr" rid="ref44">44</xref></sup> was used, and TIP4P(<xref ref-type="bibr" rid="ref45">45</xref>) was used for the water. All production runs were carried out in the NPT ensemble at 300 K and 1 bar. Temperature and pressure were controlled by Nos&#xE9;&#x2212;Hoover<sup><xref ref-type="bibr" rid="ref46">46</xref>,<xref ref-type="bibr" rid="ref47">47</xref></sup> (coupling constant &#x3C4;<sub><italic>t</italic></sub> = 0.5 ps) and Parrinello&#x2212;Rahman<sup><xref ref-type="bibr" rid="ref48">48</xref>,<xref ref-type="bibr" rid="ref49">49</xref></sup> (&#x3C4;<sub><italic>p</italic></sub> = 2.0 ps) schemes, respectively. To avoid severe density oscillations, the first 5 ns of the NPT equilibration run were performed with Berendsen weak coupling(<xref ref-type="bibr" rid="ref50">50</xref>) for temperature and pressure. Periodic boundary conditions were applied in 3D, and electrostatic forces were calculated with the particle mesh Ewald (PME) method<sup><xref ref-type="bibr" rid="ref51">51</xref>,<xref ref-type="bibr" rid="ref52">52</xref></sup> using a real-space cutoff of 1 nm and an FFT grid density of 10 nm<sup>&#x2212;1</sup>. Lennard-Jones interactions were truncated at 1 nm. Covalent bond lengths in the protein and ligand were constrained to their reference values with P-LINCS.(<xref ref-type="bibr" rid="ref53">53</xref>) SETTLE was used to constrain the water geometry.(<xref ref-type="bibr" rid="ref54">54</xref>) Equations of motion were integrated using the leapfrog scheme with a time step of 2 fs. Prior to enforcing the rotor movement, the system was equilibrated for 10 ns at the target temperature and pressure. During the first 1 ns of this run, all protein heavy atoms were harmonically restrained to their initial positions.</p>
+        <p>To mimic the effect exerted on the F<sub>1</sub> subunit by the rotation of the F<sub>o</sub> motor, a potential of the form <italic>V</italic><sup>iso</sup> (eq <xref rid="eq1" ref-type="disp-formula">1</xref>), <italic>V</italic><sup>flex</sup> (34), or <italic>V</italic><sup>flex2</sup> (40) was applied during the production runs. All 272 C<sub>&#x3B1;</sub> atoms of the &#x3B3; subunit were chosen as a rotation group. The longest principal axis of the &#x3B1;<sub>3</sub>&#x3B2;<sub>3</sub> stator, i.e., the eigenvector of the inertia tensor of &#x3B1;<sub>3</sub>&#x3B2;<sub>3</sub> corresponding to the largest eigenvalue, was used as a rotation vector <bold>v</bold>. For the fixed variant, the pivot vector <bold>u</bold> of the axis was placed at the center of mass of the &#x3B1;<sub>3</sub>&#x3B2;<sub>3</sub> units, thus defining the 3-fold pseudosymmetry axis of the stator subunit (Figure <xref rid="fig4" ref-type="fig">4</xref>). For the flexible axis runs, a slab distance of &#x394;<italic>x</italic> = 1 nm, a Gaussian function cutoff of <italic>g</italic><sub><italic>n</italic></sub><sup arrange="stack">min</sup> = 0.001, and &#x3B5;&#x2032; = 0 nm<sup>2</sup> were chosen. The &#x3B3; reference positions were rotated counter-clockwise around <bold>v</bold> at an angular rate of &#x3C9; = 0.021&#xB0;/ps over 6 ns of the simulation time, yielding a 120&#xB0; rotation of the &#x3B3;&#x3B4;&#x3B5; domain. Due to its symmetry, this covers a complete synthesis cycle, as also seen from the observed stepped motion of the &#x3B3;&#x3B4;&#x3B5; domain.(<xref ref-type="bibr" rid="ref28">28</xref>) To examine the effect of the chosen spring constant <italic>k</italic>, for each of the three potentials, five runs were performed with <italic>k</italic> values ranging from 100 to 800 kJ/(mol&#xB7;nm<sup>2</sup>). In each case, all heavy atoms of the N-terminal six-residue sequences of each &#x3B2; subunit were harmonically restrained to their initial positions using a force constant of 1500 kJ/(mol&#xB7;nm<sup>2</sup>). Additionally, for <italic>k</italic> = 600 kJ/(mol&#xB7;nm<sup>2</sup>), a complete 360&#xB0; rotation of the &#x3B3;&#x3B4;&#x3B5; domain was simulated.</p>
+      </sec>
+      <!--with a head-->
+      <sec id="sec5.2">
+        <title>Performance</title>
+        <p>We demonstrate that, due to the optimizations described in the implementation section, simulation performance is nearly unaffected for typical setups such as the F<sub>1</sub>-ATPse system, where only a small fraction of all atoms are subjected to a rotation potential. The described ATPase example with the implemented rotation types was benchmarked (Figure <xref rid="fig5" ref-type="fig">5</xref>) on a cluster of Intel Xeon L5430 nodes connected by a DDR Infiniband network. Each node comprised eight processor cores running at 2.66 GHz. An Intel MPI 3.2.1 was used with the Intel 11.1 compiler and the FFTW 3.2 library. For the benchmarks, Coulomb and van der Waals cutoffs were set to 0.9 nm and the Fourier grid to 144 &#xD7; 120 &#xD7; 120 points, yielding a grid spacing of less than 0.12 nm in each dimension. Separation into long-range (PME-only) and short-range (particle&#x2212;particle) processes was allowed. The optimal number of PME-only processes was derived with the g_tune_pme(<xref ref-type="bibr" rid="ref55">55</xref>) tool using 2000 equilibration steps for the dynamic load balancing, with run times taken from 2000 subsequent steps.</p>
+        <fig id="fig5" position="float">
+          <label>Figure 5</label>
+          <caption>
+            <p>GROMACS 4.5 performance for various rotation potentials (colors) compared to a simulation without rotation. The system comprises 401&#x2009;152 atoms in total, of which 2116 are subjected to the rotation potential. For the flexible potentials, slab distance &#x394;<italic>x</italic> = 1 nm and <italic>g</italic><sub><italic>n</italic></sub><sup arrange="stack">min</sup> = 0.001 have been chosen. The thin black line denotes ideal scaling.</p>
+          </caption>
+          <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_0005" id="gr5" position="float"/>
+        </fig>
+        <p>With the <italic>N</italic> = 272 C<sub>&#x3B1;</sub> atoms of the &#x3B3; subunit as the rotation group, none of the potentials significantly reduced the MD performance. To be able to analyze the scaling behavior (Figure <xref rid="fig5" ref-type="fig">5</xref>), the rotation group was therefore enlarged to contain all <italic>N</italic> = 2116 atoms of the &#x3B3; subunit. As seen, the overall performance decreases only slightly compared to the case without rotation. For the most computationally demanding flexible potentials, on eight processors, a 2% decrease is seen and a 9% decrease on 192 processors.</p>
+      </sec>
+    </sec>
+    <!--with a head-->
+    <sec id="sec6">
+      <label>6</label>
+      <title>Results</title>
+      <!--with a head-->
+      <sec id="sec6.1">
+        <title>Evolution of the Rotor Angle</title>
+        <p>To verify that the proposed methods properly control the motion of the rotary subunit, we first determined the time evolution of the rotor angle &#x3B8;. The actual rotation angle &#x3B8;(<italic>t</italic>) of the &#x3B3; subunit was determined by a mass-weighted root-mean-square deviation (RMSD) fit to the initial (&#x3B8; = 0&#xB0;) configuration of the &#x3B3; backbone. Figure <xref rid="fig6" ref-type="fig">6</xref> shows &#x3B8;(<italic>t</italic>) with respect to the &#x3B1;<sub>3</sub>&#x3B2;<sub>3</sub> symmetry axis.</p>
+        <fig id="fig6" position="float">
+          <label>Figure 6</label>
+          <caption>
+            <p>Time evolution of the &#x3B3; rotor angle with respect to the &#x3B1;<sub>3</sub>&#x3B2;<sub>3</sub> symmetry axis for the F<sub>1</sub>-ATPase motor enforced to rotate in the synthesis direction using the potentials <italic>V</italic><sup>iso</sup> (A), <italic>V</italic><sup>flex</sup> (B), and <italic>V</italic><sup>flex2</sup> (C) with spring constants <italic>k</italic> of 100&#x2212;800 kJ/(mol&#xB7;nm<sup>2</sup>).</p>
+          </caption>
+          <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_0006" id="gr6" position="float"/>
+        </fig>
+        <p>The results show that in all 6-ns-long enforced rotation runs the rotor changes its orientation with respect to the stator by the expected 120&#xB0;. The angle increases nearly linearly with time, with the slope reflecting the constant angular velocity of 0.021&#xB0;/ps, at which the reference is rotated. For fixed axis rotation, the subunit closely follows the reference for all tested force constants <italic>k</italic> = 100&#x2212;800 kJ/(mol&#xB7;nm<sup>2</sup>). In contrast, for both flexible variants, a less regular evolution is observed, as indicated by the large fluctuations of &#x3B8; for <italic>k</italic> = 100 kJ/(mol&#xB7;nm<sup>2</sup>). These result from conformational changes of the rotor that occur because the flexible method allows for structural relaxations and adaptations to the bearing. Additionally, at high rotation velocities, frictional forces occur, which cause further conformational changes.</p>
+        <p>Movies illustrating the effect of the fixed and flexible axis methods have been included within the <xref rid="notes-1">Supporting Information</xref>. In the movies, a <italic>V</italic><sup>iso</sup> and a <italic>V</italic><sup>flex2</sup> rotation potential with <italic>k</italic> = 600 kJ/(mol&#xB7;nm<sup>2</sup>) is applied to all C<sub>&#x3B1;</sub> atoms of the &#x3B3; subunit.</p>
+        <p>For a quantitative comparison of the &#x3B3; subunit internal deformation, Figure <xref rid="fig7" ref-type="fig">7</xref> shows the time evolution of the RMSD of the &#x3B3; backbone atoms from their initial configuration. Relatively small RMSD variations are observed for the fixed method, confirming nearly rigid-body like rotation. In contrast, both flexible axis methods allow for structural rearrangements particularly for small <italic>k</italic> values. A secondary structure analysis shows that for the F<sub>1</sub>-ATPase flexibly rotating at 0.021&#xB0;/ps the force constant <italic>k</italic> should be 200 kJ/(mol&#xB7;nm<sup>2</sup>) or larger to preserve the rotor coiled-coil conformation of the crystal structure (Figure <xref rid="fig4" ref-type="fig">4</xref>). For any of the rotation potentials, the force constant will depend on the studied system and on the rotation rate. Generally, higher rotation rates will require larger force constants that stabilize the rotation group with the help of a stronger coupling to its reference. Yet, the decrease in conformational freedom with increasing <italic>k</italic> (Figure <xref rid="fig7" ref-type="fig">7</xref>) shows that when using the flexible axis approach one can optimize the tradeoff between structural flexibility and mechanical resistance of the rotary subunit. Note that the 120&#xB0; rotations, in principle, cannot perfectly reproduce the starting configuration of the F<sub>1</sub>-ATPase, as in our simulations the rotor motion is not accompanied by occupancy changes of the active sites.</p>
+        <fig id="fig7" position="float">
+          <label>Figure 7</label>
+          <caption>
+            <p>RMSD of the &#x3B3; subunit backbone atoms with respect to the X-ray structure as a function of time for the F<sub>1</sub> motor driven to rotate in the synthesis direction using the potentials <italic>V</italic><sup>iso</sup> (A), <italic>V</italic><sup>flex</sup> (B), and <italic>V</italic><sup>flex2</sup> (C) with spring constants <italic>k</italic> of 100&#x2212;800 kJ/(mol&#xB7;nm<sup>2</sup>).</p>
+          </caption>
+          <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_0007" id="gr7" position="float"/>
+        </fig>
+        <p>Because for the flexible potentials the local rotation axis adapts dynamically, it is interesting to monitor the evolution of the F<sub>1</sub> rotor angle &#x3B8; also with respect to a variable axis. Figure <xref rid="fig8" ref-type="fig">8</xref> shows the time dependence of &#x3B8; computed in the same manner as previously but now with the instantaneous (longest) principal axis of the &#x3B3; subunit used as the reference axis. Significantly smoother variation of &#x3B8; with time is seen in Figure <xref rid="fig8" ref-type="fig">8</xref> compared to using a fixed symmetry axis (Figure <xref rid="fig6" ref-type="fig">6</xref>B,C). This result illustrates the ability of the flexible methods to adapt the rotation geometry to the structure and conformational changes of the stator.</p>
+        <fig id="fig8" position="float">
+          <label>Figure 8</label>
+          <caption>
+            <p>Time evolution of the angular position of the &#x3B3; rotor computed as the best-fit angle with respect to the &#x3B3; longest principal axis for the F<sub>1</sub> motor enforced to rotate in the synthesis direction using <italic>V</italic><sup>iso</sup> (A) and <italic>V</italic><sup>flex2</sup> (B).</p>
+          </caption>
+          <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_0008" id="gr8" position="float"/>
+        </fig>
+      </sec>
+      <!--with a head-->
+      <sec id="sec6.2">
+        <title>Torque Profiles</title>
+        <p>We will now characterize the different rotation methods in terms of torque and energetics. Because the efficiency of the chemomechanical energy transmission in the F<sub>1</sub>-ATPase, when studied in single molecule measurements, is close to 100%,(<xref ref-type="bibr" rid="ref28">28</xref>) and due to the implied tight coupling between the mechanical reaction coordinate (e. g., the &#x3B8; angle) and conformational changes in the catalytic subunit, the work necessary to enforce a 120&#xB0; rotation of F<sub>1</sub>-ATPase in the synthesis direction should approach the free energy of &#x223C;50&#x2212;70 kJ/mol required for ATP synthesis.<sup><xref ref-type="bibr" rid="ref26">26</xref>,<xref ref-type="bibr" rid="ref37">37</xref></sup></p>
+        <p>Figure <xref rid="fig9" ref-type="fig">9</xref> therefore compares the torque profiles along the mechanical reaction coordinate &#x3B8; (eq <xref rid="eq53" ref-type="disp-formula">53</xref>) for the three methods considered above. As can be seen, for both flexible axis potentials, the average torque along &#x3B8; is about 5 times smaller than that for the fixed axis potential. Assuming that for infinitely slow rotation the (equilibrium) torque curve is smaller than the observed torques, and, further, that this difference is due to dissipation or other nonequilibrium effects, this result implies that the flexible axis approach reduces the dissipated energy by at least a factor of 5 with respect to the fixed axis potential.</p>
+        <fig id="fig9" position="float">
+          <label>Figure 9</label>
+          <caption>
+            <p>The angular dependence of the driving torque for the &#x3B3; subunit enforced to rotate in the synthesis direction using <italic>V</italic><sup>iso</sup> (fixed axis), <italic>V</italic><sup>flex2</sup> (flexible axis), and <italic>V</italic><sup>flex2</sup> (flexible axis 2), using five different spring constants <italic>k</italic> = 100&#x2212;800 kJ/(mol&#xB7;nm<sup>2</sup>). All torque profiles were smoothed using a running average window of 8&#xB0;.</p>
+          </caption>
+          <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_0009" id="gr9" position="float"/>
+        </fig>
+        <p>Integrated over 120&#xB0;, the corresponding work is 5900 &#xB1; 300, 1400 &#xB1; 100, and 1490 &#xB1; 80 kJ/mol, for the fixed, flexible, and flexible 2 potential, respectively. Due to the large angular velocity applied as well as the resulting nonequilibrium nature of this process, this work is still much larger than the free energy of ATP synthesis but clearly shows the dramatic reduction by the flexible axis method. For much lower velocities of 0.00042&#xB0;/ps, the integrated work reduces further to 350 &#xB1; 50 kJ/mol (data not shown).</p>
+        <p>Already for the short simulations, the dependence of the torque on the angular position of the rotor reveals details of the free energy landscape governing the F<sub>1</sub> rotation. In all simulations with a flexible axis potential (Figures <xref rid="fig9" ref-type="fig">9</xref> and <xref rid="fig10" ref-type="fig">10</xref>), only small variations of the average torque with respect to the rotor angle are observed. This suggests that the underlying energy landscape is smooth and nearly linear, which is in agreement with recent experiments.<sup><xref ref-type="bibr" rid="ref26">26</xref>,<xref ref-type="bibr" rid="ref56">56</xref></sup> However, due to the much larger angular velocity employed here, the torque values calculated from our simulations are at least one order of magnitude larger than the F<sub>1</sub>-generated torque measured under a viscous load (40&#x2212;50 pN&#xB7;nm).<sup><xref ref-type="bibr" rid="ref28">28</xref>,<xref ref-type="bibr" rid="ref56">56</xref></sup> In addition, the calculated torque profiles indicate that the free energy landscape is steepest at &#x3B8; &#x2248; 40&#xB0;. The increase of the torque for &#x3B8; &gt; 90&#xB0; that shows up in the fixed type points to shortcomings of this particular method, which will be discussed in the next section.</p>
+        <fig id="fig10" position="float">
+          <label>Figure 10</label>
+          <caption>
+            <p>Evolution of the driving torque for the &#x3B3; subunit enforced to rotate in the synthesis direction using <italic>V</italic><sup>iso</sup> (red) and <italic>V</italic><sup>flex2</sup> (green) with <italic>k</italic> = 600 kJ/(mol&#xB7;nm<sup>2</sup>) (A). RMSD of the &#x3B3; rotor backbone atoms (solid) and of the &#x3B1;<sub>3</sub>&#x3B2;<sub>3</sub> stator backbone atoms (dotted) with respect to their respective X-ray structure (B).</p>
+          </caption>
+          <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_0010" id="gr10" position="float"/>
+        </fig>
+        <p>Since in the simulations the motion along the mechanical reaction coordinate is not synchronized with changes in chemical occupancy of the stator binding sites, we do not expect the torque to drop to zero after 120&#xB0; of rotation. To examine how far our nonequilibrium simulations are from the reversible limit, Figure <xref rid="fig10" ref-type="fig">10</xref>A shows torque profiles of full 360&#xB0; rotations applying <italic>V</italic><sup>iso</sup> and <italic>V</italic><sup>flex2</sup> with <italic>k</italic> = 600 kJ/(mol&#xB7;nm<sup>2</sup>). As can be seen, the torque determined for the fixed axis case increases strongly, whereas for the flexible case, after a small increase up to &#x3B8; &#x2248; 40&#xB0;, the torques decrease toward considerably smaller values. This result underscores that the flexible potential perturbs the system to a much lesser extent, such that it remains much closer to equilibrium than for a fixed axis rotation.</p>
+        <p>The fixed axis potential induces structural changes almost exclusively in the bearing (stator in Figure <xref rid="fig10" ref-type="fig">10</xref>B) while in the flexible axis case, the structural changes are distributed rather equally among the rotating subunit and its bearing. Moreover, in the flexible axis case, both structures nearly approach the starting structure (&#x3B8; = 0&#xB0;) at the end of a whole 360&#xB0; turn with an RMSD below 2.5 &#xC5;, which is not seen for the fixed axis simulation.</p>
+      </sec>
+      <!--with a head-->
+      <sec id="sec6.3">
+        <title>Origin of Differences in Energetics of Fixed and Flexible Axis Rotation</title>
+        <p>When using a simple fixed axis rotation potential, the rotating part behaves like a rigid body. In combination with the fixed axis, this behavior can cause unphysical close contacts and strong torques between the rotor and the bearing, which may cause extensive artificial structural changes of the bearing. The flexible axis approach, in contrast, keeps the system closer to the equilibrium for two reasons. First, the self-adjusting local rotation axis ensures an overall optimal position of the pivot; second, the built-in flexibility allows for structural relaxation of the rotating part and thus locally minimizes sterical hindrances. As the F<sub>1</sub>-ATPase motor components are strongly coupled and leave only little room for the rotating subunit inside the bearing, both reasons allow for the necessary tight adaption of the &#x3B3; rotor to the &#x3B1;<sub>3</sub>&#x3B2;<sub>3</sub> bearing.</p>
+        <p>To quantify this effect, Figure <xref rid="fig11" ref-type="fig">11</xref> displays the enforced conformational changes of the bearing, in terms of stator RMSD with respect to its X-ray structure as a function of time for the &#x3B1;<sub>2</sub> subunit. This subunit was chosen because it interacts most closely with the &#x3B3; rotor throughout the whole runs. It is evident that the structural changes induced in &#x3B1;<sub>2</sub> are considerably larger for fixed axis rotation than for the flexible potentials. Secondary structure analysis reveals that in the former case the structural motifs exposed to the center of the &#x3B1;<sub>3</sub>&#x3B2;<sub>3</sub> hexamer are distorted by the rotating &#x3B3; subunit. Also in Figure <xref rid="fig4" ref-type="fig">4</xref> one can notice partial disruption of the helices in the C-terminal part of the &#x3B2;<sub>3</sub> subunit (the bottom part of &#x3B2; on the left side of &#x3B3;, red dashed circle) when it is pressed upon by the rotor driven to rotate around the fixed axis. The torque increase for angles &#x3B8; &gt; 90&#xB0; (Figure <xref rid="fig9" ref-type="fig">9</xref>, left, and Figure <xref rid="fig10" ref-type="fig">10</xref>) reflects this effect, which is mainly due to wrapping of the &#x3B2;<sub>3</sub> C-terminal domain around the &#x3B3; subunit.</p>
+        <fig id="fig11" position="float">
+          <label>Figure 11</label>
+          <caption>
+            <p>RMSD of the &#x3B1;<sub>3</sub> subunit backbone atoms with respect to the X-ray structure when driving &#x3B3; subunit rotation using <italic>V</italic><sup>iso</sup> (A) and <italic>V</italic><sup>flex2</sup> (B). For comparison, the corresponding RMSD evolution for five independent free MD runs is also shown (C).</p>
+          </caption>
+          <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_0011" id="gr11" position="float"/>
+        </fig>
+      </sec>
+    </sec>
+    <!--with a head-->
+    <sec id="sec7">
+      <label>7</label>
+      <title>Conclusions</title>
+      <p>We have developed, implemented, and tested a new method to enforce the rotation of protein subunits that allows for (i) a flexible rotation axis and (ii) structural adaptions of the rotated subunit to its environment. For &#x3B3; subunit rotation in F<sub>1</sub>-ATPase, we have shown that our flexible axis method reduced the frictional dissipation of the &#x3B3; subunit within the &#x3B1;<sub>3</sub>&#x3B2;<sub>3</sub> bearing by more than a factor of 5. As a result, also the induced torque was 5-fold smaller compared to the one using a fixed axis.</p>
+      <p>Concerning the use of the flexible axis potentials developed here, we should like to point out two possible caveats. The first caveat is due to the fact that, while the pivot vector is free to adapt flexibly, the orientation of the direction vector is fixed. For systems where the subsystem subjected to the rotation potential is embedded within a curved &#x201C;bearing&#x201D;, the flexible adaptation will work properly only as long as the angle between the orientations of the bearing axis and the direction vector is not too large, i.e., for not too strong bending of the bearing. In extreme cases such as a complete U-shaped bearing, artificial structural changes of the bearing similar to those induced by fixed axes may occur. This problem can be addressed by subdividing the system into several parts and using a separate flexible rotation axis for each of these parts, with orientation vectors locally adapted to the respective part of the bearing.</p>
+      <p>The second caveat regards the proper choice of the slab thickness. If chosen too small, only a few atoms will be assigned to each slab, thus compromising the averaging that defines the pivot vector of each slab. In contrast, if chosen too large, the slabs might stretch over regions that would require changing pivot vectors, in which case the enforced rotation would induce, albeit to a lesser extent, the artifacts caused by fixed axis approaches. Obviously, in the limit of just a single slab covering the complete rotating subsystem, the fixed axis potential is recovered.</p>
+      <p>With these limitations and caveats in mind, our flexible axis potentials are applicable to a broad range of quite diverse biomolecular systems, processes, and functions. Apart from mimicking molecular rotary motors, it can also serve to restrain the orientation of a protein or ligand, or, in combination with umbrella sampling, to calculate the preferred orientation of transmembrane proteins or membrane-active agents within a lipid bilayer. Further, the method is expected to yield more accurate free energy profiles along circular reaction coordinates via umbrella sampling. In the long run, our flexible axis approach might prove useful for the study and design of synthetic nanodevices with rotating elements, such as those considered for molecular nanotechnology.(<xref ref-type="bibr" rid="ref57">57</xref>)</p>
+    </sec>
+  </body>
+  <back>
+    <app-group>
+      <app id="app1">
+        <title>Appendix: Using GROMACS for Enforced Rotation Simulations</title>
+        <p>All methods and potentials described in this paper have been implemented into GROMACS and will be part of the next major release. For immediate use, the rotation repository branch should be checked out from the GROMACS git repository. See <uri xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gromacs.org">www.gromacs.org</uri> for how to access the repository.</p>
+        <p>To use one of these potentials, the particles <italic>i</italic> that are to be subjected to rotation potentials are defined via index groups rot_group0, rot_group1, etc., in the grompp preprocessor mdp input file. The reference positions <bold>y</bold><sub><italic>i</italic></sub><sup arrange="stack">0</sup> are read from a file provided to grompp. If no such file is found, <bold>x</bold><sub><italic>i</italic></sub>(<italic>t</italic> = 0) are used as reference positions and written to file such that they can be used for subsequent setups. All parameters of the potentials such as <italic>k</italic>, &#x3B5;&#x2032;, etc. (Table <xref rid="tbl1" ref-type="table">1</xref>) are provided via input file parameters; rot_type selects the type of the potential. The option rot_massw allows one to choose whether or not to use mass-weighted averaging. Table <xref rid="tbl2" ref-type="table">2</xref> summarizes observables that are written to additional output files, which are described below.</p>
+        <table-wrap id="tbl1" position="float">
+          <label>Table 1</label>
+          <caption>
+            <title>Parameters Used by the Various Rotation Potentials Defined Above<xref rid="tbl1-fn1" ref-type="table-fn">a</xref></title>
+          </caption>
+          <table frame="hsides" rules="groups" border="0">
+            <colgroup>
+              <col align="left"/>
+              <col align="left"/>
+              <col align="left"/>
+              <col align="center"/>
+              <col align="center"/>
+              <col align="center"/>
+              <col align="center"/>
+              <col align="center"/>
+              <col align="center"/>
+              <col align="center"/>
+            </colgroup>
+            <thead>
+              <tr>
+                <th style="border:none;" align="center">parameter </th>
+                <th style="border:none;" align="center">&#xA0;</th>
+                <th style="border:none;" align="center">&#xA0;</th>
+                <th style="border:none;" align="center">
+                  <italic>k</italic>
+                </th>
+                <th style="border:none;" align="center">
+                  <bold>v&#x302;</bold>
+                </th>
+                <th style="border:none;" align="center">
+                  <bold>u</bold>
+                </th>
+                <th style="border:none;" align="center">&#x3C9;</th>
+                <th style="border:none;" align="center">&#x3B5;&#x2032;</th>
+                <th style="border:none;" align="center">&#x394;<italic>x</italic></th>
+                <th style="border:none;" align="center">g<sub><italic>n</italic></sub><sup arrange="stack">min</sup></th>
+              </tr>
+              <tr>
+                <th style="border:none;" align="center">grompp input</th>
+                <th style="border:none;" align="center">&#xA0;</th>
+                <th style="border:none;" align="center">&#xA0;</th>
+                <th style="border:none;" align="center">k</th>
+                <th style="border:none;" align="center">vec</th>
+                <th style="border:none;" align="center">pivot</th>
+                <th style="border:none;" align="center">rate</th>
+                <th style="border:none;" align="center">eps</th>
+                <th style="border:none;" align="center">slab_dist</th>
+                <th style="border:none;" align="center">min_gauss</th>
+              </tr>
+              <tr>
+                <th style="border:none;" align="center">unit </th>
+                <th style="border:none;" align="center">variable name</th>
+                <th style="border:none;" align="center">eq</th>
+                <th style="border:none;" align="center">[(kJ)/(mol&#xB7;nm<sup>2</sup>)]</th>
+                <th style="border:none;" align="center">[-]</th>
+                <th style="border:none;" align="center">[nm]</th>
+                <th style="border:none;" align="center">[deg/ps]</th>
+                <th style="border:none;" align="center">[nm<sup>2</sup>]</th>
+                <th style="border:none;" align="center">[nm]</th>
+                <th style="border:none;" align="center">[-]</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="10" style="border:none;" align="left">fixed axis:</td>
+              </tr>
+              <tr>
+                <td style="border:none;" align="left">isotropic</td>
+                <td style="border:none;" align="left">
+                  <italic>V</italic>
+                  <sup>iso</sup>
+                </td>
+                <td style="border:none;" align="left">
+                  <xref rid="eq1" ref-type="disp-formula">1</xref>
+                </td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">-</td>
+              </tr>
+              <tr>
+                <td style="border:none;" align="left">&#x2212;pivot-free</td>
+                <td style="border:none;" align="left">
+                  <italic>V</italic>
+                  <sup>iso-pf</sup>
+                </td>
+                <td style="border:none;" align="left">
+                  <xref rid="eq4" ref-type="disp-formula">4</xref>
+                </td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">-</td>
+              </tr>
+              <tr>
+                <td style="border:none;" align="left">parallel motion</td>
+                <td style="border:none;" align="left">
+                  <italic>V</italic>
+                  <sup>pm</sup>
+                </td>
+                <td style="border:none;" align="left">
+                  <xref rid="eq8" ref-type="disp-formula">8</xref>
+                </td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">-</td>
+              </tr>
+              <tr>
+                <td style="border:none;" align="left">&#x2212;pivot-free</td>
+                <td style="border:none;" align="left">
+                  <italic>V</italic>
+                  <sup>pm-pf</sup>
+                </td>
+                <td style="border:none;" align="left">
+                  <xref rid="eq12" ref-type="disp-formula">12</xref>
+                </td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">-</td>
+              </tr>
+              <tr>
+                <td style="border:none;" align="left">radial motion</td>
+                <td style="border:none;" align="left">
+                  <italic>V</italic>
+                  <sup>rm</sup>
+                </td>
+                <td style="border:none;" align="left">
+                  <xref rid="eq13" ref-type="disp-formula">13</xref>
+                </td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">-</td>
+              </tr>
+              <tr>
+                <td style="border:none;" align="left">&#x2212;pivot-free</td>
+                <td style="border:none;" align="left">
+                  <italic>V</italic>
+                  <sup>rm-pf</sup>
+                </td>
+                <td style="border:none;" align="left">
+                  <xref rid="eq18" ref-type="disp-formula">18</xref>
+                </td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">-</td>
+              </tr>
+              <tr>
+                <td style="border:none;" align="left">radial motion2</td>
+                <td style="border:none;" align="left">
+                  <italic>V</italic>
+                  <sup>rm2</sup>
+                </td>
+                <td style="border:none;" align="left">
+                  <xref rid="eq19" ref-type="disp-formula">19</xref>
+                </td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">-</td>
+              </tr>
+              <tr>
+                <td style="border:none;" align="left">&#x2212;pivot-free</td>
+                <td style="border:none;" align="left">
+                  <italic>V</italic>
+                  <sup>rm2-pf</sup>
+                </td>
+                <td style="border:none;" align="left">
+                  <xref rid="eq24" ref-type="disp-formula">24</xref>
+                </td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">-</td>
+              </tr>
+              <tr>
+                <td colspan="10" style="border:none;" align="left">flexible axis:</td>
+              </tr>
+              <tr>
+                <td style="border:none;" align="left"> flexible</td>
+                <td style="border:none;" align="left">
+                  <italic>V</italic>
+                  <sup>flex</sup>
+                </td>
+                <td style="border:none;" align="left">
+                  <xref rid="eq34" ref-type="disp-formula">34</xref>
+                </td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+              </tr>
+              <tr>
+                <td style="border:none;" align="left">&#x2212;transl. tol. </td>
+                <td style="border:none;" align="left">
+                  <italic>V</italic>
+                  <sup>flex-t</sup>
+                </td>
+                <td style="border:none;" align="left">
+                  <xref rid="eq39" ref-type="disp-formula">39</xref>
+                </td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+              </tr>
+              <tr>
+                <td style="border:none;" align="left">flexible2</td>
+                <td style="border:none;" align="left">
+                  <italic>V</italic>
+                  <sup>flex2</sup>
+                </td>
+                <td style="border:none;" align="left">
+                  <xref rid="eq40" ref-type="disp-formula">40</xref>
+                </td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+              </tr>
+              <tr>
+                <td style="border:none;" align="left">&#x2212;transl. tol.</td>
+                <td style="border:none;" align="left">
+                  <italic>V</italic>
+                  <sup>flex2-t</sup>
+                </td>
+                <td style="border:none;" align="left">&#xA0;</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+              </tr>
+            </tbody>
+          </table>
+          <table-wrap-foot>
+            <fn id="tbl1-fn1">
+              <label>a</label>
+              <p>X&#x2019;s indicate which parameter is actually used.</p>
+            </fn>
+          </table-wrap-foot>
+        </table-wrap>
+        <table-wrap id="tbl2" position="float">
+          <label>Table 2</label>
+          <caption>
+            <title>Quantities Recorded in Output Files during Enforced Rotation</title>
+          </caption>
+          <table frame="hsides" rules="groups" border="0">
+            <colgroup>
+              <col align="left"/>
+              <col align="left"/>
+              <col align="left"/>
+              <col align="left"/>
+              <col align="center"/>
+              <col align="center"/>
+              <col align="left"/>
+            </colgroup>
+            <thead>
+              <tr>
+                <th style="border:none;" align="center">quantity</th>
+                <th style="border:none;" align="center">unit</th>
+                <th style="border:none;" align="center">equation</th>
+                <th style="border:none;" align="center">output file</th>
+                <th style="border:none;" align="center">fixed</th>
+                <th style="border:none;" align="center">flexible</th>
+                <th style="border:none;" align="center">controlled by</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="border:none;" align="left"><italic>V</italic>(<italic>t</italic>)</td>
+                <td style="border:none;" align="left">kJ/mol</td>
+                <td style="border:none;" align="left">see Table <xref rid="tbl1" ref-type="table">1</xref></td>
+                <td style="border:none;" align="left">rotation</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="left">nstrout</td>
+              </tr>
+              <tr>
+                <td style="border:none;" align="left">&#x3B8;<sub>ref</sub>(<italic>t</italic>)</td>
+                <td style="border:none;" align="left">deg</td>
+                <td style="border:none;" align="left">&#x3B8;<sub>ref</sub>(<italic>t</italic>) = &#x3C9;t</td>
+                <td style="border:none;" align="left">rotation</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="left">nstrout</td>
+              </tr>
+              <tr>
+                <td style="border:none;" align="left">&#x3B8;<sub>av</sub>(<italic>t</italic>)</td>
+                <td style="border:none;" align="left">deg</td>
+                <td style="border:none;" align="left">
+                  <xref rid="eq50" ref-type="disp-formula">50</xref>
+                </td>
+                <td style="border:none;" align="left">rotation</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="left">nstrout</td>
+              </tr>
+              <tr>
+                <td style="border:none;" align="left">&#x3B8;<sub>fit</sub>(<italic>t</italic>), &#x3B8;<sub>fit</sub>(<italic>t</italic>,<italic>n</italic>)</td>
+                <td style="border:none;" align="left">deg</td>
+                <td style="border:none;" align="left">
+                  <xref rid="eq52" ref-type="disp-formula">52</xref>
+                </td>
+                <td style="border:none;" align="left">rotangles</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="left">nstsout</td>
+              </tr>
+              <tr>
+                <td style="border:none;" align="left"><bold>y</bold><sub>0</sub>(<italic>n</italic>), <bold>x</bold><sub>0</sub>(<italic>t</italic>,<italic>n</italic>)</td>
+                <td style="border:none;" align="left">nm</td>
+                <td style="border:none;" align="left"><xref rid="eq32" ref-type="disp-formula">32</xref>, <xref rid="eq33" ref-type="disp-formula">33</xref></td>
+                <td style="border:none;" align="left">rotslabs</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="left">nstsout</td>
+              </tr>
+              <tr>
+                <td style="border:none;" align="left">&#x3C4;(<italic>t</italic>)</td>
+                <td style="border:none;" align="left">kJ/mol</td>
+                <td style="border:none;" align="left">
+                  <xref rid="eq53" ref-type="disp-formula">53</xref>
+                </td>
+                <td style="border:none;" align="left">rotation</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="left">nstrout</td>
+              </tr>
+              <tr>
+                <td style="border:none;" align="left">&#x3C4;(<italic>t</italic>,<italic>n</italic>)</td>
+                <td style="border:none;" align="left">kJ/mol</td>
+                <td style="border:none;" align="left">
+                  <xref rid="eq53" ref-type="disp-formula">53</xref>
+                </td>
+                <td style="border:none;" align="left">rottorque</td>
+                <td style="border:none;" align="center">-</td>
+                <td style="border:none;" align="center">X</td>
+                <td style="border:none;" align="left">nstsout</td>
+              </tr>
+            </tbody>
+          </table>
+        </table-wrap>
+        <!--with a head-->
+        <sec id="sec7.1">
+          <title>Angle of Rotation Groups: Fixed Axis</title>
+          <p>For fixed axis rotation, the average angle &#x3B8;<sub>av</sub>(<italic>t</italic>) of the group relative to the reference group is determined via the distance-weighted angular deviation of all rotation group atoms from their reference positions<disp-formula id="eq50"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m053" position="anchor"/></disp-formula>Here, <italic>r</italic><sub><italic>i</italic></sub> is the distance of the reference position to the rotation axis, and the difference angles &#x3B8;<sub><italic>i</italic></sub> are determined from the atomic positions, projected onto a plane perpendicular to the rotation axis through pivot point <bold>u</bold> (see eq <xref rid="eq7" ref-type="disp-formula">7</xref> for the definition of &#x22A5;)<disp-formula id="eq51"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m054" position="anchor"/></disp-formula>The sign of &#x3B8;<sub>av</sub> is chosen such that &#x3B8;<sub>av</sub> &gt; 0 if the actual structure rotates ahead of the reference.</p>
+        </sec>
+        <!--with a head-->
+        <sec id="sec7.2">
+          <title>Angle of Rotation Groups: Flexible Axis</title>
+          <p>For flexible axis rotation, two outputs are provided, the angle of the entire rotation group and separate angles for the segments in the slabs. The angle of the entire rotation group is determined by an RMSD fit of <bold>x</bold><sub><italic>i</italic></sub> to the reference positions <bold>y</bold><sub><italic>i</italic></sub><sup arrange="stack">0</sup> at <italic>t</italic> = 0, yielding &#x3B8;<sub>fit</sub> as the angle by which the reference has to be rotated around <bold>v&#x302;</bold> for the optimal fit<disp-formula id="eq52"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m055" position="anchor"/></disp-formula>To determine the local angle for each slab <italic>n</italic>, both reference and actual positions are weighted with the Gaussian function of slab <italic>n</italic>, and &#x3B8;<sub>fit</sub>(<italic>t</italic>,<italic>n</italic>) is calculated as in eq <xref rid="eq52" ref-type="disp-formula">52</xref> from the Gaussian-weighted positions.</p>
+          <p>For all angles, the input option rot_fit_method controls whether a normal RMSD fit is performed or whether for the fit each position <bold>x</bold><sub><italic>i</italic></sub> is put at the same distance to the rotation axis as its reference counterpart <bold>y</bold><sub><italic>i</italic></sub><sup arrange="stack">0</sup>. In the latter case, the RMSD measures only angular differences, not radial ones.</p>
+        </sec>
+        <!--with a head-->
+        <sec id="sec7.3">
+          <title>Angle Determination by Searching the Energy Minimum</title>
+          <p>Alternatively, for rot_fit_method=potential, the angle of the rotation group is determined as the angle for which the rotation potential energy is minimal. Therefore, the used rotation potential is additionally evaluated for a set of angles around the current reference angle. In this case, the rotangles.log output file contains the values of the rotation potential at the chosen set of angles, while rotation.xvg lists the angle with minimal potential energy.</p>
+        </sec>
+        <!--with a head-->
+        <sec id="sec7.4">
+          <title>Torque</title>
+          <p>The torque &#x3C4;(<italic>t</italic>) exerted by the rotation potential is calculated for fixed axis rotation via<disp-formula id="eq53"><graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct-2010-00666v_m056" position="anchor"/></disp-formula>where <bold>r</bold><sub><italic>i</italic></sub>(<italic>t</italic>) is the distance vector from the rotation axis to <bold>x</bold><sub><italic>i</italic></sub>(<italic>t</italic>) and <bold>f</bold><sub><italic>i</italic></sub><sup arrange="stack">&#x22A5;</sup>(<italic>t</italic>) is the force component perpendicular to <bold>r</bold><sub><italic>i</italic></sub>(<italic>t</italic>) and <bold>v&#x302;</bold>. For flexible axis rotation, torques &#x3C4;<sub><italic>n</italic></sub> are calculated for each slab using the local rotation axis of the slab and the Gaussian-weighted positions.</p>
+        </sec>
+      </app>
+    </app-group>
+    <ack>
+      <title>Acknowledgments</title>
+      <p>This work has been supported by the EU (NANOMOT/NEST 029084) and the Deutsche Forschungsgemeinschaft (DFG GR 1590/2-1). We thank Anna Neumann for the derivation of eqs <xref rid="eq23" ref-type="disp-formula">23</xref> and <xref rid="eq46" ref-type="disp-formula">46</xref>, and Marcus Kubitzki and Berk Hess for helpful discussions.</p>
+    </ack>
+    <notes id="notes-1" notes-type="si">
+      <title>Supporting Information Available</title>
+      <p>Movies illustrating the effect of the fixed and flexible axis methods. This material is available free of charge via the Internet at <uri xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://pubs.acs.org">http://pubs.acs.org</uri>.</p>
+    </notes>
+    <sec sec-type="supplementary-material">
+      <title>Supplementary Material</title>
+      <supplementary-material content-type="local-data" id="sifile1">
+        <media xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct100666v_si_001.zip">
+          <caption>
+            <p>ct100666v_si_001.zip</p>
+          </caption>
+        </media>
+      </supplementary-material>
+      <supplementary-material content-type="local-data" id="sifile2">
+        <media xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ct100666v_si_002.zip">
+          <caption>
+            <p>ct100666v_si_002.zip</p>
+          </caption>
+        </media>
+      </supplementary-material>
+    </sec>
+    <ref-list>
+      <title>References</title>
+      <ref id="ref1">
+        <mixed-citation id="cit1" publication-type="journal"><name><surname>Yoshida</surname><given-names>M.</given-names></name>; <name><surname>Muneyuki</surname><given-names>E.</given-names></name>; <name><surname>Hisabori</surname><given-names>T.</given-names></name><source>Nat. Rev. Mol. Cell Biol.</source><year>2001</year>, <volume>2</volume>, 669&#x2013;677.<pub-id pub-id-type="pmid">11533724</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref2">
+        <mixed-citation id="cit2" publication-type="journal"><name><surname>Stock</surname><given-names>D.</given-names></name>; <name><surname>Gibbons</surname><given-names>C.</given-names></name>; <name><surname>Arechaga</surname><given-names>I.</given-names></name>; <name><surname>Leslie</surname><given-names>A.</given-names></name>; <name><surname>Walker</surname><given-names>J.</given-names></name><source>Curr. Opin. Struct. Biol.</source><year>2000</year>, <volume>10</volume>, 672&#x2013;679.<pub-id pub-id-type="pmid">11114504</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref3">
+        <mixed-citation id="cit3" publication-type="journal"><name><surname>Sowa</surname><given-names>Y.</given-names></name>; <name><surname>Berry</surname><given-names>R.</given-names></name><source>Q. Rev. Biophys.</source><year>2008</year>, <volume>41</volume>, 103&#x2013;132.<pub-id pub-id-type="pmid">18812014</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref4">
+        <mixed-citation id="cit4" publication-type="journal"><name><surname>Nakano</surname><given-names>M.</given-names></name>; <name><surname>Imamura</surname><given-names>H.</given-names></name>; <name><surname>Toei</surname><given-names>M.</given-names></name>; <name><surname>Tamakoshi</surname><given-names>M.</given-names></name>; <name><surname>Yoshida</surname><given-names>M.</given-names></name>; <name><surname>Yokoyama</surname><given-names>K.</given-names></name><source>J. Biol. Chem.</source><year>2008</year>, <volume>283</volume>, 20789&#x2013;20796.<pub-id pub-id-type="pmid">18492667</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref5">
+        <mixed-citation id="cit5" publication-type="journal"><name><surname>Laskey</surname><given-names>R.</given-names></name>; <name><surname>Madine</surname><given-names>M.</given-names></name><source>EMBO Rep.</source><year>2003</year>, <volume>4</volume>, 26&#x2013;30.<pub-id pub-id-type="pmid">12524516</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref6">
+        <mixed-citation id="cit6" publication-type="journal"><name><surname>Smith</surname><given-names>D.</given-names></name>; <name><surname>Tans</surname><given-names>S.</given-names></name>; <name><surname>Smith</surname><given-names>S.</given-names></name>; <name><surname>Grimes</surname><given-names>S.</given-names></name>; <name><surname>Anderson</surname><given-names>D.</given-names></name>; <name><surname>Bustamante</surname><given-names>C.</given-names></name><source>Nature</source><year>2001</year>, <volume>413</volume>, 748&#x2013;752.<pub-id pub-id-type="pmid">11607035</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref7">
+        <mixed-citation id="cit7" publication-type="journal"><name><surname>Simpson</surname><given-names>A.</given-names></name>; <name><surname>Tao</surname><given-names>Y.</given-names></name>; <name><surname>Leiman</surname><given-names>P.</given-names></name>; <name><surname>Badasso</surname><given-names>M.</given-names></name>; <name><surname>He</surname><given-names>Y.</given-names></name>; <name><surname>Jardine</surname><given-names>P.</given-names></name>; <name><surname>Olson</surname><given-names>N.</given-names></name>; <name><surname>Morals</surname><given-names>M.</given-names></name>; <name><surname>Grimes</surname><given-names>S.</given-names></name>; <name><surname>Anderson</surname><given-names>D.</given-names></name>; <name><surname>Baker</surname><given-names>T.</given-names></name>; <name><surname>Rossmann</surname><given-names>M.</given-names></name><source>Nature</source><year>2000</year>, <volume>408</volume>, 745&#x2013;750.<pub-id pub-id-type="pmid">11130079</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref8">
+        <mixed-citation id="cit8" publication-type="journal"><name><surname>Moore</surname><given-names>S.</given-names></name><source>Curr. Biol.</source><year>2002</year>, <volume>12</volume>, R96&#x2013;R98.<pub-id pub-id-type="pmid">11839289</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref9">
+        <mixed-citation id="cit9" publication-type="journal"><name><surname>Weber</surname><given-names>J.</given-names></name>; <name><surname>Senior</surname><given-names>A.</given-names></name><source>Biochim. Biophys. Acta</source><year>2000</year>, <volume>1458</volume>, 300&#x2013;309.<pub-id pub-id-type="pmid">10838046</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref10">
+        <mixed-citation id="cit10" publication-type="journal"><name><surname>Grubm&#xFC;ller</surname><given-names>H.</given-names></name>; <name><surname>Heymann</surname><given-names>B.</given-names></name>; <name><surname>Tavan</surname><given-names>P.</given-names></name><source>Science</source><year>1996</year>, <volume>271</volume>, 997&#x2013;999.<pub-id pub-id-type="pmid">8584939</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref11">
+        <mixed-citation id="cit11" publication-type="journal"><name><surname>Izrailev</surname><given-names>S.</given-names></name>; <name><surname>Stepaniants</surname><given-names>S.</given-names></name>; <name><surname>Balsera</surname><given-names>M.</given-names></name>; <name><surname>Oono</surname><given-names>Y.</given-names></name>; <name><surname>Schulten</surname><given-names>K.</given-names></name><source>Biophys. J.</source><year>1997</year>, <volume>72</volume>, 1568&#x2013;1581.<pub-id pub-id-type="pmid">9083662</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref12">
+        <mixed-citation id="cit12" publication-type="journal"><name><surname>Lu</surname><given-names>H.</given-names></name>; <name><surname>Isralewitz</surname><given-names>B.</given-names></name>; <name><surname>Krammer</surname><given-names>A.</given-names></name>; <name><surname>Vogel</surname><given-names>V.</given-names></name>; <name><surname>Schulten</surname><given-names>K.</given-names></name><source>Biophys. J.</source><year>1998</year>, <volume>75</volume>, 662&#x2013;671.<pub-id pub-id-type="pmid">9675168</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref13">
+        <mixed-citation id="cit13" publication-type="journal"><name><surname>Izrailev</surname><given-names>S.</given-names></name>; <name><surname>Stepaniants</surname><given-names>S.</given-names></name>; <name><surname>Isralewitz</surname><given-names>B.</given-names></name>; <name><surname>Kosztin</surname><given-names>D.</given-names></name>; <name><surname>Lu</surname><given-names>H.</given-names></name>; <name><surname>Molnar</surname><given-names>F.</given-names></name>; <name><surname>Wriggers</surname><given-names>W.</given-names></name>; <name><surname>Schulten</surname><given-names>K.</given-names></name><source>Comput. Mol. Dynamics: Challenges, Methods, Ideas</source><year>1998</year>, <volume>4</volume>, 39&#x2013;65.</mixed-citation>
+      </ref>
+      <ref id="ref14">
+        <mixed-citation id="cit14" publication-type="journal"><name><surname>Kale</surname><given-names>L.</given-names></name>; <name><surname>Skeel</surname><given-names>R.</given-names></name>; <name><surname>Bhandarkar</surname><given-names>M.</given-names></name>; <name><surname>Brunner</surname><given-names>R.</given-names></name>; <name><surname>Gursoy</surname><given-names>A.</given-names></name>; <name><surname>Krawetz</surname><given-names>N.</given-names></name>; <name><surname>Phillips</surname><given-names>J.</given-names></name>; <name><surname>Shinozaki</surname><given-names>A.</given-names></name>; <name><surname>Varadarajan</surname><given-names>K.</given-names></name>; <name><surname>Schulten</surname><given-names>K.</given-names></name><source>J. Comput. Phys.</source><year>1999</year>, 283&#x2013;312.</mixed-citation>
+      </ref>
+      <ref id="ref15">
+        <mixed-citation id="cit15" publication-type="journal"><name><surname>B&#xF6;ckmann</surname><given-names>R.</given-names></name>; <name><surname>Grubm&#xFC;ller</surname><given-names>H.</given-names></name><source>Nat. Struct. Biol.</source><year>2002</year>, <volume>9</volume>, 198&#x2013;202.<pub-id pub-id-type="pmid">11836535</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref16">
+        <mixed-citation id="cit16" publication-type="journal"><name><surname>Meglio</surname><given-names>A.</given-names></name>; <name><surname>Praly</surname><given-names>E.</given-names></name>; <name><surname>Ding</surname><given-names>F.</given-names></name>; <name><surname>Allemand</surname><given-names>J.-F.</given-names></name>; <name><surname>Bensimon</surname><given-names>D.</given-names></name>; <name><surname>Croquette</surname><given-names>V.</given-names></name><source>Curr. Opin. Struct. Biol.</source><year>2009</year>, <volume>19</volume>, 615&#x2013;622.<pub-id pub-id-type="pmid">19783425</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref17">
+        <mixed-citation id="cit17" publication-type="journal"><name><surname>Itoh</surname><given-names>H.</given-names></name>; <name><surname>Takahashi</surname><given-names>A.</given-names></name>; <name><surname>Adachi</surname><given-names>K.</given-names></name>; <name><surname>Noji</surname><given-names>H.</given-names></name>; <name><surname>Yasuda</surname><given-names>R.</given-names></name>; <name><surname>Yoshida</surname><given-names>M.</given-names></name>; <name><surname>Kinosita</surname><given-names>K.</given-names><suffix>Jr.</suffix></name><source>Nature</source><year>2004</year>, <volume>427</volume>, 465&#x2013;468.<pub-id pub-id-type="pmid">14749837</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref18">
+        <mixed-citation id="cit18" publication-type="journal"><name><surname>Mazur</surname><given-names>A. K.</given-names></name><source>J. Chem. Theory Comput.</source><year>2009</year>, <volume>5</volume>, 2149&#x2013;2157.</mixed-citation>
+      </ref>
+      <ref id="ref19">
+        <mixed-citation id="cit19" publication-type="journal"><name><surname>Aksimentiev</surname><given-names>A.</given-names></name>; <name><surname>Balabin</surname><given-names>I.</given-names></name>; <name><surname>Fillingame</surname><given-names>R.</given-names></name>; <name><surname>Schulten</surname><given-names>K.</given-names></name><source>Biophys. J.</source><year>2004</year>, 1332&#x2013;1344.<pub-id pub-id-type="pmid">14990464</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref20">
+        <mixed-citation id="cit20" publication-type="journal"><name><surname>Saam</surname><given-names>J.</given-names></name>; <name><surname>Tajkhorshid</surname><given-names>E.</given-names></name>; <name><surname>Hayashi</surname><given-names>S.</given-names></name>; <name><surname>Schulten</surname><given-names>K.</given-names></name><source>Biophys. J.</source><year>2002</year>, <volume>83</volume>, 3097&#x2013;3112.<pub-id pub-id-type="pmid">12496081</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref21">
+        <mixed-citation id="cit21" publication-type="journal"><name><surname>Phillips</surname><given-names>J.</given-names></name>; <name><surname>Braun</surname><given-names>R.</given-names></name>; <name><surname>Wang</surname><given-names>W.</given-names></name>; <name><surname>Gumbart</surname><given-names>J.</given-names></name>; <name><surname>Tajkhorshid</surname><given-names>E.</given-names></name>; <name><surname>Villa</surname><given-names>E.</given-names></name>; <name><surname>Chipot</surname><given-names>C.</given-names></name>; <name><surname>Skeel</surname><given-names>R.</given-names></name>; <name><surname>Kal&#xE9;</surname><given-names>L.</given-names></name>; <name><surname>Schulten</surname><given-names>K.</given-names></name><source>J. Comput. Chem.</source><year>2005</year>, <volume>26</volume>, 1781&#x2013;1802.<pub-id pub-id-type="pmid">16222654</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref22">
+        <mixed-citation publication-type="book" id="cit22"><person-group person-group-type="allauthors"><name><surname>Eichinger</surname><given-names>M.</given-names></name>; <name><surname>Heller</surname><given-names>H.</given-names></name>; <name><surname>Grubm&#xFC;ller</surname><given-names>H.</given-names></name></person-group><source>Molecular Dynamics on Parallel Computers</source>; <publisher-name>World Scientific</publisher-name>: <publisher-loc>River Edge, NJ</publisher-loc>, <year>2000</year>; pp <fpage>154</fpage>&#x2212;<lpage>174</lpage>.</mixed-citation>
+      </ref>
+      <ref id="ref23">
+        <mixed-citation id="cit23" publication-type="journal"><name><surname>van der Spoel</surname><given-names>D.</given-names></name>; <name><surname>Lindahl</surname><given-names>E.</given-names></name>; <name><surname>Hess</surname><given-names>B.</given-names></name>; <name><surname>Groenhof</surname><given-names>G.</given-names></name>; <name><surname>Mark</surname><given-names>A.</given-names></name>; <name><surname>Berendsen</surname><given-names>H.</given-names></name><source>J. Comput. Chem.</source><year>2005</year>, <volume>26</volume>, 1701&#x2013;1718.<pub-id pub-id-type="pmid">16211538</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref24">
+        <mixed-citation id="cit24" publication-type="journal"><name><surname>Hess</surname><given-names>B.</given-names></name>; <name><surname>Kutzner</surname><given-names>C.</given-names></name>; <name><surname>van der Spoel</surname><given-names>D.</given-names></name>; <name><surname>Lindahl</surname><given-names>E.</given-names></name><source>J. Chem. Theory Comput.</source><year>2008</year>, 435&#x2013;447.</mixed-citation>
+      </ref>
+      <ref id="ref25">
+        <mixed-citation id="cit25" publication-type="journal"><name><surname>Torrie</surname><given-names>G.</given-names></name>; <name><surname>Valleau</surname><given-names>J.</given-names></name><source>J. Comput. Phys.</source><year>1977</year>, <volume>23</volume>, 187&#x2013;199.</mixed-citation>
+      </ref>
+      <ref id="ref26">
+        <mixed-citation id="cit26" publication-type="journal"><name><surname>Kinosita</surname><given-names>K.</given-names><suffix>Jr.</suffix></name>; <name><surname>Adachi</surname><given-names>K.</given-names></name>; <name><surname>Itoh</surname><given-names>H.</given-names></name><source>Annu. Rev. Biophys. Biomol. Struct.</source><year>2004</year>, <volume>33</volume>, 245&#x2013;268.<pub-id pub-id-type="pmid">15139813</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref27">
+        <mixed-citation id="cit27" publication-type="journal"><name><surname>Abrahams</surname><given-names>J.</given-names></name>; <name><surname>Leslie</surname><given-names>A.</given-names></name>; <name><surname>Lutter</surname><given-names>R.</given-names></name>; <name><surname>Walker</surname><given-names>J.</given-names></name><source>Nature</source><year>1994</year>, <volume>370</volume>, 621&#x2013;628.<pub-id pub-id-type="pmid">8065448</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref28">
+        <mixed-citation id="cit28" publication-type="journal"><name><surname>Yasuda</surname><given-names>R.</given-names></name>; <name><surname>Noji</surname><given-names>H.</given-names></name>; <name><surname>Kinosita</surname><given-names>K.</given-names></name>; <name><surname>Yoshida</surname><given-names>M.</given-names></name><source>Cell</source><year>1998</year>, <volume>93</volume>, 1117&#x2013;1124.<pub-id pub-id-type="pmid">9657145</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref29">
+        <mixed-citation id="cit29" publication-type="journal"><name><surname>Wang</surname><given-names>H.</given-names></name>; <name><surname>Oster</surname><given-names>G.</given-names></name><source>Nature</source><year>1998</year>, <volume>396</volume>, 279&#x2013;282.<pub-id pub-id-type="pmid">9834036</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref30">
+        <mixed-citation id="cit30" publication-type="journal"><name><surname>Oster</surname><given-names>G.</given-names></name>; <name><surname>Wang</surname><given-names>H.</given-names></name><source>Biochim. Biophys. Acta</source><year>2000</year>, 482&#x2013;510.<pub-id pub-id-type="pmid">10838060</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref31">
+        <mixed-citation id="cit31" publication-type="journal"><name><surname>Gao</surname><given-names>Y.</given-names></name>; <name><surname>Yang</surname><given-names>W.</given-names></name>; <name><surname>Karplus</surname><given-names>M.</given-names></name><source>Cell</source><year>2005</year>, <volume>123</volume>, 195&#x2013;205.<pub-id pub-id-type="pmid">16239139</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref32">
+        <mixed-citation id="cit32" publication-type="journal"><name><surname>Dittrich</surname><given-names>M.</given-names></name>; <name><surname>Hayashi</surname><given-names>S.</given-names></name>; <name><surname>Schulten</surname><given-names>K.</given-names></name><source>Biophys. J.</source><year>2003</year>, <volume>85</volume>, 2253&#x2013;2266.<pub-id pub-id-type="pmid">14507690</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref33">
+        <mixed-citation id="cit33" publication-type="journal"><name><surname>B&#xF6;ckmann</surname><given-names>R.</given-names></name>; <name><surname>Grubm&#xFC;ller</surname><given-names>H.</given-names></name><source>Biophys. J.</source><year>2003</year>, <volume>85</volume>, 1482&#x2013;1491.<pub-id pub-id-type="pmid">12944266</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref34">
+        <mixed-citation id="cit34" publication-type="journal"><name><surname>Gao</surname><given-names>Y.</given-names></name>; <name><surname>Yang</surname><given-names>W.</given-names></name>; <name><surname>Marcus</surname><given-names>R.</given-names></name>; <name><surname>Karplus</surname><given-names>M.</given-names></name><source>Proc. Natl. Acad. Sci. U.S.A.</source><year>2003</year>, <volume>100</volume>, 11339&#x2013;11344.<pub-id pub-id-type="pmid">14500780</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref35">
+        <mixed-citation id="cit35" publication-type="journal"><name><surname>Pu</surname><given-names>J.</given-names></name>; <name><surname>Karplus</surname><given-names>M.</given-names></name><source>Proc. Natl. Acad. Sci. U.S.A.</source><year>2008</year>, <volume>105</volume>, 1192.<pub-id pub-id-type="pmid">18216260</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref36">
+        <mixed-citation id="cit36" publication-type="journal"><name><surname>Czub</surname><given-names>J.</given-names></name>; <name><surname>Grubm&#xFC;ller</surname><given-names>H.</given-names></name><source>Biophys. J.</source><year>2010</year>, 168a.</mixed-citation>
+      </ref>
+      <ref id="ref37">
+        <mixed-citation id="cit37" publication-type="journal"><name><surname>Junge</surname><given-names>W.</given-names></name>; <name><surname>Sielaff</surname><given-names>H.</given-names></name>; <name><surname>Engelbrecht</surname><given-names>S.</given-names></name><source>Nature</source><year>2009</year>, <volume>459</volume>, 364&#x2013;370.<pub-id pub-id-type="pmid">19458712</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref38">
+        <mixed-citation id="cit38" publication-type="journal"><name><surname>Humphrey</surname><given-names>W.</given-names></name>; <name><surname>Dalke</surname><given-names>A.</given-names></name>; <name><surname>Schulten</surname><given-names>K.</given-names></name><source>J. Mol. Graphics</source><year>1996</year>, <volume>14</volume>, 33&#x2013;38.</mixed-citation>
+      </ref>
+      <ref id="ref39">
+        <mixed-citation id="cit39" publication-type="journal"><name><surname>Gibbons</surname><given-names>C.</given-names></name>; <name><surname>Montgomery</surname><given-names>M.</given-names></name>; <name><surname>Leslie</surname><given-names>A.</given-names></name>; <name><surname>Walker</surname><given-names>J.</given-names></name><source>Nat. Struct. Mol. Biol.</source><year>2000</year>, <volume>7</volume>, 1055&#x2013;1061.</mixed-citation>
+      </ref>
+      <ref id="ref40">
+        <mixed-citation id="cit40" publication-type="journal"><name><surname>Seeliger</surname><given-names>D.</given-names></name>; <name><surname>de Groot</surname><given-names>B.</given-names></name><source>J. Comput. Chem.</source><year>2009</year>, <volume>30</volume>, 1160&#x2013;1166.<pub-id pub-id-type="pmid">18942729</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref41">
+        <mixed-citation id="cit41" publication-type="journal"><name><surname>Nicholls</surname><given-names>A.</given-names></name>; <name><surname>Honig</surname><given-names>B.</given-names></name><source>J. Comput. Chem.</source><year>1991</year>, <volume>12</volume>, 435&#x2013;445.</mixed-citation>
+      </ref>
+      <ref id="ref42">
+        <mixed-citation id="cit42" publication-type="journal"><name><surname>Vriend</surname><given-names>G.</given-names></name><source>J. Mol. Graph.</source><year>1990</year>, <volume>8</volume>, 52&#x2013;56.<pub-id pub-id-type="pmid">2268628</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref43">
+        <mixed-citation id="cit43" publication-type="journal"><name><surname>Jorgensen</surname><given-names>W.</given-names></name>; <name><surname>Maxwell</surname><given-names>D.</given-names></name>; <name><surname>Tirado-Rives</surname><given-names>J.</given-names></name><source>J. Am. Chem. Soc.</source><year>1996</year>, <volume>118</volume>, 11225&#x2013;11236.</mixed-citation>
+      </ref>
+      <ref id="ref44">
+        <mixed-citation id="cit44" publication-type="journal"><name><surname>Kaminski</surname><given-names>G.</given-names></name>; <name><surname>Friesner</surname><given-names>R.</given-names></name>; <name><surname>Tirado-Rives</surname><given-names>J.</given-names></name>; <name><surname>Jorgensen</surname><given-names>W.</given-names></name><source>J. Phys. Chem. B.</source><year>2001</year>, <volume>105</volume>, 6474&#x2013;6487.</mixed-citation>
+      </ref>
+      <ref id="ref45">
+        <mixed-citation id="cit45" publication-type="journal"><name><surname>Jorgensen</surname><given-names>W.</given-names></name>; <name><surname>Chandrasekhar</surname><given-names>J.</given-names></name>; <name><surname>Madura</surname><given-names>J.</given-names></name>; <name><surname>Impey</surname><given-names>R.</given-names></name>; <name><surname>Klein</surname><given-names>M.</given-names></name><source>J. Chem. Phys.</source><year>1983</year>, <volume>79</volume>, 926&#x2013;935.</mixed-citation>
+      </ref>
+      <ref id="ref46">
+        <mixed-citation id="cit46" publication-type="journal"><name><surname>Nos&#xE9;</surname><given-names>S.</given-names></name><source>Mol. Phys.</source><year>1984</year>, 255&#x2013;268.</mixed-citation>
+      </ref>
+      <ref id="ref47">
+        <mixed-citation id="cit47" publication-type="journal"><name><surname>Hoover</surname><given-names>W.</given-names></name><source>Phys. Rev. A</source><year>1985</year>, <volume>31</volume>, 1695&#x2013;1697.<pub-id pub-id-type="pmid">9895674</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref48">
+        <mixed-citation id="cit48" publication-type="journal"><name><surname>Parrinello</surname><given-names>M.</given-names></name>; <name><surname>Rahman</surname><given-names>A.</given-names></name><source>J. Appl. Phys.</source><year>1981</year>, <volume>52</volume>, 7182&#x2013;7190.</mixed-citation>
+      </ref>
+      <ref id="ref49">
+        <mixed-citation id="cit49" publication-type="journal"><name><surname>Nos&#xE9;</surname><given-names>S.</given-names></name>; <name><surname>Klein</surname><given-names>M.</given-names></name><source>Mol. Phys.</source><year>1983</year>, <volume>50</volume>, 1055&#x2013;1076.</mixed-citation>
+      </ref>
+      <ref id="ref50">
+        <mixed-citation id="cit50" publication-type="journal"><name><surname>Berendsen</surname><given-names>H.</given-names></name>; <name><surname>Postma</surname><given-names>J.</given-names></name>; <name><surname>van Gunsteren</surname><given-names>W.</given-names></name>; <name><surname>DiNola</surname><given-names>A.</given-names></name>; <name><surname>Haak</surname><given-names>J.</given-names></name><source>J. Chem. Phys.</source><year>1984</year>, <volume>81</volume>, 3684&#x2013;3690.</mixed-citation>
+      </ref>
+      <ref id="ref51">
+        <mixed-citation id="cit51" publication-type="journal"><name><surname>Darden</surname><given-names>T.</given-names></name>; <name><surname>York</surname><given-names>D.</given-names></name>; <name><surname>Pedersen</surname><given-names>L.</given-names></name><source>J. Chem. Phys.</source><year>1993</year>, 10089&#x2013;100092.</mixed-citation>
+      </ref>
+      <ref id="ref52">
+        <mixed-citation id="cit52" publication-type="journal"><name><surname>Essmann</surname><given-names>U.</given-names></name>; <name><surname>Perera</surname><given-names>L.</given-names></name>; <name><surname>Berkowitz</surname><given-names>M.</given-names></name>; <name><surname>Darden</surname><given-names>T.</given-names></name>; <name><surname>Lee</surname><given-names>H.</given-names></name>; <name><surname>Pedersen</surname><given-names>L.</given-names></name><source>J. Chem. Phys.</source><year>1995</year>, <volume>103</volume>, 8577&#x2013;8593.</mixed-citation>
+      </ref>
+      <ref id="ref53">
+        <mixed-citation id="cit53" publication-type="journal"><name><surname>Hess</surname><given-names>B.</given-names></name><source>J. Chem. Theory Comput.</source><year>2008</year>, <volume>4</volume>, 116&#x2013;122.</mixed-citation>
+      </ref>
+      <ref id="ref54">
+        <mixed-citation id="cit54" publication-type="journal"><name><surname>Miyamoto</surname><given-names>S.</given-names></name>; <name><surname>Kollman</surname><given-names>P.</given-names></name><source>J. Comput. Chem.</source><year>1992</year>, <volume>13</volume>, 952&#x2013;962.</mixed-citation>
+      </ref>
+      <ref id="ref55">
+        <mixed-citation publication-type="weblink" id="cit55"><person-group person-group-type="allauthors"><name><surname>van der Spoel</surname><given-names>D.</given-names></name>; <name><surname>Lindahl</surname><given-names>E.</given-names></name>; <name><surname>Hess</surname><given-names>B.</given-names></name>; <name><surname>van Buuren</surname><given-names>A.</given-names></name>; <name><surname>Apol</surname><given-names>E.</given-names></name>; <name><surname>Meulenhoff</surname><given-names>P.</given-names></name>; <name><surname>Tieleman</surname><given-names>D.</given-names></name>; <name><surname>Sijbers</surname><given-names>A.</given-names></name>; <name><surname>Feenstra</surname><given-names>K.</given-names></name>; <name><surname>van Drunen</surname><given-names>R.</given-names></name>; <name><surname>Berendsen</surname><given-names>H.</given-names></name></person-group><source>Gromacs User Manual version 4.5</source>. <uri xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.gromacs.org">www.gromacs.org</uri> (accessed March 2011).</mixed-citation>
+      </ref>
+      <ref id="ref56">
+        <mixed-citation id="cit56" publication-type="journal"><name><surname>P&#xE4;nke</surname><given-names>O.</given-names></name>; <name><surname>Cherepanov</surname><given-names>D.</given-names></name>; <name><surname>Gumbiowski</surname><given-names>K.</given-names></name>; <name><surname>Engelbrecht</surname><given-names>S.</given-names></name>; <name><surname>Junge</surname><given-names>W.</given-names></name><source>Biophys. J.</source><year>2001</year>, <volume>81</volume>, 1220&#x2013;1233.<pub-id pub-id-type="pmid">11509339</pub-id></mixed-citation>
+      </ref>
+      <ref id="ref57">
+        <mixed-citation id="cit57" publication-type="journal"><name><surname>Browne</surname><given-names>W.</given-names></name>; <name><surname>Feringa</surname><given-names>B.</given-names></name><source>Nat. Nanotechnol.</source><year>2006</year>, <volume>1</volume>, 25&#x2013;35.<pub-id pub-id-type="pmid">18654138</pub-id></mixed-citation>
+      </ref>
+    </ref-list>
+  </back>
+</article>

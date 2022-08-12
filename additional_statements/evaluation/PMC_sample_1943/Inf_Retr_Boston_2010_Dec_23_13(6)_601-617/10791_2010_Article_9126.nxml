@@ -1,0 +1,1256 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD Journal Archiving and Interchange DTD v3.0 20080202//EN" "archivearticle3.dtd">
+<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" article-type="research-article">
+  <?properties open_access?>
+  <?DTDIdentifier.IdentifierValue -//Springer-Verlag//DTD A++ V2.4//EN?>
+  <?DTDIdentifier.IdentifierType public?>
+  <?SourceDTD.DTDName A++V2.4.dtd?>
+  <?SourceDTD.Version 2.4?>
+  <?ConverterInfo.XSLTName springer2nlmx2.xsl?>
+  <?ConverterInfo.Version 2?>
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="nlm-ta">Inf Retr Boston</journal-id>
+      <journal-title-group>
+        <journal-title>Information Retrieval</journal-title>
+      </journal-title-group>
+      <issn pub-type="ppub">1386-4564</issn>
+      <issn pub-type="epub">1573-7659</issn>
+      <publisher>
+        <publisher-name>Springer Netherlands</publisher-name>
+        <publisher-loc>Dordrecht</publisher-loc>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="pmc">2992462</article-id>
+      <article-id pub-id-type="pmid">21170415</article-id>
+      <article-id pub-id-type="publisher-id">9126</article-id>
+      <article-id pub-id-type="doi">10.1007/s10791-010-9126-8</article-id>
+      <article-categories>
+        <subj-group subj-group-type="heading">
+          <subject>Article</subject>
+        </subj-group>
+      </article-categories>
+      <title-group>
+        <article-title>Finding related sentence pairs in MEDLINE</article-title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author" corresp="yes">
+          <name>
+            <surname>Smith</surname>
+            <given-names>Larry H.</given-names>
+          </name>
+          <address>
+            <email>lsmith@ncbi.nlm.nih.gov</email>
+          </address>
+          <xref ref-type="aff" rid="Aff1"/>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Wilbur</surname>
+            <given-names>W. John</given-names>
+          </name>
+          <xref ref-type="aff" rid="Aff1"/>
+        </contrib>
+        <aff id="Aff1">Computational Biology Branch, National Center for Biotechnology Information, Building 38A, 8600 Rockville Pike, Bethesda, MD 20894 USA </aff>
+      </contrib-group>
+      <pub-date pub-type="epub">
+        <day>23</day>
+        <month>1</month>
+        <year>2010</year>
+      </pub-date>
+      <pub-date pub-type="pmc-release">
+        <day>23</day>
+        <month>1</month>
+        <year>2010</year>
+      </pub-date>
+      <pub-date pub-type="ppub">
+        <month>12</month>
+        <year>2010</year>
+      </pub-date>
+      <volume>13</volume>
+      <issue>6</issue>
+      <fpage>601</fpage>
+      <lpage>617</lpage>
+      <history>
+        <date date-type="received">
+          <day>8</day>
+          <month>9</month>
+          <year>2009</year>
+        </date>
+        <date date-type="accepted">
+          <day>6</day>
+          <month>1</month>
+          <year>2010</year>
+        </date>
+      </history>
+      <permissions>
+        <copyright-statement>&#xA9; The Author(s) 2010</copyright-statement>
+      </permissions>
+      <abstract>
+        <p>We explore the feasibility of automatically identifying sentences in different MEDLINE abstracts that are related in meaning. We compared traditional vector space models with machine learning methods for detecting relatedness, and found that machine learning was superior. The Huber method, a variant of Support Vector Machines which minimizes the modified Huber loss function, achieves 73% precision when the score cutoff is set high enough to identify about one related sentence per abstract on average. We illustrate how an abstract viewed in PubMed might be modified to present the related sentences found in other abstracts by this automatic procedure.</p>
+      </abstract>
+      <kwd-group>
+        <title>Keywords</title>
+        <kwd>Machine learning</kwd>
+        <kwd>Related sentences</kwd>
+      </kwd-group>
+      <custom-meta-group>
+        <custom-meta>
+          <meta-name>issue-copyright-statement</meta-name>
+          <meta-value>&#xA9; Springer Science+Business Media, LLC 2010</meta-value>
+        </custom-meta>
+      </custom-meta-group>
+    </article-meta>
+  </front>
+  <body>
+    <sec id="Sec1">
+      <title>Introduction</title>
+      <p>Search engines respond to a user query by producing a list of documents from a given collection, ordering the list according to the user&#x2019;s supposed information need. However, even the most relevant documents will contain some portions of greater interest to the user, and other portions of little or no interest. This may explain why for example, when querying over full text collections, retrieval performance can be improved by segmenting documents into sections or paragraphs, and matching or retrieving passages rather than full documents (Hearst and Plaunt <xref ref-type="bibr" rid="CR8">1993</xref>; Lin <xref ref-type="bibr" rid="CR16">2009</xref>), although mixed results have been reported for matching queries at the sentence level (Ko et al. <xref ref-type="bibr" rid="CR14">2002</xref>; Lu et al. <xref ref-type="bibr" rid="CR19">2009</xref>; Salton and Buckley <xref ref-type="bibr" rid="CR23">1991</xref>).</p>
+      <p>PubMed<xref ref-type="fn" rid="Fn1">1</xref> is the search engine for articles in MEDLINE maintained at the National Library of Medicine (Sayers et al. <xref ref-type="bibr" rid="CR24">2009</xref>; Wilbur <xref ref-type="bibr" rid="CR32">2005</xref>). When a user selects an article to view, a list of related articles may also appear alongside its other details. Related articles are pre-computed using a topic-based model that measures the size of overlapping subject matter of two articles (Lin and Wilbur <xref ref-type="bibr" rid="CR17">2007</xref>). Although the related articles feature is popular (20% of user sessions involve viewing a related article) it assumes that users are primarily interested in articles that have maximal overlapping subject matter. The goal of this paper is to explore an alternative method of finding related content, to address the needs of users interested in a particular sentence in an article by finding other related <italic>sentences</italic>. We assume users would be interested in other occurrences of the same sentence, a restatement of the sentence, or any sentence that makes a closely related assertion.</p>
+      <p>We used vector space models to estimate the relatedness of sentences. In addition to the tf-idf formula suggested by (Salton and Buckley <xref ref-type="bibr" rid="CR23">1991</xref>), we also adapted several well known retrieval functions, such as the Dice coefficient, cosine similarity, and <italic>bm25</italic>. But fixed formulas give only one possibility for term weights in a vector space model, and theoretically it should be possible to use machine learning to find optimal term weights.</p>
+      <p>Machine learning has been applied in an analogous setting of information retrieval. The goal of learning to rank is to use machine learning to obtain retrieval scoring functions for optimal ranking of query results (Joachims et al. <xref ref-type="bibr" rid="CR12">2007</xref>). That research has been limited in the past by the availability of test data, and much of the effort has been focused on effective learning algorithms to meet the unique challenges. The focus may shift now that the LETOR corpus has emerged as a community benchmark dataset (Liu et al. <xref ref-type="bibr" rid="CR18">2007</xref>), and with methods for automated annotation derived from user clickthrough data (Joachims <xref ref-type="bibr" rid="CR10">2002</xref>).</p>
+      <p>As with learning to rank, the biggest challenge to machine learning of related sentences is the availability of a usable corpus. To our knowledge, no datasets of related sentences have been discussed in the research literature. We claim that a productive corpus must be large enough to contain many examples of related sentences on a variety of different topics, and that manual annotation of such a large corpus of sentence pairs is not feasible. Fortunately, there is an ideal solution to this problem. Firstly, the MEDLINE database contains a large number of sentences (available in article abstracts) in many different subject areas. And secondly, sentences are likely to be related if they are adjacent sentences from the same MEDLINE abstract, and unrelated if they are from different randomly selected abstracts. Thus it is possible to automatically assemble a very large training corpus of sentence pairs from MEDLINE.</p>
+      <p>Our ability to detect the relatedness of two sentences is dependent on their sharing words or parts of words. We do not use a thesaurus or dictionary. We have found words and portions of words to be the most useful features in our approach. Such features are used in our application of the standard information retrieval formulas that we test, as well as in our machine learning. In a minor departure from the vector space model, we also learned weights for terms that appear in only one sentence, which tend to be negative and reflect the evidence for two sentences to be unrelated when one sentence contains the word and the other does not.</p>
+      <p>Having a large annotated corpus of related sentences makes it possible to apply machine learning to obtain optimal weights for a vector space model, and to compare the results with traditional vector space models. Indeed, we found that the learned model was significantly better than any of the traditional models at recognizing related sentences. This result means that we can distinguish pairs of sentences that were adjacent in an abstract from pairs of sentences randomly selected from different abstracts at a high level. However, this is not our ultimate goal. Our goal is to apply the learning for a given query sentence to find related sentences in other documents. We performed a modest manual evaluation which shows that the model from machine learning also gives significantly better results at this task. In summary, our contribution is a first use of a large automatically generated training corpus for related sentences, and the demonstration that the model learned from this corpus outperforms traditional vector space methods at finding related sentence pairs in different documents.</p>
+      <p>In the remainder of the paper, Sect. <xref rid="Sec2" ref-type="sec">2</xref> describes our corpus of related sentence pairs, the baseline and machine learning methods used to detect relatedness, and our approaches to evaluating the results. Section&#xA0;<xref rid="Sec14" ref-type="sec">3</xref> gives the results of the baseline and machine learning methods, followed by a manual comparison of the best of each, and further evaluation of the best method. A potential application is illustrated in Sect. <xref rid="Sec18" ref-type="sec">4</xref>. Limitations of the concept of relatedness are discussed in Sect. <xref rid="Sec19" ref-type="sec">5</xref>. We conclude with a summary in Sect. <xref rid="Sec22" ref-type="sec">6</xref>.</p>
+    </sec>
+    <sec id="Sec2" sec-type="methods">
+      <title>Methods</title>
+      <p>We will now describe the corpus that we created for this study, the various methods of relatedness detection that we considered, and the techniques we used to evaluate them.</p>
+      <sec id="Sec3">
+        <title>Corpus</title>
+        <p>We began with a snapshot of MEDLINE, taken in June, 2008, from which we extracted the abstracts, and divided them into sentences using the MedPost part of speech tagger (Smith et al. <xref ref-type="bibr" rid="CR25">2004</xref>). There were a total of 73,812,862 sentences at this stage.</p>
+        <p>We wanted to ignore sentences which contained only generic words. To do this, we used the result of a previous study (Kim and Wilbur <xref ref-type="bibr" rid="CR13">2001</xref>) which for each word <italic>w</italic> defined a strength of context score, <italic>s</italic><sub>1</sub> (<italic>w</italic>), that serves as a measure of how strongly <italic>w</italic> is related to its context. The authors of that paper provided us with a set of <italic>s</italic><sub>1</sub>-scores for 535,533 words, from which we selected 153,737 high scoring <italic>content</italic> words by arbitrarily requiring <italic>s</italic><sub>1</sub>(<italic>w</italic>)&#xA0;&gt;&#xA0;160.0. Sentences were eliminated from consideration if they did not contain at least one of these content words, resulting in a total of 37,371,346 sentences.</p>
+        <p>Among these remaining sentences, if two were found to be in the same abstract and adjacent to each other, then they were added to the corpus of sentence pairs. In keeping with our relatedness hypothesis, these were all annotated as positive examples of related sentence pairs. This resulted in 28,771,427 related sentence pairs from 6,552,370 different abstracts, or about 5.7 sentences per content-containing abstract.</p>
+        <p>To obtain negative examples, we took this same list of related sentence pairs and randomly permuted the second sentence of all the pairs. The resulting pairs, none of which were from the same abstract, were added to the corpus as negative examples of related sentence pairs. All together, our corpus consisted of 57,542,854 sentence pairs, half of which were positive.</p>
+        <p>One-third of the corpus was designated as the <italic>test set</italic>, resulting in 19,180,952 sentence pairs. The remaining 38,361,902 sentence pairs were designated as the <italic>training set</italic>. In both the training and test sets, half of the sentence pairs were from the positive class and half from the negative class. In addition, to study feature selection and parameter tuning, we selected a <italic>tuning</italic> set of about 5 million sentence pairs such that half were annotated positive, and half negative. The tuning set was chosen to consist of all abstracts produced by a &#x201C;cardiovascular disease&#x201D; PubMed query to insure that it would contain a large number of related sentences in the same topic area.</p>
+      </sec>
+      <sec id="Sec4">
+        <title>Features</title>
+        <p>Each pair of sentences in the corpus was represented in the database by three sets of features: one set for each sentence, and a set for the pair as a whole, derived in a simple way from the two sets of sentence features. Our baseline methods used the features associated with sentences, while our machine learning methods used the features associated with pairs. We now describe the features in detail.</p>
+        <p>Each sentence was divided into tokens by breaking on all non-alphanumeric characters, retaining only strings that contained at least one letter, and excluding a set of 313 common stop words (Wilbur and Sirotkin <xref ref-type="bibr" rid="CR33">1992</xref>). These strings were mapped to lower case and designated <italic>sentence word features</italic>, or <italic>type W features</italic>. Substrings of the type W features with varying lengths (which also contained at least one letter) were designated <italic>sentence</italic><italic>substring features</italic>, or <italic>type S features</italic>. The number of times that each sentence feature occurred in a sentence was also recorded (some of the baseline methods used this data).</p>
+        <p>Features associated with a pair of sentences were defined by comparing the two sets of sentence features. Those sentence features that appeared in both sets were designated as <italic>pair</italic><italic>intersection features</italic>, or <italic>type I features</italic>. Those that occurred in only one of the sets were designated as <italic>pair</italic><italic>disjoint features</italic>, or <italic>type D features.</italic> Thus, each feature of a sentence pair was described by a string (which appears in at least one of the sentences), a sentence feature type (W or S) and a pair feature type (D or I).</p>
+        <p>Based on a preliminary study on the tuning set, the best performance was achieved when type S features of length 2&#x2013;6 were combined with type W features. With this definition, the 37,371,346 sentences in the corpus had an average of 16.1 type W features and 442.7 type S features per sentence. The 57,542,854 sentence pairs in the corpus had an average of 80.7 type I features and 630.1 type D features per pair.</p>
+      </sec>
+      <sec id="Sec5">
+        <title>Baseline methods</title>
+        <p>We tested whether machine learning was more effective at relatedness detection than traditional methods of measuring content overlap. Several relatedness measures commonly used in information retrieval were identified and used as baseline methods. Each of these methods is defined by a formula that takes as its input two sets of sentence features, and produces a number that measures the amount of overlap in the two sets. The formulas for all baseline methods are given in Table&#xA0;<xref rid="Tab1" ref-type="table">1</xref>.<table-wrap id="Tab1"><label>Table&#xA0;1</label><caption><p>Definitions and formulas used for the baseline methods of measuring the relatedness of two sentences with feature sets <italic>X</italic> and <italic>Y</italic></p></caption><table frame="hsides" rules="groups"><thead><tr><th align="left">Method</th><th align="left">Notation</th><th align="left">Formula</th></tr></thead><tbody><tr><td align="left">Dice coefficient</td><td align="left"><italic>D</italic> (<italic>X</italic>, <italic>Y</italic>)</td><td align="left"><inline-formula id="IEq17"><alternatives><tex-math id="M1">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ {\frac{{2\left| {X \cap Y} \right|}}{\left| X \right| + \left| Y \right|}} $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq17.gif"/></alternatives></inline-formula></td></tr><tr><td align="left">OKAPI bm25, product of <italic>tf</italic></td><td align="left"><italic>O</italic><sub>1</sub> (<italic>X</italic>, <italic>Y</italic>)</td><td align="left"><inline-formula id="IEq18"><alternatives><tex-math id="M2">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \sum\limits_{t \in X \cap Y} {df_{t} \cdot tf_{t,X} \cdot tf_{t,Y} } $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq18.gif"/></alternatives></inline-formula></td></tr><tr><td align="left">OKAPI bm25, geometric mean of <italic>tf</italic></td><td align="left"><italic>O</italic><sub>2</sub> (<italic>X</italic>, <italic>Y</italic>)</td><td align="left"><inline-formula id="IEq19"><alternatives><tex-math id="M3">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \sum\limits_{t \in X \cap Y} {df_{t} \sqrt {tf_{t,X} \cdot tf_{t,Y} } } $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq19.gif"/></alternatives></inline-formula></td></tr><tr><td align="left">OKAPI bm25, with <italic>tf</italic>&#xA0;=&#xA0;1</td><td align="left"><italic>O</italic><sub>3</sub> (<italic>X</italic>, <italic>Y</italic>)</td><td align="left"><inline-formula id="IEq20"><alternatives><tex-math id="M4">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \sum\limits_{t \in X \cap Y} {df_{t} } $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq20.gif"/></alternatives></inline-formula></td></tr><tr><td align="left">Text structuring, <italic>atn</italic></td><td align="left"><italic>A</italic> (<italic>X</italic>, <italic>Y</italic>)</td><td align="left"><inline-formula id="IEq21"><alternatives><tex-math id="M5">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \sum\limits_{t \in X \cap Y} {nf_{t,X} nf_{t,Y} } $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq21.gif"/></alternatives></inline-formula></td></tr><tr><td align="left">TextTiling, cosine similarity</td><td align="left"><italic>T</italic><sub><italic>1</italic></sub> (<italic>X</italic>, <italic>Y</italic>)</td><td align="left"><inline-formula id="IEq22"><alternatives><tex-math id="M6">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ {\frac{{\sum\nolimits_{t \in X \cap Y} {{\frac{{f_{t,X} f_{t,Y} }}{{n_{t}^{2} }}}} }}{{\sqrt {\sum\nolimits_{t \in X} {\left( {{\frac{{f_{t,X} }}{{n_{t} }}}} \right)^{2} } } \sqrt {\sum\nolimits_{t \in Y} {\left( {{\frac{{f_{t,Y} }}{{n_{t} }}}} \right)^{2} } } }}} $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq22.gif"/></alternatives></inline-formula></td></tr><tr><td align="left">TextTiling, dot product</td><td align="left"><italic>T</italic><sub><italic>2</italic></sub> (<italic>X</italic>, <italic>Y</italic>)</td><td align="left"><inline-formula id="IEq23"><alternatives><tex-math id="M7">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \sum\limits_{t \in X \cap Y} {{\frac{{f_{t,X} f_{t,Y} }}{{n_{t}^{2} }}}} $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq23.gif"/></alternatives></inline-formula></td></tr><tr><td align="left">Idf power, with <italic>e</italic>&#xA0;=&#xA0;0.5, 1, 1.5, 2, 3</td><td align="left"><italic>I</italic><sub><italic>e</italic></sub> (<italic>X</italic>, <italic>Y</italic>)</td><td align="left"><inline-formula id="IEq25"><alternatives><tex-math id="M8">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \sum\limits_{t \in X \cap Y} {{\frac{1}{{n_{t}^{e} }}}} $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq25.gif"/></alternatives></inline-formula></td></tr></tbody></table><table frame="hsides" rules="groups"><thead><tr><th align="left">Symbol</th><th align="left">Definition</th></tr></thead><tbody><tr><td align="left"><italic>S, X, Y</italic></td><td align="left">Set of sentence features of sentence <italic>S, X, Y</italic>, etc.</td></tr><tr><td align="left"><inline-formula id="IEq26"><alternatives><tex-math id="M9">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \left| S \right|,\left| X \right|,\left| Y \right| $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq26.gif"/></alternatives></inline-formula></td><td align="left">Number of features of sentences <italic>S, X, Y</italic>, etc.</td></tr><tr><td align="left"><italic>N</italic></td><td align="left">Number of sentences in corpus</td></tr><tr><td align="left"><italic>n</italic><sub><italic>t</italic></sub></td><td align="left">Number of sentences in corpus with feature <italic>t</italic></td></tr><tr><td align="left"><italic>f</italic><sub><italic>t</italic>,<italic>S</italic></sub></td><td align="left">Number of times a sentence feature <italic>t</italic> appears in sentence <italic>S</italic></td></tr><tr><td align="left"><italic>L</italic></td><td align="left">Average number of features of all sentences in corpus</td></tr><tr><td align="left"><italic>tf</italic><sub><italic>t</italic>,<italic>S</italic></sub></td><td align="left"><inline-formula id="IEq27"><alternatives><tex-math id="M10">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ {\frac{{f_{t,S} \left( {k_{1} + 1} \right)}}{{f_{t,S} + k_{1} \left( {1 - b + b{\frac{\left| S \right|}{L}}} \right)}}} $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq27.gif"/></alternatives></inline-formula><break/>(we used <italic>k</italic><sub>1</sub>&#xA0;=&#xA0;2, <italic>b</italic>&#xA0;=&#xA0;0.75)</td></tr><tr><td align="left"><italic>df</italic><sub><italic>t</italic></sub></td><td align="left"><inline-formula id="IEq28"><alternatives><tex-math id="M11">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \log {\frac{{N - n_{t} + 0.5}}{{n_{t} + 0.5}}} $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq28.gif"/></alternatives></inline-formula></td></tr><tr><td align="left"><italic>nf</italic><sub><italic>t,S</italic></sub></td><td align="left"><inline-formula id="IEq29"><alternatives><tex-math id="M12">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \left( {0.5 + 0.5{\frac{{f_{t,S} }}{{\max_{p} f_{p,S} }}}} \right)\left( {\log {\frac{N}{{n_{t} }}}} \right) $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq29.gif"/></alternatives></inline-formula></td></tr></tbody></table></table-wrap></p>
+        <p>The Jaccard index and Dice coefficient are the simplest methods and have a long history in information retrieval (van Rijsbergen <xref ref-type="bibr" rid="CR27">1979</xref>). Their formulas depend on the number of distinct features in each set, the size of the intersection and the size of the union. However, the two measures always produce the same ranking, as can be verified by elementary algebra, and so we only report the results for the Dice coefficient (<italic>D</italic>).</p>
+        <p>Three of the baseline methods were based on the OKAPI <italic>bm25</italic> formula (Robertson and Spark Jones <xref ref-type="bibr" rid="CR22">1994</xref>), originally designed to measure the degree of relevance of a document given a keyword query. The <italic>bm25</italic> similarity score is the sum of term frequency <italic>tf</italic><sub><italic>t,S</italic></sub> times an inverse document frequency <italic>df</italic><sub><italic>t</italic></sub> for all terms <italic>t</italic> in a query (formulas shown in Table&#xA0;<xref rid="Tab1" ref-type="table">1</xref>). But applying this formula directly to our situation would require us to designate one sentence as a query sentence and the other as a document. To preserve symmetry, we sum over all terms common to both sentences, and instead of the term frequency we use the product of term frequencies (<italic>O</italic><sub>1</sub>), geometric mean of term frequencies (<italic>O</italic><sub>2</sub>), or 1 (<italic>O</italic><sub>3</sub>).</p>
+        <p>In Automatic Text Structuring (Salton and Buckley <xref ref-type="bibr" rid="CR23">1991</xref>), sentences were compared for similarity using a dot product of weight vectors called <italic>atn</italic>. The weights were defined for terms in a sentence as a product of a term frequency formula and inverse document frequency formula. We used this same formula for a baseline method denoted <italic>A</italic>.</p>
+        <p>Two baseline methods were based on the TextTiling algorithm (Hearst <xref ref-type="bibr" rid="CR7">1993</xref>), originally developed to partition a document into coherent sections. That paper defines tf.idf for a term to be the frequency of a term within a document (<italic>tf</italic>) divided by the frequency of a term throughout the whole collection (idf; both formulas shown in Table&#xA0;<xref rid="Tab1" ref-type="table">1</xref>). Each document, in our case a sentence, is associated with a vector of tf.idf defined this way, and the TextTiling method (<italic>T</italic><sub>1</sub>) uses the cosine similarity of these vectors. The dot product of tf.idf was also used as a method (<italic>T</italic><sub>2</sub>).</p>
+        <p>Finally, generalizing the tf.idf dot product formula by taking <italic>tf</italic>&#xA0;=&#xA0;1, we define simple measures of similarity equal to the sum of the inverse document frequency raised to a power <italic>e</italic> (<italic>I</italic><sub><italic>e</italic></sub> for <italic>e</italic>&#xA0;=&#xA0;0.5, 1, 1.5, 2, 3).</p>
+      </sec>
+      <sec id="Sec6">
+        <title>Machine learning algorithm</title>
+        <p>The corpus of sentence pairs, with pair features derived from the words and strings from each sentence, and annotated for relatedness, makes it possible to apply machine learning to identify related sentences. Machine learning determines a numeric value for each feature, called a <italic>weight</italic>. For any given pair of sentences, the sum of weights over the associated pair features is used to predict whether the pair is related.</p>
+        <p>We trained on the training set with Bayesian and Huber machine learning. Definitions are given in Table&#xA0;<xref rid="Tab2" ref-type="table">2</xref>. In all cases, we used only those features that appeared in two or more sentence pairs in the training set.<table-wrap id="Tab2"><label>Table&#xA0;2</label><caption><p>Definitions and formulas used for the machine learning methods of measuring the relatedness of two sentences with feature sets <italic>X</italic> and <italic>Y</italic></p></caption><table frame="hsides" rules="groups"><thead><tr><th align="left">Method</th><th align="left">Notation</th><th align="left">Formula</th></tr></thead><tbody><tr><td align="left">Bayes</td><td align="left"><italic>B</italic> (<italic>X, Y</italic>)</td><td align="left"><italic>b&#xB7;F</italic> (<italic>X, Y</italic>)</td></tr><tr><td align="left">Huber</td><td align="left"><italic>H</italic> (<italic>X, Y</italic>)</td><td align="left"><italic>w&#xB7;F</italic> (<italic>X, Y</italic>)</td></tr></tbody></table><table frame="hsides" rules="groups"><thead><tr><th align="left">Symbol</th><th align="left">Definition</th></tr></thead><tbody><tr><td align="left"><italic>F</italic> (<italic>X, Y</italic>)</td><td align="left">Binary feature vector for <italic>X</italic> and <italic>Y</italic> with all type I and D features</td></tr><tr><td align="left"><italic>b</italic></td><td align="left">Bayesian weights for all features</td></tr><tr><td align="left"><italic>w</italic></td><td align="left">Huber weights for all features</td></tr></tbody></table></table-wrap></p>
+        <sec id="Sec7">
+          <title>Baysian machine learning</title>
+          <p>Na&#xEF;ve Bayes machine learning determines weights from the training set on the assumption that the features are independent given the class prediction (Langley <xref ref-type="bibr" rid="CR15">1996</xref>; Wilbur <xref ref-type="bibr" rid="CR31">2000</xref>). The Bayesian weight of a feature <italic>t</italic> is defined as<disp-formula id="Equ1"><label>1</label><alternatives><tex-math id="M13">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ b_{t} = \log \left( {{\frac{{p_{t} \left( {1 - q_{t} } \right)}}{{q_{t} \left( {1 - p_{t} } \right)}}}} \right) $$\end{document}</tex-math><graphic xlink:href="10791_2010_9126_Article_Equ1.gif" position="anchor"/></alternatives></disp-formula>where <italic>p</italic><sub><italic>t</italic></sub> is the proportion of positive instances that contain the feature <italic>t</italic>, and <italic>q</italic><sub><italic>t</italic></sub> is the proportion of negative instances that contain <italic>t</italic>. Note that the Bayesian weight for a given feature is independent of all other features.</p>
+        </sec>
+        <sec id="Sec8">
+          <title>Huber machine learning</title>
+          <p>We also performed Huber machine learning, which is a variant of support vector machines (SVM; Joachims <xref ref-type="bibr" rid="CR11">2006</xref>; Vapnik <xref ref-type="bibr" rid="CR28">1998</xref>). This method determines feature weights that minimize the modified Huber cost, an explicit function that substitutes a modified Huber loss function in place of the hinge loss function traditionally used in SVM learning (Zhang <xref ref-type="bibr" rid="CR34">2004</xref>; Zou et al. <xref ref-type="bibr" rid="CR35">2008</xref>).</p>
+          <p>To define Huber cost, let <italic>T</italic> denote the size of the training set, let the binary feature vector of the <italic>i</italic>th pair in the training set be denoted by <italic>X</italic><sub><italic>i</italic></sub>, and let <italic>y</italic><sub><italic>i</italic></sub>&#xA0;=&#xA0;1 if the pair is annotated as positive and <italic>y</italic><sub><italic>i</italic></sub>&#xA0;=&#xA0;&#x2212;1 otherwise. Let <italic>w</italic> denote a vector of feature weights, of the same length as <italic>X</italic><sub><italic>i</italic></sub>, let <italic>&#x3B8;</italic> denote a threshold parameter, and let <inline-formula id="IEq1"><alternatives><tex-math id="M14">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \lambda $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq1.gif"/></alternatives></inline-formula> denote a regularization parameter. Then the cost function is given by:<disp-formula id="Equ2"><label>2</label><alternatives><tex-math id="M15">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ C = {\frac{1}{2}}\lambda \left| w \right|^{2} + {\frac{1}{T}}\sum\limits_{i = 1}^{T} {h\left( {y_{i} \left( {\theta + w \cdot X_{i} } \right)} \right)} $$\end{document}</tex-math><graphic xlink:href="10791_2010_9126_Article_Equ2.gif" position="anchor"/></alternatives></disp-formula>where the function <italic>h</italic> is the modified Huber loss function:<disp-formula id="Equ3"><label>3</label><alternatives><tex-math id="M16">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ h(z) = \left\{ {\begin{array}{*{20}c} { - 4z,} \hfill &amp; {{\text{if }}z \le - 1,} \hfill \\ {(1 - z)^{2} ,} \hfill &amp; {{\text{if }} - 1 &lt; z &lt; 1,} \hfill \\ {0,} \hfill &amp; {{\text{if }}1 \le z.} \hfill \\ \end{array} } \right. $$\end{document}</tex-math><graphic xlink:href="10791_2010_9126_Article_Equ3.gif" position="anchor"/></alternatives></disp-formula></p>
+          <p>The values of the parameters (<italic>w</italic> and <italic>&#x3B8;</italic>) which minimize <italic>C</italic> can be determined using a gradient descent algorithm. The regularization parameter <inline-formula id="IEq2"><alternatives><tex-math id="M17">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \lambda $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq2.gif"/></alternatives></inline-formula> is computed from the training set with the formula:<disp-formula id="Equ4"><label>4</label><alternatives><tex-math id="M18">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \lambda = \lambda^{\prime}\left\langle {\left| x \right|} \right\rangle^{2} $$\end{document}</tex-math><graphic xlink:href="10791_2010_9126_Article_Equ4.gif" position="anchor"/></alternatives></disp-formula>where <inline-formula id="IEq3"><alternatives><tex-math id="M19">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \left\langle {\left| x \right|} \right\rangle $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq3.gif"/></alternatives></inline-formula> is the average Euclidean norm of the feature vectors in the training set, and <inline-formula id="IEq4"><alternatives><tex-math id="M20">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \lambda^{\prime} $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq4.gif"/></alternatives></inline-formula> must be chosen.<xref ref-type="fn" rid="Fn2">2</xref> We optimized <inline-formula id="IEq13"><alternatives><tex-math id="M21">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \lambda^{\prime} $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq13.gif"/></alternatives></inline-formula> on the tuning set by examining powers of 10, and arrived at <inline-formula id="IEq14"><alternatives><tex-math id="M22">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \lambda^{\prime} = 10^{ - 7} $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq14.gif"/></alternatives></inline-formula>, which was used to determine <inline-formula id="IEq15"><alternatives><tex-math id="M23">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \lambda $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq15.gif"/></alternatives></inline-formula> for all Huber training on the larger corpus.</p>
+        </sec>
+      </sec>
+      <sec id="Sec9">
+        <title>Evaluation</title>
+        <p>We evaluated the relatedness scoring functions in two complementary ways, break-even precision and manual evaluation.</p>
+        <sec id="Sec10">
+          <title>Precision-recall break-even</title>
+          <p>For each relatedness scoring function, the sentence pairs in the test set were scored and precision-recall break-even (BE) was computed (see Table&#xA0;<xref rid="Tab3" ref-type="table">3</xref>). The BE is the precision at the point in the precision-recall curve where precision equals recall. This is equivalent to the precision when the number retrieved is equal to the number of positive instances in the test set. And since the numbers of positive and negative instances were equal in our corpus, it is equivalent to the precision at the median score.<table-wrap id="Tab3"><label>Table&#xA0;3</label><caption><p>Break even precision (BE) for the baseline and machine learning methods of detecting related sentences</p></caption><table frame="hsides" rules="groups"><thead><tr><th align="left">Method</th><th align="left">Formula</th><th align="left">Break even</th></tr></thead><tbody><tr><td align="left" colspan="3">Baseline scoring functions</td></tr><tr><td align="left">&#xA0;Dice coefficient</td><td align="left"><italic>D</italic></td><td char="." align="char">84.20</td></tr><tr><td align="left">&#xA0;OKAPI bm25, multiply <italic>tf</italic></td><td align="left"><italic>O</italic><sub>1</sub></td><td char="." align="char">88.76</td></tr><tr><td align="left">&#xA0;OKAPI bm25, geometric mean of <italic>tf</italic></td><td align="left"><italic>O</italic><sub>2</sub></td><td char="." align="char">88.06</td></tr><tr><td align="left">&#xA0;OKAPI bm25, with <italic>tf</italic>&#xA0;=&#xA0;1</td><td align="left"><italic>O</italic><sub>3</sub></td><td char="." align="char">86.89</td></tr><tr><td align="left">&#xA0;Text structuring, <italic>atn</italic></td><td align="left"><italic>A</italic></td><td char="." align="char">88.45</td></tr><tr><td align="left">&#xA0;TextTiling, cosine similarity</td><td align="left"><italic>T</italic><sub>1</sub></td><td char="." align="char">85.44</td></tr><tr><td align="left">&#xA0;TextTiling, tf.idf</td><td align="left"><italic>T</italic><sub>2</sub></td><td char="." align="char">88.69</td></tr><tr><td align="left">&#xA0;Idf, with <italic>e</italic>&#xA0;=&#xA0;0.5</td><td align="left"><italic>I</italic><sub>0.5</sub></td><td char="." align="char">87.23</td></tr><tr><td align="left">&#xA0;Idf, with <italic>e</italic>&#xA0;=&#xA0;1</td><td align="left"><italic>I</italic><sub>1</sub></td><td char="." align="char">88.67</td></tr><tr><td align="left">&#xA0;Idf, with <italic>e</italic>&#xA0;=&#xA0;1.5</td><td align="left"><italic>I</italic><sub>1.5</sub></td><td char="." align="char">88.77</td></tr><tr><td align="left">&#xA0;Idf, with <italic>e</italic>&#xA0;=&#xA0;2</td><td align="left"><italic>I</italic><sub>2</sub></td><td char="." align="char">88.66</td></tr><tr><td align="left">&#xA0;Idf, with <italic>e</italic>&#xA0;=&#xA0;3</td><td align="left"><italic>I</italic><sub>3</sub></td><td char="." align="char">88.39</td></tr><tr><td align="left" colspan="3">Machine learning scoring functions</td></tr><tr><td align="left">&#xA0;Na&#xEF;ve bayes</td><td align="left"><italic>B</italic></td><td char="." align="char">88.69</td></tr><tr><td align="left">&#xA0;Modified huber cost</td><td align="left"><italic>H</italic></td><td char="." align="char">91.08</td></tr></tbody></table></table-wrap></p>
+        </sec>
+        <sec id="Sec11">
+          <title>Manual evaluation</title>
+          <p>Break-even measures the proportion of related sentences in the top half of scores in the test set. But the practical goal of our research is to find sentences that would be humanly judged to be related to a given sentence, and our test set does not specifically measure this. We therefore needed to evaluate the relatedness of the top scoring match for randomly selected <italic>query sentences</italic>. If <italic>M</italic> is a scoring method, we define the <italic>M</italic>-match of a query sentence <italic>X</italic> to be<disp-formula id="Equ5"><label>5</label><alternatives><tex-math id="M24">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$\mathop{\arg\max}\limits_{y} \; M (X,y),$$\end{document}</tex-math><graphic xlink:href="10791_2010_9126_Article_Equ5.gif" position="anchor"/></alternatives></disp-formula>where the maximization is performed over all sentences <italic>y</italic> in MEDLINE that are not in the same abstract as <italic>X</italic>.</p>
+          <p>The authors independently rated the similarity of 1,000 randomly selected query sentences to their corresponding <italic>M</italic>-match, for several methods <italic>M</italic>. Each similarity rating was a subjective estimate of the probability that a reader would consider the two sentences to be similar, using a scale from 0 to 4. The interpretation of the assigned rating was 0 for definitely unrelated, 1 for probably unrelated, 2 for possibly related, 3 for probably related, and 4 for definitely related. In performing evaluations, the order of presentation was randomized and all information about the source of the sentences (including the method and score) was suppressed.</p>
+          <p>Judgments of the relatedness of documents generally do not require an expert on those documents. In a highly technical area, one might desire some level of expertise. But previous research shows that some untrained workers give more accurate relevance judgments than subject experts, and that pooling the judgments of untrained workers actually outperforms the judgments of individual subject experts (Wilbur <xref ref-type="bibr" rid="CR30">1998</xref>). In our case, both authors have years of experience with the biological literature, and the second author has an MD degree.</p>
+        </sec>
+        <sec id="Sec12">
+          <title>McNemar statistic</title>
+          <p>We used the McNemar statistic to test significance of the difference between two classification methods (Dietterich <xref ref-type="bibr" rid="CR4">1998</xref>). For two numeric measures, <italic>B</italic> and <italic>C</italic> (which may be binary) given on a population, the statistic is defined as:<disp-formula id="Equ6"><label>6</label><alternatives><tex-math id="M25">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \chi^{2} = {\frac{{\left( {\left| {b - c} \right| - 1} \right)^{2} }}{b + c}} $$\end{document}</tex-math><graphic xlink:href="10791_2010_9126_Article_Equ6.gif" position="anchor"/></alternatives></disp-formula>where <italic>b</italic> is the number of times <italic>B</italic>&#xA0;&gt;&#xA0;<italic>C</italic>, and c is the number of times where <italic>C</italic>&#xA0;&gt;&#xA0;<italic>B</italic>. This statistic is approximately <inline-formula id="IEq16"><alternatives><tex-math id="M26">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \chi^{2} $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq16.gif"/></alternatives></inline-formula> with 1 degree of freedom.</p>
+        </sec>
+      </sec>
+      <sec id="Sec13">
+        <title>Computing resources</title>
+        <p>Our computer hardware consisted of 64 bit Intel Xeon dual and quad core hosts running Linux version 2.6.5. For multi-processing, we used a shared grid of 175 hosts, with a total of 1,164 cores and 4G of RAM each, managed with the Sun Grid Engine (SGE 6.2u1).</p>
+        <p>The baseline scoring of the entire corpus of sentence pairs was completed in 1,000 parallel processes. For each pair, all of the baseline methods were calculated at once, at an average time of 35.1 pairs per second. Na&#xEF;ve Bayes training and testing took about 6&#xA0;h on a single processor.</p>
+        <p>For Huber machine learning, the cost function was minimized using an iterative gradient descent algorithm. Because there was a very large number of training instances, and each instance had around 700 features, it was not feasible to perform the minimization unless all of the required training instances remained in resident memory. And because the total size of this data was over 160 gigabytes, it was not feasible to run it on a single computer. Therefore, in order to train more quickly and to get around the resident memory limit, we developed a multiprocessing version of the algorithm. The minimization was completed in 5,440 iterations, with the gradient computed in parallel on 64 cores, averaging 73.7&#xA0;s per iteration for about 4.7&#xA0;days of elapsed time.</p>
+        <p>To find the <italic>M</italic>-match for each query sentence, all MEDLINE sentences were scored (using the scoring method <italic>M</italic>) and sorted using a single processor. The elapsed time for scoring each sentence was approximately 10.7&#xA0;min regardless of the scoring method.</p>
+      </sec>
+    </sec>
+    <sec id="Sec14">
+      <title>Results</title>
+      <p>Here we summarize the results with break-even score (BE) and manual evaluation.</p>
+      <sec id="Sec15">
+        <title>Break-even</title>
+        <p>For each of the baseline and machine learning methods, the sentence pairs in the test set were scored and the BE calculated. These results are shown in Table&#xA0;<xref rid="Tab3" ref-type="table">3</xref>. The BE was greater than 84% for all methods, confirming the self-evident hypothesis that two sentences in the same abstract are much more likely to use the same or lexically related words than a random pair of sentences.</p>
+        <p>Among the baseline methods, the Dice coefficient (<italic>D</italic>) had the lowest BE (84.12), which may reflect that this method treats all features with equal weight. With the OKAPI <italic>bm25</italic> method, multiplying the <italic>tf</italic> (<italic>O</italic><sub>1</sub>) gave a BE of 88.34, but lower BE was observed with the geometric mean (<italic>O</italic><sub>2</sub>, 87.73) and with <italic>tf</italic>&#xA0;=&#xA0;1 (<italic>O</italic><sub>3</sub>, 86.89). With the TextTiling method, the standard cosine similarity (<italic>T</italic><sub>1</sub>) gave a BE of 85.35, while the simpler tf.idf dot product (<italic>T</italic><sub>2</sub>) gave 88.69. The idf methods gave a modal response from 87.23 for <italic>I</italic><sub>0.5</sub> to a maximum of 88.77 for <italic>I</italic><sub>1.5</sub> and back down to 88.39 for <italic>I</italic><sub>3</sub>. The BE of the idf <italic>I</italic><sub>1.5</sub> method was very close to the more complicated OKAPI <italic>bm25</italic> (<italic>O</italic><sub>1</sub>), and was nevertheless the highest BE of all baseline methods. The <italic>I</italic><sub>1.5</sub> method was used for subsequent comparison to the machine learning methods.</p>
+        <p>The machine learning methods did well relative to the baseline methods. Na&#xEF;ve Bayes (<italic>B</italic>) had a BE of 88.69, which is better than all but two of the baseline methods (one apparent tie differs in the next digit). Huber machine learning (<italic>H</italic>) had the highest BE of all methods at 91.08.</p>
+        <p>Because the number of instances in the test set was very large (over 19 million), very small differences in precision can be expected to be statistically significant. Indeed, the <italic>p-</italic>values for the differences in BE were negligible for all comparisons (by the McNemar test).</p>
+      </sec>
+      <sec id="Sec16">
+        <title>Manual comparison of <italic>I</italic><sub>1.5</sub>, <italic>B</italic>, and <italic>H</italic></title>
+        <p>All of the differences in BE were statistically significant, yet they do not predict how the methods perform when looking at their top scoring matches for a given sentence. To determine this, we compared the top scoring sentences for the best baseline method (<italic>I</italic><sub>1.5</sub>) and both machine learning methods (<italic>B</italic> and <italic>H</italic>). For each pair of methods, we randomly selected 200 query sentences which had a <italic>different</italic> match for the two methods. The resulting 1,200 sentence pairs were judged by both evaluators, as described in Sect. <xref rid="Sec11" ref-type="sec">2.5.2</xref>. The two judgments for each sentence pair were averaged as the human standard. The average rating for all <italic>I</italic><sub>1.5</sub>-matches was 1.66, for <italic>B</italic>-matches 1.75, and for <italic>H</italic>-matches 1.92. A pairwise comparison of these three methods is summarized in Table&#xA0;<xref rid="Tab4" ref-type="table">4</xref>. A significant number of query sentences had <italic>H</italic>-matches that were judged more relevant than either of the other methods (<italic>p</italic>&#xA0;=&#xA0;0.0087 for <italic>B</italic>-matches and <italic>p</italic>&#xA0;=&#xA0;0.021 for <italic>I</italic><sub>1.5</sub>-matches). Also, a greater number of query sentences had <italic>B</italic>-matches that were judged more relevant than the corresponding <italic>I</italic><sub>1.5</sub>-match (<italic>p</italic>&#xA0;=&#xA0;0.091, not statistically significant).<table-wrap id="Tab4"><label>Table&#xA0;4</label><caption><p>Manual evaluation of <italic>I</italic><sub>1.5</sub>- and <italic>B</italic>- and <italic>H</italic>-matches for 200 randomly and independently selected query sentences</p></caption><table frame="hsides" rules="groups"><thead><tr><th align="left"><italic>M</italic><sub>1</sub> vs. <italic>M</italic><sub>2</sub></th><th align="left"><italic>M</italic><sub>1</sub>&#xA0;&gt;&#xA0;<italic>M</italic><sub>2</sub></th><th align="left"><italic>M</italic><sub>1</sub>&#xA0;=&#xA0;<italic>M</italic><sub>2</sub></th><th align="left"><italic>M</italic><sub>1</sub>&#xA0;&lt;&#xA0;<italic>M</italic><sub>2</sub></th><th align="left">McNemar statistic</th><th align="left"><italic>p</italic>-value</th></tr></thead><tbody><tr><td align="left"><italic>H</italic> vs. <italic>I</italic><sub>1.5</sub></td><td char="(" align="char">94 (47%)</td><td char="(" align="char">42 (21%)</td><td char="(" align="char">64 (32%)</td><td char="." align="char">5.32</td><td char="." align="char">0.021</td></tr><tr><td align="left"><italic>H</italic> vs. <italic>B</italic></td><td char="(" align="char">86 (43%)</td><td char="(" align="char">60 (30%)</td><td char="(" align="char">54 (27%)</td><td char="." align="char">6.86</td><td char="." align="char">0.0087</td></tr><tr><td align="left"><italic>B</italic> vs. <italic>I</italic><sub>1.5</sub></td><td char="(" align="char">88 (44%)</td><td char="(" align="char">46 (23%)</td><td char="(" align="char">66 (33%)</td><td char="." align="char">2.86</td><td char="." align="char">0.091</td></tr></tbody></table><table-wrap-foot><p>For each sentence pair, the evaluation scores of two independent judges were averaged (on a scale from 0&#xA0;=&#xA0;definitely unrelated to 4&#xA0;=&#xA0;definitely related), and the results are summarized in the table. The number and proportion of query sentences where the <italic>M</italic><sub>1</sub>-match was judged more relevant (<italic>M</italic><sub>1</sub>&#xA0;&gt;&#xA0;<italic>M</italic><sub>2</sub>), equally relevant (<italic>M</italic><sub>1</sub>&#xA0;=&#xA0;<italic>M</italic><sub>2</sub>) or less relevant (<italic>M</italic><sub>1</sub>&#xA0;&lt;&#xA0;<italic>M</italic><sub>2</sub>) are shown, with the corresponding McNemar statistic and its <inline-formula id="IEq30"><alternatives><tex-math id="M27">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \chi^{2} $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq30.gif"/></alternatives></inline-formula><italic>p</italic>-value</p></table-wrap-foot></table-wrap></p>
+        <p>Because there is some subjectivity in deciding whether sentences are related, we did not expect the inter-annotator agreement to be high (Artstein and Poesio <xref ref-type="bibr" rid="CR1">2008</xref>). And since the judgments were not used in training, we do not believe this was an issue. Yet it may be of interest that there was <italic>moderate</italic> inter-annotator agreement on whether one of the matches was more relevant than the other (Cohen&#x2019;s <italic>&#x3BA;</italic>&#xA0;=&#xA0;0.4537, computed over 600 comparisons).</p>
+      </sec>
+      <sec id="Sec17">
+        <title>Manual evaluation of <italic>H</italic></title>
+        <p>We manually rated the <italic>H</italic>-matches of 1,000 randomly selected query sentences, also following the procedure described in Sect. <xref rid="Sec11" ref-type="sec">2.5.2</xref>. The distribution of the average ratings is shown in Fig.&#xA0;<xref rid="Fig1" ref-type="fig">1</xref>. There was a near uniform distribution of judgments, with 481 out of 1,000 pairs (48.1%) receiving an average rating &gt;2.<fig id="Fig1"><label>Fig.&#xA0;1</label><caption><p>Distribution of average manual judgments of <italic>H</italic>-matches for 1,000 random query sentences (the scale is from 0&#xA0;=&#xA0;definitely unrelated to 4&#xA0;=&#xA0;definitely related)</p></caption><graphic xlink:href="10791_2010_9126_Fig1_HTML" id="MO7"/></fig></p>
+        <p>Next, we looked at the <italic>H</italic>-score to select pairs that are more likely to be related. The distribution of <italic>H-</italic>scores for the 1,000 pairs is shown in Fig.&#xA0;<xref rid="Fig2" ref-type="fig">2</xref>, grouped by the integer part of the score. The average <italic>H</italic>-score was 5.01, with quartiles 3.58, 4.55, and 5.92. The comparison of <italic>H</italic>-score and average rating is shown in Fig.&#xA0;<xref rid="Fig3" ref-type="fig">3</xref>, grouped the same as Fig.&#xA0;<xref rid="Fig2" ref-type="fig">2</xref>. The graph shows that as the <italic>H</italic>-score increases, the proportion of <italic>H</italic>-matches with high rating also increases. The number of pairs that received an average rating &gt;2 was 409/750 (54.5%) for <italic>H</italic>&#xA0;&#x2265;&#xA0;3.58, 303/500 (60.6%) for <italic>H</italic>&#xA0;&#x2265;&#xA0;4.55, and 174/250 (69.6%) for <italic>H</italic>&#xA0;&#x2265;&#xA0;5.92.<fig id="Fig2"><label>Fig.&#xA0;2</label><caption><p>Distribution of highest <italic>H</italic>-scores for 1,000 random query sentences. The <italic>H</italic>-scores are grouped by their integer value</p></caption><graphic xlink:href="10791_2010_9126_Fig2_HTML" id="MO8"/></fig><fig id="Fig3"><label>Fig.&#xA0;3</label><caption><p>Plot of proportion of average rating by <italic>H-</italic>score (grouping same as Fig.&#xA0;<xref rid="Fig2" ref-type="fig">2</xref>) for 1,000 random query sentences. The vertical axis is the proportion of <italic>H-</italic>pairs in the group having the given average rating</p></caption><graphic xlink:href="10791_2010_9126_Fig3_HTML" id="MO9"/></fig></p>
+        <p>The inter-annotator agreement (Artstein and Poesio <xref ref-type="bibr" rid="CR1">2008</xref>) on the judgment of the 1,000 sentence pairs was <italic>fair</italic> (<italic>&#x3BA;</italic>&#xA0;=&#xA0;0.2666), based on a five category comparison (0&#x2013;4). The correlation of ratings of the two evaluators on the set of 1,000 sentences was 0.6067 (<italic>p</italic>&#xA0;&lt;&#xA0;10<sup>&#x2212;6</sup>, determined by two-sided bootstrap). There was <italic>moderate</italic> agreement for whether a sentence pair received a rating &gt;2 (<italic>&#x3BA;</italic>&#xA0;=&#xA0;0.4538).</p>
+      </sec>
+    </sec>
+    <sec id="Sec18">
+      <title>Application</title>
+      <p>An algorithm that identifies related sentences could be used in a query setting to recommend further reading. We illustrate how this might be implemented in PubMed. Let us call an <italic>H</italic>-match <italic>related</italic> if the average human rating is &gt;2 (this requires that at least one of the judgments was a 3 or 4). Since abstracts have an average number of sentences between 5 and 6, we chose a score cutoff <italic>H</italic>&#xA0;&#x2265;&#xA0;6.4 which selects 20% of sentences, or about one per abstract, on average. At this level, the manual judgment found 148 out of 200 pairs (73%) with average rating &gt;2. Since there were a total of 481 matches with this average rating, we expect to find approximately 148/481 (31%) of all related matches in this way.</p>
+      <p>We exhibit the related sentences for a recent MEDLINE article on an aspect of molecular biology in Alzheimer&#x2019;s disease (Ma et al. <xref ref-type="bibr" rid="CR20">2009</xref>). Figure&#xA0;<xref rid="Fig4" ref-type="fig">4</xref> shows a modified PubMed view of the abstract together with matching sentences. Of the 12 sentences in the abstract, 3 of them had matches with <italic>H</italic>&#xA0;&#x2265;&#xA0;6.4; these are shown in boxes along with additional information about the match. All of the matches are clearly in the same subject area as the original (amyloid deposition in Alzheimer&#x2019;s disease), and one of them is from an article that is actually cited in the bibliography of the paper. This also illustrates how related sentences define explicit and specific relationships to other articles, giving the user more information to guide further exploration. The matches shown are very specific and technical, and indicate different directions that a user could choose to explore.<fig id="Fig4"><label>Fig.&#xA0;4</label><caption><p>Abstract from MEDLINE (Ma et al. <xref ref-type="bibr" rid="CR20">2009</xref>) with sentences highlighted that were found to have matching sentences elsewhere in MEDLINE with <italic>H</italic>&#xA0;&#x2265;&#xA0;6.4. The three <italic>H</italic>-matches are shown in the shaded boxes below their corresponding query sentences</p></caption><graphic xlink:href="10791_2010_9126_Fig4_HTML" id="MO10"/></fig></p>
+    </sec>
+    <sec id="Sec19">
+      <title>Limitations</title>
+      <p>The very concept of relatedness in meaning at the sentence level is theoretically imprecise due to loss of context and variability in the reader&#x2019;s focus of attention and assessment of importance. There is also an ambiguity in synonymy and polysemy, the connection between character strings and word senses. We argue that these limitations do not seriously impact the ability to detect relatedness in the corpus of biomedical research writing.</p>
+      <sec id="Sec20">
+        <title>Context and focus</title>
+        <p>When a sentence is taken out of its surrounding context, some of the meaning of its implied references may be lost, e.g., anaphoric or omitted references. This loss of contextual meaning can make the judgment of relatedness ambiguous. In addition, whether or not two sentences are related in meaning can also depend on the relative importance that a particular reader places on the referenced subjects. As different readers may differ on what is important, they may also legitimately differ on the degree of relatedness of two sentences.</p>
+        <p>Here is an example that illustrates both limitations. In the manual evaluation, we encountered this pair of sentences:<list list-type="order"><list-item><p>Emissions were determined from field data by using a Fick&#x2019;s law diffusion approach and the observed variation in time of the TCE concentration gradient within 4&#xA0;m of each device (Wadden et al. <xref ref-type="bibr" rid="CR29">1989</xref>)</p></list-item><list-item><p>Observed and calculated fluxes based on vertical TCE vapor concentration gradients and Fick&#x2019;s law were in good agreement (Jellali et al. <xref ref-type="bibr" rid="CR9">2003</xref>)</p></list-item></list></p>
+        <p>These two sentences both refer to emissions/fluxes of something that is observed based on &#x201C;TCE concentration gradients&#x201D; and calculated based on &#x201C;Fick&#x2019;s law.&#x201D; To judge the degree of relatedness of these two sentences, one must consider both the emphasis and the missing context. Readers mainly interested only in TCE concentration gradients or Fick&#x2019;s law, the <italic>techniques</italic>, might find these sentences to be very related. But, except for the reference to &#x201C;devices&#x201D; in the first sentence, the <italic>what, how,</italic> and <italic>why</italic> of the emissions, the <italic>subjects</italic>, are lost from the context. So readers mainly interested in the subjects would only find the sentences to be related if their missing subjects are the same or related.</p>
+        <p>In some cases it may be possible to infer the missing subjects from what is said about them. But in these examples, nearly identical things were said about the subjects. In fact, after reading the context of the sentences, we found that the first refers to industrial degreasing devices that use TCE (trichloroethylene), and the second refers to the environmental fate of TCE buried underground.</p>
+        <p>Fortunately, ambiguity of subject seemed to be an exception rather than the rule. There were only eight out of 1,000 sentences, like the above example, in which the evaluators gave opposite ratings (that is, 0 vs. 4). Most of the sentence pairs we observed contained explicit references to all of their important concepts. Such sentence pairs are ostensibly related because they refer to the same things, or unrelated because they refer to different things. But by using the average of the rating of two evaluators, we partially compensated for the ambiguous cases. For the above example, the average rating was 2, meaning possibly related, which seems to be about right.</p>
+      </sec>
+      <sec id="Sec21">
+        <title>Synonymy and polysemy</title>
+        <p>Theoretically, two sentences could assert very similar things using lexically unrelated synonyms. It was found, for example, that in task-oriented naming and keyword assignment, the same words were used to refer to the same things only 20% of the time (Furnas et al. <xref ref-type="bibr" rid="CR6">1987</xref>). To make matters worse, the technical vocabulary used in MEDLINE is significantly distinct and larger than that of newspapers and other casual media (Smith et al. <xref ref-type="bibr" rid="CR26">2005</xref>). But in scientific peer-reviewed publication, the requirement for clear communication encourages authors to use commonly accepted expressions when referring to any given concept. This is supported by the sublanguage hypothesis (Friedman et al. <xref ref-type="bibr" rid="CR5">2002</xref>), which holds that there are unique grammatical conventions that apply within a given scientific discipline. What is more, since a sublanguage also contains rules for the formation of new expressions, independent authors will tend to use lexically similar expressions, even when referencing a new concept.</p>
+        <p>In any event, it is unlikely that our corpus contained examples of lexically unrelated synonyms, since the positive examples were from the same abstract and the negative examples were from randomly paired sentences. Even so, our methods could recognize spelling and punctuation variants, and derived forms by comparing substring features. And sentences could still be identified as related even if some of their synonymous references were lexically distinct, provided that <italic>enough</italic> of their referenced concepts used common language.</p>
+        <p>Conversely, two sentences could refer to dissimilar things using lexically related homonyms, and this can occur in one of two ways (Bodenreider et al. <xref ref-type="bibr" rid="CR2">2002</xref>). In systematic polysemy, a word may be used to refer to distinct but closely related things. For example, genes and their products typically share the same name. This does not pose a problem for detecting relatedness, because all of the senses of such a word are related in meaning.</p>
+        <p>However, serious ambiguity occurs when a word may have entirely different meanings, depending on the context in which it is used, and this could result in false positives in relatedness detection. To explore how our system handled ambiguity, we examined sentences containing the ambiguous word <italic>ventilation</italic>. There were 36,357 sentences in the corpus which contained the word, and Table&#xA0;<xref rid="Tab5" ref-type="table">5</xref> shows four of the observed senses and the frequency of each sense in 1,000 randomly selected sentences. There were three sentences out of 1,000 that used <italic>ventilation</italic> in the sense of middle ear ventilation, and all three of their <italic>H</italic>-matches had the correct sense of the word. There were 12 sentences out of 1,000 that used <italic>ventilation</italic> in the sense of environmental flow. In four of those sentences, environmental air flow was not the dominant topic, and their corresponding <italic>H</italic>-matches did not refer to environmental air flow in any way. The <italic>H</italic>-matches for six of the remaining eight (75%) discuss environmental air flow, though only two actually contained the word <italic>ventilation</italic>. One of the erroneous <italic>H</italic>-matches used the respiration sense of the word, and one used the cigarette filter sense of the word. The following sentence pair illustrates a correct <italic>H</italic>-match on the environmental sense:<table-wrap id="Tab5"><label>Table&#xA0;5</label><caption><p>Senses of the word <italic>ventilation</italic> and the number of times those senses were used in 1,000 randomly selected sentences containing the word</p></caption><table frame="hsides" rules="groups"><thead><tr><th align="left">Sense</th><th align="left">Distribution</th><th align="left">Definition</th></tr></thead><tbody><tr><td align="left">1</td><td char="." align="char">985</td><td align="left">Related to physiological respiration, with sub-senses of the function itself (e.g., ventilation rate) and devices to assist breathing (e.g., mechanical ventilation)</td></tr><tr><td align="left">2</td><td char="." align="char">12</td><td align="left">Related to environmental flow (e.g., air conditioning)</td></tr><tr><td align="left">3</td><td char="." align="char">3</td><td align="left">Related to exposing the middle ear to air with tubes (e.g., ventilation route)</td></tr><tr><td align="left">4</td><td char="." align="char">0</td><td align="left">Related to cigarette filter design (e.g., cigarette filter ventilation)</td></tr></tbody></table></table-wrap><list list-type="order"><list-item><p>Among office workers, the relative risk for short-term sick leave was 1.53 (95% confidence 1.22&#x2013;1.92) with lower ventilation, and 1.52 (1.18&#x2013;1.97) in areas with IEQ complaints (Milton et al. <xref ref-type="bibr" rid="CR21">2000</xref>)</p></list-item><list-item><p>It is essential that treated areas be ventilated adequately before workers return to their offices (Currie et al. <xref ref-type="bibr" rid="CR3">1990</xref>)</p></list-item></list></p>
+        <p>While this match is not very strong (<italic>H</italic>-score of only 2.96) and not of high quality (the average of our ratings is 1.5), yet it illustrates how sufficient context can be included in a match (<italic>office</italic>, <italic>areas</italic>) to disambiguate the meaning of the word&#xA0;<italic>ventilation</italic>. In our sample we found that for the rare senses of the word <italic>ventilation</italic>, the <italic>H</italic>-match had the wrong sense of the word in only two of the cases we examined. In thirteen or 87% of the cases there is no confusion of meaning. Thus there is a strong tendency not to confuse the meaning of the word <italic>ventilation</italic> across the sentences of an <italic>H</italic>-match. While we cannot base general conclusions on such a small sample, we believe the principles acting here come into play more generally and provide at least a partial explanation for the success of our method.</p>
+      </sec>
+    </sec>
+    <sec id="Sec22">
+      <title>Conclusion</title>
+      <p>We compared several approaches to identifying sentences in MEDLINE abstracts that are related in meaning based on a large automatically assembled training set. The baseline methods used fixed formulas that do not rely on training or optimization, and included the Dice coefficient, OKAPI <italic>bm25</italic>, the tf.idf cosine similarity used in TextTiling, and several idf-power functions. The machine learning methods included na&#xEF;ve Bayes and minimization of the Huber loss function. All of the methods achieved a BE greater than 84%. The differences between them were small but statistically significant, and favored the Huber loss function over the other methods.</p>
+      <p>Our ultimate goal was to find related sentence pairs coming from different abstracts. To achieve this goal, the best performing methods were applied to the problem of matching a query sentence with related sentences from other abstracts. When the top scoring matches were manually evaluated, we found a significant improvement of the Huber method (<italic>H</italic>) over both the Bayesian method (<italic>B</italic>) and the best baseline method (<italic>I</italic><sub>1.5</sub>), but no significant difference between the <italic>B</italic> and <italic>I</italic><sub>1.5</sub> methods. When matches were chosen in the top 20% of Huber score (<italic>H</italic>&#xA0;&#x2265;&#xA0;6.4), identifying about one sentence per abstract on average, there was an approximate precision of 73% and recall of 31%, as determined by manual evaluation (with positive relatedness defined by average human rating greater than 2). We have shown with an example (Fig.&#xA0;<xref rid="Fig4" ref-type="fig">4</xref>) how related sentences can be used to make focused suggestions for further reading.</p>
+      <p>In future work we plan to explore the use of our method of computing related sentences for topic segmentation and document summarization. There is also the possibility that it could be used to enhance full text retrieval.</p>
+    </sec>
+  </body>
+  <back>
+    <ack>
+      <p>This research was supported by the Intramural Research Program of the NIH, NLM, and NCBI.</p>
+      <p><bold>Open Access</bold> This article is distributed under the terms of the Creative Commons Attribution Noncommercial License which permits any noncommercial use, distribution, and reproduction in any medium, provided the original author(s) and source are credited.</p>
+    </ack>
+    <ref-list id="Bib1">
+      <title>References</title>
+      <ref id="CR1">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Artstein</surname>
+              <given-names>R</given-names>
+            </name>
+            <name>
+              <surname>Poesio</surname>
+              <given-names>M</given-names>
+            </name>
+          </person-group>
+          <article-title>Inter-coder agreement for computational linguistics</article-title>
+          <source>Computational Linguistics</source>
+          <year>2008</year>
+          <volume>34</volume>
+          <issue>4</issue>
+          <fpage>555</fpage>
+          <lpage>596</lpage>
+          <pub-id pub-id-type="doi">10.1162/coli.07-034-R2</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR2">
+        <mixed-citation publication-type="other">Bodenreider, O., Mitchell, J. A., &amp; McCray, A. T. (2002). Evaluation of the UMLS as a terminology and knowledge resource for biomedical informatics. <italic>Proceedings of the AMIA symposium</italic>, pp. 61&#x2013;65.</mixed-citation>
+      </ref>
+      <ref id="CR3">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Currie</surname>
+              <given-names>KL</given-names>
+            </name>
+            <name>
+              <surname>McDonald</surname>
+              <given-names>EC</given-names>
+            </name>
+            <name>
+              <surname>Chung</surname>
+              <given-names>LT</given-names>
+            </name>
+            <name>
+              <surname>Higgs</surname>
+              <given-names>AR</given-names>
+            </name>
+          </person-group>
+          <article-title>Concentrations of diazinon, chlorpyrifos, and bendiocarb after application in offices</article-title>
+          <source>American Industrial Hygiene Association Journal</source>
+          <year>1990</year>
+          <volume>51</volume>
+          <issue>1</issue>
+          <fpage>23</fpage>
+          <lpage>27</lpage>
+          <pub-id pub-id-type="pmid">1689096</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR4">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Dietterich</surname>
+              <given-names>T</given-names>
+            </name>
+          </person-group>
+          <article-title>Approximate statistical tests for comparing supervised classification learning algorithms</article-title>
+          <source>Neural Computation</source>
+          <year>1998</year>
+          <volume>10</volume>
+          <issue>7</issue>
+          <fpage>1895</fpage>
+          <lpage>1924</lpage>
+          <pub-id pub-id-type="doi">10.1162/089976698300017197</pub-id>
+          <pub-id pub-id-type="pmid">9744903</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR5">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Friedman</surname>
+              <given-names>C</given-names>
+            </name>
+            <name>
+              <surname>Kra</surname>
+              <given-names>P</given-names>
+            </name>
+            <name>
+              <surname>Rzhetsky</surname>
+              <given-names>A</given-names>
+            </name>
+          </person-group>
+          <article-title>Two biomedical sublanguages: A description based on the theories of Zellig Harris</article-title>
+          <source>Biomedical Informatics</source>
+          <year>2002</year>
+          <volume>35</volume>
+          <fpage>222</fpage>
+          <lpage>235</lpage>
+          <pub-id pub-id-type="doi">10.1016/S1532-0464(03)00012-1</pub-id>
+          <pub-id pub-id-type="pmid">12755517</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR6">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Furnas</surname>
+              <given-names>GW</given-names>
+            </name>
+            <name>
+              <surname>Landauer</surname>
+              <given-names>TK</given-names>
+            </name>
+            <name>
+              <surname>Gomez</surname>
+              <given-names>LM</given-names>
+            </name>
+            <name>
+              <surname>Dumais</surname>
+              <given-names>ST</given-names>
+            </name>
+          </person-group>
+          <article-title>The vocabulary problem in human-system communication</article-title>
+          <source>Communications of the ACM</source>
+          <year>1987</year>
+          <volume>30</volume>
+          <issue>11</issue>
+          <fpage>964</fpage>
+          <lpage>971</lpage>
+          <pub-id pub-id-type="doi">10.1145/32206.32212</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR7">
+        <mixed-citation publication-type="other">Hearst, M. (1993). <italic>TextTiling: A quantitative approach to discourse</italic>. University of California at Berkeley. Report: S2&#xA0;K-93-24.</mixed-citation>
+      </ref>
+      <ref id="CR8">
+        <mixed-citation publication-type="other">Hearst, M., &amp; Plaunt, C. (1993). Subtopic structuring for full-length document access. In: <italic>Proceedings of the ACM SIGIR conference</italic>, pp. 59&#x2013;68.</mixed-citation>
+      </ref>
+      <ref id="CR9">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Jellali</surname>
+              <given-names>S</given-names>
+            </name>
+            <name>
+              <surname>Benremita</surname>
+              <given-names>H</given-names>
+            </name>
+            <name>
+              <surname>Muntzer</surname>
+              <given-names>P</given-names>
+            </name>
+            <name>
+              <surname>Razakarisoa</surname>
+              <given-names>O</given-names>
+            </name>
+            <name>
+              <surname>Schafer</surname>
+              <given-names>G</given-names>
+            </name>
+          </person-group>
+          <article-title>A large-scale experiment on mass transfer of trichloroethylene from the unsaturated zone of a sandy aquifer to its interfaces</article-title>
+          <source>Journal of Contaminant Hydrology</source>
+          <year>2003</year>
+          <volume>60</volume>
+          <issue>1&#x2013;2</issue>
+          <fpage>31</fpage>
+          <lpage>53</lpage>
+          <pub-id pub-id-type="doi">10.1016/S0169-7722(02)00062-1</pub-id>
+          <pub-id pub-id-type="pmid">12498573</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR10">
+        <mixed-citation publication-type="other">Joachims, T. (2002). Optimizing search engines using clickthrough data. In: <italic>Proceedings of the ACM SIGKDD conference, ACM</italic>, pp. 133&#x2013;142.</mixed-citation>
+      </ref>
+      <ref id="CR11">
+        <mixed-citation publication-type="other">Joachims, T. (2006). Training linear SVMs in linear time. In: <italic>Proceedings of the ACM SIGKDD conference, ACM</italic>, pp. 217&#x2013;226.</mixed-citation>
+      </ref>
+      <ref id="CR12">
+        <mixed-citation publication-type="other">Joachims, T., Li, H., Liu, T. -Y., &amp; Zhai, C. (2007). Learning to rank for information retrieval (LR4IR 2007). In: <italic>Proceedings of the ACM SIGIR conference, ACM</italic>, pp. 58&#x2013;62.</mixed-citation>
+      </ref>
+      <ref id="CR13">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Kim</surname>
+              <given-names>WG</given-names>
+            </name>
+            <name>
+              <surname>Wilbur</surname>
+              <given-names>WJ</given-names>
+            </name>
+          </person-group>
+          <article-title>Corpus-based statistical screening for content-bearing terms</article-title>
+          <source>Journal of the American Society for Information Science</source>
+          <year>2001</year>
+          <volume>52</volume>
+          <issue>3</issue>
+          <fpage>247</fpage>
+          <lpage>259</lpage>
+          <pub-id pub-id-type="doi">10.1002/1097-4571(2000)9999:9999&lt;::AID-ASI1588&gt;3.0.CO;2-7</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR14">
+        <mixed-citation publication-type="other">Ko, Y., Park, J., &amp; Seo, J. (2002). Automatic text categorization using the importance of sentences. In: <italic>Proceedings of the 19th international conference on computational linguistics</italic>, pp. 65&#x2013;79.</mixed-citation>
+      </ref>
+      <ref id="CR15">
+        <mixed-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Langley</surname>
+              <given-names>P</given-names>
+            </name>
+          </person-group>
+          <source>Elements of machine learning</source>
+          <year>1996</year>
+          <publisher-loc>San Francisco</publisher-loc>
+          <publisher-name>Morgan Kaufmann Publishers, Inc</publisher-name>
+        </mixed-citation>
+      </ref>
+      <ref id="CR16">
+        <mixed-citation publication-type="other">Lin, J. (2009). Is searching full text more effective than searching abstracts? <italic>BMC Bioinformatics</italic>, <italic>10</italic>, 46. doi:10.1186/1471-2105-10-46.</mixed-citation>
+      </ref>
+      <ref id="CR17">
+        <mixed-citation publication-type="other">Lin, J., &amp; Wilbur, W. (2007). PubMed related articles: A probabilistic topic-based model for content similarity. <italic>BMC Bioinformatics</italic>, <italic>8</italic> (423).</mixed-citation>
+      </ref>
+      <ref id="CR18">
+        <mixed-citation publication-type="other">Liu, T. -Y., Xu, J., Qin, T., Xiong, W., &amp; Li, H. (2007). Benchmark dataset for research on learning to rank for information retrieval. In: <italic>SIGIR &#x2018;07: Proceedings of the Learning to Rank workshop</italic>.</mixed-citation>
+      </ref>
+      <ref id="CR19">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Lu</surname>
+              <given-names>Z</given-names>
+            </name>
+            <name>
+              <surname>Kim</surname>
+              <given-names>W</given-names>
+            </name>
+            <name>
+              <surname>Wilbur</surname>
+              <given-names>W</given-names>
+            </name>
+          </person-group>
+          <article-title>Evaluating relevance ranking strategies for MEDLINE retrieval</article-title>
+          <source>Journal of the American Medical Informatics Association</source>
+          <year>2009</year>
+          <volume>16</volume>
+          <issue>1</issue>
+          <fpage>32</fpage>
+          <lpage>36</lpage>
+          <pub-id pub-id-type="doi">10.1197/jamia.M2935</pub-id>
+          <pub-id pub-id-type="pmid">18952932</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR20">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Ma</surname>
+              <given-names>Q</given-names>
+            </name>
+            <name>
+              <surname>Galasko</surname>
+              <given-names>D</given-names>
+            </name>
+            <name>
+              <surname>Ringman</surname>
+              <given-names>J</given-names>
+            </name>
+            <name>
+              <surname>Vinters</surname>
+              <given-names>H</given-names>
+            </name>
+            <name>
+              <surname>Edland</surname>
+              <given-names>S</given-names>
+            </name>
+            <name>
+              <surname>Pomakian</surname>
+              <given-names>J</given-names>
+            </name>
+            <name>
+              <surname>Ubeda</surname>
+              <given-names>O</given-names>
+            </name>
+            <name>
+              <surname>Rosario</surname>
+              <given-names>E</given-names>
+            </name>
+            <name>
+              <surname>Teter</surname>
+              <given-names>B</given-names>
+            </name>
+            <name>
+              <surname>Frautschy</surname>
+              <given-names>S</given-names>
+            </name>
+            <name>
+              <surname>Cole</surname>
+              <given-names>G</given-names>
+            </name>
+          </person-group>
+          <article-title>Reduction of SorLA/LR11, a sorting protein limiting beta-amyloid production, in Alzheimer disease cerebrospinal fluid</article-title>
+          <source>Archives of Neurology</source>
+          <year>2009</year>
+          <volume>66</volume>
+          <issue>4</issue>
+          <fpage>433</fpage>
+          <lpage>434</lpage>
+          <pub-id pub-id-type="doi">10.1001/archneurol.2009.22</pub-id>
+          <pub-id pub-id-type="pmid">19364927</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR21">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Milton</surname>
+              <given-names>DK</given-names>
+            </name>
+            <name>
+              <surname>Glencross</surname>
+              <given-names>PM</given-names>
+            </name>
+            <name>
+              <surname>Walters</surname>
+              <given-names>MD</given-names>
+            </name>
+          </person-group>
+          <article-title>Risk of sick leave associated with outdoor air supply rate, humidification, and occupant complaints</article-title>
+          <source>Indoor Air</source>
+          <year>2000</year>
+          <volume>10</volume>
+          <issue>4</issue>
+          <fpage>212</fpage>
+          <lpage>221</lpage>
+          <pub-id pub-id-type="doi">10.1034/j.1600-0668.2000.010004212.x</pub-id>
+          <pub-id pub-id-type="pmid">11089326</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR22">
+        <mixed-citation publication-type="other">Robertson, S., &amp; Spark Jones, K. (1994). <italic>Simple, proven approaches to text retrieval</italic>. University of Cambridge Computer Laboratory. Report: UCAM-CL-TR-356.</mixed-citation>
+      </ref>
+      <ref id="CR23">
+        <mixed-citation publication-type="other">Salton, G., &amp; Buckley, C. (1991). Automatic text structuring and retrieval-experiments in automatic encyclopedia searching. In: <italic>Conference on research and development in information retrieval, ACM</italic>, pp. 21&#x2013;30.</mixed-citation>
+      </ref>
+      <ref id="CR24">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Sayers</surname>
+              <given-names>EW</given-names>
+            </name>
+            <name>
+              <surname>Barrett</surname>
+              <given-names>T</given-names>
+            </name>
+            <name>
+              <surname>Benson</surname>
+              <given-names>DA</given-names>
+            </name>
+            <name>
+              <surname>Bryant</surname>
+              <given-names>SH</given-names>
+            </name>
+            <name>
+              <surname>Canese</surname>
+              <given-names>K</given-names>
+            </name>
+            <name>
+              <surname>Chetvernin</surname>
+              <given-names>V</given-names>
+            </name>
+            <name>
+              <surname>Church</surname>
+              <given-names>DM</given-names>
+            </name>
+            <name>
+              <surname>DiCuccio</surname>
+              <given-names>M</given-names>
+            </name>
+            <name>
+              <surname>Edgar</surname>
+              <given-names>R</given-names>
+            </name>
+            <name>
+              <surname>Federhen</surname>
+              <given-names>S</given-names>
+            </name>
+            <name>
+              <surname>Feolo</surname>
+              <given-names>M</given-names>
+            </name>
+            <name>
+              <surname>Geer</surname>
+              <given-names>LY</given-names>
+            </name>
+            <name>
+              <surname>Helmberg</surname>
+              <given-names>W</given-names>
+            </name>
+            <name>
+              <surname>Kapustin</surname>
+              <given-names>Y</given-names>
+            </name>
+            <name>
+              <surname>Landsman</surname>
+              <given-names>D</given-names>
+            </name>
+            <name>
+              <surname>Lipman</surname>
+              <given-names>DJ</given-names>
+            </name>
+            <name>
+              <surname>Madden</surname>
+              <given-names>TL</given-names>
+            </name>
+            <name>
+              <surname>Maglott</surname>
+              <given-names>DR</given-names>
+            </name>
+            <name>
+              <surname>Miller</surname>
+              <given-names>V</given-names>
+            </name>
+            <name>
+              <surname>Mizrachi</surname>
+              <given-names>I</given-names>
+            </name>
+            <name>
+              <surname>Ostell</surname>
+              <given-names>J</given-names>
+            </name>
+            <name>
+              <surname>Pruitt</surname>
+              <given-names>KD</given-names>
+            </name>
+            <name>
+              <surname>Schuler</surname>
+              <given-names>GD</given-names>
+            </name>
+            <name>
+              <surname>Sequeira</surname>
+              <given-names>E</given-names>
+            </name>
+            <name>
+              <surname>Sherry</surname>
+              <given-names>ST</given-names>
+            </name>
+            <name>
+              <surname>Shumway</surname>
+              <given-names>M</given-names>
+            </name>
+            <name>
+              <surname>Sirotkin</surname>
+              <given-names>K</given-names>
+            </name>
+            <name>
+              <surname>Souvorov</surname>
+              <given-names>A</given-names>
+            </name>
+            <name>
+              <surname>Starchenko</surname>
+              <given-names>G</given-names>
+            </name>
+            <name>
+              <surname>Tatusova</surname>
+              <given-names>TA</given-names>
+            </name>
+            <name>
+              <surname>Wagner</surname>
+              <given-names>L</given-names>
+            </name>
+            <name>
+              <surname>Yaschenko</surname>
+              <given-names>E</given-names>
+            </name>
+            <name>
+              <surname>Ye</surname>
+              <given-names>J</given-names>
+            </name>
+          </person-group>
+          <article-title>Database resources of the National Center for Biotechnology Information</article-title>
+          <source>Nucleic Acids Research</source>
+          <year>2009</year>
+          <volume>37</volume>
+          <issue>Database Issue</issue>
+          <fpage>5</fpage>
+          <lpage>15</lpage>
+          <pub-id pub-id-type="doi">10.1093/nar/gkn741</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR25">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Smith</surname>
+              <given-names>L</given-names>
+            </name>
+            <name>
+              <surname>Rindflesch</surname>
+              <given-names>T</given-names>
+            </name>
+            <name>
+              <surname>Wilbur</surname>
+              <given-names>W</given-names>
+            </name>
+          </person-group>
+          <article-title>MedPost: A part of speech tagger for biomedical text</article-title>
+          <source>Bioinformatics</source>
+          <year>2004</year>
+          <volume>20</volume>
+          <issue>14</issue>
+          <fpage>2320</fpage>
+          <lpage>2321</lpage>
+          <pub-id pub-id-type="doi">10.1093/bioinformatics/bth227</pub-id>
+          <pub-id pub-id-type="pmid">15073016</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR26">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Smith</surname>
+              <given-names>L</given-names>
+            </name>
+            <name>
+              <surname>Rindflesch</surname>
+              <given-names>T</given-names>
+            </name>
+            <name>
+              <surname>Wilbur</surname>
+              <given-names>W</given-names>
+            </name>
+          </person-group>
+          <article-title>The importance of the lexicon in tagging biological text</article-title>
+          <source>Natural Language Engineering</source>
+          <year>2005</year>
+          <volume>12</volume>
+          <issue>2</issue>
+          <fpage>1</fpage>
+          <lpage>17</lpage>
+        </mixed-citation>
+      </ref>
+      <ref id="CR27">
+        <mixed-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Rijsbergen</surname>
+              <given-names>CJ</given-names>
+            </name>
+          </person-group>
+          <source>Information retrieval</source>
+          <year>1979</year>
+          <publisher-loc>London</publisher-loc>
+          <publisher-name>Butterworths</publisher-name>
+        </mixed-citation>
+      </ref>
+      <ref id="CR28">
+        <mixed-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Vapnik</surname>
+              <given-names>V</given-names>
+            </name>
+          </person-group>
+          <source>Statistical learning theory</source>
+          <year>1998</year>
+          <publisher-loc>New York</publisher-loc>
+          <publisher-name>Wiley</publisher-name>
+        </mixed-citation>
+      </ref>
+      <ref id="CR29">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Wadden</surname>
+              <given-names>R</given-names>
+            </name>
+            <name>
+              <surname>Scheff</surname>
+              <given-names>P</given-names>
+            </name>
+            <name>
+              <surname>Franke</surname>
+              <given-names>J</given-names>
+            </name>
+          </person-group>
+          <article-title>Emission factors for trichloroethylene vapor degreasers</article-title>
+          <source>American Industrial Hygiene Association Journal</source>
+          <year>1989</year>
+          <volume>50</volume>
+          <issue>9</issue>
+          <fpage>496</fpage>
+          <lpage>500</lpage>
+          <pub-id pub-id-type="pmid">2801518</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR30">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Wilbur</surname>
+              <given-names>WJ</given-names>
+            </name>
+          </person-group>
+          <article-title>A comparison of group and individual performance among subject experts and untrained workers at the document retrieval task</article-title>
+          <source>Journal of the American Society for Information Science</source>
+          <year>1998</year>
+          <volume>49</volume>
+          <issue>6</issue>
+          <fpage>517</fpage>
+          <lpage>529</lpage>
+          <pub-id pub-id-type="doi">10.1002/(SICI)1097-4571(19980501)49:6&lt;517::AID-ASI4&gt;3.0.CO;2-T</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR31">
+        <mixed-citation publication-type="other">Wilbur, W. J. (2000). Boosting naive bayesian learning on a large subset of MEDLINE. In: <italic>American medical informatics 2000 annual symposium, American medical informatics association</italic>, pp. 918&#x2013;922.</mixed-citation>
+      </ref>
+      <ref id="CR32">
+        <mixed-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Wilbur</surname>
+              <given-names>W</given-names>
+            </name>
+          </person-group>
+          <person-group person-group-type="editor">
+            <name>
+              <surname>Chen</surname>
+              <given-names>H</given-names>
+            </name>
+            <name>
+              <surname>Fuller</surname>
+              <given-names>SS</given-names>
+            </name>
+            <name>
+              <surname>Friedman</surname>
+              <given-names>C</given-names>
+            </name>
+            <name>
+              <surname>Hersh</surname>
+              <given-names>W</given-names>
+            </name>
+          </person-group>
+          <article-title>Modeling text retrieval in biomedicine</article-title>
+          <source>Medical informatics: knowledge management and data mining in biomedicine</source>
+          <year>2005</year>
+          <publisher-loc>New York</publisher-loc>
+          <publisher-name>Springer</publisher-name>
+          <fpage>277</fpage>
+          <lpage>297</lpage>
+        </mixed-citation>
+      </ref>
+      <ref id="CR33">
+        <mixed-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Wilbur</surname>
+              <given-names>WJ</given-names>
+            </name>
+            <name>
+              <surname>Sirotkin</surname>
+              <given-names>K</given-names>
+            </name>
+          </person-group>
+          <article-title>The automatic identification of stop words</article-title>
+          <source>Journal of Information Science</source>
+          <year>1992</year>
+          <volume>18</volume>
+          <fpage>45</fpage>
+          <lpage>55</lpage>
+          <pub-id pub-id-type="doi">10.1177/016555159201800106</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="CR34">
+        <mixed-citation publication-type="other">Zhang, T. (2004). Solving large scale linear prediction problems using stochastic gradient descent algorithms. In <italic>Proceedings of the Twenty-first international conference on machine learning</italic>, Omnipress, pp. 918&#x2013;922.</mixed-citation>
+      </ref>
+      <ref id="CR35">
+        <mixed-citation publication-type="journal"><person-group person-group-type="author"><name><surname>Zou</surname><given-names>H</given-names></name><name><surname>Zhu</surname><given-names>J</given-names></name><name><surname>Hastie</surname><given-names>T</given-names></name></person-group><article-title>New multicategory boosting algorithms based on multicategory fisher-consistent losses</article-title><source>The Annals of Applied Statistics</source><year>2008</year><volume>2</volume><issue>4</issue><fpage>1290</fpage><lpage>1306</lpage>1158.62044<pub-id pub-id-type="doi">10.1214/08-AOAS198</pub-id></mixed-citation>
+      </ref>
+    </ref-list>
+    <fn-group>
+      <fn id="Fn1">
+        <label>1</label>
+        <p><ext-link ext-link-type="uri" xlink:href="http://www.ncbi.nlm.nih.gov/pubmed/">http://www.ncbi.nlm.nih.gov/pubmed/</ext-link>.</p>
+      </fn>
+      <fn id="Fn2">
+        <label>2</label>
+        <p>With this definition, the cost <inline-formula id="IEq5"><alternatives><tex-math id="M28">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ C $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq5.gif"/></alternatives></inline-formula> is scale invariant. That is to say, if <inline-formula id="IEq6"><alternatives><tex-math id="M29">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ w $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq6.gif"/></alternatives></inline-formula>  minimizes <inline-formula id="IEq7"><alternatives><tex-math id="M30">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ C $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq7.gif"/></alternatives></inline-formula> with feature vectors <inline-formula id="IEq8"><alternatives><tex-math id="M31">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ x_{i} $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq8.gif"/></alternatives></inline-formula>  then for any <inline-formula id="IEq9"><alternatives><tex-math id="M32">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \alpha \ne 0 $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq9.gif"/></alternatives></inline-formula>, <inline-formula id="IEq10"><alternatives><tex-math id="M33">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \alpha^{ - 1} w $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq10.gif"/></alternatives></inline-formula> minimizes <inline-formula id="IEq11"><alternatives><tex-math id="M34">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ C $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq11.gif"/></alternatives></inline-formula> with feature vectors <inline-formula id="IEq12"><alternatives><tex-math id="M35">\documentclass[12pt]{minimal}
+				\usepackage{amsmath}
+				\usepackage{wasysym} 
+				\usepackage{amsfonts} 
+				\usepackage{amssymb} 
+				\usepackage{amsbsy}
+				\usepackage{mathrsfs}
+				\usepackage{upgreek}
+				\setlength{\oddsidemargin}{-69pt}
+				\begin{document}$$ \alpha x_{i} $$\end{document}</tex-math><inline-graphic xlink:href="10791_2010_9126_Article_IEq12.gif"/></alternatives></inline-formula>.</p>
+      </fn>
+    </fn-group>
+  </back>
+</article>

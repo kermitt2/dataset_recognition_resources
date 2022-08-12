@@ -1,0 +1,1017 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD Journal Archiving and Interchange DTD v3.0 20080202//EN" "archivearticle3.dtd">
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML" article-type="research-article">
+  <?properties open_access?>
+  <?DTDIdentifier.IdentifierValue -//NLM//DTD Journal Publishing DTD v2.3 20070202//EN?>
+  <?DTDIdentifier.IdentifierType public?>
+  <?SourceDTD.DTDName journalpublishing.dtd?>
+  <?SourceDTD.Version 2.3?>
+  <?ConverterInfo.XSLTName jp2nlmx2.xsl?>
+  <?ConverterInfo.Version 2?>
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="nlm-ta">Int J Biomed Imaging</journal-id>
+      <journal-id journal-id-type="publisher-id">IJBI</journal-id>
+      <journal-title-group>
+        <journal-title>International Journal of Biomedical Imaging</journal-title>
+      </journal-title-group>
+      <issn pub-type="ppub">1687-4188</issn>
+      <issn pub-type="epub">1687-4196</issn>
+      <publisher>
+        <publisher-name>Hindawi Publishing Corporation</publisher-name>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="pmc">2943093</article-id>
+      <article-id pub-id-type="pmid">20871854</article-id>
+      <article-id pub-id-type="doi">10.1155/2011/549537</article-id>
+      <article-categories>
+        <subj-group subj-group-type="heading">
+          <subject>Research Article</subject>
+        </subj-group>
+      </article-categories>
+      <title-group>
+        <article-title>SART-Type Image Reconstruction from Overlapped Projections</article-title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Yu</surname>
+            <given-names>Hengyong</given-names>
+          </name>
+          <xref ref-type="aff" rid="I1">
+            <sup>1, 2, 3</sup>
+          </xref>
+          <xref ref-type="aff" rid="I2"/>
+          <xref ref-type="aff" rid="I3"/>
+          <xref ref-type="corresp" rid="cor1">*</xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Ji</surname>
+            <given-names>Changguo</given-names>
+          </name>
+          <xref ref-type="aff" rid="I3">
+            <sup>3</sup>
+          </xref>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Wang</surname>
+            <given-names>Ge</given-names>
+          </name>
+          <xref ref-type="aff" rid="I2">
+            <sup>2, 3</sup>
+          </xref>
+          <xref ref-type="aff" rid="I3"/>
+        </contrib>
+      </contrib-group>
+      <aff id="I1"><sup>1</sup>Division of Radiologic Sciences,  Department of Radiology,  Wake Forest University Health Sciences,  Winston-Salem,  NC 27157, USA</aff>
+      <aff id="I2"><sup>2</sup>Biomedical Imaging Division,  VT-WFU School of Biomedical Engineering and Sciences,  Wake Forest University Health Sciences,  Winston-Salem,  NC 27157, USA</aff>
+      <aff id="I3"><sup>3</sup>Biomedical Imaging Division,  VT-WFU School of Biomedical Engineering and Sciences,  Virginia Tech, Blacksburg,  VA 24061, USA</aff>
+      <author-notes>
+        <corresp id="cor1">*Hengyong Yu: <email>hengyong-yu@ieee.org</email></corresp>
+        <fn fn-type="other">
+          <p>Academic Editor: Yangbo Ye</p>
+        </fn>
+      </author-notes>
+      <pub-date pub-type="ppub">
+        <year>2011</year>
+      </pub-date>
+      <pub-date pub-type="epub">
+        <day>5</day>
+        <month>9</month>
+        <year>2010</year>
+      </pub-date>
+      <volume>2011</volume>
+      <elocation-id>549537</elocation-id>
+      <history>
+        <date date-type="received">
+          <day>7</day>
+          <month>5</month>
+          <year>2010</year>
+        </date>
+        <date date-type="accepted">
+          <day>29</day>
+          <month>7</month>
+          <year>2010</year>
+        </date>
+      </history>
+      <permissions>
+        <copyright-statement>Copyright &#xA9; 2011 Hengyong Yu et al.</copyright-statement>
+        <copyright-year>2011</copyright-year>
+        <license license-type="open-access">
+          <license-p>This is an open access article distributed under the Creative Commons Attribution License, which permits unrestricted use, distribution, and reproduction in any medium, provided the original work is properly cited.</license-p>
+        </license>
+      </permissions>
+      <abstract>
+        <p>To maximize the time-integrated X-ray flux from multiple X-ray sources and shorten the data acquisition process, a promising way is to allow overlapped projections from multiple sources being simultaneously on without involving the source multiplexing technology. The most challenging task in this configuration is to perform image reconstruction effectively and efficiently from overlapped projections. Inspired by the single-source simultaneous algebraic reconstruction technique (SART), we hereby develop a multisource SART-type reconstruction algorithm regularized by a sparsity-oriented constraint in the soft-threshold filtering framework to reconstruct images from overlapped projections. Our numerical simulation results verify the correctness of the proposed algorithm and demonstrate the advantage of image reconstruction from overlapped projections.</p>
+      </abstract>
+    </article-meta>
+  </front>
+  <body>
+    <sec sec-type="section" id="sec1">
+      <title>1. Introduction</title>
+      <p>Since the first computed tomography (CT) scanner was made [<xref ref-type="bibr" rid="B1">1</xref>], all the commercial scanners have been employing the X-ray source with a single small focal spot, which can be modeled as a point source. In micro-CT and even nano-CT applications, the reduced X-ray focal spot size becomes increasingly a limiting factor to achieve contrast and temporal resolution targets. To address this issue, our group recently proposed to use a line-shaped X-ray source so that more photons can be generated in a given data acquisition interval [<xref ref-type="bibr" rid="B2">2</xref>]. In this context, the X-ray source can be modeled as a line-segment, which can be further discretely modeled as an array of points [<xref ref-type="bibr" rid="B3">3</xref>]. In single source CT scanners, contrast resolution is limited by the finite focal-spot size necessary to generate a sufficient number of X-ray photons, and temporal resolution is limited by the time taken to acquire sufficiently many projections over a full-scan or half-scan angular range. Since a line source covers a wide angular range per view, the number of photons is increased to radiate an object to be reconstructed. Therefore, use of a line-shaped X-ray source or a multiple source array is a candidate scheme to balance spatial, contrast and temporal resolution.</p>
+      <p>         Interestingly, the technology of field-emission X-ray sources based on carbon nanotubes (CNT) is a recent invention with several intrinsic advantages over conventional X-ray tubes. To maximize the time-integrated X-ray flux from multiple sources and improve the signal-to-noise ratio (SNR), multiplexing was used, where multi-source are excited with different temporal modulations [<xref ref-type="bibr" rid="B4">4</xref>]. If two or more sources are simultaneously fired, X-ray photons reach the same detector together for any single measurement, and one would not be able to identify which photon comes from which source. To unmix the signals from various sources, several projections can be collected at different time instants for the same view [<xref ref-type="bibr" rid="B5">5</xref>]. Due to the limited readout speed and mixed signals, there seems little advantage to use multiplexing configuration in terms of contrast and temporal resolution.  In collaboration with Dr. Otto Zhou's group at University of North Carolina, we are developing a novel multi-source micro-CT system. In our system, we plan to fire a multi-source system simultaneously and acquire multiple projections at any viewing angle on nonoverlapped segments of a shared detector array [<xref ref-type="bibr" rid="B6">6</xref>]. With recent developed compressive sampling (CS) techniques [<xref ref-type="bibr" rid="B7">7</xref>, <xref ref-type="bibr" rid="B8">8</xref>], we are also working to improve temporal resolution and reduce radiation dose from a limited number of nonoverlapped projections [<xref ref-type="bibr" rid="B9">9</xref>]. </p>
+      <p>        Here, we consider how to reconstruct an image from overlapped projections. Previously, our group developed a generalized simultaneous algebraic reconstruction technique (SART) algorithm to reconstruct an image from data collected with an X-ray line source [<xref ref-type="bibr" rid="B2">2</xref>]. Assuming that the differences between measured and predicted projections from various source points have equal weights, these differences are then backprojected to different X-ray source points in the SART framework. However, this algorithm converges to the least square solution that is not necessarily the true image.  In our simulation, the reconstructed images sometimes suffered from blurring [<xref ref-type="bibr" rid="B2">2</xref>]. Then, our group developed a CS-based algorithm to solve this problem [<xref ref-type="bibr" rid="B3">3</xref>]. The algorithm is implemented in a projection onto convex sets (POCS) framework and employed a steepest gradient searching strategy. Although this algorithm often converges to the true image, its convergence speed is rather slow.  Because the SART framework has an excellent convergence behavior especially when the ordered subset (OS) format is applied, in this paper we will develop a SART-type algorithm for image reconstruction from overlapped projections.</p>
+      <p>          The paper is organized as follows. In the next section, we will formulate the overlapped projection model, which is not a sum of line integrals and quite different from that in the single-source case. In the third section, we will design a SART-type reconstruction algorithm for image reconstruction from overlapped projections. In the fourth section, we will report numerical results. In the last section,  we will discuss related issues and conclude the paper.  </p>
+    </sec>
+    <sec sec-type="section" id="sec2">
+      <title>2. Imaging Model</title>
+      <sec sec-type="subsection" id="sec2.1">
+        <title>2.1. Nonoverlapped Projection Model</title>
+        <p>For CT reconstruction, a two-dimensional digital image can be expressed as <bold>f</bold> = (<italic>f</italic><sub><italic>i</italic>,<italic>j</italic></sub>) &#x2208; &#x211D;<sup><italic>I</italic></sup> &#xD7; &#x211D;<sup><italic>J</italic></sup>, where the index  1 &#x2264; <italic>i</italic> &#x2264; <italic>I</italic> and 1 &#x2264; <italic>j</italic> &#x2264; <italic>J</italic> are integers. Define</p>
+        <p><disp-formula id="EEq1"><label>(1)</label><mml:math id="M1"><mml:msub><mml:mrow><mml:mi>f</mml:mi></mml:mrow><mml:mrow><mml:mi>n</mml:mi></mml:mrow></mml:msub><mml:mo>=</mml:mo><mml:msub><mml:mrow><mml:mi>f</mml:mi></mml:mrow><mml:mrow><mml:mi>i</mml:mi><mml:mo>,</mml:mo><mml:mi>j</mml:mi></mml:mrow></mml:msub><mml:mo>,</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mi>n</mml:mi><mml:mo>=</mml:mo><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:mi>i</mml:mi><mml:mo>&#x2212;</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mo>)</mml:mo></mml:mrow><mml:mo>&#xD7;</mml:mo><mml:mi>J</mml:mi><mml:mo>+</mml:mo><mml:mi>j</mml:mi><mml:mo>,</mml:mo></mml:math></disp-formula>
+							with 1 &#x2264; <italic>n</italic> &#x2264; <italic>N</italic> and <italic>N</italic> = <italic>I</italic> &#xD7; <italic>J</italic>, we have the image in a vector representation <bold>f</bold> = [<italic>f</italic><sub>1</sub>,<italic>f</italic><sub>2</sub>,...,<italic>f</italic><sub><italic>N</italic></sub>]<sup><italic>T</italic></sup> &#x2208; &#x211D;<sup><italic>N</italic></sup>.  In this paper, we will use both the signs <italic>f</italic><sub><italic>i</italic>,<italic>j</italic></sub> and  <italic>f</italic><sub><italic>n</italic></sub>  for convenience.  Let <bold>g</bold> = [<italic>g</italic><sub>1</sub>,<italic>g</italic><sub>2</sub>,...,<italic>g</italic><sub><italic>M</italic></sub>]<sup><italic>T</italic></sup> &#x2208; &#x211D;<sup><italic>M</italic></sup> be a measured vector with <italic>M</italic> being the product of the number of projections and the number of detector elements. They are linked by the following linear system:  </p>
+        <p><disp-formula id="EEq2"><label>(2)</label><mml:math id="M2"><mml:mi mathvariant="bold">g</mml:mi><mml:mo>=</mml:mo><mml:mi mathvariant="bold">A</mml:mi><mml:mi mathvariant="bold">f</mml:mi><mml:mo>,</mml:mo></mml:math></disp-formula>
+							where <bold>A</bold> = (<italic>a</italic><sub><italic>m</italic>,<italic>n</italic></sub>) &#x2208; &#x211D;<sup><italic>M</italic></sup> &#xD7; &#x211D;<sup><italic>N</italic></sup> is a measurement matrix. In a typical fan-beam geometry, the <italic>n</italic>th pixel can be viewed as a rectangular region with a constant value <italic>f</italic><sub><italic>n</italic></sub>, the <italic>m</italic>th measured datum <italic>g</italic><sub><italic>m</italic></sub> as an integral of partially covered pixel areas by a narrow beam from an X-ray source to a detector element which are weighted by the corresponding X-ray linear attenuation coefficients. Thus, the component <italic>a</italic><sub><italic>m</italic>,<italic>n</italic></sub> in  (<xref ref-type="disp-formula" rid="EEq2">2</xref>) denotes the intersection area between the <italic>n</italic>th pixel and the <italic>m</italic>th fan-beam ray (<xref ref-type="fig" rid="fig1">Figure 1</xref>). While the whole matrix <bold>A</bold> represents the forward projection, <bold>A</bold><sup><italic>T</italic></sup> implements the backprojection.</p>
+      </sec>
+      <sec sec-type="subsection" id="sec2.2">
+        <title>2.2. Overlapped Projection Model</title>
+        <p>While the imaging model (<xref ref-type="disp-formula" rid="EEq2">2</xref>) is valid for a single-source system, it cannot be used for  multi-source-generated projections. The reason is that the measured data in  (<xref ref-type="disp-formula" rid="EEq2">2</xref>) has been postprocessed by a logarithmic operation. In other words, we must model the raw data directly. For a multi-source system with <italic>Q</italic> sources, assuming that the  <italic>q</italic>th source emits <italic>I</italic><sub><italic>q</italic></sub> photons towards each detector element. According to Beer's law, we have the following imaging model:</p>
+        <p><disp-formula id="EEq3"><label>(3)</label><mml:math id="M3"><mml:mi mathvariant="bold">p</mml:mi><mml:mo>=</mml:mo><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>q</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>Q</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:msub><mml:mrow><mml:mi>I</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msub><mml:msup><mml:mrow><mml:mi>e</mml:mi></mml:mrow><mml:mrow><mml:mo>&#x2212;</mml:mo><mml:mi>s</mml:mi><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:mi mathvariant="bold">f</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>,</mml:mo></mml:math></disp-formula>
+							where <bold>A</bold><sup><italic>q</italic></sup> is the system matrix defined in <xref ref-type="sec" rid="sec2.1">Section 2.1</xref> for the <italic>q</italic>th source,  <italic>s</italic> a constant to normalize the area model (<xref ref-type="fig" rid="fig1">Figure 1</xref>) for the measurement matrix to the line integral model, and <italic>e</italic><sup>&#x2212;<italic>s </italic><bold>A</bold><sup><italic>q</italic></sup><bold>f</bold></sup> is a vector whose element is the exponential function of the corresponding element of &#x2212;<italic>s </italic><bold>A</bold><sup><italic>q</italic></sup><bold>f</bold>. In practice, we can approximate <italic>s</italic> as the reciprocal of the average width of an X-ray path in an object to be reconstructed. If we assume that all the X-ray sources have the same intensities, <italic>I</italic><sub>1</sub> = <italic>I</italic><sub>2</sub> = &#x22EF; = <italic>I</italic><sub><italic>q</italic></sub> = <italic>I</italic><sub>0</sub>, we have </p>
+        <p><disp-formula id="EEq4"><label>(4)</label><mml:math id="M4"><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">p</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover><mml:mo>=</mml:mo><mml:mfrac><mml:mrow><mml:mi mathvariant="bold">p</mml:mi></mml:mrow><mml:mrow><mml:msub><mml:mrow><mml:mi>I</mml:mi></mml:mrow><mml:mrow><mml:mn>0</mml:mn></mml:mrow></mml:msub></mml:mrow></mml:mfrac><mml:mo>=</mml:mo><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>q</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>Q</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:msup><mml:mrow><mml:mi>e</mml:mi></mml:mrow><mml:mrow><mml:mo>&#x2212;</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow></mml:msup></mml:mrow><mml:mo>,</mml:mo></mml:math></disp-formula>
+							where the constant  <italic>s</italic> is absorbed by <inline-formula><mml:math id="M5"><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover><mml:mo>=</mml:mo><mml:mi>s</mml:mi><mml:mi mathvariant="bold">f</mml:mi></mml:math></inline-formula>, and 1/<italic>I</italic><sub>0</sub> absorbed by <inline-formula><mml:math id="M6"><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">p</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover><mml:mo>=</mml:mo><mml:mrow><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">p</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mo>/</mml:mo><mml:mrow><mml:msub><mml:mrow><mml:mi>I</mml:mi></mml:mrow><mml:mrow><mml:mn>0</mml:mn></mml:mrow></mml:msub></mml:mrow></mml:mrow></mml:math></inline-formula>.  The key task in this paper is to reconstruct <inline-formula><mml:math id="M7"><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow></mml:math></inline-formula> from <inline-formula><mml:math id="M8"><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">p</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow></mml:math></inline-formula> and known measurement matrices <bold>A</bold><sup><italic>q</italic></sup>.</p>
+      </sec>
+    </sec>
+    <sec sec-type="section" id="sec3">
+      <title>3. Reconstruction Algorithm</title>
+      <sec sec-type="subsection" id="sec3.1">
+        <title>3.1. Single-Source Algorithm</title>
+        <p>In the past decade, our group studied a block-iterative (BI) or ordered-subset (OS) version of a general Landweber scheme [<xref ref-type="bibr" rid="B10">10</xref>], of which the SART and OS-SART [<xref ref-type="bibr" rid="B11">11</xref>] are special cases, for minimization of a weighted least square functional in the real/complex space, and proved its convergence under quite general conditions [<xref ref-type="bibr" rid="B12">12</xref>, <xref ref-type="bibr" rid="B13">13</xref>]. The SART or OS-SART technology has been widely used in the CT field. Particularly, for the system (<xref ref-type="disp-formula" rid="EEq2">2</xref>) the SART-type solution is given by [<xref ref-type="bibr" rid="B11">11</xref>] </p>
+        <p><disp-formula id="EEq5"><label>(5)</label><mml:math id="M9"><mml:msubsup><mml:mrow><mml:mi>f</mml:mi></mml:mrow><mml:mrow><mml:mi>n</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msubsup><mml:mo>=</mml:mo><mml:msubsup><mml:mrow><mml:mi>f</mml:mi></mml:mrow><mml:mrow><mml:mi>n</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>&#x2212;</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msubsup><mml:mo>+</mml:mo><mml:msup><mml:mrow><mml:mi>&#x3BB;</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mfrac><mml:mrow><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:msub><mml:mrow><mml:mi>a</mml:mi></mml:mrow><mml:mrow><mml:mo>+</mml:mo><mml:mi>n</mml:mi></mml:mrow></mml:msub></mml:mrow></mml:mfrac><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>m</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>M</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:mfrac><mml:mrow><mml:msub><mml:mrow><mml:mi>a</mml:mi></mml:mrow><mml:mrow><mml:mi>m</mml:mi><mml:mo>,</mml:mo><mml:mi>n</mml:mi></mml:mrow></mml:msub></mml:mrow><mml:mrow><mml:msub><mml:mrow><mml:mi>a</mml:mi></mml:mrow><mml:mrow><mml:mi>m</mml:mi><mml:mo>+</mml:mo></mml:mrow></mml:msub></mml:mrow></mml:mfrac><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msub><mml:mrow><mml:mi>g</mml:mi></mml:mrow><mml:mrow><mml:mi>m</mml:mi></mml:mrow></mml:msub><mml:mo>&#x2212;</mml:mo><mml:msub><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>m</mml:mi></mml:mrow></mml:msub><mml:msup><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>&#x2212;</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mo>,</mml:mo></mml:math></disp-formula>
+							where  <inline-formula><mml:math id="M10"><mml:msub><mml:mrow><mml:mi>a</mml:mi></mml:mrow><mml:mrow><mml:mo>+</mml:mo><mml:mi>n</mml:mi></mml:mrow></mml:msub><mml:mo>=</mml:mo><mml:munderover><mml:mo>&#x2211;</mml:mo><mml:mrow><mml:mi>m</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>M</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:msub><mml:mrow><mml:mi>a</mml:mi></mml:mrow><mml:mrow><mml:mi>m</mml:mi><mml:mo>,</mml:mo><mml:mi>n</mml:mi></mml:mrow></mml:msub></mml:mrow><mml:mo>&gt;</mml:mo><mml:mn>0</mml:mn></mml:math></inline-formula>, <inline-formula><mml:math id="M11"><mml:msub><mml:mrow><mml:mi>a</mml:mi></mml:mrow><mml:mrow><mml:mi>m</mml:mi><mml:mo>+</mml:mo></mml:mrow></mml:msub><mml:mo>=</mml:mo><mml:munderover><mml:mo>&#x2211;</mml:mo><mml:mrow><mml:mi>n</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>N</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:msub><mml:mrow><mml:mi>a</mml:mi></mml:mrow><mml:mrow><mml:mi>m</mml:mi><mml:mo>,</mml:mo><mml:mi>n</mml:mi></mml:mrow></mml:msub></mml:mrow><mml:mo>&gt;</mml:mo><mml:mn>0</mml:mn></mml:math></inline-formula>, <bold>A</bold><sub><italic>m</italic></sub> is the <italic>m</italic>th row of <bold>A</bold>, <italic>k</italic> the iteration index, and 0 &lt; <italic>&#x3BB;</italic><sup><italic>k</italic></sup> &lt; 2 a free relaxation parameter. Let &#x39B;<sup>+<italic>N</italic></sup> &#x2208; &#x211D;<sup><italic>N</italic></sup> &#xD7; &#x211D;<sup><italic>N</italic></sup> be a diagonal matrix with &#x39B;<sub><italic>n</italic>,<italic>n</italic></sub><sup>+<italic>N</italic></sup> = 1/<italic>a</italic><sub>+<italic>n</italic></sub> and &#x39B;<sup><italic>M</italic>+</sup> &#x2208; &#x211D;<sup><italic>M</italic></sup> &#xD7; &#x211D;<sup><italic>M</italic></sup> be a diagonal matrix with &#x39B;<sub><italic>m</italic>,<italic>m</italic></sub><sup><italic>M</italic>+</sup> = 1/<italic>a</italic><sub><italic>m</italic>+</sub>, (<xref ref-type="disp-formula" rid="EEq5">5</xref>) can be rewritten as</p>
+        <p><disp-formula id="EEq6"><label>(6)</label><mml:math id="M12"><mml:msup><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mo>=</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>&#x2212;</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msup><mml:mo>+</mml:mo><mml:msup><mml:mrow><mml:mi>&#x3BB;</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="normal">&#x39B;</mml:mi></mml:mrow><mml:mrow><mml:mo>+</mml:mo><mml:mi>N</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>T</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mi mathvariant="normal">&#x39B;</mml:mi></mml:mrow><mml:mrow><mml:mi>M</mml:mi><mml:mo>+</mml:mo></mml:mrow></mml:msup><mml:mrow><mml:mo>(</mml:mo><mml:mi mathvariant="bold">g</mml:mi><mml:mo>&#x2212;</mml:mo><mml:mi mathvariant="bold">A</mml:mi><mml:msup><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>&#x2212;</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msup><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mo>)</mml:mo></mml:mrow><mml:mo>.</mml:mo></mml:math></disp-formula>
+							Note that for all the iteration index <italic>k</italic>, &#x39B;<sup><italic>M</italic>+</sup>, &#x39B;<sup>+<italic>N</italic></sup> and <bold>A</bold> remain unchanged.</p>
+      </sec>
+      <sec sec-type="subsection" id="sec3.2">
+        <title>3.2. Multisource Algorithm</title>
+        <p>Since (<xref ref-type="disp-formula" rid="EEq4">4</xref>) is a non-linear equation, there is no analytic solution to this problem. Here, we will find a solution in the SART framework summarized in the proceeding subsection.  Our strategy is to linearize the equation and approximate the solution successively.  Denote the approximate solution for (<xref ref-type="disp-formula" rid="EEq4">4</xref>) as <inline-formula><mml:math id="M13"><mml:mrow><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:math></inline-formula> after <italic>k</italic> iterations, we have   </p>
+        <p><disp-formula id="EEq7"><label>(7)</label><mml:math id="M14"><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">p</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover><mml:mo>=</mml:mo><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>q</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>Q</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:msup><mml:mrow><mml:mi>e</mml:mi></mml:mrow><mml:mrow><mml:mo>&#x2212;</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:mo minsize="0.75em" maxsize="0.75em">(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mo>+</mml:mo><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover><mml:mo>&#x2212;</mml:mo><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo minsize="0.75em" maxsize="0.75em">)</mml:mo></mml:mrow></mml:msup></mml:mrow><mml:mo>=</mml:mo><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>q</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>Q</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:msup><mml:mrow><mml:mi>e</mml:mi></mml:mrow><mml:mrow><mml:mo>&#x2212;</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:mo minsize="0.75em" maxsize="0.75em">(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mo>+</mml:mo><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo minsize="0.75em" maxsize="0.75em">)</mml:mo></mml:mrow></mml:msup></mml:mrow><mml:mo>=</mml:mo><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>q</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>Q</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi>e</mml:mi></mml:mrow><mml:mrow><mml:mo>&#x2212;</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:msup><mml:mo>&#x2299;</mml:mo><mml:msup><mml:mrow><mml:mi>e</mml:mi></mml:mrow><mml:mrow><mml:mo>&#x2212;</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mo>,</mml:mo></mml:math></disp-formula>
+							where  <inline-formula><mml:math id="M15"><mml:mi>&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:math></inline-formula> is the error image, and &#x201C;&#x2299;&#x201D; represents the component-wise multiplication of vectors of the same size. Then, <inline-formula><mml:math id="M16"><mml:msup><mml:mrow><mml:mi>e</mml:mi></mml:mrow><mml:mrow><mml:mo>-</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:mi>&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:msup></mml:math></inline-formula>in (<xref ref-type="disp-formula" rid="EEq7">7</xref>) can be expanded in a Taylor series</p>
+        <p><disp-formula id="EEq8"><label>(8)</label><mml:math id="M17"><mml:msup><mml:mrow><mml:mi>e</mml:mi></mml:mrow><mml:mrow><mml:mo>&#x2212;</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:msup><mml:mo>=</mml:mo><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>t</mml:mi><mml:mo>=</mml:mo><mml:mn>0</mml:mn></mml:mrow><mml:mrow><mml:mi>&#x221E;</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:mfrac><mml:mrow><mml:msup><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:mo>&#x2212;</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mrow><mml:mi>t</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mrow><mml:mi>t</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mrow><mml:mi>t</mml:mi><mml:mo>!</mml:mo></mml:mrow></mml:mfrac></mml:mrow><mml:mo>,</mml:mo></mml:math></disp-formula>
+							where  <inline-formula><mml:math id="M18"><mml:msup><mml:mrow><mml:mrow><mml:mo stretchy="false">(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:mi>&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo stretchy="false">)</mml:mo></mml:mrow></mml:mrow><mml:mrow><mml:mi>t</mml:mi></mml:mrow></mml:msup><mml:mo>=</mml:mo><mml:mrow><mml:mo stretchy="false">(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:mi>&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo stretchy="false">)</mml:mo></mml:mrow><mml:mo>&#x2299;</mml:mo><mml:mrow><mml:mo stretchy="false">(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:mi>&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo stretchy="false">)</mml:mo></mml:mrow><mml:mo>&#x22EF;</mml:mo><mml:mo>.</mml:mo></mml:math></inline-formula> Substituting the 1st order approximation of <inline-formula><mml:math id="M19"><mml:msup><mml:mrow><mml:mi>e</mml:mi></mml:mrow><mml:mrow><mml:mo>-</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:mi>&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:msup></mml:math></inline-formula> into (<xref ref-type="disp-formula" rid="EEq7">7</xref>), we have </p>
+        <p><disp-formula id="EEq9"><label>(9)</label><mml:math id="M20"><mml:mtable><mml:mtr><mml:mtd columnalign="right"><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">p</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mtd><mml:mtd columnalign="left"><mml:mo>&#x2248;</mml:mo><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>q</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>Q</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi>e</mml:mi></mml:mrow><mml:mrow><mml:mo>&#x2212;</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:msup><mml:mo>&#x2299;</mml:mo><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:mn>1</mml:mn><mml:mo>&#x2212;</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="right"/><mml:mtd columnalign="left"><mml:mo>=</mml:mo><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>q</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>Q</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:msup><mml:mrow><mml:mi>e</mml:mi></mml:mrow><mml:mrow><mml:mo>&#x2212;</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:msup></mml:mrow><mml:mo>&#x2212;</mml:mo><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>q</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>Q</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi>e</mml:mi></mml:mrow><mml:mrow><mml:mo>&#x2212;</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:msup><mml:mo>&#x2299;</mml:mo><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="right"/><mml:mtd columnalign="left"><mml:mo>=</mml:mo><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>q</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>Q</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:msup><mml:mrow><mml:mi>e</mml:mi></mml:mrow><mml:mrow><mml:mo>&#x2212;</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:msup></mml:mrow><mml:mo>&#x2212;</mml:mo><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>q</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>Q</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="bold">E</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow></mml:mrow><mml:mo>)</mml:mo></mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow><mml:mo>,</mml:mo></mml:mtd></mml:mtr></mml:mtable></mml:math></disp-formula>
+							where  <bold>E</bold><sup><italic>q</italic>,<italic>k</italic></sup> &#x2208; &#x211D;<sup><italic>M</italic></sup> &#xD7; &#x211D;<sup><italic>M</italic></sup> be a diagonal matrix with <inline-formula><mml:math id="M21"><mml:msubsup><mml:mrow><mml:mi>E</mml:mi></mml:mrow><mml:mrow><mml:mi>m</mml:mi><mml:mo>,</mml:mo><mml:mi>m</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msubsup><mml:mo>=</mml:mo><mml:msup><mml:mrow><mml:mi>e</mml:mi></mml:mrow><mml:mrow><mml:mo>-</mml:mo><mml:msubsup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>m</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msubsup><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:msup></mml:math></inline-formula>. Equation (<xref ref-type="disp-formula" rid="EEq9">9</xref>) can be rewritten as</p>
+        <p><disp-formula id="EEq10"><label>(10)</label><mml:math id="M22"><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">g</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mo>=</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">B</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mo>,</mml:mo></mml:math></disp-formula>
+							where</p>
+        <p><disp-formula id="EEq12"><label>(11)</label><mml:math id="M23"><mml:mtable><mml:mtr><mml:mtd><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">g</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mo>=</mml:mo><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>q</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>Q</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:msup><mml:mrow><mml:mi>e</mml:mi></mml:mrow><mml:mrow><mml:mo>&#x2212;</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:msup></mml:mrow><mml:mo>&#x2212;</mml:mo><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">p</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover><mml:mo>,</mml:mo></mml:mtd></mml:mtr><mml:mtr><mml:mtd><mml:msup><mml:mrow><mml:mi mathvariant="bold">B</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mo>=</mml:mo><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>q</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>Q</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="bold">E</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mo>.</mml:mo></mml:mtd></mml:mtr></mml:mtable></mml:math></disp-formula>
+							Since the projection errors <inline-formula><mml:math id="M24"><mml:mrow><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">g</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:math></inline-formula> from the involved sources are known, (<xref ref-type="disp-formula" rid="EEq10">10</xref>) can be understood as a linear system of <inline-formula><mml:math id="M25"><mml:mi>&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:math></inline-formula> with a measurement matrix <bold>B</bold><sup><italic>k</italic></sup>. </p>
+        <p>          Because  (<xref ref-type="disp-formula" rid="EEq10">10</xref>) has the same structure as that of (<xref ref-type="disp-formula" rid="EEq2">2</xref>), we can use the SART-type formula (<xref ref-type="disp-formula" rid="EEq6">6</xref>) to solve for <inline-formula><mml:math id="M26"><mml:mi>&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:math></inline-formula>.  Let &#x39B;<sup>+<italic>N</italic>,<italic>k</italic></sup> &#x2208; &#x211D;<sup><italic>N</italic></sup> &#xD7; &#x211D;<sup><italic>N</italic></sup> be a diagonal matrix with </p>
+        <p><disp-formula id="EEq13"><label>(12)</label><mml:math id="M27"><mml:msubsup><mml:mrow><mml:mi mathvariant="normal">&#x39B;</mml:mi></mml:mrow><mml:mrow><mml:mi>n</mml:mi><mml:mo>,</mml:mo><mml:mi>n</mml:mi></mml:mrow><mml:mrow><mml:mo>+</mml:mo><mml:mi>N</mml:mi><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msubsup><mml:mo>=</mml:mo><mml:mfrac><mml:mrow><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:msubsup><mml:mo>&#x2211;</mml:mo><mml:mrow><mml:mi>m</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>M</mml:mi></mml:mrow></mml:msubsup><mml:mrow><mml:msubsup><mml:mrow><mml:mi>b</mml:mi></mml:mrow><mml:mrow><mml:mi>m</mml:mi><mml:mo>,</mml:mo><mml:mi>n</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msubsup></mml:mrow></mml:mrow></mml:mfrac><mml:mo>,</mml:mo></mml:math></disp-formula>
+							and &#x39B;<sup><italic>M</italic>+,<italic>k</italic></sup> &#x2208; &#x211D;<sup><italic>M</italic></sup> &#xD7; &#x211D;<sup><italic>M</italic></sup>be a diagonal matrix with </p>
+        <p><disp-formula id="EEq14"><label>(13)</label><mml:math id="M28"><mml:msubsup><mml:mrow><mml:mi mathvariant="normal">&#x39B;</mml:mi></mml:mrow><mml:mrow><mml:mi>m</mml:mi><mml:mo>,</mml:mo><mml:mi>m</mml:mi></mml:mrow><mml:mrow><mml:mi>M</mml:mi><mml:mo>+</mml:mo><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msubsup><mml:mo>=</mml:mo><mml:mfrac><mml:mrow><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:munderover><mml:mo>&#x2211;</mml:mo><mml:mrow><mml:mi>n</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>N</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:msubsup><mml:mrow><mml:mi>b</mml:mi></mml:mrow><mml:mrow><mml:mi>m</mml:mi><mml:mo>,</mml:mo><mml:mi>n</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msubsup></mml:mrow></mml:mrow></mml:mfrac><mml:mo>,</mml:mo></mml:math></disp-formula>
+							we have the SART-type solution for  <inline-formula><mml:math id="M29"><mml:mi>&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:math></inline-formula></p>
+        <p><disp-formula id="EEq15"><label>(14)</label><mml:math id="M30"><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mi>l</mml:mi></mml:mrow></mml:msup><mml:mo>=</mml:mo><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mi>l</mml:mi><mml:mo>&#x2212;</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msup><mml:mo>+</mml:mo><mml:msup><mml:mrow><mml:mi>&#x3BB;</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mi>l</mml:mi></mml:mrow></mml:msup><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="normal">&#x39B;</mml:mi></mml:mrow><mml:mrow><mml:mo>+</mml:mo><mml:mi>N</mml:mi><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="bold">B</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mrow><mml:mi>T</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mi mathvariant="normal">&#x39B;</mml:mi></mml:mrow><mml:mrow><mml:mi>M</mml:mi><mml:mo>+</mml:mo><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mrow><mml:mo>(</mml:mo><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">g</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mo>&#x2212;</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">B</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mi>l</mml:mi><mml:mo>&#x2212;</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msup><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mo>)</mml:mo></mml:mrow><mml:mo>,</mml:mo></mml:math></disp-formula>
+							where <italic>l</italic> is the iteration index and <italic>&#x3BB;</italic><sup><italic>k</italic>,<italic>l</italic></sup> the relax parameter. Since</p>
+        <p><disp-formula id="EEq16"><label>(15)</label><mml:math id="M31"><mml:mtable><mml:mtr><mml:mtd columnalign="right"><mml:msup><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="bold">B</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mrow><mml:mi>T</mml:mi></mml:mrow></mml:msup></mml:mtd><mml:mtd columnalign="left"><mml:mo>=</mml:mo><mml:msup><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>q</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>Q</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="bold">E</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mrow><mml:mi>T</mml:mi></mml:mrow></mml:msup><mml:mo>=</mml:mo><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>q</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>Q</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:msup><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="bold">E</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mrow><mml:mi>T</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="right"/><mml:mtd columnalign="left"><mml:mo>=</mml:mo><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>q</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>Q</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mrow><mml:mi>T</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="bold">E</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mrow><mml:mi>T</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mo>=</mml:mo><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>q</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>Q</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mrow><mml:mi>T</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mi mathvariant="bold">E</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mo>,</mml:mo></mml:mtd></mml:mtr></mml:mtable></mml:math></disp-formula>
+							Equation (<xref ref-type="disp-formula" rid="EEq15">14</xref>) can be rewritten as</p>
+        <p><disp-formula id="EEq17"><label>(16)</label><mml:math id="M32"><mml:mtable><mml:mtr><mml:mtd columnalign="right"><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mi>l</mml:mi></mml:mrow></mml:msup></mml:mtd><mml:mtd columnalign="left"><mml:mo>=</mml:mo><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mi>l</mml:mi><mml:mo>&#x2212;</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msup><mml:mo>+</mml:mo><mml:msup><mml:mrow><mml:mi>&#x3BB;</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mi>l</mml:mi></mml:mrow></mml:msup><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="normal">&#x39B;</mml:mi></mml:mrow><mml:mrow><mml:mo>+</mml:mo><mml:mi>N</mml:mi><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>q</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>Q</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mrow><mml:mi>T</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mi mathvariant="bold">E</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow></mml:mrow></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="right"/><mml:mtd columnalign="left"><mml:mrow><mml:mrow><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#xD7;</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="normal">&#x39B;</mml:mi></mml:mrow><mml:mrow><mml:mi>M</mml:mi><mml:mo>+</mml:mo><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">g</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mo>&#x2212;</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">B</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mi>l</mml:mi><mml:mo>&#x2212;</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="right"/><mml:mtd columnalign="left"><mml:mo>=</mml:mo><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mi>l</mml:mi><mml:mo>&#x2212;</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msup><mml:mo>+</mml:mo><mml:msup><mml:mrow><mml:mi>&#x3BB;</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mi>l</mml:mi></mml:mrow></mml:msup><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>q</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>Q</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="normal">&#x39B;</mml:mi></mml:mrow><mml:mrow><mml:mo>+</mml:mo><mml:mi>N</mml:mi><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mrow><mml:mi>T</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mi mathvariant="bold">E</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:mrow></mml:mrow></mml:mrow></mml:mrow></mml:mrow></mml:mrow></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="right"/><mml:mtd columnalign="left"><mml:mrow><mml:mrow><mml:mrow><mml:mrow><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#xD7;</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="normal">&#x39B;</mml:mi></mml:mrow><mml:mrow><mml:mi>M</mml:mi><mml:mo>+</mml:mo><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">g</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mo>&#x2212;</mml:mo><mml:mi>&#x2009;&#x2009;</mml:mi><mml:msup><mml:mrow><mml:mi mathvariant="bold">B</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mi>l</mml:mi><mml:mo>&#x2212;</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="right"/><mml:mtd columnalign="left"><mml:mo>=</mml:mo><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mi>l</mml:mi><mml:mo>&#x2212;</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msup><mml:mo>+</mml:mo><mml:msup><mml:mrow><mml:mi>&#x3BB;</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mi>l</mml:mi></mml:mrow></mml:msup><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>q</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>Q</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="normal">&#x39B;</mml:mi></mml:mrow><mml:mrow><mml:mo>+</mml:mo><mml:mi>N</mml:mi><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mrow><mml:mi>T</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mi mathvariant="normal">&#x39B;</mml:mi></mml:mrow><mml:mrow><mml:mi>M</mml:mi><mml:mo>+</mml:mo><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:mrow></mml:mrow></mml:mrow></mml:mrow></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="right"/><mml:mtd columnalign="left"><mml:mrow><mml:mrow><mml:mrow><mml:mrow><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#xD7;</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">E</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mrow><mml:mo>(</mml:mo><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">g</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mi>&#x2009;&#x2009;</mml:mi><mml:mo>&#x2212;</mml:mo><mml:mi>&#x2009;&#x2009;</mml:mi><mml:msup><mml:mrow><mml:mi mathvariant="bold">B</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mi>l</mml:mi><mml:mo>&#x2212;</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msup><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="right"/><mml:mtd columnalign="left"><mml:mo>=</mml:mo><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mi>l</mml:mi><mml:mo>&#x2212;</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msup><mml:mo>+</mml:mo><mml:msup><mml:mrow><mml:mi>&#x3BB;</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mi>l</mml:mi></mml:mrow></mml:msup><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:munderover><mml:mstyle displaystyle="true"><mml:mo>&#x2211;</mml:mo></mml:mstyle><mml:mrow><mml:mi>q</mml:mi><mml:mo>=</mml:mo><mml:mn>1</mml:mn></mml:mrow><mml:mrow><mml:mi>Q</mml:mi></mml:mrow></mml:munderover><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="normal">&#x39B;</mml:mi></mml:mrow><mml:mrow><mml:mo>+</mml:mo><mml:mi>N</mml:mi><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mrow><mml:mi>T</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mi mathvariant="normal">&#x39B;</mml:mi></mml:mrow><mml:mrow><mml:mi>M</mml:mi><mml:mo>+</mml:mo><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:mrow></mml:mrow></mml:mrow></mml:mrow></mml:mtd></mml:mtr><mml:mtr><mml:mtd columnalign="right"/><mml:mtd columnalign="left"><mml:mrow><mml:mrow><mml:mrow><mml:mrow><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#x2003;</mml:mo><mml:mo>&#xD7;</mml:mo><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi>e</mml:mi></mml:mrow><mml:mrow><mml:mo>&#x2212;</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:msup><mml:mo>&#x2299;</mml:mo><mml:mrow><mml:mo>(</mml:mo><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">g</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mi>&#x2009;&#x2009;</mml:mi><mml:mo>&#x2212;</mml:mo><mml:mi>&#x2009;&#x2009;</mml:mi><mml:msup><mml:mrow><mml:mi mathvariant="bold">B</mml:mi></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mi>l</mml:mi><mml:mo>&#x2212;</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msup><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mtd></mml:mtr></mml:mtable></mml:math></disp-formula>
+							Once we have an approximation solution <inline-formula><mml:math id="M33"><mml:mi>&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mi>L</mml:mi></mml:mrow></mml:msup></mml:math></inline-formula> for <inline-formula><mml:math id="M34"><mml:mi>&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:math></inline-formula> after <italic>L</italic> iterations,we can update the reconstructed image by</p>
+        <p><disp-formula id="EEq18"><label>(17)</label><mml:math id="M36"><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>+</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msup><mml:mo>=</mml:mo><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mo>+</mml:mo><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mi>L</mml:mi></mml:mrow></mml:msup><mml:mo>.</mml:mo></mml:math></disp-formula>
+							For example, we can choose <inline-formula><mml:math id="M37"><mml:mi>&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mn>0</mml:mn></mml:mrow></mml:msup><mml:mo>=</mml:mo><mml:mn>0</mml:mn></mml:math></inline-formula> as the initial image and set <italic>L</italic> = 1 for one step iteration to approximate <inline-formula><mml:math id="M38"><mml:mi>&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:math></inline-formula>, which results in a simplified algorithm</p>
+        <p>
+          <disp-formula id="EEq19">
+            <label>(18)</label>
+            <mml:math id="M39">
+              <mml:msup>
+                <mml:mrow>
+                  <mml:mover accent="true">
+                    <mml:mrow>
+                      <mml:mi mathvariant="bold">f</mml:mi>
+                    </mml:mrow>
+                    <mml:mo>&#x2DC;</mml:mo>
+                  </mml:mover>
+                </mml:mrow>
+                <mml:mrow>
+                  <mml:mi>k</mml:mi>
+                  <mml:mo>+</mml:mo>
+                  <mml:mn>1</mml:mn>
+                </mml:mrow>
+              </mml:msup>
+              <mml:mo>=</mml:mo>
+              <mml:msup>
+                <mml:mrow>
+                  <mml:mover accent="true">
+                    <mml:mrow>
+                      <mml:mi mathvariant="bold">f</mml:mi>
+                    </mml:mrow>
+                    <mml:mo>&#x2DC;</mml:mo>
+                  </mml:mover>
+                </mml:mrow>
+                <mml:mrow>
+                  <mml:mi>k</mml:mi>
+                </mml:mrow>
+              </mml:msup>
+              <mml:mo>+</mml:mo>
+              <mml:msup>
+                <mml:mrow>
+                  <mml:mi>&#x3BB;</mml:mi>
+                </mml:mrow>
+                <mml:mrow>
+                  <mml:mi>k</mml:mi>
+                </mml:mrow>
+              </mml:msup>
+              <mml:mrow>
+                <mml:mo>(</mml:mo>
+                <mml:mrow>
+                  <mml:munderover>
+                    <mml:mstyle displaystyle="true">
+                      <mml:mo>&#x2211;</mml:mo>
+                    </mml:mstyle>
+                    <mml:mrow>
+                      <mml:mi>q</mml:mi>
+                      <mml:mo>=</mml:mo>
+                      <mml:mn>1</mml:mn>
+                    </mml:mrow>
+                    <mml:mrow>
+                      <mml:mi>Q</mml:mi>
+                    </mml:mrow>
+                  </mml:munderover>
+                  <mml:mrow>
+                    <mml:mrow>
+                      <mml:mo>(</mml:mo>
+                      <mml:mrow>
+                        <mml:msup>
+                          <mml:mrow>
+                            <mml:mi mathvariant="normal">&#x39B;</mml:mi>
+                          </mml:mrow>
+                          <mml:mrow>
+                            <mml:mo>+</mml:mo>
+                            <mml:mi>N</mml:mi>
+                            <mml:mo>,</mml:mo>
+                            <mml:mi>k</mml:mi>
+                          </mml:mrow>
+                        </mml:msup>
+                        <mml:msup>
+                          <mml:mrow>
+                            <mml:mrow>
+                              <mml:mo>(</mml:mo>
+                              <mml:mrow>
+                                <mml:msup>
+                                  <mml:mrow>
+                                    <mml:mi mathvariant="bold">A</mml:mi>
+                                  </mml:mrow>
+                                  <mml:mrow>
+                                    <mml:mi>q</mml:mi>
+                                  </mml:mrow>
+                                </mml:msup>
+                              </mml:mrow>
+                              <mml:mo>)</mml:mo>
+                            </mml:mrow>
+                          </mml:mrow>
+                          <mml:mrow>
+                            <mml:mi>T</mml:mi>
+                          </mml:mrow>
+                        </mml:msup>
+                        <mml:msup>
+                          <mml:mrow>
+                            <mml:mi mathvariant="normal">&#x39B;</mml:mi>
+                          </mml:mrow>
+                          <mml:mrow>
+                            <mml:mi>M</mml:mi>
+                            <mml:mo>+</mml:mo>
+                            <mml:mo>,</mml:mo>
+                            <mml:mi>k</mml:mi>
+                          </mml:mrow>
+                        </mml:msup>
+                        <mml:mrow>
+                          <mml:mo>(</mml:mo>
+                          <mml:mrow>
+                            <mml:msup>
+                              <mml:mrow>
+                                <mml:mi>e</mml:mi>
+                              </mml:mrow>
+                              <mml:mrow>
+                                <mml:mo>&#x2212;</mml:mo>
+                                <mml:msup>
+                                  <mml:mrow>
+                                    <mml:mi mathvariant="bold">A</mml:mi>
+                                  </mml:mrow>
+                                  <mml:mrow>
+                                    <mml:mi>q</mml:mi>
+                                  </mml:mrow>
+                                </mml:msup>
+                                <mml:msup>
+                                  <mml:mrow>
+                                    <mml:mover accent="true">
+                                      <mml:mrow>
+                                        <mml:mi mathvariant="bold">f</mml:mi>
+                                      </mml:mrow>
+                                      <mml:mo>&#x2DC;</mml:mo>
+                                    </mml:mover>
+                                  </mml:mrow>
+                                  <mml:mrow>
+                                    <mml:mi>k</mml:mi>
+                                  </mml:mrow>
+                                </mml:msup>
+                              </mml:mrow>
+                            </mml:msup>
+                            <mml:mo>&#x2299;</mml:mo>
+                            <mml:msup>
+                              <mml:mrow>
+                                <mml:mover accent="true">
+                                  <mml:mrow>
+                                    <mml:mi mathvariant="bold">g</mml:mi>
+                                  </mml:mrow>
+                                  <mml:mo>&#x2DC;</mml:mo>
+                                </mml:mover>
+                              </mml:mrow>
+                              <mml:mrow>
+                                <mml:mi>k</mml:mi>
+                              </mml:mrow>
+                            </mml:msup>
+                          </mml:mrow>
+                          <mml:mo>)</mml:mo>
+                        </mml:mrow>
+                      </mml:mrow>
+                      <mml:mo>)</mml:mo>
+                    </mml:mrow>
+                  </mml:mrow>
+                </mml:mrow>
+                <mml:mo>)</mml:mo>
+              </mml:mrow>
+              <mml:mo>.</mml:mo>
+            </mml:math>
+          </disp-formula>
+        </p>
+        <p>             For numerical implementation, our SART-type reconstruction algorithm for image reconstruction from overlapped projections can be summarized in the following pseudocode:</p>
+        <list list-type="simple">
+          <list-item>
+            <label>(S.1.)</label>
+            <p> initialize <inline-formula><mml:math id="M40"><mml:mrow><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:math></inline-formula> and <italic>&#x3BB;</italic><sup><italic>k</italic></sup> for <italic>k</italic> :  = 0;</p>
+          </list-item>
+          <list-item>
+            <label>(S.2.)</label>
+            <p> compute <inline-formula><mml:math id="M41"><mml:mrow><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">g</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:math></inline-formula>, &#x39B;<sup>+<italic>N</italic>,<italic>k</italic></sup> and &#x39B;<sup><italic>M</italic>+,<italic>k</italic></sup>;</p>
+          </list-item>
+          <list-item>
+            <label>(S.3.)</label>
+            <p> initialize the error image <inline-formula><mml:math id="M42"><mml:mi>&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msup><mml:mo>:</mml:mo><mml:mo>=</mml:mo><mml:mn>0</mml:mn></mml:math></inline-formula>;</p>
+          </list-item>
+          <list-item>
+            <label>(S.4.)</label>
+            <p>  for <italic>q</italic> = 1 to <italic>Q</italic> backproject the projection error; </p>
+            <p>
+              <list list-type="simple">
+                <list-item>
+                  <label>(S.4.1.)</label>
+                  <p> weight the projection error <inline-formula><mml:math id="M43"><mml:mrow><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">g</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:math></inline-formula> by <inline-formula><mml:math id="M44"><mml:msup><mml:mrow><mml:mi>e</mml:mi></mml:mrow><mml:mrow><mml:mo>-</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:msup></mml:math></inline-formula>;</p>
+                </list-item>
+                <list-item>
+                  <label>(S.4.2.)</label>
+                  <p> weight the projection error <inline-formula><mml:math id="M45"><mml:mrow><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">g</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:math></inline-formula> by &#x39B;<sup><italic>M</italic>+,<italic>k</italic></sup>;</p>
+                </list-item>
+                <list-item>
+                  <label>(S.4.3.)</label>
+                  <p> backproject the weighted projection error towards the <italic>q</italic>th X-ray source;</p>
+                </list-item>
+                <list-item>
+                  <label>(S.4.4.)</label>
+                  <p> weight the backprojected error image by &#x39B;<sup>+<italic>N</italic>,<italic>k</italic></sup>;</p>
+                </list-item>
+                <list-item>
+                  <label>(S.4.5.)</label>
+                  <p> add the backprojected image to <inline-formula><mml:math id="M46"><mml:mi>&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msup></mml:math></inline-formula> by
+													<disp-formula id="eq1"><label>(19)</label><mml:math id="M47"><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msup><mml:mi>&#x2009;&#x2009;</mml:mi><mml:mtext>:=</mml:mtext><mml:mi>&#x2009;&#x2009;</mml:mi><mml:mi mathvariant="normal">&#x394;</mml:mi><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>,</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msup><mml:mo>+</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="normal">&#x39B;</mml:mi></mml:mrow><mml:mrow><mml:mo>+</mml:mo><mml:mi>N</mml:mi><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow></mml:mrow><mml:mrow><mml:mi>T</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mi mathvariant="normal">&#x39B;</mml:mi></mml:mrow><mml:mrow><mml:mi>M</mml:mi><mml:mo>+</mml:mo><mml:mo>,</mml:mo><mml:mi>k</mml:mi></mml:mrow></mml:msup><mml:mrow><mml:mo>(</mml:mo><mml:mrow><mml:msup><mml:mrow><mml:mi>e</mml:mi></mml:mrow><mml:mrow><mml:mo>&#x2212;</mml:mo><mml:msup><mml:mrow><mml:mi mathvariant="bold">A</mml:mi></mml:mrow><mml:mrow><mml:mi>q</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:msup><mml:mo>&#x2299;</mml:mo><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">g</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>)</mml:mo></mml:mrow><mml:mo>;</mml:mo></mml:math></disp-formula></p>
+                </list-item>
+              </list>
+            </p>
+          </list-item>
+          <list-item>
+            <label>(S.5.)</label>
+            <p> update the current estimated image by</p>
+          </list-item>
+        </list>
+        <p>
+          <disp-formula id="eq2">
+            <label>(20)</label>
+            <mml:math id="M48">
+              <mml:msup>
+                <mml:mrow>
+                  <mml:mover accent="true">
+                    <mml:mrow>
+                      <mml:mi mathvariant="bold">f</mml:mi>
+                    </mml:mrow>
+                    <mml:mo>&#x2DC;</mml:mo>
+                  </mml:mover>
+                </mml:mrow>
+                <mml:mrow>
+                  <mml:mi>k</mml:mi>
+                  <mml:mo>+</mml:mo>
+                  <mml:mn>1</mml:mn>
+                </mml:mrow>
+              </mml:msup>
+              <mml:mi>&#x2009;&#x2009;</mml:mi>
+              <mml:mtext>:=</mml:mtext>
+              <mml:mi>&#x2009;&#x2009;</mml:mi>
+              <mml:msup>
+                <mml:mrow>
+                  <mml:mover accent="true">
+                    <mml:mrow>
+                      <mml:mi mathvariant="bold">f</mml:mi>
+                    </mml:mrow>
+                    <mml:mo>&#x2DC;</mml:mo>
+                  </mml:mover>
+                </mml:mrow>
+                <mml:mrow>
+                  <mml:mi>k</mml:mi>
+                </mml:mrow>
+              </mml:msup>
+              <mml:mo>+</mml:mo>
+              <mml:msup>
+                <mml:mrow>
+                  <mml:mi>&#x3BB;</mml:mi>
+                </mml:mrow>
+                <mml:mrow>
+                  <mml:mi>k</mml:mi>
+                </mml:mrow>
+              </mml:msup>
+              <mml:mi mathvariant="normal">&#x394;</mml:mi>
+              <mml:msup>
+                <mml:mrow>
+                  <mml:mover accent="true">
+                    <mml:mrow>
+                      <mml:mi mathvariant="bold">f</mml:mi>
+                    </mml:mrow>
+                    <mml:mo>&#x2DC;</mml:mo>
+                  </mml:mover>
+                </mml:mrow>
+                <mml:mrow>
+                  <mml:mi>k</mml:mi>
+                  <mml:mo>,</mml:mo>
+                  <mml:mn>1</mml:mn>
+                </mml:mrow>
+              </mml:msup>
+              <mml:mo>;</mml:mo>
+            </mml:math>
+          </disp-formula>
+        </p>
+        <list list-type="simple">
+          <list-item>
+            <label>(S.6.)</label>
+            <p>  set <italic>k</italic> :  = <italic>k</italic> + 1; </p>
+          </list-item>
+          <list-item>
+            <label>(S.7.)</label>
+            <p>  go to (S.2) until the convergence criteria are satisfied;</p>
+          </list-item>
+          <list-item>
+            <label>(S.8.)</label>
+            <p>  scale the reconstructed image <inline-formula><mml:math id="M49"><mml:mrow><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>&#x2217;</mml:mi></mml:mrow></mml:msup></mml:mrow></mml:math></inline-formula> to obtain the final result <inline-formula><mml:math id="M50"><mml:msup><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mrow><mml:mi>&#x2217;</mml:mi></mml:mrow></mml:msup><mml:mo>=</mml:mo><mml:mrow><mml:mrow><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>&#x2217;</mml:mi></mml:mrow></mml:msup></mml:mrow><mml:mo>/</mml:mo><mml:mrow><mml:mi>s</mml:mi></mml:mrow></mml:mrow></mml:math></inline-formula>.</p>
+          </list-item>
+        </list>
+        <p>               In the above pseudo-code, (S.1.) initializes the iteration index <italic>k</italic>, the relax parameter <italic>&#x3BB;</italic>, and the initial image <inline-formula><mml:math id="M51"><mml:mrow><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mn>0</mml:mn></mml:mrow></mml:msup></mml:mrow></mml:math></inline-formula>.  In our numerical simulation, we always set <italic>&#x3BB;</italic><sup><italic>k</italic></sup> = 1 and <inline-formula><mml:math id="M52"><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mn>0</mml:mn></mml:mrow></mml:msup><mml:mo>=</mml:mo><mml:mn>0</mml:mn></mml:math></inline-formula>. The outer loop (S.2)&#x2013;(S.7) solves for <inline-formula><mml:math id="M53"><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow></mml:math></inline-formula> successively. (S.2) precomputes several important intermediate variables to update an reconstructed image in the iteration step <italic>k</italic>. (S.3)-(S.4) computes the current error image for one step iteration according to (<xref ref-type="disp-formula" rid="EEq17">16</xref>).  Because the backprojection operation for different X-ray sources in the inner loop (S.4) has the same structure, it can be implemented by calling a common procedure.  (S.5) updates an reconstructed image. (S.6) updates the iteration index. In (S.7), the convergence criteria are checked. The stopping criteria for (S.7) can be the maximum iteration number is reached and/or the relative reconstruction error comes under a predefined threshold [<xref ref-type="bibr" rid="B14">14</xref>]. Finally, the reconstructed image <bold>f</bold>* is scaled by dividing with the constant <italic>s</italic>.</p>
+      </sec>
+      <sec sec-type="subsection" id="sec3.3">
+        <title>3.3. Sparsity Regularization</title>
+        <p>The conventional data acquisition is based on the Nyquist sampling theory, which states that for accurate reconstruction of a band-limited signal or image the sampling rate must be at least twice the highest frequency of the signal or image. However, the recently developed CS theory shows that a high-quality signal or image can be reconstructed from far fewer measurements than what is usually required by the Nyquist sampling theorem [<xref ref-type="bibr" rid="B7">7</xref>, <xref ref-type="bibr" rid="B8">8</xref>]. In light of the work on solving the linear inverse problems with sparsity constraints by Daubechies et al.    [<xref ref-type="bibr" rid="B14">14</xref>, <xref ref-type="bibr" rid="B15">15</xref>], we recently adapted the single source SART to reconstruct an image from a limited number of projections subject to a sparsity constraint [<xref ref-type="bibr" rid="B16">16</xref>], and demonstrated that the sparsity constraint helped improve the quality of reconstructed images effectively and reduce the number of projections significantly.  Using the same strategy described in our previous papers  [<xref ref-type="bibr" rid="B16">16</xref>, <xref ref-type="bibr" rid="B17">17</xref>],  here we use the sparisty constraint to regularize the proposed multi-source SART algorithm.  This can be done by adding a soft-threshold filtering step between (S.5) and (S.6) in the pseudo-code given in <xref ref-type="sec" rid="sec3.2">Section 3.2</xref>.  Particularly, we have the following pseudo-code segment:</p>
+        <list list-type="simple">
+          <list-item>
+            <label>(SS.5.)</label>
+            <p>     perform a soft-threshold filtering operation for <inline-formula><mml:math id="M54"><mml:mrow><mml:msup><mml:mrow><mml:mover accent="true"><mml:mrow><mml:mi mathvariant="bold">f</mml:mi></mml:mrow><mml:mo>&#x2DC;</mml:mo></mml:mover></mml:mrow><mml:mrow><mml:mi>k</mml:mi><mml:mo>+</mml:mo><mml:mn>1</mml:mn></mml:mrow></mml:msup></mml:mrow></mml:math></inline-formula>;       </p>
+            <p>
+              <list list-type="simple">
+                <list-item>
+                  <label>(SS.5.1.)</label>
+                  <p> compute the sparse transform;</p>
+                </list-item>
+                <list-item>
+                  <label>(SS.5.2.)</label>
+                  <p> estimate the optimal threshold;</p>
+                </list-item>
+                <list-item>
+                  <label>(SS.5.3.)</label>
+                  <p>perform the soft-threshold filtering;</p>
+                </list-item>
+                <list-item>
+                  <label>(SS.5.4.)</label>
+                  <p>perform the inverse sparse transform.</p>
+                </list-item>
+              </list>
+            </p>
+          </list-item>
+        </list>
+        <p>            In the above pseudo-code,  the sparse transform in (SS.5.1) can be either any invertible lossless compressible transform such as wavelet transform [<xref ref-type="bibr" rid="B16">16</xref>] and Fourier transform or uninvertible transforms such as discrete gradient transform (DGT) and discrete difference transform (DDT) [<xref ref-type="bibr" rid="B17">17</xref>].  For an uninvertible transform, the inverse sparse transform in (SS.5.4.) is in terms of pseudoinversion as we performed for DGT and DDT [<xref ref-type="bibr" rid="B17">17</xref>].  (SS.5.2.) determines an optimal threshold automatically using the projected gradient method for fast convergence [<xref ref-type="bibr" rid="B14">14</xref>]. In fact, we can omit (SS.5.2.) and specify any fixed filtering threshold. However, both the convergence speed and final result depend on the choice of the threshold.   </p>
+      </sec>
+    </sec>
+    <sec sec-type="section" id="sec4">
+      <title>4. Numerical Simulation</title>
+      <p>To verify the proposed SART-type algorithm for image reconstruction from overlapped projections, we implemented it in Matlab on a PC, with the computationally intensive segments coded in C and linked via the MEX mechanism. As illustrated in <xref ref-type="fig" rid="fig2">Figure 2</xref>, we simulated a triple-source fan-beam micro-CT system.  In the system, the source XS0 is rotated on a circular scanning locus of radius 120&#x2009;mm. The object was a modified Shepp-Logan phantom in a compact support with a radius of 35&#x2009;mm. We used an equi-distance detector array of length 120&#x2009;mm. The detector was perpendicular to the direction from the origin to the X-ray source XS0 that is 40&#x2009;mm from the system origin.  The detector array consisted of 500 elements.  On the line through the X-ray source XS0 and parallel to the detector, we put two sources XS1 and XS2 being 25&#x2009;mm apart from XS0 on its right and left sides, respectively. With this triple-source configuration, we simulated single-source (only XS0 was fired), dual-source (XS1 and XS2 fired simultaneously), and triple-source cases (XS0, XS1 and XS2 fired simultaneously). </p>
+      <p>          For each of our selected numbers of projections over a full-scan range, we first equiangularly acquired the corresponding projection dataset based on the aforementioned projection model in the single, dual, and triple source cases, respectively. Then, we reconstructed the images using our algorithm described in <xref ref-type="sec" rid="sec3.2">Section 3.2</xref>. In our simulation, the parameter <italic>&#x3BB;</italic><sup><italic>k</italic></sup> in the SART formula (<xref ref-type="disp-formula" rid="EEq19">18</xref>) was set to 1.0, and the stopping criterion was defined as reaching the maximum iteration number 5000. Because the Shepp-Logan phantom is a piecewise constant function, its DGT and DDT are sparse. Hence, we also employed the sparsity regularization in terms of total difference minimization [<xref ref-type="bibr" rid="B17">17</xref>] and the threshold for filtering was automatically computed using the projected gradient method [<xref ref-type="bibr" rid="B14">14</xref>].  <xref ref-type="fig" rid="fig3">Figure 3 </xref>shows the reconstructed 256 &#xD7; 256 images from 9, 11, 13, and 15 projections, respectively. For real-world applications, measurement noise is unavoidable. To test the stability of the proposed algorithm against data noise, we repeated the above reconstructions from projections corrupted by Poisson noise, assuming <italic>I</italic><sub>0</sub> = 5 &#xD7; 10<sup>4</sup> photons per detector element [<xref ref-type="bibr" rid="B18">18</xref>]. The results are in <xref ref-type="fig" rid="fig4">Figure 4</xref>, which indicate the stability of the proposed algorithm.  </p>
+    </sec>
+    <sec sec-type="section" id="sec5">
+      <title>5. Discussions and Conclusion</title>
+      <p>        In the CT field, the line integral model along an X-ray path has been widely used in consistency with Beer's law. However, it does not reflect the divergence due to the combination of the finite detector size and the source focal spot. As shown in <xref ref-type="fig" rid="fig1">Figure 1</xref>, we have assumed an area model for the X-ray path and normalized it for the multi-source imaging model. Our area model treats the X-ray path as a narrow fan-beam from the X-ray point source to the detector element, and we believe that the area model works better than the line model. Note that the proposed algorithm views the projection procedure as a matrix transform, both the area and line models can be handled by our algorithm. In other words, the proposed algorithm is independent of the imaging model as long as it is linear or can be transformed into a linear one. Additionally, to simplify the derivation and demonstrate our idea, we have assumed that the photon numbers emitting from all the sources to each detector are the same. In fact, these numbers may be different, and can be easily incorporated into our algorithm.</p>
+      <p>       As far as the convergence of the proposed algorithm is concerned, it should converge to the least square solution in the cases of either noise-free and noisy projections. The reason is that the proposed method is in the framework of the general Landweber scheme, whose convergence has been well studied under quite general conditions [<xref ref-type="bibr" rid="B12">12</xref>, <xref ref-type="bibr" rid="B13">13</xref>]. When only a small number of projections are available, we can use some sparse constraints to steer the solution to the truth. However, the convergence speed of the current soft-threshold filtering technology is still slow although it has been accelerated using the projected gradient method [<xref ref-type="bibr" rid="B14">14</xref>]. In the future, we will employ more advanced techniques for a faster speed, which may include but not limited to optimizing the code, employing parallel computation, and developing new algorithms.</p>
+      <p>           In conclusion, we have developed a SART-type algorithm for image reconstruction from overlapped projections. The algorithm has been verified and demonstrated in the numerical simulation. Our methodology has a potential to support more flexible designs of multi-source CT/micro-CT systems for better contrast and temporal resolution.</p>
+    </sec>
+  </body>
+  <back>
+    <ack>
+      <title>Acknowledgments</title>
+      <p>This work is partially supported by the NSF/MRI Program (CMMI-0923297) and NIH/NIBIB Grants (EB009275 and EB011785). The authors are grateful for constructive comments from the reviewers.</p>
+    </ack>
+    <ref-list>
+      <ref id="B1">
+        <label>1</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Hounsfield</surname>
+              <given-names>GN</given-names>
+            </name>
+          </person-group>
+          <article-title>Computerized transverse axial scanning (tomography) .1. Description of system (reprinted from British-Journal-of-Radiology, vol 46, pg. 1016&#x2013;1022, 1973)</article-title>
+          <source>
+            <italic>The British Journal of Radiology</italic>
+          </source>
+          <year>1995</year>
+          <volume>68</volume>
+          <issue>815</issue>
+          <fpage>H166</fpage>
+          <lpage>H172</lpage>
+          <pub-id pub-id-type="pmid">8542219</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B2">
+        <label>2</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Bharkhada</surname>
+              <given-names>D</given-names>
+            </name>
+            <name>
+              <surname>Wang</surname>
+              <given-names>G</given-names>
+            </name>
+            <name>
+              <surname>Yu</surname>
+              <given-names>H</given-names>
+            </name>
+            <name>
+              <surname>Liu</surname>
+              <given-names>H</given-names>
+            </name>
+            <name>
+              <surname>Plemmons</surname>
+              <given-names>R</given-names>
+            </name>
+          </person-group>
+          <article-title>Line-source based X-ray tomography</article-title>
+          <source>
+            <italic>International Journal of Biomedical Imaging</italic>
+          </source>
+          <year>2009</year>
+          <volume>2009</volume>
+          <fpage>8 pages</fpage>
+          <comment>Article ID 534516.</comment>
+        </element-citation>
+      </ref>
+      <ref id="B3">
+        <label>3</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Yang</surname>
+              <given-names>L</given-names>
+            </name>
+            <name>
+              <surname>Lu</surname>
+              <given-names>Y</given-names>
+            </name>
+            <name>
+              <surname>Wang</surname>
+              <given-names>G</given-names>
+            </name>
+          </person-group>
+          <article-title>Compressed sensing based image reconstruction from overlapped proejctions</article-title>
+          <source>
+            <italic>International Journal of Biomedical Imaging</italic>
+          </source>
+          <year>2010</year>
+          <volume>2010</volume>
+          <fpage>8 pages</fpage>
+          <comment>Article ID 284073.</comment>
+        </element-citation>
+      </ref>
+      <ref id="B4">
+        <label>4</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Zhang</surname>
+              <given-names>J</given-names>
+            </name>
+            <name>
+              <surname>Yang</surname>
+              <given-names>G</given-names>
+            </name>
+            <name>
+              <surname>Lee</surname>
+              <given-names>Y</given-names>
+            </name>
+            <etal/>
+          </person-group>
+          <article-title>Multiplexing radiography for ultra-fast computed tomography: a feasibility study</article-title>
+          <source>
+            <italic>Medical Physics</italic>
+          </source>
+          <year>2007</year>
+          <volume>34</volume>
+          <issue>6</issue>
+          <fpage>2527</fpage>
+          <lpage>2527</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B5">
+        <label>5</label>
+        <element-citation publication-type="confproc">
+          <person-group person-group-type="author">
+            <name>
+              <surname>De Man</surname>
+              <given-names>B</given-names>
+            </name>
+            <name>
+              <surname>Pelc</surname>
+              <given-names>NJ</given-names>
+            </name>
+            <name>
+              <surname>Dumoulin</surname>
+              <given-names>C</given-names>
+            </name>
+            <name>
+              <surname>Bernstein</surname>
+              <given-names>T</given-names>
+            </name>
+          </person-group>
+          <person-group person-group-type="editor">
+            <name>
+              <surname>Hsieh</surname>
+              <given-names>J</given-names>
+            </name>
+            <name>
+              <surname>Samei</surname>
+              <given-names>E</given-names>
+            </name>
+          </person-group>
+          <article-title>Propagation of quantum noise in multiplexed x-ray imaging</article-title>
+          <conf-name>In: Medical Imaging 2008: Physics of Medical Imaging</conf-name>
+          <conf-date>2008</conf-date>
+          <conf-loc>San Diego, Calif, USA</conf-loc>
+          <comment><italic>Proceedings of SPIE</italic>. Paper no. 69131U</comment>
+        </element-citation>
+      </ref>
+      <ref id="B6">
+        <label>6</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Lu</surname>
+              <given-names>Y</given-names>
+            </name>
+          </person-group>
+          <article-title>Multi-beam field emission x-ray system and its reconstruction algorithm</article-title>
+          <source>
+            <italic>Medical Physics</italic>
+          </source>
+          <year>2010</year>
+          <volume>37</volume>
+          <issue>7</issue>
+          <fpage>3773</fpage>
+          <lpage>3781</lpage>
+          <pub-id pub-id-type="pmid">20831085</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B7">
+        <label>7</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Donoho</surname>
+              <given-names>DL</given-names>
+            </name>
+          </person-group>
+          <article-title>Compressed sensing</article-title>
+          <source>
+            <italic>IEEE Transactions on Information Theory</italic>
+          </source>
+          <year>2006</year>
+          <volume>52</volume>
+          <issue>4</issue>
+          <fpage>1289</fpage>
+          <lpage>1306</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B8">
+        <label>8</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Cand&#xE8;s</surname>
+              <given-names>EJ</given-names>
+            </name>
+            <name>
+              <surname>Romberg</surname>
+              <given-names>J</given-names>
+            </name>
+            <name>
+              <surname>Tao</surname>
+              <given-names>T</given-names>
+            </name>
+          </person-group>
+          <article-title>Robust uncertainty principles: exact signal reconstruction from highly incomplete frequency information</article-title>
+          <source>
+            <italic>IEEE Transactions on Information Theory</italic>
+          </source>
+          <year>2006</year>
+          <volume>52</volume>
+          <issue>2</issue>
+          <fpage>489</fpage>
+          <lpage>509</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B9">
+        <label>9</label>
+        <element-citation publication-type="other">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Ji</surname>
+              <given-names>CG</given-names>
+            </name>
+            <name>
+              <surname>Yu</surname>
+              <given-names>HY</given-names>
+            </name>
+            <name>
+              <surname>Wang</surname>
+              <given-names>G</given-names>
+            </name>
+          </person-group>
+          <article-title>Compressive sensing CT reconstruction with distributed x-ray sources and very few projection views</article-title>
+          <comment>in draft, 2010</comment>
+        </element-citation>
+      </ref>
+      <ref id="B10">
+        <label>10</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Landweber</surname>
+              <given-names>L</given-names>
+            </name>
+          </person-group>
+          <article-title>An iteration formula for Fredholm integral equations of the first kind</article-title>
+          <source>
+            <italic>American Journal of Mathematics</italic>
+          </source>
+          <year>1951</year>
+          <volume>73</volume>
+          <fpage>615</fpage>
+          <lpage>624</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B11">
+        <label>11</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Wang</surname>
+              <given-names>G</given-names>
+            </name>
+            <name>
+              <surname>Jiang</surname>
+              <given-names>M</given-names>
+            </name>
+          </person-group>
+          <article-title>Ordered-subset simultaneous algebraic reconstruction techniques (OS-SART)</article-title>
+          <source>
+            <italic>Journal of X-Ray Science and Technology</italic>
+          </source>
+          <year>2004</year>
+          <volume>12</volume>
+          <issue>3</issue>
+          <fpage>169</fpage>
+          <lpage>177</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B12">
+        <label>12</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Jiang</surname>
+              <given-names>M</given-names>
+            </name>
+            <name>
+              <surname>Wang</surname>
+              <given-names>G</given-names>
+            </name>
+          </person-group>
+          <article-title>Convergence studies on iterative algorithms for image reconstruction</article-title>
+          <source>
+            <italic>IEEE Transactions on Medical Imaging</italic>
+          </source>
+          <year>2003</year>
+          <volume>22</volume>
+          <issue>5</issue>
+          <fpage>569</fpage>
+          <lpage>579</lpage>
+          <pub-id pub-id-type="pmid">12846426</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B13">
+        <label>13</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Jiang</surname>
+              <given-names>M</given-names>
+            </name>
+            <name>
+              <surname>Wang</surname>
+              <given-names>G</given-names>
+            </name>
+          </person-group>
+          <article-title>Development of iterative algorithms for image reconstruction</article-title>
+          <source>
+            <italic>Journal of X-Ray Science and Technology</italic>
+          </source>
+          <year>2002</year>
+          <volume>10</volume>
+          <issue>1-2</issue>
+          <fpage>77</fpage>
+          <lpage>86</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B14">
+        <label>14</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Daubechies</surname>
+              <given-names>I</given-names>
+            </name>
+            <name>
+              <surname>Fornasier</surname>
+              <given-names>M</given-names>
+            </name>
+            <name>
+              <surname>Loris</surname>
+              <given-names>I</given-names>
+            </name>
+          </person-group>
+          <article-title>Accelerated projected gradient method for linear inverse problems with sparsity constraints</article-title>
+          <source>
+            <italic>Journal of Fourier Analysis and Applications</italic>
+          </source>
+          <year>2008</year>
+          <volume>14</volume>
+          <issue>5-6</issue>
+          <fpage>764</fpage>
+          <lpage>792</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B15">
+        <label>15</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Daubechies</surname>
+              <given-names>I</given-names>
+            </name>
+            <name>
+              <surname>Defrise</surname>
+              <given-names>M</given-names>
+            </name>
+            <name>
+              <surname>De Mol</surname>
+              <given-names>C</given-names>
+            </name>
+          </person-group>
+          <article-title>An iterative thresholding algorithm for linear inverse problems with a sparsity constraint</article-title>
+          <source>
+            <italic>Communications on Pure and Applied Mathematics</italic>
+          </source>
+          <year>2004</year>
+          <volume>57</volume>
+          <issue>11</issue>
+          <fpage>1413</fpage>
+          <lpage>1457</lpage>
+        </element-citation>
+      </ref>
+      <ref id="B16">
+        <label>16</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Yu</surname>
+              <given-names>H</given-names>
+            </name>
+            <name>
+              <surname>Wang</surname>
+              <given-names>G</given-names>
+            </name>
+          </person-group>
+          <article-title>SART-type image reconstruction from a limited number of projections with the sparsity constraint</article-title>
+          <source>
+            <italic>International Journal of Biomedical Imaging</italic>
+          </source>
+          <year>2010</year>
+          <volume>2010</volume>
+          <fpage>9 pages</fpage>
+          <comment>Article ID 934847.</comment>
+        </element-citation>
+      </ref>
+      <ref id="B17">
+        <label>17</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Yu</surname>
+              <given-names>HY</given-names>
+            </name>
+            <name>
+              <surname>Wang</surname>
+              <given-names>G</given-names>
+            </name>
+          </person-group>
+          <article-title>A soft-threshold filtering approach for reconstruction from a limited number of projections</article-title>
+          <source>
+            <italic>Physics in Medicine and Biology</italic>
+          </source>
+          <year>2010</year>
+          <volume>55</volume>
+          <issue>13</issue>
+          <fpage>3905</fpage>
+          <lpage>3916</lpage>
+          <pub-id pub-id-type="pmid">20571212</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="B18">
+        <label>18</label>
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Yu</surname>
+              <given-names>H</given-names>
+            </name>
+            <name>
+              <surname>Ye</surname>
+              <given-names>Y</given-names>
+            </name>
+            <name>
+              <surname>Zhao</surname>
+              <given-names>S</given-names>
+            </name>
+            <name>
+              <surname>Wang</surname>
+              <given-names>G</given-names>
+            </name>
+          </person-group>
+          <article-title>Local ROI reconstruction via generalized FBP and BPF algorithms along more flexible curves</article-title>
+          <source>
+            <italic>International Journal of Biomedical Imaging</italic>
+          </source>
+          <year>2006</year>
+          <volume>2006</volume>
+          <fpage>7 pages</fpage>
+          <comment>Article ID 14989.</comment>
+        </element-citation>
+      </ref>
+    </ref-list>
+  </back>
+  <floats-group>
+    <fig id="fig1" position="float">
+      <label>Figure 1</label>
+      <caption>
+        <p>Projection model of a discrete image in fan-beam geometry.</p>
+      </caption>
+      <graphic xlink:href="IJBI2011-549537.001"/>
+    </fig>
+    <fig id="fig2" position="float">
+      <label>Figure 2</label>
+      <caption>
+        <p>Geometrical configuration of a triple-source  micro-CT system.</p>
+      </caption>
+      <graphic xlink:href="IJBI2011-549537.002"/>
+    </fig>
+    <fig id="fig3" position="float">
+      <label>Figure 3</label>
+      <caption>
+        <p>Reconstructed images from  noise-free projections after 5000 iterations. Form the left to right columns, the projection numbers are 9, 11, 13 and 15, respectively. From the top to bottom rows, the source numbers are 1, 2, and 3, respectively. The display window is [0,0.5].</p>
+      </caption>
+      <graphic xlink:href="IJBI2011-549537.003"/>
+    </fig>
+    <fig id="fig4" position="float">
+      <label>Figure 4</label>
+      <caption>
+        <p>The counterparts of <xref ref-type="fig" rid="fig3">Figure 3 </xref>from datasets corrupted by Poisson noise.    </p>
+      </caption>
+      <graphic xlink:href="IJBI2011-549537.004"/>
+    </fig>
+  </floats-group>
+</article>

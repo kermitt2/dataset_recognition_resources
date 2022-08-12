@@ -1,0 +1,1902 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD Journal Archiving and Interchange DTD v3.0 20080202//EN" "archivearticle3.dtd">
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML" article-type="research-article">
+  <?properties open_access?>
+  <?DTDIdentifier.IdentifierValue -//NLM//DTD Journal Publishing DTD v2.0 20040830//EN?>
+  <?DTDIdentifier.IdentifierType public?>
+  <?SourceDTD.DTDName journalpublishing.dtd?>
+  <?SourceDTD.Version 2.0?>
+  <?ConverterInfo.XSLTName jp2nlmx2.xsl?>
+  <?ConverterInfo.Version 2?>
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="nlm-ta">J R Stat Soc Series B Stat Methodol</journal-id>
+      <journal-id journal-id-type="publisher-id">rssb</journal-id>
+      <journal-title-group>
+        <journal-title>Journal of the Royal Statistical Society. Series B, Statistical Methodology</journal-title>
+      </journal-title-group>
+      <issn pub-type="ppub">1369-7412</issn>
+      <issn pub-type="epub">1467-9868</issn>
+      <publisher>
+        <publisher-name>Blackwell Publishing Ltd</publisher-name>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="pmc">2810828</article-id>
+      <article-id pub-id-type="pmid">20107611</article-id>
+      <article-id pub-id-type="doi">10.1111/j.1467-9868.2009.00723.x</article-id>
+      <article-categories>
+        <subj-group subj-group-type="heading">
+          <subject>Original Articles</subject>
+        </subj-group>
+      </article-categories>
+      <title-group>
+        <article-title>Sparse partial least squares regression for simultaneous dimension reduction and variable selection</article-title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Chun</surname>
+            <given-names>Hyonho</given-names>
+          </name>
+        </contrib>
+        <contrib contrib-type="author">
+          <name>
+            <surname>Kele&#x15F;</surname>
+            <given-names>S&#xFC;nd&#xFC;z</given-names>
+          </name>
+        </contrib>
+        <aff>
+          <institution>University of Wisconsin</institution>
+          <addr-line>Madison, USA</addr-line>
+        </aff>
+      </contrib-group>
+      <author-notes>
+        <corresp id="cor1">S&#xFC;nd&#xFC;z Kele&#x15F;, Departments of Statistics and of Biostatistics and Medical Informatics, University of Wisconsin&#x2014;Madison, 1300 University Avenue, 1245B Medical Sciences Center, Madison, WI 53706, USA. E-mail: <email>keles@stat.wisc.edu</email></corresp>
+        <fn>
+          <p>Reuse of this article is permitted in accordance with the terms and conditions set out at <ext-link ext-link-type="uri" xlink:href="http://www3.interscience.wiley.com/authorresources/onlineopen.html">http://www3.interscience.wiley.com/authorresources/onlineopen.html</ext-link>.</p>
+        </fn>
+      </author-notes>
+      <pub-date pub-type="ppub">
+        <month>1</month>
+        <year>2010</year>
+      </pub-date>
+      <volume>72</volume>
+      <issue>1</issue>
+      <fpage>3</fpage>
+      <lpage>25</lpage>
+      <history>
+        <date date-type="received">
+          <month>4</month>
+          <year>2008</year>
+        </date>
+        <date date-type="rev-recd">
+          <month>4</month>
+          <year>2009</year>
+        </date>
+      </history>
+      <permissions>
+        <copyright-statement>&#xA9; 2010 The Royal Statistical Society and Blackwell Publishing Ltd</copyright-statement>
+        <license license-type="open-access" xlink:href="http://creativecommons.org/licenses/by/2.5/">
+          <license-p>Re-use of this article is permitted in accordance with the Creative Commons Deed, Attribution 2.5, which does not permit commercial exploitation.</license-p>
+        </license>
+      </permissions>
+      <abstract>
+        <p>Partial least squares regression has been an alternative to ordinary least squares for handling multicollinearity in several areas of scientific research since the 1960s. It has recently gained much attention in the analysis of high dimensional genomic data. We show that known asymptotic consistency of the partial least squares estimator for a univariate response does not hold with the very large <italic>p</italic> and small <italic>n</italic> paradigm. We derive a similar result for a multivariate response regression with partial least squares. We then propose a sparse partial least squares formulation which aims simultaneously to achieve good predictive performance and variable selection by producing sparse linear combinations of the original predictors. We provide an efficient implementation of sparse partial least squares regression and compare it with well-known variable selection and dimension reduction approaches via simulation experiments. We illustrate the practical utility of sparse partial least squares regression in a joint analysis of gene expression and genomewide binding data.</p>
+      </abstract>
+      <kwd-group>
+        <kwd>Chromatin immuno-precipitation</kwd>
+        <kwd>Dimension reduction</kwd>
+        <kwd>Gene expression</kwd>
+        <kwd>Lasso</kwd>
+        <kwd>Microarrays</kwd>
+        <kwd>Partial least squares</kwd>
+        <kwd>Sparsity</kwd>
+        <kwd>Variable and feature selection</kwd>
+      </kwd-group>
+    </article-meta>
+  </front>
+  <body>
+    <sec>
+      <title>1. Introduction</title>
+      <p>With the recent advancements in biotechnology such as the use of genomewide microarrays and high throughput sequencing, regression-based modelling of high dimensional data in biology has never been more important. Two important statistical problems commonly arise within regression problems that concern modern biological data. The first is the selection of a set of <italic>important</italic> variables among a large number of predictors. Utilizing the sparsity principle, e.g. operating under the assumption that a small subset of the variables is deriving the underlying process, with <italic>L</italic><sub>1</sub>-penalty has been promoted as an effective solution (<xref ref-type="bibr" rid="b34">Tibshirani, 1996</xref>; <xref ref-type="bibr" rid="b11">Efron <italic>et al.</italic>, 2004</xref>). The second problem is that such a variable selection exercise often arises as an ill-posed problem where</p>
+      <list list-type="alpha-lower">
+        <list-item>
+          <p>the sample size <italic>n</italic> is much smaller than the total number of variables (<italic>p</italic>) and</p>
+        </list-item>
+        <list-item>
+          <p>covariates are highly correlated.</p>
+        </list-item>
+      </list>
+      <p>Dimension reduction techniques such as principal components analysis (PCA) or partial least squares (PLS) have recently gained much attention for addressing these within the context of genomic data (<xref ref-type="bibr" rid="b7">Boulesteix and Strimmer, 2006</xref>).</p>
+      <p>Although dimension reduction via PCA or PLS is a principled way of dealing with ill-posed problems, it does not automatically lead to selection of relevant variables. Typically, all or a large portion of the variables contribute to final direction vectors which represent linear combinations of original predictors. Imposing sparsity in the midst of the dimension reduction step might lead to simultaneous dimension reduction and variable selection. Recently, <xref ref-type="bibr" rid="b21">Huang <italic>et al.</italic> (2004)</xref> proposed a penalized PLS method that thresholds the final PLS estimator. Although this imposes sparsity on the solution itself, it does not necessarily lead to sparse linear combinations of the original predictors. Our goal is to impose sparsity in the dimension reduction step of PLS so that sparsity can play a direct principled role.</p>
+      <p>The rest of the paper is organized as follows. We review general principles of the PLS methodology in Section 2. We show that PLS regression for either a univariate or multivariate response provides consistent estimators only under restricted conditions, and the consistency property does not extend to the very large <italic>p</italic> and small <italic>n</italic> paradigm. We formulate sparse partial least squares (SPLS) regression by relating it to sparse principal components analysis (SPCA) (<xref ref-type="bibr" rid="b23">Jolliffe <italic>et al.</italic>, 2003</xref>; Zou <italic>et al.</italic>, 2006) in Section 3 and provide an efficient algorithm for solving the SPLS regression formulation in Section 4. Methods for tuning the sparsity parameter and the number of components are also discussed in this section. Simulation studies and an application to transcription factor activity analysis by integrating microarray gene expression and chromatin immuno-precipitation&#x2013;microarray chip (CHIP&#x2013;chip) data are provided in Sections 5 and 6.</p>
+    </sec>
+    <sec>
+      <title>2. Partial least squares regression</title>
+      <sec>
+        <title>2.1. Description of partial least squares regression</title>
+        <p>PLS regression, which was introduced by <xref ref-type="bibr" rid="b36">Wold (1966)</xref>, has been used as an alternative approach to ordinary least squares (OLS) regression in ill-conditioned linear regression models that arise in several disciplines such as chemistry, economics and medicine (<xref ref-type="bibr" rid="b24">de Jong, 1993</xref>). At the core of PLS regression is a dimension reduction technique that operates under the assumption of a basic latent decomposition of the response matrix (<inline-formula><inline-graphic xlink:href="rssb0072-0003-mu1.jpg" mimetype="image"/></inline-formula>) and predictor matrix (<inline-formula><inline-graphic xlink:href="rssb0072-0003-mu2.jpg" mimetype="image"/></inline-formula>, where <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu3.jpg" mimetype="image"/></inline-formula> is a matrix that produces <italic>K</italic> linear combinations (scores); <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu4.jpg" mimetype="image"/></inline-formula> and <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu5.jpg" mimetype="image"/></inline-formula> are matrices of coefficients (loadings), and <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu6.jpg" mimetype="image"/></inline-formula> and <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu7.jpg" mimetype="image"/></inline-formula> are matrices of random errors.</p>
+        <p>To specify the latent component matrix <italic>T</italic> such that <italic>T</italic>=<italic>XW</italic>, PLS requires finding the columns of <italic>W</italic>=(<italic>w</italic><sub>1</sub>,<italic>w</italic><sub>2</sub>,&#x2026;,<italic>w</italic><sub><italic>K</italic></sub>) from successive optimization problems. The criterion to find the <italic>k</italic>th direction vector <italic>w</italic><sub><italic>k</italic></sub> for univariate <italic>Y</italic> is formulated as <disp-formula id="m1"><graphic xlink:href="rssb0072-0003-m1"/><label>(1)</label></disp-formula> for <italic>j</italic>=1,&#x2026;,<italic>k</italic>&#x2212;1, where &#x3A3;<sub><italic>XX</italic></sub> is the covariance of <italic>X</italic>. As evident from this formulation, PLS seeks direction vectors that not only relate <italic>X</italic> to <italic>Y</italic> but also capture the most variable directions in the <italic>X</italic>-space (<xref ref-type="bibr" rid="b12">Frank and Friedman, 1993</xref>).</p>
+        <p>There are two main formulations for finding PLS direction vectors in the context of multivariate <italic>Y</italic>. These vectors were originally derived from an algorithm, known as NIPALS (<xref ref-type="bibr" rid="b36">Wold, 1966</xref>), without a specific optimization problem formulation. Subsequently, a statistically inspired modification of PLS, known as SIMPLS (<xref ref-type="bibr" rid="b24">de Jong, 1993</xref>), was proposed with an algorithm by directly extending the univariate PLS formulation. Later, <xref ref-type="bibr" rid="b8">ter Braak and de Jong (1998)</xref> identified the &#x2018;PLS2&#x2019; formulation which the NIPALS algorithm actually solves. The PLS2 formulation is given by <disp-formula id="m2"><graphic xlink:href="rssb0072-0003-m2"/><label>(2)</label></disp-formula> for <italic>j</italic>=1,&#x2026;,<italic>k</italic>&#x2212;1, where <italic>&#x3C3;</italic><sub><italic>XY</italic></sub> is the covariance of <italic>X</italic> and <italic>Y</italic>, <italic>I</italic><sub><italic>p</italic></sub> denotes a <italic>p</italic>&#xD7;<italic>p</italic> identity matrix and <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu8.jpg" mimetype="image"/></inline-formula> is the unique Moore&#x2013;Penrose inverse of <italic>W</italic><sub><italic>k</italic>&#x2212;1</sub>=(<italic>w</italic><sub>1</sub>,&#x2026;,<italic>w</italic><sub><italic>k</italic>&#x2212;1</sub>). The SIMPLS formulation is given by <disp-formula id="m3"><graphic xlink:href="rssb0072-0003-m3"/><label>(3)</label></disp-formula> for <italic>j</italic>=1,&#x2026;,<italic>k</italic>&#x2212;1. Both formulations have the same objective function but different constraints and thus yield different sets of direction vectors. Their prediction performances depend on the nature of the data (<xref ref-type="bibr" rid="b24">de Jong, 1993</xref>; <xref ref-type="bibr" rid="b8">ter Braak and de Jong, 1998</xref>). <xref ref-type="bibr" rid="b24">de Jong (1993)</xref> showed that both formulations become equivalent and yield the same set of direction vectors for univariate <italic>Y</italic>.</p>
+        <p>In the actual fitting of the PLS regression, either the NIPALS or the SIMPLS algorithm is used for obtaining the PLS estimator. The NIPALS algorithm produces the direction vector <italic>d</italic><sub><italic>k</italic>+1</sub> with respect to the deflated matrix <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu9.jpg" mimetype="image"/></inline-formula> at the (<italic>k</italic>+1)th step by solving <disp-formula><graphic xlink:href="rssb0072-0003-mu10"/></disp-formula> where <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu11.jpg" mimetype="image"/></inline-formula> and <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu12.jpg" mimetype="image"/></inline-formula>. At the final <italic>K</italic>th step, <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu13.jpg" mimetype="image"/></inline-formula>, the direction matrix with respect to the original matrix <italic>X</italic>, is computed by <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu14.jpg" mimetype="image"/></inline-formula>, where <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu15.jpg" mimetype="image"/></inline-formula> and <italic>D</italic><sub><italic>K</italic></sub>=(<italic>d</italic><sub>1</sub>,&#x2026;,<italic>d</italic><sub><italic>K</italic></sub>). In contrast, the SIMPLS algorithm produces the (<italic>k</italic>+1)th direction vector <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu16.jpg" mimetype="image"/></inline-formula> directly with respect to the original matrix <italic>X</italic> by solving <disp-formula><graphic xlink:href="rssb0072-0003-mu17"/></disp-formula></p>
+        <p>After estimating the latent components (<inline-formula><inline-graphic xlink:href="rssb0072-0003-mu18.jpg" mimetype="image"/></inline-formula>) by using <italic>K</italic> numbers of direction vectors, loadings <italic>Q</italic> are estimated via solving min<sub><italic>Q</italic></sub>(&#x2016;<italic>Y</italic>&#x2212;<italic>T</italic><sub><italic>KQ</italic></sub><sup>T</sup>&#x2016;<sub>2</sub>). This leads to the final estimator <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu19.jpg" mimetype="image"/></inline-formula>, where <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu20.jpg" mimetype="image"/></inline-formula> is the solution of this least squares problem.</p>
+      </sec>
+      <sec>
+        <title>2.2. An asymptotic property of partial least squares regression</title>
+        <sec>
+          <title>2.2.1. Partial least squares regression for univariate <italic>Y</italic></title>
+          <p><xref ref-type="bibr" rid="b33">Stoica and Soderstorom (1998)</xref> derived asymptotic formulae for the bias and variance of the PLS estimator for the univariate case. These formulae are valid if the &#x2018;signal-to-noise ratio&#x2019; is high or if <italic>n</italic> is large and the predictors are uncorrelated with the residuals. <xref ref-type="bibr" rid="b29">Naik and Tsai (2000)</xref> proved consistency of the PLS estimator under normality assumptions on both <italic>Y</italic> and <italic>X</italic> in addition to consistency of <italic>S</italic><sub><italic>XY</italic></sub> and <italic>S</italic><sub><italic>XX</italic></sub> and the following condition 1. This condition, which is known as the <xref ref-type="bibr" rid="b20">Helland and Almoy (1994)</xref> condition, implies that an integer <italic>K</italic> exists such that exactly <italic>K</italic> of the eigenvectors of &#x3A3;<sub><italic>XX</italic></sub> have non-zero components along <italic>&#x3C3;</italic><sub><italic>XY</italic></sub>.</p>
+          <p><italic>Condition 1</italic>. There are eigenvectors <italic>v</italic><sub><italic>j</italic></sub> (<italic>j</italic>=1,&#x2026;,<italic>K</italic>) of &#x3A3;<sub><italic>XX</italic></sub> corresponding to different eigenvalues, such that <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu21.jpg" mimetype="image"/></inline-formula> and <italic>&#x3B1;</italic><sub>1</sub>,&#x2026;,<italic>&#x3B1;</italic><sub><italic>K</italic></sub> are non-zero.</p>
+          <p>We note that the consistency proof of <xref ref-type="bibr" rid="b29">Naik and Tsai (2000)</xref> requires <italic>p</italic> to be fixed. In many fields of modern genomic research, data sets contain a large number of variables with a much smaller number of observations (e.g. gene expression data sets where the variables are of the order of thousands and the sample size is of the order of tens). Therefore, we investigate the consistency of the PLS regression estimator under the very large <italic>p</italic> and small <italic>n</italic> paradigm and extend the result of <xref ref-type="bibr" rid="b29">Naik and Tsai (2000)</xref> for the case where <italic>p</italic> is allowed to grow with <italic>n</italic> at an appropriate rate. In this setting, we need additional assumptions on both <italic>X</italic> and <italic>Y</italic> to ensure the consistency of <italic>S</italic><sub><italic>XX</italic></sub> and <italic>S</italic><sub><italic>XY</italic></sub>, which is the conventional assumption for fixed <italic>p</italic>. Recently, <xref ref-type="bibr" rid="b22">Johnstone and Lu (2004)</xref> proved that the leading PC of <italic>S</italic><sub><italic>XX</italic></sub> is consistent if and only if <italic>p</italic>/<italic>n</italic>&#x2192;0. Hence, we adopt their assumptions for <italic>X</italic> to ensure consistency of <italic>S</italic><sub><italic>XX</italic></sub> and <italic>S</italic><sub><italic>XY</italic></sub>. Assumptions for <italic>X</italic> from <xref ref-type="bibr" rid="b22">Johnstone and Lu (2004)</xref> are as follows.</p>
+          <p><italic>Assumption 1</italic>. Assume that each row of <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu22.jpg" mimetype="image"/></inline-formula> follows the model <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu23.jpg" mimetype="image"/></inline-formula>, for some constant <italic>&#x3C3;</italic><sub>1</sub>, where</p>
+          <list list-type="alpha-lower">
+            <list-item>
+              <p><italic>&#x3C1;</italic><sup><italic>j</italic></sup>,<italic>j</italic>=1,&#x2026;,<italic>m</italic>&#x2264;<italic>p</italic>, are mutually orthogonal PCs with norms &#x2016;<italic>&#x3C1;</italic><sup>1</sup>&#x2016;&#x2265;&#x2016;<italic>&#x3C1;</italic><sup>2</sup>&#x2016;&#x2265;&#x2026;&#x2265;&#x2016;<italic>&#x3C1;</italic><sup><italic>m</italic></sup>&#x2016;,</p>
+            </list-item>
+            <list-item>
+              <p>the multipliers <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu24.jpg" mimetype="image"/></inline-formula> are independent over the indices of both <italic>i</italic> and <italic>j</italic>,</p>
+            </list-item>
+            <list-item>
+              <p>the noise vectors <italic>e</italic><sub><italic>i</italic></sub>&#x223C;<italic>N</italic>(0,<italic>I</italic><sub><italic>p</italic></sub>) are independent among themselves and of the random effects <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu25.jpg" mimetype="image"/></inline-formula> and</p>
+            </list-item>
+            <list-item>
+              <p><italic>p</italic>(<italic>n</italic>),<italic>m</italic>(<italic>n</italic>) and {<italic>&#x3C1;</italic><sup><italic>j</italic></sup>(<italic>n</italic>),<italic>j</italic>=1,&#x2026;,<italic>m</italic>} are functions of <italic>n</italic>, and the norms of the PCs converge as sequences: <italic>&#x3F1;</italic>(<italic>n</italic>)=(&#x2016;<italic>&#x3C1;</italic><sup>1</sup>(<italic>n</italic>)&#x2016;,&#x2026;,&#x2016;<italic>&#x3C1;</italic><sup><italic>j</italic></sup>(<italic>n</italic>)&#x2016;,&#x2026;)&#x2192;<italic>&#x3F1;</italic>=(<italic>&#x3F1;</italic><sub>1</sub>,&#x2026;,<italic>&#x3F1;</italic><sub><italic>j</italic></sub>,&#x2026;). We also write <italic>&#x3F1;</italic><sub>+</sub> for the limiting <italic>l</italic><sub>1</sub>-norm: <italic>&#x3F1;</italic><sub>+</sub>=&#x3A3;<sub><italic>j</italic></sub> <italic>&#x3F1;</italic><sub><italic>j</italic></sub>.</p>
+            </list-item>
+          </list>
+          <p>We remark that the above factor model for <italic>X</italic> is similar to that of <xref ref-type="bibr" rid="b18">Helland (1990)</xref> except for having an additional random error term <italic>e</italic><sub><italic>i</italic></sub>. All properties of PLS in <xref ref-type="bibr" rid="b18">Helland (1990)</xref> will hold, as the eigenvectors of &#x3A3;<sub><italic>XX</italic></sub> and <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu26.jpg" mimetype="image"/></inline-formula> are the same. We take the assumptions for <italic>Y</italic> from <xref ref-type="bibr" rid="b18">Helland (1990)</xref> with an additional norm condition on <italic>&#x3B2;</italic>.</p>
+          <p><italic>Assumption 2</italic>. Assume that <italic>Y</italic> and <italic>X</italic> have the relationship, <italic>Y</italic>=<italic>X&#x3B2;</italic>+<italic>&#x3C3;</italic><sub>2</sub><italic>f</italic>, where <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu27.jpg" mimetype="image"/></inline-formula> &lt;&#x221E;, and <italic>&#x3C3;</italic><sub>2</sub> is a constant.</p>
+          <p>We next show that, under the above assumptions and condition 1, the PLS estimator is consistent if and only if <italic>p</italic> grows much slower than <italic>n</italic>.</p>
+          <p><italic>Theorem 1</italic>. Under assumptions 1 and 2, and condition 1,</p>
+          <list list-type="alpha-lower">
+            <list-item>
+              <p>if <italic>p</italic>/<italic>n</italic>&#x2192;0, then <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu28.jpg" mimetype="image"/></inline-formula> in probability and</p>
+            </list-item>
+            <list-item>
+              <p>if <italic>p</italic>/<italic>n</italic>&#x2192;<italic>k</italic><sub>0</sub> for <italic>k</italic><sub>0</sub>&gt;0, then <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu29.jpg" mimetype="image"/></inline-formula> in probability.</p>
+            </list-item>
+          </list>
+          <p>The main implication of this theorem is that the PLS estimator is not suitable for very large <italic>p</italic> and small <italic>n</italic> problems in complete generality. Although PLS utilizes a dimension reduction technique by using a few latent factors, it cannot avoid the sample size issue since a reasonable size of <italic>n</italic> is required to estimate sample covariances consistently as shown in the proof of theorem 1 in <xref ref-type="app" rid="app1">Appendix A.</xref> A referee pointed out that a qualitatively equivalent result has been obtained by <xref ref-type="bibr" rid="b28">Nadler and Coifman (2005)</xref>, where the root-mean-squared error of the PLS estimator has an additional error term that depends on <italic>p</italic><sup>2</sup>/<italic>n</italic><sup>2</sup>.</p>
+        </sec>
+        <sec>
+          <title>2.2.2. Partial least squares regression for multivariate <italic>Y</italic></title>
+          <p>There are limited or virtually no results on the theoretical properties of PLS regression within the context of a multivariate response. Counterintuitive simulation results, where multivariate PLS shows a minor improvement in prediction error, were reported in <xref ref-type="bibr" rid="b12">Frank and Friedman (1993)</xref>. Later, <xref ref-type="bibr" rid="b19">Helland (2000)</xref> argued by intuition that, since multivariate PLS achieves parsimonious models by using the same reduced model space for all the responses, the net gain of sharing the model space could be negative if, in fact, all the responses require different reduced model spaces. Thus, we next introduce a specific setting for multivariate PLS regression in the light of <xref ref-type="bibr" rid="b19">Helland's (2000)</xref> intuition and extend the consistency result of univariate PLS to the multivariate case.</p>
+          <p>Assume that all the response variables have linear relationships with the <italic>same</italic> set of covariates: <italic>Y</italic><sub>1</sub>=<italic>Xb</italic><sub>1</sub>+<italic>f</italic><sub>1</sub>,<italic>Y</italic><sub>2</sub>=<italic>Xb</italic><sub>2</sub>+<italic>f</italic><sub>2</sub>,&#x2026;,<italic>Y</italic><sub><italic>q</italic></sub>=<italic>Xb</italic><sub><italic>q</italic></sub>+<italic>f</italic><sub><italic>q</italic></sub>, where <italic>b</italic><sub>1</sub>,&#x2026;,<italic>b</italic><sub><italic>q</italic></sub> are <italic>p</italic>&#xD7;1 coefficient vectors and <italic>f</italic><sub>1</sub>,&#x2026;,<italic>f</italic><sub><italic>q</italic></sub> are independent error vectors from <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu30.jpg" mimetype="image"/></inline-formula>. Since the shared reduced model space of each response is determined by <italic>b</italic><sub><italic>i</italic></sub>s, we impose a restriction on these coefficients. Namely, we require the existence of eigenvectors <italic>v</italic><sub>1</sub>,&#x2026;,<italic>v</italic><sub><italic>K</italic></sub> of &#x3A3;<sub><italic>XX</italic></sub> that span the solution space, which each <italic>b</italic><sub><italic>i</italic></sub> belongs to.</p>
+          <p>We have proved consistency of the PLS estimator for a univariate response using the facts that <italic>S</italic><sub><italic>XY</italic></sub> is proportional to the first direction vector and the solution space, which <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu31.jpg" mimetype="image"/></inline-formula> belongs to, can be explicitly characterized by <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu32.jpg" mimetype="image"/></inline-formula>. However, for a multivariate response, PLS finds the first direction vector as the first left singular vector of <italic>S</italic><sub><italic>XY</italic></sub>. The presence of remaining directions in the column space of <italic>S</italic><sub><italic>XY</italic></sub> makes it difficult to characterize the solution space explicitly. Furthermore, the solution space varies depending on the algorithm that is used to fit the model. If we further assume that <italic>b</italic><sub><italic>i</italic></sub>=<italic>k</italic><sub><italic>ib</italic></sub><sub>1</sub> for constants <italic>k</italic><sub>2</sub>,&#x2026;,<italic>k</italic><sub><italic>q</italic></sub> then &#x3A3;<sub><italic>XY</italic></sub> becomes a rank 1 matrix and these challenges are reduced, thereby leading to a setting where we can start to understand characteristics of multivariate PLS.</p>
+          <p>Condition 2 and assumption 3 below recapitulate these assumptions where the set of regression coefficients <italic>b</italic><sub>1</sub>,<italic>b</italic><sub>2</sub>,&#x2026;,<italic>b</italic><sub><italic>q</italic></sub> are represented by the coefficient matrix <italic>B</italic>.</p>
+          <p><italic>Condition 2</italic>. There are eigenvectors <italic>v</italic><sub><italic>j</italic></sub>(<italic>j</italic>=1,&#x2026;,<italic>K</italic>) of &#x3A3;<sub><italic>XX</italic></sub> corresponding to different eigenvalues, such that <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu33.jpg" mimetype="image"/></inline-formula> and <italic>&#x3B1;</italic><sub><italic>i</italic>1</sub>,&#x2026;,<italic>&#x3B1;</italic><sub><italic>iK</italic></sub> are non-zero for <italic>i</italic>=1,&#x2026;,<italic>q</italic>.</p>
+          <p><italic>Assumption 3</italic>. Assume that <italic>Y</italic>=<italic>XB</italic>+<italic>F</italic>, where columns of <italic>F</italic> are independent and from <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu34.jpg" mimetype="image"/></inline-formula>. <italic>B</italic> is a rank 1 matrix with singular value decomposition <italic>&#x3D1;uv</italic><sup>T</sup>, where <italic>&#x3D1;</italic> denotes the singular value and <italic>u</italic> and <italic>v</italic> are left and right singular vectors respectively. In addition, <italic>&#x3D1;</italic>&lt;&#x221E; and <italic>q</italic> is fixed.</p>
+          <p>Lemma 1 proves the convergence of the first direction vector which plays a key role in forming the solution space of the PLS estimator. The proof is provided in <xref ref-type="app" rid="app1">Appendix A.</xref></p>
+          <p><italic>Lemma 1</italic>. Under assumption 3, <disp-formula><graphic xlink:href="rssb0072-0003-mu35"/></disp-formula> where <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu36.jpg" mimetype="image"/></inline-formula> is the estimate of the first direction vector <italic>w</italic><sub>1</sub> and is given by &#x3A3;<sub><italic>XX</italic></sub><italic>u</italic>/&#x2016;&#x3A3;<sub><italic>XX</italic></sub><italic>u</italic>&#x2016;<sub>2</sub>.</p>
+          <p>The main implication of lemma 1 is that, under the given conditions, the convergence rate of the first direction vector from multivariate PLS is the same as that of a single univariate PLS. Since the application of univariate PLS for a multivariate response requires estimating <italic>q</italic> numbers of separate direction vectors, the advantage of multivariate PLS is immediate. The proof of lemma 1 relies on obtaining the left singular vector <italic>s</italic> by the rank 1 approximation of <italic>S</italic><sub><italic>XY</italic></sub>, minimizing <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu37.jpg" mimetype="image"/></inline-formula>. Here, &#x2016;&#xB7;&#x2016;<sub>F</sub> denotes Frobenius norm, <italic>&#x3C2;</italic> is the non-zero singular value of <italic>S</italic><sub><italic>XY</italic></sub> and <italic>s</italic> and <italic>t</italic><sub>1</sub> are left and right singular vectors respectively. As a result, <italic>s</italic> can be represented by <disp-formula><graphic xlink:href="rssb0072-0003-mu38"/></disp-formula> where <italic>t</italic><sub>1<italic>i</italic></sub> is the <italic>i</italic>th element of <italic>t</italic><sub>1</sub>, and sgn(<italic>t</italic><sub>1<italic>i</italic></sub>)=sgn(<italic>s</italic><sup>T</sup><italic>S</italic><sub><italic>XY</italic><sub><italic>i</italic></sub></sub>). This form of <italic>s</italic> provides intuition for estimating the first multivariate PLS direction vector. Namely, the first direction vector can be interpreted as the weighted sum of sign-adjusted covariance vectors. Directions with stronger signals contribute more in a sign-adjusted manner.</p>
+          <p>The above discussion highlighted the advantage of multivariate PLS compared with univariate PLS in terms of estimation of the direction vectors. Next, we present the convergence result of the final PLS solution.</p>
+          <p><italic>Theorem 2</italic>. Under assumptions 1 and 3, condition 2 and for fixed <italic>K</italic> and <italic>q</italic>, <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu39.jpg" mimetype="image"/></inline-formula> in probability if and only if <italic>p</italic>/<italic>n</italic>&#x2192;0.</p>
+          <p>Theorem 2 implies that, under the given conditions and for fixed <italic>K</italic> and <italic>q</italic>, the PLS estimator is consistent regardless of the algorithmic variant that is used if <italic>p</italic>/<italic>n</italic>&#x2192;0. Although PLS solutions from algorithmic variants might differ for finite <italic>n</italic>, these solutions are consistent. Moreover, the fixed <italic>q</italic> case is practical in most applications because we can always cluster <italic>Y</italic>s into smaller groups before linking them to <italic>X</italic>. We refer to <xref ref-type="bibr" rid="b10">Chun and Kele&#x15F; (2009)</xref> for an application of this idea within the context of expression quantitative loci mapping.</p>
+          <p>Our results for multivariate <italic>Y</italic> are based on the equal variance assumption on the components of the error matrix <italic>F</italic>. Even though the popular objective functions of multivariate PLS given in expressions (2) and (3) do not involve a scaling factor for each component of multivariate <italic>Y</italic>, in practice, <italic>Y</italic>s are often scaled before the analysis. Violation of the equal variance assumption will affect the performance of PLS regression (<xref ref-type="bibr" rid="b19">Helland, 2000</xref>). Therefore, if there are reasons to believe that the error levels in <italic>Y</italic>, not the signal strengths, are different, scaling will aid in satisfying the equal variance assumption of our theoretical result.</p>
+        </sec>
+      </sec>
+      <sec>
+        <title>2.3. Motivation for the sparsity principle in partial least squares regression</title>
+        <p>To motivate the sparsity principle, we now explicitly illustrate how a large number of irrelevant variables affect the PLS estimator through a simple example. This observation is central to our methodological development. We utilize the closed form solution of <xref ref-type="bibr" rid="b18">Helland (1990)</xref> for univariate PLS regression <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu40.jpg" mimetype="image"/></inline-formula>, where <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu41.jpg" mimetype="image"/></inline-formula>.</p>
+        <p>Assume that <italic>X</italic> is partitioned into (<italic>X</italic><sub>1</sub>,<italic>X</italic><sub>2</sub>), where <italic>X</italic><sub>1</sub> and <italic>X</italic><sub>2</sub> denote <italic>p</italic><sub>1</sub> relevant and <italic>p</italic>&#x2212;<italic>p</italic><sub>1</sub> irrelevant variables respectively and each column of <italic>X</italic><sub>2</sub> follows <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu42.jpg" mimetype="image"/></inline-formula>. We assume the existence of a latent variable (<italic>K</italic>=1) as well as a fixed number of relevant variables (<italic>p</italic><sub>1</sub>) and let <italic>p</italic> grow at the rate <italic>O</italic>(<italic>k</italic><sup>&#x2032;</sup><italic>n</italic>), where the constant <italic>k</italic><sup>&#x2032;</sup> is sufficiently large to have <disp-formula id="m4"><graphic xlink:href="rssb0072-0003-m4"/><label>(4)</label></disp-formula> where <italic>&#x3C3;</italic><sub>1</sub> and <italic>&#x3C3;</italic><sub>2</sub> are from Section 2.2.1.</p>
+        <p>It is not difficult to obtain a sufficiently large <italic>k</italic><sup>&#x2032;</sup> to satisfy condition (4) for fixed <italic>p</italic><sub>1</sub>. Then, the PLS estimator can be approximated by <disp-formula id="m5"><graphic xlink:href="rssb0072-0003-m5"/><label>(5)</label></disp-formula></p>
+        <p>
+          <disp-formula id="m6">
+            <graphic xlink:href="rssb0072-0003-m6"/>
+            <label>(6)</label>
+          </disp-formula>
+        </p>
+        <p>Approximation (5) follows from lemma 2 in <xref ref-type="app" rid="app1">Appendix A</xref> and assumption (4). Approximation (6) is due to the fact that the largest and smallest eigenvalues of the Wishart matrix are <italic>O</italic>(<italic>k</italic><sup>&#x2032;</sup>) (<xref ref-type="bibr" rid="b14">Geman, 1980</xref>). In this example, the large number of noise variables forces the loadings in the direction of <italic>S</italic><sub><italic>XY</italic></sub> to be attenuated and thereby cause inconsistency.</p>
+        <p>From a practical point of view, since latent factors of PLS have contributions from all the variables, the interpretation becomes difficult in the presence of large numbers of noise variables. Motivated by the observation that noise variables enter the PLS regression via direction vectors and attenuate estimates of the regression parameters, we consider imposing sparsity on the direction vectors.</p>
+      </sec>
+    </sec>
+    <sec>
+      <title>3. Sparse partial least squares regression</title>
+      <sec>
+        <title>3.1. Finding the first sparse partial least squares direction vector</title>
+        <p>We start with formulation of the first <sc>spls</sc> direction vector and illustrate the main ideas within this simpler problem. We formulate the objective function for the first <sc>spls</sc> direction vector by adding an <italic>L</italic><sub>1</sub>-constraint to problems (2) and (3): <disp-formula id="m7"><graphic xlink:href="rssb0072-0003-m7"/><label>(7)</label></disp-formula> where <italic>M</italic>=<italic>X</italic><sup>T</sup><italic>YY</italic><sup>T</sup><italic>X</italic> and <italic>&#x3BB;</italic> determines the amount of sparsity. The same approach has been used in SPCA. By specifying <italic>M</italic> to be <italic>X</italic><sup>T</sup><italic>X</italic> in expression (7), this objective function coincides with that of a simplified component lasso technique called &#x2018;SCOTLASS&#x2019; (<xref ref-type="bibr" rid="b23">Jolliffe <italic>et al.</italic>, 2003</xref>) and both SPLS and SPCA correspond to the same class of maximum eigenvalue problem with a sparsity constraint.</p>
+        <p><xref ref-type="bibr" rid="b23">Jolliffe <italic>et al.</italic> (2003)</xref> pointed out that the solution of this formulation tends not to be sufficiently sparse and the problem is not convex. This convexity issue was revisited by <xref ref-type="bibr" rid="b2">d'Aspremont <italic>et al.</italic> (2007)</xref> in direct SPCA by reformulating the criterion in terms of <italic>W</italic>=<italic>ww</italic><sup>T</sup>, thereby producing a semidefinite programming problem that is known to be convex. However, the sparsity issue remained.</p>
+        <p>To obtain a sufficiently sparse solution, we reformulate the SPLS criterion (7) by generalizing the regression formulation of SPCA (<xref ref-type="bibr" rid="b38">Zou <italic>et al.</italic>, 2006</xref>). This formulation promotes the exact zero property by imposing an <italic>L</italic><sub>1</sub>-penalty onto a surrogate of the direction vector (<italic>c</italic>) instead of the original direction vector (<italic>w</italic>), while keeping <italic>w</italic> and <italic>c</italic> close to each other: <disp-formula id="m8"><graphic xlink:href="rssb0072-0003-m8"/><label>(8)</label></disp-formula></p>
+        <p>In this formulation, the <italic>L</italic><sub>1</sub>-penalty encourages sparsity on <italic>c</italic> whereas the <italic>L</italic><sub>2</sub>-penalty addresses the potential singularity in <italic>M</italic> when solving for <italic>c</italic>. We shall rescale <italic>c</italic> to have norm 1 and use this scaled version as the estimated direction vector. We note that this problem becomes that of SCOTLASS when <italic>w</italic>=<italic>c</italic> and <italic>M</italic>=<italic>X</italic><sup>T</sup><italic>X</italic>, SPCA when <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu43.jpg" mimetype="image"/></inline-formula> and <italic>M</italic>=<italic>X</italic><sup>T</sup><italic>X</italic>, and the original maximum eigenvalue problem of PLS when <italic>&#x3BA;</italic>=1. We aim to reduce the effect of the concave part (hence the local solution issue) by using a small <italic>&#x3BA;</italic>.</p>
+      </sec>
+      <sec>
+        <title>3.2. Solution for the generalized regression formulation of sparse partial least squares</title>
+        <p>We solve the generalized regression formulation of SPLS given in expression (8) by alternatively iterating between solving for <italic>w</italic> for fixed <italic>c</italic> and solving for <italic>c</italic> after fixing <italic>w</italic>.</p>
+        <p>For the problem of solving <italic>w</italic> for fixed <italic>c</italic>, the objective function in problem (8) becomes <disp-formula id="m9"><graphic xlink:href="rssb0072-0003-m9"/><label>(9)</label></disp-formula></p>
+        <p>For <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu44.jpg" mimetype="image"/></inline-formula>, problem (9) can be rewritten as <disp-formula><graphic xlink:href="rssb0072-0003-mu45"/></disp-formula> where <italic>Z</italic>=<italic>X</italic><sup>T</sup><italic>Y</italic> and <italic>&#x3BA;</italic><sup>&#x2032;</sup>=(1&#x2212;<italic>&#x3BA;</italic>)/(1&#x2212;2<italic>&#x3BA;</italic>). This constrained least squares problem can be solved via the method of Lagrange multipliers and the solution is given by <italic>w</italic>=<italic>&#x3BA;</italic><sup>&#x2032;</sup>(<italic>M</italic>+<italic>&#x3BB;</italic><sup>*</sup><italic>I</italic>)<sup>&#x2212;1</sup><italic>Mc</italic> where the multiplier <italic>&#x3BB;</italic><sup>*</sup> is the solution of <italic>c</italic><sup>T</sup><italic>M</italic>(<italic>M</italic>+<italic>&#x3BB;I</italic>)<sup>&#x2212;2</sup><italic>Mc</italic>=<italic>&#x3BA;</italic><sup>&#x2032;2</sup>. For <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu46.jpg" mimetype="image"/></inline-formula>, the objective function in problem (9) reduces to &#x2212;<italic>w</italic><sup>T</sup><italic>Mc</italic> and the solution is <italic>w</italic>=<italic>UV</italic><sup>T</sup>, where <italic>U</italic> and <italic>V</italic> are obtained from the singular value decomposition of <italic>Mc</italic> (<xref ref-type="bibr" rid="b38">Zou <italic>et al.</italic>, 2006</xref>).</p>
+        <p>When solving for <italic>c</italic> for fixed <italic>w</italic>, problem (8) becomes <disp-formula id="m10"><graphic xlink:href="rssb0072-0003-m10"/><label>(10)</label></disp-formula></p>
+        <p>This problem, which is equivalent to the naive elastic net (EN) problem of Zou and Hastie (2005) when <italic>Y</italic> in the naive EN is replaced with <italic>Z</italic><sup>T</sup><italic>w</italic>, can be solved efficiently via the least angle regression spline algorithm LARS (<xref ref-type="bibr" rid="b11">Efron <italic>et al.</italic>, 2004</xref>). SPLS often requires a large <italic>&#x3BB;</italic><sub>2</sub>-value to solve problem (10) because <italic>Z</italic> is a <italic>q</italic>&#xD7;<italic>p</italic> matrix with usually small <italic>q</italic>, i.e. <italic>q</italic>=1 for univariate <italic>Y</italic>. As a remedy, we use an EN formulation with <italic>&#x3BB;</italic><sub>2</sub>=&#x221E; and this yields the solution to have the form of a soft thresholded estimator (Zou and Hastie, 2005). This concludes our solution of the regression formulation for general <italic>Y</italic> (univariate or multivariate). We further have the following simplification for univariate <italic>Y</italic> (<italic>q</italic>=1).</p>
+        <p><italic>Theorem 3</italic>. For univariate <italic>Y</italic>, the solution of problem (8) is <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu47.jpg" mimetype="image"/></inline-formula>, where <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu48.jpg" mimetype="image"/></inline-formula> is the first direction vector of PLS.</p>
+        <p><italic>Proof</italic>. For a given <italic>c</italic> and <italic>&#x3BA;</italic>=0.5, it follows that <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu49.jpg" mimetype="image"/></inline-formula> since the singular value decomposition of <italic>ZZ</italic><sup>T</sup><italic>c</italic> yields <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu50.jpg" mimetype="image"/></inline-formula> and <italic>V</italic>=1. For a given <italic>c</italic> and 0&lt;<italic>&#x3BA;</italic>&lt;0.5, the solution is given by <italic>w</italic>={<italic>Z</italic><sup>T</sup><italic>c</italic>/(&#x2016;<italic>Z</italic>&#x2016;<sup>2</sup>+<italic>&#x3BB;</italic><sup>*</sup>)}<italic>Z</italic> by using the Woodbury formula (<xref ref-type="bibr" rid="b15">Golub and van Loan, 1987</xref>). Noting that <italic>Z</italic><sup>T</sup><italic>c</italic>/(&#x2016;<italic>Z</italic>&#x2016;<sup>2</sup>+<italic>&#x3BB;</italic><sup>*</sup>) is a scalar and by the norm constraint, we have <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu51.jpg" mimetype="image"/></inline-formula>. Since <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu52.jpg" mimetype="image"/></inline-formula> does not depend on <italic>c</italic>, we have <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu53.jpg" mimetype="image"/></inline-formula> for large <italic>&#x3BB;</italic><sub>2</sub>.</p>
+      </sec>
+    </sec>
+    <sec>
+      <title>4. Implementation and algorithmic details</title>
+      <sec>
+        <title>4.1. Sparse partial least squares algorithm</title>
+        <p>In this section, we present the complete SPLS algorithm which encompasses the formulation of the first SPLS direction vector from Section 3.1 as well as an efficient algorithm for obtaining all the other direction vectors and coefficient estimates.</p>
+        <p>In principle, the objective function for the first SPLS direction vector can be utilized at each step of the NIPALS or SIMPLS algorithm to obtain the rest of the direction vectors. We call this idea the naive SPLS algorithm. However, this naive SPLS algorithm loses the conjugacy of the direction vectors. A similar issue appears in SPCA, where none of the methods proposed (<xref ref-type="bibr" rid="b23">Jolliffe <italic>et al.</italic>, 2003</xref>; <xref ref-type="bibr" rid="b38">Zou <italic>et al.</italic>, 2006</xref>; <xref ref-type="bibr" rid="b2">d'Aspremont <italic>et al.</italic>, 2007</xref>) produces orthogonal sparse principal components. Although conjugacy can be obtained by the Gram&#x2013;Schmidt conjugation of the derived sparse direction vectors, these post-conjugated vectors do not inherit the property of Krylov subsequences which is known to be crucial for the convergence of the algorithm (<xref ref-type="bibr" rid="b26">Kr&#xE4;mer, 2007</xref>). Essentially, such a post-orthogonalization does not guarantee the existence of the solution among the iterations.</p>
+        <p>To address this concern, we propose an SPLS algorithm which leads to a sparse solution by keeping the Krylov subsequence structure of the direction vectors in a restricted <italic>X</italic>-space of selected variables. Specifically, at each step of either the NIPALS or the SIMPLS algorithm, it searches for relevant variables, the so-called active variables, by optimizing expression (8) and updates all direction vectors to form a Krylov subsequence on the subspace of the active variables. This is simply achieved by conducting PLS regression by using the selected variables. Let <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu54.jpg" mimetype="image"/></inline-formula> be an index set for active variables and <italic>K</italic> the number of components. Denote <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu55.jpg" mimetype="image"/></inline-formula> as the submatrix of <italic>X</italic> whose column indices are contained in <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu56.jpg" mimetype="image"/></inline-formula>. The SPLS algorithm can utilize either the NIPALS or the SIMPLS algorithm as described below.</p>
+        <list list-type="simple">
+          <list-item>
+            <p>Step 1: set <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu57.jpg" mimetype="image"/></inline-formula>. For the NIPALS algorithm set, <italic>Y</italic><sub>1</sub>=<italic>Y</italic>, and for the SIMPLS algorithm set <italic>X</italic><sub>1</sub>=<italic>X</italic>.</p>
+          </list-item>
+          <list-item>
+            <p>Step 2: while <italic>k</italic>&#x2264;<italic>K</italic>,</p>
+          </list-item>
+        </list>
+        <list list-type="alpha-lower">
+          <list-item>
+            <p>find <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu58.jpg" mimetype="image"/></inline-formula> by solving the objective (8) in Section 3.1 with <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu59.jpg" mimetype="image"/></inline-formula> for the NIPALS and <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu60.jpg" mimetype="image"/></inline-formula> for the SIMPLS algorithm,</p>
+          </list-item>
+          <list-item>
+            <p>update <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu61.jpg" mimetype="image"/></inline-formula> as <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu62.jpg" mimetype="image"/></inline-formula>,</p>
+          </list-item>
+          <list-item>
+            <p>fit PLS with <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu63.jpg" mimetype="image"/></inline-formula> by using <italic>k</italic> number of latent components and</p>
+          </list-item>
+          <list-item>
+            <p>update <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu64.jpg" mimetype="image"/></inline-formula> by using the new PLS estimates of the direction vectors, update <italic>k</italic> with <italic>k</italic>&#x2190;<italic>k</italic>+1, for the NIPALS algorithm, update <italic>Y</italic><sub>1</sub> through <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu65.jpg" mimetype="image"/></inline-formula> and for the SIMPLS algorithm, update <italic>X</italic><sub>1</sub> through <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu66.jpg" mimetype="image"/></inline-formula>, where <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu67.jpg" mimetype="image"/></inline-formula>.</p>
+          </list-item>
+        </list>
+        <p>The original NIPALS algorithm includes deflation steps for both <italic>X</italic>- and <italic>Y</italic>- matrices, but the same <italic>M</italic>-matrix can be computed via the deflation of either <italic>X</italic> or <italic>Y</italic> owing to the idempotency of the projection matrix. In our SPLS&#x2013;NIPALS algorithm, we chose to deflate the <italic>Y</italic>-matrix because, in that case, the eigenvector <italic>X</italic><sup>T</sup><italic>Y</italic><sub>1</sub>/&#x2016;<italic>X</italic><sup>T</sup><italic>Y</italic><sub>1</sub>&#x2016; of <italic>M</italic> is proportional to the current correlations in the LARS algorithm for univariate <italic>Y</italic>. Hence, the LARS and SPLS&#x2013;NIPALS algorithms use the same criterion to select active variables in this case. However, the SPLS&#x2013;NIPALS algorithm differs from LARS in that it selects more than one variable at a time and utilizes the conjugate gradient (CG) method to compute the coefficients at each step (<xref ref-type="bibr" rid="b13">Friedman and Popescu, 2004</xref>). This, in particular, implies that the SPLS&#x2013;NIPALS algorithm can select a group of correlated variables simultaneously. The cost of computing coefficients at each step of the SPLS algorithm is less than or equal to that of LARS as the CG method avoids matrix inversion.</p>
+        <p>The SPLS&#x2013;SIMPLS algorithm has similar attributes to the SPLS&#x2013;NIPALS algorithm. It also uses the CG method and selects more than one variable at each step and handles multivariate responses. However, the <italic>M</italic>-matrix is no longer proportional to the current correlations of the LARS algorithm. SIMPLS yields direction vectors directly satisfying the conjugacy constraint, which may hamper the ability of revealing relevant variables. In contrast, the direction vectors at each step of the NIPALS algorithm are derived to maximize the current correlations on the basis of residual matrices, and conjugated direction vectors are computed at the final stage. Thus, the SPLS&#x2013;NIPALS algorithm is more likely to choose the correct set of relevant variables when the signals of the relevant variables are weak. A small simulation study investigating this point is presented in Section 5.1.</p>
+      </sec>
+      <sec>
+        <title>4.2. Choosing the thresholding parameter and the number of hidden components</title>
+        <p>Although the SPLS regression formulation in expression (8) has four tuning parameters (<italic>&#x3BA;</italic>,<italic>&#x3BB;</italic><sub>1</sub>,<italic>&#x3BB;</italic><sub>2</sub> and <italic>K</italic>), only two of these are key tuning parameters, namely the thresholding parameter <italic>&#x3BB;</italic><sub>1</sub> and the number of hidden components <italic>K</italic>. As we discussed in theorem 3 of Section 3.2, the solution does not depend on <italic>&#x3BA;</italic> for univariate <italic>Y</italic>. For multivariate <italic>Y</italic>, we show with a simulation study in Section 5.2 that setting <italic>&#x3BA;</italic> smaller than <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu68.jpg" mimetype="image"/></inline-formula> generally avoids local solution issues. Different <italic>&#x3BA;</italic>-values have the effect of starting the algorithm with different starting values. Since the algorithm is computationally inexpensive (the average run time including the tuning is only 9 min for a sample size of <italic>n</italic>=100 with <italic>p</italic>=5000 predictors on a 64-bit machine with 2.66 GHz central processor unit), users are encouraged to try several <italic>&#x3BA;</italic>-values. Finally, as described in Section 3.2, setting the <italic>&#x3BB;</italic><sub>2</sub>-parameter to &#x221E; yields the thresholded estimator which depends only on <italic>&#x3BB;</italic><sub>1</sub>. Therefore, we proceed with the tuning mechanisms for the two key parameters <italic>&#x3BB;</italic><sub>1</sub> and <italic>K</italic>. We start with univariate <italic>Y</italic> since imposing an <italic>L</italic><sub>1</sub>-penalty has the simple form of thresholding, and then we discuss multivariate <italic>Y</italic>.</p>
+        <p>We start with describing a form of soft thresholded direction vector <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu69.jpg" mimetype="image"/></inline-formula> where 0&#x2264;<italic>&#x3B7;</italic>&#x2264;1. Here, <italic>&#x3B7;</italic> plays the role of the sparsity parameter <italic>&#x3BB;</italic><sub>1</sub> in theorem 3. This form of soft thresholding retains components that are greater than some fraction of the maximum component. A similar approach was utilized in <xref ref-type="bibr" rid="b13">Friedman and Popescu (2004)</xref> with hard thresholding as opposed to our soft thresholding scheme. The single tuning parameter <italic>&#x3B7;</italic> is tuned by cross-validation (CV) for all the direction vectors. We do not use separate sparsity parameters for individual directions because tuning multiple parameters is computationally prohibitive and may not produce a unique minimum for the CV criterion.</p>
+        <p>Next, we describe a hard thresholding approach by the control of the false discovery rate FDR. SPLS selects variables which exhibit high correlations with <italic>Y</italic> in the first step and adds additional variables with high partial correlations in the subsequent steps. Although we are imposing sparsity on direction vectors via an <italic>L</italic><sub>1</sub>-penalty, the thresholded form of our solution for univariate <italic>Y</italic> allows us to compare and contrast our approach directly with the supervised PC approach of <xref ref-type="bibr" rid="b3">Bair <italic>et al.</italic> (2006)</xref> that operates by an initial screening of the predictor variables. Selecting related variables on the basis of correlations has been utilized in supervised PCs, and, in a way, we further extend this approach by utilizing partial correlations in the later steps. Owing to uniform consistency of correlations (or partial correlations after taking into account the effect of relevant variables), FDR control is expected to work well even in the large <italic>p</italic> and small <italic>n</italic> scenario (<xref ref-type="bibr" rid="b25">Kosorok and Ma, 2007</xref>). As we described in Section 4, the components of the direction vectors for univariate <italic>Y</italic> have the form of a correlation coefficient (or a partial correlation coefficient after the first step) between the individual covariate and response, and a thresholding parameter can be determined by control of the FDR at a prespecified level <italic>&#x3B1;</italic>. Let <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu70.jpg" mimetype="image"/></inline-formula> denote the sample partial correlation of the <italic>i</italic>th variable <italic>X</italic><sub><italic>i</italic></sub> with <italic>Y</italic> given <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu71.jpg" mimetype="image"/></inline-formula>, where <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu72.jpg" mimetype="image"/></inline-formula> denotes the set of first <italic>k</italic>&#x2212;1 latent variables included in the model. Under the normality assumption on <italic>X</italic> and <italic>Y</italic>, and the null hypothesis <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu73.jpg" mimetype="image"/></inline-formula>, the <italic>z</italic>-transformed (partial) correlation coefficients have the distribution (<xref ref-type="bibr" rid="b4">Bendel and Afifi, 1976</xref>) <disp-formula><graphic xlink:href="rssb0072-0003-mu74"/></disp-formula></p>
+        <p>We compute the corresponding <italic>p</italic>-values <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu75.jpg" mimetype="image"/></inline-formula>, for <italic>i</italic>=1,&#x2026;,<italic>p</italic>, for the (partial) correlation coefficients by using this statistic and arrange them in ascending order: <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu76.jpg" mimetype="image"/></inline-formula>. After defining <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu77.jpg" mimetype="image"/></inline-formula>, the hard thresholded direction vector becomes <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu78.jpg" mimetype="image"/></inline-formula> based on the <xref ref-type="bibr" rid="b5">Benjamini and Hochberg (1995)</xref> FDR procedure.</p>
+        <p>We remark that the solution from FDR control is minimax optimal if <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu79.jpg" mimetype="image"/></inline-formula> and <italic>&#x3B1;</italic>&gt;<italic>&#x3B3;</italic>/ log (<italic>p</italic>)(<italic>&#x3B3;</italic>&gt;0) under independence among tests. As long as <italic>&#x3B1;</italic> decreases with an appropriate rate as <italic>p</italic> increases, thresholding by FDR control is optimal without knowing the level of sparsity and, hence, reduces computation considerably. Although we do not have this independence, this adaptivity may work since the argument for minimax optimality mainly depends on marginal properties (<xref ref-type="bibr" rid="b1">Abramovich <italic>et al.</italic>, 2006</xref>).</p>
+        <p>As discussed in Section 3.2, for multivariate <italic>Y</italic>, the solution for SPLS is obtained through iterations and the resulting solution has a form of soft thresholding. Although hard thresholding with FDR control is no longer applicable, we can still employ soft thresholding based on CV. The number of hidden components, <italic>K</italic>, is tuned by CV as in the original PLS. We note that CV will be a function of two arguments for soft thresholding and that of one argument for hard thresholding and thereby making hard thresholding computationally much cheaper than soft thresholding.</p>
+      </sec>
+    </sec>
+    <sec>
+      <title>5. Simulation studies</title>
+      <sec>
+        <title>5.1. Comparison between SPLS&#x2013;NIPALS and SPLS&#x2013;SIMPLS algorithms</title>
+        <p>We conducted a small simulation study to compare variable selection performances of the two SPLS variants, SPLS&#x2013;NIPALS and SPLS&#x2013;SIMPLS. The data-generating mechanism is set as follows. Columns of <italic>X</italic> are generated by <italic>X</italic><sub><italic>i</italic></sub>=<italic>H</italic><sub><italic>j</italic></sub>+<italic>&#x25B;</italic><sub><italic>i</italic></sub> for <italic>n</italic><sub><italic>j</italic>&#x2212;1</sub>+1&#x2264;<italic>i</italic>&#x2264;<italic>n</italic><sub><italic>j</italic></sub>, where <italic>j</italic>=1,&#x2026;,3 and (<italic>n</italic><sub>0</sub>,<italic>n</italic><sub>1</sub>,<italic>n</italic><sub>2</sub>,<italic>n</italic><sub>3</sub>)=(0,6,13,30). Here, <italic>H</italic><sub>1</sub>,<italic>H</italic><sub>2</sub> and <italic>H</italic><sub>3</sub> are independent random vectors from <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu80.jpg" mimetype="image"/></inline-formula> and the <italic>&#x25B;</italic><sub><italic>i</italic></sub>s are from <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu81.jpg" mimetype="image"/></inline-formula>. Columns of <italic>Y</italic> are generated by <italic>Y</italic><sub>1</sub>=0.1<italic>H</italic><sub>1</sub>&#x2212;2<italic>H</italic><sub>2</sub>+<italic>f</italic><sub>1</sub>, and <italic>Y</italic><sub><italic>i</italic>+1</sub>=1.2<italic>Y</italic><sub><italic>i</italic></sub>+<italic>f</italic><sub><italic>i</italic></sub>, where the <italic>f</italic><sub><italic>i</italic></sub>s are from <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu82.jpg" mimetype="image"/></inline-formula>. We generated 100 simulated data sets and analysed them using both the SPLS&#x2013;NIPALS and the SPLS&#x2013;SIMPLS algorithms. <xref ref-type="table" rid="tbl1">Table 1</xref> reports the first quartile, median, and the third quartile of the numbers of correctly and incorrectly selected variables. We observe that the SPLS&#x2013;NIPALS algorithm performs better in identifying larger numbers of correct variables with a smaller number of false positive results compared with the SPLS&#x2013;SIMPLS algorithm. Further investigation reveals that the relevant variables that the SPLS&#x2013;SIMPLS algorithm misses are typically from the <italic>H</italic><sub>1</sub>-component with weaker signal.</p>
+        <table-wrap id="tbl1" position="float">
+          <label>Table 1</label>
+          <caption>
+            <p>Variable selection performances of SPLS&#x2013;NIPALS <italic>versus</italic> SPLS&#x2013;SIMPLS algorithms</p>
+          </caption>
+          <table frame="hsides" rules="groups">
+            <thead>
+              <tr>
+                <th align="left" rowspan="1" colspan="1">
+                  <italic>Method</italic>
+                </th>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>Number of correct variables</italic>
+                  <xref ref-type="table-fn" rid="tf1-1">&#x2020;</xref>
+                </th>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>Number of incorrect variables</italic>
+                  <xref ref-type="table-fn" rid="tf1-1">&#x2020;</xref>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td align="left" rowspan="1" colspan="1">SPLS&#x2013;NIPALS</td>
+                <td align="center" rowspan="1" colspan="1">9.75 / 12 / 13</td>
+                <td align="center" rowspan="1" colspan="1">0 / 0 / 2</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1">SPLS&#x2013;SIMPLS</td>
+                <td align="center" rowspan="1" colspan="1">7 / 9 / 13</td>
+                <td align="center" rowspan="1" colspan="1">0 / 2 / 5</td>
+              </tr>
+            </tbody>
+          </table>
+          <table-wrap-foot>
+            <fn id="tf1-1">
+              <label>&#x2020;</label>
+              <p>First quartile/median/third quartile.</p>
+            </fn>
+          </table-wrap-foot>
+        </table-wrap>
+      </sec>
+      <sec>
+        <title>5.2. Setting the weight factor <italic>&#x3BA;</italic> in the general regression formulation of problem (8)</title>
+        <p>We ran a small simulation study to examine how the generalization of the regression formulation given in expression (8) helps to avoid the local solution issue. The data-generating mechanism is set as follows. Columns of <italic>X</italic> are generated by <italic>X</italic><sub><italic>i</italic></sub>=<italic>H</italic><sub><italic>j</italic></sub>+<italic>&#x25B;</italic><sub><italic>i</italic></sub> for <italic>n</italic><sub><italic>j</italic>&#x2212;1</sub>+1&#x2264;<italic>i</italic>&#x2264;<italic>n</italic><sub><italic>j</italic></sub>, where <italic>j</italic>=1,&#x2026;,4 and (<italic>n</italic><sub>0</sub>,&#x2026;,<italic>n</italic><sub>4</sub>)=(0,4,8,10,100). Here, <italic>H</italic><sub>1</sub> is a random vector from <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu83.jpg" mimetype="image"/></inline-formula> is a random vector from <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu84.jpg" mimetype="image"/></inline-formula> and <italic>H</italic><sub>4</sub>=0. The <italic>&#x25B;</italic><sub><italic>i</italic></sub>s are independent identically distributed random vectors from <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu85.jpg" mimetype="image"/></inline-formula>. For illustration, we use <italic>M</italic>=<italic>X</italic><sup>T</sup><italic>X</italic>. When <italic>&#x3BA;</italic>=0.5, the algorithm becomes stuck at a local solution in 27 out of 100 simulation runs. When <italic>&#x3BA;</italic>=0.1,0.3,0.4, the correct solution is obtained in all runs. This indicates that a slight imbalance giving less weight to the concave objective function of formulation (8) might lead to a numerically easier optimization problem.</p>
+      </sec>
+      <sec>
+        <title>5.3. Comparisons with recent variable selection methods in terms of prediction power and variable selection</title>
+        <p>In this section, we compare SPLS regression with other popular methods in terms of prediction and variable selection performances in various correlated covariates settings. We include OLS and the lasso, which are not particularly tailored for correlated variables. We also consider dimension reduction methods such as PLS, principal component regression (PCR) and supervised PCs, which ought to be appropriate for highly correlated variables. The EN is also included in these comparisons since it can handle highly correlated variables.</p>
+        <p>We first consider the case where there is a reasonable number of observations (i.e. <italic>n</italic>&gt;<italic>p</italic>) and set <italic>n</italic>=400 and <italic>p</italic>=40. We vary the number of spurious variables as <italic>q</italic>=10 and <italic>q</italic>=30, and the noise-to-signal ratios as 0.1 and 0.2. Hidden variables <italic>H</italic><sub>1</sub>,&#x2026;,<italic>H</italic><sub>3</sub> are from <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu86.jpg" mimetype="image"/></inline-formula>, and the columns of the covariate matrix <italic>X</italic> are generated by <italic>X</italic><sub><italic>i</italic></sub>=<italic>H</italic><sub><italic>j</italic></sub>+<italic>&#x25B;</italic><sub><italic>i</italic></sub> for <italic>n</italic><sub><italic>j</italic>&#x2212;1</sub>+1&#x2264;<italic>i</italic>&#x2264;<italic>n</italic><sub><italic>j</italic></sub>, where <italic>j</italic>=1,&#x2026;,3,(<italic>n</italic><sub>0</sub>,&#x2026;,<italic>n</italic><sub>3</sub>)=(0,(<italic>p</italic>&#x2212;<italic>q</italic>)/2,<italic>p</italic>&#x2212;<italic>q</italic>,<italic>p</italic>) and <italic>&#x25B;</italic><sub>1</sub>,&#x2026;,<italic>&#x25B;</italic><sub><italic>p</italic></sub> are drawn independently from <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu87.jpg" mimetype="image"/></inline-formula>. <italic>Y</italic> is generated by 3<italic>H</italic><sub>1</sub>&#x2212;4<italic>H</italic><sub>2</sub>+<italic>f</italic>, where <italic>f</italic> is normally distributed with mean 0. This mechanism generates covariates, subsets of which are highly correlated.</p>
+        <p>We, then, consider the case where the sample size is smaller than the number of the variables (i.e. <italic>n</italic>&lt;<italic>p</italic>) and set <italic>n</italic>=40 and <italic>p</italic>=80. The numbers of spurious variables are set to <italic>q</italic>=20 and <italic>q</italic>=40, and noise-to-signal ratios to 0.1 and 0.2 respectively. <italic>X</italic> and <italic>Y</italic> are generated similarly to the above <italic>n</italic>&gt;<italic>p</italic> case.</p>
+        <p>We select the optimal tuning parameters for most of the methods by using tenfold CV. Since the CV curve tends to be flat in this simulation study, we first identify parameters of which CV scores are less than 1.1 times the minimum of the CV scores. We select the smallest <italic>K</italic> and the largest <italic>&#x3B7;</italic> among the selected parameters for SPLS, the largest <italic>&#x3BB;</italic><sub>2</sub> and the smallest step size for the EN and the smallest step size for the lasso. We use the <italic>F</italic>-statistic (the default CV score in the R package ) from the fitted model as a CV score for supervised PC. Then, we use the same procedure to generate an independent test data set and predict <italic>Y</italic> on this test data set on the basis of the fitted models. For each parameter setting, we perform 30 runs of simulations and compute the mean and standard deviation of the mean-squared prediction errors. The averages of the sensitivities and specificities are computed across the simulations to compare the accuracy of variable selection. The results are presented in <xref ref-type="table" rid="tbl2">Tables 2 and 3</xref>.</p>
+        <table-wrap id="tbl2" position="float">
+          <label>Table 2</label>
+          <caption>
+            <p>Mean-squared prediction error for simulations I and II<xref ref-type="table-fn" rid="tf2-1">&#x2020;</xref></p>
+          </caption>
+          <table frame="hsides" rules="groups">
+            <thead>
+              <tr>
+                <th align="left" rowspan="1" colspan="1"><italic>p</italic>/<italic>n</italic>/<italic>q</italic>/<italic>nssettings</italic></th>
+                <th align="center" colspan="8" rowspan="1">
+                  <italic>Mean-squared prediction errors for the following methods:</italic>
+                  <hr/>
+                </th>
+              </tr>
+              <tr>
+                <th align="left" rowspan="1" colspan="1"/>
+                <th align="left" rowspan="1" colspan="1">
+                  <italic>PLS (SE)</italic>
+                </th>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>PCR (SE)</italic>
+                </th>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>OLS (SE)</italic>
+                </th>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>Lasso (SE)</italic>
+                </th>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>SPLS1 (SE)</italic>
+                </th>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>SPLS2 (SE)</italic>
+                </th>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>Supervised PCs (SE)</italic>
+                </th>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>EN (SE)</italic>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td align="center" rowspan="1" colspan="1">40/400/10/0.1</td>
+                <td align="center" rowspan="1" colspan="1">31417.9</td>
+                <td align="center" rowspan="1" colspan="1">15717.1</td>
+                <td align="center" rowspan="1" colspan="1">31444.4</td>
+                <td align="center" rowspan="1" colspan="1">208.3</td>
+                <td align="center" rowspan="1" colspan="1">199.8</td>
+                <td align="center" rowspan="1" colspan="1">201.4</td>
+                <td align="center" rowspan="1" colspan="1">198.6</td>
+                <td align="center" rowspan="1" colspan="1">200.1</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1"/>
+                <td align="left" rowspan="1" colspan="1">(552.5)</td>
+                <td align="center" rowspan="1" colspan="1">(224.2)</td>
+                <td align="center" rowspan="1" colspan="1">(554.0)</td>
+                <td align="center" rowspan="1" colspan="1">(10.4)</td>
+                <td align="center" rowspan="1" colspan="1">(9.0)</td>
+                <td align="center" rowspan="1" colspan="1">(11.2)</td>
+                <td align="center" rowspan="1" colspan="1">(9.5)</td>
+                <td align="center" rowspan="1" colspan="1">(10.0)</td>
+              </tr>
+              <tr>
+                <td align="center" rowspan="1" colspan="1">40/400/10/0.2</td>
+                <td align="center" rowspan="1" colspan="1">31872.0</td>
+                <td align="center" rowspan="1" colspan="1">16186.5</td>
+                <td align="center" rowspan="1" colspan="1">31956.9</td>
+                <td align="center" rowspan="1" colspan="1">697.3</td>
+                <td align="center" rowspan="1" colspan="1">661.4</td>
+                <td align="center" rowspan="1" colspan="1">658.7</td>
+                <td align="center" rowspan="1" colspan="1">658.8</td>
+                <td align="center" rowspan="1" colspan="1">685.5</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1"/>
+                <td align="left" rowspan="1" colspan="1">(544.4)</td>
+                <td align="center" rowspan="1" colspan="1">(231.4)</td>
+                <td align="center" rowspan="1" colspan="1">(548.9)</td>
+                <td align="center" rowspan="1" colspan="1">(15.7)</td>
+                <td align="center" rowspan="1" colspan="1">(13.9)</td>
+                <td align="center" rowspan="1" colspan="1">(15.7)</td>
+                <td align="center" rowspan="1" colspan="1">(14.2)</td>
+                <td align="center" rowspan="1" colspan="1">(17.7)</td>
+              </tr>
+              <tr>
+                <td align="center" rowspan="1" colspan="1">40/400/30/0.1</td>
+                <td align="center" rowspan="1" colspan="1">31409.1</td>
+                <td align="center" rowspan="1" colspan="1">20914.2</td>
+                <td align="center" rowspan="1" colspan="1">31431.7</td>
+                <td align="center" rowspan="1" colspan="1">205.0</td>
+                <td align="center" rowspan="1" colspan="1">203.3</td>
+                <td align="center" rowspan="1" colspan="1">205.5</td>
+                <td align="center" rowspan="1" colspan="1">202.7</td>
+                <td align="center" rowspan="1" colspan="1">203.1</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1"/>
+                <td align="left" rowspan="1" colspan="1">(552.5)</td>
+                <td align="center" rowspan="1" colspan="1">(1324.4)</td>
+                <td align="center" rowspan="1" colspan="1">(554.2)</td>
+                <td align="center" rowspan="1" colspan="1">(9.5)</td>
+                <td align="center" rowspan="1" colspan="1">(10.1)</td>
+                <td align="center" rowspan="1" colspan="1">(11.1)</td>
+                <td align="center" rowspan="1" colspan="1">(9.4)</td>
+                <td align="center" rowspan="1" colspan="1">(9.7)</td>
+              </tr>
+              <tr>
+                <td align="center" rowspan="1" colspan="1">40/400/30/0.2</td>
+                <td align="center" rowspan="1" colspan="1">31863.7</td>
+                <td align="center" rowspan="1" colspan="1">21336.0</td>
+                <td align="center" rowspan="1" colspan="1">31939.3</td>
+                <td align="center" rowspan="1" colspan="1">678.6</td>
+                <td align="center" rowspan="1" colspan="1">661.2</td>
+                <td align="center" rowspan="1" colspan="1">663.5</td>
+                <td align="center" rowspan="1" colspan="1">663.5</td>
+                <td align="center" rowspan="1" colspan="1">684.9</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1"/>
+                <td align="left" rowspan="1" colspan="1">(544.1)</td>
+                <td align="center" rowspan="1" colspan="1">(1307.6)</td>
+                <td align="center" rowspan="1" colspan="1">(549.1)</td>
+                <td align="center" rowspan="1" colspan="1">(13.6)</td>
+                <td align="center" rowspan="1" colspan="1">(14.4)</td>
+                <td align="center" rowspan="1" colspan="1">(15.6)</td>
+                <td align="center" rowspan="1" colspan="1">(14.4)</td>
+                <td align="center" rowspan="1" colspan="1">(19.3)</td>
+              </tr>
+              <tr>
+                <td align="center" rowspan="1" colspan="1">80/40/20/0.1</td>
+                <td align="center" rowspan="1" colspan="1">29121.4</td>
+                <td align="center" rowspan="1" colspan="1">15678.0</td>
+                <td align="center" rowspan="1" colspan="1"/>
+                <td align="center" rowspan="1" colspan="1">485.2</td>
+                <td align="center" rowspan="1" colspan="1">538.4</td>
+                <td align="center" rowspan="1" colspan="1">494.6</td>
+                <td align="center" rowspan="1" colspan="1">720.0</td>
+                <td align="center" rowspan="1" colspan="1">533.9</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1"/>
+                <td align="left" rowspan="1" colspan="1">(1583.2)</td>
+                <td align="center" rowspan="1" colspan="1">(652.9)</td>
+                <td align="center" rowspan="1" colspan="1"/>
+                <td align="center" rowspan="1" colspan="1">(48.4)</td>
+                <td align="center" rowspan="1" colspan="1">(70.5)</td>
+                <td align="center" rowspan="1" colspan="1">(63.0)</td>
+                <td align="center" rowspan="1" colspan="1">(240.0)</td>
+                <td align="center" rowspan="1" colspan="1">(75.3)</td>
+              </tr>
+              <tr>
+                <td align="center" rowspan="1" colspan="1">80/40/20/0.2</td>
+                <td align="center" rowspan="1" colspan="1">30766.9</td>
+                <td align="center" rowspan="1" colspan="1">16386.5</td>
+                <td align="center" rowspan="1" colspan="1"/>
+                <td align="center" rowspan="1" colspan="1">1099.2</td>
+                <td align="center" rowspan="1" colspan="1">1019.5</td>
+                <td align="center" rowspan="1" colspan="1">965.5</td>
+                <td align="center" rowspan="1" colspan="1">2015.8</td>
+                <td align="center" rowspan="1" colspan="1">1050.7</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1"/>
+                <td align="left" rowspan="1" colspan="1">(1386.0)</td>
+                <td align="center" rowspan="1" colspan="1">(636.8)</td>
+                <td align="center" rowspan="1" colspan="1"/>
+                <td align="center" rowspan="1" colspan="1">(86.0)</td>
+                <td align="center" rowspan="1" colspan="1">(74.6)</td>
+                <td align="center" rowspan="1" colspan="1">(74.7)</td>
+                <td align="center" rowspan="1" colspan="1">(523.6)</td>
+                <td align="center" rowspan="1" colspan="1">(84.5)</td>
+              </tr>
+              <tr>
+                <td align="center" rowspan="1" colspan="1">80/40/40/0.1</td>
+                <td align="center" rowspan="1" colspan="1">29116.2</td>
+                <td align="center" rowspan="1" colspan="1">17416.1</td>
+                <td align="center" rowspan="1" colspan="1"/>
+                <td align="center" rowspan="1" colspan="1">502.4</td>
+                <td align="center" rowspan="1" colspan="1">506.9</td>
+                <td align="center" rowspan="1" colspan="1">497.7</td>
+                <td align="center" rowspan="1" colspan="1">522.7</td>
+                <td align="center" rowspan="1" colspan="1">545.3</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1"/>
+                <td align="left" rowspan="1" colspan="1">(1591.7)</td>
+                <td align="center" rowspan="1" colspan="1">(924.2)</td>
+                <td align="center" rowspan="1" colspan="1"/>
+                <td align="center" rowspan="1" colspan="1">(54.0)</td>
+                <td align="center" rowspan="1" colspan="1">(66.9)</td>
+                <td align="center" rowspan="1" colspan="1">(62.8)</td>
+                <td align="center" rowspan="1" colspan="1">(69.4)</td>
+                <td align="center" rowspan="1" colspan="1">(77.1)</td>
+              </tr>
+              <tr>
+                <td align="center" rowspan="1" colspan="1">80/40/40/0.2</td>
+                <td align="center" rowspan="1" colspan="1">29732.4</td>
+                <td align="center" rowspan="1" colspan="1">17940.8</td>
+                <td align="center" rowspan="1" colspan="1"/>
+                <td align="center" rowspan="1" colspan="1">1007.2</td>
+                <td align="center" rowspan="1" colspan="1">1013.3</td>
+                <td align="center" rowspan="1" colspan="1">964.4</td>
+                <td align="center" rowspan="1" colspan="1">1080.6</td>
+                <td align="center" rowspan="1" colspan="1">1018.7</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1"/>
+                <td align="left" rowspan="1" colspan="1">(1605.8)</td>
+                <td align="center" rowspan="1" colspan="1">(932.2)</td>
+                <td align="center" rowspan="1" colspan="1"/>
+                <td align="center" rowspan="1" colspan="1">(82.9)</td>
+                <td align="center" rowspan="1" colspan="1">(78.7)</td>
+                <td align="center" rowspan="1" colspan="1">(74.6)</td>
+                <td align="center" rowspan="1" colspan="1">(165.6)</td>
+                <td align="center" rowspan="1" colspan="1">(74.9)</td>
+              </tr>
+            </tbody>
+          </table>
+          <table-wrap-foot>
+            <fn id="tf2-1">
+              <label>&#x2020;</label>
+              <p><italic>p</italic>, the number of covariates; <italic>n</italic>, the sample size; <italic>q</italic>, the number of spurious variables; ns, noise-to-signal ratio; SPLS1, SPLS tuned by FDR control (FDR = 0.1); SPLS2, SPLS tuned by CV; SE, standard error.</p>
+            </fn>
+          </table-wrap-foot>
+        </table-wrap>
+        <p>Although not so surprising, the methods with an intrinsic variable selection property show smaller prediction errors compared with the methods lacking this property. For <italic>n</italic>&gt;<italic>p</italic>, the lasso, SPLS, supervised PCs and the EN show similar prediction performances in all four scenarios. This holds for the <italic>n</italic>&lt;<italic>p</italic> case, except that supervised PC shows a slight increase in prediction error for dense models (<italic>p</italic>=80 and <italic>q</italic>=20). For the model selection accuracy, SPLS, supervised PCs and the EN show excellent performances, whereas the lasso exhibits poor performance by missing relevant variables. SPLS performs better than other methods for <italic>n</italic>&lt;<italic>p</italic> and high noise-to-signal ratio scenarios. We observe that the EN misses relevant variables in the <italic>n</italic>&lt;<italic>p</italic> scenario, even though its <italic>L</italic><sub>2</sub>-penalty aims to handle these cases specifically. Moreover, the EN performs well for the right size of the regularization parameter <italic>&#x3BB;</italic><sub>2</sub>, but finding the optimal size objectively through CV seems to be a challenging task.</p>
+        <p>In general, both SPLS&#x2013;CV and SPLS&#x2013;FDR perform at least as well as other methods (<xref ref-type="table" rid="tbl3">Table 3</xref>). Especially, when <italic>n</italic>&lt;<italic>p</italic>, the lasso fails to identify important variables, whereas SPLS regression succeeds. This is because, although the number of SPLS latent components is limited by <italic>n</italic>, the actual number of variables that makes up the latent components can exceed <italic>n</italic>.</p>
+        <table-wrap id="tbl3" position="float">
+          <label>Table 3</label>
+          <caption>
+            <p>Model accuracy for simulations I and II<xref ref-type="table-fn" rid="tf3-1">&#x2020;</xref></p>
+          </caption>
+          <table frame="hsides" rules="groups">
+            <thead>
+              <tr>
+                <th align="left" rowspan="1" colspan="1"><italic>p</italic>/<italic>n</italic>/<italic>q</italic>/<italic>ns settings</italic></th>
+                <th align="center" colspan="10" rowspan="1">
+                  <italic>Results for the following methods:</italic>
+                  <hr/>
+                </th>
+              </tr>
+              <tr>
+                <th align="center" rowspan="1" colspan="1"/>
+                <th align="center" colspan="2" rowspan="1">
+                  <italic>Lasso</italic>
+                  <hr/>
+                </th>
+                <th align="center" colspan="2" rowspan="1">
+                  <italic>SPLS1</italic>
+                  <hr/>
+                </th>
+                <th align="center" colspan="2" rowspan="1">
+                  <italic>SPLS2</italic>
+                  <hr/>
+                </th>
+                <th align="center" colspan="2" rowspan="1">
+                  <italic>SuperPC</italic>
+                  <hr/>
+                </th>
+                <th align="center" colspan="2" rowspan="1">
+                  <italic>EN</italic>
+                  <hr/>
+                </th>
+              </tr>
+              <tr>
+                <th align="center" rowspan="1" colspan="1"/>
+                <th align="left" rowspan="1" colspan="1">
+                  <italic>Sensitivity</italic>
+                </th>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>Specificity</italic>
+                </th>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>Sensitivity</italic>
+                </th>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>Specificity</italic>
+                </th>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>Sensitivity</italic>
+                </th>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>Specificity</italic>
+                </th>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>Sensitivity</italic>
+                </th>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>Specificity</italic>
+                </th>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>Sensitivity</italic>
+                </th>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>Specificity</italic>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td align="left" rowspan="1" colspan="1">40/400/10/0.1</td>
+                <td align="center" rowspan="1" colspan="1">0.76</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">0.83</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">0.95</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1">40/400/10/0.2</td>
+                <td align="center" rowspan="1" colspan="1">0.67</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">0.80</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">0.94</td>
+                <td align="center" rowspan="1" colspan="1">0.97</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1">40/400/30/0.1</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">0.98</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">0.83</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">0.95</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1">40/400/30/0.2</td>
+                <td align="center" rowspan="1" colspan="1">0.96</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">0.80</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">0.95</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1">80/40/20/0.1</td>
+                <td align="center" rowspan="1" colspan="1">0.15</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">0.80</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">0.97</td>
+                <td align="center" rowspan="1" colspan="1">0.93</td>
+                <td align="center" rowspan="1" colspan="1">0.72</td>
+                <td align="center" rowspan="1" colspan="1">0.99</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1">80/40/20/0.2</td>
+                <td align="center" rowspan="1" colspan="1">0.12</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">0.67</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">0.86</td>
+                <td align="center" rowspan="1" colspan="1">0.83</td>
+                <td align="center" rowspan="1" colspan="1">0.80</td>
+                <td align="center" rowspan="1" colspan="1">0.98</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1">80/40/40/0.1</td>
+                <td align="center" rowspan="1" colspan="1">0.21</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">0.80</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">0.93</td>
+                <td align="center" rowspan="1" colspan="1">0.72</td>
+                <td align="center" rowspan="1" colspan="1">0.99</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1">80/40/40/0.2</td>
+                <td align="center" rowspan="1" colspan="1">0.15</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">0.80</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">1.00</td>
+                <td align="center" rowspan="1" colspan="1">0.97</td>
+                <td align="center" rowspan="1" colspan="1">0.90</td>
+                <td align="center" rowspan="1" colspan="1">0.80</td>
+                <td align="center" rowspan="1" colspan="1">0.98</td>
+              </tr>
+            </tbody>
+          </table>
+          <table-wrap-foot>
+            <fn id="tf3-1">
+              <label>&#x2020;</label>
+              <p><italic>p</italic>, the number of covariates; <italic>n</italic>, the sample size; <italic>q</italic>, the number of spurious variables; ns, noise-to-signal ratio; SPLS1, SPLS tuned by FDR control (FDR = 0.1); SPLS2, SPLS tuned by CV.</p>
+            </fn>
+          </table-wrap-foot>
+        </table-wrap>
+      </sec>
+      <sec>
+        <title>5.4. Comparisons of predictive power among methods that handle multicollinearity</title>
+        <p>In this section, we compare SPLS regression with some of the popular methods that handle multicollinearity such as PLS, PCR, ridge regression, a mixed variance&#x2013;covariance approach, gene shaving (<xref ref-type="bibr" rid="b17">Hastie <italic>et al.</italic>, 2000</xref>) and supervised PCs (<xref ref-type="bibr" rid="b3">Bair <italic>et al.</italic>, 2006</xref>). These comparisons are motivated by those presented in <xref ref-type="bibr" rid="b3">Bair <italic>et al.</italic> (2006)</xref>. We compare only prediction performances since all methods except for gene shaving and supervised PCs are not equipped with variable selection. For the dimension reduction methods, we allow only one latent component for a fair comparison.</p>
+        <p>Throughout these simulations, we set <italic>p</italic>=5000 and <italic>n</italic>=100. All the scenarios follow the general model of <italic>Y</italic>=<italic>X&#x3B2;</italic>+<italic>f</italic>, but the underlying data generation for <italic>X</italic> is varying. We devise simulation scenarios where the multicollinearity is due to the presence of one main latent variable (simulations 1 and 2), the presence of multiple latent variables (simulation 3) and the presence of a correlation structure that is not induced by latent variables but some other mechanism (simulation 4). We select the optimal tuning parameters and compute the prediction errors as in Section 5.3. The results are summarized in <xref ref-type="table" rid="tbl4">Table 4</xref>.</p>
+        <table-wrap id="tbl4" position="float">
+          <label>Table 4</label>
+          <caption>
+            <p>Mean-squared prediction errors<xref ref-type="table-fn" rid="tf4-1">&#x2020;</xref></p>
+          </caption>
+          <table frame="hsides" rules="groups">
+            <thead>
+              <tr>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>Method</italic>
+                </th>
+                <th align="center" colspan="4" rowspan="1">
+                  <italic>Mean-squared prediction errors for the following simulations:</italic>
+                  <hr/>
+                </th>
+              </tr>
+              <tr>
+                <th align="left" rowspan="1" colspan="1"/>
+                <th align="left" rowspan="1" colspan="1">
+                  <italic>Simulation 1</italic>
+                </th>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>Simulation 2</italic>
+                </th>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>Simulation 3</italic>
+                </th>
+                <th align="center" rowspan="1" colspan="1">
+                  <italic>Simulation 4</italic>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td align="left" rowspan="1" colspan="1">PCR1</td>
+                <td align="center" rowspan="1" colspan="1">320.67 (8.07)</td>
+                <td align="center" rowspan="1" colspan="1">308.93 (7.13)</td>
+                <td align="center" rowspan="1" colspan="1">241.75 (5.62)</td>
+                <td align="center" rowspan="1" colspan="1">2730.53 (75.82)</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1">PLS1</td>
+                <td align="center" rowspan="1" colspan="1">301.25 (7.32)</td>
+                <td align="center" rowspan="1" colspan="1">292.70 (7.69)</td>
+                <td align="center" rowspan="1" colspan="1">209.19 (4.58)</td>
+                <td align="center" rowspan="1" colspan="1">1748.53 (47.47)</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1">Ridge regression</td>
+                <td align="center" rowspan="1" colspan="1">304.80 (7.47)</td>
+                <td align="center" rowspan="1" colspan="1">296.36 (7.81)</td>
+                <td align="center" rowspan="1" colspan="1">211.59 (4.70)</td>
+                <td align="center" rowspan="1" colspan="1">1723.58 (46.41)</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1">Supervised PC</td>
+                <td align="center" rowspan="1" colspan="1">252.01 (9.71)</td>
+                <td align="center" rowspan="1" colspan="1">248.26 (7.68)</td>
+                <td align="center" rowspan="1" colspan="1">134.90 (3.34)</td>
+                <td align="center" rowspan="1" colspan="1">263.46 (14.98)</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1">SPLS1(FDR)</td>
+                <td align="center" rowspan="1" colspan="1">256.22 (13.82)</td>
+                <td align="center" rowspan="1" colspan="1">246.28 (7.87)</td>
+                <td align="center" rowspan="1" colspan="1">139.01 (3.74)</td>
+                <td align="center" rowspan="1" colspan="1">290.78 (13.29)</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1">SPLS1(CV)</td>
+                <td align="center" rowspan="1" colspan="1">257.40 (9.66)</td>
+                <td align="center" rowspan="1" colspan="1">261.14 (8.11)</td>
+                <td align="center" rowspan="1" colspan="1">120.27 (3.42)</td>
+                <td align="center" rowspan="1" colspan="1">195.63 (7.59)</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1">Mixed variance&#x2013;covariance</td>
+                <td align="center" rowspan="1" colspan="1">301.05 (7.31)</td>
+                <td align="center" rowspan="1" colspan="1">292.46 (7.67)</td>
+                <td align="center" rowspan="1" colspan="1">209.45 (4.58)</td>
+                <td align="center" rowspan="1" colspan="1">1748.65 (47.58)</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1">Gene shaving</td>
+                <td align="center" rowspan="1" colspan="1">255.60 (9.28)</td>
+                <td align="center" rowspan="1" colspan="1">292.46 (7.67)</td>
+                <td align="center" rowspan="1" colspan="1">119.39 (3.31)</td>
+                <td align="center" rowspan="1" colspan="1">203.46 (7.95)</td>
+              </tr>
+              <tr>
+                <td align="left" rowspan="1" colspan="1">True</td>
+                <td align="center" rowspan="1" colspan="1">224.13 (5.12)</td>
+                <td align="center" rowspan="1" colspan="1">218.04 (6.80)</td>
+                <td align="center" rowspan="1" colspan="1">96.90 (3.02)</td>
+                <td align="center" rowspan="1" colspan="1">99.12 (2.50)</td>
+              </tr>
+            </tbody>
+          </table>
+          <table-wrap-foot>
+            <fn id="tf4-1">
+              <label>&#x2020;</label>
+              <p>PCR1, PCR with one component; PLS1, PLS with one component; SPLS1(FDR), SPLS with one component tuned by FDR control (FDR = 0.4); SPLS1(CV), SPLS with one component tuned by CV; True, true model.</p>
+            </fn>
+          </table-wrap-foot>
+        </table-wrap>
+        <p>The first simulation scenario is the same as the &#x2018;simple simulation&#x2019; that was utilized by <xref ref-type="bibr" rid="b3">Bair <italic>et al.</italic> (2006)</xref>, where hidden components <italic>H</italic><sub>1</sub> and <italic>H</italic><sub>2</sub> are defined as follows: <italic>H</italic><sub>1<italic>j</italic></sub> equals 3 for 1&#x2264;<italic>j</italic>&#x2264;50 and 4 for 51&#x2264;<italic>j</italic>&#x2264;<italic>n</italic> and <italic>H</italic><sub>2<italic>j</italic></sub>=3.5 for 1&#x2264;<italic>j</italic>&#x2264;<italic>n</italic>. Columns of <italic>X</italic> are generated by <italic>X</italic><sub><italic>i</italic></sub>=<italic>H</italic><sub>1</sub>+<italic>&#x25B;</italic><sub><italic>i</italic></sub> for 1&#x2264;<italic>i</italic>&#x2264;50 and <italic>H</italic><sub>2</sub>+<italic>&#x25B;</italic><sub><italic>i</italic></sub> for 51&#x2264;<italic>i</italic>&#x2264;<italic>p</italic>, where <italic>&#x25B;</italic><sub><italic>i</italic></sub> are an independent identically distributed random vector from <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu88.jpg" mimetype="image"/></inline-formula>. <italic>&#x3B2;</italic> is a <italic>p</italic>&#xD7;1 vector, where the <italic>i</italic>th element is 1/25 for 1&#x2264;<italic>i</italic>&#x2264;50 and 0 for 51&#x2264;<italic>i</italic>&#x2264;<italic>p</italic>. <italic>f</italic> is a random vector from <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu89.jpg" mimetype="image"/></inline-formula>. Although this scenario is ideal for supervised PCs in that <italic>Y</italic> is related to one main hidden component, SPLS regression shows a comparable performance with supervised PCs and gene shaving.</p>
+        <p>The second simulation was referred to as &#x2018;hard simulation&#x2019; by <xref ref-type="bibr" rid="b3">Bair <italic>et al.</italic> (2006)</xref>, where more complicated hidden components are generated, and the rest of the data generation remains the same as in the simple simulation. <italic>H</italic><sub>1</sub>,&#x2026;,<italic>H</italic><sub>5</sub> are generated by <italic>H</italic><sub>1<italic>j</italic></sub>=3 <italic>I</italic>(<italic>j</italic>&#x2264;50)+4 <italic>I</italic>(<italic>j</italic>&gt;50),<italic>H</italic><sub>2<italic>j</italic></sub>=3.5+1.5 <italic>I</italic>(<italic>u</italic><sub>1<italic>j</italic></sub>&#x2264;0.4),<italic>H</italic><sub>3<italic>j</italic></sub>=3.5+0.5 <italic>I</italic>(<italic>u</italic><sub>1<italic>j</italic></sub>&#x2264;0.7),<italic>H</italic><sub>4<italic>j</italic></sub>=3.5&#x2212;1.5<italic>I</italic>(<italic>u</italic><sub>1<italic>j</italic></sub>&#x2264;0.3) and <italic>H</italic><sub>5<italic>j</italic></sub>=3.5, for 1&#x2264;<italic>j</italic>&#x2264;<italic>n</italic>, where <italic>u</italic><sub>1<italic>j</italic></sub>,<italic>u</italic><sub>2<italic>j</italic></sub> and <italic>u</italic><sub>3<italic>j</italic></sub> are independent identically distributed random variables from Unif(0,1). Columns of <italic>X</italic> are generated by <italic>X</italic><sub><italic>i</italic></sub>=<italic>H</italic><sub><italic>j</italic></sub>+<italic>&#x25B;</italic><sub><italic>i</italic></sub> for <italic>n</italic><sub><italic>j</italic>&#x2212;1</sub>+1&#x2264;<italic>i</italic>&#x2264;<italic>n</italic><sub><italic>j</italic></sub>, where <italic>j</italic>=1,&#x2026;,5 and (<italic>n</italic><sub>0</sub>,&#x2026;,<italic>n</italic><sub>5</sub>)=(0,50,100,200,300,<italic>p</italic>). As seen in <xref ref-type="table" rid="tbl4">Table 4</xref>, when there are complex latent components, SPLS and supervised PCs show the best performance. These two simulation studies illustrate that both SPLS and supervised PCs have good prediction performances under the latent component model with few relevant variables.</p>
+        <p>The third simulation is designed to compare the prediction performances of the methods when all methods are allowed to use only one latent component, even though there are more than one hidden components related to <italic>Y</italic>. This scenario aims to illustrate the differences of the derived latent components depending on whether they are guided by the response <italic>Y</italic>. <italic>H</italic><sub>1</sub> and <italic>H</italic><sub>2</sub> are generated as <italic>H</italic><sub>1<italic>j</italic></sub>=2.5 <italic>I</italic>(<italic>j</italic>&#x2264;50)+4 <italic>I</italic>(<italic>j</italic>&gt;50),<italic>H</italic><sub>2<italic>j</italic></sub>=2.5 <italic>I</italic>(1&#x2264;<italic>j</italic>&#x2264;25 or 51&#x2264;<italic>j</italic>&#x2264;75)+4 <italic>I</italic>(26&#x2264;<italic>j</italic>&#x2264;50 or 76&#x2264;<italic>j</italic>&#x2264;100). (<italic>H</italic><sub>3</sub>,&#x2026;,<italic>H</italic><sub>6</sub>) are defined in the same way as (<italic>H</italic><sub>2</sub>,&#x2026;,<italic>H</italic><sub>5</sub>) in the second simulation. Columns of <italic>X</italic> are generated by <italic>X</italic><sub><italic>i</italic></sub>=<italic>H</italic><sub><italic>j</italic></sub>+<italic>&#x25B;</italic><sub><italic>i</italic></sub> for <italic>n</italic><sub><italic>j</italic>&#x2212;1</sub>+1&#x2264;<italic>i</italic>&#x2264;<italic>n</italic><sub><italic>j</italic></sub>, <italic>j</italic>=1,&#x2026;,6, and (<italic>n</italic><sub>0</sub>,&#x2026;,<italic>n</italic><sub>6</sub>)=(0,25,50,100,200,300,<italic>p</italic>). <italic>f</italic> is a random vector from <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu90.jpg" mimetype="image"/></inline-formula>. Gene shaving and SPLS both exhibit good predictive performance in this scenario. In a way, when the number of components in the model is fixed, the methods which utilize <italic>Y</italic> when deriving latent components can achieve better predictive performances compared with methods that utilize only <italic>X</italic> when deriving these vectors. This agrees with the prior observation that PLS typically requires a smaller number of latent components than that of PCA (<xref ref-type="bibr" rid="b12">Frank and Friedman, 1993</xref>).</p>
+        <p>The fourth simulation is designed to compare the prediction performances of the methods when the relevant variables are not governed by a latent variable model. We generate the first 50 columns of <italic>X</italic> from a multivariate normal distribution with auto-regressive covariance, and the remaining 4950 columns of <italic>X</italic> are generated from hidden components as before. Five hidden components are generated as follows: <italic>H</italic><sub>1<italic>j</italic></sub> equals 1 for 1&#x2264;<italic>j</italic>&#x2264;50 and 6 for 51&#x2264;<italic>j</italic>&#x2264;<italic>n</italic> and <italic>H</italic><sub>2</sub>,&#x2026;,<italic>H</italic><sub>5</sub> are the same as in the second simulation. Denoting <italic>X</italic>=(<italic>X</italic><sup>(1)</sup>,<italic>X</italic><sup>(2)</sup>) by using a partitioned matrix, we generate rows of <italic>X</italic><sup>(1)</sup> from <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu91.jpg" mimetype="image"/></inline-formula>, where &#x3A3;<sub>50&#xD7;50</sub> is from an AR(1) process with an auto-correlation <italic>&#x3C1;</italic>=0.9. Columns of <italic>X</italic><sup>(2)</sup> are generated by <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu92.jpg" mimetype="image"/></inline-formula> for <italic>n</italic><sub><italic>j</italic>&#x2212;1</sub>+1&#x2264;<italic>i</italic>&#x2264;<italic>n</italic><sub><italic>j</italic></sub>, where <italic>j</italic>=1,&#x2026;,5 and (<italic>n</italic><sub>0</sub>,&#x2026;,<italic>n</italic><sub>5</sub>)=(0,50,100,200,300,<italic>p</italic>&#x2212;50). <italic>&#x3B2;</italic> is a <italic>p</italic>&#xD7;1 vector and its <italic>i</italic>th element is given by <italic>&#x3B2;</italic><sub><italic>i</italic></sub>=<italic>k</italic><sub><italic>j</italic></sub> for <italic>n</italic><sub><italic>j</italic>&#x2212;1</sub>+1&#x2264;<italic>i</italic>&#x2264;<italic>n</italic><sub><italic>j</italic></sub>, where <italic>j</italic>=1,&#x2026;,6, (<italic>n</italic><sub>0</sub>,&#x2026;,<italic>n</italic><sub>6</sub>)=(0,10,20,30,40,50,<italic>p</italic>) and (<italic>k</italic><sub>1</sub>,&#x2026;,<italic>k</italic><sub>6</sub>)=(8,6,4,2,1,0)/25. SPLS regression and gene shaving perform well, indicating that they have the ability to handle such a correlation structure. As in the third simulation, these two methods may gain some advantage in handling more general correlation structures by utilizing response <italic>Y</italic> when deriving direction vectors.</p>
+      </sec>
+    </sec>
+    <sec>
+      <title>6. Case-study: application to yeast cell cycle data set</title>
+      <p>Transcription factors (TFs) play an important role for interpreting a genome's regulatory code by binding to specific sequences to induce or repress gene expression. It is of general interest to identify TFs which are related to regulation of the cell cycle, which is one of the fundamental processes in a eukaryotic cell. Recently, <xref ref-type="bibr" rid="b6">Boulesteix and Strimmer (2005)</xref> performed an integrative analysis of gene expression and CHIP&#x2013;chip data measuring the amount of transcription and physical binding of TFs respectively, to address this question. Their analysis focused on estimation rather than variable selection. In this section, we focus on identifying cell cycle regulating TFs.</p>
+      <p>We utilize a yeast cell cycle gene expression data set from <xref ref-type="bibr" rid="b32">Spellman <italic>et al.</italic> (1998)</xref>. This experiment measures messenger ribonucleic acid levels every 7 min for 119 min with a total of 18 measurements covering two cell cycle periods. The second data set, CHIP&#x2013;chip data of <xref ref-type="bibr" rid="b27">Lee <italic>et al.</italic> (2002)</xref>, contains binding information of 106 TFs which elucidates which transcriptional regulators bind to promoter sequences of genes across the yeast genome. After excluding genes with missing values in either of the experiments, 542 cell-cycle-related genes are retained.</p>
+      <p>We analyse these data sets with our proposed multivariate (SPLS&#x2013;NIPALS) and univariate SPLS regression methods, and also with the lasso for a comparison and summarize the results in <xref ref-type="table" rid="tbl5">Table 5</xref>. Since CHIP&#x2013;chip data provide a proxy for the binary outcome of binding, we scale the CHIP&#x2013;chip data and use tenfold CV for tuning. Multivariate SPLS selects the least number of TFs (32 TFs), and univariate SPLS selects 70 TFs. The lasso selects the largest number of TFs, 100 out of 106. There are a total of 21 experimentally confirmed cell-cycle-related TFs (<xref ref-type="bibr" rid="b35">Wang <italic>et al.</italic>, 2007</xref>), and we report the number of confirmed TFs among those selected as a guideline for performance comparisons. In <xref ref-type="table" rid="tbl5">Table 5</xref>, we also report a hypergeometric probability calculation quantifying chance occurrences of the number of confirmed TFs among the variables selected by each method. A comparison of these probabilities indicates that multivariate SPLS has more evidence that selection of a large number of confirmed TFs is not due to chance.</p>
+      <table-wrap id="tbl5" position="float">
+        <label>Table 5</label>
+        <caption>
+          <p>Comparison of the number of selected TFs<xref ref-type="table-fn" rid="tf5-1">&#x2020;</xref></p>
+        </caption>
+        <table frame="hsides" rules="groups">
+          <thead>
+            <tr>
+              <th align="left" rowspan="1" colspan="1">
+                <italic>Method</italic>
+              </th>
+              <th align="center" rowspan="1" colspan="1">
+                <italic>Number of TFs selected (s)</italic>
+              </th>
+              <th align="center" rowspan="1" colspan="1">
+                <italic>Number of confirmed TFs (k)</italic>
+              </th>
+              <th align="center" rowspan="1" colspan="1"><italic>Prob</italic>(<italic>K</italic>&#x2265;<italic>k</italic>)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="left" rowspan="1" colspan="1">Multivariate SPLS</td>
+              <td align="center" rowspan="1" colspan="1">32</td>
+              <td align="center" rowspan="1" colspan="1">10</td>
+              <td align="center" rowspan="1" colspan="1">0.034</td>
+            </tr>
+            <tr>
+              <td align="left" rowspan="1" colspan="1">Univariate SPLS</td>
+              <td align="center" rowspan="1" colspan="1">70</td>
+              <td align="center" rowspan="1" colspan="1">17</td>
+              <td align="center" rowspan="1" colspan="1">0.058</td>
+            </tr>
+            <tr>
+              <td align="left" rowspan="1" colspan="1">Lasso</td>
+              <td align="center" rowspan="1" colspan="1">100</td>
+              <td align="center" rowspan="1" colspan="1">21</td>
+              <td align="center" rowspan="1" colspan="1">0.256</td>
+            </tr>
+            <tr>
+              <td align="left" rowspan="1" colspan="1">Total</td>
+              <td align="center" rowspan="1" colspan="1">106</td>
+              <td align="center" rowspan="1" colspan="1">21</td>
+              <td align="center" rowspan="1" colspan="1"/>
+            </tr>
+          </tbody>
+        </table>
+        <table-wrap-foot>
+          <fn id="tf5-1">
+            <label>&#x2020;</label>
+            <p>Prob(<italic>K</italic>&#x2265;<italic>k</italic>) denotes the probability of observing at least <italic>k</italic> confirmed variables out of 85 unconfirmed and 21 confirmed variables in a random draw of <italic>s</italic> variables.</p>
+          </fn>
+        </table-wrap-foot>
+      </table-wrap>
+      <p>We next compare results from multivariate and univariate SPLS. There are a total of 28 TFs which are selected by both methods and nine of these are experimentally verified according to the literature. The estimators, i.e. TF activities, of selected TFs in general show periodicity. This is indeed a desirable property since the 18 time points cover two periods of a cell cycle. Interestingly, as depicted <xref ref-type="fig" rid="fig01">Fig. 1</xref>, multivariate SPLS regression obtains smoother estimates of TF activities compared with univariate SPLS. A total of four TFs are selected only by multivariate SPLS regression. These coefficients are small but consistent across the time points (<xref ref-type="fig" rid="fig02">Fig. 2</xref>). A total of 42 TFs are selected only by univariate SPLS, and eight of these are among the confirmed TFs. These TFs do not show periodicity or have non zero coefficients only at few time points (the data are not shown). In general, multivariate SPLS regression can capture the weak effects that are consistent across the time points.</p>
+      <fig id="fig02" position="float">
+        <label>Fig. 2</label>
+        <caption>
+          <p>Estimated TF activities selected only by the multivariate SPLS regression; the magnitudes of the estimated TF activities are small but consistent across the time points</p>
+        </caption>
+        <graphic xlink:href="rssb0072-0003-f2"/>
+      </fig>
+      <fig id="fig01" position="float">
+        <label>Fig. 1</label>
+        <caption>
+          <p>Estimated TF activities for the 21 confirmed TFs (plots for ABF-1, CBF-1, GCR2 and SKN7 are not displayed since the TF activities of the factors were zero by both the univariate and the multivariate SPLS; the <italic>y</italic>-axis denotes estimated coefficients and the <italic>x</italic>-axis is time; multivariate SPLS regression yields smoother estimates and exhibits periodicity): <inline-formula><inline-graphic xlink:href="rssb0072-0003-fu1.jpg" mimetype="image"/></inline-formula>, estimated TF activities by the multivariate SPLS regression; <inline-formula><inline-graphic xlink:href="rssb0072-0003-fu2.jpg" mimetype="image"/></inline-formula>, estimated TF activities by univariate SPLS</p>
+        </caption>
+        <graphic xlink:href="rssb0072-0003-f1"/>
+      </fig>
+    </sec>
+    <sec>
+      <title>7. Discussion</title>
+      <p>PLS regression has been successfully utilized in ill-conditioned linear regression problems that arise in several scientific disciplines. <xref ref-type="bibr" rid="b16">Goutis (1996)</xref> showed that PLS yields shrinkage estimators. <xref ref-type="bibr" rid="b9">Butler and Denham (2000)</xref> argued that it may provide peculiar shrinkage in the sense that some of the components of the regression coefficient vector may expand instead of shrinking. However, as argued by <xref ref-type="bibr" rid="b31">Rosipal and Kr&#xE4;mer (2006)</xref>, this does not necessarily lead to worse shrinkage because PLS estimators are highly non-linear. We showed that both univariate and multivariate PLS regression estimators are consistent under the latent model assumption with strong restrictions on the number of variables and the sample size. This makes the suitability of PLS for the contemporary very large <italic>p</italic> and small <italic>n</italic> paradigm questionable. We argued and illustrated that imposing sparsity on direction vectors helps to avoid sample size problems in the presence of large numbers of irrelevant variables. We further developed a regression technique called SPLS. SPLS regression is also likely to yield shrinkage estimators since the methodology can be considered as a form of PLS regression on a restricted set of predictors. Analysis of its shrinkage properties is among our current investigations. SPLS regression is computationally efficient since it solves a linear equation by employing a CG algorithm rather than matrix inversion at each step.</p>
+      <p>We presented the solution of the SPLS criterion for the direction vectors and proposed an accompanying SPLS regression algorithm. Our SPLS regression algorithm has connections to other variable selection algorithms including the EN (<xref ref-type="bibr" rid="b37">Zou and Hastie, 2005</xref>) and the threshold gradient (<xref ref-type="bibr" rid="b13">Friedman and Popescu, 2004</xref>) method. The EN method deals with collinearity in variable selection by incorporating the ridge regression method into the LARS algorithm. In a way, SPLS handles the same issue by fusing the PLS technique into the LARS algorithm. SPLS can also be related to the threshold gradient method in that both algorithms use only the thresholded gradient and not the Hessian. However, SPLS achieves faster convergence by using the CG.</p>
+      <p>We presented proof-of-principle simulation studies with combinations of small and large number of predictors and sample sizes. These illustrated that SPLS regression achieves both high predictive power and accuracy for finding the relevant variables. Moreover, it can select a higher number of relevant variables than the available sample size since the number of variables that contribute to the direction vectors is not limited by the sample size.</p>
+      <p>Our application with SPLS involved two recent genomic data types, namely gene expression data and genomewide binding data of TFs. The response variable was continuous and a linear modelling framework followed naturally. Extensions of SPLS to other modelling frameworks such as generalized linear models and survival models are exciting future directions. Our application with integrative analysis of expression and TF binding date highlighted the use of SPLS within the context of a multivariate response. We expect that several genomic problems with multivariate responses, e.g. linking expression of a cluster of genes to genetic marker data, might lend themselves to the multivariate SPLS framework. We provide an implementation of the SPLS regression methodology as an R package at <ext-link ext-link-type="uri" xlink:href="http://cran.r-project.org/web/packages/spls">http://cran.r-project.org/web/packages/spls</ext-link>.</p>
+    </sec>
+  </body>
+  <back>
+    <ack>
+      <p>This research has been supported by National Institutes of Health grant H6003747 and National Science Foundation grant DMS 0804597 to SK.</p>
+    </ack>
+    <ref-list>
+      <title>References</title>
+      <ref id="b1">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Abramovich</surname>
+              <given-names>F</given-names>
+            </name>
+            <name>
+              <surname>Benjamini</surname>
+              <given-names>Y</given-names>
+            </name>
+            <name>
+              <surname>Donoho</surname>
+              <given-names>DL</given-names>
+            </name>
+            <name>
+              <surname>Johnstone</surname>
+              <given-names>IM</given-names>
+            </name>
+          </person-group>
+          <article-title>Adapting to unknown sparsity by controlling the false discovery rate</article-title>
+          <source>Ann. Statist.</source>
+          <year>2006</year>
+          <volume>34</volume>
+          <fpage>584</fpage>
+          <lpage>653</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b2">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>d'Aspremont</surname>
+              <given-names>A</given-names>
+            </name>
+            <name>
+              <surname>Ghaoui</surname>
+              <given-names>LE</given-names>
+            </name>
+            <name>
+              <surname>Jordan</surname>
+              <given-names>MI</given-names>
+            </name>
+            <name>
+              <surname>Lanckriet</surname>
+              <given-names>GRG</given-names>
+            </name>
+          </person-group>
+          <article-title>A direct formulation for sparse pca using semidefinite programming</article-title>
+          <source>SIAM Rev.</source>
+          <year>2007</year>
+          <volume>49</volume>
+          <fpage>434</fpage>
+          <lpage>448</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b3">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Bair</surname>
+              <given-names>E</given-names>
+            </name>
+            <name>
+              <surname>Hastie</surname>
+              <given-names>T</given-names>
+            </name>
+            <name>
+              <surname>Paul</surname>
+              <given-names>D</given-names>
+            </name>
+            <name>
+              <surname>Tibshirani</surname>
+              <given-names>R</given-names>
+            </name>
+          </person-group>
+          <article-title>Prediction by supervised principal components</article-title>
+          <source>J. Am. Statist. Ass.</source>
+          <year>2006</year>
+          <volume>101</volume>
+          <fpage>119</fpage>
+          <lpage>137</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b4">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Bendel</surname>
+              <given-names>RB</given-names>
+            </name>
+            <name>
+              <surname>Afifi</surname>
+              <given-names>AA</given-names>
+            </name>
+          </person-group>
+          <article-title>A criterion for stepwise regression</article-title>
+          <source>Am. Statistn</source>
+          <year>1976</year>
+          <volume>30</volume>
+          <fpage>85</fpage>
+          <lpage>87</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b5">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Benjamini</surname>
+              <given-names>Y</given-names>
+            </name>
+            <name>
+              <surname>Hochberg</surname>
+              <given-names>Y</given-names>
+            </name>
+          </person-group>
+          <article-title>Controlling the false discovery rate: a practical and powerful approach to multiple testing</article-title>
+          <source>J. R. Statist. Soc. B</source>
+          <year>1995</year>
+          <volume>57</volume>
+          <fpage>289</fpage>
+          <lpage>300</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b6">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Boulesteix</surname>
+              <given-names>A-L</given-names>
+            </name>
+            <name>
+              <surname>Strimmer</surname>
+              <given-names>K</given-names>
+            </name>
+          </person-group>
+          <article-title>Predicting transcription factor activities from combined analysis of microarray and chip data: a partial least squares approach</article-title>
+          <source>Theor. Biol. Med. Modllng</source>
+          <year>2005</year>
+          <volume>2</volume>
+        </element-citation>
+      </ref>
+      <ref id="b7">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Boulesteix</surname>
+              <given-names>A-L</given-names>
+            </name>
+            <name>
+              <surname>Strimmer</surname>
+              <given-names>K</given-names>
+            </name>
+          </person-group>
+          <article-title>Partial least squares: a versatile tool for the analysis of high-dimensional genomic data</article-title>
+          <source>Brief. Bioinform.</source>
+          <year>2006</year>
+          <volume>7</volume>
+          <fpage>32</fpage>
+          <lpage>44</lpage>
+          <pub-id pub-id-type="pmid">16772269</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="b8">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>ter Braak</surname>
+              <given-names>CJF</given-names>
+            </name>
+            <name>
+              <surname>de Jong</surname>
+              <given-names>S</given-names>
+            </name>
+          </person-group>
+          <article-title>The objective function of partial least squares regression</article-title>
+          <source>J. Chemometr.</source>
+          <year>1998</year>
+          <volume>12</volume>
+          <fpage>41</fpage>
+          <lpage>54</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b9">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Butler</surname>
+              <given-names>NA</given-names>
+            </name>
+            <name>
+              <surname>Denham</surname>
+              <given-names>MC</given-names>
+            </name>
+          </person-group>
+          <article-title>The peculiar shrinkage properties of partial least squares regression</article-title>
+          <source>J. R. Statist. Soc B</source>
+          <year>2000</year>
+          <volume>62</volume>
+          <fpage>585</fpage>
+          <lpage>593</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b10">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Chun</surname>
+              <given-names>H</given-names>
+            </name>
+            <name>
+              <surname>Kele&#x15F;</surname>
+              <given-names>S</given-names>
+            </name>
+          </person-group>
+          <article-title>Expression quantitative loci mapping with multivariate sparse partial least squares</article-title>
+          <source>Genetics</source>
+          <year>2009</year>
+          <volume>182</volume>
+          <fpage>79</fpage>
+          <lpage>90</lpage>
+          <pub-id pub-id-type="pmid">19270271</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="b11">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Efron</surname>
+              <given-names>B</given-names>
+            </name>
+            <name>
+              <surname>Hastie</surname>
+              <given-names>T</given-names>
+            </name>
+            <name>
+              <surname>Johnstone</surname>
+              <given-names>I</given-names>
+            </name>
+            <name>
+              <surname>Tibshirani</surname>
+              <given-names>R</given-names>
+            </name>
+          </person-group>
+          <article-title>Least angle regression</article-title>
+          <source>Ann. Statist.</source>
+          <year>2004</year>
+          <volume>32</volume>
+          <fpage>407</fpage>
+          <lpage>499</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b12">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Frank</surname>
+              <given-names>IE</given-names>
+            </name>
+            <name>
+              <surname>Friedman</surname>
+              <given-names>JH</given-names>
+            </name>
+          </person-group>
+          <article-title>A statistical view of some chemometrics regression tools</article-title>
+          <source>Technometrics</source>
+          <year>1993</year>
+          <volume>35</volume>
+          <fpage>109</fpage>
+          <lpage>135</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b13">
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Friedman</surname>
+              <given-names>JH</given-names>
+            </name>
+            <name>
+              <surname>Popescu</surname>
+              <given-names>BE</given-names>
+            </name>
+          </person-group>
+          <article-title>Gradient directed regularization for linear regression and classification</article-title>
+          <source>Technical Report</source>
+          <publisher-loc>Stanford University, Stanford</publisher-loc>
+          <publisher-name>Department of Statistics</publisher-name>
+        </element-citation>
+      </ref>
+      <ref id="b14">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Geman</surname>
+              <given-names>S</given-names>
+            </name>
+          </person-group>
+          <article-title>A limit theorem for the norm of random matrices</article-title>
+          <source>Ann. Probab.</source>
+          <year>1980</year>
+          <volume>8</volume>
+          <fpage>252</fpage>
+          <lpage>261</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b15">
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Golub</surname>
+              <given-names>GH</given-names>
+            </name>
+            <name>
+              <surname>van Loan</surname>
+              <given-names>CF</given-names>
+            </name>
+          </person-group>
+          <source>Matrix Computations</source>
+          <year>1987</year>
+          <publisher-loc>Baltimore</publisher-loc>
+          <publisher-name>Johns Hopkins University Press</publisher-name>
+        </element-citation>
+      </ref>
+      <ref id="b16">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Goutis</surname>
+              <given-names>C</given-names>
+            </name>
+          </person-group>
+          <article-title>Partial least squares algorithm yields shrinkage estimators</article-title>
+          <source>Ann. Statist.</source>
+          <year>1996</year>
+          <volume>24</volume>
+          <fpage>816</fpage>
+          <lpage>824</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b17">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Hastie</surname>
+              <given-names>T</given-names>
+            </name>
+            <name>
+              <surname>Tibshirani</surname>
+              <given-names>R</given-names>
+            </name>
+            <name>
+              <surname>Eisen</surname>
+              <given-names>M</given-names>
+            </name>
+            <name>
+              <surname>Alizadeh</surname>
+              <given-names>A</given-names>
+            </name>
+            <name>
+              <surname>Levy</surname>
+              <given-names>R</given-names>
+            </name>
+            <name>
+              <surname>Staudt</surname>
+              <given-names>L</given-names>
+            </name>
+            <name>
+              <surname>Botstein</surname>
+              <given-names>D</given-names>
+            </name>
+            <name>
+              <surname>Brown</surname>
+              <given-names>P</given-names>
+            </name>
+          </person-group>
+          <article-title>Identifying distinct sets of genes with similar expression patterns via &#x2018;&#x2018;gene shaving&#x2019;&#x2019;</article-title>
+          <source>Genome Biol.</source>
+          <year>2000</year>
+          <volume>1</volume>
+          <fpage>1</fpage>
+          <lpage>21</lpage>
+          <pub-id pub-id-type="pmid">11178226</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="b18">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Helland</surname>
+              <given-names>IS</given-names>
+            </name>
+          </person-group>
+          <article-title>Partial least squares regression and statistical models</article-title>
+          <source>Scand. J. Statist.</source>
+          <year>1990</year>
+          <volume>17</volume>
+          <fpage>97</fpage>
+          <lpage>114</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b19">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Helland</surname>
+              <given-names>IS</given-names>
+            </name>
+          </person-group>
+          <article-title>Model reduction for prediction in regression models</article-title>
+          <source>Scand. J. Statist.</source>
+          <year>2000</year>
+          <volume>27</volume>
+          <fpage>1</fpage>
+          <lpage>20</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b20">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Helland</surname>
+              <given-names>IS</given-names>
+            </name>
+            <name>
+              <surname>Almoy</surname>
+              <given-names>T</given-names>
+            </name>
+          </person-group>
+          <article-title>Comparison of prediction methods when only a few components are relevant</article-title>
+          <source>J. Am. Statist. Ass.</source>
+          <year>1994</year>
+          <volume>89</volume>
+          <fpage>583</fpage>
+          <lpage>591</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b21">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Huang</surname>
+              <given-names>X</given-names>
+            </name>
+            <name>
+              <surname>Pan</surname>
+              <given-names>W</given-names>
+            </name>
+            <name>
+              <surname>Park</surname>
+              <given-names>S</given-names>
+            </name>
+            <name>
+              <surname>Han</surname>
+              <given-names>X</given-names>
+            </name>
+            <name>
+              <surname>Miller</surname>
+              <given-names>LW</given-names>
+            </name>
+            <name>
+              <surname>Hall</surname>
+              <given-names>J</given-names>
+            </name>
+          </person-group>
+          <article-title>Modeling the relationship between lvad support time and gene expression changes in the human heart by penalized partial least squares</article-title>
+          <source>Bioinformatics</source>
+          <year>2004</year>
+          <volume>20</volume>
+          <fpage>888</fpage>
+          <lpage>894</lpage>
+          <pub-id pub-id-type="pmid">14751963</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="b22">
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Johnstone</surname>
+              <given-names>IM</given-names>
+            </name>
+            <name>
+              <surname>Lu</surname>
+              <given-names>AY</given-names>
+            </name>
+          </person-group>
+          <article-title>Sparse principal component analysis. <italic>Technical Report</italic></article-title>
+          <publisher-loc>Stanford</publisher-loc>
+          <publisher-name>Department of Statistics, Stanford University</publisher-name>
+        </element-citation>
+      </ref>
+      <ref id="b23">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Jolliffe</surname>
+              <given-names>IT</given-names>
+            </name>
+            <name>
+              <surname>Trendafilov</surname>
+              <given-names>NT</given-names>
+            </name>
+            <name>
+              <surname>Uddin</surname>
+              <given-names>M</given-names>
+            </name>
+          </person-group>
+          <article-title>A modified principal component technique based on the lasso</article-title>
+          <source>J. Computnl Graph. Statist.</source>
+          <year>2003</year>
+          <volume>12</volume>
+          <fpage>531</fpage>
+          <lpage>547</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b24">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>de Jong</surname>
+              <given-names>S</given-names>
+            </name>
+          </person-group>
+          <article-title>SIMPLS: an alternative approach to partial least squares regression</article-title>
+          <source>Chemometr. Intell. Lab. Syst.</source>
+          <year>1993</year>
+          <volume>18</volume>
+          <fpage>251</fpage>
+          <lpage>263</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b25">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Kosorok</surname>
+              <given-names>MR</given-names>
+            </name>
+            <name>
+              <surname>Ma</surname>
+              <given-names>S</given-names>
+            </name>
+          </person-group>
+          <article-title>Marginal asymptotics for the &#x2018;&#x2018;large p, small n&#x2019;&#x2019; paradigm: with applications to microarray data</article-title>
+          <source>Ann. Statist.</source>
+          <year>2007</year>
+          <volume>35</volume>
+          <fpage>1456</fpage>
+          <lpage>1486</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b26">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Kr&#xE4;mer</surname>
+              <given-names>N</given-names>
+            </name>
+          </person-group>
+          <article-title>An overview on the shrinkage properties of partial least squares regression</article-title>
+          <source>Computnl Statist.</source>
+          <year>2007</year>
+          <volume>22</volume>
+          <fpage>249</fpage>
+          <lpage>273</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b27">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Lee</surname>
+              <given-names>TI</given-names>
+            </name>
+            <name>
+              <surname>Rinaldi</surname>
+              <given-names>NJ</given-names>
+            </name>
+            <name>
+              <surname>Robert</surname>
+              <given-names>F</given-names>
+            </name>
+            <name>
+              <surname>Odom</surname>
+              <given-names>DT</given-names>
+            </name>
+            <name>
+              <surname>Bar-Joseph</surname>
+              <given-names>Z</given-names>
+            </name>
+            <name>
+              <surname>Gerber</surname>
+              <given-names>GK</given-names>
+            </name>
+            <name>
+              <surname>Hannett</surname>
+              <given-names>NM</given-names>
+            </name>
+            <name>
+              <surname>Harbison</surname>
+              <given-names>CT</given-names>
+            </name>
+            <name>
+              <surname>Thomson</surname>
+              <given-names>CM</given-names>
+            </name>
+            <name>
+              <surname>Simon</surname>
+              <given-names>I</given-names>
+            </name>
+            <name>
+              <surname>Zeitlinger</surname>
+              <given-names>J</given-names>
+            </name>
+            <name>
+              <surname>Jennings</surname>
+              <given-names>EG</given-names>
+            </name>
+            <name>
+              <surname>Murray</surname>
+              <given-names>HL</given-names>
+            </name>
+            <name>
+              <surname>Gordon</surname>
+              <given-names>DB</given-names>
+            </name>
+            <name>
+              <surname>Ren</surname>
+              <given-names>B</given-names>
+            </name>
+            <name>
+              <surname>Wyrick</surname>
+              <given-names>JJ</given-names>
+            </name>
+            <name>
+              <surname>Tagne</surname>
+              <given-names>J-B</given-names>
+            </name>
+            <name>
+              <surname>Volkert</surname>
+              <given-names>TL</given-names>
+            </name>
+            <name>
+              <surname>Fraenkel</surname>
+              <given-names>E</given-names>
+            </name>
+            <name>
+              <surname>Gifford</surname>
+              <given-names>DK</given-names>
+            </name>
+            <name>
+              <surname>Young</surname>
+              <given-names>RA</given-names>
+            </name>
+          </person-group>
+          <article-title>Transcriptional regulatory networks in saccharomyces cerevisiae</article-title>
+          <source>Science</source>
+          <year>2002</year>
+          <volume>298</volume>
+          <fpage>799</fpage>
+          <lpage>804</lpage>
+          <pub-id pub-id-type="pmid">12399584</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="b28">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Nadler</surname>
+              <given-names>B</given-names>
+            </name>
+            <name>
+              <surname>Coifman</surname>
+              <given-names>RR</given-names>
+            </name>
+          </person-group>
+          <article-title>The prediction error in cls and pls: the importance of feature selection prior to multivariate calibration</article-title>
+          <source>J. Chemometr.</source>
+          <year>2005</year>
+          <volume>19</volume>
+          <fpage>107</fpage>
+          <lpage>118</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b29">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Naik</surname>
+              <given-names>P</given-names>
+            </name>
+            <name>
+              <surname>Tsai</surname>
+              <given-names>C-L</given-names>
+            </name>
+          </person-group>
+          <article-title>Partial least squares estimator for single-index models</article-title>
+          <source>J. R. Statist. Soc. B</source>
+          <year>2000</year>
+          <volume>62</volume>
+          <fpage>763</fpage>
+          <lpage>771</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b30">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Pratt</surname>
+              <given-names>JW</given-names>
+            </name>
+          </person-group>
+          <article-title>On interchanging limits and integrals</article-title>
+          <source>Ann. Math. Statist.</source>
+          <year>1960</year>
+          <volume>31</volume>
+          <fpage>74</fpage>
+          <lpage>77</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b31">
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Rosipal</surname>
+              <given-names>R</given-names>
+            </name>
+            <name>
+              <surname>Kr&#xE4;mer</surname>
+              <given-names>N</given-names>
+            </name>
+          </person-group>
+          <person-group person-group-type="editor">
+            <name>
+              <surname>Saunders</surname>
+              <given-names>C</given-names>
+            </name>
+            <name>
+              <surname>Grobelnik</surname>
+              <given-names>M</given-names>
+            </name>
+            <name>
+              <surname>Gunn</surname>
+              <given-names>S</given-names>
+            </name>
+            <name>
+              <surname>Shawe-Taylor</surname>
+              <given-names>J</given-names>
+            </name>
+          </person-group>
+          <article-title>Overview and recent advances in partial least squares</article-title>
+          <source>Subspace, Latent Structure and Feature Selection Techniques</source>
+          <year>2006</year>
+          <publisher-loc>New York</publisher-loc>
+          <publisher-name>Springer</publisher-name>
+          <fpage>34</fpage>
+          <lpage>51</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b32">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Spellman</surname>
+              <given-names>PT</given-names>
+            </name>
+            <name>
+              <surname>Sherlock</surname>
+              <given-names>G</given-names>
+            </name>
+            <name>
+              <surname>Zhang</surname>
+              <given-names>MQ</given-names>
+            </name>
+            <name>
+              <surname>Iyer</surname>
+              <given-names>VR</given-names>
+            </name>
+            <name>
+              <surname>Anders</surname>
+              <given-names>K</given-names>
+            </name>
+            <name>
+              <surname>Eisen</surname>
+              <given-names>MB</given-names>
+            </name>
+            <name>
+              <surname>Brown</surname>
+              <given-names>PO</given-names>
+            </name>
+            <name>
+              <surname>Botstein</surname>
+              <given-names>D</given-names>
+            </name>
+            <name>
+              <surname>Futcher</surname>
+              <given-names>B</given-names>
+            </name>
+          </person-group>
+          <article-title>Comprehensive identification of cell cycle-regulated genes of the yeast <italic>saccharomyces cerevisiae</italic> by microarray hybridization</article-title>
+          <source>Molec. Biol. Cell</source>
+          <year>1998</year>
+          <volume>9</volume>
+          <fpage>3273</fpage>
+          <lpage>3279</lpage>
+          <pub-id pub-id-type="pmid">9843569</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="b33">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Stoica</surname>
+              <given-names>P</given-names>
+            </name>
+            <name>
+              <surname>Soderstorom</surname>
+              <given-names>T</given-names>
+            </name>
+          </person-group>
+          <article-title>Partial least squares: a first-order analysis</article-title>
+          <source>Scand. J. Statist.</source>
+          <year>1998</year>
+          <volume>25</volume>
+          <fpage>17</fpage>
+          <lpage>24</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b34">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Tibshirani</surname>
+              <given-names>R</given-names>
+            </name>
+          </person-group>
+          <article-title>Regression shrinkage and selection via the lasso</article-title>
+          <source>J. R. Statist. Soc. B</source>
+          <year>1996</year>
+          <volume>58</volume>
+          <fpage>267</fpage>
+          <lpage>288</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b35">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Wang</surname>
+              <given-names>L</given-names>
+            </name>
+            <name>
+              <surname>Chen</surname>
+              <given-names>G</given-names>
+            </name>
+            <name>
+              <surname>Li</surname>
+              <given-names>H</given-names>
+            </name>
+          </person-group>
+          <article-title>Group scad regression analysis for microarray time course gene expression data</article-title>
+          <source>Bioinformatics</source>
+          <year>2007</year>
+          <volume>23</volume>
+          <fpage>1486</fpage>
+          <lpage>1494</lpage>
+          <pub-id pub-id-type="pmid">17463025</pub-id>
+        </element-citation>
+      </ref>
+      <ref id="b36">
+        <element-citation publication-type="book">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Wold</surname>
+              <given-names>H</given-names>
+            </name>
+          </person-group>
+          <source>Estimation of Principal Components and Related Models by Iterative Least Squares</source>
+          <year>1966</year>
+          <publisher-loc>New York</publisher-loc>
+          <publisher-name>Academic Press</publisher-name>
+        </element-citation>
+      </ref>
+      <ref id="b37">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Zou</surname>
+              <given-names>H</given-names>
+            </name>
+            <name>
+              <surname>Hastie</surname>
+              <given-names>T</given-names>
+            </name>
+          </person-group>
+          <article-title>Regularization and variable selection via the elastic net</article-title>
+          <source>J. R. Statist. Soc. B</source>
+          <year>2005</year>
+          <volume>67</volume>
+          <fpage>301</fpage>
+          <lpage>320</lpage>
+        </element-citation>
+      </ref>
+      <ref id="b38">
+        <element-citation publication-type="journal">
+          <person-group person-group-type="author">
+            <name>
+              <surname>Zou</surname>
+              <given-names>H</given-names>
+            </name>
+            <name>
+              <surname>Hastie</surname>
+              <given-names>T</given-names>
+            </name>
+            <name>
+              <surname>Tibshirani</surname>
+              <given-names>R</given-names>
+            </name>
+          </person-group>
+          <article-title>Sparse principal component analysis</article-title>
+          <source>J. Computnl Graph. Statist.</source>
+          <year>2006</year>
+          <volume>15</volume>
+          <fpage>265</fpage>
+          <lpage>286</lpage>
+        </element-citation>
+      </ref>
+    </ref-list>
+    <app-group>
+      <app id="app1">
+        <title>Appendix A: Proofs of the theorems</title>
+        <p>We first introduce lemmas 2 and 3 and then utilize these in the proof of theorem 1. &#x2016;<italic>A</italic>&#x2016;<sub>2</sub> for matrix <italic>A</italic> &#x2208; <italic>R</italic><sup><italic>n</italic>&#xD7;<italic>k</italic></sup> is defined as the largest singular value of <italic>A</italic>.</p>
+        <p><italic>Lemma 2.</italic> Under assumptions 1 and 2, and <italic>p</italic>/<italic>n</italic>&#x2192;0, <disp-formula><graphic xlink:href="rssb0072-0003-mu93"/></disp-formula></p>
+        <p><italic>Proof.</italic> The first part of lemma 2 was proved by <xref ref-type="bibr" rid="b22">Johnstone and Lu (2004)</xref>, and we shall show the second part on the basis of their argument. We decompose <italic>S</italic><sub><italic>XY</italic></sub>&#x2212;<italic>&#x3C3;</italic><sub><italic>XY</italic></sub> as (<italic>A</italic><sub><italic>n</italic></sub>+<italic>B</italic><sub><italic>n</italic></sub>+<italic>C</italic><sub><italic>n</italic></sub>)<italic>&#x3B2;</italic>+<italic>D</italic><sub><italic>n</italic></sub>, where <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu94.jpg" mimetype="image"/></inline-formula> and <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu95.jpg" mimetype="image"/></inline-formula>. We remark that here <italic>E</italic> is defined to be an <italic>n</italic>&#xD7;<italic>p</italic> matrix of which the <italic>i</italic>th row is <italic>e</italic><sub><italic>i</italic></sub>, whereas the corresponding matrix <italic>Z</italic> in <xref ref-type="bibr" rid="b22">Johnstone and Lu (2004)</xref> is a <italic>p</italic>&#xD7;<italic>n</italic> matrix. We aim to show that the norm of each component of the decomposition is <italic>O</italic><sub><italic>p</italic></sub>{&#x221A;(<italic>p</italic>/<italic>n</italic>)}. <xref ref-type="bibr" rid="b22">Johnstone and Lu (2004)</xref> showed that, if <italic>p</italic>/<italic>n</italic>&#x2192;<italic>k</italic><sub>0</sub> &#x2208; [0,&#x221E;), then &#x2016;<italic>A</italic><sub><italic>n</italic></sub>&#x2016;<sub>2</sub>&#x2192;0,&#x2016;<italic>B</italic><sub><italic>n</italic></sub>&#x2016;<sub>2</sub>&#x2264;<italic>&#x3C3;</italic><sub>1</sub>&#x221A;<italic>k</italic><sub>0</sub>&#x3A3;<italic>&#x3F1;</italic><sub><italic>j</italic></sub> and <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu96.jpg" mimetype="image"/></inline-formula> almost surely. Hence, we examine &#x2016;<italic>D</italic><sub><italic>n</italic></sub>&#x2016;<sub>2</sub>, components of which have the distributions <italic>&#x3C5;</italic><sup><italic>j</italic>T</sup><italic>f</italic>=<sup>d</sup><italic>&#x3C7;</italic><sub><italic>n</italic></sub><italic>&#x3C7;</italic><sub>1</sub><italic>U</italic><sub><italic>j</italic></sub> for 1&#x2264;<italic>j</italic>&#x2264;<italic>m</italic> and <italic>E</italic><sup>T</sup><italic>f</italic>=<sup>d</sup><italic>&#x3C7;</italic><sub><italic>n</italic></sub><italic>&#x3C7;</italic><sub><italic>p</italic></sub><italic>U</italic><sub><italic>m</italic>+1</sub>, where <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu97.jpg" mimetype="image"/></inline-formula> and <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu98.jpg" mimetype="image"/></inline-formula> are <italic>&#x3C7;</italic><sup>2</sup> random variables and the <italic>U</italic><sub><italic>j</italic></sub>s are random vectors, uniform on the surface of the unit sphere <italic>S</italic><sup><italic>p</italic>&#x2212;1</sup> in <italic>R</italic><sup><italic>p</italic></sup>. After denoting <italic>a</italic><sub><italic>j</italic></sub>=<italic>&#x3C5;</italic><sup><italic>j</italic>T</sup><italic>f</italic> for 1&#x2264;<italic>j</italic>&#x2264;<italic>m</italic> and <italic>a</italic><sub><italic>m</italic>+1</sub>=<italic>E</italic><sup>T</sup><italic>f</italic>, we have that <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu99.jpg" mimetype="image"/></inline-formula> almost surely, for 1&#x2264;<italic>j</italic>&#x2264;<italic>m</italic>, and <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu100.jpg" mimetype="image"/></inline-formula> almost surely from the previous results on the distributions. By using a version of the dominated convergence theorem (<xref ref-type="bibr" rid="b30">Pratt, 1960</xref>), the results follow: <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu101.jpg" mimetype="image"/></inline-formula> almost surely &#x2016;<italic>D</italic><sub><italic>n</italic></sub>&#x2016;<sub>2</sub>&#x2192;&#x221A;<italic>k</italic><sub>0</sub><italic>&#x3C3;</italic><sub>1</sub><italic>&#x3C3;</italic><sub>2</sub> almost surely and <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu102.jpg" mimetype="image"/></inline-formula> almost surely, and thus the lemma is proved.</p>
+        <p><italic>Lemma 3.</italic> Under assumptions 1 and 2 and <italic>p</italic>/<italic>n</italic>&#x2192;0, <disp-formula id="m11"><graphic xlink:href="rssb0072-0003-m11"/><label>(11)</label></disp-formula><disp-formula id="m12"><graphic xlink:href="rssb0072-0003-m12"/><label>(12)</label></disp-formula></p>
+        <p><italic>Proof.</italic> Both of these bounds (<xref ref-type="disp-formula" rid="m11">equations (11)</xref> and <xref ref-type="disp-formula" rid="m12">(12)</xref>) are direct consequences of lemma 2. By using the triangular inequality, H&#xF6;lder's inequality and lemma 2, we have that <disp-formula><graphic xlink:href="rssb0072-0003-mu103"/></disp-formula> for some constants <italic>k</italic><sub>1</sub> and <italic>k</italic><sub>2</sub> and <disp-formula><graphic xlink:href="rssb0072-0003-mu104"/></disp-formula></p>
+        <sec>
+          <title>A.1. Proof of theorem 1</title>
+          <p>We start with proving the first part of theorem 1. We use the closed form solution <disp-formula><graphic xlink:href="rssb0072-0003-mu105"/></disp-formula> where <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu106.jpg" mimetype="image"/></inline-formula>. First, we establish that <disp-formula><graphic xlink:href="rssb0072-0003-mu107"/></disp-formula></p>
+          <p>By using the triangular inequality and H&#xF6;lder's inequality, <disp-formula><graphic xlink:href="rssb0072-0003-mu108"/></disp-formula></p>
+          <p>It is sufficient to show that <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu109.jpg" mimetype="image"/></inline-formula> and <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu110.jpg" mimetype="image"/></inline-formula> in probability.</p>
+          <p>The first claim is proved by using the definition of a matrix norm and lemmas 2 and 3 as <disp-formula><graphic xlink:href="rssb0072-0003-mu111"/></disp-formula></p>
+          <p>For the second claim, we focus on <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu112.jpg" mimetype="image"/></inline-formula> since <disp-formula><graphic xlink:href="rssb0072-0003-mu113"/></disp-formula> (Golub and van Loan, 1987). Here, &#x2016;(<italic>R</italic>&#x3A3;<sub><italic>XX</italic></sub><italic>R</italic>)<sup>&#x2212;1</sup>&#x2016;<sub>2</sub> and <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu114.jpg" mimetype="image"/></inline-formula> are finite as (<italic>R</italic>&#x3A3;<sub><italic>XX</italic></sub><italic>R</italic>)<sup>&#x2212;1</sup> and <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu115.jpg" mimetype="image"/></inline-formula> are non-singular for a given <italic>K</italic>. Using this fact as well as the triangular and H&#xF6;lder's inequalities, we can easily show the second claim. The third claim follows by the fact that <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu116.jpg" mimetype="image"/></inline-formula> in probability, lemma 2 and the triangular and H&#xF6;lder's inequalities.</p>
+          <p>Next, we can establish that <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu117.jpg" mimetype="image"/></inline-formula> by using the same argument of proposition 1 of Naik and Tsai (2000).</p>
+          <p>We, now, prove the second part of theorem 1. Since <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu118.jpg" mimetype="image"/></inline-formula> almost surely, <disp-formula id="m13"><graphic xlink:href="rssb0072-0003-m13"/><label>(13)</label></disp-formula></p>
+          <p>If <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu119.jpg" mimetype="image"/></inline-formula> in probability for <italic>p</italic>/<italic>n</italic>&#x2192;<italic>k</italic><sub>0</sub>(&gt;0), <disp-formula id="m14"><graphic xlink:href="rssb0072-0003-m14"/><label>(14)</label></disp-formula></p>
+          <p>Since &#x2016;<italic>E</italic><sup>T</sup><italic>f</italic>/<italic>n</italic>&#x2016;<sub>2</sub>&#x2260;0 almost surely, <xref ref-type="disp-formula" rid="m14">equation (14)</xref> implies that <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu120.jpg" mimetype="image"/></inline-formula> as <italic>n</italic>&#x2192;&#x221E;.</p>
+          <p>This contradicts the fact that <italic>E</italic><sup>T</sup><italic>f</italic>=<sup>d</sup><italic>&#x3C7;</italic><sub>(<italic>n</italic>)</sub><italic>&#x3C7;</italic><sub>(<italic>p</italic>)</sub><italic>U</italic><sub><italic>p</italic></sub>, where <italic>U</italic><sub><italic>p</italic></sub> is a vector uniform on the surface of the unit sphere <italic>S</italic><sup><italic>p</italic>&#x2212;1</sup>, as the dimension of <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu121.jpg" mimetype="image"/></inline-formula> is <italic>p</italic>&#x2212;<italic>K</italic>.</p>
+        </sec>
+        <sec>
+          <title>A.2. Proof of lemma 1</title>
+          <p>We remark that <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu122.jpg" mimetype="image"/></inline-formula>, and <disp-formula><graphic xlink:href="rssb0072-0003-mu123"/></disp-formula> from the triangular inequality, proof of theorem 1 and <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu124.jpg" mimetype="image"/></inline-formula>. Then, we have <disp-formula><graphic xlink:href="rssb0072-0003-mu125"/></disp-formula></p>
+        </sec>
+        <sec>
+          <title>A.3. Proof of theorem 2</title>
+          <p>We start with the sufficient condition of the convergence. We shall first characterize the space that is generated by the direction vectors of each algorithm. For the NIPALS algorithm, we denote <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu126.jpg" mimetype="image"/></inline-formula> and <italic>D</italic><sub><italic>K</italic></sub>=(<italic>d</italic><sub>1</sub>,&#x2026;,<italic>d</italic><sub><italic>K</italic></sub>) as direction vectors for the original covariate and the deflated covariates respectively. The first direction vector <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu127.jpg" mimetype="image"/></inline-formula> is obtained by <italic>S</italic><sub><italic>XY</italic></sub><italic>t</italic><sub>1</sub>/&#x2016;<italic>S</italic><sub><italic>XY</italic></sub><italic>t</italic><sub>1</sub>&#x2016;<sub>2</sub>, where <italic>t</italic><sub>1</sub> is the right singular vector of <italic>S</italic><sub><italic>XY</italic></sub>. We denote <italic>s</italic><sub><italic>i</italic>,1</sub>=<italic>S</italic><sub><italic>XY</italic></sub><italic>t</italic><sub><italic>i</italic></sub>/&#x2016;<italic>S</italic><sub><italic>XY</italic></sub><italic>t</italic><sub><italic>i</italic></sub>&#x2016;<sub>2</sub>, as this form of vector recurs in the remaining steps. Then, <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu128.jpg" mimetype="image"/></inline-formula>. Define <italic>&#x3C8;</italic><sub><italic>i</italic></sub> as the step size vector at the <italic>i</italic>th step, and the <italic>i</italic>th current correlation matrix <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu129.jpg" mimetype="image"/></inline-formula> as <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu130.jpg" mimetype="image"/></inline-formula>. The current correlation matrix at the second step is given by <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu131.jpg" mimetype="image"/></inline-formula> and thus the second direction vector <italic>d</italic><sub>2</sub> is proportional to <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu132.jpg" mimetype="image"/></inline-formula>, where <italic>t</italic><sub>2</sub> is the right singular vector of <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu133.jpg" mimetype="image"/></inline-formula>. Then <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu134.jpg" mimetype="image"/></inline-formula>, where <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu135.jpg" mimetype="image"/></inline-formula>. Similarly, we can obtain <disp-formula><graphic xlink:href="rssb0072-0003-mu136"/></disp-formula></p>
+          <p>Now, we observe that <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu137.jpg" mimetype="image"/></inline-formula> does not form a Krylov space, because <italic>s</italic><sub><italic>i</italic>,1</sub> is not the same as <italic>s</italic><sub>1,1</sub> for multivariate <italic>Y</italic>. However, it forms a Krylov space for large <italic>n</italic>, since &#x2016;<italic>S</italic><sub><italic>XY</italic></sub><italic>t</italic>/&#x2016;<italic>S</italic><sub><italic>XY</italic></sub><italic>t</italic>&#x2016;<sub>2</sub>&#x2212;<italic>w</italic><sub>1</sub>&#x2016;<sub>2</sub>&#x2192;0 for any <italic>q</italic>-dimensional random vector <italic>t</italic> subject to &#x2016;<italic>t</italic>&#x2016;<sub>2</sub>=1 almost surely, following lemma 1.</p>
+          <p>For the SIMPLS algorithm, using the fact that the <italic>i</italic>th direction vector of SIMPLS is obtained sequentially from the left singular vector of <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu138.jpg" mimetype="image"/></inline-formula>, where <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu139.jpg" mimetype="image"/></inline-formula>, we can characterize <disp-formula><graphic xlink:href="rssb0072-0003-mu140"/></disp-formula></p>
+          <p>We note that <italic>s</italic><sub><italic>i</italic>,1</sub>s and <italic>l</italic><sub><italic>i</italic>,<italic>j</italic></sub>s from the NIPALS and SIMPLS algorithms are different because the <italic>t</italic><sub><italic>i</italic></sub>s are from <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu141.jpg" mimetype="image"/></inline-formula> and <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu142.jpg" mimetype="image"/></inline-formula> for the NIPALS and SIMPLS algorithms respectively.</p>
+          <p>Next, we shall focus on the convergence of the NIPALS estimator, because the convergence of the SIMPLS estimator can be proved by the same argument owing to the structural similarity of <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu143.jpg" mimetype="image"/></inline-formula> and <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu144.jpg" mimetype="image"/></inline-formula>.</p>
+          <p>Denoting <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu145.jpg" mimetype="image"/></inline-formula> and <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu146.jpg" mimetype="image"/></inline-formula>, one can show that <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu147.jpg" mimetype="image"/></inline-formula> by using the fact &#x2016;<italic>s</italic><sub><italic>i</italic>,1</sub>&#x2212;<italic>w</italic><sub>1</sub>&#x2016;<sub>2</sub>=<italic>O</italic><sub><italic>p</italic></sub>{&#x221A;(<italic>p</italic>/<italic>n</italic>)} for <italic>i</italic>=1,&#x2026;,<italic>K</italic>. Since <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu148.jpg" mimetype="image"/></inline-formula> can also be represented as <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu149.jpg" mimetype="image"/></inline-formula>, we have that <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu150.jpg" mimetype="image"/></inline-formula>. Thus, we now deal with the convergence of <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu151.jpg" mimetype="image"/></inline-formula>, which has a similar form to that of the univariate response case.</p>
+          <p>Since <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu152.jpg" mimetype="image"/></inline-formula> for <italic>i</italic>=1,&#x2026;,<italic>K</italic>, one can show that <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu153.jpg" mimetype="image"/></inline-formula>, where <italic>R</italic>=(<italic>w</italic><sub>1</sub>,&#x3A3;<sub><italic>XX</italic></sub><italic>w</italic><sub>1</sub>,&#x2026;,&#x3A3;<sub><italic>XX</italic></sub><italic>w</italic><sub>1</sub>). The convergence of the estimator can be established similarly to the argument in theorem 1 with the following additional argument: <disp-formula id="m15"><graphic xlink:href="rssb0072-0003-m15"/><label>(15)</label></disp-formula></p>
+          <p>Inequality (15) follows from observing that each column of the matrix <disp-formula><graphic xlink:href="rssb0072-0003-mu154"/></disp-formula> follows <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu155.jpg" mimetype="image"/></inline-formula> independently. The remainder of the proof is a simple extension of the proof of theorem 1.</p>
+          <p>The necessity condition of the convergence is proved as follows. Assume that <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu156.jpg" mimetype="image"/></inline-formula> in probability, when <italic>p</italic>/<italic>n</italic>&#x2192;<italic>k</italic><sub>0</sub> (&gt;0). Following the argument in the proof of theorem 1, we have <disp-formula><graphic xlink:href="rssb0072-0003-mu157"/></disp-formula></p>
+          <p>Since &#x2016;<italic>E</italic><sup>T</sup><italic>F</italic>/<italic>n</italic>&#x2016;<sub>2</sub>&#x2260;0 almost surely, this equation implies that <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu158.jpg" mimetype="image"/></inline-formula> as <italic>n</italic>&#x2192;&#x221E;.</p>
+          <p>If <italic>p</italic>/<italic>n</italic>&#x2192;<italic>k</italic><sub>0</sub> (&gt;0), this contradicts the fact that <italic>E</italic><sup>T</sup><italic>F</italic><sub><italic>i</italic></sub>=<sup>d</sup><italic>&#x3C7;</italic><sub>(<italic>n</italic>)</sub><italic>&#x3C7;</italic><sub>(<italic>p</italic>)</sub><italic>U</italic><sub><italic>p</italic></sub>, where <italic>F</italic><sub><italic>i</italic></sub> denotes the <italic>i</italic>th column of <italic>F</italic> and <italic>U</italic><sub><italic>p</italic></sub> is a vector uniform on the surface of the unit sphere <italic>S</italic><sup><italic>p</italic>&#x2212;1</sup>, as the dimension of <inline-formula><inline-graphic xlink:href="rssb0072-0003-mu159.jpg" mimetype="image"/></inline-formula> is <italic>p</italic>&#x2212;<italic>K</italic>.</p>
+        </sec>
+      </app>
+    </app-group>
+  </back>
+</article>

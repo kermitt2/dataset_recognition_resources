@@ -1,0 +1,1140 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//NLM//DTD Journal Archiving and Interchange DTD v3.0 20080202//EN" "archivearticle3.dtd">
+<article xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:mml="http://www.w3.org/1998/Math/MathML" article-type="research-article">
+  <?DTDIdentifier.IdentifierValue article.dtd?>
+  <?DTDIdentifier.IdentifierType system?>
+  <?SourceDTD.DTDName article.dtd?>
+  <?SourceDTD.Version 1.0?>
+  <?ConverterInfo.XSLTName bmc2nlmx2.xsl?>
+  <?ConverterInfo.Version 2?>
+  <front>
+    <journal-meta>
+      <journal-id journal-id-type="nlm-ta">BMC Biophys</journal-id>
+      <journal-title-group>
+        <journal-title>BMC Biophysics</journal-title>
+      </journal-title-group>
+      <issn pub-type="epub">2046-1682</issn>
+      <publisher>
+        <publisher-name>BioMed Central</publisher-name>
+      </publisher>
+    </journal-meta>
+    <article-meta>
+      <article-id pub-id-type="pmc">3126788</article-id>
+      <article-id pub-id-type="publisher-id">2046-1682-4-10</article-id>
+      <article-id pub-id-type="pmid">21595867</article-id>
+      <article-id pub-id-type="doi">10.1186/2046-1682-4-10</article-id>
+      <article-categories>
+        <subj-group subj-group-type="heading">
+          <subject>Methodology Article</subject>
+        </subj-group>
+      </article-categories>
+      <title-group>
+        <article-title>A Bayesian method for inferring quantitative information from FRET data</article-title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author" id="A1">
+          <name>
+            <surname>Lichten</surname>
+            <given-names>Catherine A</given-names>
+          </name>
+          <xref ref-type="aff" rid="I1">1</xref>
+          <xref ref-type="aff" rid="I2">2</xref>
+          <email>catherine.lichten@mail.mcgill.ca</email>
+        </contrib>
+        <contrib contrib-type="author" corresp="yes" id="A2">
+          <name>
+            <surname>Swain</surname>
+            <given-names>Peter S</given-names>
+          </name>
+          <xref ref-type="aff" rid="I2">2</xref>
+          <email>peter.swain@ed.ac.uk</email>
+        </contrib>
+      </contrib-group>
+      <aff id="I1"><label>1</label>Department of Physiology, McGill University, 3655 Promenade Sir William Osler, Montreal, Quebec H3G 1Y6, Canada</aff>
+      <aff id="I2"><label>2</label>Centre for Systems Biology at Edinburgh, University of Edinburgh, Edinburgh EH9 3JD, UK</aff>
+      <pub-date pub-type="collection">
+        <year>2011</year>
+      </pub-date>
+      <pub-date pub-type="epub">
+        <day>9</day>
+        <month>5</month>
+        <year>2011</year>
+      </pub-date>
+      <volume>4</volume>
+      <fpage>10</fpage>
+      <lpage>10</lpage>
+      <history>
+        <date date-type="received">
+          <day>14</day>
+          <month>2</month>
+          <year>2011</year>
+        </date>
+        <date date-type="accepted">
+          <day>9</day>
+          <month>5</month>
+          <year>2011</year>
+        </date>
+      </history>
+      <permissions>
+        <copyright-statement>Copyright &#xA9;2011 Lichten and Swain; licensee BioMed Central Ltd.</copyright-statement>
+        <copyright-year>2011</copyright-year>
+        <copyright-holder>Lichten and Swain; licensee BioMed Central Ltd.</copyright-holder>
+        <license license-type="open-access" xlink:href="http://creativecommons.org/licenses/by/2.0">
+          <license-p>This is an Open Access article distributed under the terms of the Creative Commons Attribution License (<ext-link ext-link-type="uri" xlink:href="http://creativecommons.org/licenses/by/2.0">http://creativecommons.org/licenses/by/2.0</ext-link>), which permits unrestricted use, distribution, and reproduction in any medium, provided the original work is properly cited.</license-p>
+        </license>
+      </permissions>
+      <self-uri xlink:href="http://www.biomedcentral.com/2046-1682/4/10"/>
+      <abstract>
+        <sec>
+          <title>Background</title>
+          <p>Understanding biological networks requires identifying their elementary protein interactions and establishing the timing and strength of those interactions. Fluorescence microscopy and F&#xF6;rster resonance energy transfer (FRET) have the potential to reveal such information because they allow molecular interactions to be monitored in living cells, but it is unclear how best to analyze FRET data. Existing techniques differ in assumptions, manipulations of data and the quantities they derive. To address this variation, we have developed a versatile Bayesian analysis based on clear assumptions and systematic statistics.</p>
+        </sec>
+        <sec>
+          <title>Results</title>
+          <p>Our algorithm infers values of the FRET efficiency and dissociation constant, <italic>K<sub>d</sub></italic>, between a pair of fluorescently tagged proteins. It gives a posterior probability distribution for these parameters, conveying more extensive information than single-value estimates can. The width and shape of the distribution reflects the reliability of the estimate and we used simulated data to determine how measurement noise, data quantity and fluorophore concentrations affect the inference. We are able to show why varying concentrations of donors and acceptors is necessary for estimating <italic>K<sub>d</sub></italic>. We further demonstrate that the inference improves if additional knowledge is available, for example of the FRET efficiency, which could be obtained from separate fluorescence lifetime measurements.</p>
+        </sec>
+        <sec>
+          <title>Conclusions</title>
+          <p>We present a general, systematic approach for extracting quantitative information on molecular interactions from FRET data. Our method yields both an estimate of the dissociation constant and the uncertainty associated with that estimate. The information produced by our algorithm can help design optimal experiments and is fundamental for developing mathematical models of biochemical networks.</p>
+        </sec>
+      </abstract>
+    </article-meta>
+  </front>
+  <body>
+    <sec>
+      <title>Background</title>
+      <p>Proteins work together continuously in the cells of all living things, generating cascades of reactions that are vital for life. To fully understand each individual protein's task requires discovering the timing, location, and strength of its interactions. To acquire this detailed information, fluorescence microscopy methods are ideal because they can provide dynamic, single-cell data at high spatial resolution [<xref ref-type="bibr" rid="B1">1</xref>,<xref ref-type="bibr" rid="B2">2</xref>]. One fluorescence tool that enables researchers to observe protein interactions in living cells is F&#xF6;rster resonance energy transfer (FRET). FRET data has the potential to yield biochemical constants, which are critical for modeling biological systems, but measuring protein interactions from FRET data requires careful quantitative analysis.</p>
+      <p>FRET is a physical process where a molecule in an excited energetic state (the donor) transfers energy to a nearby ground-state molecule (the acceptor). The chance that an excited donor will transfer its energy to an acceptor (known as the FRET efficiency, <italic>E<sub>fr</sub></italic>) depends on the distance between the donor and acceptor (which must be between 1 and 10 nm for FRET to occur), their relative orientation, and the extent to which the donor's fluorescence emission peak overlaps the excitation peak of the acceptor [<xref ref-type="bibr" rid="B3">3</xref>]. Optimal conditions for energy transfer occur when the distance between donor and acceptor is minimal, the molecules' electric dipoles are aligned, and the spectral overlap is significant.</p>
+      <p>When FRET is used to study protein interactions in living cells, the proteins under investigation are fused to fluorescent tags (often variants of the green fluorescent protein) that act as the donors and acceptors. When the proteins interact, they bring the fluorescent tags together so that FRET may occur. FRET increases the number of photons emitted by acceptors and reduces both the number of photons emitted by donors and the donor's fluorescence lifetime. To observe these effects, the most common techniques for collecting FRET data include fluorescence lifetime imaging (FLIM) and using a fluorescence microscope or spectrofluorometer to record fluorescence intensity after exposing samples to light that mainly excites either donors or acceptors [<xref ref-type="bibr" rid="B4">4</xref>-<xref ref-type="bibr" rid="B6">6</xref>].</p>
+      <p>For FRET data to reveal information about the underlying protein interactions, complicating factors must be dealt with. One confounding issue is spectral contamination, which arises from the requirement that the donor and acceptor must have overlapping spectra for FRET to occur. Due to the overlap, excitation light intended to excite one fluorophore may also excite the other (spectral crosstalk), and, conversely, one fluorophore may emit photons in the emission range of the other (spectral bleed-through). Several FRET analysis methods address this issue by calculating a FRET index, which is the FRET signal corrected for contamination from spectral overlap and normalised by donor or acceptor concentrations [<xref ref-type="bibr" rid="B7">7</xref>-<xref ref-type="bibr" rid="B12">12</xref>]. Although they are straightforward to calculate, FRET indices often bear an indirect and nonlinear relationship to the underlying concentrations and strength of protein interactions [<xref ref-type="bibr" rid="B13">13</xref>,<xref ref-type="bibr" rid="B14">14</xref>]. Alternatively, the ratio of donors to acceptors and the apparent FRET efficiency, which is the product of the intrinsic FRET efficiency and the fraction of donors (or acceptors) in complex, can be calculated [<xref ref-type="bibr" rid="B15">15</xref>-<xref ref-type="bibr" rid="B19">19</xref>,<xref ref-type="bibr" rid="B14">14</xref>]. Such quantities can be measured, provided calibrations are carried out using constructs consisting of a donor linked to an acceptor [<xref ref-type="bibr" rid="B17">17</xref>,<xref ref-type="bibr" rid="B19">19</xref>], but again do not relate directly to the dissocation constant (<italic>K<sub>d</sub></italic>) of an interaction.</p>
+      <p>Another significant challenge is that both the <italic>K<sub>d </sub></italic>and the FRET efficiency, <italic>E<sub>fr</sub></italic>, affect the observed signals, and so neither can be determined independently of the other based on data from a single sample. <italic>E<sub>fr </sub></italic>has been estimated from separate acceptor photobleaching [<xref ref-type="bibr" rid="B14">14</xref>] and FLIM experiments [<xref ref-type="bibr" rid="B15">15</xref>], but these approaches have drawbacks. Acceptor photo-bleaching is slow, irreversible, often fails to bleach all acceptors, and yields the intrinsic FRET efficiency only when all donors are in complex with acceptors [<xref ref-type="bibr" rid="B4">4</xref>-<xref ref-type="bibr" rid="B6">6</xref>]. FLIM requires specialized equipment, is often slower than standard fluorescence imaging, and analysis of FLIM data is complicated by the multiexponential fluorescence decays of fluorescent proteins [<xref ref-type="bibr" rid="B20">20</xref>]. There is however an alternative to directly measuring <italic>E<sub>fr</sub></italic>: Many values of <italic>K<sub>d </sub></italic>and <italic>E<sub>fr </sub></italic>will be consistent with data from a single cell or sample, but, by taking a set of data from samples that contain varying concentrations of donors and acceptors and analyzing it altogether, it is possible to find the unique values of <italic>K<sub>d </sub></italic>and <italic>E<sub>fr </sub></italic>that are consistent with the ensemble [<xref ref-type="bibr" rid="B16">16</xref>,<xref ref-type="bibr" rid="B21">21</xref>].</p>
+      <p>Given these different approaches, it is not always obvious which one should be applied in different situations and there is no consensus on the statistical analysis, with each method processing the data differently and most giving no procedure to test the reliability of any estimates. A general method for inferring the <italic>K<sub>d </sub></italic>along with the uncertainty of that inference is necessary for the standardization of quantitative FRET measurements, the design of informative experiments, and for providing <italic>in vivo </italic>parameters for developing models of protein networks [<xref ref-type="bibr" rid="B22">22</xref>-<xref ref-type="bibr" rid="B24">24</xref>].</p>
+      <p>Here we propose a systematic analysis method that explicitly includes models of the photophysics and underlying chemical interactions and of measurement noise. Building on a spectral model for FRET [<xref ref-type="bibr" rid="B25">25</xref>], we develop a Bayesian algorithm to infer both the interaction strength (in terms of the <italic>in vivo </italic><italic>K<sub>d</sub></italic>) and the FRET efficiency. Applying our algorithm to simulated data, we gain insight into how both experimental design factors such as measurement noise, number of measurements, fluorophore concentrations and ratios, and prior information impact our estimate and its uncertainty.</p>
+    </sec>
+    <sec>
+      <title>Results and Discussion</title>
+      <sec>
+        <title>Algorithm</title>
+        <sec>
+          <title>Overview of the mathematical model</title>
+          <p>FRET enables the study of molecular interactions in diverse settings. To design a widely applicable analysis technique, we consider a general system containing proteins (or other molecules) that form complexes and are labelled with fluorophores that act as FRET donors and acceptors (Figure <xref ref-type="fig" rid="F1">1A</xref>). We assume that all the molecules of interest are fluorescently tagged, so instead of referring to 'donor-tagged proteins' or 'acceptor-tagged proteins', we simply refer to 'donors' and 'acceptors'.</p>
+          <fig id="F1" position="float">
+            <label>Figure 1</label>
+            <caption>
+              <p><bold>Overview of interaction and photophysical model</bold>. (A) In the underlying interaction, a donor-tagged protein binds an acceptor-tagged protein with dissociation constant <italic>K<sub>d</sub></italic>. (B) During a FRET experiment, photophysical events occur such as FRET, which occurs between donors and acceptors in complex with efficiency <italic>E<sub>fr</sub></italic>, and the excitation of and emissions from donors and acceptors, where the factor relating fluorescence observed in channel <italic>i </italic>to the concentration of species <italic>S </italic>is <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i1.gif"/></inline-formula>. We include all possible spectral overlap effects, allowing the donor and acceptor to be excited and emit photons in all spectral channels.</p>
+            </caption>
+            <graphic xlink:href="2046-1682-4-10-1"/>
+          </fig>
+          <p>Our model relies on a few other assumptions. First, we assume that donors and acceptors may be free or form bimolecular, donor-acceptor complexes (i.e. [<italic>D</italic>] + [<italic>A</italic>] &#x21CC; [<italic>DA</italic>]) with dissociation constant <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i2.gif"/></inline-formula>. Whether free or in complex, the fluorophores undergo fluorescence excitation and emission (Figure <xref ref-type="fig" rid="F1">1B</xref>). In complexes, the donor and acceptor are together and FRET may also occur. We assume that FRET due to random collisions between donors and acceptors occurs seldom enough to be neglected. Finally, we assume that donor-acceptor complexes all have the same FRET efficiency, which is denoted <italic>E<sub>fr </sub></italic>and refers to the fraction of instances where exciting a donor in complex leads to excitation of the acceptor.</p>
+          <p>For our general mathematical description of the FRET system, we use a previously described spectral mixing model [<xref ref-type="bibr" rid="B25">25</xref>] with slightly modified matrices. This model relates concentrations of fluorescent molecules to the fluorescence observed at various excitation wavelengths and ranges of emission wavelengths (spectral channels). It can be written as a matrix equation in the following form [<xref ref-type="bibr" rid="B6">6</xref>]:<disp-formula id="bmcM1"><label>(1)</label><graphic xlink:href="2046-1682-4-10-i3.gif"/></disp-formula></p>
+          <p>where <bold>C </bold>is a vector of the concentrations of fluorophores (<bold>C </bold>= ([<italic>D</italic>], [<italic>A</italic>], [<italic>DA</italic>])<italic><sup>T </sup></italic>), <bold>I<sub>obs </sub></bold>is a vector of the fluorescence intensities observed for each spectral channel, and <italic>M </italic>is a matrix of the photophysical parameters that relate the concentrations of fluorophore to the observed intensities (Figure <xref ref-type="fig" rid="F1">1B</xref>).</p>
+          <p>The observed fluorescence intensities could represent data obtained from fluorescence microscopy, spectrophotometry or a flow cytometer. Microscopy images would require standard image processing steps for quantification, such as subtracting background fluorescence and defining regions of interest such as areas within the cytosol or nucleus for localized fluorescence [<xref ref-type="bibr" rid="B26">26</xref>].</p>
+        </sec>
+        <sec>
+          <title>Photophysics in the mathematical model</title>
+          <p>The matrix <italic>M </italic>contains all the relevant information about the photophysical processes we model. In addition to the expected direct excitation and emission, we include resonance energy transfer, cross-talk (unintended excitation) and bleed-through (acceptors emitting in the donors' typical emission range).</p>
+          <p>The spectral mixing framework can represent any number of spectral channels by increasing the dimensions of the matrix, but we focus on the particular case of three, which describes the most common 'three-cube' FRET experiments [<xref ref-type="bibr" rid="B12">12</xref>,<xref ref-type="bibr" rid="B7">7</xref>-<xref ref-type="bibr" rid="B9">9</xref>,<xref ref-type="bibr" rid="B14">14</xref>,<xref ref-type="bibr" rid="B18">18</xref>,<xref ref-type="bibr" rid="B17">17</xref>,<xref ref-type="bibr" rid="B21">21</xref>,<xref ref-type="bibr" rid="B16">16</xref>]. The first spectral channel, known as the donor channel, consists of an excitation wavelength that primarily excites donors and an emission filter that collects photons from the donor's emission range. The second channel, the acceptor channel, consists of an excitation wavelength that primarily excites acceptors and an emission filter that collects photons from the acceptor's emission range. The third channel, the FRET channel, combines the donor channel's excitation wavelength with the acceptor channel's emission filter, so that donors are excited preferentially and the emissions are filtered to primarily collect photons from acceptors. For three-cube FRET, the detailed form of Eq (1) is<disp-formula id="bmcM2"><label>(2)</label><graphic xlink:href="2046-1682-4-10-i4.gif"/></disp-formula></p>
+          <p>where <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i5.gif"/></inline-formula>. The parameters <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i6.gif"/></inline-formula> each represent a combination of excitation and emission information [<xref ref-type="bibr" rid="B25">25</xref>]:<disp-formula id="bmcM3"><label>(3)</label><graphic xlink:href="2046-1682-4-10-i7.gif"/></disp-formula></p>
+          <p>Here the subscript <italic>i </italic>refers to the spectral channel (for the three-cube case, it is 1 for the donor channel, 2 for the acceptor channel, and 3 for the FRET channel) and the superscript (<italic>S</italic>) refers to the fluorescent species (D, the donor; A, the acceptor; and DA, the complex). The variable <italic>I</italic><sub><italic>i </italic></sub>is the illumination intensity for the excitation wavelength of channel <italic>i</italic>; <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i8.gif"/></inline-formula> is the molar extinction coefficient of species (<italic>S</italic>) with excitation wavelength from channel <italic>i</italic>; <italic>Q</italic><sup>(<italic>S</italic>) </sup>is the quantum yield of species (<italic>S</italic>); and <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i9.gif"/></inline-formula> is the product of the emission of species (<italic>S</italic>) at the wavelengths of channel <italic>i </italic>and the sensitivity of the detector to the emitted photons. We describe a calibration procedure for obtaining these values in the Methods.</p>
+          <p>To illustrate Eq (2), consider the expression it yields for <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i10.gif"/></inline-formula>, the intensity in the donor channel. The intensity will be the sum of contributions from free donors, free acceptors, and donor- acceptor complexes. The contribution from free donors is <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i11.gif"/></inline-formula> and the contribution from free acceptors is <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i12.gif"/></inline-formula>, which results from cross-talk and bleed-through. The complex, <italic>DA</italic>, can potentially produce contributions from donors not undergoing FRET <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i13.gif"/></inline-formula>, from acceptors <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i14.gif"/></inline-formula> and from FRET <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i15.gif"/></inline-formula>. Adding these contributions together, we obtain the following expression for the predicted intensity in the donor channel, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i10.gif"/></inline-formula>,<disp-formula id="bmcM4"><label>(4)</label><graphic xlink:href="2046-1682-4-10-i16.gif"/></disp-formula></p>
+          <p>Continuing the matrix multiplication yields analogous expressions for <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i17.gif"/></inline-formula> and <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i18.gif"/></inline-formula>.</p>
+        </sec>
+        <sec>
+          <title>Molecular interactions in the mathematical model</title>
+          <p>To include <italic>K<sub>d </sub></italic>in our model, we model the chemical equilibrium, [<italic>D</italic>] + [<italic>A</italic>] &#x21CC; [<italic>DA</italic>]. Defining [<italic>D</italic><sub>0 </sub>] = [<italic>D</italic>] + [<italic>DA</italic>] and [<italic>A</italic><sub>0</sub>] = [<italic>A</italic>] + [<italic>DA</italic>], and given that <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i19.gif"/></inline-formula>, we can compute the values of [<italic>DA</italic>], [<italic>D</italic>], and [<italic>A</italic>] in terms of [<italic>D</italic><sub>0</sub>], [<italic>A</italic><sub>0</sub>], and <italic>K<sub>d</sub></italic>.<disp-formula id="bmcM5"><label>(5)</label><graphic xlink:href="2046-1682-4-10-i20.gif"/></disp-formula></p>
+          <p>with [<italic>D</italic>] = [<italic>D</italic><sub>0</sub>] - [<italic>DA</italic>] and [<italic>A</italic>] = [<italic>A</italic><sub>0</sub>] - [<italic>DA</italic>].</p>
+        </sec>
+        <sec>
+          <title>Bayesian inference</title>
+          <p>Our aim is to infer the values of <italic>K<sub>d </sub></italic>and <italic>E<sub>fr </sub></italic>from the data. To this end, Bayesian inference is an ideal tool. Given a model, it quantifies the knowledge gained from a set of experimental observations about the parameters of interest, including the uncertainty of that knowledge [<xref ref-type="bibr" rid="B27">27</xref>]. That is, it allows us to update the prior probability distribution, <italic>P </italic>(<italic>K<sub>d</sub></italic>, <italic>E<sub>fr</sub></italic>), which represents what is known about the parameters before data has been acquired, to the posterior probability distribution, <italic>P </italic>(<italic>K<sub>d</sub></italic>, <italic>E<sub>fr</sub></italic>|data), which reflects both the prior information and what is learned from the data. According to Bayes' theorem,<disp-formula id="bmcM6"><label>(6)</label><graphic xlink:href="2046-1682-4-10-i21.gif"/></disp-formula></p>
+          <p>The likelihood function, <italic>P </italic>(data|<italic>K<sub>d</sub></italic>, <italic>E<sub>fr</sub></italic>), can be explicitly expressed through our photophysical model and a model of measurement noise. It quantifies the likelihood of different values for <italic>K<sub>d </sub></italic>and <italic>E<sub>fr </sub></italic>given the current data. We assume that the data follows a Gaussian distribution centred around the predicted intensity given by Eq (2). For three measurements, one from each of the three spectral channels, the likelihood is:<disp-formula id="bmcM7"><label>(7)</label><graphic xlink:href="2046-1682-4-10-i22.gif"/></disp-formula></p>
+          <p>The observed intensities for each channel are <italic>I<sub>D</sub></italic>, <italic>I<sub>A</sub></italic>, and <italic>I<sub>F</sub></italic>. <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i10.gif"/></inline-formula>, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i17.gif"/></inline-formula> and <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i18.gif"/></inline-formula> denote the predicted intensities and <italic>&#x3C3;<sub>D</sub></italic>, <italic>&#x3C3;<sub>A </sub></italic>and <italic>&#x3C3;<sub>F </sub></italic>measure the magnitude of the measurement noise in each channel and are approximated by the variances of the data in that channel (Methods). For fitting, we use a Gaussian approximation of Eq (7) based around the values of <italic>D</italic><sub>0 </sub>and <italic>A</italic><sub>0 </sub>that maximize the likelihood (see section on marginalization of <italic>D</italic><sub>0 </sub>and <italic>A</italic><sub>0 </sub>in the Methods). Combining the likelihood and prior probability distribution allows us to calculate the posterior probability distribution and determine the most probable values for our parameters of interest.</p>
+        </sec>
+        <sec>
+          <title>Illustration of method</title>
+          <p>To illustrate our method, we simulated data from three cells (Figure <xref ref-type="fig" rid="F2">2A</xref>, left), although in practice, data could come instead from cellular compartments or other sub-cellular regions of interest. For simplicity, each cell contains equal concentrations of donor ([<italic>D</italic><sub>0</sub>]) and acceptor ([<italic>A</italic><sub>0</sub>]). In the first cell, [<italic>D</italic><sub>0</sub>] = [<italic>A</italic><sub>0</sub>] = 0.2 <italic>&#x3BC;</italic>M; in the second, [<italic>D</italic><sub>0</sub>] = [<italic>A</italic><sub>0</sub>] = 1 <italic>&#x3BC;</italic>M; and in the third, [<italic>D</italic><sub>0</sub>] = [<italic>A</italic><sub>0</sub>] = 5 <italic>&#x3BC;</italic>M. Other parameter values are given in the Methods. We then simulated three-cube FRET measurements, generating data for the donor, acceptor, and FRET channels (Figure <xref ref-type="fig" rid="F2">2A</xref>, right). We made a series of ten measurements for each channel and each cell, to which we added Gaussian noise so that the standard deviation of the measurements was around 5% of the mean signal strength. We define <italic>r </italic>as the ratio of the standard deviation of the measurements to the mean signal strength; in this case, <italic>r </italic>&#x2248; 0.05.</p>
+          <fig id="F2" position="float">
+            <label>Figure 2</label>
+            <caption>
+              <p><bold>Analysis of typical FRET data recovers true values of K<sub>d </sub>and E<sub>fr</sub></bold>. A typical three-cube FRET experiment is simulated from three virtual cells, each containing the indicated concentrations of donor- and acceptor- tagged proteins (A, left). The data is summarized in bar graphs with mean &#xB1; SD (A, right). Ten measurements/channel are made for each cell with 5% added measurement noise. For other parameters, see Methods. The data was analyzed in two ways to find the values of <italic>K<sub>d </sub></italic>and <italic>E<sub>fr </sub></italic>consistent with the data. We first calculated the energy for an array of parameter values; as the energy contour plot shows (B), the energy was minimal near the true parameter values. We also used a Monte Carlo algorithm to explore <italic>K<sub>d</sub></italic>-<italic>E<sub>fr </sub></italic>space, running 3 biased random walks starting from different initial positions (white *) and running for 12,000 steps. The paths of the walks (for clarity only the first 2,000 steps are shown) are superimposed on the contour plot (B) and all three converged to a region around the true value which coincides with the energy minimum. Histograms of the locations visited by all three walks, including only post-convergence steps (11,000 steps are included from each walk) act as approximate posterior distributions for <italic>K<sub>d </sub></italic>and <italic>E<sub>fr </sub></italic>(C). The dashed red lines indicate the true values of <italic>K<sub>d </sub></italic>and <italic>E<sub>fr </sub></italic>used to generate the data.</p>
+            </caption>
+            <graphic xlink:href="2046-1682-4-10-2"/>
+          </fig>
+          <p>To obtain the posterior probability distribution that corresponds to this data for two parameters of interest, <italic>K<sub>d </sub></italic>and <italic>E<sub>fr</sub></italic>, we used two methods, the results of which should agree. First, because we are restricting our analysis to two parameters, we can visualize the distribution by computing the energy, the negative logarithm of the posterior probability, over a grid of values of <italic>K<sub>d </sub></italic>and <italic>E<sub>fr</sub></italic>. The resulting energy surface, shown in Figure <xref ref-type="fig" rid="F2">2B</xref>, was minimal around the true values of the parameters. If we were to extend our analysis to more than two parameters, including uncertainty in the <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i6.gif"/></inline-formula> constants for instance, we would use a Markov chain Monte Carlo (MCMC) algorithm to sample from the parameter space. To show that the MCMC algorithm gives results consistent with the energy surface, we used the algorithm to sample the posterior probability distribution for <italic>K<sub>d </sub></italic>and <italic>E<sub>fr</sub></italic>. We ran the algorithm three times, starting each time at different initial values. All three walks converged on the same small region of equally probable values: they are superimposed on the energy surface in Figure <xref ref-type="fig" rid="F2">2B</xref>. Both methods therefore recover the true values used to generate the data as optimal parameter values. The approximate posterior probability distributions for <italic>K<sub>d </sub></italic>and <italic>E<sub>fr </sub></italic>are shown in Figure <xref ref-type="fig" rid="F2">2C</xref>. The distributions are estimated as the histograms of the three walks, excluding the burn-in period before convergence [<xref ref-type="bibr" rid="B28">28</xref>]. They peak near the parameter values used to simulate the data, indicating that the highly probable values for <italic>K<sub>d </sub></italic>and <italic>E<sub>fr </sub></italic>predicted by the methods are accurate.</p>
+        </sec>
+        <sec>
+          <title>Inferring other quantities from FRET data</title>
+          <p>To further illustrate the versatility of our method, we show that we can also use our model and Bayesian framework to estimate other parameters. Two instrument-independent parameters that have been a focus of interest are the apparent FRET efficiency, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i23.gif"/></inline-formula>, and the ratio, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i24.gif"/></inline-formula>[<xref ref-type="bibr" rid="B15">15</xref>-<xref ref-type="bibr" rid="B19">19</xref>,<xref ref-type="bibr" rid="B14">14</xref>]. The analogous apparent FRET efficiency for the acceptor, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i25.gif"/></inline-formula>, is the product of <italic>E<sub>d </sub></italic>and <italic>r<sub>da</sub></italic>. We can estimate these quantities using our method, provided that a calibration has been carried out with cells expressing only donors, only acceptors, and only a donor-acceptor construct. The FRET efficiency of the construct need not be known. Supposing we have calibrated the parameters <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i6.gif"/></inline-formula> of Eq 2 relative to <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i26.gif"/></inline-formula>, which is taken to be unity, then we can express Eq 2 just in terms of [<italic>A</italic><sub>0</sub>] with [<italic>D</italic><sub>0</sub>] = <italic>r<sub>da</sub></italic>[<italic>A</italic><sub>0</sub>] and <italic>E<sub>fr</sub></italic>[<italic>DA</italic>] = <italic>E<sub>d </sub>r<sub>da</sub></italic>[<italic>A</italic><sub>0</sub>]. We can analytically maximize the posterior probability of <italic>r<sub>da </sub></italic>and <italic>E<sub>d </sub></italic>as a function of [<italic>A</italic><sub>0</sub>] by setting the derivative of the probability with respect to [<italic>A</italic><sub>0</sub>] equal to zero and solving for this optimal [<italic>A</italic><sub>0</sub>] in terms of <italic>r<sub>da </sub></italic>and <italic>E<sub>d</sub></italic>. Our MCMC algorithm can be used to sample values of <italic>r<sub>da </sub></italic>and <italic>E<sub>d </sub></italic>that are consistent with the data.</p>
+        </sec>
+      </sec>
+      <sec>
+        <title>Testing</title>
+        <sec>
+          <title>Algorithm reflects data quality</title>
+          <p>An algorithm for estimating parameter values should report not just an estimate of the most probable parameter values but also the reliability of that estimate. To evaluate this aspect of our algorithm, we measured both the error and the uncertainty of its output. We defined the error as the discrepancy between the mean of the posterior probability distribution and the true value. We calculated error as <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i27.gif"/></inline-formula>, meaning that a perfect estimate would have zero error. Because under experimental conditions we would not know the true value, we also calculated the uncertainty of the estimate as an indicator of the reliability even when true values are unknown. The uncertainty corresponds to the width of the posterior probability distributions for <italic>K<sub>d </sub></italic>and <italic>E<sub>fr</sub></italic>. To prevent the magnitude of the parameter of interest from skewing the uncertainty, we use the relative uncertainty, calculated as the coefficient of variation (the standard deviation divided by the mean).</p>
+          <p>We first tested our algorithm in the presence of varying levels of measurement noise. As the examples in Figure <xref ref-type="fig" rid="F3">3A</xref> suggest, when measurement noise increased, the optimal regions in <italic>K<sub>d </sub></italic>and <italic>E<sub>fr</sub></italic>-space grew wider and longer and the peak of the posterior probability distribution for <italic>K<sub>d </sub></italic>often deviated from the true value (see Figure <xref ref-type="fig" rid="F3">3A</xref> inset). In Figures <xref ref-type="fig" rid="F3">3C</xref> and <xref ref-type="fig" rid="F3">3E</xref>, the error (upper plot) and uncertainty (lower plot) for estimating <italic>K<sub>d </sub></italic>are shown and confirm that both the error and uncertainty of the estimate increased with increasing noise. Similar results were obtained for the estimate of <italic>E<sub>fr </sub></italic>(data not shown).</p>
+          <fig id="F3" position="float">
+            <label>Figure 3</label>
+            <caption>
+              <p><bold>K<sub>d </sub>estimates reflect data quality and quantity</bold>. We simulated and analyzed data with varying levels of measurement noise and numbers of measurements/cell/channel. The locations visited by MCMC walks (dots) for the three noise levels (A) and the three numbers of measurements/cell/channel (B) show that the highly probable region grows as measurement noise increases and as the number of measurements decreases. The 'True Value' (black and white spot) indicates values used to generate the data. Histograms of the locations visited by the walks (insets, histograms smoothed for clarity) approximate the corresponding posterior probability distributions for <italic>K<sub>d</sub></italic>, with true values indicated by black lines. The plots of error <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i28.gif"/></inline-formula> vs. measurement noise (C) and error vs. amount of data (D) illustrate that, in general, accuracy decreases with increasing noise and decreasing number of measurements although the mean of the error remains centered at zero. Even when the true value is unknown, the relative uncertainty of the parameter estimate (coefficient of variation of locations visited by a walk) is measurable; it also grows with increasing noise (E) and decreasing number of measurements/cell/channel (F). In (C-F), error bars are mean &#xB1; SD. 50 data sets were analyzed for each noise level or number of measurements, and each dataset was analyzed once with a random walk running for 20,000 steps, starting once the walk converged. Except when otherwise indicated, data had 10 measurements/cell/channel and 5% added Gaussian noise. For other parameters, see Methods.</p>
+            </caption>
+            <graphic xlink:href="2046-1682-4-10-3"/>
+          </fig>
+          <p>Next, we verified that gathering more data would improve the quality of the estimates of <italic>K<sub>d </sub></italic>and <italic>E<sub>fr</sub></italic>. Such data could be obtained by, for example, collecting several images of the same sample or dividing a region of interest into subregions. The examples in Figure <xref ref-type="fig" rid="F3">3B</xref> show that with more measurements, the optimal region became smaller and the peak of the posterior probability distribution for <italic>K<sub>d </sub></italic>moved closer to the true value (see Figure <xref ref-type="fig" rid="F3">3B</xref> inset). Figures <xref ref-type="fig" rid="F3">3D</xref> and <xref ref-type="fig" rid="F3">3F</xref> show, as expected, that increasing the number of measurements decreases the error and uncertainty for the <italic>K<sub>d </sub></italic>estimate. The effect of data quantity on the error and uncertainty of the <italic>E<sub>fr </sub></italic>estimate was similar (data not shown).</p>
+          <p>Overall, our algorithm reliably reflects the quality of the data analyzed in the uncertainty it gives of its estimate and accurately infers the values of <italic>K<sub>d </sub></italic>and <italic>E<sub>fr </sub></italic>for 10 measurements per cell per channel with 10% measurement noise. We also note that in Figures <xref ref-type="fig" rid="F3">3C</xref> and <xref ref-type="fig" rid="F3">3D</xref>, the mean error in <italic>K<sub>d </sub></italic>remained close to zero, indicating that neither measurement noise nor number of measurements systematically biased the location of the peak.</p>
+        </sec>
+        <sec>
+          <title>The total amount of donor, <italic>[D<sub>0</sub>]</italic>, and the total amount of acceptor, <italic>[<roman>A</roman><sub>0</sub>]</italic>, affect inference of <italic>K</italic><sub><italic>d </italic></sub>and <italic>E</italic><sub><italic>fr</italic></sub></title>
+          <sec>
+            <title><italic>Inferring unique values of K<sub>d </sub>and E<sub>fr </sub>requires variations in </italic>[<italic>D</italic><sub>0</sub>]<italic> and </italic>[<italic>A</italic><sub>0</sub>]</title>
+            <p>A challenge in analyzing FRET data is that both <italic>E<sub>fr </sub></italic>and <italic>K<sub>d </sub></italic>affect the extent of FRET that may occur, making it difficult to tease out the contribution of each parameter. In general, for data from a single pair of donor and acceptor concentrations, a weak <italic>E<sub>fr </sub></italic>and strong <italic>K<sub>d </sub></italic>can give rise to the same observations as a strong <italic>E<sub>fr </sub></italic>and weak <italic>K<sub>d</sub></italic>. However, because our algorithm can analyze data from multiple cells at once, it can overcome this challenge.</p>
+            <p>To demonstrate the problem, we analyzed a set of simulated data from a single sample with [<italic>A</italic><sub>0</sub>] = [<italic>D</italic><sub>0</sub>] = 1 <italic>&#x3BC;M</italic>. As Figure <xref ref-type="fig" rid="F4">4A</xref> shows, the resulting region of optimal values had an elongated shape, indicating that many equally probable solutions exist for {<italic>K<sub>d</sub></italic>, <italic>E<sub>fr</sub></italic>} for that dataset. To show that collecting more data from similar cells does not help, we repeated the experiment, simulating data from 3 cells with the same concentrations as the first. As Figure <xref ref-type="fig" rid="F4">4B</xref> shows, including this data made the region slightly narrower but did not change its elongated shape.</p>
+            <fig id="F4" position="float">
+              <label>Figure 4</label>
+              <caption>
+                <p><bold>Concentration variations determine shape of region of high probability</bold>. Using the Monte Carlo algorithm to analyze data from a single cell containing [<italic>D</italic><sub>0</sub>] = [<italic>A</italic><sub>0</sub>] = 1 <italic>&#x3BC;M </italic>produced an elongated region of highly probable values (A), indicated by the collection of dots showing the locations in (<italic>K<sub>d</sub></italic>, <italic>E<sub>fr</sub></italic>) visited by the biased random walk. These single-cell results are shown again in (B-E) (blue dots), with the results from analyzing other data sets superimposed. Analyzing three identical cells instead of one produced a narrower but still elongated region (B). However, when analyzing data from two cells (C and C inset) and three cells (D) with different concentrations of fluorophores, the resulting regions were contracted. Analyzing cells individually showed that the elongated highly probable regions for each all intersected near the true value (E). More extreme variation in concentrations led to an even smaller optimal region (F). In (A-F), there were 10 measurements/cell/channel, 3% added Gaussian noise, and 31,000 steps are shown for each walk. For other parameter values, see Methods.</p>
+              </caption>
+              <graphic xlink:href="2046-1682-4-10-4"/>
+            </fig>
+            <p>The difficulty in determining <italic>K<sub>d </sub></italic>without knowing <italic>E<sub>fr </sub></italic>or vice versa can be overcome by analyzing data from samples containing varying fluorophore concentrations [<xref ref-type="bibr" rid="B16">16</xref>,<xref ref-type="bibr" rid="B21">21</xref>]. To quantitatively justify how varying concentrations facilitates parameter fitting, we simulated data from three cells containing different concentrations of donors and acceptors. As Figure <xref ref-type="fig" rid="F4">4C</xref> shows, analyzing data from two different cells decreased the size of the region of equally probable values. Combining data from a cell containing [<italic>D</italic><sub>0</sub>] = [<italic>A</italic><sub>0</sub>] = 1 <italic>&#x3BC;</italic>M with data from a cell containing 0.5 <italic>&#x3BC;</italic>M eliminated high values of <italic>K<sub>d </sub></italic>(Figure <xref ref-type="fig" rid="F4">4C</xref>); combining data from a 1 <italic>&#x3BC;</italic>M cell and a 5 <italic>&#x3BC;</italic>M cell eliminated low values of <italic>K<sub>d </sub></italic>(Figure <xref ref-type="fig" rid="F4">4C</xref>, inset). As Figure <xref ref-type="fig" rid="F4">4D</xref> indicates, analyzing data from all three cells (0.5 <italic>&#x3BC;</italic>M, 1 <italic>&#x3BC;</italic>M, and 5 <italic>&#x3BC;</italic>M) together eliminated higher and lower <italic>K<sub>d </sub></italic>values, leaving a small region of equally probable values that included the true values. To show why varying fluorophore concentrations is effective, we analyzed data from each of the three cells in Figure <xref ref-type="fig" rid="F4">4D</xref> individually. The optimal regions for each cell are plotted in Figure <xref ref-type="fig" rid="F4">4E</xref> and clearly intersect at the true value. Varying the concentrations more broadly can further shrink the solution region (Figure <xref ref-type="fig" rid="F4">4F</xref>).</p>
+          </sec>
+          <sec>
+            <title><italic>Inference is limited if </italic>[<italic>D</italic><sub>0</sub>] = [<italic>A</italic><sub>0</sub>] &#x226B; <italic>K<sub>d </sub></italic><italic>or </italic>[<italic>D</italic><sub>0</sub>] = [<italic>A</italic><sub>0</sub>] &#x226A; <italic>K<sub>d</sub></italic></title>
+            <p>Plots of complex formation vs. <italic>K<sub>d </sub></italic>(Figure <xref ref-type="fig" rid="F5">5A</xref>, insets) show that only <italic>K<sub>d </sub></italic>values within a limited range significantly affect complex formation: outside this range, further changes in <italic>K<sub>d </sub></italic>have little effect. For instance, when [<italic>D</italic><sub>0</sub>] = [<italic>A</italic><sub>0</sub>] &#x2248; <italic>K<sub>d</sub></italic>, small changes in <italic>K<sub>d </sub></italic>in either direction affect [<italic>DA</italic>] (Figure <xref ref-type="fig" rid="F5">5A</xref> centre, inset). However, when [<italic>D</italic><sub>0</sub>] = [<italic>A</italic><sub>0</sub>] &#x226A; <italic>K<sub>d </sub></italic>(Figure <xref ref-type="fig" rid="F5">5A</xref>, left inset) or [<italic>D</italic><sub>0</sub>] = [<italic>A</italic><sub>0</sub>] &#x226B; <italic>K<sub>d </sub></italic>(Figure <xref ref-type="fig" rid="F5">5A</xref>, right inset), only changes to <italic>K<sub>d </sub></italic>in one direction affect the amount of [<italic>DA</italic>]. When a range of <italic>K<sub>d </sub></italic>values are consistent with the data, <italic>K<sub>d </sub></italic>cannot be fit to a single value.</p>
+            <fig id="F5" position="float">
+              <label>Figure 5</label>
+              <caption>
+                <p><bold>Gaining insight into optimal experimental design</bold>. The approximate posterior probability distributions for <italic>K<sub>d </sub></italic>(A) have different shapes if the data analyzed was simulated from three cells containing equal concentrations of donors and acceptors which are much lower than (left), higher than (right) or about equal to <italic>K<sub>d </sub></italic>(centre). For the data analyzed in the left panel, for instance, the cells contained the concentrations [<italic>D</italic><sub>0</sub>] = [<italic>A</italic><sub>0</sub>] = 0.2&#xB7;10<sup>-3 </sup><italic>&#x3BC;M</italic>, [<italic>D</italic><sub>0</sub>] = [<italic>A</italic><sub>0</sub>] = 1&#xB7;10<sup>-3 </sup><italic>&#x3BC;M</italic>, and [<italic>D</italic><sub>0</sub>] = [<italic>A</italic><sub>0</sub>] = 5&#xB7;10<sup>-3 </sup><italic>&#x3BC;M</italic>. Insets show amount of complex formed as a function of <italic>K<sub>d </sub></italic>for the indicated concentrations, demonstrating that where complex formation is insensitive to <italic>K<sub>d </sub></italic>corresponds to plateaus in the posterior probability distributions for <italic>K<sub>d</sub></italic>. In each plot (or inset), a vertical dashed line (or red circle) indicates 10<sup>-6</sup><italic>M</italic>, the true value of <italic>K<sub>d</sub></italic>. (A) had 36,000 steps/walk and 5% added noise. Exploring another aspect of fluorophore concentrations, increasing the ratio [<italic>D</italic><sub>0</sub>] : [<italic>A</italic><sub>0</sub>] increases the uncertainty in fitting <italic>K</italic><sub><italic>d </italic></sub>(B). As the ratio was increased (by keeping [<italic>D</italic><sub>0</sub>] constant for the three cells at 0.2&#xB7;10<sup>-6</sup><italic>M</italic>, 1.0&#xB7;10<sup>-6</sup><italic>M </italic>and 5.0 10<sup>-6</sup><italic>M </italic>while decreasing [<italic>A</italic><sub>0</sub>] according to the ratio), posterior probability distributions for <italic>K<sub>d </sub></italic>broadened (true value indicated by dashed vertical line). Insets show data used for fitting (bars marked '<italic>E<sub>fr </sub></italic>= 0.4') from the donor channel (left) and FRET channel (right) contrasted with data from the same cells simulated with <italic>E<sub>fr </sub></italic>= 0, demonstrating that the relative contribution of FRET decreases as [<italic>D</italic><sub>0</sub>] : [<italic>A</italic><sub>0</sub>] increases. (B) had 50 measurements/cell/channel, 36,000 steps/walk and 3% added noise. Bars show mean &#xB1; SD. For other parameters, see Methods.</p>
+              </caption>
+              <graphic xlink:href="2046-1682-4-10-5"/>
+            </fig>
+            <p>By finding the posterior probability distribution of <italic>K<sub>d</sub></italic>, our algorithm predicts when a range of <italic>K<sub>d </sub></italic>values will be consistent with the data. First, we simulated data with equal concentrations of acceptors and donors that were very low or very high relative to <italic>K<sub>d</sub></italic>. As shown in Figure <xref ref-type="fig" rid="F5">5A</xref>, the approximate posterior probability distributions of <italic>K<sub>d </sub></italic>for data simulated with relatively low or high concentrations form plateaus instead of single peaks. The plateaus indicate that a range of <italic>K<sub>d </sub></italic>values is equally probable and consistent with the data. The posterior distribution obtained for [<italic>D</italic><sub>0</sub>] = [<italic>A</italic><sub>0</sub>] &#x226A; <italic>K<sub>d </sub></italic>reveals that <italic>K<sub>d </sub></italic>could be any number greater than approximately 10<sup>-6</sup><italic>M</italic>; the distribution for [<italic>D</italic><sub>0</sub>] = [<italic>A</italic><sub>0</sub>] &#x226B; <italic>K<sub>d </sub></italic>reveals that <italic>K<sub>d </sub></italic>&lt; 10<sup>-6</sup><italic>M</italic>.</p>
+            <p>This analysis illustrates how posterior probability distributions for the parameters of interest can be more informative than single values. For example, information from posterior distributions can be useful for improving experimental design. If one were to obtain plateaued distributions like the two shown in Figure <xref ref-type="fig" rid="F5">5A</xref>, one could recognize that the fluorophore concentrations were too low or high relative to <italic>K<sub>d </sub></italic>and devise a more informative experiment.</p>
+          </sec>
+          <sec>
+            <title>The ratio [<italic>D</italic><sub>0</sub>]:[<italic>A</italic><sub>0</sub>] affects inference</title>
+            <p>We also used our algorithm to explore the effects of varying the ratio, [<italic>D</italic><sub>0</sub>] : [<italic>A</italic><sub>0</sub>], on the algorithm's ability to infer <italic>K<sub>d </sub></italic>(Figure <xref ref-type="fig" rid="F5">5B</xref>) and how these effects arise. While other authors have reported that FRET data becomes increasingly unreliable as the ratio [<italic>D</italic><sub>0</sub>] : [<italic>A</italic><sub>0</sub>] deviates from unity [<xref ref-type="bibr" rid="B13">13</xref>], they measured how noise propagates in FRET formulas and did not directly address how the ratio impacts the measurement of interaction strength. As Figure <xref ref-type="fig" rid="F5">5B</xref> shows, the width of the approximate posterior distributions for <italic>K<sub>d </sub></italic>broaden as the ratio increases, meaning that the uncertainty in the estimate increases. The peaks of the distributions however remain close to the true values. The same effect occurs when the ratio decreases (data not shown).</p>
+            <p>The insets in Figure <xref ref-type="fig" rid="F5">5</xref> illustrate why the ratio affects the uncertainty, showing data from the donor and FRET channels in the presence and absence of FRET. Here, FRET contributes only a fraction of the observed signals. This small contribution is particularly evident in the FRET channel, where the change in the signal due to FRET is small compared to the measurement error: measurement error is 3% and the increase in the FRET channel from FRET is only 2.9% for [<italic>D</italic><sub>0</sub>] : [<italic>A</italic><sub>0</sub>] = 1 and drops to 0.7% for [<italic>D</italic><sub>0</sub>] : [<italic>A</italic><sub>0</sub>] = 10 (FRET is included by changing the FRET efficiency from 0 to 0.4). As the ratio increased, the relative shortage of acceptors meant that fewer complexes could form, making the contributions from FRET smaller and causing the uncertainty of the estimate to grow. In the absence of measurement noise, however, our algorithm can estimate <italic>K<sub>d </sub></italic>even from very extreme ratios. These data also demonstrate that with our method, we can make inferences about <italic>K<sub>d </sub></italic>even when FRET causes perceptible changes in only one channel (e.g. the donor channel here).</p>
+            <p>Knowing how spectral overlap and the ratio of donors to acceptors affect the inference of protein interaction strength helps make it possible to design informative experiments. For example, we find that in each channel, the difference generated by FRET depends on spectral overlap. In the donor channel, where FRET decreases the signal, the relative change is <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i29.gif"/></inline-formula>, meaning that the observed change depends on the difference between acceptor bleed-through, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i30.gif"/></inline-formula>, and donor fluorescence, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i31.gif"/></inline-formula>. Analogous changes occur in the other channels. When [<italic>D</italic><sub>0</sub>] = [<italic>A</italic><sub>0</sub>], the change in the donor channel is proportional to <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i32.gif"/></inline-formula>, the change in the acceptor channel to <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i33.gif"/></inline-formula> and the change in the FRET channel to <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i34.gif"/></inline-formula>. In each channel, increasing the difference between <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i35.gif"/></inline-formula> and <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i36.gif"/></inline-formula> would make experiments more informative.</p>
+          </sec>
+        </sec>
+        <sec>
+          <title>Prior information improves estimate</title>
+          <p>A further advantage of our method is its flexibility. The Bayesian framework makes it possible to incorporate additional details we know about the system as prior information, allowing us to more accurately represent the system being analyzed and potentially improve our estimate of the parameters of interest. To exploit this feature, we tested whether including additional information about the FRET efficiency would improve our inference of <italic>E<sub>fr </sub></italic>and <italic>K<sub>d</sub></italic>. Information about <italic>E<sub>fr </sub></italic>could be obtained, for example, from lifetime imaging experiments [<xref ref-type="bibr" rid="B29">29</xref>].</p>
+          <p>Figure <xref ref-type="fig" rid="F6">6</xref> shows the approximate posterior probability distributions for <italic>E<sub>fr </sub></italic>and <italic>K<sub>d </sub></italic>that result from analyzing the same data in the presence and absence of prior information for <italic>E<sub>fr</sub></italic>. We included slightly inaccurate prior information with large uncertainty, supposing that <italic>E<sub>fr </sub></italic>was measured to be 0.45 (instead of the true value, <italic>E<sub>fr </sub></italic>= 0.4) with an uncertainty of 0.15. Even with this limited information, the resulting histograms for both <italic>K<sub>d </sub></italic>and <italic>E<sub>fr </sub></italic>have taller, narrower peaks which are closer to the true values compared to the histograms produced by analyzing the same data in the absence of the prior information. As expected, this improvement was more substantial when we analyzed a set of data consisting of just 3 measurements per cell per channel (Figure <xref ref-type="fig" rid="F6">6</xref>, right column): prior information becomes more important the less relevant information there is in the data. As another form of prior information, we could also include error in the calibration measurements for the constants that relate molecular concentration to fluorescence in Eq (2). Incorporating this information would make it possible to monitor the impact of that error on the uncertainty of the final estimate of <italic>K<sub>d</sub></italic>.</p>
+          <fig id="F6" position="float">
+            <label>Figure 6</label>
+            <caption>
+              <p><bold>Prior information on E<sub>fr </sub>improves estimate</bold>. Approximate posterior distributions for <italic>E<sub>fr </sub></italic>(upper panels) and <italic>K<sub>d </sub></italic>(lower panels) obtained from using the MCMC algorithm to analyze the same datasets in the absence (red) or presence (blue) of prior knowledge about <italic>E<sub>fr </sub></italic>show that prior knowledge helps to improve accuracy and reduce uncertainty of the estimate. True values are indicated by vertical dashed lines and the inset shows the prior distributions used (red is a uniform distribution and blue is a normal distribution centred at 0.45 with a variance of 0.15). The plots on the left show results from analyzing data where 10 measurements were made in each channel for each of 3 cells with [<italic>A</italic><sub>0</sub>] = [<italic>D</italic><sub>0</sub>] = [.2, 1, 5]&#xB7;10<sup>-6</sup><italic>M</italic>. The plots on the right show results from data from the same cells, but with just 3 measurements/channel. 20,000 steps were recorded for each biased biased random walk, with 5% added noise. For other parameter values, see Methods.</p>
+            </caption>
+            <graphic xlink:href="2046-1682-4-10-6"/>
+          </fig>
+        </sec>
+        <sec>
+          <title>Summary of testing</title>
+          <p>We have shown, using typical, simulated FRET data, that our algorithm accurately recovers the parameters of interest. It responded consistently and intuitively to changes in the amount of measurement noise present in the data and the quantity of data. We also used the posterior probability distributions we obtain for the parameters to gain insight into how the magnitude and variation of the donor and acceptor concentrations affect the ability of the algorithm to infer <italic>K<sub>d</sub></italic>. The algorithm gave informative results even when given data simulated with very high or low concentrations of donors and acceptors relative to the <italic>K<sub>d </sub></italic>although, as expected, with this data it could not converge on a unique pair of values for <italic>K<sub>d </sub></italic>and <italic>E<sub>fr </sub></italic>but gave upper or lower bounds. Gaining an understanding of how experimental parameters such as measurement noise, number of measurements, spectral overlap and fluorophore concentrations affect inference allows experimenters to design optimal experiments that yield information with less uncertainty [<xref ref-type="bibr" rid="B24">24</xref>].</p>
+        </sec>
+      </sec>
+    </sec>
+    <sec>
+      <title>Conclusions</title>
+      <p>Fluorescence microscopy and FRET open a window onto the cell, allowing us to observe protein interactions as the cell functions as a complete system. However, for protein interaction information from FRET data to be integrated into models and improve our understanding of biological systems, it must be reliably quantified, including the uncertainty in the estimates produced [<xref ref-type="bibr" rid="B27">27</xref>].</p>
+      <p>For this purpose, we have presented an algorithm for inferring the most probable values of the absolute or relative <italic>in vivo </italic>dissociation constant and the FRET efficiency from three-cube FRET data. Our algorithm produces estimates in terms of the posterior probability distribution for the parameters of interest. Posterior probability distributions yield more extensive information than a single value can provide, conveying the reliability of the estimates through the shape and width of the distribution and giving upper or lower bounds on parameters if the data is not more informative. Our method requires only basic three-cube FRET data but has the flexibility to use data from more spectral channels and incorporate other types of data, such as a separate measure of the FRET efficiency. We have focused on using our algorithm to fit <italic>E<sub>fr </sub></italic>and <italic>K<sub>d</sub></italic>, but it can also infer the apparent FRET efficiency and ratio of donors to acceptors, other quantities sometimes used as measures of FRET [<xref ref-type="bibr" rid="B15">15</xref>-<xref ref-type="bibr" rid="B19">19</xref>,<xref ref-type="bibr" rid="B14">14</xref>].</p>
+      <p>In the examples described here, we make a few assumptions, but these are not necessarily part of our methodology. First, we use molar extinction coefficients that must be measured separately or taken from the literature and assume that the literature measurements are valid in the cellular environment. Second, we assume Gaussian measurement noise, but our model could be straightforwardly adapted to include log-normal or other types of noise. Finally, we have not taken into consideration photo-bleaching, incomplete labelling or dark states, but our model could readily be extended to include these factors.</p>
+      <p>We have used simulated data to illustrate principles that apply to real data, showing how, in practice, it is best to infer the dissociation constant from FRET data. Three-cube FRET experiments are a well-established experimental technique [<xref ref-type="bibr" rid="B3">3</xref>-<xref ref-type="bibr" rid="B6">6</xref>]. For our method, the calibration procedure we describe in the Methods for quantifying the <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i6.gif"/></inline-formula> constants of Eq (2) is also necessary. The procedure is similar to existing calibration methods. Measuring relative values of <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i36.gif"/></inline-formula> and <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i37.gif"/></inline-formula> is a standard part of FRET data collection, necessary for calibrating the extent of spectral bleed-through and cross-talk. We require calibration with a donor-acceptor construct to relate the brightness of the donor to that of the acceptor, which is necessary for obtaining the relative <italic>K<sub>d</sub></italic>. This calibration is not always a part of standard FRET data collection, but it has been used in several studies [<xref ref-type="bibr" rid="B8">8</xref>,<xref ref-type="bibr" rid="B18">18</xref>,<xref ref-type="bibr" rid="B17">17</xref>,<xref ref-type="bibr" rid="B4">4</xref>,<xref ref-type="bibr" rid="B14">14</xref>,<xref ref-type="bibr" rid="B19">19</xref>,<xref ref-type="bibr" rid="B21">21</xref>]. Alternatively, measuring the absolute brightness per molecule, which is necessary for measuring the absolute <italic>K<sub>d</sub></italic>, is more technically challenging but has been achieved [<xref ref-type="bibr" rid="B30">30</xref>,<xref ref-type="bibr" rid="B31">31</xref>].</p>
+      <p>We have demonstrated that to infer the values of <italic>K<sub>d </sub></italic>and <italic>E<sub>fr</sub></italic>, it is important that the FRET data analyzed come from samples containing varying concentrations of donor- and acceptor-tagged proteins. The precise amount of variation required is difficult to predict because it depends on the measurement noise present in the data, the number of measurements made, and the extent of spectral bleed-through and cross-talk. Naturally occurring variation in protein expression from cell to cell generated sufficient variability for estimating the FRET efficiency and relative dissociation constant [<xref ref-type="bibr" rid="B21">21</xref>], at least in transiently transfected mammalian cells.</p>
+      <p>While a number of <italic>ad hoc </italic>methods exist for quantifying protein interactions using FRET, our method contributes something new in that it makes plain the spectral information being used and the bio-chemical assumptions made about the system. Our model is general: it is not specific to three-cube data and could be used to analyze data with any number of spectral channels. It can be straight-forwardly adapted to other experimental situations, for instance to measure the dimerization affinity of a homodimeric protein. Our approach is a Bayesian analysis that reveals the uncertainty in estimated parameters and produces informative results for data from a wide-range of experimental set-ups. It focuses on determining what we can learn from experimental observations about the parameters of interest given clear assumptions and a systematic, statistical analysis based only on those assumptions.</p>
+    </sec>
+    <sec sec-type="methods">
+      <title>Methods</title>
+      <sec>
+        <title>Calibration of fluorescence constants, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i6.gif"/></inline-formula></title>
+        <p>The <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i6.gif"/></inline-formula> constants, which relate concentrations of single fluorophores to observed fluorescence intensity, can be obtained by calibration. Calibration of spectral cross-talk and bleed-through is a standard part of FRET quantification [<xref ref-type="bibr" rid="B4">4</xref>-<xref ref-type="bibr" rid="B6">6</xref>]. If the fluorophore concentrations can be determined [<xref ref-type="bibr" rid="B30">30</xref>,<xref ref-type="bibr" rid="B31">31</xref>], then the values for the three <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i36.gif"/></inline-formula> and three <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i37.gif"/></inline-formula> constants can be obtained from samples containing only donors or only acceptors. This calibration makes it possible to measure the absolute <italic>K<sub>d</sub></italic>. Three-cube data from donor-only and acceptor-only samples correspond to the following equations (from Eq (2)):<disp-formula id="bmcM8"><label>(8)</label><graphic xlink:href="2046-1682-4-10-i38.gif"/></disp-formula><disp-formula id="bmcM9"><label>(9)</label><graphic xlink:href="2046-1682-4-10-i39.gif"/></disp-formula></p>
+        <p>To infer the values of the constants <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i36.gif"/></inline-formula> and <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i37.gif"/></inline-formula> and their uncertainty (due to measurement error), we can sample from posterior distributions for <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i36.gif"/></inline-formula> and <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i37.gif"/></inline-formula> given the calibration data. We will illustrate this procedure for a more complicated example below.</p>
+        <p>Determining the <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i35.gif"/></inline-formula>, which relate a complex undergoing FRET to its fluorescence in channel <italic>i</italic>, is more complicated because the <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i35.gif"/></inline-formula> depend on properties of both the donor and the acceptor. However, from Eq (3), <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i40.gif"/></inline-formula>, but <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i41.gif"/></inline-formula>. Therefore, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i42.gif"/></inline-formula>, and so <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i35.gif"/></inline-formula> can be obtained through knowledge of the ratio of molar extinction coefficients at the excitation wavelength for channel <italic>i</italic>. The values of the molar extinction coefficients, <italic> &#x3B5; </italic><sup>(<italic>D</italic>) </sup>and <italic> &#x3B5;</italic><sup>(<italic>A</italic>)</sup>, may not always be available at these wavelengths, but they can be estimated from literature values of the molar extinction coefficients (usually measured at the fluorophore's excitation peak) and the excitation spectra of the donor and acceptor [<xref ref-type="bibr" rid="B25">25</xref>]. Interpreting the excitation spectra as the probability of the fluorophore becoming excited and assuming that the extinction coefficient is proportional to the probability of excitation, we can use the excitation spectra to rescale the literature value of the extinction coefficient to the excitation wavelength of channel <italic>i</italic>. This estimate is valid provided that the molar extinction coefficients obtained from the literature are not significantly different from the molar extinction coefficients in the cellular environment of the experiment (or provided that the change in environment affects both donor and acceptor similarly).</p>
+        <p>When the relationship between brightness and concentration cannot be determined absolutely, relative values for <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i36.gif"/></inline-formula> and <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i37.gif"/></inline-formula> can be obtained from samples containing only donors and only acceptors, along with samples containing linked donor-acceptor constructs. The constructs consist of a donor and an acceptor fluorophore separated by a short linker of 5-10 amino acids and have been used for FRET calibration in several studies [<xref ref-type="bibr" rid="B8">8</xref>,<xref ref-type="bibr" rid="B18">18</xref>,<xref ref-type="bibr" rid="B17">17</xref>,<xref ref-type="bibr" rid="B4">4</xref>,<xref ref-type="bibr" rid="B14">14</xref>,<xref ref-type="bibr" rid="B19">19</xref>,<xref ref-type="bibr" rid="B21">21</xref>]. The construct's FRET efficiency, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i43.gif"/></inline-formula>, need not be known and can be determined using the procedure we describe below.</p>
+        <p>The three-cube measurements on samples containing only donors or only acceptors would correspond to Eqs (8) and (9). Three-cube data obtained from samples containing donor-acceptor constructs would correspond to the following equations:<disp-formula id="bmcM10"><label>(10)</label><graphic xlink:href="2046-1682-4-10-i44.gif"/></disp-formula></p>
+        <p>where we have replaced <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i35.gif"/></inline-formula> by <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i45.gif"/></inline-formula>. To infer the values of the <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i6.gif"/></inline-formula> constants given calibration data consisting of three-cube measurements made on samples with only donors, only acceptors, and donor-acceptor complexes, we first define the general likelihood function of these experiments for a single sample:<disp-formula id="bmcM11"><label>(11)</label><graphic xlink:href="2046-1682-4-10-i46.gif"/></disp-formula></p>
+        <p>where <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i47.gif"/></inline-formula>, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i48.gif"/></inline-formula>, and <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i49.gif"/></inline-formula> are the <italic>i<sup>th </sup></italic>measurements in the donor, acceptor, and FRET channels, respectively. For a given sample, we assume that an equal number of measurements, <italic>n</italic>, will be made in each channel and <italic>&#x3C3; </italic>quantifies the error of the measurements. The predicted intensities in channel <italic>k</italic>, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i50.gif"/></inline-formula>, are given by Eqs (8), (9) and (10) and are a function of the constants <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i6.gif"/></inline-formula>, the concentrations of the species (donors, acceptors, or donor-acceptor complexes), and also <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i43.gif"/></inline-formula> in the case of the donor-acceptor construct. The full likelihood for all the calibration data together would be the product of three instances of Eq (11), one specified for each three-cube experiment (donor-only, acceptor-only, or donor-acceptor complex).</p>
+        <p>We are interested in the values of the <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i6.gif"/></inline-formula> but indifferent to the concentrations of fluorophores and complexes in the samples. For this reason and because the concentrations of fluorophores and complexes will vary for different samples, it is useful to marginalize the calibration likelihood over [<italic>A</italic><sub>0</sub>], [<italic>D</italic><sub>0</sub>], and [<italic>DA</italic>]. We can also eliminate <italic>&#x3C3; </italic>by marginalization [<xref ref-type="bibr" rid="B28">28</xref>], assuming the measurement error is the same for all three spectral channels. If this assumption does not hold, one can define <italic>&#x3C3;<sub>k </sub></italic>for the measurement error in each channel and either approximate each <italic>&#x3C3;<sub>k </sub></italic>as equal to the standard deviation of the measurements in the <italic>k<sup>th </sup></italic>channel or include the <italic>&#x3C3;</italic><sub><italic>k </italic></sub>as parameters to be inferred in the procedure we describe below. Assuming a prior probability that only specifies positive values for the <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i6.gif"/></inline-formula> and <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i43.gif"/></inline-formula>, marginalizing Eq (11) over the concentrations and <italic>&#x3C3; </italic>yields the posterior probability of <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i43.gif"/></inline-formula> and relative values of <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i6.gif"/></inline-formula>:<disp-formula id="bmcM12"><label>(12)</label><graphic xlink:href="2046-1682-4-10-i51.gif"/></disp-formula></p>
+        <p>which is valid for the three cube experiments for each sample (donor, acceptor, or construct). For the donor-only sample, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i52.gif"/></inline-formula>; for the acceptor-only sample, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i53.gif"/></inline-formula>; and for the sample with the donor-acceptor construct, the <italic>a<sub>i </sub></italic>are replaced with <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i54.gif"/></inline-formula>. The posterior probability, including all the calibration data together, is obtained by multiplying the forms of Eq (12) for each of the three 3-cube experiments.</p>
+        <p>For a given data set, we can infer <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i43.gif"/></inline-formula> and five of the six <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i6.gif"/></inline-formula> constants relative to the remaining one, for instance <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i55.gif"/></inline-formula>, which is set to unity. The numerator of Eq (12) remains unaltered by such a rescaling of the <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i6.gif"/></inline-formula>, and the alteration in the denominator is cancelled by the Jacobian required for the change in variables. One can use a Markov chain Monte Carlo method to sample the <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i6.gif"/></inline-formula> and <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i43.gif"/></inline-formula> from <italic>P</italic><sub>calib</sub>. Alternatively, one can use a numerical solver to find the most probable values by solving for the roots of the system of equations consisting of the derivatives of Eq (12) with respect to each of the six variables. Using this relative calibration procedure, the final <italic>K<sub>d </sub></italic>values obtained would relate to the true <italic>K<sub>d </sub></italic>by the scaling factor, for instance <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i55.gif"/></inline-formula>.</p>
+      </sec>
+      <sec>
+        <title>Data simulation</title>
+        <p>We designed our simulated data to mimic the key features of experimental data, which could come from various sources, such as fluorescence reader measurements of solutions of purified proteins or images of cells from fluorescence microscopy that have been processed and quantified. To simulate data, we wrote a function in Matlab (The Mathworks, Natick, MA) that takes as input <italic>E<sub>fr</sub></italic>, <italic>K<sub>d</sub></italic>, <bold>A<sub>0</sub></bold>, <bold>D<sub>0</sub></bold>, <italic>n</italic>, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i6.gif"/></inline-formula>, and <italic>r </italic>where <bold>A<sub>0</sub></bold>, <bold>D<sub>0 </sub></bold>are vectors of length <italic>m </italic>(representing <italic>m </italic>cells or regions within cells), <italic>n </italic>is the number of measurements made on each cell or vesicle, and <italic>r </italic>is the strength of measurement noise. The function outputs a set of simulated three-cube FRET data from <italic>m </italic>samples with <italic>n </italic>measurements per sample.</p>
+        <p>For each pair of concentrations, [<italic>A</italic><sub>0</sub>] and [<italic>D</italic><sub>0</sub>], we calculate [<italic>D</italic>], [<italic>A</italic>], and [<italic>DA</italic>] using Eq (5). Next, we calculate the simulated experimental intensities <italic>I<sub>D</sub></italic>, <italic>I<sub>A</sub></italic>, and <italic>I<sub>F </sub></italic>using Eq (1). Finally, we simulate measurement noise by adding Gaussian random numbers to the data. The variable <italic>r </italic>is a scalar between 0 and 1 that refers to the strength of the measurement noise relative to the mean of the observed signal. Noise with <italic>r </italic>= 10% would have Gaussian measurement noise with standard deviation that is 10% of the mean signal observed in each channel.</p>
+        <p>In our examples, we use <italic>E<sub>fr </sub></italic>= 0.4 and <italic>K<sub>d </sub></italic>= 1 <italic>&#x3BC;</italic>M. Unless otherwise indicated, we simulate ten measurements per cell per channel and use the following set of <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i6.gif"/></inline-formula> values, which were chosen to represent a donor-acceptor pair with considerable spectral cross-talk and bleed-through:<disp-formula><graphic xlink:href="2046-1682-4-10-i56.gif"/></disp-formula></p>
+        <p>The constants corresponding to the donor, acceptor, and complex fluorescing in their respective channels <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i57.gif"/></inline-formula> are assigned the largest values. As donors and acceptors are often not equally bright, we set <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i58.gif"/></inline-formula>. In the FRET channel, the constants corresponding to bleed-through from donors <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i59.gif"/></inline-formula> and cross-talk from acceptors <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i60.gif"/></inline-formula> have been set to approximately 20% of the constants for donor and acceptor in their respective channels <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i61.gif"/></inline-formula> because spectral overlap contributes significantly in the FRET channel. In the acceptor channel, smaller values are assigned to <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i62.gif"/></inline-formula> and <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i63.gif"/></inline-formula> to describe the donor undergoing cross-talk and, subsequently, either bleed-through (<inline-formula><inline-graphic xlink:href="2046-1682-4-10-i62.gif"/></inline-formula>) or FRET (<inline-formula><inline-graphic xlink:href="2046-1682-4-10-i63.gif"/></inline-formula>) in the acceptor channel. It is unlikely that acceptors would emit photons detectable in the donor channel, so the constants corresponding to that process, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i64.gif"/></inline-formula> and <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i65.gif"/></inline-formula>, are very small, but they are non-zero to show that any measurable spectral contamination can be included.</p>
+      </sec>
+      <sec>
+        <title>Incorporating prior information</title>
+        <p>The Bayesian framework makes it possible to incorporate prior information about any of the parameters, including uncertainty in <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i6.gif"/></inline-formula>. As an example, we include prior knowledge about <italic>E<sub>fr </sub></italic>(see the Results). Such data could be collected in separate experiments under slightly different experimental conditions and in the presence of measurement noise. We define the prior probability of <italic>E<sub>fr </sub></italic>by a Gaussian distribution with mean at the measured value <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i66.gif"/></inline-formula> and variance <italic>&#x3C3;<sub>E</sub></italic>, which reflects the confidence in the measurement:<disp-formula id="bmcM13"><label>(13)</label><graphic xlink:href="2046-1682-4-10-i67.gif"/></disp-formula></p>
+      </sec>
+      <sec>
+        <title>Markov chain Monte Carlo (MCMC) estimation</title>
+        <p>To sample <italic>K<sub>d </sub></italic>and <italic>E<sub>fr </sub></italic>from the posterior probability distribution, we use a biased random walk. Although a simpler approach would be sufficient to explore two dimensions, we use this method because it will allow us to efficiently extend our search to sample other, additional parameters we may wish to infer, such as the values of <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i6.gif"/></inline-formula>.</p>
+        <p>We use the Metropolis-Hastings algorithm [<xref ref-type="bibr" rid="B32">32</xref>,<xref ref-type="bibr" rid="B33">33</xref>]. It begins at a random location in parameter space and takes random steps, moving in up to 3 dimensions at a time with proposed steps drawn from a distribution that is symmetric about the current location. Proposals that increase the posterior probability are always accepted; those that decrease it are accepted with probability <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i68.gif"/></inline-formula>, where <italic>P </italic>(<italic>x<sup>j</sup></italic>) is the posterior probability of the proposed step and <italic>P </italic>(<italic>x</italic><sup><italic>j</italic>-1</sup>) is the posterior probability of the current location. The walk is run for a sufficiently long time (about 10,000 steps) to generate independent samples from the posterior distribution and the step size chosen to maintain an acceptance rate of 40 - 60% [<xref ref-type="bibr" rid="B28">28</xref>].</p>
+        <p>Once the walk has converged with the energy fluctuating around a minimum value, we record the steps taken and use the histogram of these sampled values as our estimate of the posterior probability distribution. From this estimated distribution, we obtain the mean and standard deviation of each parameter being inferred. The algorithm is summarized below.</p>
+      </sec>
+      <sec>
+        <title>Marginalization of <italic>D</italic><sub>0 </sub>and <italic>A</italic><sub>0</sub></title>
+        <p>We have defined the likelihood in Eq 7 and assume that the measurement noise in each channel is independent. Because we have a Gaussian model, the values of the measurement noise parameters, <italic>&#x3C3;<sub>D</sub></italic>, <italic>&#x3C3;<sub>A </sub></italic>and <italic>&#x3C3;<sub>F </sub></italic>, that maximise the posterior probability are approximately equivalent to the observed variances of the data from the donor, acceptor, and FRET channels, respectively [<xref ref-type="bibr" rid="B28">28</xref>]. However, it would also be possible to fit <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i69.gif"/></inline-formula>, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i70.gif"/></inline-formula> and <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i71.gif"/></inline-formula> directly, along with <italic>K<sub>d </sub></italic>and <italic>E<sub>fr</sub></italic>.</p>
+        <p>Although <italic>K<sub>d</sub></italic>, <italic>E<sub>fr</sub></italic>, <italic>D</italic><sub>0 </sub>and <italic>A</italic><sub>0 </sub>are important parameters, we cannot measure them directly. For our purposes, we are interested in the values of <italic>K<sub>d </sub></italic>and perhaps <italic>E<sub>fr</sub></italic>, but not the values of <italic>D</italic><sub>0 </sub>and <italic>A</italic><sub>0</sub>. Rather than fit <italic>D</italic><sub>0 </sub>and <italic>A</italic><sub>0</sub>, we marginalize or integrate them out:<disp-formula id="bmcM14"><label>(14)</label><graphic xlink:href="2046-1682-4-10-i72.gif"/></disp-formula></p>
+        <p>To indicate that we have no knowledge about the values of <italic>D</italic><sub>0 </sub>and <italic>A</italic><sub>0</sub>, we set the prior, <italic>P </italic>(<italic>D</italic><sub>0</sub>, <italic>A</italic><sub>0</sub>), to a constant for positive <italic>D</italic><sub>0 </sub>and <italic>A</italic><sub>0 </sub>(and 0 otherwise).</p>
+        <p>As a result,<disp-formula id="bmcM15"><label>(15)</label><graphic xlink:href="2046-1682-4-10-i73.gif"/></disp-formula></p>
+        <p>Because this expression is difficult to integrate analytically, we consider the 'energy', <italic>E </italic>= - log(<italic>P</italic>(data|<italic>K<sub>d</sub></italic>, <italic>E<sub>fr</sub></italic>, <italic>D</italic><sub>0</sub>, A<sub>0</sub>)), and approximate <italic>E </italic>with a two-dimensional Taylor expansion about <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i74.gif"/></inline-formula>, where <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i74.gif"/></inline-formula> minimizes <italic>E </italic>(and thus maximizes the likelihood). Ignoring terms above second order,<disp-formula id="bmcM16"><label>(16)</label><graphic xlink:href="2046-1682-4-10-i75.gif"/></disp-formula></p>
+        <p>where &#x2207;&#x2207;<italic>E </italic>is the Hessian, or matrix of second-derivatives of <italic>E </italic>with respect to <italic>D</italic><sub>0 </sub>and <italic>A</italic><sub>0</sub>.</p>
+        <p>Therefore,<disp-formula id="bmcM17"><label>(17)</label><graphic xlink:href="2046-1682-4-10-i76.gif"/></disp-formula></p>
+        <p>This approximation of the likelihood results in a Gaussian integrand, which we can then integrate analytically [<xref ref-type="bibr" rid="B34">34</xref>]. Note that we do not use the limits of integration (0, &#x221E;) which would be appropriate for non-negative concentration values. We instead use the limits (- &#x221E;, &#x221E;) to make the integral simple. It is a valid approximation provided that <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i77.gif"/></inline-formula> and <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i78.gif"/></inline-formula> are sufficiently large and it consistently yields appropriate results in practice.</p>
+        <p>In summary,<disp-formula id="bmcM18"><label>(18)</label><graphic xlink:href="2046-1682-4-10-i79.gif"/></disp-formula></p>
+        <p>where |<italic>H</italic>| is the determinant of the Hessian, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i80.gif"/></inline-formula>. Although <italic>K<sub>d </sub></italic>and <italic>E<sub>fr </sub></italic>do not appear explicitly in the final form of Eq (18), both <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i81.gif"/></inline-formula> and <italic>H </italic>depend on <italic>K<sub>d </sub></italic>and <italic>E<sub>fr</sub></italic>.</p>
+      </sec>
+    </sec>
+    <sec>
+      <title>Algorithm summary</title>
+      <p>Our algorithm for sampling from the posterior probability distribution of (<italic>K<sub>d</sub></italic>, <italic>E<sub>fr</sub></italic>) with a prior probability distribution for <italic>E<sub>fr </sub></italic>consists of the following steps:</p>
+      <p>1. Perform calibration to obtain values (absolute or relative) for the <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i6.gif"/></inline-formula> constants.</p>
+      <p>2. Define prior probability distributions for parameters to be inferred based on initial information that is known, if any.</p>
+      <p>3. Run Markov chain Monte Carlo algorithm:</p>
+      <p>Choose initial step <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i82.gif"/></inline-formula> and compute the posterior probability, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i83.gif"/></inline-formula>, as outlined in (b) below.</p>
+      <p>For j = 2 to n,</p>
+      <p>(a) Choose proposal step <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i84.gif"/></inline-formula>.</p>
+      <p>(b) Compute the posterior probability, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i85.gif"/></inline-formula>, for that step:</p>
+      <p>i. Find <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i74.gif"/></inline-formula>, the values of {<italic>D</italic><sub>0</sub>, <italic>A</italic><sub>0</sub>} that minimise the energy of the posterior probability using nonlinear optimisation (the Nelder-Mead simplex algorithm implemented in Matlab's fminsearch function (The Mathworks, Natick, MA)).</p>
+      <p>ii. Compute <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i80.gif"/></inline-formula> using analytical expressions for the second derivatives of <italic>E </italic>computed in Mathematica (Wolfram Research, Champaign, IL) and exported to Matlab.</p>
+      <p>iii. Using Eq (18), compute the likelihood, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i86.gif"/></inline-formula>.</p>
+      <p>iv. Using Eq (13), compute the prior, <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i87.gif"/></inline-formula>.</p>
+      <p>v. Compute the posterior probability distribution, <italic>P<sub>j</sub></italic>, which is the likelihood times the prior probability.</p>
+      <p>(c) Check whether to accept the move to <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i88.gif"/></inline-formula></p>
+      <p>&#x2022; If <italic>P<sub>j </sub></italic>&gt;<italic>P</italic><sub><italic>j</italic>-1</sub>, accept.</p>
+      <p>&#x2022; Otherwise, accept with probability <inline-formula><inline-graphic xlink:href="2046-1682-4-10-i89.gif"/></inline-formula>.</p>
+      <p>Steps (a)-(c) are repeated until <italic>j </italic>= <italic>n</italic>. After an initial burn-in period where the energy reaches a minimum and the walk achieves a stationary distribution, record samples of <italic>K<sub>d </sub></italic>and <italic>E<sub>fr</sub></italic>.</p>
+      <p>4. Repeat step 3, varying initial (<italic>K<sub>d</sub></italic>, <italic>E<sub>fr</sub></italic>). To ensure convergence, the stationary distributions of all walks should overlap [<xref ref-type="bibr" rid="B28">28</xref>].</p>
+    </sec>
+    <sec>
+      <title>Availability</title>
+      <p>We have made our data simulation and analysis software available at <ext-link ext-link-type="uri" xlink:href="http://swainlab.bio.ed.ac.uk/software/FRET">http://swainlab.bio.ed.ac.uk/software/FRET</ext-link>.</p>
+    </sec>
+    <sec>
+      <title>Authors' contributions</title>
+      <p>PSS conceived of the study. CL and PSS developed the methodology. CL implemented and tested the algorithm. Both authors wrote the paper and read and approved the final manuscript.</p>
+    </sec>
+  </body>
+  <back>
+    <sec>
+      <title>Acknowledgements</title>
+      <p>We thank Marko Laine (Finnish Meteorological Institute) for providing his MCMC code and helpful feedback. We also wish to acknowledge Stephane Laporte, May Simaan and Jay Nadeau (McGill University) for useful discussions and Andrea Weisse, Bruno Martins, Christos Josephides, Clive Bowsher (University of Edinburgh), Nathan Scales (McGill University), and Vahid Shahrezaei (Imperial College London) for helpful comments on the manuscript. CL and PSS are supported by the Scottish Universities Life Sciences Alliance.</p>
+    </sec>
+    <ref-list>
+      <ref id="B1">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Verveer</surname>
+            <given-names>P</given-names>
+          </name>
+          <name>
+            <surname>Bastiaens</surname>
+            <given-names>P</given-names>
+          </name>
+          <article-title>Quantitative microscopy and systems biology: seeing the whole picture</article-title>
+          <source>Histochemistry and cell biology</source>
+          <year>2008</year>
+          <volume>130</volume>
+          <issue>5</issue>
+          <fpage>833</fpage>
+          <lpage>843</lpage>
+          <pub-id pub-id-type="doi">10.1007/s00418-008-0517-5</pub-id>
+          <pub-id pub-id-type="pmid">18830616</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B2">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Megason</surname>
+            <given-names>S</given-names>
+          </name>
+          <name>
+            <surname>Fraser</surname>
+            <given-names>S</given-names>
+          </name>
+          <article-title>Imaging in systems biology</article-title>
+          <source>Cell</source>
+          <year>2007</year>
+          <volume>130</volume>
+          <issue>5</issue>
+          <fpage>784</fpage>
+          <lpage>795</lpage>
+          <pub-id pub-id-type="doi">10.1016/j.cell.2007.08.031</pub-id>
+          <pub-id pub-id-type="pmid">17803903</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B3">
+        <mixed-citation publication-type="book">
+          <name>
+            <surname>Lakowicz</surname>
+            <given-names>J</given-names>
+          </name>
+          <source>Principles of Fluorescence Spectroscopy</source>
+          <year>2006</year>
+          <publisher-name>New York, NY: Springer</publisher-name>
+        </mixed-citation>
+      </ref>
+      <ref id="B4">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Vogel</surname>
+            <given-names>SS</given-names>
+          </name>
+          <name>
+            <surname>Thaler</surname>
+            <given-names>C</given-names>
+          </name>
+          <name>
+            <surname>Koushik</surname>
+            <given-names>SV</given-names>
+          </name>
+          <article-title>Fanciful FRET</article-title>
+          <source>Sci STKE</source>
+          <year>2006</year>
+          <volume>2006</volume>
+          <fpage>re2</fpage>
+          <pub-id pub-id-type="doi">10.1126/stke.3312006re2</pub-id>
+          <pub-id pub-id-type="pmid">16622184</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B5">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Piston</surname>
+            <given-names>DW</given-names>
+          </name>
+          <name>
+            <surname>Kremers</surname>
+            <given-names>GJ</given-names>
+          </name>
+          <article-title>Fluorescent protein FRET: the good, the bad and the ugly</article-title>
+          <source>Trends Biochem Sci</source>
+          <year>2007</year>
+          <volume>32</volume>
+          <fpage>407</fpage>
+          <lpage>14</lpage>
+          <pub-id pub-id-type="doi">10.1016/j.tibs.2007.08.003</pub-id>
+          <pub-id pub-id-type="pmid">17764955</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B6">
+        <mixed-citation publication-type="book">
+          <name>
+            <surname>Hoppe</surname>
+            <given-names>A</given-names>
+          </name>
+          <person-group person-group-type="editor">Shorte SL, Frischknecht F</person-group>
+          <article-title>Quantitative FRET microscopy of live cells</article-title>
+          <source>Imaging Cellular and Molecular Biological Functions</source>
+          <year>2007</year>
+          <publisher-name>Heidelberg: Springer</publisher-name>
+          <fpage>157</fpage>
+          <lpage>180</lpage>
+        </mixed-citation>
+      </ref>
+      <ref id="B7">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Gordon</surname>
+            <given-names>G</given-names>
+          </name>
+          <name>
+            <surname>Berry</surname>
+            <given-names>G</given-names>
+          </name>
+          <name>
+            <surname>Liang</surname>
+            <given-names>X</given-names>
+          </name>
+          <name>
+            <surname>Levine</surname>
+            <given-names>B</given-names>
+          </name>
+          <article-title>Quantitative fluorescence resonance energy transfer measurements using fluorescence microscopy</article-title>
+          <source>Biophysical Journal</source>
+          <year>1998</year>
+          <volume>74</volume>
+          <fpage>2702</fpage>
+          <lpage>2713</lpage>
+          <pub-id pub-id-type="doi">10.1016/S0006-3495(98)77976-7</pub-id>
+          <pub-id pub-id-type="pmid">9591694</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B8">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Xia</surname>
+            <given-names>Z</given-names>
+          </name>
+          <name>
+            <surname>Zhou</surname>
+            <given-names>Q</given-names>
+          </name>
+          <name>
+            <surname>Lin</surname>
+            <given-names>J</given-names>
+          </name>
+          <name>
+            <surname>Liu</surname>
+            <given-names>Y</given-names>
+          </name>
+          <article-title>Stable SNARE complex prior to evoked synaptic vesicle fusion revealed by fluorescence resonance energy transfer</article-title>
+          <source>J Biol Chem</source>
+          <year>2001</year>
+          <volume>276</volume>
+          <fpage>1766</fpage>
+          <lpage>71</lpage>
+          <pub-id pub-id-type="pmid">11035043</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B9">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Nagy</surname>
+            <given-names>P</given-names>
+          </name>
+          <name>
+            <surname>V&#xE1;mosi</surname>
+            <given-names>G</given-names>
+          </name>
+          <name>
+            <surname>Bodn&#xE1;r</surname>
+            <given-names>A</given-names>
+          </name>
+          <name>
+            <surname>Lockett</surname>
+            <given-names>SJ</given-names>
+          </name>
+          <name>
+            <surname>Sz&#xF6;ll&#xF6;si</surname>
+            <given-names>J</given-names>
+          </name>
+          <article-title>Intensity-based energy transfer measurements in digital imaging microscopy</article-title>
+          <source>Eur Biophys J</source>
+          <year>1998</year>
+          <volume>27</volume>
+          <fpage>377</fpage>
+          <lpage>89</lpage>
+          <pub-id pub-id-type="doi">10.1007/s002490050145</pub-id>
+          <pub-id pub-id-type="pmid">9691467</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B10">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Elangovan</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Wallrabe</surname>
+            <given-names>H</given-names>
+          </name>
+          <name>
+            <surname>Chen</surname>
+            <given-names>Y</given-names>
+          </name>
+          <name>
+            <surname>Day</surname>
+            <given-names>RN</given-names>
+          </name>
+          <name>
+            <surname>Barroso</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Periasamy</surname>
+            <given-names>A</given-names>
+          </name>
+          <article-title>Characterization of one- and two-photon excitation fluorescence resonance energy transfer microscopy</article-title>
+          <source>Methods</source>
+          <year>2003</year>
+          <volume>29</volume>
+          <fpage>58</fpage>
+          <lpage>73</lpage>
+          <pub-id pub-id-type="doi">10.1016/S1046-2023(02)00283-9</pub-id>
+          <pub-id pub-id-type="pmid">12543072</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B11">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Tr&#xF3;n</surname>
+            <given-names>L</given-names>
+          </name>
+          <name>
+            <surname>Sz&#xF6;ll&#xF3;si</surname>
+            <given-names>J</given-names>
+          </name>
+          <name>
+            <surname>Damjanovich</surname>
+            <given-names>S</given-names>
+          </name>
+          <name>
+            <surname>Helliwell</surname>
+            <given-names>SH</given-names>
+          </name>
+          <name>
+            <surname>Arndt-Jovin</surname>
+            <given-names>DJ</given-names>
+          </name>
+          <name>
+            <surname>Jovin</surname>
+            <given-names>TM</given-names>
+          </name>
+          <article-title>Flow cytometric measurement of fluorescence resonance energy transfer on cell surfaces. Quantitative evaluation of the transfer efficiency on a cell-by-cell basis</article-title>
+          <source>Biophysical Journal</source>
+          <year>1984</year>
+          <volume>45</volume>
+          <fpage>939</fpage>
+          <lpage>46</lpage>
+          <pub-id pub-id-type="doi">10.1016/S0006-3495(84)84240-X</pub-id>
+          <pub-id pub-id-type="pmid">6428482</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B12">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Youvan</surname>
+            <given-names>D</given-names>
+          </name>
+          <name>
+            <surname>Silva</surname>
+            <given-names>C</given-names>
+          </name>
+          <name>
+            <surname>Bylina</surname>
+            <given-names>E</given-names>
+          </name>
+          <name>
+            <surname>Coleman</surname>
+            <given-names>W</given-names>
+          </name>
+          <name>
+            <surname>Dilworth</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Yang</surname>
+            <given-names>M</given-names>
+          </name>
+          <article-title>Calibration of fluorescence resonance energy transfer in microscopy using genetically engineered GFP derivatives on nickel chelating beads</article-title>
+          <source>Biotechnology et alia</source>
+          <year>1997</year>
+          <volume>3</volume>
+          <fpage>1</fpage>
+          <lpage>18</lpage>
+        </mixed-citation>
+      </ref>
+      <ref id="B13">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Berney</surname>
+            <given-names>C</given-names>
+          </name>
+          <name>
+            <surname>Danuser</surname>
+            <given-names>G</given-names>
+          </name>
+          <article-title>FRET or no FRET: a quantitative comparison</article-title>
+          <source>Biophysical Journal</source>
+          <year>2003</year>
+          <volume>84</volume>
+          <fpage>3992</fpage>
+          <lpage>4010</lpage>
+          <pub-id pub-id-type="doi">10.1016/S0006-3495(03)75126-1</pub-id>
+          <pub-id pub-id-type="pmid">12770904</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B14">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Zal</surname>
+            <given-names>T</given-names>
+          </name>
+          <name>
+            <surname>Gascoigne</surname>
+            <given-names>NRJ</given-names>
+          </name>
+          <article-title>Photobleaching-corrected FRET efficiency imaging of live cells</article-title>
+          <source>Biophysical Journal</source>
+          <year>2004</year>
+          <volume>86</volume>
+          <fpage>3923</fpage>
+          <lpage>39</lpage>
+          <pub-id pub-id-type="doi">10.1529/biophysj.103.022087</pub-id>
+          <pub-id pub-id-type="pmid">15189889</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B15">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Hoppe</surname>
+            <given-names>A</given-names>
+          </name>
+          <name>
+            <surname>Christensen</surname>
+            <given-names>K</given-names>
+          </name>
+          <name>
+            <surname>Swanson</surname>
+            <given-names>JA</given-names>
+          </name>
+          <article-title>Fluorescence resonance energy transfer-based stoichiometry in living cells</article-title>
+          <source>Biophysical Journal</source>
+          <year>2002</year>
+          <volume>83</volume>
+          <issue>6</issue>
+          <fpage>3652</fpage>
+          <lpage>64</lpage>
+          <pub-id pub-id-type="doi">10.1016/S0006-3495(02)75365-4</pub-id>
+          <pub-id pub-id-type="pmid">12496132</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B16">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Erickson</surname>
+            <given-names>MG</given-names>
+          </name>
+          <name>
+            <surname>Alseikhan</surname>
+            <given-names>BA</given-names>
+          </name>
+          <name>
+            <surname>Peterson</surname>
+            <given-names>BZ</given-names>
+          </name>
+          <name>
+            <surname>Yue</surname>
+            <given-names>DT</given-names>
+          </name>
+          <article-title>Preassociation of calmodulin with voltage-gated Ca(2+) channels revealed by FRET in single living cells</article-title>
+          <source>Neuron</source>
+          <year>2001</year>
+          <volume>31</volume>
+          <issue>6</issue>
+          <fpage>973</fpage>
+          <lpage>85</lpage>
+          <pub-id pub-id-type="doi">10.1016/S0896-6273(01)00438-X</pub-id>
+          <pub-id pub-id-type="pmid">11580897</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B17">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Chen</surname>
+            <given-names>H</given-names>
+          </name>
+          <name>
+            <surname>Puhl</surname>
+            <given-names>H</given-names>
+          </name>
+          <name>
+            <surname>Koushik</surname>
+            <given-names>S</given-names>
+          </name>
+          <name>
+            <surname>Vogel</surname>
+            <given-names>S</given-names>
+          </name>
+          <name>
+            <surname>Ikeda</surname>
+            <given-names>S</given-names>
+          </name>
+          <article-title>Measurement of FRET efficiency and ratio of donor to acceptor concentration in living cells</article-title>
+          <source>Biophysical Journal</source>
+          <year>2006</year>
+          <volume>91</volume>
+          <fpage>L39</fpage>
+          <lpage>41</lpage>
+          <pub-id pub-id-type="doi">10.1529/biophysj.106.088773</pub-id>
+          <pub-id pub-id-type="pmid">16815904</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B18">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Elder</surname>
+            <given-names>A</given-names>
+          </name>
+          <name>
+            <surname>Domin</surname>
+            <given-names>A</given-names>
+          </name>
+          <name>
+            <surname>Schierle</surname>
+            <given-names>GK</given-names>
+          </name>
+          <name>
+            <surname>Lindon</surname>
+            <given-names>C</given-names>
+          </name>
+          <name>
+            <surname>Pines</surname>
+            <given-names>J</given-names>
+          </name>
+          <name>
+            <surname>Esposito</surname>
+            <given-names>A</given-names>
+          </name>
+          <name>
+            <surname>Kaminski</surname>
+            <given-names>C</given-names>
+          </name>
+          <article-title>A quantitative protocol for dynamic measurements of protein interactions by FRET-sensitized fluorescence emission</article-title>
+          <source>Royal Society Interface</source>
+          <year>2009</year>
+          <volume>6</volume>
+          <fpage>1</fpage>
+          <lpage>24</lpage>
+          <pub-id pub-id-type="doi">10.1098/rsif.2008.0327</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B19">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Wlodarczyk</surname>
+            <given-names>J</given-names>
+          </name>
+          <name>
+            <surname>Woehler</surname>
+            <given-names>A</given-names>
+          </name>
+          <name>
+            <surname>Kobe</surname>
+            <given-names>F</given-names>
+          </name>
+          <name>
+            <surname>Ponimaskin</surname>
+            <given-names>E</given-names>
+          </name>
+          <name>
+            <surname>Zeug</surname>
+            <given-names>A</given-names>
+          </name>
+          <name>
+            <surname>Neher</surname>
+            <given-names>E</given-names>
+          </name>
+          <article-title>Analysis of FRET signals in the presence of free donors and acceptors</article-title>
+          <source>Biophysical Journal</source>
+          <year>2008</year>
+          <volume>94</volume>
+          <fpage>986</fpage>
+          <lpage>1000</lpage>
+          <pub-id pub-id-type="doi">10.1529/biophysj.107.111773</pub-id>
+          <pub-id pub-id-type="pmid">17921223</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B20">
+        <mixed-citation publication-type="book">
+          <name>
+            <surname>Gadella</surname>
+            <given-names>T</given-names>
+          </name>
+          <source>FRET and FLIM Techniques</source>
+          <year>2009</year>
+          <publisher-name>Elsevier Science</publisher-name>
+        </mixed-citation>
+      </ref>
+      <ref id="B21">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Chen</surname>
+            <given-names>H</given-names>
+          </name>
+          <name>
+            <surname>III</surname>
+            <given-names>HP</given-names>
+          </name>
+          <name>
+            <surname>Ikeda</surname>
+            <given-names>S</given-names>
+          </name>
+          <article-title>Estimating protein-protein interaction affinity in living cells using quantitative F&#xF6;rster resonance energy transfer measurements</article-title>
+          <source>Journal of Biomedical Optics</source>
+          <year>2007</year>
+          <volume>12</volume>
+          <fpage>054011</fpage>
+          <pub-id pub-id-type="doi">10.1117/1.2799171</pub-id>
+          <pub-id pub-id-type="pmid">17994899</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B22">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Bruggeman</surname>
+            <given-names>F</given-names>
+          </name>
+          <name>
+            <surname>Westerhoff</surname>
+            <given-names>H</given-names>
+          </name>
+          <article-title>The nature of systems biology</article-title>
+          <source>TRENDS in Microbiology</source>
+          <year>2007</year>
+          <volume>15</volume>
+          <fpage>45</fpage>
+          <lpage>50</lpage>
+          <pub-id pub-id-type="doi">10.1016/j.tim.2006.11.003</pub-id>
+          <pub-id pub-id-type="pmid">17113776</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B23">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Piehler</surname>
+            <given-names>J</given-names>
+          </name>
+          <article-title>New methodologies for measuring protein interactions in vivo and in vitro</article-title>
+          <source>Curr Opin Struct Biol</source>
+          <year>2005</year>
+          <volume>15</volume>
+          <fpage>4</fpage>
+          <lpage>14</lpage>
+          <pub-id pub-id-type="doi">10.1016/j.sbi.2005.01.008</pub-id>
+          <pub-id pub-id-type="pmid">15718127</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B24">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Kreutz</surname>
+            <given-names>C</given-names>
+          </name>
+          <name>
+            <surname>Timmer</surname>
+            <given-names>J</given-names>
+          </name>
+          <article-title>Systems biology: experimental design</article-title>
+          <source>FEBS Journal</source>
+          <year>2009</year>
+          <volume>276</volume>
+          <issue>4</issue>
+          <fpage>923</fpage>
+          <lpage>942</lpage>
+          <pub-id pub-id-type="doi">10.1111/j.1742-4658.2008.06843.x</pub-id>
+          <pub-id pub-id-type="pmid">19215298</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B25">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Neher</surname>
+            <given-names>RA</given-names>
+          </name>
+          <name>
+            <surname>Neher</surname>
+            <given-names>E</given-names>
+          </name>
+          <article-title>Applying spectral fingerprinting to the analysis of FRET images</article-title>
+          <source>Microsc Res Tech</source>
+          <year>2004</year>
+          <volume>64</volume>
+          <fpage>185</fpage>
+          <lpage>95</lpage>
+          <pub-id pub-id-type="doi">10.1002/jemt.20078</pub-id>
+          <pub-id pub-id-type="pmid">15352090</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B26">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Ljosa</surname>
+            <given-names>V</given-names>
+          </name>
+          <name>
+            <surname>Carpenter</surname>
+            <given-names>AE</given-names>
+          </name>
+          <article-title>Introduction to the Quantitative Analysis of Two-Dimensional Fluorescence Microscopy Images for Cell-Based Screening</article-title>
+          <source>PLoS Comput Biol</source>
+          <year>2009</year>
+          <volume>5</volume>
+          <issue>12</issue>
+          <fpage>e1000603</fpage>
+          <pub-id pub-id-type="doi">10.1371/journal.pcbi.1000603</pub-id>
+          <pub-id pub-id-type="pmid">20041172</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B27">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Wilkinson</surname>
+            <given-names>D</given-names>
+          </name>
+          <article-title>Stochastic modelling for quantitative description of heterogeneous biological systems</article-title>
+          <source>Nat Rev Genet</source>
+          <year>2009</year>
+          <volume>10</volume>
+          <issue>2</issue>
+          <fpage>122</fpage>
+          <lpage>133</lpage>
+          <pub-id pub-id-type="doi">10.1038/nrg2509</pub-id>
+          <pub-id pub-id-type="pmid">19139763</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B28">
+        <mixed-citation publication-type="book">
+          <name>
+            <surname>MacKay</surname>
+            <given-names>D</given-names>
+          </name>
+          <source>Information Theory, Inference &amp; Learning Algorithms</source>
+          <year>2002</year>
+          <publisher-name>Cambridge: Cambridge University Press</publisher-name>
+          <pub-id pub-id-type="pmid">21545720</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B29">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Wallrabe</surname>
+            <given-names>H</given-names>
+          </name>
+          <name>
+            <surname>Periasamy</surname>
+            <given-names>A</given-names>
+          </name>
+          <article-title>Imaging protein molecules using FRET and FLIM microscopy</article-title>
+          <source>Current Opinion in Biotechnology</source>
+          <year>2005</year>
+          <volume>16</volume>
+          <fpage>19</fpage>
+          <lpage>27</lpage>
+          <pub-id pub-id-type="doi">10.1016/j.copbio.2004.12.002</pub-id>
+          <pub-id pub-id-type="pmid">15722011</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B30">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Rosenfeld</surname>
+            <given-names>N</given-names>
+          </name>
+          <name>
+            <surname>Perkins</surname>
+            <given-names>TJ</given-names>
+          </name>
+          <name>
+            <surname>Alon</surname>
+            <given-names>U</given-names>
+          </name>
+          <name>
+            <surname>Elowitz</surname>
+            <given-names>MB</given-names>
+          </name>
+          <name>
+            <surname>Swain</surname>
+            <given-names>PS</given-names>
+          </name>
+          <article-title>A fluctuation method to quantify in vivo fluorescence data</article-title>
+          <source>Biophysical Journal</source>
+          <year>2006</year>
+          <volume>91</volume>
+          <issue>2</issue>
+          <fpage>759</fpage>
+          <lpage>66</lpage>
+          <pub-id pub-id-type="doi">10.1529/biophysj.105.073098</pub-id>
+          <pub-id pub-id-type="pmid">16648159</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B31">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Digman</surname>
+            <given-names>MA</given-names>
+          </name>
+          <name>
+            <surname>Dalal</surname>
+            <given-names>RB</given-names>
+          </name>
+          <name>
+            <surname>Horwitz</surname>
+            <given-names>AF</given-names>
+          </name>
+          <name>
+            <surname>Gratton</surname>
+            <given-names>E</given-names>
+          </name>
+          <article-title>Mapping the number of molecules and brightness in the laser scanning microscope</article-title>
+          <source>Biophysical Journal</source>
+          <year>2008</year>
+          <volume>94</volume>
+          <issue>6</issue>
+          <fpage>2320</fpage>
+          <lpage>2332</lpage>
+          <pub-id pub-id-type="doi">10.1529/biophysj.107.114645</pub-id>
+          <pub-id pub-id-type="pmid">18096627</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B32">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Metropolis</surname>
+            <given-names>N</given-names>
+          </name>
+          <name>
+            <surname>Rosenbluth</surname>
+            <given-names>A</given-names>
+          </name>
+          <name>
+            <surname>Rosenbluth</surname>
+            <given-names>M</given-names>
+          </name>
+          <name>
+            <surname>Teller</surname>
+            <given-names>A</given-names>
+          </name>
+          <name>
+            <surname>Teller</surname>
+            <given-names>E</given-names>
+          </name>
+          <article-title>Equation of state calculations by fast computing machines</article-title>
+          <source>J Chem Phys</source>
+          <year>1953</year>
+          <volume>21</volume>
+          <fpage>1087</fpage>
+          <lpage>1092</lpage>
+          <pub-id pub-id-type="doi">10.1063/1.1699114</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B33">
+        <mixed-citation publication-type="journal">
+          <name>
+            <surname>Hastings</surname>
+            <given-names>W</given-names>
+          </name>
+          <article-title>Monte Carlo sampling methods using Markov chains and their applications</article-title>
+          <source>Biometrika</source>
+          <year>1970</year>
+          <volume>57</volume>
+          <fpage>97</fpage>
+          <lpage>109</lpage>
+          <pub-id pub-id-type="doi">10.1093/biomet/57.1.97</pub-id>
+        </mixed-citation>
+      </ref>
+      <ref id="B34">
+        <mixed-citation publication-type="book">
+          <name>
+            <surname>Sivia</surname>
+            <given-names>D</given-names>
+          </name>
+          <name>
+            <surname>Skilling</surname>
+            <given-names>J</given-names>
+          </name>
+          <source>Data Analysis: a Bayesian Tutorial</source>
+          <year>2006</year>
+          <publisher-name>Oxford: Oxford University Press</publisher-name>
+        </mixed-citation>
+      </ref>
+    </ref-list>
+  </back>
+</article>
