@@ -1,9 +1,14 @@
 # Annotation guidelines
-JATS is a risotto... the annotation is not systematic and stable so here the need for this document. 
+JATS is a risotto... the annotation is not systematic and stable so here the need for this document.
 
 ## Bioxiv
 
 ## PMC Sample
+
+Summary:
+ - Acknowledgement: `<p content-type="acknowledgment"`
+ - Funding: `<p content-type="funding"` or `<p content-type="financial-disclosure"`
+ - Data availability: `<p content-type="availability"`
 
 ### Acknowledgement 
 Usually acknoledgement is contained within `<ack>`, however could happen that:
