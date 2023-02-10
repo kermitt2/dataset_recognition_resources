@@ -1,0 +1,825 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">The plant leaf movement analyzer (PALMA): a simple tool for the analysis of periodic cotyledon and leaf movement in Arabidopsis thaliana</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Lucas</forename><surname>Wagner</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Molecular Cell Physiology</orgName>
+								<orgName type="department" key="dep2">Faculty of Biology</orgName>
+								<orgName type="institution">Bielefeld University</orgName>
+								<address>
+									<settlement>Bielefeld</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Christoph</forename><surname>Schmal</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Molecular Cell Physiology</orgName>
+								<orgName type="department" key="dep2">Faculty of Biology</orgName>
+								<orgName type="institution">Bielefeld University</orgName>
+								<address>
+									<settlement>Bielefeld</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Dorothee</forename><surname>Staiger</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Molecular Cell Physiology</orgName>
+								<orgName type="department" key="dep2">Faculty of Biology</orgName>
+								<orgName type="institution">Bielefeld University</orgName>
+								<address>
+									<settlement>Bielefeld</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName><forename type="first">Selahattin</forename><surname>Danisman</surname></persName>
+							<email>selahattin.danisman@uni-bielefeld.de</email>
+							<idno type="ORCID">0000-0002-9579-3781</idno>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Molecular Cell Physiology</orgName>
+								<orgName type="department" key="dep2">Faculty of Biology</orgName>
+								<orgName type="institution">Bielefeld University</orgName>
+								<address>
+									<settlement>Bielefeld</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">The plant leaf movement analyzer (PALMA): a simple tool for the analysis of periodic cotyledon and leaf movement in Arabidopsis thaliana</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">C073C20C0F47F82044AB471A877A3838</idno>
+					<idno type="DOI">10.1186/s13007-016-0153-3</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:36+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Circadian clock</term>
+					<term>Iron homeostasis</term>
+					<term>Rhythmic leaf movement analysis</term>
+					<term>Rhythmic cotyledon movement analysis</term>
+					<term>PALMA</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Background: The analysis of circadian leaf movement rhythms is a simple yet effective method to study effects of treatments or gene mutations on the circadian clock of plants.</s><s>Currently, leaf movements are analysed using time lapse photography and subsequent bioinformatics analyses of leaf movements.</s><s>Programs that are used for this purpose either are able to perform one function (i.e.</s><s>leaf tip detection or rhythm analysis) or their function is limited to specific computational environments.</s><s>We developed a leaf movement analysis tool-PALMA-that works in command line and combines image extraction with rhythm analysis using Fast Fourier transformation and non-linear least squares fitting.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results:</head><p><s>We validated PALMA in both simulated time series and in experiments using the known short period mutant sensitivity to red light reduced 1 (srr1-1).</s><s>We compared PALMA with two established leaf movement analysis tools and found it to perform equally well.</s><s>Finally, we tested the effect of reduced iron conditions on the leaf movement rhythms of wild type plants.</s><s>Here, we found that PALMA successfully detected period lengthening under reduced iron conditions.</s></p><p><s>Conclusions: PALMA correctly estimated the period of both simulated and real-life leaf movement experiments.</s><s>As a platform-independent console-program that unites both functions needed for the analysis of circadian leaf movements it is a valid alternative to existing leaf movement analysis tools.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Background</head><p><s>Organisms across all kingdoms adapt to the periodic changes of day and night in their environment caused by the rotation of the Earth.</s><s>Molecular clocks evolved to anticipate dusk and dawn and to synchronize biological processes with the time of the day <ref type="bibr" target="#b0">[1]</ref>.</s><s>In the model species Arabidopsis thaliana, plants that are in sync achieve higher fitness than plants that are out of phase with the ambient day/night cycle <ref type="bibr" target="#b1">[2]</ref>.</s></p><p><s>The Arabidopsis circadian clock is composed of a series of interconnected feedback loops with two related Myb transcription factors, LATE ELONGATED HYPOCO-TYL (LHY) and CIRCADIAN CLOCK ASSOCIATED1 (CCA1) and the pseudo response regulator TIMING OF CAB EXPRESSION 1 (TOC1), at its core <ref type="bibr" target="#b2">[3,</ref><ref type="bibr" target="#b3">4]</ref>.</s><s>The interconnected feedback loops have two functions: they maintain the rhythmic expression of the core clock genes and control the expression of target genes that are involved in a plethora of biological processes <ref type="bibr" target="#b0">[1]</ref>.</s><s>For a comprehensive overview over the composition of the plant circadian clock, see <ref type="bibr" target="#b4">[5,</ref><ref type="bibr" target="#b5">6]</ref>.</s></p><p><s>The endogenous clock of plants is subject to entrainment by inputs that confer information about the external world, i.e. whether it is day or night.</s><s>Light and temperature are the most commonly known input signals to the plant circadian clock.</s><s>Another input is photosynthetically supplied sucrose.</s><s>Addition of external sucrose shortens the period CCA1 transcript oscillations by 2.7 h <ref type="bibr" target="#b6">[7]</ref>.</s><s>Similarly, iron availability controls the periods of clock genes in a dose-dependent manner <ref type="bibr" target="#b7">[8,</ref><ref type="bibr" target="#b8">9]</ref>.</s><s>Also, mutants of the FERRIC INDUCED TRANSCRIPTION FACTOR, which are defective in iron homeostasis, exhibit a lengthened period of CCA1 transcript oscillations <ref type="bibr" target="#b7">[8]</ref>.</s><s>The effect of iron on the circadian clock is dependent on the presence of functional chloroplasts, as plants treated with plastid translation inhibitors, e.g.</s><s>kanamycine, exhibited no irondependent period change of clock gene reporters <ref type="bibr" target="#b7">[8]</ref>.</s></p><p><s>The plant clock controls many key biological processes, such as photosynthesis, defence against pathogens, growth, iron homeostasis and leaf movements <ref type="bibr" target="#b8">[9]</ref><ref type="bibr" target="#b9">[10]</ref><ref type="bibr" target="#b10">[11]</ref><ref type="bibr" target="#b11">[12]</ref><ref type="bibr" target="#b12">[13]</ref>.</s><s>Periodic leaf movements are among the first described time of day dependent physiological processes in plants.</s><s>Androsthenes of Thasos, scribe and admiral of Alexander the Great, described 'sleeping behavior' of Tamarindus indica plants growing on the island of Bahrain <ref type="bibr" target="#b13">[14]</ref>.</s><s>In 1729, the astronomer Jean-Jacques d'Ortous de Mairan demonstrated diurnal rhythms of leaf opening and closing in Mimosa pudica plants in day-night cycles that persisted under constant conditions <ref type="bibr" target="#b14">[15]</ref>.</s><s>The first to perform a systematic computer-based analysis of leaf movement rhythms using time-lapse photography in A. thaliana were Engelmann et al. <ref type="bibr" target="#b15">[16]</ref>.</s></p><p><s>Until today leaf movement experiments are a simple yet powerful way to analyze mutant plants for a circadian clock phenotype.</s><s>These experiments allow a first assessment whether a specific mutant genotype leads to a deviant clock period in free-running conditions.</s><s>A frequently used method to estimate leaf movement periods has been developed by Martin Straume and relies on Fast Fourier transformation (FFT) and subsequent non-linear least squares fitting (NLLS) <ref type="bibr" target="#b16">[17]</ref>.</s><s>Based on the FFT-NLLS method, the Millar lab developed the Excel-based Biological Rhythms Analysis Software System (BRASS) <ref type="bibr" target="#b17">[18,</ref><ref type="bibr" target="#b18">19]</ref>.</s></p><p><s>Here, we introduce a simple to use leaf movement analysis tool that combines the detection of leaf movements with the estimation of their periods.</s><s>The plant leaf movement analyzer (PALMA) functions in command line and requires minimal input from the user.</s><s>PALMA includes two programs: PALMA1 determines leaf tip positions of plants grown in vertical plates with 25 chambers and PALMA2 calculates the period of the leaf movement rhythms.</s><s>We tested PALMA in both simulated time series and in wet lab experiments.</s><s>In the first experiment, we compared cotyledon movements of the known short period mutant, sensitivity to red light reduced 1 (srr1-1) with wild type plants <ref type="bibr" target="#b19">[20,</ref><ref type="bibr" target="#b20">21]</ref>.</s><s>In the second, we tested whether exogenous iron affects periodic leaf movements.</s><s>Finally, we compared PALMA with BRASS and a newer plant leaf movement analyzer, Tracking Rhythms in Plants (TRiP) <ref type="bibr" target="#b21">[22]</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results and discussion</head><p><s>Leaf movement rhythms are a commonly known output of the circadian clock <ref type="bibr" target="#b14">[15]</ref>.</s><s>Here, we introduce PALMA, a simple leaf movement analyzer that both extracts leaf movement data from high resolution time-lapse photography and analyses the extracted data using FFT-NLLS.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>PALMA is an easy to use platform-independent console program</head><p><s>PALMA was written in C# using the MonoDevelop framework and hence requires no additional software to perform.</s><s>It was mainly programmed to work in a Windows environment, although compilation for Linuxsystems is possible by using the MonoDevelop compiler.</s><s>PALMA allows for incorporation into a more automated pipeline because of three reasons: it is designed as a console program, includes an automated leaf tip detection algorithm already, and it is independent from third party software.</s><s>A small change in the source code can be made to make PALMA respond to console arguments only, removing the necessity for human input.</s></p><p><s>Updating to different Windows version is obsolete because PALMA works in command line.</s><s>PALMA has two components: PALMA1 recognizes leaf tips and extracts leaf tip positions for each time point of the time lapse photography.</s><s>PALMA2 calculates the periods of the leaf movement rhythms using FFT-NLLS.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>PALMA1 identifies the positions of both cotyledon and leaf tips of Arabidopsis seedlings</head><p><s>PALMA1 recognizes leaf or cotyledon tip positions in time series analysis.</s><s>When using compartmentalized square dish plates, PALMA1 is able to determine leaf and cotyledon tip positions in each compartment.</s><s>For the experiments in this study, we used Sterilin ™ 100 mm square dishes with 25 compartments.</s><s>The partition walls between the compartments are transparent.</s><s>To facilitate compartment detection, PALMA1 was facilitated by marking the dishes with a pattern of red dots.</s><s>With the help of these red dots, PALMA1 determines both individual chambers and the dimensions of the entire square dish (Fig. <ref type="figure" target="#fig_0">1a</ref>; Additional file 1).</s><s>After this PALMA1 allows for a manual control step in which the correct identification of the individual chambers and the seedling detection can be reviewed (see "Methods" section, Additional file 1) (Fig. <ref type="figure" target="#fig_0">1b</ref>).</s><s>Subsequently, PALMA1 recognizes the individual plants by the contrast between the plant and the background.</s><s>We avoided a detection algorithm based on green coloration to allow for plants with different chlorophyll contents (Fig. <ref type="figure" target="#fig_0">1c</ref>).</s><s>This contrasting is performed in eight iterations and leads to a black-and-white picture that is used for subsequent leaf tip detection.</s><s>PALMA1 detects leaf tip positions of every picture in a time lapse series by tracing the left and right rims of each plant, respectively (Fig. <ref type="figure" target="#fig_0">1d</ref>).</s><s>PALMA1 can identify both leaf tips and cotyledon tips using this simple algorithm provided that the individual leaves/cotyledons are placed exactly orthogonal to the viewing direction of the camera.</s><s>Such a careful placement of the seedlings increases the success rate of leaf and cotyledon tip detection by PALMA1.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>PALMA2 correctly determines periods and phase shifts in simulated time series</head><p><s>After identification of leaf or cotyledon tip positions by PALMA1, PALMA2 estimates periods and phases of the leaf movements.</s><s>We first tested whether PALMA2 correctly determines periods and phases in simulated leaf movement rhythms.</s><s>Time series simulations were created by generating a simple cosine wave-function using average leaf movements.</s><s>Noise (±15%) was added to the time series to simulate biological variance (Fig. <ref type="figure" target="#fig_1">2a-e</ref>).</s><s>We tested PALMA2 using five time series.</s><s>Three time series represented leaf movements with circadian periods of 23, 24, and 25 h, respectively.</s><s>PALMA2 correctly predicted the periods of these time series as 23.26, 23.99 and 25.05 h, respectively.</s><s>The fourth time series represented a 24 h-rhythm with a linear growth trend simulating plant growth over b Depicts a sample picture of the manual control step allowed by PALMA1.</s><s>PALMA1 presents and overlay of the recognized chambers (in white) with the picture chosen for initial plant detection.</s><s>Red squares indicate the borders of the detected chambers and of detected seedlings.</s><s>In this example, PALMA1 recognized all chambers correctly but not all seedlings (e.g.</s><s>seedling in the top left corner).</s><s>c Plant detection by iterative contrasting.</s><s>The first picture depicts a seedling as seen by camera before contrasting by PALMA1.</s><s>Pictures two to four depict the same seedling in the first, fourth and eighth iterative contrasting step.</s><s>d Depicts the final plant picture outlined and the detection of leaf tips by those pixels of the binarized seedling picture that cut across the outline (here marked by arrows) ▸ the course of the experiment (Fig. <ref type="figure" target="#fig_1">2d</ref>).</s><s>Also here, PALMA2 correctly identified the period as 23.99 h and hence corrected for the linear growth trend.</s><s>The fifth time series represented leaf movements of a 24 h period but with a 6 h phase delay in comparison to the simple wave function used initially (Fig. <ref type="figure" target="#fig_1">2e</ref>).</s><s>Here, PALMA2 identified the correct period despite the 6 h phase shift (Table <ref type="table" target="#tab_0">1</ref>).</s></p><p><s>In another series of tests we analysed the sensitivity of PALMA2 period estimation to increased noise.</s><s>We simulated the noisiness of real leaf rhythm analyses by adding evenly distributed noise to a simulated leaf movement rhythm of 24 h.</s><s>The tested noise intensities were 20, 40, 60, 80, 100 and 200% noise, respectively (Fig. <ref type="figure" target="#fig_2">3a-f</ref> ).</s><s>In four out of five cases, PALMA2 recognized the 24 h period correctly.</s><s>At a noise of 200%, the standard deviation was too high and a correct period could not be estimated by PALMA2 (Fig. <ref type="figure" target="#fig_2">3g</ref>).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Comparison with established leaf movement analysis programs</head><p><s>We subsequently compared the performance of PALMA2 with the performances of two other leaf movement programs, BRASS and TRiP <ref type="bibr" target="#b17">[18,</ref><ref type="bibr" target="#b21">22]</ref>.</s><s>BRASS performs only in conjunction with the proprietary software Microsoft Excel and thus only operates on Windows systems.</s><s>In addition, BRASS itself does not extract leaf movement data from time lapse pictures and thus needs to be combined with other programs <ref type="bibr" target="#b17">[18]</ref>.</s><s>The Millar lab generally uses the commercially available image analysis software MetaMorph ™ .</s><s>Even using different image analysis software, conversion between generated data and BRASSfeasible input data is complex and requires additional processing steps.</s><s>Incorporating BRASS in a computational pipeline is difficult, as the original BRASS program does not allow for batch processing and requires additional scripting efforts.</s></p><p><s>TRiP relies on the proprietary MATLAB computing environment or its UNIX equivalent Octave <ref type="bibr" target="#b21">[22]</ref>.</s><s>While its dependence on MATLAB makes it somewhat inflexible, the use of MATLAB allows for easy customisation of the given program.</s><s>Although TRiP can be incorporated into a pipeline, PALMA's automated plant position acquisition algorithm allows for an easier incorporation into pipelines.</s><s>Overall, both TRiP and PALMA are valid alternatives to BRASS.</s><s>As TRiP uses dynamic image acquisition, it can potentially determine leaf movement rhythms better than PALMA with its simple leaf tip detection algorithm.</s><s>However, the necessity of the manual assessment of plant positions makes it impracticable for use in large data scaling <ref type="bibr" target="#b21">[22]</ref>.</s><s>PALMA's command line nature allows for easy customization into new platforms and can be used immediately on computers without the need for installation or licencing issues.</s></p><p><s>We performed rhythm analyses of the same time series simulations with BRASS and TRiP and found that they performed similarly to PALMA.</s><s>In all cases, short period and long period mutants were identified correctly.</s><s>Also all programs performed similarly well on data containing a linear growth trend and a phase delay of 6 h.</s><s>The simulated time series experiment shows that PALMA2 conducts correct FFT and NLLS and can be used to determine periods of leaf movement experiments.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>PALMA correctly identified a short period mutant in wet-lab experiments</head><p><s>Having shown that PALMA2 correctly identifies phases and periods of simulated time series, we tested PALMA under laboratory conditions.</s><s>For this we used the short period mutant srr1-1.</s><s>SRR1 is involved in phytochrome B-mediated signalling and the mutant exhibits a shorter period of leaf movements as well as shorter periods of core clock gene expression, such as CCA1, LHY and TOC1 as well as of output gene expression <ref type="bibr" target="#b19">[20,</ref><ref type="bibr" target="#b20">21]</ref>.</s><s>Seedlings of srr1-1 and the corresponding Col-7 wild type were grown for four days in a 12/12 day-night regime after which they were transferred into the vertical chambers and into continuous light conditions for time lapse photography.</s><s>Whereas the Col-7 wild type plants showed a cotyledon movement period of 24.7 h, the srr1-1 mutant displayed significantly reduced cotyledon movement periods of 23.14 h (p = 0.005) (Fig. <ref type="figure" target="#fig_3">4a</ref>).</s><s>This period shortening is similar to earlier observations using a Kujata imaging system and subsequent FFT-NLLS analysis <ref type="bibr" target="#b19">[20]</ref>.</s><s>We next analysed the same experiment using BRASS and TRiP.</s><s>BRASS does not include a leaf detection program, so the leaf tip positions determined by PALMA1 were used for period estimation by BRASS.</s><s>TRiP does include leaf detection and used the leaf positions determined by its own algorithm.</s><s>Further, TRiP uses a Nelder-Mead nonlinear optimization algorithm to fit the single FFT component <ref type="bibr" target="#b22">[23]</ref>.</s><s>All programs detected the same reduction in cotyledon movement periods although BRASS could not find a significant effect in the data (p = 0.13) (Fig. <ref type="figure" target="#fig_3">4b</ref>).</s><s>As BRASS used the same leaf tip positions as PALMA2, the difference in the significance is mainly due to the detrending algorithm that differs between BRASS and PALMA2.</s><s>While BRASS uses a two-pass detrending using a weighted gaussian kernel, PALMA2 uses a simple one-pass moving average algorithm.</s><s>In the Col-7 data set, TRiP determines a standard deviation of 0.58 h (Fig. <ref type="figure" target="#fig_3">4c</ref>) whereas both BRASS (1.02 h) and the PALMA (1.6 h) analyses lead to higher standard deviations.</s><s>Thus, PALMA performs similarly to both TRiP and BRASS.</s><s>These detection methods are superior to simple time lapse photography because they follow leaf movements in all three dimensions, allowing for the analysis of atypical leaf movements.</s><s>PALMA was designed for simple detection of circadian clock mutants in Arabidopsis and although it can detect leaf movements both on the horizontal and the vertical axis, we limited the PALMA1 output to movements on the vertical axis, only.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Reduced iron availability leads to shortened leaf movement periods in Arabidopsis</head><p><s>Low iron leads to longer periods of circadian clock gene expression in Arabidopsis <ref type="bibr" target="#b7">[8,</ref><ref type="bibr" target="#b24">25]</ref>.</s><s>We used PALMA to investigate whether this period lengthening under reduced iron conditions is detectable also for leaf movement rhythms.</s><s>For this, wild type plants were grown in a 12 h/12 h day/night rhythm on medium containing 100 µM Fe(III)-EDTA for one week.</s><s>After this, the seedlings were transferred to medium containing 100 µM Fe(III)-EDTA (i.e.</s><s>iron-rich conditions) or 20 µM Fe(III)-EDTA (i.e.</s><s>iron-limited conditions), respectively.</s><s>After transfer the seedlings were entrained for one more day to allow adjustment to the new medium.</s><s>The next day the seedlings were transferred into the vertical leaf movement analysis chambers and into continuous light conditions for time lapse photography.</s><s>In contrast to the srr1 experiment, the seedlings were positioned to allow identification of the leaf tip positions of the first leaves instead of cotyledon tips.</s><s>As the seedlings were transferred after seven days instead of four days, the growing first leaves would have impeded periodic cotyledon movements.</s><s>Hence it was easier to detect period movements in the first leaves than in the cotyledons.</s><s>We also noticed that plants that grew on 20 µM Fe(III)-EDTA were more likely to exhibit difficult to analyse leaf movement behaviour, as also the growth of the plants was impeded after transfer from 100 to 20 µM Fe(III)-EDTA.</s><s>About 50% of all seedlings that were transferred had to be discarded before the statistical analysis (n = 32).</s></p><p><s>We found that seedlings that were transferred 20 µM Fe(III)-EDTA showed a significant increase of 1.59 h in leaf movement periods (Student's t test; p = 0.0007) (Fig. <ref type="figure" target="#fig_4">5</ref>).</s><s>Thus, iron also affects leaf movement rhythms, and reduced iron lengthens the period, as previously observed for clock gene expression.</s><s>This is in accordance with the expected effect of reduced iron on the circadian clock, where reduced iron led to a period of clock gene expression that was lengthened between 30 min on minimum medium without iron and 2 h on medium containing Ferrozine as iron chelator <ref type="bibr" target="#b24">[25]</ref>.</s><s>In another study, the period of TOC1:luciferase oscillations lengthened by almost 3 h between 100 and 0.25 µM iron concentration in the medium <ref type="bibr" target="#b7">[8]</ref>.</s><s>This means that iron also affects periodic leaf movements and that reduced iron lengthens the period of these.</s></p><p><s>Overall, leaf movement rhythms are another output of the clock that is dependent on iron.</s><s>The effect of iron on the clock can be studied by time lapse photography and subsequent rhythm analysis by PALMA, in addition to monitoring clock gene expression using e.g. a promoterluciferase fusion construct.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusions</head><p><s>The new and simple plant leaf movement analysis tool PALMA can estimate the correct period in both simulated and real leaf movement experiments.</s><s>It performs similarly to established leaf movement analyzers <ref type="bibr" target="#b17">[18,</ref><ref type="bibr" target="#b21">22]</ref>, with the advantage of being able to extract leaf movement data from images and analysing these while remaining platform independent (Table <ref type="table" target="#tab_1">2</ref>).</s><s>Using PALMA we found that reduced iron conditions lengthen the period of leaf movement rhythms in Arabidopsis, an effect of reduced iron availability that is similar to what has been observed on the period of clock gene expression in earlier studies <ref type="bibr" target="#b7">[8,</ref><ref type="bibr" target="#b24">25]</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Plant material</head><p><s>Col-7 and sensitivity to red light reduced 1 (srr1-1) were described before <ref type="bibr" target="#b19">[20,</ref><ref type="bibr" target="#b20">21]</ref>.</s><s>Col-0 was used to test the effect of iron on periodic leaf movements.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Leaf movement analyses</head><p><s>For testing the performance of PALMA on srr1-1 plants, seeds were sown out on half-strength Murashige-Skoog plates <ref type="bibr" target="#b25">[26]</ref> and grown at a day-night rhythm of 12 h/12 h in a PERCIVAL growth chamber for four days.</s><s>After four days, seedlings were transferred by cutting a roughly 1 × 1 cm square into the agar around the individual seedlings and transferring the seedlings together with the agar blocks into Sterilin ™ 100 mm square petri dishes with 25 compartments (Thermo Scientific).</s><s>Seedlings of the different genotypes were placed into the compartments in a randomized manner.</s><s>All seedlings were placed in the middle of the respective chamber in a way that both cotyledons were detectable, i.e. orthogonal to camera-angle.</s><s>The plates were covered with two lids on the side facing the camera to avoid condense water accumulation  in form of droplets.</s><s>The plates were immediately placed into continuous light and pictures were taken from the first day onwards.</s></p><p><s>For testing the effect of iron on leaf movement periods, Col-0 seeds were grown on self-made medium consisting of 2 mM Ca(NO 3 ) 2 , 0.75 mM K 2 SO 4 , 0.65 mM MgSO 4 , 0.1 mM KH 2 PO 4 , 10 µM H 3 BO 3 , 0.1 µM MnSO 4 , 0.05 µM CuSO 4 , 0.05 µM ZnSO 4 , 0.005 µM (NH 3 ) 6 Mo 7 O 24 , 0.5 g MES, 100 µM Fe(III)-EDTA, 0.5% sucrose, pH 5.7and 1% agar.</s><s>The seedlings were grown in a 12/12 day/night rhythm for seven days before transfer of the seedlings to 20 µM Fe(III)-EDTA (low iron).</s><s>As control, half of the seedlings were transferred to 100 µM Fe(III)-EDTA.</s><s>After transfer the seedlings were grown one additional day at a 12/12 rhythm before being transferred into the leaf movement experiment.</s><s>For the leaf movement analysis, the first leaves of mutant and wild type plants were photographed.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Camera settings</head><p><s>For all leaf movement experiments, Canon EOS 1100D high resolution cameras were used.</s><s>Cameras and plates were fixed to avoid positional changes in the course of the experiment.</s><s>White paper was affixed behind the plates to increase the contrast of the plants to the background.</s><s>Three cameras were controlled by one computer using the Linux-based program gphoto2.</s><s>Focus settings were set on manual and checked before each experiment started.</s><s>Pictures were taken for seven days at a rate of one picture every 10 min.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>PALMA1: determination of cotyledon and leaf tip positions</head><p><s>The underlying framework for seedling recognition was ' AForge.NET Framework' <ref type="bibr" target="#b26">[27]</ref> that was developed for research in picture recognition for artificial intelligences.</s><s>The framework for Fourier analyses and multiplication of vectors and matrices is the 'Math.NET' framework (Additional file 2).</s><s>PALMA extracts the position of the leaf tips from the images of the time lapse photography using a threshold binarization algorithm, coupled with a simple blob detection algorithm.</s><s>The experimental setting was marked using red dots to help PALMA identify plant positions and tilting angle of the plates (Fig. <ref type="figure" target="#fig_0">1</ref>).</s><s>The red dots indicate the number of compartments in which plants need to be identified by PALMA1.</s><s>Whereas we used Sterilin ™ 100 mm square petri dishes with 25 compartments (Thermo Scientific), placement of the red dots is flexible and thus able to detect a variable number of compartments (see Additional file 1).</s><s>For this, the plates are marked using four red dots at specific positions that define both the single chambers and the whole plate (Fig. <ref type="figure" target="#fig_0">1a</ref>).</s><s>PALMA1 recognizes the red marks using a radial hue, saturation and value (HSV)-colour filter.</s><s>The filter works by projecting the presented colours in the 360° HSV colour space and selecting the pixels that are red (hue value: 0°).</s><s>PALMA1 allows for 15° deviations from 0° to tolerate different hues of red.</s><s>After filtering for red marks, PALMA1 binarizes the pictures and subsequently removes noise by erosion and dilation.</s><s>Then PALMA1 uses a blob detector with a size filter that excludes all signals smaller than 0.5% of the overall picture's size.</s><s>Finally, PALMA1 determines the positions of all chambers using the four red marks.</s><s>As the red marks are placed manually and camera settings, camera position and the presence of noise can still lead to incorrect detection of chambers, PALMA1 allows for a manual control step.</s><s>In case that PALMA1 did not recognize all chambers correctly, users can correct the mark positions on one sample picture using a simple graphic tool and feed PALMA with this new information.</s></p><p><s>Once the chambers were detected successfully, PALMA1 determines the outlines of all seedlings in these chambers.</s><s>For this, PALMA1 reduces the picture size of all seedling chambers by 30% to further reduce noise.</s><s>Plants are detected based on their contrast to the background and not their green colour to allow analysis of plants with different chlorophyll contents.</s><s>Plant detection by contrast is made possible by luminescence filtering in eight iterations (Fig. <ref type="figure" target="#fig_0">1b</ref>).</s><s>First all images are adjusted to an even average luminescence level to allow the luminescence filtering to perform evenly on each image.</s><s>Then the colour spectrum is sheared linearly by using the average luminescence level of the image as a threshold in eight iterations.</s><s>As the major part of the image is expected to be background colour, the average luminescence level is expected to group slightly below the majority of background luminescence.</s><s>The difference between foreground and background is increased by linearly mapping the lower luminescence spectrum (zero to mean) to the whole spectrum.</s><s>A contrast correction of 10% is used to increase the difference in each step.</s><s>After eight iterations the image is binarized into a black-andwhite picture and used for image detection.</s></p><p><s>For each binarized image simple blob detection is used to locate an initial plant position.</s><s>As the luminescence filtering can cause interference factors (like speckles, water droplets, etc.) to surface more prominently and plants can appear segmented after filtering, the located plant blobs are revised to accurately locate the plants.</s><s>As this can lead to individual leaves being separate blobs, all blobs found in the image are united using a metric filter which identifies plant structures based on the blob's distance to the image centre and the size and the form of the blob.</s></p><p><s>After locating each plant, PALMA1 detects the leaf tip movements by tracing the left and right rim of each plant (Fig. <ref type="figure" target="#fig_0">1c</ref>).</s><s>By averaging all data points found within 3-5 pixels vicinity to the borders the left and right leaf tip position can be reasonably approximated.</s><s>In Arabidopsis, both cotyledon movements and movement of the first leaves can be detected using this method and depending on the preferences of the individual experiment.</s><s>Whereas time lapse photography allows for a detection of leaf tips in both x-and y-axis, period estimation by PALMA2 only includes movements of the y-axis.</s><s>Hence, PALMA1 only determines the movements of leaf tips in the y-axis.</s><s>For this, camera set-ups need to capture leaf positions in three dimensions.</s><s>Below, we performed both analyses of cotyledon movements and of first leaves.</s><s>Whereas cotyledons allow for a faster analysis as time lapse photography can start at day four after germination, some experimental set-ups make the analysis of first leaves more reasonable.</s><s>The analysis of the movement rhythms of first leaves allows using older seedlings in which cotyledon movements are largely dampened once the first leaves emerge.</s><s>Finally, the positions of all left and right leaf tips are stored in a.csv-file and then used in the rhythm analysis by PALMA2.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>PALMA2: determination of periods</head><p><s>Since the movements of the leaf tips follow circadian rhythms, the fitting function is assumed to be a summation of multiple cosine terms, with each term denoting one prominent set of amplitude, period and phase <ref type="bibr" target="#b16">[17]</ref>.</s><s>By iteratively applying the Gauss-Newton method an accurate approximation of the data was generated from an inaccurate guess for the given fitting function.</s><s>In rhythmic functions with a time-independent period, the experimental data can be approximated to a high precision by using a summation of multiple cosine terms.</s><s>We found that expansion of the fitting function to less than 5 terms often suffices for a good approximation.</s><s>PALMA2 stops the fitting when the variance of next added term is above 0.1.</s><s>Then PALMA2 removes the linear growth trend of the plants using simple linear regression.</s><s>A FFT is run on the data to receive an initial estimation of the fitting parameters which is further optimized by NLLS fitting using the Gauss-Newton method.</s><s>To define the precision of the parameters, the approximated nonlinear support plane joint confidence interval is calculated for each parameter <ref type="bibr" target="#b16">[17]</ref>.</s><s>Using this approximated confidence interval, relative errors of each parameter can be calculated.</s><s>Using this error for each set of parameters (of amplitude, period and phase) the period of leaf movements can be identified.</s><s>The period with the least relative error and hence the cosine term which has the most impact on the fitting was consequently determined as the leaf movement period of the individual plant <ref type="bibr" target="#b16">[17,</ref><ref type="bibr" target="#b17">18]</ref>.</s><s>Due to the decentralized nature of the plant circadian clock <ref type="bibr" target="#b27">[28]</ref>, leaf rhythms can vary considerably between the left and the right leaves of the same plant.</s><s>Whereas TRiP solves this problem by averaging all determined periods <ref type="bibr" target="#b21">[22]</ref>, we do not recommend averaging the right and left leaf tip periods determined by PALMA2.</s><s>This is mainly due to the fact that in several cases only one of the two leaf tips generates a reliable period.</s><s>Averaging a reliably determined period with a noisy period will generally lead to a more erroneous estimate.</s><s>Hence, we selected always the left leaf of an individual plant's time lapse photos and only selected the right leaf when there was no period to be determined from the left leaf.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1 a</head><label>1</label><figDesc><div><p><s>Fig.1a Set-up of leaf movement experiments for recognition by PALMA.</s><s>25 seedlings can be analyzed in parallel per vertical plate and each camera takes picture series of one plate.</s><s>Red dots on the plates mark the boundaries of an individual chamber and of the entire plate.</s><s>b Depicts a sample picture of the manual control step allowed by PALMA1.</s><s>PALMA1 presents and overlay of the recognized chambers (in white) with the picture chosen for initial plant detection.</s><s>Red squares indicate the borders of the detected chambers and of detected seedlings.</s><s>In this example, PALMA1 recognized all chambers correctly but not all seedlings (e.g.</s><s>seedling in the top left corner).</s><s>c Plant detection by iterative contrasting.</s><s>The first picture depicts a seedling as seen by camera before contrasting by PALMA1.</s><s>Pictures two to four depict the same seedling in the first, fourth and eighth iterative contrasting step.</s><s>d Depicts the final plant picture outlined and the detection of leaf tips by those pixels of the binarized seedling picture that cut across the outline (here marked by arrows)</s></p></div></figDesc><graphic coords="3,313.17,96.54,216.96,581.04" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2</head><label>2</label><figDesc><div><p><s>Fig. 2 Simulated time series for leaf movement analyses.</s><s>a-c Time series with a period of 23, 24, and 25 h, respectively.</s><s>d Time series with a linear growth trend (blue line).</s><s>e Time series with a 6 h phase shift</s></p></div></figDesc><graphic coords="4,106.55,94.83,382.68,508.56" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 3</head><label>3</label><figDesc><div><p><s>Fig. 3 Effect of noise on PALMA2 performance.</s><s>a-f Outputs of PALMA2 when tested with simulated leaf movement data with 20, 40, 60, 80, 100 and 200% added noise, respectively.</s><s>Black lines represent simulated leaf movement data, red lines the calculated period.</s><s>Histogram (g) summarizes the results of (a-f), showing calculated periods and standard deviations for each noise condition tested</s></p></div></figDesc><graphic coords="6,137.32,94.96,320.88,581.16" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 4</head><label>4</label><figDesc><div><p><s>Fig. 4 Leaf movement rhythms of the srr1-1 mutant and the corresponding Col-7 wild type analyzed by a PALMA, b BRASS [18], and c TRiP [22] (n = 40).</s><s>Asterisks indicate statistical significance (p &lt; 0.05) in a Student's t test</s></p></div></figDesc><graphic coords="7,66.05,94.71,215.40,496.92" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 5</head><label>5</label><figDesc><div><p><s>Fig. 5 Analysis of iron effects on Arabidopsis leaf movement rhythms.</s><s>a Experimental set-up of the experiment.</s><s>b Period of leaf movements of Col-0 wild type plants on agar containing 100 µM and 20 µM Fe(III)-EDTA, respectively.</s><s>The asterisk marks a significant difference in a Student's t test [p = 0.0007; n = 62 (100 µM), n = 31 (20 µM)].</s><s>The experiment was repeated twice with similar results</s></p></div></figDesc><graphic coords="8,66.30,94.96,215.40,386.16" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 Performance of PALMA2 in the analysis of simu- lated leaf movement time series in comparison to BRASS and TRiP</head><label>1</label><figDesc></figDesc><table><row><cell>Data set</cell><cell>Simulated phenotype</cell><cell>PALMA</cell><cell>BRASS</cell><cell>TRiP</cell></row><row><cell>1</cell><cell>23 h period</cell><cell>23.26 h</cell><cell>22.97 h</cell><cell>22.99 h</cell></row><row><cell>2</cell><cell>24 h period</cell><cell>23.99 h</cell><cell>24.00 h</cell><cell>24.01 h</cell></row><row><cell>3</cell><cell>25 h period</cell><cell>25.05 h</cell><cell>24.99 h</cell><cell>25.01 h</cell></row><row><cell>4</cell><cell>24 h</cell><cell>23.99 h</cell><cell>24.00 h</cell><cell>24.05 h</cell></row><row><cell>5</cell><cell>+ linear growth trend 24 h</cell><cell>24.00 h</cell><cell>23.62 h</cell><cell>24.06 h</cell></row><row><cell></cell><cell>+ 6 h</cell><cell>+ 6 h</cell><cell>+ 6 h</cell><cell>+ 6.3 h</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 Comparison of system requirements, functions and performance between BRASS, PALMA and TRiP</head><label>2</label><figDesc></figDesc><table><row><cell></cell><cell>BRASS</cell><cell>PALMA</cell><cell>TRiP</cell></row><row><cell>Plant detection</cell><cell>None</cell><cell>Leaf tip detection</cell><cell>Dynamic</cell></row><row><cell>Mathematical analysis</cell><cell>FFT-NLLS</cell><cell>FFT-NLLS</cell><cell>Nelder-Mead optimization of FFT</cell></row><row><cell>Environment</cell><cell>Windows Excel</cell><cell>Command line</cell><cell>MATLAB</cell></row><row><cell>Performance on in silico data</cell><cell>Similar</cell><cell>Similar</cell><cell>Similar</cell></row><row><cell>Performance on srr1-1 data</cell><cell>Similar</cell><cell>Similar</cell><cell>Similar</cell></row></table></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abbreviations</head><p><s>BRASS: Biological Rhythm Analysis Software; CCA1: CIRCADIAN CLOCK ASSO-CIATED 1; FFT: Fast Fourier transformation; LHY: LATE ELONGATED HYPOCOTYL; NLLS: non-linear least squares fitting; PALMA: plant leaf movement analyzer; SRR1: SENSITIVITY TO RED LIGHT REDUCED 1; TOC1: TIMING OF CAB EXPRES-SION 1; TRiP: Tracking Rhythms in Plants.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Authors' contributions</head><p><s>LW programmed PALMA.</s><s>DS designed the project.</s><s>LW and SD designed, performed and analysed all experiments.</s><s>CS assisted LW in programming PALMA and gave useful advice on FFT-NLLS analysis.</s><s>CS also assisted on the initial set-up of the camera platform.</s><s>LW, SD and DS wrote the manuscript.</s><s>All authors read and approved the final manuscript.</s></p><p><s>Author details 1 Molecular Cell Physiology, Faculty of Biology, Bielefeld University, Bielefeld, Germany. 2 Institute for Theoretical Biology, Charité Universitätsmedizin, Berlin, Germany.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Competing interests</head><p><s>The authors declare that they have no competing interests.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Availability of data and material</head><p><s>PALMA is a platform-independent console program.</s><s>Its current libraries limit it to use with Windows computers.</s><s>The PALMA code has been provided as a supplemental file (Additional file 2) and can be found on Sourceforge.net</s><s>(https://sourceforge.net/projects/palma-leafmov/).</s><s>Non-academic users need the written permission by the corresponding author to use the program.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Funding</head><p><s>This work was supported by the DFG (STA 653).</s><s>CS was a fellow of the International Graduate Program "Bioinformatics of Signaling Networks" funded by Bielefeld University.</s><s>We acknowledge support of the publication fee by Deutsche Forschungsgemeinschaft and the Open Access Publication Funds of Bielefeld University.</s><s>CS acknowledges the financial support from the DFG through grant BO3612/2-1 and from the Joachim Herz Stiftung.</s></p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Integrating circadian dynamics with physiological processes in plants</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Greenham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">R</forename><surname>Mcclung</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Rev Genet</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="page" from="598" to="610" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Circadian rhythms confer a higher level of fitness to Arabidopsis plants</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">M</forename><surname>Green</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Tingay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z-Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">M</forename><surname>Tobin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Plant Physiol</title>
+		<imprint>
+			<biblScope unit="volume">129</biblScope>
+			<biblScope unit="page" from="576" to="584" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">The late elongated hypocotyl mutation of Arabidopsis disrupts circadian rhythms and the photoperiodic control of flowering</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Schaffer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Ramsay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Samach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Corden</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Putterill</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">A</forename><surname>Carré</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cell</title>
+		<imprint>
+			<biblScope unit="volume">93</biblScope>
+			<biblScope unit="page" from="1219" to="1229" />
+			<date type="published" when="1998">1998</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">A Myb-related transcription factor is involved in the phytochrome regulation of an Arabidopsis Lhcb gene</title>
+		<author>
+			<persName><forename type="first">Z</forename><forename type="middle">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Kenigsbuch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Harel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">S</forename><surname>Ong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">M</forename><surname>Tobin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Plant Cell</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page" from="491" to="507" />
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Wheels within wheels: the plant circadian system</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">Y</forename><surname>Hsu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">L</forename><surname>Harmer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Trends Plant Sci</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="page" from="240" to="249" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">The circadian clock goes genomic</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Staiger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Shin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Johansson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Davis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Genome Biol</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page">208</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Photosynthetic entrainment of the Arabidopsis thaliana circadian clock</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Haydon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Mielczarek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">C</forename><surname>Robertson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">E</forename><surname>Hubbard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Aar</forename><surname>Webb</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">502</biblScope>
+			<biblScope unit="page" from="689" to="692" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Circadian clock adjustment to plant iron status depends on chloroplast and phytochrome function</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">A</forename><surname>Salomé</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Oliva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Weigel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Krämer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">EMBO J</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="page" from="511" to="523" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Crosstalk between the circadian clock and innate immunity in Arabidopsis</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">G</forename><surname>Anderson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Ng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">C</forename><surname>Seitz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Peterson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PLoS Pathog</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page">e1003370</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Rhythmic processes in plants</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">G</forename><surname>Cumming</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Wagner</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Annu Rev Plant Physiol</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="page" from="381" to="416" />
+			<date type="published" when="1968">1968</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Differential control of pre-invasive and post-invasive antibacterial defense by the Arabidopsis circadian clock</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Korneli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Danisman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Staiger</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Plant Cell Physiol</title>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="page" from="1613" to="1622" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Diurnal dependence of growth responses to shade in Arabidopsis: role of hormone, clock, and light signaling</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Sellaro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Pacín</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">J</forename><surname>Casal</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Mol Plant</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page" from="619" to="628" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Regulation of iron homeostasis in Arabidopsis thaliana by the clock regulator time for coffee</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Duc</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Cellier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lobréaux</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J-F</forename><surname>Briat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Gaymard</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Biol Chem</title>
+		<imprint>
+			<biblScope unit="volume">284</biblScope>
+			<biblScope unit="page" from="36271" to="36281" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Botanische Forschungen des Alexanderzuges</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Bretzl</surname></persName>
+		</author>
+		<editor>B.G. Teubner</editor>
+		<imprint>
+			<date type="published" when="1903">1903</date>
+			<biblScope unit="page" from="120" to="132" />
+			<pubPlace>Leipzig</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Observation Botanique</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>De Mairan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Hist. L&apos; Academie R. Sci. Paris</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<date type="published" when="1729">1729</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Leaf movement rhythm in Arabidopsis thaliana</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Engelmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Simon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Phen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Z Für Naturforschung C J Biosci</title>
+		<imprint>
+			<biblScope unit="volume">47</biblScope>
+			<biblScope unit="page" from="925" to="928" />
+			<date type="published" when="1992">1992</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">Least-squares analysis of fluorescence data</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Straume</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Frasier-Cadoret</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Johnson</forename><forename type="middle">M</forename></persName>
+		</author>
+		<editor>Lakowicz JR</editor>
+		<imprint>
+			<date type="published" when="1991">1991</date>
+			<publisher>Springer</publisher>
+			<biblScope unit="page" from="177" to="240" />
+			<pubPlace>New York</pubPlace>
+		</imprint>
+	</monogr>
+	<note>Topics in fluorescence spectroscopy</note>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Extension of a genetic network model by iterative experimentation and mathematical analysis</title>
+		<author>
+			<persName><forename type="first">Jcw</forename><surname>Locke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">M</forename><surname>Southern</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Kozma-Bognár</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Hibberd</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">E</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">S</forename><surname>Turner</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Mol Syst Biol</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<date type="published" when="2005">2005. 2005.0013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">Circadian genetics in the model higher plant, Arabidopsis thaliana</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">M</forename><surname>Southern</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Millar</surname></persName>
+		</author>
+		<ptr target="http://www.sciencedirect.com/science/article/pii/S0076687905930024" />
+		<imprint>
+			<date type="published" when="2005">2005. 2015 Nov 11</date>
+			<publisher>Academic Press</publisher>
+			<biblScope unit="page" from="23" to="35" />
+		</imprint>
+	</monogr>
+	<note>Methods Enzym</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">The Arabidopsis SRR1 gene mediates phyB signaling and is required for normal circadian clock function</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Staiger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Allenbach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Salathia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Fiechter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Davis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Millar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Genes Dev</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="page" from="256" to="268" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">SRR1 is essential to repress flowering in noninductive conditions in Arabidopsis thaliana</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Johansson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Staiger</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Exp Bot</title>
+		<imprint>
+			<biblScope unit="volume">65</biblScope>
+			<biblScope unit="page" from="5811" to="5822" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">TRiP: Tracking Rhythms in Plants, an automated leaf movement analysis program for circadian period estimation</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Greenham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Lou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">E</forename><surname>Remsen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Farid</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">R</forename><surname>Mcclung</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Plant Methods</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page">33</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">A simplex method for function minimization</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Nelder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Mead</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Comput J</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="308" to="313" />
+			<date type="published" when="1965">1965</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Differentially phased leaf growth and movements in arabidopsis depend on coordinated circadian and light regulation</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Dornbusch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Michaud</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Xenarios</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Fankhauser</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Plant Cell</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="page" from="3911" to="3921" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Reciprocal interaction of the circadian clock with the iron homeostasis network in Arabidopsis</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">L</forename><surname>Guerinot</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">R</forename><surname>Mcclung</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Plant Physiol</title>
+		<imprint>
+			<biblScope unit="volume">161</biblScope>
+			<biblScope unit="page" from="893" to="903" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">A revised medium for rapid growth and bio assays with tobacco tissue cultures</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Murashige</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Skoog</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Physiol Plant</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="page" from="473" to="497" />
+			<date type="published" when="1962">1962</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title level="m" type="main">NET framework</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kirillov</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Aforge</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Tissue-specific clocks in Arabidopsis show asymmetric coupling</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Endo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Shimizu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Nohales</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Araki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Kay</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">515</biblScope>
+			<biblScope unit="page" from="419" to="422" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

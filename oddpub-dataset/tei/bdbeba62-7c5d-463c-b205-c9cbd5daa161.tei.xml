@@ -1,0 +1,1055 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">How to improve parameter estimates in GLM-based fMRI data analysis: cross-validated Bayesian model averaging -Preprint, resubmitted to NeuroImage on 21/06/2017</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Joram</forename><surname>Soch</surname></persName>
+							<email>joram.soch@bccn-berlin.de.</email>
+							<affiliation key="aff0">
+								<orgName type="department">Bernstein Center for Computational Neuroscience</orgName>
+								<address>
+									<settlement>Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff5">
+								<orgName type="department">Department of Psychology</orgName>
+								<orgName type="institution">Humboldt-Universität zu Berlin</orgName>
+								<address>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Achim</forename><forename type="middle">Pascal</forename><surname>Meyer</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Bernstein Center for Computational Neuroscience</orgName>
+								<address>
+									<settlement>Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">John-Dylan</forename><surname>Haynes</surname></persName>
+						</author>
+						<author>
+							<affiliation key="aff1">
+								<orgName type="department">Berlin Center for Advanced Neuroimaging</orgName>
+								<address>
+									<settlement>Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff2">
+								<orgName type="department">Berlin School of Mind and Brain</orgName>
+								<address>
+									<settlement>Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff3">
+								<orgName type="department">Excellence Cluster NeuroCure</orgName>
+								<orgName type="institution">Charité -Universitätsmedizin Berlin</orgName>
+								<address>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff4">
+								<orgName type="department">Department of Neurology</orgName>
+								<orgName type="institution">Charité -Universitätsmedizin Berlin</orgName>
+								<address>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff6">
+								<orgName type="institution">BCCN Berlin</orgName>
+								<address>
+									<addrLine>Philippstraße 13, Haus 6</addrLine>
+									<postCode>10115</postCode>
+									<settlement>Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">How to improve parameter estimates in GLM-based fMRI data analysis: cross-validated Bayesian model averaging -Preprint, resubmitted to NeuroImage on 21/06/2017</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">2BCF06260C3A2C07A47C7DEE71D90992</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:37+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>fMRI-based neuroimaging</term>
+					<term>mass-univariate GLM</term>
+					<term>nuisance variables</term>
+					<term>correlated regressors</term>
+					<term>cross-validation</term>
+					<term>Bayesian model averaging</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>In functional magnetic resonance imaging (fMRI), model quality of general linear models (GLMs) for first-level analysis is rarely assessed.</s><s>In recent work <ref type="bibr" target="#b36">(Soch et al., 2016</ref>: "How to avoid mismodelling in GLM-based fMRI data analysis: cross-validated</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>to parameter estimates which are closer to their true values than estimates from the group-level or subject-wise best model.</s><s>In Section 4, we apply cvBMA to empirical data before we discuss our results.</s><s>Again, we show that cvBMA can be more sensitive than just using even the best GLM in each subject.</s><s>Moreover, we find that cvBMS can prevent not detecting established effects, e.g. when using only one model.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2">Theory</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1">The general linear model</head><p><s>As linear models, GLMs for fMRI <ref type="bibr" target="#b13">(Friston et al., 1994;</ref><ref type="bibr" target="#b20">Kiebel and Holmes, 2011)</ref> assume an additive relationship between experimental conditions and the fMRI BOLD signal, i.e. a linear summation of expected hemodynamic responses into the measured hemodynamic signal.</s><s>Consequently, in the GLM, a single voxel's fMRI data (y) are modelled as a linear combination (β) of experimental factors and potential confounds (X), where errors (ε) are assumed to be normally distributed around zero and to have a known covariance structure (V ), but unknown variance factor (σ 2 ):</s></p><formula xml:id="formula_0">y = Xβ + ε, ε ∼ N(0, σ 2 V )<label>(1)</label></formula><p><s>In this equation, X is an n × p matrix called the "design matrix" and V is an n × n matrix called a "correlation matrix" where n is the number of data points and p ist the number of regressors.</s><s>In standard analysis packages like Statistical Parametric Mapping (SPM) <ref type="bibr" target="#b3">(Ashburner et al., 2016)</ref>, V is typically estimated from the signal's temporal autocorrelations across all voxels using a Restricted Maximum Likelihood (ReML) approach <ref type="bibr" target="#b11">(Friston et al., 2002b, a)</ref>.</s><s>In contrast to that, X has to be set by the user.</s><s>Especially if regressors are correlated with each other, there can be doubt about which model to use.</s><s>The general linear model (1) implicitly defines the following likelihood function:</s></p><formula xml:id="formula_1">p(y|β, σ 2 ) = N(y; Xβ, σ 2 V )<label>(2)</label></formula><p><s>GLMs are typically inverted by applying maximum likelihood (ML) estimation to equation (2).</s><s>This leads to ordinary least squares (OLS) estimates <ref type="bibr">(Bishop, 2007, eq. 3.15)</ref> if V = I n , i.e. under temporal independence, or weighted least squares (WLS) estimates <ref type="bibr">(Koch, 2007, eq. 4.29</ref>) if V = I n , i.e. when errors ε are not assumed independent and identically distributed <ref type="bibr">(i.i.d.)</ref>.</s></p><p><s>Based on these ML estimates, statistical tests can be performed to investigate brain activity during different experimental conditions.</s><s>These tests however strongly depend on the design matrix of the underlying model <ref type="bibr" target="#b8">(Carp, 2012)</ref>.</s><s>When events overlap in time or are closely spaced temporally, convolution with the hemodynamic response function <ref type="bibr" target="#b16">(Henson et al., 2001)</ref> will lead to positive correlation between the corresponding regressors.</s><s>This influences parameter estimates for regressors of interest which in turn influences statistical tests and can change non-significant to significant or vice versa.</s></p><p><s>For mathematical convenience, we will rewrite the likelihood function (2) as p(y|β, τ ) = N(y; Xβ, (τ P ) −1 ) (3)</s></p><p><s>In this equation, P = V −1 is a n × n precision matrix and τ = 1/σ 2 is the inverse residual variance <ref type="bibr">(Koch, 2007, eq. 4.116)</ref>.</s><s>For Bayesian inference, it is advantageous to use the conjugate prior relative to equation (3).</s><s>We have described this model, the general linear model with normal-gamma priors (GLM-NG), earlier and derived posterior distributions on the model parameters <ref type="bibr">(Soch et al., 2016, eqs. 6)</ref> as well as the log model evidence for model comparison <ref type="bibr">(Soch et al., 2016, eqs. 9</ref>).</s></p><p><s>In the following, we will introduce this model quality criterion (Section 2.2) and show how it can give rise to averaged model parameters (Section 2.3).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2">The log model evidence</head><p><s>Consider Bayesian inference on data y using model m with parameters θ.</s><s>In this case, Bayes' theorem is a statement about the posterior density <ref type="bibr">(Gelman et al., 2013, eq. 1.1)</ref>:</s></p><formula xml:id="formula_2">p(θ|y, m) = p(y|θ, m) p(θ|m) p(y|m)<label>(4)</label></formula><p><s>Here, p(y|θ, m) is the likelihood function, p(θ|m) is the prior distribution and the posterior distribution p(θ|y, m) is given as the normalized product of likelihood and prior.</s><s>The denominator p(y|m) on the right-hand side acts as a normalization constant on the posterior density p(θ|y, m) and is given by <ref type="bibr">(Gelman et al., 2013, eq. 1.</ref>3)</s></p><formula xml:id="formula_3">p(y|m) = p(y|θ, m) p(θ|m) dθ (5)</formula><p><s>This is the probability of the data given only the model, independent of any particular parameter values.</s><s>It is also called "marginal likelihood" or "model evidence" and can act as a model quality criterion in Bayesian inference <ref type="bibr" target="#b27">(Penny, 2012)</ref>.</s><s>For computational reasons, only the logarithmized or log model evidence (LME) L(m) = log p(y|m) is of interest in most cases.</s><s>For the GLM-NG, we have derived the posterior distribution <ref type="bibr">(Soch et al., 2016, eq. 6)</ref> and log model evidence <ref type="bibr">(Soch et al., 2016, eq. 9)</ref> in earlier work on model selection for GLMs.</s></p><p><s>The LME is a reliable model selection criterion as it (i) automatically penalizes for additional model parameters by integrating them out of the likelihood <ref type="bibr" target="#b27">(Penny, 2012)</ref>, (ii) can be naturally decomposed into model accuracy and model complexity <ref type="bibr" target="#b28">(Penny et al., 2007)</ref> and (iii) accounts for the whole uncertainty about parameter estimates <ref type="bibr" target="#b14">(Gelman et al., 2013)</ref> instead of using point estimates like classical information criteria such as AIC <ref type="bibr" target="#b0">(Akaike, 1974)</ref> and BIC <ref type="bibr" target="#b32">(Schwarz, 1978)</ref>.</s></p><p><s>The LME however also requires prior distributions on the model parameters and typically diverges with ML-style flat priors.</s><s>As multi-session fMRI data provides a natural basis for cross-validation (CV), we therefore suggested to use the LME in conjunction with CV <ref type="bibr" target="#b35">(Soch et al., 2015)</ref> in order to avoid the necessity to specify prior distributions (see Figure <ref type="figure" target="#fig_0">S1</ref>) which are usually hard to come up with in fMRI research.</s></p><p><s>In this procedure, a posterior distribution is estimated from all sessions j = i using non-informative prior distributions and then used as an informative prior distribution on the remaining session i to calculate the LME for this session <ref type="bibr" target="#b36">(Soch et al., 2016)</ref>.</s><s>This is repeated for all CV folds, i.e. for each left-out session i, and the sum of out-of-sample LMEs (oosLME) then gives rise to the cross-validated LME (cvLME):</s></p><formula xml:id="formula_4">cvLME(m) = S i=1 log p(y i |θ, m) p(θ| ∪ j =i y j , m) dθ (6)</formula><p><s>The cvLME has been validated using extensive simulations <ref type="bibr" target="#b36">(Soch et al., 2016)</ref> and is insensitive to the number of folds into which the data are partitioned for cross-validation (see Figure <ref type="figure" target="#fig_1">S2</ref>; <ref type="bibr">Soch and Allefeld, in prep.)</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3">Bayesian model averaging</head><p><s>As log model evidences (LME) represent conditional probabilities, they can be used to calculate posterior probabilities (PP) using Bayes' theorem <ref type="bibr">(Hoeting et al., 1999, eq. 2)</ref>:</s></p><formula xml:id="formula_5">p(m i |y) = p(y|m i ) p(m i ) M j=1 p(y|m j ) p(m j ) (7)</formula><p><s>Here, M is the number of models, p(y|m i ) is the i-th model evidence where the exponentiated cvLME has to be plugged in and p(m i ) is the i-th prior probability which is usually set to p(m i ) = 1/M making all models equally likely a priori.</s><s>In this latter case, posterior probabilities are obtained as normalized exponentiated LMEs.</s><s>Conceptually, this approach uses the first-level model evidences as the second-level likelihood function to make probabilistic statements about the model space.</s></p><p><s>After model assessment using LMEs, the PPs can be used to calculate averaged parameter estimates by performing Bayesian model averaging (BMA) <ref type="bibr">(Hoeting et al., 1999, eq. 1)</ref>:</s></p><formula xml:id="formula_6">βBMA = M i=1 βi • p(m i |y) (8)</formula><p><s>Here, βi is the i-th model's parameter estimate for a specific regressor and p(m i |y) is the ith model's posterior probability.</s><s>Formally, BMA estimates can be seen as the parameter estimates of a larger model in which the variable "model" has been marginalized out.</s></p><p><s>Note that, when one model is highly favored by the LME with a PP close to one, BMA is equivalent to just selecting this model's parameter estimate.</s><s>However, BMA automatically generalizes to cases where LMEs are less clear. 1 BMA is theoretically advantageous <ref type="bibr" target="#b18">(Hoeting et al., 1999)</ref> by making use of the whole posterior distribution across models, thereby accounting for modelling uncertainty, and has been empirically shown <ref type="bibr" target="#b30">(Raftery et al., 1997)</ref> to provide improved predictive performance, e.g.</s><s>measured using a logarithmic scoring rule <ref type="bibr" target="#b15">(Good, 1952)</ref>.</s></p><p><s>Model averaging is especially useful in, but not restricted to cases when the regressor or regressors for which the averaged parameter values are calculated are contained in all models of the model space.</s><s>For this reason, BMA is particularly interesting when having identical regressors of interest, but varying regressors of no interest potentially correlated to the regressors of interest, which is often the case in fMRI data analysis due to different possible nuisance variables (see Figure <ref type="figure" target="#fig_0">1A</ref>).</s><s>We will investigate such cases in simulation settings (see Section 3) as well as with empirical data (see Section 4).</s></p><p><s>For the application of BMA to GLMs for fMRI, we use voxel-wise maximum-likelihood parameter estimates from SPM's first-level analysis <ref type="bibr" target="#b3">(Ashburner et al., 2016)</ref> and voxelwise cross-validated log model evidences as described earlier <ref type="bibr" target="#b36">(Soch et al., 2016)</ref> (see Figure <ref type="figure" target="#fig_0">1B</ref>).</s><s>As we show in the Appendix, maximum likelihood (ML) estimates are equivalent to maximum a posteriori (MAP) estimates when non-informative priors are used.</s><s>Finally, voxel-wise BMA estimates are calculated according to equation (8) (see Figure <ref type="figure" target="#fig_0">1C</ref>).</s><s>Together, this is referred to as cross-validated Bayesian model averaging (cvBMA).</s><s>3 Simulation</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Methods</head><p><s>We test the cvBMA approach using simulated data and specifically investigate the impact of regressor correlation on various parameter estimation methods.</s></p><p><s>To this end, we imagine three different regressors: a "target" regressor specifying event onsets for a condition of interest (x 1 ), a "cue" regressor with event onsets before targets (x 2 ) and a "feedback" regressor with event onsets after targets (x 3 ).</s><s>Importantly, these experimental events have close temporal proximity so that convolution with the hemodynamic response function (HRF) leads to non-orthogonality.</s><s>Here, we use a trial duration (t dur ) of 2 s and modulate the onset difference (∆t) from 6 s down to 2 s.</s></p><p><s>Based on these regressors, we define four different models: one consisting of only the target regressor (m 1 ), two having the target regressor with either the cue regressor (m 2 ) or the feedback regressor (m 3 ) and one containing all three regressors (m 4 ).</s><s>In the full model m 4 , this leads to covariation of targets x 1 with cues x 2 and feedbacks x 3 where correlation between regressors decreases with onset difference (see Figure <ref type="figure" target="#fig_1">2A</ref>).</s></p><p><s>For each onset difference or delay, N 1 = 10,000 samples with N 2 = 25 subjects per sample are simulated as follows.</s><s>First, a true model is randomly drawn from M = {m 1 , m 2 , m 3 , m 4 } for each subject.</s><s>For each model and delay, design matrices X for S = 5 sessions were generated before simulation.</s><s>Each session consisted of n = 200 scans at TR = 2 s containing 9 trials with a duration of 2 s in intervals of 20 scans and the respective delay between target and cue or feedback (see Figure <ref type="figure" target="#fig_1">2A</ref>).</s><s>Second, true regression coefficients are drawn using the relation</s></p><formula xml:id="formula_7">β ij = x j + y ij x j ∼ N(µ j , σ 2 BS ) y ij ∼ N(0, σ 2 WS )</formula><p><s>where i and j index session and parameter respectively, µ j is the true population average of one regressor's effect, σ 2 BS represents the subject-to-subject variance and σ 2 WS represents the session-to-session variance.</s><s>Following a bottom-up approach, the scan-to-scan variance σ 2 was set to 1.</s><s>Then, the ratio of between-subject variance to within-subject variance σ 2 BS /σ 2 WS was set to 2 (cf.</s><s><ref type="bibr">Soch et al., 2016, fig. 6C</ref>) and the variances were chosen such that the full model m 4 exhibited an expected signal-to-noise ratio SNR = var(Xβ)/σ 2 of 0.1.</s><s>This resulted in values σ 2 BS ≈ 1.5 and σ 2 WS ≈ 0.75.</s><s>Finally, the population mean µ 1 for the target effect β 1 was calibrated such that the power of a one-sample t-test against µ 0 = 0 across N 2 = 25 subjects drawn from a population with total variance of (σ 2 BS + σ 2 WS ) was 0.8 at a significance level of α = 0.05.</s><s>This resulted in the value µ 1 ≈ 0.75.</s><s>For the confound effects β 2 and β 3 , µ was set to 0 reflecting that confound effects exist, but that they are unsystematic across subjects. 2</s></p><p><s>With µ 1 = 0, simulations allows to assess the true positive rate (TPR), i.e. statistical power, of a one-sample t-test of β 1 against 0. In another N 1 = 10,000 simulations, µ 1 was simply set to 0 which allows to assess the false positive rate (FPR), i.e. type I error probability, of the same statistical test.</s><s>Third, simulated data are generated by sampling zero-mean Gaussian observation noise ε ∼ N(0, σ 2 V ) where the temporal covariance V was set to invoke fMRI-typical autocorrelations 3 and then adding the random noise to the true signal to get a measured signal y = Xβ + ε that was entered into analyses.</s><s>Finally, as the target regressor (x 1 ) was included in all design matrices of our model space, the model parameter corresponding to target presentation (β 1 ) was estimated using all four models and models were quantified using the cross-validated log model evidence (cvLME).</s><s>Then, we compared four parameter estimates for β 1 : the one obtained using the group-level best model (obtained by cvBMS), using the subject-wise best model (with maximal cvLME), using Bayesian model averaging (obtained by cvBMA) and using the true model (used to generate the data).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Results</head><p><s>The impact of covariation between regressors on parameter estimates in the general linear model (GLM) using ordinary least squares (OLS) is best captured using the inner product of these regressors.</s><s>The normalized inner product of two vectors is equal to the cosine of the angle between them.</s><s>With 6 s delay, regressors are almost orthogonal, i.e. their angle is close to 90°.</s><s>With a delay of 2 s, we observe an angle of 35.7°and a correlation of 0.78 in our simulations (see Figure <ref type="figure" target="#fig_1">2A</ref>), implying a considerable degree of non-orthogonality, but not collinearity between target and cue or feedback regressors.</s><s>The precision of parameter estimates can be described by squared errors (SE), i.e. squared differences between true and estimated parameter values.</s><s>We were interested in SE(β 1 ), because the parameter estimate for the target regressor could possibly be confounded by the cue and feedback regressors, depending on whether they were part of the true model or not.</s><s>Additionally, the TPR for a t-test of H 1 : β 1 &gt; 0 against H 0 : β 1 = 0 was plotted against the FPR in a receiver-operating characteristic (ROC) analysis to calculate the area under the curve (AUC) as a measure of statistical test performance.</s><s>First, in the case of a large onset difference, the SEs for this parameter are the same for all models, because additional regressors do not change parameter estimates if they are orthogonal to the regressor of interest (see Figure <ref type="figure" target="#fig_1">2B</ref>, left panels).</s><s>Second, when there is temporal overlap between event regressors, SEs are on average smallest when the true model is used (see Figure <ref type="figure" target="#fig_1">2B</ref>, blue bars), because the model used to generate the data leads to the most precise parameter estimates.</s><s>Third, while the true model slightly outperforms cvBMA estimates, cvBMA estimates slightly outperform the subject-wise best model and strongly outperform the group-level best model (see Figure <ref type="figure" target="#fig_1">2B</ref>, green/red/black), because BMA accounts for the whole uncertainty over models and does not just select from the model with maximal LME.</s><s>Interestingly, the best model and the averaged model get very close to the true model in cases of moderate correlation which suggests that LMEs are very decisive so that the advantage of BMA is not very high.</s><s>This is also reflected in AUC values not differing very much between models for medium overlap (see Figure <ref type="figure" target="#fig_1">2C</ref>).</s></p><p><s>The results demonstrate that Bayesian model averaging, i.e. weighting parameter estimates according to the models' posterior probabilities, can be better than using the best individual model, i.e. taking parameter estimates from the model with maximal posterior probability.</s><s>Although cvBMA is worse than using the true model, it is the optimal approach for empirical data, because the true model is unknown in such cases.</s><s>These simulations are therefore a first indication for employing cvBMA in fMRI data analysis.</s></p><p><s>A second indication will be provided by the analysis of empirical data.</s><s>(A) Design matrices of the full model used in the simulation.</s><s>Different onset differences between a target regressor (x 1 ) and preceding cues (x 2 ) as well as subsequent feedback (x 3 ) are simulated where a delay in seconds implies a certain angle in degrees and correlation between x 1 and x 2 as well as x 1 and x 3 .</s><s>(B) Box plots of squared errors (SE) across simulations when estimating the target regressor weight (β 1 ) using either the group-level best model (obtained by cvBMS, black), the subject-wise best model (with maximal cvLME, red), the averaged model (obtained by cvBMA, green) or the true model (used to generate the data, blue).</s><s>Each panel is scaled such that the upper black whisker corresponds to 95% of the y-axis maximum and the y-axis minimum is at zero.</s><s>(C) Bar plots of area under the curve (AUC) when performing an ROC analysis for the secondlevel one-sample t-test of β 1 against 0. Each panel is scaled to 0.9 &lt; AUC &lt; 1.</s><s>When regressors are almost orthogonal, the four estimation techniques do not differ regarding SE or AUC.</s><s>With decreasing delay and thus increasing overlap, the true model outperforms cvBMA and cvBMA outperforms the best-model approaches in terms of both, estimation precision (B) and test performance (C).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1">Methods</head><p><s>We test the cvBMA approach using empirical data from a conflict adaptation paradigm <ref type="bibr">(Meyer and Haynes, in prep.)</ref> and specifically investigate the capability of model averaging to identify experimental effects that would be undetectable by individual models.</s></p><p><s>The experimental paradigm (see Figure <ref type="figure" target="#fig_2">3</ref>) was an Eriksen flanker task <ref type="bibr" target="#b9">(Eriksen and Eriksen, 1974)</ref> combined with a response rule switch <ref type="bibr" target="#b5">(Bode and Haynes, 2009)</ref> giving a 2 × 2 factorial design, the two factors being conflict (congruent vs. incongruent) and task set (response rule 1 vs. 2).</s><s>In each trial, three vertical arrows (pointing upward or downward) were presented at the center of the screen.</s><s>The upper and the lower arrow were either pointing in the same (congruent) or in opposite direction (incongruent) when compared to the target arrow in the center (see Figure <ref type="figure" target="#fig_2">3C</ref>).</s><s>Subjects were requested to indicate the direction of the target arrow via right-hand button press, but the response rule was changing from block to block (see Figure <ref type="figure" target="#fig_2">3C</ref>).</s><s>Stimuli were presented in 6 sessions with 20 blocks of 10 trials.</s><s>Each trial consisted of 1 second presentation and 1 second fixation (see Figure <ref type="figure" target="#fig_2">3B</ref>).</s><s>Each block lasted 10 × 2 = 20 seconds, was preceded by a 500 ms auditory cue signalling the response rule as well as a 5.5 second delay phase to prepare for the coming block and was succeeded by a 1 second feedback phase indicating how many blocks would still follow (see Figure <ref type="figure" target="#fig_2">3A</ref>).</s><s>There were 5 blocks per each of the 4 conditions.</s><s>The total duration of one block was around 33 seconds and each fMRI session was lasting 666 seconds.</s><s>fMRI data were preprocessed using SPM12, Revision 6225 per 01/10/2014 (http://www.</s><s>fil.ion.ucl.ac.uk/spm/software/spm12/).</s><s>Functional MRI scans were corrected for acquisition time delay (slice timing) and head motion (spatial realignment), normalized to MNI space using a voxel size of 3 × 3 × 3 mm (spatial normalization), smoothed using a Gaussian kernel with a full width at half maximum (FWHM) of 6 × 6 × 6 mm (spatial smoothing) and filtered using a high-pass filter (HPF) with cut-off at T = 128 s (temporal filtering).</s><s>Unless otherwise stated, SPM12 default parameters were used.</s></p><p><s>For first-level analysis, we categorized each block as containing congruent or incongruent stimuli and by whether the response rule switched or stayed relative to the preceding block. 4</s><s>This lead to four categories of blocks: congruent-stay, congruent-switch, incongruent-stay, incongruent-switch.</s><s>For each subject and each session, a GLM was specified including four regressors modelling these four types of blocks and two regressors modelling delay phases for switch blocks and for stay blocks.</s><s>There was no modelling of error trials, button presses, reaction times or feedback phases.</s><s>Each model included six movement parameters obtained from spatial realignment.</s><s>A first-order auto-regressive AR(1) model was used to account for noise auto-correlations.</s></p><p><s>In second-level analysis, we were interested in the different neural activity in the switchdelays preceding the application of a new response rule and the stay-delays preceding the application of the same response rule as before.</s><s>To again induce correlation between regressors, we introduce two variable model space features with regressors overlapping with the delay phase regressors and therefore influencing their estimates.</s></p><p><s>First, the 500 ms auditory cues before the 5.5 second delay phases were modelled by two extra regressors, also separated by the switch-stay difference.</s><s>This model feature was motivated by the fact these stimulations indeed require two different cognitive processes, namely auditory perception for the cues and executive planning for the delays.</s><s>Second, the first trials of stimulation blocks were additionally modelled by four extra regressors, separated exactly like the block regressors.</s><s>This model feature was motivated by the fact that the first trial of each block could demand a restart cost which was also observable in the distribution of reaction times, i.e. a significantly higher reaction time in the first trial compared to later trials <ref type="bibr">(Meyer and Haynes, in prep.)</ref>.</s><s>Taken together, this resulted in four possible models for first-level data (see Table <ref type="table" target="#tab_1">2</ref>): all of them with blocks and delays being modelled; one with only cue phases being additionally modelled, one with only first trials being additionally modelled, one with both and one without both.</s><s>Across all subjects and sessions, average correlation between delays and cue phases was 0.63 and average correlation between delays and first trials was 0.46.</s><s>Like in our simulation study, the goal was to investigate the properties of statistical inference being performed with individual models, using the best GLM as identified by maximal cvLME and using BMA estimates based on the models' cvLMEs.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2">Results</head><p><s>On the second level, we focused on the delay phases and looked for a main effect of stay vs. switch blocks.</s><s>We hypothesized that delay phases after cues indicating a switch of the response rule might elicit preparatory processes that lead to higher motor cortex activity in the left hemisphere (participants responded with their right hand) compared to delay phases preceding blocks with the same response rule as before.</s><s>Such an effect has been suggested by early work on task preparation <ref type="bibr" target="#b7">(Brass and Cramon, 2002)</ref>, experimentally demonstrated <ref type="bibr" target="#b22">(Kim et al., 2011)</ref> and meta-analytically validated <ref type="bibr" target="#b21">(Kim et al., 2012)</ref>.</s><s>In fact, this main effect later turned out to be due to a positive effect of switch over stay blocks (see Table <ref type="table">1</ref>, right-hand side).</s><s>First, we tried to identify this effect using the four first-level models as such.</s><s>We performed second-level analysis using the summary-statistic approach and <ref type="bibr" target="#b19">Friston, 1998)</ref> and were able to detect a main effect of stay vs. switch in left primary motor cortex using all models except the one modelling both, cue phases and first trials (see Table <ref type="table">1</ref>, upper section).</s><s>The effect was not significant at the cluster level under correction for family-wise errors (FWE) when using the model with cue phases but without first trials, indicating that modelling the cue phase had a higher impact on parameter estimates for the delay phase due to their shared variance and higher correlation, making the difference between stay and switch blocks insignificant.</s></p><p><s>Next, we performed cross-validated Bayesian model selection (cvBMS) to identify the group-level optimal model in each voxel <ref type="bibr" target="#b35">(Soch et al., 2015)</ref> and observed that all models are optimal in at least some voxels of the left precentral gyrus (see Table <ref type="table" target="#tab_1">2</ref>).</s><s>We used this information to generate selected-model maps (SMM) indicating for each model in which voxels it is optimal and masked second-level analyses using these SMMs in order to restrict statistical inferences to those voxels where the corresponding model is best explaining the data at the group level.</s><s>This approach, as suggested in previous work <ref type="bibr" target="#b36">(Soch et al., 2016)</ref>, lead to the effect only being detected by the models not accounting for cue phases, again suggesting that modelling these had the greater influence on delay phase significance (see Table <ref type="table">1</ref>, middle section).</s><s>In the model including first trials but not cue phases, the main effect of stay vs. switch blocks in left primary motor cortex was also the global maximum on the respective contrast.</s><s>This demonstrates that cvBMS can prevent us from overfitting and not detecting established effects when using just one model.</s><s>Notably, the most complex model including both, cue phases and first trials, would not have been the best choice here.</s><s>we compared two estimation methods not being based on individual models: using parameter estimates from the subject-level optimal models as identified by maximal LME and using cross-validated Bayesian model averaging (cvBMA) as developed in the present work.</s><s>For both methods, voxel-wise cvLMEs were calculated for each model in each subject.</s><s>For the best-model approach, first-level parameter estimates in each voxel were taken from the model having the highest cvLME in this voxel and then subjected to second-level analysis.</s><s>For the model averaging approach, first-level parameter estimates in each voxel were weighted according to posterior probabilities calculated from the models' cvLMEs in this voxel (see Figure <ref type="figure" target="#fig_0">1</ref>) and the averaged parameters were subjected to second-level analysis.</s><s>The best-model approach is equivalent to setting the posterior probability of the most likely model to 1 and then performing Bayesian model averaging.</s></p><p><s>We observe that the effect in question can be identified using both methods, but with a different degree of significance.</s><s>When test statistic, cluster size or p-value are taken as a measure of sensitivity, cvBMA must be judged superior to using the subject-wise best GLM (see Table <ref type="table">1</ref>, lower section).</s><s>Interestingly, cvBMA does not only calculate the weighted average of the models' parameter estimates per voxel, but also seems to make a compromise regarding the spatial location of the main effect when compared to statistical inferences based on the individual models (see Figure <ref type="figure" target="#fig_3">4A</ref>).</s><s>Like our simulation study, this empirical example therefore indicates that performing cvBMA can be better than using parameter estimates from the subject-wise best GLMs.</s><s>Using cvBMA, we can improve parameter estimates for regressors of interest by drawing information from a variety of models of just relying on one particular model.</s><s>This is possible, because each model provides parameter estimates for these regressors and because the models differ in how well they are supported by the measured data, as quantified by their posterior probabilties.</s><s>As demonstrated in simulation, by factoring in our uncertainty in this way, parameter estimates move closer to their true values which in turn increases the sensitivity for experimental effects.</s><s>switch blocks observed when using a model without cue phases and first trials (red), a model without cue phases but with first trials (blue), both masked with their group-level selected-model map (SMM) obtained through cross-validated Bayesian model selection (cvBMS), as well as observed in a second-level analysis on the averaged parameters (green) obatined via cross-validated Bayesian model averaging (cvBMA).</s><s>The BMA approach seems to not only average parameter values, but to also make a compromise regarding spatial location with respect to the blue (more ventral-posterior) and red (more dorsalanterior) clusters.</s><s>(B) Colored voxels indicate overlap between significant effects using individual models and cvBMA estimates.</s><s>The BMA approach shows stronger overlap with the model including first trials (cyan) than with the one not including them (yellow).</s><s>By definition, there is no overlap between these two models as SMMs are mutually exclusive.</s><s>(C) Axial sections and color coding used for the panels on the left.</s><s>Negative effect "stay &lt; switch" no significant effect in left primary motor cortex (AAL 001) Table <ref type="table">1</ref>.</s><s>Empirical example for cross-validated Bayesian model averaging.</s><s>In each row, peak-level, cluster-level and set-level statistics are given for an F-test of the main effect between stay and switch blocks as well as a t-test of the negative effect of stay against switch blocks.</s><s>The upper section of the table summarizes unconstrained whole-brain statistical inference using the four models.</s><s>The effect in question can be detected using three models, but not the most complex one.</s><s>The middle section of the table summarizes second-level analyses that were masked using selected-model maps (SMM) from crossvalidated Bayesian model selection (cvBMS).</s><s>The effect in question can be detected using the two models that do not include cue phase regressors.</s><s>The lower section of the table summarizes second-level analysis based on averaged parameters (cvBMA estimates) and the subject-wise best GLM's parameter estimates (maximal cvLME).</s><s>The effect in question can be detected using both methods, but is stronger when employing the cvBMA approach.</s><s>Abbreviations: x, y, z = MNI coordinates; F /t = F-/t-statistic, k = cluster size; p FWE = family-wise error-corrected p-value; GM = global maximum.</s><s><ref type="figure" target="#fig_3">3 and 4</ref>).</s><s>For each model, the number of voxels in which it is selected as the optimal model cross-validated Bayesian model selection (cvBMS) is given for the left and right precentral gyrus, taken from the Automated Anatomical Labeling (AAL) atlas (AAL 001 and AAL 002) and putatively including the primary motor cortices, as well as at the whole-brain level.</s></p><p><s>We have introduced a model averaging approach for optimizing parameter estimates when analyzing functional magnetic resonance imaging (fMRI) data using general linear models (GLMs).</s><s>We have demonstrated that cross-validated Bayesian model (cvBMA) serves its intended purpose and that it is useful in practice.</s><s>As nuisance variables and correlated regressors are common topics in fMRI data analysis, usage of this technique reduces model misspecification and thereby enhances the methodological quality of functional neuroimaging studies <ref type="bibr" target="#b12">(Friston, 2009)</ref>.</s></p><p><s>Often, psychological paradigms combined with fMRI use trials or blocks with multiple phases (e.g.</s><s>cue -delay -target -feedback; see <ref type="bibr">Meyer and Haynes, in prep.)</ref>, so that the basic model setup (the target regressors) is fixed, but there is uncertainty about which processes of no interest (cues, delays, feedback) should be included into the model <ref type="bibr" target="#b1">(Andrade et al., 1999)</ref>.</s><s>Especially in, but not restricted to these cases of correlated regressors <ref type="bibr" target="#b26">(Mumford et al., 2015)</ref>, cvBMA has its greatest potential which is why our simulated data and the empirical examples were constructed like this.</s><s>Typically, if one is unsure about the optimal analysis approach in such a situation, just one model is estimated or, even worse, a lot of models are estimated and model selection is made by looking at significant effects <ref type="bibr" target="#b36">(Soch et al., 2016)</ref>.</s><s>Here, model averaging provides a simple way to avoid such biases.</s><s>It encourages multiple model estimation in order to avoid mismodelling, but calculates weighted parameter estimates by combining the models in order to avoid subjective model selection.</s><s>These weighted parameters can then be used for second-level analyses within standard workflows, e.g.</s><s>SPM.</s></p><p><s>Using simulated data, we were able to show that averaged model parameter estimates have a smaller mean squared error than even the best model's parameter estimates.</s><s>Using empirical data, we demonstrated the trivial fact that different GLMs can lead to the same effect being either significant or insignificant.</s><s>Interestingly, we found that the most complex GLM is not always the best, speaking against the fMRI practitioner's maxim that the design matrix should "embody all available knowledge about experimentally controlled factors and potential confounds" <ref type="bibr" target="#b37">(Stephan, 2010)</ref> -though it should still be applied in the absence of any knowledge about model quality.</s></p><p><s>Although the most complex model was not optimal in this case, our previously suggested approach of cross-validated Bayesian model selection (cvBMS) and subsequent masking of second-level analyses with selected-model maps (SMM) was able to protect against not detecting an established experimental effect which additionally validates this technique <ref type="bibr" target="#b36">(Soch et al., 2016)</ref>.</s><s>Moreover, cross-validated Bayesian model averaging (cvBMA) was found to be more sensitive to experimental effects than simply extracting parameter estimates from the best GLM in each subject which again highlights its applicability in situations of uncertainty about modelling processes of no interest.</s><s>However, we want to caution the reader that model averaging is not a general remedy against confound effects.</s><s>In cases of low and medium correlation, cvBMA can be a useful tool to adjust parameter estimates of experimental regressors for the effects of confound regressors.</s><s>But if two HRF regressors are correlated by say 0.99, and just one of them has an effect on the data, it is almost impossible to find out where this effect really comes from.</s><s>Any model selection will either increase the false positive rate (when including an experimental regressor which does not have an effect) or decrease the true positive rate (when including a confound regressor that does not have an effect) of statistical tests for experimental effects.</s><s>Even model averaging can only achieve a compromise between these two suboptima.</s><s>Also with model selection methods at hand, one still try to avoid confounds in experimental designs.</s><s>And if confounds are unavoidable within subjects, they should at least not be consistent across subjects.</s><s>Moreover, one has to keep in mind that cvBMS and cvBMA do not only perform different statistical operations, but also have different interpretations.</s><s>Whereas cvBMS aims at identifying which psychological model best describes the hemodynamic signal, cvBMA tries to optimize decisions with respect to certain model parameters, in this case by improving parameter estimates.</s><s>For example, if we look at Figure <ref type="figure" target="#fig_3">4A</ref>, red and blue voxels indicate that the respective models are optimal and the respective contrast is significant in these voxels.</s><s>In contrast, green voxels indicate that the respective contrast is significant in these voxels, given that model uncertainty has been removed.</s><s>All in all, we therefore see cvBMA as a complement to the recently developed cvBMS.</s><s>While cvBMS is the optimal approach when parameters of interest are not identical across the model space, e.g. because one part of the models uses a categorical and another part uses a parametric description of the paradigm <ref type="bibr" target="#b6">(Bogler et al., 2013)</ref>, cvBMA is the more appropriate analysis when regressors of interest are the same in all models <ref type="bibr">(Meyer and Haynes, in prep.)</ref>, such that their estimates can be averaged across models and taken to second-level analysis for sensible population inference.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6">Acknowledgements</head></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc><div><p><s>Figure 1.</s><s>Model averaging for general linear models in fMRI data analysis.</s><s>This figure summarizes our approach of cross-validated Bayesian model averaging (cvBMA).</s><s>All calculations are performed voxel-wise, an exemplary voxel is highlighted using red crosshairs.</s><s>(A) A model space is constructed by adding varying additional regressors (e.g.</s><s>describing cues and feedback) to a set of common regressors (e.g.</s><s>describing targets) which are included in all models.</s><s>(B) Model estimation proceeds by classical GLM inversion, resulting in maximum likelihood (ML) parameter estimates (1-4), and by Bayesian GLM inversion with cross-validation (CV), resulting in maps of cross-validated log model evidences (LME) from which posterior probabilities (PP) can be calculated.</s><s>(C) Model averaging proceeds by weighting different models' estimates for the same regressor with the corresponding PP to obtain BMA estimates on which second-level inference can be performed.</s><s>Parts of this figure are adapted from SPM course material (Stephan, 2010).</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc><div><p><s>Figure 2. Simulation performance of cross-validated Bayesian model averaging.</s><s>This figure demonstrates that Bayesian model averaging (BMA) can be superior to always using parameters from the best model as identified by maximal log model evidence (LME).(A)</s><s>Design matrices of the full model used in the simulation.</s><s>Different onset differences between a target regressor (x 1 ) and preceding cues (x 2 ) as well as subsequent feedback (x 3 ) are simulated where a delay in seconds implies a certain angle in degrees and correlation between x 1 and x 2 as well as x 1 and x 3 .</s><s>(B) Box plots of squared errors (SE) across simulations when estimating the target regressor weight (β 1 ) using either the group-level best model (obtained by cvBMS, black), the subject-wise best model (with maximal cvLME, red), the averaged model (obtained by cvBMA, green) or the true model (used to generate the data, blue).</s><s>Each panel is scaled such that the upper black whisker corresponds to 95% of the y-axis maximum and the y-axis minimum is at zero.</s><s>(C) Bar plots of area under the curve (AUC) when performing an ROC analysis for the secondlevel one-sample t-test of β 1 against 0. Each panel is scaled to 0.9 &lt; AUC &lt; 1.</s><s>When regressors are almost orthogonal, the four estimation techniques do not differ regarding SE or AUC.</s><s>With decreasing delay and thus increasing overlap, the true model outperforms cvBMA and cvBMA outperforms the best-model approaches in terms of both, estimation precision (B) and test performance (C).</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc><div><p><s>Figure 3. Experimental design of the conflict adaptation paradigm.</s><s>This figure describes the experiment underlying the data set used for empirical validation of our method.</s><s>(A) Sequence of events and exact timing during each of the 20 blocks per session.</s><s>(B) Sequence of events and exact timing during one of the 10 trials per block.</s><s>(C) Experimental conditions: The paradigm was a 2 × design with conflict (congruent vs. incongruent) and task set (response rule 1 vs. 2) being the two factors.</s><s>Abbreviations: sec = seconds; exp.</s><s>dist.</s><s>= exponentially distributed; L/R = left/right button.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 .</head><label>4</label><figDesc><div><p><s>Figure 4. Empirical example for cross-validated Bayesian model averaging.</s><s>This figure illustrates how model averaging achieves a compromise between the different models' parameter estimates.</s><s>(A) Colored voxels indicate a significant main effect of stay vs.switch blocks observed when using a model without cue phases and first trials (red), a model without cue phases but with first trials (blue), both masked with their group-level selected-model map (SMM) obtained through cross-validated Bayesian model selection (cvBMS), as well as observed in a second-level analysis on the averaged parameters (green) obatined via cross-validated Bayesian model averaging (cvBMA).</s><s>The BMA approach seems to not only average parameter values, but to also make a compromise regarding spatial location with respect to the blue (more ventral-posterior) and red (more dorsalanterior) clusters.</s><s>(B) Colored voxels indicate overlap between significant effects using individual models and cvBMA estimates.</s><s>The BMA approach shows stronger overlap with the model including first trials (cyan) than with the one not including them (yellow).</s><s>By definition, there is no overlap between these two models as SMMs are mutually exclusive.</s><s>(C) Axial sections and color coding used for the panels on the left.</s></p></div></figDesc><graphic coords="15,351.73,329.08,163.99,163.99" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>level analyses with unconstrained whole-brain statistical inference (unc., p ≤ 0.001, k = 10) Second-level analyses masked with selected-model maps (cross-validated Bayesian model selection, cvBMS)</head><label></label><figDesc></figDesc><table><row><cell>First-level model used for second-level analysis</cell><cell></cell><cell cols="5">Main effect "stay ≠ switch" peak-level cluster-level</cell><cell></cell><cell></cell><cell cols="2">peak-level</cell><cell></cell><cell cols="2">cluster-level</cell><cell></cell></row><row><cell>Second-</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>&lt;0.001</cell><cell>no</cell><cell>-15</cell><cell>-13</cell><cell>77</cell><cell>6.60</cell><cell>239</cell><cell>&lt;0.001</cell><cell>no</cell></row><row><cell>with cue phase, w/o 1st trials</cell><cell>-18</cell><cell>-25</cell><cell>77</cell><cell>20.76</cell><cell>14</cell><cell>0.401</cell><cell>no</cell><cell>-18</cell><cell>-25</cell><cell>77</cell><cell>4.56</cell><cell>21</cell><cell>0.237</cell><cell>no</cell></row><row><cell>with cue phase, with 1st trials</cell><cell cols="7">no significant effect in left primary motor cortex (AAL 001)</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>w/o cue phase, w/o 1st trials</cell><cell>-15</cell><cell>-13</cell><cell>77</cell><cell>45.98</cell><cell>13</cell><cell>0.513</cell><cell>no</cell><cell>-15</cell><cell>-13</cell><cell>77</cell><cell>6.78</cell><cell>15</cell><cell></cell><cell>no</cell></row><row><cell></cell><cell>-18</cell><cell>-28</cell><cell>77</cell><cell>36.62</cell><cell>16</cell><cell>0.367</cell><cell>no</cell><cell>-18</cell><cell>-28</cell><cell>77</cell><cell>6.05</cell><cell>18</cell><cell>0.381</cell><cell>no</cell></row><row><cell></cell><cell>-18</cell><cell>8</cell><cell>68</cell><cell>23.72</cell><cell>10</cell><cell>0.691</cell><cell>no</cell><cell>-18</cell><cell>8</cell><cell>68</cell><cell>4.87</cell><cell>14</cell><cell>0.547</cell><cell>no</cell></row><row><cell>w/o cue phase, with 1st trials</cell><cell>-30</cell><cell>-40</cell><cell>71</cell><cell>42.87</cell><cell>100</cell><cell>&lt;0.001</cell><cell>yes</cell><cell>-30</cell><cell>-40</cell><cell>71</cell><cell>6.55</cell><cell>135</cell><cell>&lt;0.001</cell><cell>yes</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>-42</cell><cell>-16</cell><cell>53</cell><cell>4.84</cell><cell>14</cell><cell>0.533</cell><cell>no</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>-24</cell><cell>-55</cell><cell>59</cell><cell>3.86</cell><cell>10</cell><cell>0.739</cell><cell>no</cell></row><row><cell>with cue phase, w/o 1st trials</cell><cell cols="7">no significant effect in left primary motor cortex (AAL 001)</cell><cell cols="7">no significant effect in left primary motor cortex (AAL 001)</cell></row><row><cell>with cue phase, with 1st trials</cell><cell cols="7">no significant effect in left primary motor cortex (AAL 001)</cell><cell cols="7">no significant effect in left primary motor cortex (AAL 001)</cell></row><row><cell cols="12">Second-level analyses based on averaged parameters (cross-validated Bayesian model averaging, cvBMA)</cell><cell></cell><cell></cell><cell></cell></row><row><cell>averaged model parameter estimates</cell><cell>-18</cell><cell>-22</cell><cell>77</cell><cell>28.26</cell><cell>44</cell><cell>0.002</cell><cell>no</cell><cell>-18</cell><cell>-22</cell><cell>77</cell><cell>5.32</cell><cell>77</cell><cell>&lt;0.001</cell><cell>no</cell></row><row><cell>best model's parameter estimates</cell><cell>-18</cell><cell>-16</cell><cell>77</cell><cell>26.81</cell><cell>22</cell><cell>0.021</cell><cell>no</cell><cell>-18</cell><cell>-16</cell><cell>77</cell><cell>5.18</cell><cell>71</cell><cell>&lt;0.001</cell><cell>no</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 .</head><label>2</label><figDesc><div><p><s>Selected models from cross-validated Bayesian model selection.</s><s>This table summarizes model selection results for the four models used in the empirical example (see Figures</s></p></div></figDesc><table><row><cell>left</cell><cell>right</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head></head><label></label><figDesc><div><p><s>This work was supported by the Bernstein Computational Neuroscience Program of the German Federal Ministry of Education and Research (BMBF grant 01GQ1001C), the Research Training Group "Sensory Computation in Neural Systems" (GRK 1589/1-2), the Collaborative Research Center "Volition and Cognitive Control: Mechanisms, Modulations, Dysfunctions" (SFB 940/1) and the German Research Foundation (DFG grants EXC 257 and KFO 247).</s><s>Joram Soch received a Humboldt Research Track Scholarship and receives an Elsa Neumann Scholarship from the State of Berlin.</s><s>The authors have no conflict of interest, financial or otherwise, to declare.</s><s>Implementations of voxel-wise cross-validated Bayesian model selection (https://github.</s><s>com/JoramSoch/cvBMS) and cross-validated Bayesian model averaging (https://github.</s><s>com/JoramSoch/cvBMA) compatible with SPM8 and SPM12 can be downloaded from the corresponding author's GitHub profile (https://github.com/JoramSoch).</s></p></div></figDesc><table><row><cell>7 Software Note</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1">Please note that the cvLME is used for model averaging and therefore session-wise parameter estimates (e.g. obtained from SPM) are averaged across sessions before applying the BMA equation. In the case of single-session fMRI data, we suggest to use split-half cross-validation<ref type="bibr" target="#b34">(Soch et al., 2014)</ref> and use the cvLME together with the one estimate for each regressor.</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2">For comparison, in an SPM template data set, we have observed the median values µ = 0.14, σ 2 BS = 3.33 and SNR = 4.10, i.e. a much higher SNR than in our simulations. These data were first published as a study on repetition priming<ref type="bibr" target="#b17">(Henson et al., 2002)</ref>, previously used for model comparison<ref type="bibr" target="#b28">(Penny et al., 2007)</ref> and analyzed according to the SPM8 Manual(Ashburner et al., 2013, ch. 29).</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="3">In our MATLAB script, V was created using the command: V = toeplitz(exp(-[0:1:(n-1)])).</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="4">The first block was categorized as a switch block, because a new rule had to be applied.</note>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8">Appendix</head><p><s>Consider the general linear model (GLM) given by</s></p><p><s>with known design matrix X and covariance structure V = −1 as well as unknown model parameters β and σ 2 = 1/τ .</s><s>Then, maximum likelihood (ML) estimates for regression coefficients β, their covariance cov(β) and residual variance σ 2 are given by βML</s></p><p><s>The most common Bayesian treatment of linear regression is the general linear model with normal-gamma priors (GLM-NG; <ref type="bibr">Bishop, 2007, ch. 3.4;</ref><ref type="bibr">Koch, 2007, ch. 4.3.2)</ref>.</s><s>Using a non-informative prior distribution <ref type="bibr">(Soch et al., 2016, eq. 15)</ref>, the parameters of the posterior distribution <ref type="bibr">(Soch et al., 2016, eq. 6)</ref> evaluate as</s></p><p><s>Then, maximum a posteriori (MAP) estimates for regression coefficients β, their covariance cov(β) and residual precision τ are given by</s></p><p><s>This demonstrates that ML estimates for the regression coefficients in one session correspond to MAP estimates when analyzing this session with non-informative priors.</s><s>Given that all sessions contribute the same amount of evidence -which usually is the case in fMRI when sessions (approximately) use the same number of scans -, the MAP estimate from all data is also equal to the average of the session-wise ML estimates where i indexes session.</s><s>It follows that BMA using averaged ML estimates (e.g.</s><s>estimated using SPM) is equivalent to BMA using MAP estimates obtained with non-informative priors (e.g. when calculating the cvLME).</s></p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">A new look at the statistical model identification</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Akaike</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TAC.1974.1100705</idno>
+		<ptr target="http://ieeexplore.ieee.org/lpdocs/epic03/wrapper.htm?arnumber=1100705" />
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Automatic Control</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="page" from="716" to="723" />
+			<date type="published" when="1974">1974</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Ambiguous Results in Functional Neuroimaging Data Analysis Due to Covariate Correlation</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Andrade</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">L</forename><surname>Paradis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Rouquette</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">B</forename><surname>Poline</surname></persName>
+		</author>
+		<idno type="DOI">10.1006/nimg.1999.0479</idno>
+		<ptr target="http://www.sciencedirect.com/science/article/pii/S1053811999904792" />
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page" from="483" to="486" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ashburner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Friston</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Penny</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">E</forename><surname>Stephan</surname></persName>
+		</author>
+		<ptr target="http://www.fil.ion.ucl.ac.uk/spm/doc/spm8manual.pdf" />
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="volume">8</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ashburner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Friston</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Penny</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">E</forename><surname>Stephan</surname></persName>
+		</author>
+		<ptr target="http://www.fil.ion.ucl.ac.uk/spm/doc/spm12manual.pdf" />
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="volume">12</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<monogr>
+		<title level="m" type="main">Pattern Recognition and Machine Learning</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Bishop</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2007">2007. 2011</date>
+			<publisher>Springer</publisher>
+			<pubPlace>New York</pubPlace>
+		</imprint>
+	</monogr>
+	<note>1st ed. 2006. corr. 2nd printing</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Decoding sequential stages of task preparation in the human brain</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bode</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Haynes</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuroimage.2008.11.031</idno>
+		<ptr target="http://linkinghub.elsevier.com/retrieve/pii/S1053811908012226" />
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="page" from="606" to="613" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Orientation pop-out processing in human visual cortex</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Bogler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bode</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Haynes</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuroimage.2013.05.040</idno>
+		<ptr target="http://linkinghub.elsevier.com/retrieve/pii/S105381191300534X" />
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage</title>
+		<imprint>
+			<biblScope unit="volume">81</biblScope>
+			<biblScope unit="page" from="73" to="80" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">The Role of the Frontal Cortex in Task Preparation</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Brass</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">Y</forename><surname>Cramon</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/cercor/12.9.908</idno>
+		<idno>doi:10.1093/cercor/12.9.908</idno>
+		<ptr target="http://www.cercor.oupjournals.org/cgi/doi/10.1093/cercor/12.9.908" />
+	</analytic>
+	<monogr>
+		<title level="j">Cerebral Cortex</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="908" to="914" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">On the Plurality of (Methodological) Worlds: Estimating the Analytic Flexibility of fMRI Experiments</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Carp</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/fnins.2012.00149/abstract</idno>
+		<idno>doi:10.3389/fnins.2012. 00149</idno>
+		<ptr target="http://journal.frontiersin.org/article/10.3389/fnins.2012.00149/abstract" />
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Effects of noise letters upon the identification of a target letter in a nonsearch task</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">A</forename><surname>Eriksen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">W</forename><surname>Eriksen</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/BF03203267</idno>
+		<idno>doi:10.3758/BF03203267</idno>
+		<ptr target="http://www.springerlink.com/index/10.3758/BF03203267" />
+	</analytic>
+	<monogr>
+		<title level="j">Perception &amp; Psychophysics</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="page" from="143" to="149" />
+			<date type="published" when="1974">1974</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Classical and Bayesian Inference in Neuroimaging: Applications</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Friston</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Glaser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Henson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kiebel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Phillips</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ashburner</surname></persName>
+		</author>
+		<idno>doi:10. 1006/nimg.2002.1091</idno>
+		<ptr target="http://linkinghub.elsevier.com/retrieve/pii/S1053811902910918" />
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="page" from="484" to="512" />
+			<date type="published" when="2002">2002a</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Classical and Bayesian Inference in Neuroimaging: Theory</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Friston</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Penny</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Phillips</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kiebel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Hinton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ashburner</surname></persName>
+		</author>
+		<idno>doi:10. 1006/nimg.2002.1090</idno>
+		<ptr target="http://linkinghub.elsevier.com/retrieve/pii/S1053811902910906" />
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="page" from="465" to="483" />
+			<date type="published" when="2002">2002b</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Modalities, Modes, and Models in Functional Neuroimaging</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Friston</surname></persName>
+		</author>
+		<idno type="DOI">10.1126/science.1174521</idno>
+		<idno>doi:10.1126/science.1174521</idno>
+		<ptr target="http://www.sciencemag.org/cgi/doi/10.1126/science.1174521" />
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">326</biblScope>
+			<biblScope unit="page" from="399" to="403" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Statistical parametric maps in functional imaging: A general linear approach. Human Brain Mapping 2</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Friston</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">P</forename><surname>Holmes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Worsley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Poline</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">D</forename><surname>Frith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">S J</forename><surname>Frackowiak</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/hbm.460020402</idno>
+		<idno>doi:10.1002/hbm.460020402</idno>
+		<ptr target="http://doi.wiley.com/10.1002/hbm.460020402" />
+		<imprint>
+			<date type="published" when="1994">1994</date>
+			<biblScope unit="page" from="189" to="210" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Bayesian Data Analysis</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Gelman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">B</forename><surname>Carlin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">S</forename><surname>Stern</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Dunson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Vehtari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Rubin</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<publisher>Chapman and Hall/CRC</publisher>
+			<pubPlace>Boca Raton</pubPlace>
+		</imprint>
+	</monogr>
+	<note>3rd edition ed.</note>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Rational Decisions</title>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">J</forename><surname>Good</surname></persName>
+		</author>
+		<ptr target="http://www.jstor.org/stable/2984087" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society. Series B (Methodological)</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page" from="107" to="114" />
+			<date type="published" when="1952">1952</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">The choice of basis functions in eventrelated fMRI</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Henson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">D</forename><surname>Rugg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Friston</surname></persName>
+		</author>
+		<ptr target="http://www.fil.ion.ucl.ac.uk/spm/data/facerfx/pdf/hbm-fir.pdf" />
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="page" from="149" to="149" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Face Repetition Effects in Implicit and Explicit Memory Tests as Measured by fMRI</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">N A</forename><surname>Henson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Shallice</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">L</forename><surname>Gorno-Tempini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Dolan</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/cercor/12.2.178</idno>
+		<idno>doi:10.1093/cercor/12.2.178</idno>
+		<ptr target="http://www.cercor.oxfordjournals.org/cgi/doi/10.1093/cercor/12.2.178" />
+	</analytic>
+	<monogr>
+		<title level="j">Cerebral Cortex</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="178" to="186" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Bayesian Model Averaging: A Tutorial</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Hoeting</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Madigan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Raftery</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">T</forename><surname>Volinsky</surname></persName>
+		</author>
+		<ptr target="http://www.jstor.org/stable/2676803" />
+	</analytic>
+	<monogr>
+		<title level="j">Statistical Science</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page" from="382" to="401" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Generalisability, random effects &amp; population inference</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Holmes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Friston</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page">S754</biblScope>
+			<date type="published" when="1998">1998</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">The General Linear Model, in: Statistical Parametric Mapping: The Analysis of Functional Brain Images: The Analysis of Functional Brain Images</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kiebel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Holmes</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2011">2011</date>
+			<publisher>Academic Press</publisher>
+			<biblScope unit="page" from="101" to="125" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Domain general and domain preferential brain regions associated with different types of task switching: A Meta-Analysis</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">E</forename><surname>Cilles</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">F</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">T</forename><surname>Gold</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/hbm.21199</idno>
+		<idno>doi:10.1002/hbm.21199</idno>
+		<ptr target="http://doi.wiley.com/10.1002/hbm.21199" />
+	</analytic>
+	<monogr>
+		<title level="j">Human Brain Mapping</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="130" to="142" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Common and Distinct Mechanisms of Cognitive Flexibility in Prefrontal Cortex</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">F</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">E</forename><surname>Cilles</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">T</forename><surname>Gold</surname></persName>
+		</author>
+		<idno type="DOI">10.1523/JNEUROSCI.5923-10.2011</idno>
+		<idno>doi:10. 1523/JNEUROSCI.5923-10</idno>
+		<ptr target="http://www.jneurosci.org/cgi/doi/10.1523/JNEUROSCI.5923-10.2011" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="page" from="4771" to="4779" />
+			<date type="published" when="2011">2011. 2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<monogr>
+		<title level="m" type="main">Introduction to Bayesian Statistics</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">R</forename><surname>Koch</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2007">2007</date>
+			<publisher>Springer</publisher>
+			<pubPlace>Berlin; New York</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">Decoding behavioral adaptation under stimulus conflict</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Meyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Haynes</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Statistical Analysis of fMRI Time-Series: A Critical Review of the GLM Approach</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Monti</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/fnhum.2011.00028/abstract</idno>
+		<idno>doi:10.3389/fnhum.2011.00028</idno>
+		<ptr target="http://journal.frontiersin.org/article/10.3389/fnhum.2011.00028/abstract" />
+	</analytic>
+	<monogr>
+		<title level="j">Frontiers in Human Neuroscience</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Orthogonalization of Regressors in fMRI Models</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Mumford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">B</forename><surname>Poline</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Poldrack</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0126255</idno>
+		<idno>doi:10.1371/journal.pone.0126255</idno>
+		<ptr target="http://dx.plos.org/10.1371/journal.pone.0126255" />
+	</analytic>
+	<monogr>
+		<title level="j">PLOS ONE</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<date type="published" when="2015">2015. e0126255</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Comparing Dynamic Causal Models using AIC, BIC and Free Energy</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Penny</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuroimage.2011.07.039</idno>
+		<ptr target="http://linkinghub.elsevier.com/retrieve/pii/S1053811911008160" />
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage</title>
+		<imprint>
+			<biblScope unit="volume">59</biblScope>
+			<biblScope unit="page" from="319" to="330" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Bayesian comparison of spatially regularised general linear models</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Penny</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Flandin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Trujillo-Barreto</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/hbm.20327/abstract</idno>
+		<idno>doi:10.1002/hbm.20327</idno>
+		<ptr target="http://onlinelibrary.wiley.com/doi/10.1002/hbm.20327/abstract" />
+	</analytic>
+	<monogr>
+		<title level="j">Human Brain Mapping</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="page" from="275" to="293" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Comparing Families of Dynamic Causal Models</title>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">D</forename><surname>Penny</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">E</forename><surname>Stephan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Daunizeau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Rosa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Friston</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">M</forename><surname>Schofield</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">P</forename><surname>Leff</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pcbi.1000709</idno>
+		<idno>doi:10. 1371/journal.pcbi.1000709</idno>
+		<ptr target="http://dx.plos.org/10.1371/journal.pcbi.1000709" />
+	</analytic>
+	<monogr>
+		<title level="j">PLoS Computational Biology</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<date type="published" when="2010">2010. e1000709</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Bayesian Model Averaging for Linear Regression Models</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Raftery</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Madigan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Hoeting</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01621459.1997.10473615</idno>
+		<idno>doi:10.1080/ 01621459.1997.10473615</idno>
+		<ptr target="http://www.tandfonline.com/doi/abs/10.1080/01621459.1997.10473615" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">92</biblScope>
+			<biblScope unit="page" from="179" to="191" />
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Model assessment and model building in fMRI</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Razavi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">J</forename><surname>Grabowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">P</forename><surname>Vispoel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Monahan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Mehta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Eaton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Bolinger</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/hbm.10141</idno>
+		<idno>doi:10.1002/hbm.10141</idno>
+		<ptr target="http://doi.wiley.com/10.1002/hbm.10141" />
+	</analytic>
+	<monogr>
+		<title level="j">Human Brain Mapping</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="page" from="227" to="238" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Estimating the Dimension of a Model</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Schwarz</surname></persName>
+		</author>
+		<idno type="DOI">10.1214/aos/1176344136</idno>
+		<ptr target="http://projecteuclid.org/euclid.aos/1176344136" />
+	</analytic>
+	<monogr>
+		<title level="j">The Annals of Statistics</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page" from="461" to="464" />
+			<date type="published" when="1978">1978</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<monogr>
+		<title level="m" type="main">The cross-validated log model evidence: comparison to other model selection criteria</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Soch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Allefeld</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<title level="m" type="main">Solving the problem of overfitting in neuroimaging? Use of voxel-wise model comparison to test design parameters in first-level fMRI data analysis</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Soch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Allefeld</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Haynes</surname></persName>
+		</author>
+		<idno type="DOI">10.7490/f1000research.1096034.1</idno>
+		<ptr target="http://f1000research.com/posters/1096034" />
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="page">F1000R</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<monogr>
+		<title level="m" type="main">Solving the problem of overfitting in neuroimaging? Cross-validated Bayesian model selection for methodological control in fMRI data analysis</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Soch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Allefeld</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Haynes</surname></persName>
+		</author>
+		<idno type="DOI">10.7490/f1000research.1000161.1</idno>
+		<idno>doi:10.7490/f1000research.1000161.1</idno>
+		<ptr target="http://dx.doi.org/10.7490/f1000research.1000161.1" />
+		<imprint>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page">F1000R</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">How to avoid mismodelling in GLMbased fMRI data analysis: Cross-validated Bayesian model selection</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Soch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Haynes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Allefeld</surname></persName>
+		</author>
+		<idno>doi:10.1016/ j.neuroimage.2016.07.047</idno>
+		<ptr target="http://linkinghub.elsevier.com/retrieve/pii/S1053811916303615" />
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage</title>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<monogr>
+		<title level="m" type="main">Methods &amp; models for fMRI data analysis in neuroeconomics</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">E</forename><surname>Stephan</surname></persName>
+		</author>
+		<ptr target="http://www.socialbehavior.uzh.ch/teaching/methodsspring10.html" />
+		<imprint>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,2191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Rare-event sampling of epigenetic landscapes and phenotype transitions</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018-08-03">August 3, 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Margaret</forename><forename type="middle">J</forename><surname>Tse</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Chemical Engineering &amp; Materials Science</orgName>
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<settlement>Irvine, Irvine</settlement>
+									<region>California</region>
+									<country>United States of America</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Brian</forename><forename type="middle">K</forename><surname>Chu</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Chemical Engineering &amp; Materials Science</orgName>
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<settlement>Irvine, Irvine</settlement>
+									<region>California</region>
+									<country>United States of America</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Cameron</forename><forename type="middle">P</forename><surname>Gallivan</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Chemical Engineering &amp; Materials Science</orgName>
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<settlement>Irvine, Irvine</settlement>
+									<region>California</region>
+									<country>United States of America</country>
+								</address>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName><forename type="first">Elizabeth</forename><forename type="middle">L</forename><surname>Read</surname></persName>
+							<email>elread@uci.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Chemical Engineering &amp; Materials Science</orgName>
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<settlement>Irvine, Irvine</settlement>
+									<region>California</region>
+									<country>United States of America</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Molecular Biology &amp; Biochemistry</orgName>
+								<orgName type="institution">University of California</orgName>
+								<address>
+									<settlement>Irvine, Irvine</settlement>
+									<region>California</region>
+									<country>United States of America</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff2">
+								<orgName type="institution">Ottawa University</orgName>
+								<address>
+									<country key="CA">CANADA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff3">
+								<orgName type="institution">Read-Lab-UCI/ Rare-Event-Sampling-Gene-Networks</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Rare-event sampling of epigenetic landscapes and phenotype transitions</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018-08-03">August 3, 2018</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">3D4C05D81D0C7B7FF05B63CAAA1C6224</idno>
+					<idno type="DOI">10.1371/journal.pcbi.1006336</idno>
+					<note type="submission">Received: December 9, 2017 Accepted: June 29, 2018</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:17+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Stochastic simulation has been a powerful tool for studying the dynamics of gene regulatory networks, particularly in terms of understanding how cell-phenotype stability and fatetransitions are impacted by noisy gene expression.</s><s>However, gene networks often have dynamics characterized by multiple attractors.</s><s>Stochastic simulation is often inefficient for such systems, because most of the simulation time is spent waiting for rare, barriercrossing events to occur.</s><s>We present a rare-event simulation-based method for computing epigenetic landscapes and phenotype-transitions in metastable gene networks.</s><s>Our computational pipeline was inspired by studies of metastability and barrier-crossing in protein folding, and provides an automated means of computing and visualizing essential stationary and dynamic information that is generally inaccessible to conventional simulation.</s><s>Applied to a network model of pluripotency in Embryonic Stem Cells, our simulations revealed rare phenotypes and approximately Markovian transitions among phenotypestates, occurring with a broad range of timescales.</s><s>The relative probabilities of phenotypes and the transition paths linking pluripotency and differentiation are sensitive to global kinetic parameters governing transcription factor-DNA binding kinetics.</s><s>Our approach significantly expands the capability of stochastic simulation to investigate gene regulatory network dynamics, which may help guide rational cell reprogramming strategies.</s><s>Our approach is also generalizable to other types of molecular networks and stochastic dynamics frameworks.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p><s>In multicellular organisms, differentiation of pluripotent stem cells into tissue-specific cells was traditionally considered to be an irreversible process.</s><s>The discovery of cell reprogramming revealed that the identity of a cell is not irreversibly stable, but rather plastic and amenable to control by perturbation of gene regulatory interactions-for example, through over-expression of key transcription factors <ref type="bibr" target="#b0">[1]</ref>.</s><s>Cellular plasticity has also been observed in other contexts, where cells appear to spontaneously transition among phenotypically distinct states.</s><s>For example, in embryonic stem cells, expression levels of key transcription factors show dynamic heterogeneity, which is thought to enable diversification of the population prior to lineage commitment <ref type="bibr" target="#b1">[2]</ref><ref type="bibr" target="#b2">[3]</ref><ref type="bibr" target="#b3">[4]</ref><ref type="bibr" target="#b4">[5]</ref><ref type="bibr" target="#b5">[6]</ref>.</s><s>This heterogeneity may result at least in part from stochastic statetransitions between functionally distinct, metastable subpopulations <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b6">[7]</ref><ref type="bibr" target="#b7">[8]</ref><ref type="bibr" target="#b8">[9]</ref>.</s><s>Stochastic statetransitions have also been proposed to play a role in cancer, by enabling cancer stem cells to arise de novo from non-stem subpopulations <ref type="bibr" target="#b9">[10]</ref>, or by enabling cells to reversibly transition to a drug-tolerant phenotype <ref type="bibr" target="#b10">[11]</ref>.</s><s>In microbial systems, stochastic phenotype switching has been identified as a survival mechanism for populations subjected to fluctuating environments <ref type="bibr" target="#b11">[12,</ref><ref type="bibr" target="#b12">13]</ref>.</s></p><p><s>Mathematical modeling has provided a basis for understanding how gene regulatory mechanisms and network interactions control cellular identity, stability, and phenotype-transitions.</s><s>These approaches yield a quantitative means of reinterpreting the long-standing conceptual framework known as Waddington's epigenetic landscape <ref type="bibr" target="#b13">[14]</ref><ref type="bibr" target="#b14">[15]</ref><ref type="bibr" target="#b15">[16]</ref><ref type="bibr" target="#b16">[17]</ref>.</s><s>In a mathematical framework, the "valleys" in the landscape that stabilize cell identities within distinct lineages correspond to attractor basins of a high-dimensional nonlinear dynamical system <ref type="bibr" target="#b17">[18]</ref>.</s><s>The nonlinearity results from positive feedback in transcriptional regulation and epigenetic barriers to chromatin remodeling, for example.</s><s>These feedback mechanisms give rise to multiple, stable (or metastable) phenotype-states accessible to a given genome.</s><s>Given the "bursty" nature of gene expression and ever-present molecular fluctuations in the cell <ref type="bibr" target="#b18">[19,</ref><ref type="bibr" target="#b19">20]</ref>, an active area of research is in modeling the effects of so-called intrinsic noise on gene regulatory network (GRN) dynamics.</s><s>These mathematical models support the idea that intrinsic noise can drive stochastic phenotype-transitions <ref type="bibr" target="#b20">[21]</ref><ref type="bibr" target="#b21">[22]</ref><ref type="bibr" target="#b22">[23]</ref><ref type="bibr" target="#b23">[24]</ref><ref type="bibr" target="#b24">[25]</ref>, which, though likely to be exceedingly rare in general cellular contexts, may explain the heterogeneity observed in embryonic stem cells where epigenetic barriers appear to be lowered <ref type="bibr" target="#b25">[26]</ref>.</s></p><p><s>Mathematical models of GRN dynamics that treat stochastic molecular processes are often formulated as probabilistic Master Equations, in which the system evolves probabilistically over a discrete state-space of molecular species and configurations according to a defined set of biochemical reaction rules.</s><s>Another common framework is that of a coupled system of ODEs describing the expression levels of genes in the network, with the inclusion of additive noise terms.</s><s>The Master Equation framework is well-suited to studying how "local" stochastic molecular events (e.g., transcription factors interacting with DNA or chromatin statetransitions near promoters) impact "global" dynamics of phenotype stability and state-switching <ref type="bibr">[23-25, 27, 28]</ref>.</s><s>These molecular fluctuations affecting promoter activity have been shown to significantly impact the structure of epigenetic landscapes, motivating the use of Master Equation-based approaches.</s><s>That is, the number and stability of phenotype-states accessible to a given GRN varies depending on the kinetic parameters governing these fluctuations <ref type="bibr" target="#b22">[23,</ref><ref type="bibr" target="#b23">24,</ref><ref type="bibr" target="#b28">29]</ref>.</s><s>Furthermore, ODE or "mean-field" models that average over these fluctuations can show qualitatively different landscape features <ref type="bibr" target="#b29">[30]</ref><ref type="bibr" target="#b30">[31]</ref><ref type="bibr" target="#b31">[32]</ref>.</s></p><p><s>Master Equation approaches face the well-known challenge of the "Curse-of-Dimensionality", as solving them requires enumeration of a state-space that grows exponentially with the number of molecular species in the network.</s><s>For this reason, discrete stochastic models of GRNs are often studied by stochastic Monte Carlo simulation, via the Gillespie algorithm <ref type="bibr" target="#b32">[33]</ref>.</s><s>However, stochastic simulation can also be problematic: in systems with metastability, such as GRNs, stochastic simulation becomes highly inefficient.</s><s>Transitions between metastable states are rare events (i.e., rare relative to the timescale of fluctuations within a metastable attractor basin), and thus difficult or impossible to observe.</s><s>Often, these rare events are precisely the events of interest, such as in GRNs where infrequent state-transitions represent critical cellfate transitions.</s></p><p><s>Rare-event sampling algorithms are designed to overcome these challenges, by redirecting computational resources towards events of interest, while maintaining statistical accuracy to global system dynamics <ref type="bibr" target="#b33">[34,</ref><ref type="bibr" target="#b34">35]</ref>.</s><s>In this work, we present a rare-event simulation-based method for computing and analyzing epigenetic landscapes of stochastic GRN models.</s><s>We combine rare-event methods with coarse-graining and analysis by Transition Path Theory-adopted from the field of Molecular Dynamics of protein folding <ref type="bibr" target="#b35">[36]</ref>-and show that this unified framework provides an automated approach to map epigenetic landscapes and transition dynamics in complex GRNs.</s><s>The method quantifies the number of metastable phenotype-states accessible to a GRN, calculates the rates of transitioning among phenotypes, and computes the likely paths by which transitions among phenotypes occur.</s><s>We apply the method to a model of pluripotency in mouse Embryonic Stem Cells.</s><s>Our results reveal rare sub-populations and transitions in the network, demonstrate how global landscape structure depends on kinetic parameters, and reveal irreversibility in paths of differentiation and reprogramming.</s><s>Our approach is not limited to gene regulatory networks; it is generalizable to other stochastic dynamics frameworks and is thus a potentially powerful tool for computing global dynamic landscapes in areas such as signal-transduction, population dynamics, and evolutionary dynamics.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head><p><s>A graphical overview of the computational pipeline presented in this paper can be found in Fig <ref type="figure" target="#fig_0">1</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Gene regulatory network models</head><p><s>We demonstrate the rare-event sampling method for two representative GRN models.</s><s>A small, two-gene network serves as a model system to validate the simulations.</s><s>We then apply the method to a more complex model of pluripotency in mouse Embryonic Stem Cells (mESCs).</s></p><p><s>Exclusive mutual inhibition, self-activation model.</s><s>The Exclusive Mutual Inhibition, Self-Activation (ExMISA) model is a two-gene network representing an archetypal motif at cell-fate branch points <ref type="bibr" target="#b36">[37,</ref><ref type="bibr" target="#b37">38]</ref>.</s><s>Each gene, denoted generically as A or B, encodes a transcription factor that activates its own transcription and represses transcription of the other gene.</s><s>We adopt previous conventions <ref type="bibr" target="#b21">[22,</ref><ref type="bibr" target="#b22">23,</ref><ref type="bibr" target="#b38">39]</ref> for stochastic GRN dynamic models.</s><s>The full list of biochemical reactions and parameters can be found in the Supplement, S1 File and S1 Table <ref type="table">.</ref></s><s>The model encompasses stochastic birth/death processes for transcription factor production and degradation, and stochastic binding and unbinding of transcription factors to DNA regulatory/promoter regions; the binding-states of these regions governs the production rate.</s><s>Each transcription factor is assumed to bind to DNA as a homodimer, giving cooperative regulation (explicit dimerization reactions are neglected, such that the transcription-factor- Computational pipeline for rare-event sampling of epigenetic landscapes and phenotype transitions.</s><s>The input to the computational pipeline is a reaction network model of gene regulatory network dynamics.</s><s>Stochastic simulations are performed using SSA <ref type="bibr" target="#b32">[33]</ref> and Weighted Ensemble rare-event sampling <ref type="bibr" target="#b44">[45]</ref>.</s><s>The WE method can be run in two modes: Rate Mode computes the rate of transitioning between two userdefined regions of interest with high accuracy.</s><s>Transitio n-Matrix Mode computes the pairwise transition probabilities among N bins adaptively defined sampling bins that span the system state-space.</s><s>Further visualization and analysis of the transition-matrix can be performed, including automatic designation of metastable phenotypes via the coarse-graining framework <ref type="bibr" target="#b41">[42]</ref> and identification of likely transition paths <ref type="bibr" target="#b35">[36]</ref>.</s><s>https://doi.org/10.1371/journal.pcbi.1006336.g001</s><s>binding reaction is modeled as tri-molecular).</s><s>In the "exclusive" network variant, transcription factors compete for binding sites on DNA (only one transcription factor dimer can be bound to a gene's promoter at a time).</s><s>The discrete state-vector, which completely describes the state of the system, is given by x = [A ij , B ij , n a , n b ].</s><s>A ij and B ij represent the three possible promoter binding-states for each gene (i.e., A/B 00 , A/B 10 , A/B 01 denote unbound, activator-bound, or repressor-bound states).</s><s>The copy-numbers of expressed protein transcription factors are denoted by n a and n b for products of gene A and B, respectively, and may in principle take any nonnegative integer value.</s><s>All processes related to transcription, translation, and assembly are subsumed into a single protein birth reaction.</s><s>For genes in state A/B ij , this production occurs with rate constant g ij .</s><s>The production rate is high when the promoter is bound by the activator (its own product).</s><s>Otherwise, if unbound or repressor-bound, a low "basal" rate of expression is assumed, i.e. g 00 = g 01 &lt; g 10 .</s><s>Degradation of protein products occurs with rate k, and stochastic binding/unbinding of transcription factors to DNA occur with h and f, respectively.</s><s>The model is symmetric, with equivalent parameters for the two genes.</s></p><p><s>We studied a parameter set (S1 Table <ref type="table">)</ref> in the regime of slow DNA-binding kinetics, in contrast to the so-called "adiabatic" regime where binding/unbinding of regulators to promoters occurs quickly relative to protein production and degradation.</s><s>We adopt this regime here for two reasons.</s><s>First, it has recently been suggested that the slow-or moderate-binding regime is likely to be more accurate in eukaryotic systems, where complex, slow-timescale changes in chromatin structure accompany binding events <ref type="bibr" target="#b26">[27,</ref><ref type="bibr" target="#b27">28,</ref><ref type="bibr" target="#b39">40]</ref>.</s><s>Second, the number of metastable states in GRNs appears to generally increase in the slow-binding regime, due to distinct combinations of relatively stable promoter configurations <ref type="bibr" target="#b40">[41]</ref>.</s><s>Therefore, this regime presents a test-case to develop enhanced sampling techniques that can efficiently traverse multiple system barriers and reconstruct complex, multi-modal dynamics.</s></p><p><s>Pluripotency network model.</s><s>The pluripotency network model of mESCs was developed by Zhang and Wolynes <ref type="bibr" target="#b27">[28]</ref> on the basis of experimental literature and previous models.</s><s>The 8-gene network shares the same stochastic reaction framework as the ExMISA model.</s><s>The genes (NANOG, OCT4, SOX2, GCNF, KLF4, PBX1, GATA6, and CDX2) suppress and activate each other through homo-and heterodimers of their encoded transcription factors (OCT4 and SOX2 form a heterodimer; all other regulatory interactions occur via homodimers).</s><s>Binding of transcription factors to promoters is not exclusive.</s><s>The model has five kinetic parameters: g on , g off , h, f, and k, corresponding to the rate of gene expression in the activated state, the rate of gene expression in the un-activated state, binding of transcription factors to DNA, unbinding of transcription factors from DNA, and transcription factor degradation (or exit from the nucleus).</s><s>Genes are expressed at the basal rate g off except when bound by at least one activator and no repressor, in which case they are expressed with rate g on .</s><s>The exception to this logic rule is NANOG, which must be bound by the the KLF4 and PBX1 transcription factor homodimers and the heterodimer OCT4-SOX2 to be activated.</s><s>Overall, these interactions lead to a total of 396 biochemical reactions, with a total of 88 "species" (counting 80 distinct gene promoter configurations and 8 protein species).</s><s>The complete logic rules and list of reaction rate parameters can be found in the Supplement (S1 File, S2 and S3 Tables).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Theoretical background: The chemical master equation and stochastic transition-matrix</head><p><s>The mathematical framework of the network models is the discrete Chemical Master Equation (CME) <ref type="bibr" target="#b32">[33]</ref>, which gives the time-evolution of the probability to observe the system in a given state.</s><s>In vector-matrix form, the CME can be written dpðx; tÞ dt ¼ Kpðx; tÞ ð1Þ</s></p><p><s>where p(x, t) is the probability over the system state-space (x) at time t, and K is the reaction rate-matrix containing stochastic reaction propensities (diagonal elements k jj = −∑ i k ij , i.e., columns sum to 0).</s><s>Eq 1 assumes a well-mixed system of reacting species, and assumes that the technically infinite state-space described by x (containing molecular species numbers/configurations) may be limited to some finite number of "reachable" states, (i.e., with non-negligible probability) for an enumeration of N states of the system, K 2 R NÂN .</s><s>The steady-state probability π(x) p(x, t ! 1) over N states satisfies</s></p><formula xml:id="formula_0">KpðxÞ ¼ 0:<label>ð2Þ</label></formula><p><s>Thus, π(x) can be obtained from K as the normalized right-eigenvector corresponding to the zero-eigenvalue.</s></p><p><s>It is sometimes desirable to work with the time-dependent stochastic transition-matrix T(τ) rather than the time-independent stochastic rate matrix K <ref type="bibr" target="#b41">[42]</ref>.</s><s>For example, T(τ) may be more amenable to estimation by sampling (as we demonstrate in this work for the pluripotency network, for which K is impractical to enumerate).</s><s>For a CME with rate matrix K, T(τ) is given by</s></p><formula xml:id="formula_1">TðtÞ ¼ expðtK T Þ<label>ð3Þ</label></formula><p><s>where exp denotes the matrix exponential.</s><s>TðtÞ 2 R NÂN 0 x 1 then gives the conditional probability for the system to transition between each pair of states within a lagtime τ.</s><s>That is, the elements T ij give the probability that the system, if found in state i, will then be found in state j at a time τ later, and rows sum to 1. Using T(τ), the evolution of probability over discrete intervals of the lagtime τ is given by the Chapman-Kolmogorov equation:</s></p><formula xml:id="formula_2">p T ðx; t þ ktÞ ¼ p T ðx; tÞT k ðtÞ:<label>ð4Þ</label></formula><p><s>Eigenvectors corresponding to dominant eigenvalues of the stochastic transition-matrix are associated with slow system processes.</s><s>By Perron-Frobenius, for an irreducible stochastic matrix T(τ) with eigenvalues λ i , there exists λ 1 = 1, and all other eigenvalues satisfy |λ i | &lt; 1. Analogous to Eq (2) for K, the steady-state probability can be obtained directly from T(τ) according to π T (x) = π T (x)T(τ), i.e., as the normalized left-eigenvector corresponding to λ 1 .</s></p><p><s>Eigenvalues λ i are related to global system timescales t i by</s></p><formula xml:id="formula_3">t i ¼ À t lnjl i ðtÞj ;<label>ð5Þ</label></formula><p><s>(with t 1 giving the infinite-time, stationary result) <ref type="bibr" target="#b41">[42]</ref>.</s><s>Additionally, the Mean First Passage Time for transitions from an individual state i to a region Y (MFPT i,Y , where Y may be an individual state or a set of states) can be computed using the matrix elements T i,j by <ref type="bibr" target="#b42">[43,</ref><ref type="bibr" target="#b43">44]</ref>:</s></p><formula xml:id="formula_4">MFPT i;Y ¼ 0 i 2 Y 1 þ X j= 2Y T i;j MFPT j;Y i = 2 Y : 8 &lt; :<label>ð6Þ</label></formula><p><s>MFPT i,Y is defined as the expected time for the system to reach Y for the first time, having started in state i.</s><s>The MFPTs may be computed by solving the linear system in Eq 6. Eq 6 computes the MFPT as a dimensionless quantity, the expected number of "steps" (of duration τ) required for the transition; multiplication by τ gives the MFPT in units of time.</s><s>The MFPT starting from a region X (i.e., a set of states, rather than an individual state) and ending in a region Y is given by the stationary-probability-weighted sum:</s></p><formula xml:id="formula_5">MFPT X;Y ¼ X i2X p i MFPT i;Y P j2X p j :<label>ð7Þ</label></formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Weighted ensemble stochastic simulation</head><p><s>Stochastic reaction kinetics can be simulated by the Stochastic Simulation Algorithm (SSA) <ref type="bibr" target="#b32">[33]</ref>, which produces numerically exact realizations of the CME (Eq 1).</s><s>Simulation circumvents the need for enumerating the exceedingly large system state-spaces typical of gene network models, but suffers from inefficiency due to rare events.</s><s>The Weighted Ensemble (WE) rare-event sampling algorithm <ref type="bibr" target="#b44">[45]</ref> redistributes computational resources from highprobability regions of state-space to low-probability regions, which tend to be under-sampled in conventional simulation.</s><s>The method thereby reduces computational effort in sampling rare transitions and improves accuracy of estimating probability density in, e.g., barrierregions or tails of distributions.</s><s>The method can be applied to any stochastic dynamics framework; in recent years, it has been widely applied to atom-scale Molecular Dynamics.</s><s>Details of the methodology are discussed in a recent review <ref type="bibr" target="#b34">[35]</ref> and references therein.</s><s>Both WE and a related method, Forward Flux Sampling, have been applied previously to the study of 2-gene networks <ref type="bibr" target="#b45">[46,</ref><ref type="bibr" target="#b46">47]</ref>.</s><s>Briefly, the algorithm works as follows: state-space is divided up into bins that span transitions of interest.</s><s>The number of bins, N bins , is typically Oð100Þ, and a variety of binning procedures can be used (we use an adaptive procedure described below).</s><s>Initially, a single simulation trajectory, or "replica", is assigned a weight of 1 and allowed to freely move within and between bins for a user-defined lagtime τ WE .</s><s>After each iteration of τ WE , a splitting and culling procedure divides and/or combines replicas and their associated weights in such a way as to reach and maintain an equal target number of weighted replicas, M targ , in each bin.</s><s>Over the course of the simulation, the combined weights of the replicas in a bin (averaged over successive iterations) will evolve toward the probability of the system to reside in that bin.</s><s>By maintaining the same number of replicas in each bin (M targ ), with weights proportional to probability, the algorithm devotes comparable computational time to low-and highprobability regions.</s><s>Effectively, the algorithm computes long-time processes on the basis of many short-time simulated trajectories.</s></p><p><s>Adaptive binning procedure.</s><s>As with other enhanced sampling methods, the WE algorithm requires dividing of state-space into defined sampling regions or "bins".</s><s>For highdimensional systems, discretization poses a challenge because, for an N-dimensional, evenly spaced grid, the number of required sampling bins increases exponentially with the number of degrees of freedom.</s><s>To address this challenge, a variety of Voronoi-polyhedra-based procedures have been developed <ref type="bibr" target="#b47">[48]</ref><ref type="bibr" target="#b48">[49]</ref><ref type="bibr" target="#b49">[50]</ref>.</s><s>These methods balance the need to focus simulation toward regions with non-negligible probability, while still enabling capture of rare transitions of interest.</s><s>In addition to efficiently discretizing high-dimensional spaces, the methods have the benefit of requiring little to no a priori knowledge of system dynamics (e.g., of the locations of regions of interest, or of appropriate progress coordinates for transitions).</s><s>We utilize an adaptive binning procedure from ref. <ref type="bibr" target="#b49">[50]</ref>.</s><s>Each bin (of user-defined number N bins ) is a Voronoi polyhedron with a generating node; the bin is defined as the region of state-space encompassing all points closer to the generating node than to nodes of any other region.</s><s>After each lagtime τ WE , new Voronoi regions are generated by successively selecting N bins node-positions from the current replica positions in a way that maximizes the Euclidean distance between them.</s><s>By this procedure, over the course of the simulation, bins spread to encompass all areas of state-space reached by any simulated trajectory.</s><s>After sufficient iterations, the bin positions stop spreading to new areas but continue to fluctuate.</s><s>The procedure is shown by representative simulations in S1 Fig.</s></p><p><s>Computation of transition rates.</s><s>One important output of WE sampling is the quantitative rate of transitions between regions of interest, which may be difficult or impossible to estimate from conventional simulation.</s><s>WE sampling may be run in different modes, depending on whether the sought-after information concerns a specific transition of interest, or a more global picture of system dynamics, i.e., encompassing approximate rates of transitions among many system states.</s><s>We term the two modes "rate" mode and "global transition-matrix" mode.</s><s>The former can deliver a more accurate estimate for a particular state-transition, while the latter can yield a more comprehensive, but approximate, measure of global system dynamics.</s></p><p><s>In rate mode, the user specifies two regions of interest, X and Y, The flux of probability into/out of regions of interest can be estimated by recording the amount of weight transferred at the end of each simulation iteration.</s><s>The mean first passage time of transitions from X to Y (MFPT X,Y ) is given in general by the inverse of probability flux from X to Y.</s><s>In practice, we apply a "labeling" scheme <ref type="bibr" target="#b50">[51,</ref><ref type="bibr" target="#b51">52]</ref>, where each replica is labeled as belonging to either set S X or S Y according to its history, i.e., whether it most recently visited region X or Y, respectively.</s><s>The summed weight of all replicas in S X is given by P S X , and</s></p><formula xml:id="formula_6">P S X þ P S Y ¼ 1 satisfies probabil- ity conservation. Then, MFPT X;Y ¼ P S X SS F SS ðYjS X Þ<label>ð8Þ</label></formula><p><s>where F SS ðYjS X Þ is the average probability flux from S X into Y at steady-state, which is measured by the weight of S X -labeled replicas entering Y during the simulation after convergence to steady-state.</s><s>The labeling scheme enables accurate estimates, including for non-Markovian transitions.</s><s>For Markovian transitions well-described by a single rate-constant,</s></p><formula xml:id="formula_7">k X,Y = 1/MFPT X,Y .</formula><p><s>Computation of network transition-matrix.</s><s>Running WE in transition-matrix mode enables visualization and analysis of global system dynamics on the basis of a single simulation, and requires no designation of regions of interest.</s><s>In this mode, the previously-converged Voronoi bins are fixed, and simulations are used to estimate a coarse-grained stochastic transition-matrix TðtÞ of size N bins × N bins .</s><s>The coarse-grained TðtÞ approximates the true dynamics over the full state-space, as given by T(τ).</s><s>Thus, the procedure enables estimation of the global transition-matrix (and subsequent analysis) in systems where enumeration of states is not feasible.</s><s>To estimate TðtÞ, the weight transferred between bins is recorded at each iteration, and the elements of the transition-matrix are estimated according to <ref type="bibr" target="#b50">[51]</ref>:</s></p><formula xml:id="formula_8">T i;j ¼ hw i;j i 2 hw i i<label>ð9Þ</label></formula><p><s>where hw i,j i 2 is the average weight transferred from bin i to bin j over the iteration time τ WE (counting only after at least 2 transitions, and averaging over multiple iterations) and hw i i is the average population (summed weight) in bin i.</s><s>By construction, this is a row-stochastic transition-matrix with state-space "resolution" determined by N bins (each state in the full state-space sampled by the simulation is assigned to its nearest neighboring Voronoi node).</s><s>The lagtime τ of the transition-matrix corresponds to the sampled WE-time τ WE .</s><s>However, use of TðtÞ to compute system dynamics imposes a Markovian approximation, by which equilibration of replicas within bins is assumed to be rapid on the timescale of τ, and hops between states (i.e.</s><s>bins) are memoryless.</s><s>As such, while this mode of simulation has the advantage of acquiring a holistic view of global system dynamics, it has the disadvantage of introducing a Markovian approximation.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Coarse-graining procedure to classify phenotype-states</head><p><s>While the sampled N bins × N bins transition-matrix provides a global approximation of the epigenetic landscape and state-transitions, we apply a method to further coarse-grain dynamics, known as the Markov State Model framework <ref type="bibr" target="#b28">[29,</ref><ref type="bibr" target="#b35">36,</ref><ref type="bibr" target="#b41">42]</ref>.</s><s>This automated procedure produces a highly simplified representation of global dynamics in terms of a few (generally &lt; 10) clustered sets and the transitions among them.</s><s>Such highly-reduced models can be beneficial in terms of human intuition of system dynamics, comparison to experiments, and-in this application-automated designation of dynamic phenotype-states.</s><s>The method utilizes the concept of metastability, i.e., system states that experience relatively fast transitions among them are clustered together into the same coarse-grained set.</s><s>Collectively, the coarse sets experience relatively rare inter-cluster transitions and frequent intra-cluster transitions.</s><s>We employ the metastability concept as a definition of cell phenotype, reasoning that a phenotype should be a relatively stable attribute of a cell, and stochastic inter-phenotype transitions should be relatively rare.</s><s>In practice, we employ the Markov State Model framework to further reduce the sampled row-stochastic transition-matrix TðtÞ from size N bins × N bins down to C × C, where C is the number of coarse-grained clusters chosen by the user.</s><s>As the Markov State Model (MSM) is itself a stochastic transition-matrix on a coarse-grained space, it implies a more severe Markovian approximation.</s><s>It provides a way to describe global system dynamics in a highly simplified way while maintaining high accuracy to the slowest system dynamics as sampled by TðtÞ.</s><s>In previous work, we demonstrated the application of this coarse-graining approach to automatically designate phenotypes in small gene networks <ref type="bibr" target="#b28">[29]</ref>; here, we extend the applicability of the coarse-graining to large, complex networks by combining it with rareevent sampling.</s><s>The coarse-graining procedure is a spectral clustering method based on the Perron Cluster Cluster Analysis (PCCA+) algorithm <ref type="bibr" target="#b52">[53]</ref>, which optimizes the (nearly)-block-diagonal structure of TðtÞ for systems with metastability.</s><s>The signature of such metastability is a separationof-timescales for intra-and inter-basin dynamics, which may be seen as gaps in the eigenvalue spectrum <ref type="bibr" target="#b41">[42]</ref>.</s><s>As noted above, T(τ) (or its sampled counterpart, TðtÞ) has λ 1 = 1, corresponding to the infinite time-limit.</s><s>If a set of m dominant eigenvalues exists, such that for decreasing eigenvalues λ i &lt; % 1, i 2 {2,. .</s><s>., m}, and a gap is present, λ j ( λ m for j &gt; m, this indicates the presence of m slow-timescale processes in the system, and further indicates that TðtÞ may be re-ordered to give m nearly-uncoupled blocks.</s><s>In practice, the algorithm attempts to find a coarse-graining onto C clusters, where C may be user-defined, or may be determined algorithmically, e.g., according to the spectral gap <ref type="bibr" target="#b52">[53]</ref>.</s><s>Here, we choose C clusters, where the last significant gap in the spectrum is seen between λ C and λ C+1 .</s><s>For the GRNs studied here, this corresponds to choosing C such that λ C /λ C+1 &gt; 10.</s></p><p><s>Transition path analysis.</s><s>The coarse-grained model of system dynamics given by the MSM enables estimation of the ensemble of dominant transition paths among phenotypes, along with their relative probabilities.</s><s>We adopt methods from Transition Path Theory according to Noe, et al. <ref type="bibr" target="#b35">[36]</ref> (details therein).</s><s>Briefly, TðtÞ can be used to compute the effective flux of trajectories, along any edge in the coarse-grained network, contributing to transitions between states X and Y (where these designated states correspond to one or more coarsegrained phenotype-states produced by the MSM).</s><s>A pathway decomposition algorithm on the matrix of effective fluxes for X !</s><s>Y transitions then yields a set of dominant pathways and the relative contribution of each to the overall flux.</s><s>Each state in the MSM is analogous to a cell phenotype, and transition path analysis is used to identify parallel phenotype transition paths and the relative rates of transitioning between phenotypes.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Visualization of epigenetic landscapes</head><p><s>Both the sampled transition-matrix TðtÞ and the coarse-grained MSM encode stationary and dynamic information about global dynamics-that is, they quantify the epigenetic landscape.</s><s>For visualization, we use Gephi graph visualization software <ref type="bibr" target="#b53">[54]</ref> using the Force Atlas algorithm.</s><s>Every circle (or node) in the graph corresponds to a sampling bin or to a coarse-grained phenotype, and the area of a circle is proportional to its relative steady state probability according to ln(γP SS ), where P SS is the steady state probability of the node and γ is a constant chosen to improve visibility of low probability regions of the landscape.</s><s>Lines between circles (edges) correspond to transitions between sampling regions or coarse-grained phenotype.</s><s>Their thickness and coloring correspond to their relative transition probability and source state, respectively.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Validation: Numerical solution of the chemical master equation</head><p><s>To validate the simulation method, we compare the simulated dynamics to the numerical solution to the CME.</s><s>We choose the parameters of the ExMISA model in such a way as to restrict the effective state-space, so that a numerical solution of the CME is tractable.</s><s>Building the reaction rate matrix K 2 R NÂN requires enumeration of N system states.</s><s>In general, if a system of S molecular species has a maximum copy number per species of n max , then N % n S max .</s><s>In the ExMISA model, the state-vector is given by x = [A ij , B ij , n a , n b ].</s><s>For enumeration, we neglect states with protein copy-numbers larger than a cutoff value which exceeds g 10 /k (corresponding to the average number of transcription factors maintained in the system from a gene while in its active state).</s><s>For example, with model parameters g 10 = 18 and k = 1, we truncate at n a,max = n b,max = 41 and assume that probability flux between states with n a , n b 41 and states with n a , n b &gt; 41 is assumed to be 0 (i.e., the boundaries of the state-space are reflective).</s><s>Including the gene-binding states, this gives N = 3 × 3 × 42 × 42 = 15876 states.</s><s>This size is tractable for complete solution of the CME using matrix methods in MATLAB <ref type="bibr" target="#b54">[55]</ref>.</s><s>This truncation of the state-space introduces a small approximation error (see S2 Fig) <ref type="figure">.</ref></s><s>The pluripotency network has 8 genes with copy numbers of Oð10 3 Þ (determined by the parameters g on /k = 3900).</s><s>The number of distinct binding-promoter states for each gene are 16, 32, 8, 8, 2, 8, 4, and 2 for GATA6, NANOG, CDX2, OCT4, SOX2, KLF4, GCNF, PBX1, respectively (see S2 Table <ref type="table">)</ref>.</s><s>Together these combinations enumerate a state-space of N &gt; 10 30 % 1000 8 × 16 × 32 × 8 × 8 × 2 × 8 × 4 × 2. This size precludes solution of the CME, and we instead estimate the dynamics by WE sampling.</s><s>Where possible, we validate the WEsampling results by "conventional", i.e., by direct simulation using SSA.</s></p><p><s>Validation of coarse-grained models.</s><s>To check the validity of the coarse-grained MSM as a representation of the global dynamics, we use the Chapman-Kolmogorov test to compare the relaxation curves of the coarse-grained system to those found through direct SSA following Eq 4 <ref type="bibr" target="#b41">[42]</ref>.</s><s>If the coarse-graining is appropriate, the relaxation curves of the MSM probabilities will match the relaxation profile of long conventional (direct SSA) simulations initiated within each coarse-grained phenotype.</s><s>Transition paths through the coarse-grained phenotype network are validated, where possible, against conventional SSA simulation.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Implementation and software</head><p><s>Stochastic Gillespie (SSA) simulations were carried out using BioNetGen <ref type="bibr" target="#b55">[56]</ref>.</s><s>WE sampling was implemented with in-house software code written in MATLAB.</s><s>Simulations were run on the high performance computing cluster (HPC) at the University of California, Irvine, and parallelization of BioNetGen SSA simulations was performed using the Sun Grid Engine scheduler.</s><s>The coarse-graining procedure and transition path analysis was implemented in python scripts, adapted from MSMBuilder <ref type="bibr" target="#b56">[57]</ref> and Pyemma <ref type="bibr" target="#b42">[43]</ref>, respectively.</s><s>Transitionmatrix and MSM visualization was carried out using Gephi software and the Force Atlas layout <ref type="bibr" target="#b53">[54]</ref>.</s><s>All simulation parameters can be found in the supplement S4 Table <ref type="table">.</ref></s><s>Pseudo-code for the adaptive binning procedure can be found in S2 File and software can be found in https:// github.com/Read-Lab-UCI/Rare-Event-Sampling-Gene-Networks.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Rare states and transitions in gene regulatory networks are accessible by rare-event sampling</head><p><s>We first apply the computational pipeline to a small two-gene model (the exclusive Mutual Inhibition, Self-Activation model, ExMISA, see Methods), exhibiting an archetypal motif for cell fate-decisions <ref type="bibr" target="#b36">[37,</ref><ref type="bibr" target="#b37">38]</ref>.</s><s>The model is tractable for computation of full, discrete stochastic dynamics to within a small approximation error using matrix methods.</s><s>Thus, the model provides a numerical benchmark for assessing the accuracy of the simulation method, before extension to larger systems where solution of the Chemical Master Equation (CME) is intractable.</s><s>For the chosen parameters, the ExMISA model shows four peaks in the steady-state probability distribution (projected onto protein copy numbers, n a and n b ).</s><s>Peaks in probability correspond to basins in the so-called quasipotential landscape, defined by U = −ln(π(x)) (Fig <ref type="figure" target="#fig_2">2</ref>).</s><s>The four peaks/basins corresponds to four possible combinations of binarized A/B gene expression: hi/hi, hi/lo, lo/hi, and lo/lo.</s><s>These four phenotype-states arise due to the combination of balanced repression and self-activation in the network, and the slow kinetic parameters (Supplementary S1 Table <ref type="table">)</ref> for transcription factor binding and unbinding to promoters that effect changes in individual gene-activity states between low and high expression rates <ref type="bibr" target="#b28">[29,</ref><ref type="bibr" target="#b57">58]</ref>.</s></p><p><s>The WE-based simulation method enabled estimation of global dynamics of the ExMISA model.</s><s>By redistributing computational resources from relatively high-probability to lowprobability regions (see Methods), the WE method enabled uniform sampling of the quasipotential landscape, i.e., mapping basins (high-probability regions) along with high barriers (low probability regions) (Fig <ref type="figure" target="#fig_2">2a</ref>) In addition to sampling global dynamics, the WE method can be used to estimate rate constants for individual, rare transitions of interest.</s><s>The Mean First Passage Time of the global network switch from the center of one polarized phenotype-state to another, i.e., MFPT X!Y from protein a/b expression level hi/lo to lo/hi was estimated from WE to be 1.82 × 10 5 (units of k −1 ) (see S6</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Phenotype transitions can be approximated by Markovian jumps, enabling construction of coarse-grained models</head><p><s>A network transition-matrix TðtÞ over sampled bins (N bins = 300) was constructed from WE sampling for ExMISA and used for subsequent analysis of global system dynamics.</s><s>By comparison, a full network transition-matrix T(τ) over the enumerated system state-space was constructed from the CME (N = 15876, see Methods).</s><s>The full, computed (T(τ)) and simulated ( TðtÞ) transition-matrices showed qualitatively similar eigenvalue spectra with four dominant eigenvalues, indicating the presence of metastability (separation-of-timescales between intrabasin and inter-basin transitions) (Fig <ref type="figure" target="#fig_2">2b</ref>).</s><s>The slow system-timescales predicted by the full CME model corresponding to eigenvalues λ 2 , λ 3 , λ 4 were t 2 , t 3 , t 4 = 6.8 × 10 4 , 4.2 × 10 4 , 1.0 × 10 4 respectively, in units of k −1 where k is the protein degradation rate (the Perron eigenvalue λ 1 = 1 is associated with the infinite-time (stationary) distribution).</s><s>The corresponding values given by the WE-simulated TðtÞ were 6.1 × 10 4 , 3.5 × 10 4 , 9.4 × 10 3 , respectively.</s><s>These numbers demonstrate how the sampled TðtÞ enables global approximation of slow system timescales to &lt; 20% relative error.</s><s>Error in these values (relative to the slowest timescales implied by the true eigenvalues) depends on both "spectral" (lagtime) and discretization error, i.e., improvements can be achieved only with a larger number of bins (finer discretization) and/or longer lagtime <ref type="bibr" target="#b41">[42]</ref> (see S4 Fig) <ref type="figure">.</ref></s><s>In contrast, WE sampling in "rate mode" (see Methods) enabled highly accurate estimation of MFPT X!Y to within 2% error (S6 Table <ref type="table">)</ref>.</s></p><p><s>According to the Markov State Model framework, the presence of timescale separation indicates that a simplified model, retaining a few coarse-grained metastable states with Markovian transitions among them, can reasonably approximate the full system dynamics.</s><s>Using this approach, we label the metastable sets as phenotypes accessible to the network, reasoning that a useful classification of cell phenotypes should be one that gives relatively stable, rather than transient, cell types.</s><s>We apply the Markov State Model coarse-graining procedure to both the full T(τ) and simulated TðtÞ, yielding similar results.</s><s>The coarse sets (or metastable phenotype-states) in the reduced models for both cases are generated automatically, and map directly onto the four basins seen in the quasipotential landscape (i.e., the gene A/B expression hi/hi, hi/lo, lo/hi, and lo/lo cell phenotypes).</s><s>The reduced models are visualized by network graphs, in which node sizes are proportional to steady-state probability, and the thicknesses and lengths of edges are proportional to the transition probability between them (on lagtime τ) (Fig <ref type="figure" target="#fig_2">2c</ref>).</s><s>Some discrepancies can be seen visually in the network graphs.</s><s>These discrepancies likely result in part from the slightly different mappings of the full state-space onto the four clusters (see S11 Fig for <ref type="figure">details</ref>), which could in turn result from the distance-metric-based binning, which is relatively insensitive to changes in promoter configuration.</s><s>Numerical values for the reduced models can be found in S5 Table <ref type="table">.</ref></s><s>The network graph can be considered to be an alternative representation of the global epigenetic landscape, which contains both stationary and dynamic information.</s><s>(In contrast, the epigenetic landscape plotted as a quasipotential function does not explicitly contain dynamic information, due to non-gradient dynamics <ref type="bibr" target="#b15">[16]</ref>).</s></p><p><s>Validation of the coarse-grained model can be carried out according to the Chapman-Kolmogorov test <ref type="bibr" target="#b41">[42]</ref>, which tests how well the relaxation dynamics initialized in the metastable phenotypes approximate the dynamics that are predicted either by the full model (CME) or simulated trajectories.</s><s>According to this test, relaxation dynamics out of metastable phenotypes from WE sampling was predicted with relative error values between 0.02 and 0.12 for all phenotypes (S5 Fig) <ref type="figure">.</ref></s><s>Together, these results indicate (i) that a Markovian model of phenotype transitions is a good approximation of the full system dynamics for the ExMISA model, and (ii) that the WE-simulation based computational pipeline predicts a quantitatively similar coarse-grained phenotype-network to the full CME model.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>The method maps the epigenetic landscape and identifies dominant phenotypes in a pluripotency network model</head><p><s>We apply the computational pipeline to a pluripotent fate-decision network from mouse Embryonic Stem Cells (mESCs) introduced by Zhang et al. <ref type="bibr" target="#b27">[28]</ref> (Fig <ref type="figure" target="#fig_3">3A</ref>).</s><s>The network comprises eight interacting genes: NANOG, GATA6, CDX2, SOX2, OCT4, GCNF, and PBX1.</s><s>Three of these genes, NANOG, SOX2, and OCT4 have been suggested to maintain pluripotency <ref type="bibr" target="#b58">[59]</ref>, and NANOG inhibits the expression of differentiation markers <ref type="bibr" target="#b59">[60]</ref>.</s><s>The GATA6 and CDX2 genes have been used in experiments as markers of differentiation, with the GATA6 transcription factor being a marker of the primitive endoderm cell lineage, and the CDX2 transcription factor being a marker of the trophectoderm lineage <ref type="bibr" target="#b60">[61]</ref>.</s></p><p><s>Using the WE-based computational pipeline, we estimate TðtÞ with a resolution of N bins = 250.</s><s>To visualize the global landscape as a graph network at this resolution, we plot the converged TðtÞ using a force-directed automated graph layout <ref type="bibr" target="#b53">[54]</ref> (Fig <ref type="figure" target="#fig_3">3B</ref>).</s><s>The barbell shape of the network reflects the broad antagonism between pluripotency and differentiation genes, which is a general feature of the overall network topology.</s><s>At the same time, each "pole" comprises multiple distinct patterns of gene expression (seen in the graph as different colors with full compositions in Fig <ref type="figure" target="#fig_3">3C</ref>), hinting at the existence of multiple phenotypes associated with both pluripotency and lineage-specification.</s><s>Moreover, the network representation reveals numerous links between pluripotent and differentiated states, pointing to both direct and indirect transitions, through a network of relatively transient intermediate states.</s></p><p><s>To further analyze the global dynamics of the pluripotency network, we apply the Markov State Model coarse-graining framework.</s><s>The simulated TðtÞ shows gaps in the eigenvalue spectrum after four and after six eigenvalues (Fig <ref type="figure" target="#fig_4">4a</ref>).</s><s>The corresponding approximate timescales are given by t 2 , t 3 , t 4 , t 5 , t 6 = 1.1 × 10 5 , 95, 51, 12, 12 (k −1 ), respectively.</s><s>These values, though only approximate, indicate the presence of a single long timescale process (t 2 ) corresponding to transfer between differentiated and pluripotent states, while transitions within those basins (t 3 , etc.) occur at least four orders of magnitude more quickly.</s><s>Applying the coarse-graining algorithm to achieve six clusters results in a reduced model (Fig <ref type="figure" target="#fig_4">4b</ref>), with the clusters representing metastable phenotypes.</s><s>The phenotypes can largely be distinguished in the subspace of NANOG, GATA6, and CDX2 expression levels; the differentiated phenotypes show expression of either GATA6 (primitive endoderm, PE), CDX2 (trophectoderm, TE), or  both (denoted an intermediate cell type, IM).</s><s>Phenotypes associated with pluripotency do not express high levels of GATA6 or CDX2, and may express high levels of NANOG (stem cell, SC).</s><s>The coarse-grained model reveals two separate pluripotent phenotypes that are low in NANOG expression: one which expresses other pluripotent factors OCT4, SOX2, and KLF4 ("Low NANOG 1" LN1), and one which has low expression of all factors ("Low NANOG 2" LN2) (Fig <ref type="figure" target="#fig_4">4c</ref>).</s><s>Overall, these phenotypes broadly match experimentally-determined categories, coincide with steady-states of the stochastic model computed previously by a CME-approximation method <ref type="bibr" target="#b27">[28]</ref>, and coincide with phenotype-states identified in related pluripotency GRN models <ref type="bibr" target="#b61">[62]</ref>.</s><s>The steady-state probabilities associated with the phenotypes are highly nonuniform, with 95% of the population divided nearly evenly between the IM and LN1 phenotypes, which are associated with differentiation and pluripotency, respectively.</s><s>The LN2 state is rarest, comprising only 8 × 10 −4 % of the population, and was not identified previously <ref type="bibr" target="#b27">[28]</ref>.</s><s>Together, these results indicate that the clustering method identifies both common and exceedingly rare phenotypes in the in silico cell population modeled by simulation trajectories.</s><s>Furthermore, the automated method identifies both expected phenotypes and one novel (albeit low probability) phenotype.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>The method reveals multiple, irreversible pathways for phenotype transitions in the pluripotency network</head><p><s>Previously, Markov State Models constructed on the basis of Molecular Dynamics simulations were used to analyze the ensemble of distinct pathways of protein-folding <ref type="bibr" target="#b35">[36]</ref>.</s><s>Here, we utilize the coarse-grained model of phenotype transitions in the pluripotency GRN in a similar manner, to analyze pathways of cell differentiation and dedifferentiation.</s><s>Using Transition Path Theory, the method identifies the pathways that carry the greatest fraction of net probability flux, among sequences associated with successful SC!TE transitions (and reverse) (Fig 4d <ref type="figure" target="#fig_4">and 4e</ref>).</s><s>Transition paths between the stem cell (SC) and PE phenotypes can be found in S6 Fig.</s><s><ref type="figure">For</ref> Parameter Set I, the method identifies three pathways encompassing &gt; 98% of the probability flux for both forward and reverse transitions.</s><s>While the SC! TE transition is most likely to occur directly through the LN1 state (i.e., NANOG expression will shut off, followed by turning on CDX2), the reverse transition shows a different route through the IM and PE states (i.e., GATA6 expression turns on, then CDX2 turns off, then GATA6 turns off, and finally NANOG turns on).</s></p><p><s>Dynamic analysis of the coarse-grained model, including analysis of transition paths, relies on the Markovian approximation for inter-phenotype transitions.</s><s>In the pluripotency network, stochastic transitions between pluripotency (SC, LN1, LN2) and differentiation (TE, IM, PE) basins are infrequent relative to transitions within those basins, justifying the Markovian assumption, since the system equilibrates within those basins much more rapidly than interbasin transitions occur.</s><s>However, the Markovian assumption may be less accurate for describing intra-basin transitions between phenotypes, which occur much more frequently.</s><s>Despite the coarse-grained model encompassing transitions on highly disparate timescales, the qualitative results of transition path analysis were validated by collected conventional simulation trajectories (not subject to any Markovian assumption), which identified the same dominant transition paths (S7 Fig) <ref type="figure">.</ref></s><s>Overall, these results indicate that a stochastic excursion of a cell from the SC to TE phenotypes and back maps a cycle in gene-expression space, echoing previous studies indicating nonequilibrium dynamics in GRNs <ref type="bibr" target="#b15">[16,</ref><ref type="bibr" target="#b22">23]</ref>.</s><s>The results further indicate that the Markov State Model, while a highly coarse-grained approximation, can provide an accurate estimation of inter-phenotype transition dynamics.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Cell phenotype landscape and transition dynamics are sensitive to kinetic parameters</head><p><s>We applied the computational pipeline to the pluripotency network using two different rate parameters sets (see S1 File), which differ in rates of transcription factor binding and unbinding to DNA.</s><s>In line with previous studies <ref type="bibr" target="#b22">[23,</ref><ref type="bibr" target="#b23">24,</ref><ref type="bibr" target="#b28">29]</ref>, we found that increasing the so-called adiabaticity (i.e., increasing h and f, or the rates of TF-binding relative to protein production and degradation, Parameter Set II) led generally to rarer inter-phenotype transitions (see Table <ref type="table">1</ref>).</s><s>For example, in Parameter Set I, the Mean First Passage Time (MFPT) for transitions from SC !</s><s>TE was calculated to be 1.36 × 10 5 in units of k −1 , as compared to 8.13 × 10 8 for Parameter Set II.</s><s>The MFPTs of the reverse transition TE !</s><s>SC for each set were 2.70 × 10 5 and 5.82 × 10 9 , respectively (see Table <ref type="table">1 and S7 Table)</ref>.</s><s>These differences in magnitude broadly reflect that moving toward the adiabatic regime leads to increased epigenetic barriers between phenotypes.</s></p><p><s>In addition to generally slowing transitions, the increased adiabaticity of Parameter Set II gives rise to an epigenetic landscape structure that is distinct from that of Parameter Set I, with altered steady-state phenotype probabilities (Fig <ref type="figure" target="#fig_5">5a</ref>).</s><s>The eigenvalue spectrum shows qualitatively distinct features as well, with a gap after five values (Fig <ref type="figure" target="#fig_7">6a</ref>).</s><s>As such, the Markov State Model framework identifies five dominant phenotypes in the network, which correspond broadly to those of Parameter Set I, except that only a single Low-NANOG (LN) phenotype is Table <ref type="table">1</ref>.</s><s>Computed mean first passage times (MFPTs) of phenotype transitions in the pluripotency network.</s><s>MFPTs are shown for transitions between the pluripotency (high NANOG) state (SC) and low NANOG expression states (LN( <ref type="formula">1</ref>)) (left columns) and for transitioning between the pluripotency state (SC) and the trophectoderm state (TE) (right columns), in units of the inverse transcription factor decay rate, k −1 .</s><s>Transitions for Parameter Set I were computed using the WE method in rate mode while transitions for Parameter Set II were estimated from the sampled transition matrix.</s><s>The definitions of SC and LN(1) are analogous to the high NANOG production (N hi ) and low NANOG production (N lo ) transitions measured in experiments <ref type="bibr" target="#b7">[8,</ref><ref type="bibr" target="#b8">9]</ref>.</s><s>Increasing the adiabaticity (i.e., the rates of DNA-(un)binding, h, f), leads to rarer inter-phenotype transitions.</s><s>The simulations also show that, within the same gene network for a given parameter set, inter-phenotype transition times span four orders of magnitude.</s><s>), see Table <ref type="table">1</ref>).</s><s>(B) States visited in conventional SSA simulation (using the same initialization, definitions, and placement as in (A)).</s><s>In the conventional simulation, a transition out of the IM phenotype was never observed.</s><s>model with different kinetic parameters may give rise to qualitatively similar phenotypes, they differ in quantitative stationary and dynamic features, including relative steady-state probabilities, transition times, and likeliest transition pathways.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Efficiency of rare-event sampling compared to conventional SSA</head><p><s>Rare phenotype transitions can be difficult to observe with conventional SSA simulation.</s><s>We compared simulated landscapes (based on estimated TðtÞ) from the computational pipeline for the Pluripotency network (Parameter Set II) to those obtained from an equivalent (large) number of SSA simulation steps (Fig 5a <ref type="figure" target="#fig_5">and 5b</ref>).</s><s>This comparison revealed that the WE-based method uncovers multiple phenotypes and associated transitions that are effectively invisible to conventional simulation due to the rarity of exiting metastable basins.</s><s>Quantitative estimates of efficiency gains for WE have been based on comparing the number of simulation steps required to estimate a desired quantity (such as a rate constant) using WE versus conventional simulation <ref type="bibr" target="#b46">[47]</ref>.</s><s>Treating TðtÞ as the desired output (as it contains holistic dynamic information for the system), we estimate the efficiency gain of our pipeline by computing:</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>E ¼</head><p><s>Sim: steps to estimate TðtÞ; Conv: Sim: steps to estimate TðtÞ; WE : ð10Þ</s></p><p><s>The denominator of Eq 10 is given by N bins × N iterations × τ × M targ , thus accounting for all individual replica-steps in the total WE simulation time.</s><s>The numerator is computed by asking how many steps of a conventional simulated trajectory are required to estimate TðtÞ.</s><s>It is generally prohibitive to collect enough conventional simulation steps to estimate TðtÞ to a similar resolution as WE.</s><s>However, given a TðtÞ estimated from WE, it is in principle possible to estimate how many steps would be necessary to achieve the same TðtÞ by conventional simulation.</s><s>We used an approximate, conservative estimate given by: ½Sim: steps to estimate TðtÞ; Conv: &gt; % t</s></p><formula xml:id="formula_9">X i ðP 5%;i fT ij gÞ À 1 ;<label>ð11Þ</label></formula><p><s>where P 5%,i denotes the 5th percentile over nonzero elements of row i. Justification of Eq 11 is given in the Supplement, S3 File.</s><s>Briefly, Eq 11 reflects the fact that the required simulation time should be dominated by the rare transitions (i.e., the smaller elements of TðtÞ), while attempting to avoid over-dependence on individual estimates of small T ij , which generally have unknown error These numbers show that the pipeline can afford a significant speedup over conventional simulation in providing global dynamic information.</s><s>The numbers further show that the efficiency gain is most pronounced for the Pluripotency network with exceedingly rare interphenotype transitions.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p><s>In this work, we present a method for efficient, automated computation of epigenetic landscapes, metastable phenotypes, and phenotype-transition dynamics of stochastic GRN models.</s><s>Our computational pipeline was inspired by studies of metastability and barrier-crossing in Molecular Dynamics, and our application of the pipeline to cell-scale networks addresses a number of current challenges for stochastic GRN dynamics.</s><s>First, it overcomes the curse-ofdimensionality of complex models, by leveraging available rule-based modeling tools for stochastic biochemical networks <ref type="bibr" target="#b55">[56]</ref>.</s><s>Second, it overcomes the challenge of efficiently simulating stochastic systems with rare events, by using enhanced Weighted Ensemble rare-event sampling <ref type="bibr" target="#b44">[45]</ref>.</s><s>Third, it addresses the challenge of extracting and interpreting essential dynamics of complex systems on the basis of simulated trajectories, by using the Markov State Model framework <ref type="bibr" target="#b35">[36]</ref> to automatically generate a compact, approximate representation of global system dynamics.</s><s>Combining these tools into a unified pipeline provides an automated means of computing and visualizing essential stationary and dynamic properties of stochastic GRNs, including the number and identities (i.e.</s><s>state-space mapping) of metastable phenotypes, their steady-state probabilities, and most-likely pathways of inter-phenotype transitions and their transition rates.</s><s>By advancing the capability to compute and interpret hypothesized or experimentally-derived stochastic GRN models, the method can yield insight into how "local" stochastic, molecular processes involved in epigenetic regulation affect "global" dynamics such as phenotypic stability and fate-transitions in cells.</s><s>Moreover, it can help close the gap between dynamic, molecular-detailed models of gene regulation and cell-population level experimental data, to inform rational cell reprogramming strategies.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Insights from the pluripotency network simulations</head><p><s>We used the pluripotency network as a model system to develop and demonstrate the simulation approach, but the results also yielded biological insights.</s><s>For example, the simulations revealed a hierarchical structure of the epigenetic landscape.</s><s>The network-exhibiting 5-6 metastable phenotypes-occupies a limited subspace from the vast possible gene combinations (e.g., 2 8 = 256 possible distinct on/off combinations of gene expression states).</s><s>The dominant feature of the global landscape is a high barrier/slow timescale between pluripotent and differentiated phenotypes.</s><s>Within each of these categories, further sub-states were identified.</s><s>The model revealed multi-timescale dynamics of phenotype transitions; the pluripotency network showed relatively rapid transitions between phenotype-states that differed in the expression-level (high vs. low) of a single gene, e.g. the high NANOG to low NANOG transition, whereas phenotype transitions involving a change in expression level of seven genes, e.g. the SC macrostate to the TE macrostate, occurred five orders of magnitude more slowly on average.</s></p><p><s>While the accessible phenotypes appear broadly similar across parameter sets, the relative stability and transition dynamics among phenotypes were sensitive to kinetic parameters governing transcription factor binding/unbinding.</s><s>A global change in these parameters (affecting all individual transcription factor-DNA interactions equally) changed the shape of the landscape, altering the relative steady-state probabilities of different phenotypes and the likely transition pathways linking them.</s><s>The DNA binding parameters capture the local epigenetic mechanisms that enable/disable transcription factors from accessing regulatory elements.</s><s>A global rate change nevertheless has a varying influence on different genes because the number of regulators differs, as does the molecular logic by which activators and repressors exert combinatorial control on different genes.</s><s>These results echo findings that global modification of chromatin regulators often have lineage-specific effects <ref type="bibr" target="#b62">[63]</ref>.</s><s>These results highlight both the need for, and the challenge of, informing cell reprogramming strategies with quantitative network models, as they suggest that the dynamic response of cellular networks to perturbations is governed by the detailed kinetics of molecular regulatory mechanisms, which are generally difficult to parameterize.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dynamic definition of cell phenotype</head><p><s>The Markov State Model framework implicitly imposes a dynamic definition of cell phenotypes; the number of phenotypes was determined using spectral gap-analysis, and the coarsegraining algorithm automatically identified metastable aggregates (i.e., grouped sampled network states into larger clusters).</s><s>This is different from the classifications of phenotypes that are generally used in analyzing experimental data, where gene expression or marker levels are often used to categorize cells.</s><s>However, experiments have also revealed the potential need for a dynamic definition of cell phenotype, based not only on single-timepoint measurements of gene expression or phenotype-markers, but also on information from past or future timepoints <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b7">8]</ref>.</s><s>For example, Filipczyk et al. <ref type="bibr" target="#b7">[8]</ref> identified distinct subpopulations within a compartment of NANOG-negative cells in mESCS, which differed in their propensity to re-express NANOG.</s><s>At the same time, fluctuations between low-and high-NANOG expressing cells were not necessarily associated with any functional state change.</s><s>The Markov State Model approach, based on kinetic/dynamic coarse-graining, thus provides a quantitative approach for classifying phenotype-states that is both completely generalizable rather than ad hoc (it requires no a priori knowledge or designation of markers/genes) and is in line with these recent experiments revealing the need for a dynamic definition of phenotype.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Timescales of stochastic phenotype transitions</head><p><s>Markovian transitions (i.e., memoryless "hops") among cell phenotypes have been observed experimentally: examples include transitions among phenotypes in cancer cells, as measured by flow cytometry <ref type="bibr" target="#b9">[10]</ref>, and among pluripotency-states in mESCs, as measured by time-lapse microscopy of fluctuating gene expression <ref type="bibr" target="#b6">[7]</ref><ref type="bibr" target="#b7">[8]</ref><ref type="bibr" target="#b8">[9]</ref>.</s><s>The compact nature of these data-inferred networks-showing hops among a limited set of broad phenotypes-suggests that the computed MSM framework advanced in this study provides an appropriate level of resolution at which to analyze GRN dynamics and may serve as a useful tool for comparing models to experimental data.</s></p><p><s>Experimental studies have quantified the timescales of Markovian transitions between NANOG-high and NANOG-low states in mESCs <ref type="bibr" target="#b7">[8,</ref><ref type="bibr" target="#b8">9]</ref>.</s><s>From Hormoz et al., the probability of transitioning from NANOG-high to NANOG-low in mESCs is 0.02 per cell cycle, while that of the reverse transition is 0.08.</s><s>These values represent a relatively rapid transition rate, since NANOG expression is known to be particularly dynamic <ref type="bibr" target="#b59">[60]</ref>.</s><s>Similarly, plasticity has been observed in cancer cells where quantitative estimates of stochastic cell transitions between a stem cell cancer cell phenotype to a basal cancer cell phenotype were observed to be roughly on the order of 0.01 to 0.1 per cell cycle <ref type="bibr" target="#b9">[10]</ref>.</s><s>We can translate our model results to approximate biological timescales: the degradation rate, which sets the timeunit for model results (i.e., k is taken to be 1) was experimentally determined to be on the order of a few hours (in the E14 mouse embryonic stem cell line, the half-lives of NANOG, OCT4, and SOX2 are approximately 4.7, &gt; 6, and 1.6 hours, respectively <ref type="bibr" target="#b63">[64]</ref>).</s><s>Assuming that degradation is unimolecular, k = ln(2)/t [NANOG]1/2 , and the half-life of NANOG, t [NANOG]1/2 = 5 hours, the degradation rate is k = 0.1.</s><s>Using a mESC cell cycle time of 12 hours <ref type="bibr" target="#b64">[65]</ref>, the simulations for Parameter Set I then predict NANOG-high to NANOG-low transitions occurring with a rate of 0.03 per cell cycle, and of 3 × 10 −3 for the reverse.</s><s>For Parameter Set II, the computed rates were 8 × 10 −6 and 5 × 10 −5 , respectively.</s><s>Comparison of these computed and experimental rates of NANOG transitions indicates that Parameter Set I (f = 10) is more in line with experimental observations, while Parameter Set II (f = 50) gives transition rates that are three orders of magnitude too slow.</s><s>These results are in agreement with previous findings from theoretical studies that GRNs in pluripotency networks operate in a so-called "weakly-adiabatic" regime <ref type="bibr" target="#b23">[24,</ref><ref type="bibr" target="#b26">27,</ref><ref type="bibr" target="#b27">28]</ref>, in which the timescale of DNA-binding by transcription factors is on the order of transcription factor production and degradation.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Comparison to other models and computational approaches</head><p><s>A number of theoretical studies have elucidated dynamics of stochastic molecular-detailed GRN models (i.e., models that include molecular fluctuations and regulatory mechanisms, in contrast to Boolean models <ref type="bibr" target="#b65">[66]</ref>).</s><s>These studies have largely focused on small 1-or 2-gene motifs[ <ref type="bibr">[21-25, 32, 39]</ref>].</s><s>In the limit of slow DNA-binding/unbinding, it was shown that the stationary distribution of the stochastic model can be solved exactly <ref type="bibr" target="#b40">[41]</ref>.</s><s>Recent years have seen extension of stochastic methods to studies of more complex, experimentally derived GRN models encompassing Oð10Þ genes.</s><s>For example, determination of global dynamic properties of such networks has been achieved by combining information from long stochastic simulations of discrete models <ref type="bibr" target="#b26">[27,</ref><ref type="bibr" target="#b61">62]</ref>, or of continuum SDE models, in combination with path integral approaches <ref type="bibr" target="#b57">[58,</ref><ref type="bibr" target="#b66">67]</ref>.</s><s>The pluripotency network studied herein was developed by Zhang and Wolynes <ref type="bibr" target="#b27">[28]</ref>; in their work, the authors developed a continuum approximation to the Chemical Master Equation that enabled quantitative construction of the epigenetic landscape.</s><s>Here, we present an alternative approach that is unique in two major aspects: (1) the use of stochastic simulations (i.e., SSA <ref type="bibr" target="#b32">[33]</ref>), which is enabled by use of the WE rare-event sampling algorithm, and (2) the automated Markov State Model framework for designating phenotypes and constructing a coarse-grained view of the epigenetic landscape.</s><s>While we utilize a different framework (that of coarse-grained, discrete stochastic models) from Zhang and Wolynes to approximate and interpret dynamics, our results are broadly consistent with theirs.</s><s>For example, the dominant identified phenotypes we found are the same as in their work (the only exception being the exceedingly rare LN2 phenotype identified by the coarse-graining algorithm for Parameter Set I).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Current challenges and future directions</head><p><s>Our approach is uniquely suited to extracting global dynamics information for stochastic systems with metastability, using simulations.</s><s>An advantage of this approach is that both the WE and coarse-graining algorithms are"dynamics-agnostic" <ref type="bibr" target="#b46">[47]</ref>, meaning that they can be applied to any type of stochastic dynamics framework.</s><s>In the context of computational biology, our pipeline could be extended to other types of stochastic biochemical systems, such as systems with hybrid discrete-continuum dynamics <ref type="bibr" target="#b67">[68]</ref>, systems with spatial heterogeneity <ref type="bibr" target="#b68">[69]</ref>, or multi-level models <ref type="bibr" target="#b69">[70]</ref>.</s><s>In addition to this flexibility, simulation-based methods have the advantage of being able to leverage existing, widely-used open-source packages, which in turn facilitate model specification and model sharing.</s><s>For example, BioNetGen <ref type="bibr" target="#b55">[56]</ref> can interpret models specified in the Systems Biology Markup Language <ref type="bibr" target="#b70">[71]</ref>.</s></p><p><s>Several challenges and potential weaknesses with the pipeline exist, both with regard to sampling rare events, and in determining an appropriate coarse-grained model.</s><s>Potential challenges with the WE algorithm itself have been described elsewhere <ref type="bibr" target="#b34">[35,</ref><ref type="bibr" target="#b68">69]</ref>, and include the difficulty of determining a binning that captures slow degrees of freedom and the existence of time-correlations between sampled iterations of the simulation, which can impede unbiased sampling.</s><s>The Voronoi-based binning procedure we employ here is related to a number of similar approaches <ref type="bibr" target="#b23">[24,</ref><ref type="bibr" target="#b47">[48]</ref><ref type="bibr" target="#b48">[49]</ref><ref type="bibr" target="#b49">[50]</ref>, and has the advantage of effectively tiling a high-dimensional space without the need for a priori knowledge.</s><s>However, in practice, according to others and our own studies, the method is effective up to about 10 degrees of freedom.</s><s>Therefore, in larger gene networks (as in other complex systems) an ongoing challenge will be to identify optimal binning methods to effectively partition slow degrees of freedom and thus enable efficient enhanced sampling.</s><s>New adaptive partitioning methods could also have the effect of improving the accuracy of coarse-grained Markov models, as finer partitioning of transition regions has been found to reduce errors in the Markovian approximation <ref type="bibr" target="#b41">[42]</ref>.</s><s>Additional improvements to efficiency, which could aid in scaling the method to larger networks, could be achieved in the future by using alternatives to the direct SSA algorithm (see e.g., <ref type="bibr" target="#b71">[72]</ref>) or improved parallelization techniques.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig 1 .</head><label>1</label><figDesc><div><p><s>Fig 1.Computational pipeline for rare-event sampling of epigenetic landscapes and phenotype transitions.</s><s>The input to the computational pipeline is a reaction network model of gene regulatory network dynamics.</s><s>Stochastic simulations are performed using SSA<ref type="bibr" target="#b32">[33]</ref> and Weighted Ensemble rare-event sampling<ref type="bibr" target="#b44">[45]</ref>.</s><s>The WE method can be run in two modes: Rate Mode computes the rate of transitioning between two userdefined regions of interest with high accuracy.</s><s>Transitio n-Matrix Mode computes the pairwise transition probabilities among N bins adaptively defined sampling bins that span the system state-space.</s><s>Further visualization and analysis of the transition-matrix can be performed, including automatic designation of metastable phenotypes via the coarse-graining framework<ref type="bibr" target="#b41">[42]</ref> and identification of likely transition paths<ref type="bibr" target="#b35">[36]</ref>.</s></p></div></figDesc><graphic coords="4,119.96,78.01,455.98,366.69" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc><div><p><s>. The simulation estimated individual steady-state binprobabilities as low as 1.3 × 10 −6 and showed good global agreement with the numerical CME benchmark (see Fig 2 and Supplement, S3 Fig).</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig 2 .</head><label>2</label><figDesc><div><p><s>Fig 2. Simulation results show good agreement with a theoretical benchmark for the 2-gene ExMISA (mutual inhibition, self-activation) cell-decision circuit.</s><s>The Chemical Master Equation for the 2-gene model, ExMISA, was solved numerically (see Methods) (top) and compared to simulation results from the computational pipeline presented in this paper (bottom).</s><s>Shown for each are the Quasipotential Landscape (A), Eigenvalue Spectrum (B), and Markov State Model (C).</s><s>(A) Quasipotential landscapes of the ExMISA network projected onto the two protein coordinates.</s><s>Deep blue regions denote low potential (high probability) and yellow denote high potential (low probability).</s><s>The four visible basins in both correspond to combinations of lo/hi expression for the two genes A and B. (For both rows, quasipotential surfaces estimated over discrete states/bins are smoothed for visualization).</s><s>WE sampling captured both the basin structure and low probability edge and barrier regions.</s><s>(B) Eigenvalue spectra and corresponding computed global transition timescales.</s><s>Gaps in the eigenvalue spectrum indicate separation of timescales, i.e., the presence of metastability.</s><s>C) Four-phenotype coarse-grained models automatically generated from the clustering algorithm (see Methods).</s><s>Each colored circle represents a cell phenotype, sized proportionally to its probability.</s><s>Edges are inter-phenotype transitions (colored by source-state, with width proportional to probability).</s><s>The full CME and simulation pipeline identify similar metastable phenotype networks (see S11 Fig for details).</s><s>https://doi.org/10.1371/journal.pcbi.1006336.g002</s></p></div></figDesc><graphic coords="12,119.96,68.88,455.98,304.04" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig 3 .</head><label>3</label><figDesc><div><p><s>Fig 3. Pluripotency network model and simulation results (Parameter Set I).</s><s>A)Wiring diagram for the eight-gene pluripotency network model, adapted from [28].</s><s>Arrowheads represent positive interactions, while flat lines denote repression.</s><s>B) Simulation results: state-transition graph of sampled network states.</s><s>Circles represent aggregate gene-expression states sampled during the Weighted Ensemble simulation.</s><s>Circle areas are proportional to the steady-state probability π i in each state according to ln(γπ i ) with scaling factor γ = 3.4.</s><s>States are colored according to the gene expression levels of three of the genes; red, green, and blue correspond to high NANOG, GATA6, and CDX2 expression respectively, while black corresponds to low or no gene expression.</s><s>Edges connecting the states indicate possible state-transitions, colored according to the originating state.</s><s>The graph is produced using Gephi [54] using a force-directed layout algorithm (Force Atlas), therefore short inter-state distances reflect higher probability of transitioning.</s><s>C) Full protein compositions of two representative states, with either high CDX2 expression (blue) or high NANOG expression (red).</s><s>States in (C) correspond to yellow circles in (B).</s><s>https://doi.org/10.1371/journal.pcbi.1006336.g003</s></p></div></figDesc><graphic coords="14,155.23,78.01,420.66,247.46" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig 4 .</head><label>4</label><figDesc><div><p><s>Fig 4. Simulation results for the pluripotency network (Parameter Set I).</s><s>The Computational Pipeline Uncovers Six Metastable Phenotypes and Irreversible Phenotype Transitions.</s><s>A) Computed eigenvalue spectrum and global timescales indicating the presence of metastability in the network.</s><s>The gap in the eigenvalue spectrum after the sixth eigenvalue suggests that a partitioning can be found into six metastable phenotypes.</s><s>B) The coarse-grained network showing six algorithmically-identified phenotypes designated as Low NANOG 1 (LN1), Low NANOG 2 (LN2), Stem Cell (SC), Primitive Endoderm (PE), Trophectoderm (TE), and the Intermediate Cell (IM) state.</s><s>C) The averaged gene expression levels (copy numbers) of each transcription factor for each phenotype and their respective steady-state probabilities.</s><s>D) The four most probable transition pathways from the SC state to the TE state (differentiation) and from the TE state to the SC state (dedifferentiation).</s><s>E) The highest probability transition paths projected onto three protein coordinates, NANOG, GATA6, and CDX2.</s><s>Differentiation from SC to TE is visibly irreversible, i.e., the system returns by a separate route.</s><s>https://doi.org/10.1371/journal.pcbi.1006336.g004</s></p></div></figDesc><graphic coords="15,47.96,78.01,527.98,516.76" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig 5 .</head><label>5</label><figDesc><div><p><s>Fig 5.</s><s>The rare-event sampling pipeline makes rare states and transitions accessible to simulation.</s><s>A) The global state-transition graph computed with the computational pipeline for the Pluripotency Network with rare transitions (Parameter Set II).</s><s>The states are colored according to the coarse-grained (algorithmically-identified) phenotypes.</s><s>In this parameter regime (f = 50) the differentiated (TE, PE, IM) and pluripotent phenotypes are cleanly separated, reflecting exceedingly rare transitions between the two phenotypes (O(10 9 ), see Table1).</s><s>(B) States visited in conventional SSA simulation (using the same initialization, definitions, and placement as in (A)).</s><s>In the conventional simulation, a transition out of the IM phenotype was never observed.</s></p></div></figDesc><graphic coords="17,200.01,498.05,359.94,122.91" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head></head><label></label><figDesc><div><p><s>https://doi.org/10.1371/journal.pcbi.1006336.g005</s><s>identified (Fig 6b).</s><s>Most of the steady-state probability is contained in the IM state (Fig 6c).</s><s>In addition to altering the transition rates and relative phenotype probabilities, the kinetic parameters altered the dynamics of differentiation and dedifferentiation.</s><s>The two likeliest pathways of forward (and reverse) SC !</s><s>TE transitions follow the same route through LN and IM phenotypes (Fig 6d and 6e).</s><s>Alternative differentiation pathways of forward (and reverse) SC !</s><s>PE transitions can be found in S9 Fig.</s><s>These results indicate that, while the same GRN</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Fig 6 .</head><label>6</label><figDesc><div><p><s>Fig 6.</s><s>Simulation results for the pluripotency network (Parameter Set II).</s><s>Changing DNA-Binding Kinetics Alters the Epigenetic Landscape.</s><s>A) Computed eigenvalue spectrum and global timescales.</s><s>B) The coarse-grained Markov State Model showing five phenotypes corresponding to the LN1, SC, PPE, TE, and IM phenotypes of Parameter Set I.</s><s>The majority of the steady state probability is in the IM phenotype (0.98).</s><s>C) The gene expression levels for each phenotype and their respective steady-state probabilities.</s><s>D) The four most probable differentiation pathways between SC and TE phenotypes.</s><s>E)The dominant pathways of (de)differentiation projected onto the GATA6, CDX2, and NANOG coordinates.</s><s>The change in DNA-binding kinetics shows different transition dynamics from Parameter Set I. Here, the forward and reverse paths are the same.</s><s>https://doi.org/10.1371/journal.pcbi.1006336.g006</s></p></div></figDesc><graphic coords="18,119.96,78.01,455.98,447.19" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head></head><label></label><figDesc><div><p><s>. The error versus simulation time in WE-and Conv.-estimated</s><s>TðtÞ are plotted in S12 Fig.</s><s>According to Eq 11, we estimate that our pipeline provided efficiency gains of 2 for ExMISA (Fig 2), 900 for Pluripotency Parameter Set I (Fig 3), and 1 × 10 6 for Parameter Set II (Fig 6).</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>S5</head><label></label><figDesc><div><p><s>Fig. The Chapman-Kolmogorov test on the four Markov State Model phenotypes of the sampled ExMISA network.</s><s>(PDF) S6 Fig. Pathway decomposition for the SC !</s><s>PE transition for f = 10.</s><s>(PDF) S7 Fig. Validation of the SC !</s><s>TE transition pathway calculated through weighted ensemble simulation.</s><s>(PDF) S8 Fig. Reproducibility of the weighted ensemble sampling of the pluripotency network.</s><s>(PDF) S9 Fig. Pathway decomposition for the SC !</s><s>PE transition for f = 50.</s><s>(PDF) S10 Fig. Convergence of the flux of the TE !</s><s>SC transition in the pluripotency network with f = 10.</s><s>(PDF) S11 Fig. Difference in Coarse-Grained clustering for the 2-gene ExMISA cell decision network studied through the numerical benchmark (top) and the WE sampling pipeline (bottom).</s><s>(PDF) S12 Fig. Plotted errors in sampled TðtÞ for ExMISA.</s><s>(PDF) Writing -review &amp; editing: Margaret J. Tse, Brian K. Chu, Elizabeth L. Read.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head></head><label></label><figDesc><div><p><s>Table), in agreement with the CME result.</s></p></div></figDesc><table /></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">PLOS Computational Biology | https://doi.org/10.1371/journal.pcbi.1006336August 3, 2018  </note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgments</head><p><s>We thank the administrators of the University of California, Irvine High-Performance Computing Cluster and we thank Jun Allard for helpful discussions.</s></p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>S5 Table. Transition matrices of metastable phenotype clusters (MSMs). (PDF)</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>S6 Table. Computed mean first passage times in the</head></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Induction of Pluripotent Stem Cells from Adult Human Fibroblasts by Defined Factors</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Takahashi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Tanabe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ohnuki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Narita</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Ichisaka</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Tomoda</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cell.2007.11.019</idno>
+		<idno type="PMID">18035408</idno>
+		<ptr target="https://doi.org/10.1016/j.cell.2007.11.019" />
+	</analytic>
+	<monogr>
+		<title level="j">Cell</title>
+		<imprint>
+			<biblScope unit="volume">131</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="861" to="872" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Stochastic NANOG fluctuations allow mouse embryonic stem cells to explore pluripotency</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Abranches</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amv</forename><surname>Guedes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Moravec</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Maamar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Svoboda</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Raj</surname></persName>
+		</author>
+		<idno type="DOI">10.1242/dev.108910</idno>
+		<idno type="PMID">25005472</idno>
+		<ptr target="https://doi.org/10.1242/dev.108910" />
+	</analytic>
+	<monogr>
+		<title level="j">Development</title>
+		<imprint>
+			<biblScope unit="volume">141</biblScope>
+			<biblScope unit="issue">14</biblScope>
+			<biblScope unit="page" from="2770" to="2779" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Stochastic patterning in the mouse pre-implantation embryo</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">E</forename><surname>Dietrich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hiiragi</surname></persName>
+		</author>
+		<idno type="DOI">10.1242/dev.003798</idno>
+		<idno type="PMID">17978007</idno>
+		<ptr target="https://doi.org/10.1242/dev.003798" />
+	</analytic>
+	<monogr>
+		<title level="j">Development</title>
+		<imprint>
+			<biblScope unit="volume">134</biblScope>
+			<biblScope unit="issue">23</biblScope>
+			<biblScope unit="page" from="4219" to="4231" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Regulated Fluctuations in Nanog Expression Mediate Cell Fate Decisions in Embryonic Stem Cells</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Kalmar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Lim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Hayward</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Muñoz-Descalzo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Nichols</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Garcia-Ojalvo</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pbio.1000149</idno>
+		<idno type="PMID">19582141</idno>
+		<ptr target="https://doi.org/10.1371/journal.pbio.1000149" />
+	</analytic>
+	<monogr>
+		<title level="j">PLoS Biology</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page">e1000149</biblScope>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">A heterogeneous expression pattern for Nanog in embryonic stem cells</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hamazaki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">E</forename><surname>Hankowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Terada</surname></persName>
+		</author>
+		<idno type="DOI">10.1634/stemcells.2007-0126</idno>
+		<ptr target="https://doi.org/10.1634/stemcells.2007-0126" />
+	</analytic>
+	<monogr>
+		<title level="j">Stem Cells</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="2534" to="2542" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Cell-to-cell expression variability followed by signal reinforcement progressively segregates early mouse lineages</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Ohnishi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Huber</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Tsumura</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Xenopoulos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Kurimoto</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/ncb2881</idno>
+		<idno type="PMID">24292013</idno>
+		<ptr target="https://doi.org/10.1038/ncb2881" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature cell biology</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="27" to="37" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Dynamic Heterogeneity and DNA Methylation in Embryonic Stem Cells</title>
+		<author>
+			<persName><forename type="first">Z</forename><forename type="middle">S</forename><surname>Singer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Tischler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Hackett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Altinok</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Surani</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.molcel.2014.06.029</idno>
+		<idno type="PMID">25038413</idno>
+		<ptr target="https://doi.org/10.1016/j.molcel.2014.06.029" />
+	</analytic>
+	<monogr>
+		<title level="j">Molecular Cell</title>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="319" to="331" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Network plasticity of pluripotency transcription factors in embryonic stem cells</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Filipczyk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Marr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hastreiter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Feigelman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Schwarzfischer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">S</forename><surname>Hoppe</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/ncb3237</idno>
+		<idno type="PMID">26389663</idno>
+		<ptr target="https://doi.org/10.1038/ncb3237" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature Cell Biology</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="1235" to="1246" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Inferring Cell-State Transition Dynamics from Lineage Trees and Endpoint Single-Cell Measurements</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hormoz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><forename type="middle">S</forename><surname>Singer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Linton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">E</forename><surname>Antebi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">I</forename><surname>Shraiman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">B</forename><surname>Elowitz</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cels.2016.10.015</idno>
+		<idno type="PMID">27883889</idno>
+		<ptr target="https://doi.org/10.1016/j.cels.2016.10.015" />
+	</analytic>
+	<monogr>
+		<title level="j">Cell Systems</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="419" to="433" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Stochastic State Transitions Give Rise to Phenotypic Equilibrium in Populations of Cancer Cells</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">B</forename><surname>Gupta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Fillmore</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">D</forename><surname>Shapira</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Tao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Kuperwasser</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cell.2011.07.026</idno>
+		<idno type="PMID">21854987</idno>
+		<ptr target="https://doi.org/10.1016/j.cell.2011.07.026" />
+	</analytic>
+	<monogr>
+		<title level="j">Cell</title>
+		<imprint>
+			<biblScope unit="volume">146</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="633" to="644" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">A Chromatin-Mediated Reversible Drug-Tolerant State in Cancer Cell Subpopulations</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">V</forename><surname>Sharma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">Y</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">P</forename><surname>Quinlan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Takahashi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Maheswaran</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cell.2010.02.027</idno>
+		<idno type="PMID">20371346</idno>
+		<ptr target="https://doi.org/10.1016/j.cell.2010.02.027" />
+	</analytic>
+	<monogr>
+		<title level="j">Cell</title>
+		<imprint>
+			<biblScope unit="volume">141</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="69" to="80" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Stochastic switching as a survival strategy in fluctuating environments</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Acar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">T</forename><surname>Mettetal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Van Oudenaarden</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/ng.110</idno>
+		<idno type="PMID">18362885</idno>
+		<ptr target="https://doi.org/10.1038/ng.110" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature Genetics</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="471" to="475" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Bacterial Persistence as a Phenotypic Switch</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">Q</forename><surname>Balaban</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Merrin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Chait</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Kowalik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Leibler</surname></persName>
+		</author>
+		<idno type="DOI">10.1126/science.1099390</idno>
+		<idno type="PMID">15308767</idno>
+		<ptr target="https://doi.org/10.1126/science.1099390" />
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">305</biblScope>
+			<biblScope unit="issue">5690</biblScope>
+			<biblScope unit="page" from="1622" to="1625" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">The Strategy of the Genes. Routledge</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Waddington</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Kacser</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1957">1957</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">A deterministic map of Waddington&apos;s epigenetic landscape for cell fate specification</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bhattacharya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">E</forename><surname>Andersen</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/1752-0509-5-85</idno>
+		<idno type="PMID">21619617</idno>
+		<ptr target="https://doi.org/10.1186/1752-0509-5-85" />
+	</analytic>
+	<monogr>
+		<title level="j">BMC Systems Biology</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page">85</biblScope>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">Quantifying the Waddington landscape and biological paths for development and differentiation</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.1017017108</idno>
+		<idno type="PMID">21536909</idno>
+		<ptr target="https://doi.org/10.1073/pnas.1017017108" />
+		<imprint>
+			<date type="published" when="2011">2011. 21536909</date>
+			<biblScope unit="volume">108</biblScope>
+			<biblScope unit="page" from="8257" to="8262" />
+		</imprint>
+		<respStmt>
+			<orgName>Proceedings Of The National Academy Of Sciences Of The United States Of America</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">The molecular and mathematical basis of Waddington&apos;s epigenetic landscape: a framework for post-Darwinian biology?</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Huang</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/bies.201100031</idno>
+		<ptr target="https://doi.org/10.1002/bies.201100031" />
+	</analytic>
+	<monogr>
+		<title level="j">BioEssays: News and Reviews in Molecular, Cellular and Developmental Biology</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="149" to="157" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Cell fates as high-dimensional attractor states of a complex gene regulatory network</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Eichler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Bar-Yam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">E</forename><surname>Ingber</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRevLett.94.128701</idno>
+		<idno type="PMID">15903968</idno>
+		<ptr target="https://doi.org/10.1103/PhysRevLett.94.128701" />
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review Letters</title>
+		<imprint>
+			<biblScope unit="volume">94</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page">128701</biblScope>
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Stochastic Gene Expression in a Single Cell</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">B</forename><surname>Elowitz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Levine</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">D</forename><surname>Siggia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">S</forename><surname>Swain</surname></persName>
+		</author>
+		<idno type="DOI">10.1126/science.1070919</idno>
+		<idno type="PMID">12183631</idno>
+		<ptr target="https://doi.org/10.1126/science.1070919" />
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">297</biblScope>
+			<biblScope unit="issue">5584</biblScope>
+			<biblScope unit="page" from="1183" to="1186" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Stochasticity in gene expression: from theories to phenotypes</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kaern</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">C</forename><surname>Elston</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">J</forename><surname>Blake</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">J</forename><surname>Collins</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nrg1615</idno>
+		<idno type="PMID">15883588</idno>
+		<ptr target="https://doi.org/10.1038/nrg1615" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature Reviews Genetics</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="451" to="464" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Epigenetics as a First Exit Problem</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Aurell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Sneppen</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRevLett.88.048101</idno>
+		<idno type="PMID">11801174</idno>
+		<ptr target="https://doi.org/10.1103/PhysRevLett.88.048101" />
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review Letters</title>
+		<imprint>
+			<biblScope unit="volume">88</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Stochastic gene expression as a many-body problem</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Sasai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">G</forename><surname>Wolynes</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.2627987100</idno>
+		<ptr target="https://doi.org/10.1073/pnas.2627987100" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">100</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="2374" to="2379" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">A new mechanism of stem cell differentiation through slow binding/unbinding of regulators to genes</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/srep00550</idno>
+		<idno type="PMID">22870379</idno>
+		<ptr target="https://doi.org/10.1038/srep00550" />
+	</analytic>
+	<monogr>
+		<title level="j">Sci Rep</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">550</biblScope>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">DNA-Binding Kinetics Determines the Mechanism of Noise-Induced Switching in Gene Networks</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Tse</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">K</forename><surname>Chu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Roy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">L</forename><surname>Read</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.bpj.2015.08.035</idno>
+		<idno type="PMID">26488666</idno>
+		<ptr target="https://doi.org/10.1016/j.bpj.2015.08.035" />
+	</analytic>
+	<monogr>
+		<title level="j">Biophysical Journal</title>
+		<imprint>
+			<biblScope unit="volume">109</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="1746" to="1757" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Stochastic Phenotype Transition of a Single Cell in an Intermediate Region of Gene State Switching</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Ge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Qian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><forename type="middle">S</forename><surname>Xie</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRevLett.114.078101</idno>
+		<idno type="PMID">25763973</idno>
+		<ptr target="https://doi.org/10.1103/PhysRevLett.114.078101" />
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review Letters</title>
+		<imprint>
+			<biblScope unit="volume">114</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page">78101</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Transcriptome-wide noise controls lineage choice in mammalian progenitor cells</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">H</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hemberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Barahona</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">E</forename><surname>Ingber</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Huang</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nature06965</idno>
+		<idno type="PMID">18497826</idno>
+		<ptr target="https://doi.org/10.1038/nature06965" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">453</biblScope>
+			<biblScope unit="issue">7194</biblScope>
+			<biblScope unit="page" from="544" to="547" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Time Scales in Epigenetic Dynamics and Phenotypic Heterogeneity of Embryonic Stem Cells</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Sasai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Kawabata</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Makishi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Itoh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">P</forename><surname>Terada</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pcbi.1003380</idno>
+		<idno type="PMID">24348228</idno>
+		<ptr target="https://doi.org/10.1371/journal.pcbi.1003380" />
+	</analytic>
+	<monogr>
+		<title level="j">PLOS Computational Biology</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page">e1003380</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Stem cell differentiation as a many-body problem</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">G</forename><surname>Wolynes</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.1408561111</idno>
+		<ptr target="https://doi.org/10.1073/pnas.1408561111" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">111</biblScope>
+			<biblScope unit="issue">28</biblScope>
+			<biblScope unit="page" from="10185" to="10190" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Markov State Models of gene regulatory networks</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">K</forename><surname>Chu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Tse</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">R</forename><surname>Sato</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">L</forename><surname>Read</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/s12918-017-0394-4</idno>
+		<idno type="PMID">28166778</idno>
+		<ptr target="https://doi.org/10.1186/s12918-017-0394-4" />
+	</analytic>
+	<monogr>
+		<title level="j">BMC Systems Biology</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page">14</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Genetic Toggle Switch without Cooperative Binding</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Lipshtat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Loinger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">Q</forename><surname>Balaban</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Biham</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRevLett.96.188101</idno>
+		<idno type="PMID">16712399</idno>
+		<ptr target="https://doi.org/10.1103/PhysRevLett.96.188101" />
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review Letters</title>
+		<imprint>
+			<biblScope unit="volume">96</biblScope>
+			<biblScope unit="issue">18</biblScope>
+			<biblScope unit="page">188101</biblScope>
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<monogr>
+		<title level="m" type="main">Extinction and resurrection in gene networks. Proceedings of the National Academy of Sciences of the United States of America</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Schultz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Walczak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename><surname>Onuchic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">G</forename><surname>Wolynes</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.0810366105</idno>
+		<idno type="PMID">19033463</idno>
+		<ptr target="https://doi.org/10.1073/pnas.0810366105" />
+		<imprint>
+			<date type="published" when="2008">2008</date>
+			<biblScope unit="volume">105</biblScope>
+			<biblScope unit="page" from="19165" to="19170" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Small-Number Effects: A Third Stable State in a Genetic Bistable Toggle Switch</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Ma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Hou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Liu</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRevLett.109.248107</idno>
+		<idno type="PMID">23368390</idno>
+		<ptr target="https://doi.org/10.1103/PhysRevLett.109.248107" />
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review Letters</title>
+		<imprint>
+			<biblScope unit="volume">109</biblScope>
+			<biblScope unit="issue">24</biblScope>
+			<biblScope unit="page">248107</biblScope>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Exact stochastic simulation of coupled chemical reactions</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">T</forename><surname>Gillespie</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/j100540a008</idno>
+		<ptr target="https://doi.org/10.1021/j100540a008" />
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Physical Chemistry</title>
+		<imprint>
+			<biblScope unit="volume">81</biblScope>
+			<biblScope unit="issue">25</biblScope>
+			<biblScope unit="page" from="2340" to="2361" />
+			<date type="published" when="1977">1977</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Forward flux sampling for rare event simulations</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Allen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Valeriani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Ten Wolde</surname></persName>
+		</author>
+		<idno type="DOI">10.1088/0953-8984/21/46/463102</idno>
+		<ptr target="https://doi.org/10.1088/0953-8984/21/46/463102" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal Of Physics-Condensed Matter</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="page">463102</biblScope>
+			<date type="published" when="2009">2009. 000271268400004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Weighted Ensemble Simulation: Review of Methodology, Applications, and Software</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Zuckerman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">T</forename><surname>Chong</surname></persName>
+		</author>
+		<idno type="DOI">10.1146/annurev-biophys-070816-033834</idno>
+		<idno type="PMID">28301772</idno>
+		<ptr target="https://doi.org/10.1146/annurev-biophys-070816-033834" />
+	</analytic>
+	<monogr>
+		<title level="j">Annual Review of Biophysics</title>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="43" to="57" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Constructing the equilibrium ensemble of folding pathways from short off-equilibrium simulations</title>
+		<author>
+			<persName><forename type="first">´f</forename><surname>Noe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Schu ¨tte</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Vanden-Eijnden</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Reich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">R</forename><surname>Weikl</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.0905466106</idno>
+		<ptr target="https://doi.org/10.1073/pnas.0905466106" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">106</biblScope>
+			<biblScope unit="issue">45</biblScope>
+			<biblScope unit="page" from="19011" to="19016" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Reprogramming cell fates: reconciling rarity with robustness</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Huang</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/bies.200800189</idno>
+		<ptr target="https://doi.org/10.1002/bies.200800189" />
+	</analytic>
+	<monogr>
+		<title level="j">BioEssays: News and Reviews in Molecular, Cellular and Developmental Biology</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="546" to="560" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Forcing cells to change lineages</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Graf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Enver</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nature08533</idno>
+		<idno type="PMID">19956253</idno>
+		<ptr target="https://doi.org/10.1038/nature08533" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">462</biblScope>
+			<biblScope unit="issue">7273</biblScope>
+			<biblScope unit="page" from="587" to="594" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Stochasticity in Transcriptional Regulation: Origins, Consequences, and Mathematical Representations</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">B</forename><surname>Kepler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">C</forename><surname>Elston</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0006-3495(01)75949-8</idno>
+		<idno type="PMID">11720979</idno>
+		<ptr target="https://doi.org/10.1016/S0006-3495" />
+	</analytic>
+	<monogr>
+		<title level="j">Biophysical Journal</title>
+		<imprint>
+			<biblScope unit="volume">81</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="75949" to="75957" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Efficient analysis of stochastic gene dynamics in the non-adiabatic regime using piecewise deterministic Markov processes</title>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">T</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">E</forename><surname>Buchler</surname></persName>
+		</author>
+		<idno type="DOI">10.1098/rsif.2017.0804</idno>
+		<ptr target="https://doi.org/10.1098/rsif.2017.0804" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of The Royal Society Interface</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">138</biblScope>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<monogr>
+		<title level="m" type="main">Multi-modality in gene regulatory networks with slow gene binding</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Al-Radhawi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Del</forename><surname>Vecchio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Sontag</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">D</forename></persName>
+		</author>
+		<idno>arXiv:170502330</idno>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Markov models of molecular kinetics: Generation and validation</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Prinz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Sarich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Keller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Senne</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Held</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.3565032</idno>
+		<idno type="PMID">21548671</idno>
+		<ptr target="https://doi.org/10.1063/1.3565032" />
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">134</biblScope>
+			<biblScope unit="issue">17</biblScope>
+			<biblScope unit="page">174105</biblScope>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">PyEMMA 2: A Software Package for Estimation, Validation, and Analysis of Markov Models</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">K</forename><surname>Scherer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Trendelkamp-Schroer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Paul</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Pe ´rez-Herna ´ndez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hoffmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Plattner</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/acs.jctc.5b00743</idno>
+		<idno type="PMID">26574340</idno>
+		<ptr target="https://doi.org/10.1021/acs.jctc.5b00743" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Chemical Theory and Computation</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="5525" to="5542" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<monogr>
+		<title level="m" type="main">Introduction to Stochastic Processes</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">G</forename><surname>Hoel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">C</forename><surname>Port</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Stone</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1986">1986</date>
+			<publisher>Waveland Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Weighted-ensemble Brownian dynamics simulations for protein association reactions</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Huber</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kim</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0006-3495(96)79552-8</idno>
+		<idno type="PMID">8770190</idno>
+		<ptr target="https://doi.org/10.1016/" />
+	</analytic>
+	<monogr>
+		<title level="j">Biophysical Journal</title>
+		<imprint>
+			<biblScope unit="volume">70</biblScope>
+			<biblScope unit="issue">8770190</biblScope>
+			<biblScope unit="page" from="97" to="110" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Sampling Rare Switching Events in Biochemical Networks</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Allen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">B</forename><surname>Warren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">R</forename><surname>Ten Wolde</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRevLett.94.018104</idno>
+		<ptr target="https://doi.org/10.1103/PhysRevLett.94.018104" />
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review Letters</title>
+		<imprint>
+			<biblScope unit="volume">94</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Efficient stochastic simulation of chemical kinetics networks using a weighted ensemble of trajectories</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Donovan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sedgewick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Faeder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Zuckerman</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.4821167</idno>
+		<idno type="PMID">24070313</idno>
+		<ptr target="https://doi.org/10.1063/1.4821167" />
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of chemical physics</title>
+		<imprint>
+			<biblScope unit="volume">139</biblScope>
+			<biblScope unit="page">115105</biblScope>
+			<date type="published" when="2013">2013. 24070313</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Nonequilibrium umbrella sampling in spaces of many order parameters</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dickson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Warmflash</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">R</forename><surname>Dinner</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.3070677</idno>
+		<idno type="PMID">19239281</idno>
+		<ptr target="https://doi.org/10.1063/1.3070677" />
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">130</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page">74104</biblScope>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Hierarchical Exploration of High-Dimensional Spaces Using the Weighted Ensemble Algorithm</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dickson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">L</forename><surname>Brooks</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wexplore</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/jp411479c</idno>
+		<idno type="PMID">24490961</idno>
+		<ptr target="https://doi.org/10.1021/jp411479c" />
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Physical Chemistry B</title>
+		<imprint>
+			<biblScope unit="volume">118</biblScope>
+			<biblScope unit="issue">13</biblScope>
+			<biblScope unit="page" from="3532" to="3542" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">The &quot;weighted ensemble&quot; path sampling method is statistically exact for a broad class of stochastic processes and binning procedures</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Jasnow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Zuckerman</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.3306345</idno>
+		<idno type="PMID">20136305</idno>
+		<ptr target="https://doi.org/10.1063/1.3306345" />
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of chemical physics</title>
+		<imprint>
+			<biblScope unit="volume">132</biblScope>
+			<biblScope unit="page">54107</biblScope>
+			<date type="published" when="2010">2010. 20136305</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Simultaneous Computation of Dynamical and Equilibrium Information Using a Weighted Ensemble of Trajectories</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Sua ´rez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lettieri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">C</forename><surname>Zwier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">A</forename><surname>Stringer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">R</forename><surname>Subramanian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">T</forename><surname>Chong</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/ct401065r</idno>
+		<idno type="PMID">25246856</idno>
+		<ptr target="https://doi.org/10.1021/ct401065r" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Chemical Theory and Computation</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="2658" to="2667" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Separating forward and backward pathways in nonequilibrium umbrella sampling</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dickson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Warmflash</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">R</forename><surname>Dinner</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.3244561</idno>
+		<idno type="PMID">20568844</idno>
+		<ptr target="https://doi.org/10.1063/1.3244561" />
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">131</biblScope>
+			<biblScope unit="issue">15</biblScope>
+			<biblScope unit="page">154104</biblScope>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<monogr>
+		<title level="m" type="main">Fuzzy spectral clustering by PCCA+: application to Markov state models and data classification</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ro ¨blitz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Weber</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s11634-013-0134-6</idno>
+		<ptr target="https://doi.org/10.1007/s11634-013-0134-6" />
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="147" to="179" />
+		</imprint>
+	</monogr>
+	<note>Advances in Data Analysis and Classification</note>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<monogr>
+		<title level="m" type="main">Gephi: An Open Source Software for Exploring and Manipulating Networks</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Bastian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Heymann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Jacomy</surname></persName>
+		</author>
+		<ptr target="http://www.aaai.org/ocs/index.php/ICWSM/09/paper/view/154" />
+		<imprint>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<monogr>
+		<title level="m">MATLAB and Parallel Computing Toolbox Release</title>
+				<imprint>
+			<date type="published" when="2012">2012b</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Rule-Based Modeling of Biochemical Systems with BioNetGen</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Faeder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">L</forename><surname>Blinov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">S</forename><surname>Hlavacek</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-1-59745-525-1_5</idno>
+		<ptr target="https://link.springer.com/protocol/10.1007/978-1-59745-525-1_5" />
+	</analytic>
+	<monogr>
+		<title level="j">Systems Biology. Methods in Molecular Biology</title>
+		<imprint>
+			<biblScope unit="page" from="113" to="167" />
+			<date type="published" when="2009">2009</date>
+			<publisher>Humana Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">P</forename><surname>Harrigan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">M</forename><surname>Sultan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">X</forename><surname>Herna ´ndez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">E</forename><surname>Husic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Eastman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">R</forename><surname>Schwantes</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.bpj.2016.10.042</idno>
+		<idno type="PMID">28076801</idno>
+		<ptr target="https://doi.org/10.1016/j.bpj.2016.10.042" />
+	</analytic>
+	<monogr>
+		<title level="j">Statistical Models for Biomolecular Dynamics. Biophysical Journal</title>
+		<imprint>
+			<biblScope unit="volume">112</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="10" to="15" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Epigenetic state network approach for describing cell phenotypic transitions</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><forename type="middle">J</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Xing</surname></persName>
+		</author>
+		<idno type="DOI">10.1098/rsfs.2013.0068</idno>
+		<ptr target="https://doi.org/10.1098/rsfs.2013.0068" />
+	</analytic>
+	<monogr>
+		<title level="j">Interface Focus</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Nanog safeguards pluripotency and mediates germline development</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Chambers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Silva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Colby</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Nichols</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Nijmeijer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Robertson</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nature06403</idno>
+		<idno type="PMID">18097409</idno>
+		<ptr target="https://doi.org/10.1038/nature06403" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">450</biblScope>
+			<biblScope unit="issue">7173</biblScope>
+			<biblScope unit="page" from="1230" to="1234" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">Nanog Is the Gateway to the Pluripotent Ground State</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Silva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Nichols</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">W</forename><surname>Theunissen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">L</forename><surname>Van Oosten</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Barrandon</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cell.2009.07.039</idno>
+		<idno type="PMID">19703398</idno>
+		<ptr target="https://doi.org/10.1016/j.cell.2009.07.039" />
+	</analytic>
+	<monogr>
+		<title level="j">Cell</title>
+		<imprint>
+			<biblScope unit="volume">138</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="722" to="737" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">Oct-4 Knockdown Induces Similar Patterns of Endoderm and Trophoblast Differentiation Markers in Human and Mouse Embryonic Stem Cells</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">C</forename><surname>Hay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Sutherland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Clark</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Burdon</surname></persName>
+		</author>
+		<idno type="DOI">10.1634/stemcells.22-2-225</idno>
+		<idno type="PMID">14990861</idno>
+		<ptr target="https://doi.org/10.1634/stemcells.22-2-225" />
+	</analytic>
+	<monogr>
+		<title level="j">STEM CELLS</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="225" to="235" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">Quantifying Waddington landscapes and paths of non-adiabatic cell fate decisions for differentiation, reprogramming and transdifferentiation</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.1098/rsif.2013.0787</idno>
+		<ptr target="https://doi.org/10.1098/rsif.2013.0787" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of The Royal Society Interface</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">89</biblScope>
+			<biblScope unit="page">20130787</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<analytic>
+		<title level="a" type="main">Functional striated muscle cells from non-myoblast precursors following 5-azacytidine treatment</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">G</forename><surname>Constantinides</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">A</forename><surname>Jones</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Gevers</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/267364a0</idno>
+		<idno type="PMID">68440</idno>
+		<ptr target="https://doi.org/10.1038/267364a0" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">267</biblScope>
+			<biblScope unit="issue">5609</biblScope>
+			<biblScope unit="page" from="364" to="366" />
+			<date type="published" when="1977">1977</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<analytic>
+		<title level="a" type="main">Generation and Characterization of a Novel Mouse Embryonic Stem Cell Line with a Dynamic Reporter of Nanog Expression</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Abranches</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Bekman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Henrique</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0059928</idno>
+		<idno type="PMID">23527287</idno>
+		<ptr target="https://doi.org/10.1371/journal.pone.0059928" />
+	</analytic>
+	<monogr>
+		<title level="j">PLOS ONE</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page">e59928</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">Mice cloned from embryonic stem cells</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Wakayama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Rodriguez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Acf</forename><surname>Perry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Yanagimachi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Mombaerts</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.96.26.14984</idno>
+		<idno type="PMID">10611324</idno>
+		<ptr target="https://doi.org/10.1073/pnas.96.26.14984" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences of the United States of America</title>
+		<imprint>
+			<biblScope unit="volume">96</biblScope>
+			<biblScope unit="issue">26</biblScope>
+			<biblScope unit="page" from="14984" to="14989" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title level="a" type="main">Systematic Search for Recipes to Generate Induced Pluripotent Stem Cells</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Shoemaker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pcbi.1002300</idno>
+		<ptr target="https://doi.org/10.1371/journal.pcbi.1002300" />
+	</analytic>
+	<monogr>
+		<title level="j">PLoS Computational Biology</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">Quantifying the Landscape for Development and Cancer from a Core Cancer Stem Cell Circuit</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.1158/0008-5472.CAN-15-0079</idno>
+		<idno type="PMID">25972342</idno>
+		<ptr target="https://doi.org/10" />
+	</analytic>
+	<monogr>
+		<title level="j">Cancer Research</title>
+		<imprint>
+			<biblScope unit="volume">75</biblScope>
+			<biblScope unit="issue">13</biblScope>
+			<biblScope unit="page" from="2607" to="2618" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">Adaptive hybrid simulations for multiscale stochastic reaction networks</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Hepp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Gupta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Khammash</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.4905196</idno>
+		<idno type="PMID">25612700</idno>
+		<ptr target="https://doi.org/10.1063/1.4905196" />
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">142</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page">34118</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<analytic>
+		<title level="a" type="main">Unbiased Rare Event Sampling in Spatial Stochastic Systems Biology Models Using a Weighted Ensemble of Trajectories</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">M</forename><surname>Donovan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">J</forename><surname>Tapia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Sullivan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Faeder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">F</forename><surname>Murphy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Dittrich</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pcbi.1004611</idno>
+		<idno type="PMID">26845334</idno>
+		<ptr target="https://doi.org/10.1371/journal.pcbi.1004611" />
+	</analytic>
+	<monogr>
+		<title level="j">PLoS Computational Biology</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title level="a" type="main">Rule-based multi-level modeling of cell biological systems</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Maus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Rybacki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Uhrmacher</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/1752-0509-5-166</idno>
+		<idno type="PMID">22005019</idno>
+		<ptr target="https://doi.org/10.1186/1752-0509-5-166" />
+	</analytic>
+	<monogr>
+		<title level="j">BMC Systems Biology</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page">166</biblScope>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<analytic>
+		<title level="a" type="main">BioNetGen 2.2: advances in rulebased modeling</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">A</forename><surname>Harris</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Hogg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">J</forename><surname>Tapia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Sekar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Gupta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Korsunsky</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/bioinformatics/btw469</idno>
+		<idno type="PMID">27402907</idno>
+		<ptr target="https://doi.org/10.1093/bioinformatics/btw469" />
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="issue">21</biblScope>
+			<biblScope unit="page" from="3366" to="3368" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<monogr>
+		<title level="m" type="main">Improved leap-size selection for accelerated stochastic simulation. The Journal of Chemical Physics</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">T</forename><surname>Gillespie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">R</forename><surname>Petzold</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.1613254</idno>
+		<ptr target="https://doi.org/10.1063/1.1613254" />
+		<imprint>
+			<date type="published" when="2003">2003</date>
+			<biblScope unit="volume">119</biblScope>
+			<biblScope unit="page" from="8229" to="8234" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

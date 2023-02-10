@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Towards open data blockchain analytics: a Bitcoin perspective</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">D</forename><surname>Mcginn</surname></persName>
+							<email>d.mcginn@imperial.ac.uk</email>
+							<affiliation key="aff0">
+								<orgName type="department">Data Science Institute</orgName>
+								<orgName type="institution">Imperial College London</orgName>
+								<address>
+									<settlement>London</settlement>
+									<country key="GB">UK</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff1">
+								<address>
+									<postCode>0000-0001-8671-4335</postCode>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">D</forename><surname>Mcilwraith</surname></persName>
+							<affiliation key="aff1">
+								<address>
+									<postCode>0000-0001-8671-4335</postCode>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Y</forename><surname>Guo</surname></persName>
+							<affiliation key="aff1">
+								<address>
+									<postCode>0000-0001-8671-4335</postCode>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Towards open data blockchain analytics: a Bitcoin perspective</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">85D4F38C2C3942409ADC108D08353B73</idno>
+					<idno type="DOI">10.1098/rsos.180298</idno>
+					<note type="submission">Received: 24 February 2018 Accepted: 6 July 2018</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:35+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Computer science bitcoin</term>
+					<term>blockchain</term>
+					<term>open data</term>
+					<term>graph database</term>
+					<term>data mining</term>
+					<term>knowledge discovery</term>
+				</keywords>
+			</textClass>
+			<abstract/>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Bitcoin is the first implementation of a technology that has become known as a 'public permissionless' blockchain.</s><s>Such systems allow public read/write access to an append-only blockchain database without the need for any mediating central authority.</s><s>Instead, they guarantee access, security and protocol conformity through an elegant combination of cryptographic assurances and game theoretic economic incentives.</s><s>Not until the advent of the Bitcoin blockchain has such a trusted, transparent, comprehensive and granular dataset of digital economic behaviours been available for public network analysis.</s><s>In this article, by translating the cumbersome binary data structure of the Bitcoin blockchain into a high fidelity graph model, we demonstrate through various analyses the often overlooked social and econometric benefits of employing such a novel open data architecture.</s><s>Specifically, we show: (i) how repeated patterns of transaction behaviours can be revealed to link user activity across the blockchain; (ii) how newly mined bitcoin can be associated to demonstrate individual accumulations of wealth; (iii) through application of the naïve quantity theory of money that Bitcoin's disinflationary properties can be revealed and measured; and (iv) how the user community can develop coordinated defences against repeated denial of service attacks on the network.</s><s>Such public analyses of this open data are exemplary benefits unavailable to the closed data models of the 'private permissioned' distributed ledger architectures currently dominating enterprise-level blockchain development owing to existing issues of scalability, confidentiality and governance.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction and prior work</head><p><s>Bitcoin's release in 2009 <ref type="bibr" target="#b0">[1]</ref> heralded the introduction of a novel distributed database technology that has become known as blockchain.</s><s>Reaching a fault-tolerant consensus on state has been a well-researched distributed system problem, but, reaching such a consensus without the need for any centralized identity management system is the solution to this surprisingly 2018 The Authors.</s><s>Published by the Royal Society under the terms of the Creative Commons Attribution License http://creativecommons.org/licenses/by/4.0/,</s><s>which permits unrestricted use, provided the original author and source are credited.</s><s>overlooked problem that the invention of Bitcoin has presented.</s><s>Bitcoin's premissionless operation relies upon both public read and conforming public write access to its blockchain database.</s><s>Such a distributed store of trusted public data presents many opportunities for increased access and transparency without the need for any further reconciliation effort between users of the shared data.</s><s>The Bitcoin protocol specification is defined by its open-source reference implementation and its precise workings are well explained in many sources such as Bonneau et al. <ref type="bibr" target="#b1">[2]</ref> or Antonopoulos <ref type="bibr" target="#b2">[3]</ref>.</s><s>However, such pseudonymous trustless blockchain architectures as currently implemented in Bitcoin and Ethereum come with significant challenges, such as their inherent difficulty to scale and their leakage of (albeit obfuscated) private information.</s></p><p><s>In a fully trustless blockchain system, each participant must verify the activity of every other participant-an inbuilt O(n 2 ) scalability problem.</s><s>It is well known that the Bitcoin network currently suffers confirmation delays and becomes congested at approximately four transactions per second (tps) and the Ethereum network becomes congested at approximately 17 tps (compared to Paypal which claims to handle 450 tps on Cybermondays or Visa which claims to have tested up to 56 000 tps).</s><s>Proposals to scale Bitcoin to these global levels in the future involve a compromise of its fully trustless nature by maintaining the original blockchain as a consolidated settlement layer only, and introducing secondary layers of off-chain transaction verification known as the Lightning Network.</s></p><p><s>The leakage of private information on the Bitcoin blockchain is well studied and has, to date, focussed on the deanonymization of pseudonymous bitcoin transactions.</s><s>Reid &amp; Harrigan <ref type="bibr" target="#b3">[4]</ref> first took the approach of associating bitcoin address tokens to unique users by splitting the blockchain into two graph structures: a transaction network and an address network, using the former to abstract the latter into an implied user network.</s><s>Both Androulaki et al. <ref type="bibr" target="#b4">[5]</ref> and Meiklejohn et al. <ref type="bibr" target="#b5">[6]</ref> took a similar approach by splitting the blockchain into two graphs and using the associative information leaked by the shared inputs of multi-input transactions, along with information derived from 'shadow' addresses used for change amounts, to derive a consolidated graph of unique entity transactions.</s><s>Ron &amp; Shamir <ref type="bibr" target="#b6">[7]</ref> also collapsed the transaction and address graphs into an abstract entity graph whose purpose was to explore its network properties rather than deanonymization.</s><s>The literature in this area has become notably more sparse as the data have grown to become more unwieldy.</s><s>Such established privacy deficiencies have, however, led to the development of more private systems such as ZCash that, while maintaining a public permissionless blockchain architecture, employs an optional zero knowledge protocol to guarantee privacy, albeit at increased computational cost.</s><s>However, while ZCash aims for the computationally secure secrecy of shielded transactions, Qesnelle <ref type="bibr" target="#b7">[8]</ref> showed how its transactions can also be associated together through behavioural patterns of usage.</s></p><p><s>Mitigating against these scaling and privacy problems, while avoiding the additional resources required for zero knowledge protocols or the expensive consensus mechanisms associated with public permissionless architectures, enterprise-level blockchain solutions currently in development are gravitating towards a private permissioned distributed ledger model of walled-garden data-silos with access controlled by gatekeepers, as shown by the brief review shown in table <ref type="table" target="#tab_0">1</ref>.</s></p><p><s>These commercial private permissioned approaches, however, negate many of the prime benefits of blockchain technology: namely the trust, transparency and socio-econometric benefits of an open data model, some of which we demonstrate here.</s></p><p><s>In this article, we demonstrate the full advantage presented by the open data nature of the Bitcoin blockchain: never before has a financial transaction dataset of such granularity and longevity been available for public study.</s><s>We present our exploration of this open data to develop the new field of 'blockchain analytics' in order to understand dynamic behaviours within blockchain systems.</s><s>By modelling the cumbersome native blockchain data as a high fidelity graph described in §2, we demonstrate how traversals of the public Bitcoin dataset can derive socially useful personal and econometric information not envisaged by the original data model.</s><s>In §3, we make the first attempt to visualize and detect associated patterns of transactional behaviour across the entire blockchain using a path dependent query facilitated only by the adoption of the graph model we describe.</s><s>We then deploy our graph in consideration of the 'coinbase' transactions of each block: transactions specially crafted by the successful miner creating new amounts of bitcoin awarded to themselves as a reward for their validation work and the method by which the bitcoin economy is inflated.</s><s>Through a combinatorial analysis of coinbase-spending transactions and their disposable extranonce bytes buried deep in the coinbase raw data, §4 shows how confidence in wealth accumulation attributed to the founder and early adopters can be increased.</s><s>In §5, we develop a simple measure to explore the velocity of circulation within the bitcoin economy and examine its impact on future price moves.</s><s>We round off our set of analyses in §6 by demonstrating how transaction patterns associated with denial of service attacks on the bitcoin network can be identified and used by the community to defend against such attacks.</s></p><p><s>In conducting these analyses, we highlight examples of the transparent benefits of the public, yet secure, open data model that blockchain technology can afford, which would be lost in any private permissioned blockchain implementation.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">High fidelity graph model</head><p><s>The core of the Bitcoin system is the blockchain: a continuously appended publicly distributed database storing immutable, verified records of all valid bitcoin transactions since system inception.</s><s>A copy of this data structure is stored and grown locally by each full network peer in a sequential series of proprietary format binary data files exemplified by the de facto reference implementation of the Bitcoin protocol.</s><s>While the raw blockchain presents a complete and granular transactional dataset for analysis, the binary and sequential nature of this unindexed data makes direct analysis impossible and we must look for an appropriate secondary data store informed by the structure of the data itself.</s><s>To appreciate the task at hand, an example dissection of a block of this raw binary data with its non-trivial encapsulation, lack of primary keys, implicit metadata and heterogeneous byte ordering is presented in appendix A.</s></p><p><s>We now turn to look at the relationships presented by the components of this dataset.</s><s>The integrity of the blockchain is predicated upon the computational work provably done by a miner in solving each block.</s><s>By design one miner in the network will probably find a block solution every 10 min, adding upon the work having already been expended in solving the previously mined block, and each other block before it.</s><s>Thus each new block is necessarily related to each prior block in the chain.</s><s>Each valid transaction broadcast into the system becomes ordered and related to the particular block into which it is first successfully mined.</s><s>Furthermore, each transaction is composed of any number of inputs and outputs, and each input is related to a corresponding and pre-existing unspent output belonging to its own transaction and block, ordered at a prior point in the blockchain.</s><s>Each spending output/input pair is also necessarily related to one or more bitcoin addresses normally representing the public key component of the private key required to authorize a change of ownership.</s><s>Each output records an amount of bitcoin and a cryptographic challenge expressed in an executable, stack-based script which is required to be married to the cryptographic solution contained in a corresponding script of the input to the valid spending transaction.</s><s>There is no limit to the number of transactions that miners may decide to include in a block, but historically an arbitrary limit on the size of data in a block has applied to prevent abuse of the system (originally 32 MB, reduced to 1 MB in 2010, and a cap of similar order currently exists after the introduction of Segregated Witness).</s><s>This unstructured tangle of data relationships between blocks, transactions, inputs, outputs and addresses naturally lends itself to a graph representation for efficient query traversal and pattern recognition.</s><s>Indeed, previous work has analysed sub-graphs of the full dataset, particularly with regard to the associations of identities through the abstracted relationships between addresses and transactions <ref type="bibr" target="#b3">[4]</ref><ref type="bibr" target="#b4">[5]</ref><ref type="bibr" target="#b5">[6]</ref>.</s><s>For the purposes of knowledge discovery, we propose the graph model described in figure <ref type="figure" target="#fig_1">1</ref>, which refrains from abstracting information away and retains the full fidelity of the raw binary data of the blockchain while making for efficient query traversals that would be computationally limiting for a tabular relational database.</s><s>Also stored in our graph model (not shown in figure <ref type="figure" target="#fig_1">1</ref>) are vertices to represent each of the data files and the corresponding byte offset of each block and transaction within those files for easy recourse to the raw binary data and a graphical time tree to enable temporal analyses.</s><s>The graph was implemented in the popular open source graph database Neo4j Community Edition.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.">Implementation</head><p><s>The first step in implementing the graph model was to parse the raw binary data files, each sequentially containing around 128 MB of blockchain data such as that in appendix A. To this end, we wrote a custom C++ parser to consume and quickly deserialize the binary data files in parallel on a 400 core HPC cluster <ref type="bibr" target="#b8">[9]</ref> into an intermediate format in preparation for import into Neo4j.</s></p><p><s>The period of the blockchain data in which we are interested is from its genesis, to shortly after the second halving of the block reward (each halving event occurring according to the Bitcoin protocol every 210 000 blocks).</s><s>Constrained by resources, we arbitrarily chose to model 425 000 blocks given the second halving event occurred shortly before at Block#420 000, therefore extracting almost 8 years of transactional data to 13 August 2016.</s><s>In our particular local copy of the blockchain, Block#425 000 was written into the data file blk00596.dat,</s><s>standing atop an accumulation of 80 GB of raw data files.</s><s>The files naturally exhibit data parallelism as the blocks and transactions they contain are unique and relate to each other through unique identifiers.</s><s>It is only the address data that occurs across multiple files, and this can be rationalized in a simple post-processing step to remove data duplication.</s></p><p><s>Summary statistics of the scope of the resulting graph are shown in table 2, which can be considered a large graph on which to compute.</s><s>The Neo4j instance was run on a 12 core virtual machine with 64 GB RAM, with the allocated heap space configured to sustain concurrent operations at 16 GB, and 24 GB allocated for the page cache.</s><s>Inevitably, the memory available for the page cache results in a performance degradation owing to swapping of data from disk, but to avoid this would have required a recommended 595 GB of RAM for the cache to hold the entire graph resident in memory.</s></p><p><s>In the following sections, we demonstrate the advantage of the index-free adjacency properties of such a granular graph model, which can be efficiently traversed and interrogated to reveal less obvious insights into the relationships within the Bitcoin dataset.</s><s>The graph queries were constructed in the declarative domain-specific query language 'Cypher', native to Neo4j.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">The Bitcoin blockchain: a visual history</head><p><s>Our aim in this section was to stress the graph database with a single query that would be forced to touch most vertices in the graph, and in so doing to create the first visualization of patterns of activity across the whole blockchain.</s></p><p><s>The query considers each input to each transaction in each block, and asks from which historical block did each input amount of bitcoin originate?</s><s>This allows us to inspect the source block (and approximately therefore the time at which it last changed hands) of each amount of bitcoin transacted in each block, which allows the examination of anomalous patterns of behaviour and as we will see in §5 to explore the velocity of circulation characteristics within the Bitcoin economy.</s></p><p><s>In order to avoid self-edges, we do not consider newly generated coinbase transactions nor highfrequency transactions whose inputs point to transactions within the same block.</s><s>We also normalize the amounts of bitcoin to be expressed as the percentage contribution to the whole amount transacted within a block in order to account for large changes in volumes transacted over time.</s></p><p><s>As the Bitcoin blockchain of transactions is a directed acyclic graph, it naturally lends itself to an adjacency matrix representation, and as we only consider inputs from transactions prior to the current block, it takes a strictly upper triangular form.</s><s>We can now visualize this strictly upper triangular Visualizing transfers of value between blocks on the blockchain as such an edge weighted adjacency matrix reveals several interesting features, which are better explored with the interactive zoom capabilities of the tool mentioned in the caption to figure 2. Primarily note the 'heat' along the diagonal.</s><s>This shows that the highest percentage of value transferred into each new block originates from bitcoins that were last transacted in very recent blocks, and thus the velocity of bitcoins in circulation is high: bitcoins are predominantly transacted and churned in relatively short periods of time and this econometric feature is explored further in §5.</s></p><p><s>We can also note distinct horizontal linear features which represent a single block into which many previous amounts of bitcoin are consolidated and also distinct vertical features which represent a single block from which many amounts of bitcoin are distributed.</s><s>Given the density of data and the space available here, these features are most notable in the sparseness of earlier blocks, particularly before the first distributive explosion around Block#120 000.</s><s>However, if we closely examine even recent blocks using our interactive tool, these horizontal and vertical patterns are still present in the data.</s><s>We can thus employ the visualization to backtrack from a particular block on the leading diagonal across repeated horizontal consolidations and vertical distributions in a stepwise manner down through the blockchain to examine the primary source of such behaviour and look to correlate such anomalous behaviour with external events.</s></p><p><s>Furthermore, this allows us to speculate that transactions associated with anomalously repeating horizontal, vertical or diagonal patterns in close proximity are all associated behaviours, controlled by one actor.</s><s>An example is highlighted as repeated 'DNA sequences' of transactional behaviour in figure <ref type="figure" target="#fig_3">2</ref> and such patterns of association are present throughout the blockchain.</s><s>Quantifying these relationships with a mutual similarity measure between blocks and associating transactions to incidences of high similarity is ongoing work.</s><s>We can already see though how speculative relationships from such transactions can be related to a controlling entity in our high fidelity graph to increase confidence in any transaction linkability or deanonimization tasks we may be interested to perform.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Identity leakage through data exhaust</head><p><s>In this section, we dig deep into the raw binary data, and it may be opportune to review the protocol dissection in appendix A for details of a block's extranonce field.</s><s>We employ the open data derived graph database described in §2 to expand upon a prior primary analysis by Lerner <ref type="bibr" target="#b9">[10]</ref> of information leakage through parsing up to four potentially random functional bytes of a comment field, powerfully exposing the probable accumulation of bitcoin wealth by the very first miners, predominantly the single entity by the name of Satoshi Nakamoto <ref type="bibr" target="#b0">[1]</ref>.</s></p><p><s>As described in Bonneau <ref type="bibr" target="#b1">[2]</ref>, the mechanism of Bitcoin mining is to be the first to propose to the network a block of transaction data whose summary block header has a double SHA-256 message digest that is arithmetically less than the then current difficulty criterion.</s><s>Given the nature of this problem, miners adopt a brute force approach by repeatedly testing the message digest of different block headers against the appropriate difficulty criterion.</s><s>The 80 byte block header contains six pieces of summary information about the set of transactions contained therein, four of which are fixed for any given set of immutable transaction data and network consensus.</s><s>Thus the only variables at the control of the miner in order to generate differing message digests between brute force attempts are the nonce and timestamp fields in the header.</s><s>Indirectly a miner may generate a different message digest by changing the set of transaction data, changing the set's Merkle root which is also referenced as a field in the block header (essentially a unique fingerprint of the particular ordered set of transactions contained within the block and the mechanism by which immutability is guaranteed).</s></p><p><s>Changing the transaction dataset is the least preferred option since calculating its new Merkle root, validating new transactions for inclusion or removing transactions either reduce mining efficiency or reduce mining fees.</s><s>The Unix timestamp can be changed within bounds approximately −1/ + 2 hours of the current time, but the obvious field to test against is the 4-byte nonce field dedicated for this purpose.</s><s>However, given the solution space is therefore limited to 2 32 possible message digests, it is feasible that all possibilities can be exhausted by brute force within a very short period of time, where a block header solution that satisfies the difficulty criterion is not found.</s></p><p><s>To overcome this limitation, it has been customary since the genesis block for miners to include up to four bytes of 'extranonce' data in the redundant input field to their coinbase transaction of each block (because this first transaction of each block represents newly generated bitcoins awarded to the miner and requires no inputs).</s><s>This extranonce complements the primary nonce data of the block header.</s><s>By changing this arbitrary little-endian data included within this free-form comment field outside of the formal protocol, the whole transaction set's Merkle root is changed yet all transactions remain valid and thus a new round of 2 32 attempts can be made at finding a solution to the block header.</s><s>If a miner simply increments the extranonce on the overflow of each round of 2 32 unsuccessful primary nonce solution attempts, then once published in a block on success, the extranonce can be considered to represent a slow real-time clock signal from that particular miner.</s></p><p><s>The observation that a seemingly unimportant four bytes of incremental extranonce data in the general exhaust of operation actually represents a slow real-time clock of a particular miner's operation is the foundation of Lerner's 2013 analysis.</s><s>It was shown that the value of each block's incremental extranonce against its time of mining (assuming constant computational mining power) should result in a constant gradient relationship indicative of a particular miner.</s><s>Figure <ref type="figure" target="#fig_5">3</ref> replicates and expands upon Lerner's work, the bottom half showing the same obvious straight line relationships of blocks mined by particular miners, infrequently resetting the extranonce to 0. Blocks mined by a particular miner using an infrequently resetting, non-randomized extranonce all lie on the same positively sloping line.</s><s>The slope (assuming all miners are searching the same primary 2 32 nonce space) is indicative of the rate of successful block solutions, a direct measure of computational mining power and another signature of associated identity.</s></p><p><s>We extend Lerner's analysis and add to it with a traversal of the graph model to show in which block the generated bitcoins under consideration were first spent, and colour the points according to this block height (top of figure <ref type="figure" target="#fig_5">3</ref>).</s><s>This reveals further patterns of identity associations, namely the obvious difference between spent and unspent coinbase transactions and those coinbase transactions which were all spent at the same time.</s><s>In this way, even miners of low computational power with sparse extranonce data points that do not extend into a straight line above the extranonce noise can be further associated together by the horizontal consolidation of coinbase transactions being spent at the same time (see example highlighted in red in figure <ref type="figure" target="#fig_5">3</ref>).</s></p><p><s>There are four reasons that we terminate this analysis so early at Block#80 000:</s></p><p><s>-the linear features are less clear to demonstrate at larger scale given limited space here; -more miners over time result in progressively noisier incremental data; -the free-form nature of the coinbase field becomes more difficult to parse as participants diverge from the initial reference schema (e.g. one can witness similar incremental behaviours using sequential quotations from the Bible, which whilst leaking the same information are significantly more difficult to plot than integers!);</s><s>and -awareness of this information leakage encouraged adoption of extranonce randomization.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Monetary supply disinflation and velocity of circulation</head><p><s>It is well known that bitcoins come into existence as a reward to miners for ensuring system integrity through competing in the mining puzzle.</s><s>Coin creation is famously at a geometrically reducing rate, halving every four years from an initial reward of B50 per block such that mining rewards will cease when the amount reaches the smallest divisible unit around the year 2140, at which point approximately 21 million bitcoin will be in existence.</s><s>In some quarters, this fixed algorithmic coin creation has long been a major attraction of Bitcoin compared to a fiat monetary system where money is supplied according to the political whim of central banks.</s><s>However, it has long been argued this lack of monetary expansion can be considered deflationary, <ref type="bibr" target="#b10">[11]</ref> as expectations of a rise in value owing to restricted supply will lead to hoarding.</s><s>Having every historical transaction available for scrutiny through the open data nature of the public Bitcoin blockchain allows us to examine this disinflationary claim.</s></p><p><s>Monetary economists such as Irving Fisher encapsulated this deflationary concept in the equation of exchange <ref type="bibr" target="#b11">[12]</ref> expounded in the naïve quantity theory of money:  wherein changes in the monetary supply (M), such as the coin generation halvings programmed into Bitcoin or the contrary operation of central bank quantitative easing, will have a causal effect primarily on the level of prices (P) if the velocity of circulation (V) and the number of transactions (T) remain constant.</s></p><formula xml:id="formula_0">MV = PT, (<label>5</label></formula><p><s>In the real economy, V and T are difficult to measure: V is often assumed fixed and T is often substituted by a macro-measure of national income.</s><s>However now, for the first time, the granular open data of the entire blockchain powerfully allow us to directly apply such theories against every transaction in the Bitcoin economy.</s></p><p><s>We can see from studying the diagonal of the edge weighted adjacency matrix of amounts flowing between blocks in figure <ref type="figure" target="#fig_3">2</ref> that a large number of inputs into a block have been transacted in the very recent past, so we start by introducing a measure of velocity of circulation.</s><s>For all m inputs into all the transactions mined in a particular block B N , we define the block's bitcoin dwell time D N as in equation (5.2):</s></p><formula xml:id="formula_1">D N = m i=1 (B N − b i )a i m i=1 a i ,<label>(5.2)</label></formula><p><s>where, a i is the amount of the input and b i is the block number from where the amount originates.</s><s>The dwell time can be considered the equilibrium point in time, measured in number of blocks ago, such that the weighted amount of bitcoins transacted in a block balances the imaginary beam depicted in figure <ref type="figure">4</ref>. It may not be immediately obvious, but these beams are the physical analogue of each row of data visualized in figure <ref type="figure" target="#fig_3">2</ref>. This dwell time measure is naturally inversely related to the velocity of circulation: the larger a block's dwell time, the longer transacted bitcoins in that block have been stationary and out of circulation.</s><s>Now if we look at (the log of) this dwell time measure over the entire blockchain under consideration (figure <ref type="figure" target="#fig_7">5</ref>), we can see that as volumes have increased, the velocity of circulation has reasonable variance but exhibits no accelerating or decelerating trend.</s><s>As an aside, the horizontal features observable at the beginning of the chart occur during a period of very low volume, where many blocks had single transactions of fixed amounts from a small number of blocks prior.</s><s>In fact, the restriction for a miner to wait more than 100 blocks to spend the B50 coinbase reward can also clearly be seen in this early period.</s></p><p><s>Figure <ref type="figure" target="#fig_7">5</ref> shows that of the bitcoins transacted, there is no evidence of change in any hoarding behaviour as the velocity of circulation as measured by the bitcoin dwell time also shows no significant change, despite the two halvings of the monetary supply already experienced.</s><s>In fact, if we make a linear least squares fit of the dwell time data, while mildly positively sloping, it only increases by 33 blocks over the whole 425 000 block period from D 0 = 861 blocks.</s><s>Alternatively, we can say that a typical bitcoin circulating over this 7-8 year period under consideration has been transacted approximately every six days (given the mining rate at ~144 blocks d −1 ), and this has remained the case since its genesis and over the two halving events experienced so far.</s><s>With this constant V in mind, referring back to the naïve equation of exchange (5.1) as a cartoon example and noting both that the number of transactions (T) is constrained as a constant by the currently exhibited protocol block size limit of around 1 MB and that the monetary supply (M) is reducing as programmed by the quadrennial halving events, we can thus theorize that the prices of goods denominated in bitcoin (P) must also tend to decrease from current expectations in line with the reduced monetary supply.</s></p><p><s>Have we in fact experienced this anticipated price deflation?</s><s>Empirically, there are very few goods denominated in bitcoin, but we can turn to the inverse of price and look at the purchasing power of one bitcoin.</s><s>If we look to the price of a bitcoin as a measure of its purchasing power in the wider fiat economy, we can see it has indeed increased over the two halvings.</s><s>As well as through speculation, Bitcoin has exhibited a deflationary profile, and we can speculate that such purchasing power increases may continue as the supply becomes ever more restricted while the velocity of circulation and effective 1 MB block size limit remain in effect.</s></p><p><s>It is only through the open data nature of the blockchain that any interested party can generate on a per transaction granular basis such a metric for the velocity of circulation within the Bitcoin economy.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Denial of service attacks</head><p><s>In our previous work visualizing transaction patterns across the Bitcoin blockchain <ref type="bibr" target="#b12">[13]</ref>, a particular result was the identification of programmatically generated spam transactions.</s><s>In that work, we generated a real-time force directed graph of bitcoin transactions within blocks, visualizing the relationships between transaction inputs (orange), transaction outputs (blue) and transaction components sharing a common bitcoin address (grey).</s><s>An example of the visualization showing Block#364133 is shown in figure <ref type="figure" target="#fig_10">6</ref>.</s><s>This block was mined in a period where an attacker had mounted a denial of service (DoS) attack on Bitcoin, algorithmically and cheaply generating many 'spam' transactions of small value to artificially fill up the blocks with large amounts of data to push against the arbitrary the 1 MB block ceiling hard coded into the Bitcoin protocol at that time.</s></p><p><s>A cursory inspection of the anomalous worm structures in the block visualization reveals the nature of the algorithm used to generate the spam transactions, namely many high-frequency transactions repeatedly spending small blue outputs to 102 separate addresses in the case of the 'fat worm', and 11 and 15 separate addresses in the case of the two 'thin worms'.</s></p><p><s>Knowing the primary feature of these high-frequency spam transactions is their high out degree (and later their in degree), we can deploy our high fidelity graph model to query and explore this algorithm's evolution.</s><s>The results of this query are shown in figure <ref type="figure" target="#fig_11">7</ref> which depicts, for each block, a particular 'heat' according to the number of transactions of a certain (positive) in degree and the number of transactions of a certain (negative) out degree, plotted on a log scale.</s><s>Clearly there are many regular transactions in each block of small in and out degree hence the indeterminate and unimportant 'heat' along the central axis, but by observing the clear linear structures away from the central axis it immediately becomes clear when the high-frequency algorithm of anomalously large in or out degree is in operation.</s></p><p><s>We can see from figure <ref type="figure" target="#fig_11">7</ref> that the denial of service algorithm did indeed commence operation at the time of Block#364133 visualized in figure <ref type="figure" target="#fig_10">6</ref> and quickly evolved to generating at least five discrete structures, each with a unique but consistent out degree signature.</s><s>We can also see somewhat coordinated periods where the algorithms briefly cease operation, perhaps to recharge funds or perhaps for overnight shutdown which could identify the time zone of the operator.</s><s>Clearly we are able to associate these transactions by their consistent anomalous structure and coordinated   start/stop behaviour.</s><s>We can also determine the point at which the algorithm ceased operation around Block#365149, almost exactly 7 days after its start.</s><s>Shortly after this transaction output algorithm's cessation, a new linear structure above the central axis emerges, indicating a high-frequency algorithm similar in nature but instead using transaction inputs as opposed to outputs, potentially collecting the small amounts that the previous algorithm had distributed, minimizing the cost of the attack but multiplying its effects on the network.</s><s>It can be no coincidence that such anomalous behaviour starts so soon after the cessation of the previous pernicious algorithmic behaviour.</s><s>Another approach performed by Baquer et al. <ref type="bibr" target="#b13">[14]</ref> is to use a k-means clustering of spam features.</s><s>By combining approaches, we would be able to increase confidence in the positive identification of transactions related to the denial of service spam attack through the public nature of the blockchain data, and can decorate our graph model with this additional intelligence in order to identify addresses and behaviours which would otherwise remain hidden in the data and can potentially be used by the community to generate heuristic defences against such attacks.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.">Conclusion and further work</head><p><s>A distributed public permissionless blockchain database such as Bitcoin securely holds immutable records of transactional data between users.</s><s>The Bitcoin blockchain is an unwieldy data structure, large in size, lacking primary keys, of non-trivial encapsulation and heterogeneous byte ordering, while demanding additional computation of inferred data to be of use.</s><s>In this article, we have disentangled the cumbersome binary blockchain into a usable graph model with its associated benefits of efficient path traversal and pattern matching isomorphisms.</s><s>This work has taken full advantage of this first example of a granular financial open dataset to show some of the socially useful analyses that can be conducted to the benefit of the system and its community of users.</s></p><p><s>Our contributions have been:</s></p><p><s>-to reveal observable patterns of linked transactional behaviour by traversing the entire graph, producing the first visualization of the entire blockchain as an edge weighted adjacency matrix; -to increase confidence in the attribution of mined bitcoin to single entities by combining existing analyses of the extranonce with a traversal of the graph to the point at which they were first spent; -to show econometrically a per transaction application of the quantity theory of money to the deflationary Bitcoin economy without having to rely on traditional broad and aggregative assumptions; and -to demonstrate how network metrics can distinguish anomalous patterns of algorithmically generated transaction behaviour during denial of service 'spam' attacks.</s></p><p><s>We can now set to the task of automatically classifying these linked transactional behaviours observed in the Bitcoin blockchain and decorate our graph with this additional intelligence.</s><s>We speculate that associating these transactions at the user level may reveal new patterns in the data.</s><s>We also look to apply the methods here to alternative blockchain databases such as Ethereum and ZCash, developing cross-chain analytic tools.</s><s>In this instance, blockchain analytics will have important applications in fields such as fraud and tax investigation, the application of econometric and economic behaviour theory and towards the improvement of blockchain technology in general.</s></p><p><s>Bitcoin's blockchain database happens to contain records of financial transactions.</s><s>But as the technology matures, it is a small step of the imagination to consider securing similar shared public data assets in a blockchain architecture; perhaps containing records of anonymized medical or epidemiological data, results of pharmaceutical trials, geological seismology studies or the weightings of pre-trained neural networks.</s><s>Blockchain analytics will have an important role across research and industry.</s></p><p><s>However, it must be noted that a public open data architecture as currently implemented in Bitcoin presents challenges of privacy and scalability.</s><s>Particularly at the enterprise level, where all participants in a business network are required to be authenticated or a centralized third party can be trusted, the issues of scale and confidentiality with these distributed ledger technologies are being addressed by implementing walled-garden models of siloed data.</s><s>In such cases, however, the benefits of these private permissioned distributed ledger solutions over a properly authenticated, replicated and audited traditional database remain uncertain.</s><s><ref type="bibr">It</ref>  length and heterogeneous byte orders, leads to the result that it is necessary to post-process the binary data files, parsing them in their entirety to extract useful information.</s><s>The need for data expansion into a secondary store for efficient query traversal becomes obvious, and a graph structure is the natural choice.</s></p><p><s>It is curious to note that such great efforts were made in the Bitcoin protocol design to minimize the bytes that would have to be stored in perpetuity by every fully validating participant.</s><s>Yet the fact is that it is redundant to record the public key itself on the blockchain as ECDSA facilitates public key recovery given the signature, plain text message and nonce used, which suggests the designer(s) were not fully conversant with elliptic curve cryptography at the outset.</s><s>An interesting aside is the ECDSA signature nonce must be truly random for any address re-use as private key recovery is possible given known public keys, signatures, corresponding plain texts and nonces <ref type="bibr" target="#b14">[15]</ref>.</s><s>Once linkability is established between a user's transactions through means such as those exhibited throughout this article, patterns of ECDSA nonce use may expose a feasible attack vector.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc><div><p><s>. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 .</head><label>1</label><figDesc><div><p><s>Figure 1.</s><s>Example portion of the graph model of the Bitcoin blockchain showing the relationships between blocks, transactions, their inputs, outputs and associated addresses.</s><s>The figure shows the source and destination components reflecting the spending of B61 in the second transaction mined into Block#496, whose identifying hash is highlighted in red.</s></p></div></figDesc><graphic coords="4,74.09,42.29,387.50,439.34" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>5</head><label></label><figDesc><div><p><s>rsos.royalsocietypublishing.org R. Soc.</s><s>open sci.</s><s>5: 180298 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 2 .</head><label>2</label><figDesc><div><p><s>Figure 2. Full Bitcoin blockchain visualization as an adjacency matrix representation (edge-weighted by colour) of the flow of bitcoin amounts between all blocks of the entire Bitcoin blockchain to Block#425 000, designed for interrogation on our 130 megapixel data visualization facility, a navigable interactive version of which is available at https://www.doc.ic.ac.uk/ dmcginn/adjmat.html</s></p></div></figDesc><graphic coords="6,100.49,44.21,335.66,312.26" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>7</head><label></label><figDesc><div><p><s>rsos.royalsocietypublishing.org R. Soc.</s><s>open sci.</s><s>5: 180298 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 3 .</head><label>3</label><figDesc><div><p><s>Figure 3. Plots showing heights at which each block's coinbase was first spent (top) and the extranonce value used (bottom), coloured by spent height (including unspent).</s><s>Note the constant gradient incremental extranonce features identifying discrete continuous mining operations, highlighted in red when combined with simultaneous spending data.</s></p></div></figDesc><graphic coords="8,95.57,166.49,322.70,84.86" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>. 1 )Figure 4 .</head><label>14</label><figDesc><div><p><s>Figure 4. Example bitcoin dwell time measure, D 496 , for the three component input amounts to all transactions mined in Block#496.</s><s>(See figure 1 for further details).</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 5 .</head><label>5</label><figDesc><div><p><s>Figure 5. Bitcoin dwell time by block (log plot).</s></p></div></figDesc><graphic coords="9,91.97,180.53,361.94,185.18" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head></head><label></label><figDesc><div><p><s>rsos.royalsocietypublishing.org R. Soc.</s><s>open sci.</s><s>5: 180298 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head></head><label></label><figDesc><div><p><s>rsos.royalsocietypublishing.org R. Soc.</s><s>open sci.</s><s>5: 180298 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Figure 6 .</head><label>6</label><figDesc><div><p><s>Figure 6.</s><s>Algorithmically associated spam transactions forming the three visually anomalous 'worm' structures (indicated) of a DoS attack commencing in Block#364133.</s><s>(McGinn et al. [13] for details).</s></p></div></figDesc><graphic coords="11,90.53,41.81,340.34,338.90" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_11"><head>Figure 7 .</head><label>7</label><figDesc><div><p><s>Figure 7. Spectrogram-type plot of transaction count per block by (log) +in/-out degree exposing specific periods of anomalous degree distribution.</s></p></div></figDesc><graphic coords="11,84.41,443.33,336.02,224.66" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_12"><head></head><label></label><figDesc><div><p><s>is clear though that the open data model of a rsos.royalsocietypublishing.org R. Soc.</s><s>open sci.</s><s>5: 180298 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc><div><p></p></div></figDesc><graphic coords="13,57.53,244.25,406.94,250.94" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 .</head><label>1</label><figDesc><div><p><s>At the enterprise level, there is a clear design evolution towards a private permissioned distributed ledger architecture for reasons of governance, commercial confidentiality, regulatory compliance and computational simplicity.. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .</s><s>There is no global broadcast at any point' b . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .</s><s>Sawtooth is built to solve the challenges of permissioned (private) networks' e . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .</s><s>Permissioned blockchain networks differ from unpermissioned blockchain networks solely based on the presence of an access control layer built into the blockchain nodes' f . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .</s></p></div></figDesc><table><row><cell>Clearmatics</cell><cell>limited public information although the Utility Settlement Coin project is limited to 12 members of a</cell></row><row><cell></cell><cell>private consortium a</cell></row><row><cell>Corda (R3)</cell><cell>'Corda is designed for semi-private networks in which admission requires obtaining an identity signed</cell></row><row><cell cols="2">by a root authority • • • Digital Asset Holdings 'the Digital Asset Platform Distributed Ledger layer is a permissioned l edger accessible (for reading or</cell></row><row><cell></cell><cell>writing) only by known and pre-approved parties' c</cell></row><row><cell>Hyperledger Fabric</cell><cell>'Hyperledger Fabric is a platform for distributed ledger solutions • • • is private and permissioned• • •</cell></row><row><cell></cell><cell>the members of a Hyperledger Fabr ic network enrol through a Membership Service Provider' d</cell></row><row><cell>Hyperledger Sawtooth</cell><cell>'Hyperledger Sawtooth is an enterprise blockchain platform for building distributed ledger applications</cell></row><row><cell cols="2">and networks• • • Monax 'Monax was the first to market with a permissionable blockchain which kick-started enterprise</cell></row><row><cell cols="2">interest• • • a https://www.clearmatics.com/utility-settlement-coin-pioneering-form-digital-cash/.</cell></row><row><cell cols="2">b https://docs.corda.net/_static/corda-technical-whitepaper.pdf.</cell></row><row><cell cols="2">c http://hub.digitalasset.com/hubfs/Documents/Digital%20Asset%20Platform%20-%20Non-technical%20White%20Paper.pdf.</cell></row><row><cell cols="2">d https://hyperledger-fabric.readthedocs.io/en/latest/blockchain.html#what-is-hyperledger-fabric.</cell></row><row><cell cols="2">e https://sawtooth.hyperledger.org/docs/core/releases/latest/introduction.html.</cell></row><row><cell cols="2">f https://monax.io/learn/permissioned_blockchains/.</cell></row></table><note><p><s>. . .</s></p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 .</head><label>2</label><figDesc><div><p><s>Summary statistics of vertices in the graph model. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .</s></p></div></figDesc><table><row><cell>number of blocks</cell><cell>425 000</cell></row><row><cell>number of transactions</cell><cell>148 967 063</cell></row><row><cell>number of inputs</cell><cell>386 925 089</cell></row><row><cell>number of outputs</cell><cell>428 714 233</cell></row><row><cell>number of addresses</cell><cell>196 560 158</cell></row><row><cell>data size binary (MB)</cell><cell>79 924</cell></row><row><cell>data size Neo4j (MB)</cell><cell>519 792</cell></row></table><note><p><s>. . . . . . .</s></p></note></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">Downloaded from https://royalsocietypublishing.org/ on 17 May 2022</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="18">18SH9v... 1ByLSV... source addresses 15NUwy... unlock unlock lock lock lock lock</note>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Data accessibility.</s><s>Figure data available from the Dryad Digital Repository: http://dx.doi.org/10.5061/dryad.h9r0p65</s><s><ref type="bibr" target="#b15">[16]</ref>, a subset of the wholly open data, publicly accessible through participation in the Bitcoin network with full integrity, consistency and liveness guarantees.</s></p><p><s>Authors' contributions.</s><s>D.M. conceived of the study, carried out the data collection, analysis and interpretation and drafted the manuscript; Y.G. sponsored the project and both he and D.M. assisted in the drafting of the manuscript.</s><s>All authors gave final approval for publication.</s></p><p><s>Competing interests.</s><s>We declare we have no competing interests.</s><s>Funding.</s><s>No directly attributable sources of funding were used for this research.</s><s>Acknowledgements.</s><s>David Birch provided valuable visualization assistance in Imperial's Data Observatory.</s><s>This research was partly carried out in the Imperial College-Zhejiang University Joint Laboratory for Applied Data Science and the HNA Research Centre for Future Data Ecosystems at the Imperial College Data Science Institute.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Appendix A. Dissecting the raw binary data: Block#170</head><p><s>The graphic presented in this appendix shows the dissection of the 490 bytes of raw binary blockchain data representing Block#170: the block into which the first ever spending transaction between Satoshi Nakamoto and Hal Finney was mined.</s><s>Every node fully participating in the Bitcoin network carries this data, along with that of every other valid block, leading to the robust redundancy and replication for which Bitcoin is known.</s></p><p><s>Following the colour convention of figure <ref type="figure">1</ref>, the block data with its 80 byte header are shown in green.</s><s>Encapsulated within the block in this case are two transactions depicted in grey.</s><s>The first transaction of a block is always the coinbase transaction allocating newly minted bitcoins to the successful miner.</s><s>Each transaction is composed of orange inputs (redundant in the case of each coinbase transaction) and blue outputs.</s><s>The transaction outputs are the sockets into which future inputs can connect, at which point they become spent.</s><s>The outputs propose an amount of bitcoin and a cryptographic challenge (pkScript) usually referencing an ECDSA public key or its derivative hash from which the bitcoin address is further derived, shown in red.</s><s>When the output's pkScript is combined with its corresponding spending input's scriptSig (which contains a DER encoded ECDSA signature over the transaction), each validating node can independently verify that the spend was correctly authorized by knowledge of the private key corresponding to the bitcoin address.</s></p><p><s>Particular to note is the over-normalization and lack of any primary keys directly identifying any piece of data such as a block hash, transaction hash or bitcoin address, all to which the data refer but must be derived from the data itself.</s><s>This fact, coupled with the non-trivial encapsulation of data of variable</s></p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Bitcoin: a peer-to-peer electronic cash system</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Nakamoto</surname></persName>
+		</author>
+		<ptr target="https://bitcoin.org/bitcoin.pdf" />
+		<imprint>
+			<date type="published" when="2008-12">2008. December 2017</date>
+			<biblScope unit="page">25</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">SoK: research perspectives and challenges for bitcoin and cryptocurrencies</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Bonneau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Miller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Clark</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Narayanan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Kroll</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">W</forename><surname>Felten</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings -IEEE Symposium on Security and Privacy</title>
+				<meeting>-IEEE Symposium on Security and Privacy<address><addrLine>New York, NY</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE Inc</publisher>
+			<date type="published" when="2015-07">2015. 2015-July, 104-121</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Mastering Bitcoin</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Antonopoulos</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<pubPlace>Sebastopol, CA: O&apos;Reilly</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">An analysis of anonymity in the Bitcoin system</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Reid</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Harrigan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2011 IEEE Third International Conference on Privacy, Security, Risk and Trust and IEEE Third International Conference on Social Computing</title>
+				<meeting>the 2011 IEEE Third International Conference on Privacy, Security, Risk and Trust and IEEE Third International Conference on Social Computing<address><addrLine>Los Alamitos, CA, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>IEEE Computer Society</publisher>
+			<date type="published" when="2011">2011. 2011</date>
+			<biblScope unit="page" from="1318" to="1326" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Evaluating user privacy in Bitcoin</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Androulaki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">O</forename><surname>Karame</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Roeschlin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Scherer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Capkun</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/978-3-642-39884-1_4</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Lecture Notes in Computer Science (including subseries Lecture Notes in Artificial Intelligence and Lecture Notes in Bioinformatics) 7859 LNCS</title>
+				<imprint>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="page" from="34" to="51" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">A fistful of Bitcoins: characterizing payments among men with no names</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Meiklejohn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Pomarole</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Jordan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Levchenko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Mccoy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">M</forename><surname>Voelker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Savage</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. 2013 Internet Measurement Conference</title>
+				<meeting>2013 Internet Measurement Conference<address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="page" from="127" to="140" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Quantitative analysis of the full Bitcoin transaction graph</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Ron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Shamir</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="s">Lecture Notes in Computer Science (including subseries Lecture Notes in Artificial Intelligence and Lecture Notes in Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">7859</biblScope>
+			<biblScope unit="page" from="6" to="24S" />
+			<date type="published" when="2013">2013</date>
+			<publisher>Springer</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">On the linkability of Zcash transactions</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Quesnelle</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">ArXiv e-prints</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title/>
+		<idno type="DOI">10.14469/hpc/2232</idno>
+		<ptr target="http://www.imperial.ac.uk/admin-services/ict/self-service/research-support/hpc" />
+		<imprint>
+			<date type="published" when="2016-12">2016. December 2017</date>
+			<biblScope unit="page">25</biblScope>
+		</imprint>
+		<respStmt>
+			<orgName>Imperial College Research Computing Service</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">The well deserved fortune of Satoshi Nakamoto, Bitcoin creator, visionary and genius</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">D</forename><surname>Lerner</surname></persName>
+		</author>
+		<ptr target="https://bitslog.wordpress.com/2013/04/17/the-well-deserved-fortune-of-satoshi-nakamoto" />
+		<imprint>
+			<date type="published" when="2013-12">2013. December 2017</date>
+			<biblScope unit="page">25</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">-chronic-deflation-may-keepbitcoin-displacing-its-fiat-rivals-money</title>
+		<ptr target="https://www.economist.com/news/finance-and-economics/21599053" />
+		<imprint>
+			<date type="published" when="2014-03">2014. March-2014 (accessed 25-December-2017</date>
+			<biblScope unit="volume">15</biblScope>
+		</imprint>
+	</monogr>
+	<note>Chronic deflation may keep Bitcoin from displacing its fiat rivals</note>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">The purchasing power of money</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Fisher</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2011">2011</date>
+			<publisher>The Macmillan Co</publisher>
+			<pubPlace>New York, NY</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Visualizing dynamic Bitcoin transaction patterns</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Mcginn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Birch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Akroyd</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Molina-Solana</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wj ; E</forename><surname>Knottenbelt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Bertini</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Maciejewski</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Perer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Big data</title>
+				<meeting><address><addrLine>La Rochelle, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Mary Ann Liebert, Inc</publisher>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page" from="109" to="119" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Stressing out: Bitcoin &apos;stress testing&apos; . In Financial Cryptography and Data Security. FC</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Baqer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Mccoy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Weaver</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="s">Lecture Notes in Computer Science</title>
+		<imprint>
+			<biblScope unit="page" from="3" to="18" />
+			<date type="published" when="2016">2016. 2016</date>
+			<publisher>Springer</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Private key recovery combination attacks: on extreme fragility of popular Bitcoin key management, wallet and cold storage solutions in presence of poor RNG events</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">T</forename><surname>Courtois</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Emirdag</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Valsorda</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+	<note>Cryptology ePrint Archive</note>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Data from: Towards open data blockchain analytics: a Bitcoin perspective</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Mcginn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Mcilwraith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Guo</surname></persName>
+		</author>
+		<idno type="DOI">10.5061/dryad.h9r0p65</idno>
+		<ptr target="http://dx.doi.org/10.5061/dryad.h9r0p65" />
+	</analytic>
+	<monogr>
+		<title level="j">Dryad Digital Repository</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,1589 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Role of peptide processing predictions in T cell epitope identification: contribution of different prediction programs</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2014-12-06">6 December 2014</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Jorg</forename><forename type="middle">J A</forename><surname>Calis</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Peter</forename><surname>Reinink</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Christin</forename><surname>Keller</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Peter</forename><forename type="middle">M</forename><surname>Kloetzel</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Can</forename><surname>Kes</surname></persName>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="department">Theoretical Biology &amp; Bioinformatics, Biology Department</orgName>
+								<orgName type="institution">Utrecht University</orgName>
+								<address>
+									<addrLine>Padualaan 8</addrLine>
+									<postCode>3584 CH</postCode>
+									<settlement>Utrecht</settlement>
+									<country key="NL">The Netherlands</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff1">
+								<orgName type="department" key="dep1">Institut für Biochemie-Charité</orgName>
+								<orgName type="department" key="dep2">Medical Faculty</orgName>
+								<orgName type="institution">Humboldt University Berlin</orgName>
+								<address>
+									<settlement>Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Role of peptide processing predictions in T cell epitope identification: contribution of different prediction programs</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2014-12-06">6 December 2014</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">36D0714807D6A962496A342735848CD7</idno>
+					<idno type="DOI">10.1007/s00251-014-0815-0</idno>
+					<note type="submission">Received: 12 August 2014 / Accepted: 10 November 2014 /</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:20+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Proteasomal cleavage</term>
+					<term>Proteolysis</term>
+					<term>MHC-I presentation</term>
+					<term>Peptide processing</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Proteolysis is the general term to describe the process of protein degradation into peptides.</s><s>Proteasomes are the main actors in cellular proteolysis, and their activity can be measured in in vitro digestion experiments.</s><s>However, in vivo proteolysis can be different than what is measured in these experiments if other proteases participate or if proteasomal activity is different in vivo.</s><s>The in vivo proteolysis can be measured only indirectly, by the analysis of peptides presented on MHC-I molecules.</s><s>MHC-I presented peptides are protected from further degradation, thus enabling an indirect view on the underlying in vivo proteolysis.</s><s>The ligands presented on different MHC-I molecules enable different views on this process; in combination, they might give a complete picture.</s><s>Based on in vitro proteasomeonly digestions and MHC-I ligand data, different proteolysis predictors have been developed.</s><s>With new in vitro digestion and MHC-I ligand data sets, we benchmarked how well these predictors capture in vitro proteasome-only activity and in vivo whole-cell proteolysis, respectively.</s><s>Even though the in vitro proteasome digestion patterns were best captured by methods trained on such data (ProteaSMM and NetChop 20S), the in vivo whole-cell proteolysis was best predicted by a method trained on MHC-I ligand data</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p><s>The proteasome degrades intracellular proteins, marked for degradation by the ubiquitination pathway <ref type="bibr" target="#b9">(Hershko and Ciechanover 1992)</ref>.</s><s>Protein degradation, i.e., proteolysis, is important to remove miss-folded proteins, to regulate cellular processes such as the cell-cycle or for the production of MHC-I ligands <ref type="bibr">(Goldberg 2003;</ref><ref type="bibr" target="#b32">Seifert et al. 2010;</ref><ref type="bibr" target="#b20">van Leuken et al. 2008;</ref><ref type="bibr" target="#b1">Clijsters et al. 2013;</ref><ref type="bibr" target="#b16">Kloetzel 2001)</ref>.</s><s>Peptide fragments that result from proteolysis are rapidly degraded by cytosolic aminopeptidases <ref type="bibr" target="#b29">(Reits et al. 2003)</ref>.</s><s>However, few peptides escape this degradation and are transported to the endoplasmatic reticulum (ER) by the transporter associated with antigen processing (TAP), where they can form peptide-MHC-I complexes (pMHCs) <ref type="bibr" target="#b22">(Neefjes et al. 2011)</ref>.</s><s>pMHCs are presented on the cell surface to enable immune surveillance by T cells.</s></p><p><s>Most cells express the constitutive proteasome, which is a barrel-shaped multi-subunit protein complex, composed of two α-and two β-rings, where each ring contains seven subunits.</s><s>In the β ring of the constitutive proteasome, three proteins are present that have proteolytic capacity: β1, β2, and β5 <ref type="bibr" target="#b18">(Kloetzel and Ossendorp 2004)</ref>.</s><s>Under the influence of interferon-γ (IFNγ ), these subunits can be substituted by β1 i , β2 i , and β5 i , respectively, to form the so-called immunoproteasome <ref type="bibr" target="#b0">(Aki et al. 1994)</ref>.</s><s>Whereas the constitutive proteasome has a preference to cleave hydrophobic, acidic, and basic amino acids, the immunoproteasome is more efficiently cleaving after hydrophobic and basic amino acids <ref type="bibr" target="#b4">(Gaczynska et al. 1993;</ref><ref type="bibr" target="#b38">Toes et al. 2001;</ref><ref type="bibr" target="#b13">Kesmir et al. 2003)</ref>.</s><s>Other proteasome types can be formed by a combination of constitutive and immunoproteasomal subunits <ref type="bibr" target="#b8">(Guillaume et al. 2010)</ref>, or with the β5 t subunit that is only expressed in cortical thymic epithelial cells <ref type="bibr" target="#b21">(Murata et al. 2007</ref>).</s><s>These different proteasome types largely overlap in their cleavage preferences <ref type="bibr" target="#b8">(Guillaume et al. 2010;</ref><ref type="bibr" target="#b21">Murata et al. 2007;</ref><ref type="bibr" target="#b3">Florea et al. 2010)</ref>, though the efficiency can differ at different cleavage sites which has an influence on the repertoire of MHC-I presented peptides <ref type="bibr" target="#b15">(Kincaid et al. 2012)</ref>.</s></p><p><s>Two main approaches have been taken to study proteolytic activity: in vitro digestion experiments and in vivo MHC-I-ligand elutions.</s><s>In an in vitro digestion experiment, a protein is incubated with proteasomes.</s><s>The peptide fragments that are formed during the digestion can be detected by mass spectrometry, and cleavage sites can be inferred from the fragments <ref type="bibr" target="#b2">(Emmerich et al. 2000;</ref><ref type="bibr" target="#b36">Tenzer et al. 2004;</ref><ref type="bibr" target="#b38">Toes et al. 2001)</ref>.</s><s>So far, the cleavage sites of only three proteins, i.e., β-casein, enolase, and prion protein, have been determined in such in vitro assays <ref type="bibr" target="#b2">(Emmerich et al. 2000;</ref><ref type="bibr" target="#b36">Tenzer et al. 2004;</ref><ref type="bibr" target="#b38">Toes et al. 2001)</ref>.</s><s>Alternatively, in vivo proteolytic activity can be measured by the analysis of digestion fragments that form pMHCs; these fragments can be eluted from a cell and identified by mass spectrometry.</s><s>The C-terminus of the MHC-I presented peptide is generated by proteolytic activity and reflects an in vivo cleavage site in the protein from which the MHC-I ligand was derived <ref type="bibr" target="#b16">(Kloetzel 2001</ref>).</s><s>However, as many cleavage sites will result in fragments that do not become MHC-I ligands, only a small subset of all cleavage sites can be detected via this approach.</s><s>In addition, other peptidases such as ACE, TPPII, and Nardilysin <ref type="bibr" target="#b5">(Geier et al. 1999;</ref><ref type="bibr" target="#b33">Shen et al. 2008;</ref><ref type="bibr" target="#b14">Kessler et al. 2011</ref>) can influence the C-terminus of MHC-I ligands.</s><s>Therefore, the MHC-Iligand data is more likely to reflect the proteolytic activity of all cellular proteases, rather than the activity of just the proteasomes or one proteasome-type.</s></p><p><s>To study proteolyis and to aid MHC-I ligand predictions, different proteolyis predictors have been developed <ref type="bibr" target="#b11">(Holzhutter et al. 1999;</ref><ref type="bibr" target="#b10">Holzhutter and Kloetzel 2000;</ref><ref type="bibr" target="#b12">Kesmir et al. 2002;</ref><ref type="bibr" target="#b23">Nielsen et al. 2005;</ref><ref type="bibr" target="#b37">Tenzer et al. 2005;</ref><ref type="bibr" target="#b6">Ginodi et al. 2008;</ref><ref type="bibr" target="#b19">Kuttler et al. 2000;</ref><ref type="bibr" target="#b24">Nussbaum et al. 2001</ref><ref type="bibr">. Most predictors, e.g., FragPredict (Holzhutter et al. 1999;</ref><ref type="bibr" target="#b10">Holzhutter and Kloetzel 2000)</ref>, ProteaSMM <ref type="bibr" target="#b37">(Tenzer et al. 2005)</ref>, PAProC <ref type="bibr" target="#b19">(Kuttler et al. 2000;</ref><ref type="bibr" target="#b24">Nussbaum et al. 2001)</ref>, and PepCleave <ref type="bibr" target="#b6">(Ginodi et al. 2008)</ref>, have been trained on the in vitro proteasome digestion data from β-casein and enolase <ref type="bibr" target="#b2">(Emmerich et al. 2000;</ref><ref type="bibr" target="#b38">Toes et al. 2001)</ref>.</s><s>NetChop 20S <ref type="bibr" target="#b12">(Kesmir et al. 2002;</ref><ref type="bibr" target="#b23">Nielsen et al. 2005</ref>) and the so-called enhanced versions of ProteaSMM are trained on the in vitro proteasome digestion data from β-casein, enolase, and the prion-protein <ref type="bibr" target="#b2">(Emmerich et al. 2000;</ref><ref type="bibr" target="#b38">Toes et al. 2001;</ref><ref type="bibr" target="#b36">Tenzer et al. 2004)</ref>.</s><s>Unlike the other predictors, NetChop Cterm is trained on in vivo MHC-I ligand data <ref type="bibr" target="#b12">(Kesmir et al. 2002;</ref><ref type="bibr" target="#b23">Nielsen et al. 2005)</ref>.</s><s>Besides the different data sets that were used for training the methods, different computational techniques were used to construct the predictors.</s><s>For instance, ProteaSMM models the cleavage pattern with a stabilized matrix method (SMM) using six amino acids C-terminal and four amino acids N-terminal of a potential cleavage site, and NetChop is based on a neural network that uses nine amino acids C-terminal and eight amino acids N-terminal of a potential cleavage site.</s></p><p><s>In 2005, <ref type="bibr" target="#b37">Tenzer et al. (2005)</ref> bench-marked FragPredict, PAProC, NetChop-2.0,</s><s>and ProteaSMM on several data sets, and showed that ProteaSMM best predicted in vitro proteasome digestion cleavage patterns, whereas NetChop-2.0</s><s>Cterm best predicted the cleavage patterns based on MHC-I ligands.</s><s><ref type="bibr" target="#b37">Tenzer et al. (2005)</ref> argued that the increased performance of NetChop-2.0</s><s>Cterm on the MHC-I ligand data was due to a recognition of TAP-transportable peptides.</s><s>After this study, NetChop was updated to version 3.0 <ref type="bibr" target="#b23">(Nielsen et al. 2005)</ref> and a new method, PepCleave, was developed <ref type="bibr" target="#b6">(Ginodi et al. 2008)</ref>.</s><s>Unfortunately, PepCleave cannot be compared to the other predictors as it predicts fragments and not cleavages <ref type="bibr" target="#b6">(Ginodi et al. 2008)</ref>.</s><s>Therefore, we have chosen to compare ProteaSMM and the newest version of NetChop on new in vitro proteasome digestion data sets, and a new benchmark set of MHC-I ligands.</s><s>Next to benchmarking, our analysis shines light on the nature of the difference between in vitro proteasome-only and in vivo whole-cell proteolytic activities, suggesting an important role for proteases other than the proteasome.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Predicting in vitro cleavage patterns</head><p><s>To compare proteasome predictors, we generated a new independent data set.</s><s>This data set was based on in vitro digestions of 17-30 amino acids long HIV-1 peptides; the products of these digestions were analyzed using mass spectrometry to determine cleavage and non-cleavage sites (see "Methods" section).</s><s>Digestions were performed with either constitutive or immunoproteasomes.</s><s>Of 368 possible cleavage sites, 150 (41 %) were used by the constitutive proteasomes, and 148 by the immunoproteasomes, 103 sites (of the 148 cleavage sites) were cleaved by both proteasometypes (Supplementary Table <ref type="table" target="#tab_0">S1</ref>).</s><s>Thus, even though the different proteasomes can target the different sites with varying efficiencies, the set of cleavage sites that is identified in this assay largely overlaps.</s></p><p><s>The prediction performance of ProteaSMM and NetChop-3.0</s><s>was analyzed using receiver operator characteristic (ROC) curves, where the number of correct and false predictions is plotted for every prediction threshold <ref type="bibr" target="#b35">(Swets 1988)</ref>.</s><s>The area under a ROC-curve (AUC) is a performance measure of the predictor, and is widely used because it is threshold independent <ref type="bibr" target="#b35">(Swets 1988)</ref>.</s><s>For each predictor (and different versions of the predictors), the AUCs were determined on both constitutive and immunoproteasomal cleavage patterns obtained from the in vitro digestions (Table <ref type="table" target="#tab_0">1</ref>).</s><s>In general, the methods performed better in predicting the immunoproteasomal cleavage pattern.</s><s>This could be explained by the more biased cleavage preference of immunoproteasomes, that cleave after hydrophobic and basic amino acids with greater, and after acidic amino acids with lesser efficiency <ref type="bibr" target="#b4">(Gaczynska et al. 1993;</ref><ref type="bibr" target="#b38">Toes et al. 2001;</ref><ref type="bibr" target="#b13">Kesmir et al. 2003)</ref>.</s><s>Such a more biased cleavage pattern might be easier to predict.</s><s>The immunoproteasomal cleavage pattern was best predicted by proteaSMMimmuno and proteaSMM-constitutive (ROC-comparison test: p &lt; 0.001; Table <ref type="table" target="#tab_0">1</ref>), and the constitutive cleavage pattern was best captured by proteaSMM-constitutive and NetChop-3.0</s><s>20S (ROC-comparison test: p &lt; 0.001; Table <ref type="table" target="#tab_0">1</ref>).</s><s>Surprisingly, the enhanced ProteaSMM versions did not perform better, even though they are trained on extra data from proteasomally digested prion protein <ref type="bibr" target="#b36">(Tenzer et al. 2004</ref>).</s><s>NetChop-3.0</s><s>20S is also trained on prion data, but no version of this method is available that is not trained on prion data, to test if prion data negatively affects the performance of NetChop-3.0</s><s>20S.</s></p><p><s>In summary, the methods that have been trained on in vitro proteasome digestion data (proteaSMMs and NetChop-3.0</s><s>20S) outperformed the method that has been trained on in vivo MHC-I ligand data (NetChop-3.0</s><s>Cterm), which agrees with previous observations <ref type="bibr" target="#b37">(Tenzer et al. 2005;</ref><ref type="bibr" target="#b30">Saxova et al. 2003)</ref> and the expectation that methods trained on in vitro data can best predict proteasome-only cleavage patterns.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Predicting in vivo cleavage patterns</head><p><s>In vivo proteolytic activity can be rather different from pure proteasomal activity, if other peptidases e.g., ACE, TPPII, or Nardilysin <ref type="bibr" target="#b5">(Geier et al. 1999;</ref><ref type="bibr" target="#b33">Shen et al. 2008</ref><ref type="bibr" target="#b34">Shen et al. , 2011;;</ref><ref type="bibr" target="#b14">Kessler et al. 2011</ref>) contribute to the in vivo proteolysis.</s><s>As a result, the ability of different proteasome predictors to predict in vivo proteolysis might be different from their ability to predict in vitro proteasome-only cleavages.</s><s>To test and compare the in vivo proteolysis prediction performances, we inferred in vivo cleavage sites from non-redundant MHC-I ligands that have been identified from 2005 on, after NetChop Cterm was last updated (n = 832; see Fig. <ref type="figure">1</ref> and "Methods" section).</s><s>A data set of in vivo non-cleavage sites was derived in two ways: (1) by shuffling, 100 noncleavage sites were made by shuffling the 19 amino acids flanking a cleavage site (the area used by NetChop for predictions plus one N-terminal and one C-terminal extension, see Fig. <ref type="figure" target="#fig_0">2</ref>).</s><s>( <ref type="formula">2</ref>) By assuming that all sites in the source protein of the MHC-I ligand that are not identified as cleavage sites are non-cleavage sites ("Methods" section).</s><s>The predictors were assessed for their capacity to discriminate cleavage sites from non-cleavage sites, by comparing AUC values.</s><s>Not surprisingly, NetChop-3.0</s><s>Cterm most accurately captured the in vivo cleavage pattern irrespective of the non-cleavage data set (ROC-comparison test: p &lt; 0.001; Fig. <ref type="figure">3</ref>).</s><s>This is expected as NetChop Cterm has been trained on in vivo cleavage patterns inferred from MHC-I ligands.</s></p><p><s>As in vivo proteolysis is inferred from MHC-I ligand data and NetChop Cterm is trained on such data, <ref type="bibr" target="#b37">Tenzer et al. (2005)</ref> noted in an earlier benchmark study that the superior performance of NetChop might be due to a biased recognition of peptides with a high TAP affinity.</s><s>To exclude this effect, the performance of the different proteasome predictors was tested in combination with a The prediction performance was determined for constitutive and immunoproteasomal cleavage patterns (second and third column, respectively), as AUC of ROC-curves.</s><s>In boldface the predictors are indicated that performed better than the other predictors (ROC-comparison test: p&lt; 0.001).</s><s>These predictors were not significantly different in their performance (ROC-comparison test: p&gt; 0.001) Fig. <ref type="figure">1</ref> Constructing MHC-I ligand data set.</s><s>MHC-I ligands and source proteins, that were discovered in elution studies, were derived from the SYFPHEITI database <ref type="bibr" target="#b28">(Rammensee et al. 1999</ref>) and the IEDB database <ref type="bibr" target="#b39">(Vita et al. 2010)</ref>.</s><s>The data sets were combined and nonredundant ligands that were not published before 2005 were selected.</s><s>Every MHC-I ligand in its source protein represents a cleavage site; non-cleavage sites were derived by either shuffling an area of 19 amino acids around the cleavage site (Fig. <ref type="figure" target="#fig_0">2</ref> and "Methods" section), or by defining all other sites in the source proteins of MHC-I ligands as non-cleavage sites ("Methods" section)</s></p><p><s>TAP transport predictor <ref type="bibr" target="#b26">(Peters et al. 2003)</ref>.</s><s>Therefore, we first followed the approach from <ref type="bibr" target="#b37">Tenzer et al. (2005)</ref> by summing TAP-transport and proteasome cleavage scores into a single score.</s><s>For both non-cleavage site definitions, NetChop-3.0</s><s>Cterm outperformed the other predictors, even when the TAP transport scores were differently weighted prior to summation (Fig. <ref type="figure">4 and S1</ref>).</s></p><p><s>In an AUC-analysis, one can test the predictive performance of a single set of scores.</s><s>However, we wanted to test the performance of a combination of two scores, i.e., proteasome cleavage and TAP transport scores, as an alternative to the additive model proposed by as Tenzer et al. did.</s><s>Therefore, we developed a new method to measure the performance of these two scores simultaneously.</s><s>In this method, for every TAP binding threshold, the performance of the cleavage predictor was measured on cleavage and non-cleavage sites exceeding the threshold.</s><s>Next, an integration over all the performance scores was combined in a score called volume under the plane (VUP; see "Methods" section).</s><s>For both non-cleavage definitions, NetChop-3.0</s><s>Cterm outperformed the other proteasome predictors based on VUP-scores (ROC-comparison test: p &lt; 0.001; Fig. <ref type="figure">3</ref>), again indicating that its higher performance is not due to a biased recognition of TAP ligands.</s><s>Taken together, NetChop Cterm seems to predict in vivo proteolysis better than the other predictors that are trained on proteasome-only in vitro proteolysis data.</s><s>This suggests that the proteolytic activity in vivo that underlies MHC-I ligand production is markedly different from in vitro proteasome-only proteolysis.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Comparing in vitro and in vivo proteolysis activity</head><p><s>To better understand why NetChop-3.0</s><s>Cterm predicts in vivo proteolysis better than the other predictors, even though these predictors better predict proteasome-only in vitro proteolysis, we examined for each predictor which cleavage sites were given a low prediction score.</s><s>The cleavage sites with a bottom 5 % prediction score were selected for further analysis.</s><s>A striking difference between NetChop-3.0</s><s>Cterm and the other predictors was observed at position P1' of these poorly predicted cleavage sites (i.e., the C-terminus of the MHC-I ligand; Fig. <ref type="figure" target="#fig_0">2</ref>).</s><s>Whereas the amino acids at position P1' were equally distributed for NetChop-3.0</s><s>Cterm, a Lysine was found in at least 50 % of the cases for the other predictors (Fig. <ref type="figure">5</ref>).</s><s>In other words, the predictors based on in vitro proteasomal cleavage data fail to capture the in vivo cleavage after Lysine residues.</s><s>This fits with the described proteolytic preferences of TPPII and Nardilysin <ref type="bibr" target="#b5">(Geier et al. 1999;</ref><ref type="bibr" target="#b14">Kessler et al. 2011)</ref>, and the suggested role of these proteases in the generation of MHC-I ligands, for instance for HLA-A*03 and HLA-A*11 <ref type="bibr" target="#b31">(Seifert et al. 2003;</ref><ref type="bibr" target="#b17">Kloetzel 2004;</ref><ref type="bibr" target="#b18">Kloetzel and Ossendorp 2004.</ref></s><s>In addition, other proteases such as ACE have been shown to influence the generation of MHC-I ligands <ref type="bibr" target="#b33">(Shen et al. 2008</ref><ref type="bibr" target="#b34">(Shen et al. , 2011) )</ref> and their proteolytic activity could be captured by NetChop-3.0</s><s>Cterm.</s><s>Taken together, these results Fig. <ref type="figure">3</ref> Predicting in vivo proteolysis.</s><s>Proteasome cleavage predictors were tested as a stand-alone predictor, or in combination with a TAP predictor, and performance was assessed using AUC and VUP, respectively (see "Methods" section).</s><s>The performance was tested using either non-cleavage data sets derived by the shuffling method (a) or by taking other sites from the source protein as non-cleavage sites (b) (see Fig. <ref type="figure">1</ref> and "Methods" section).</s><s>Examples of the AUC and the VUP analyses are shown in the upper part, AUC and VUP scores are given in the lower part.</s><s>In all analyses, NetChop-3.0</s><s>Cterm showed the highest performance (ROC-comparison test: p&lt; 0.001).</s><s>The performance of NetChop-3.0</s><s>Cterm is shown in red lines, NetChop-3.0</s><s>20S in black, ProteaSMM Immuno in yellow, ProteaSMM Immuno enhanced in green, ProteaSMM constitutive in blue, and ProteaSMM constitutive enhanced in magenta lines suggest that NetChop-3.0</s><s>Cterm incorporates the activity of all different proteases that make a substantial contribution to in vivo proteolysis, thereby can predict in vivo proteolysis better.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p><s>In this study, we analyzed how well different methods can predict the cleavage patterns in proteolysis.</s><s>In vitro cleavage patterns were shown to be best captured by methods trained on in vitro proteasome digestion data, i.e., ProteaSMM and NetChop-3.0</s><s>20S (Table <ref type="table" target="#tab_0">1</ref>).</s><s>Similarly, in vivo proteolysis was best predicted by the method that is trained on MHC-I ligand data, NetChop-3.0</s><s>Cterm (Fig. <ref type="figure">3</ref>).</s><s>Furthermore, we showed that the better prediction of in vivo proteolysis was not due to an embedded recognition of TAP transportable peptides (Figs. <ref type="figure">3 and 4</ref>).</s></p><p><s>There can be two explanations for the difference between in vitro and in vivo proteolysis: First, the proteolytic activity of proteasomes in vitro might be different from their in vivo activity.</s><s>This difference might result from the interactions with other molecules such as PA28 or the 19S cap regulatory particle <ref type="bibr" target="#b7">(de Graaf et al. 2011;</ref><ref type="bibr" target="#b2">Emmerich et al. 2000)</ref>.</s><s>Second, other proteases such as TPPII, ACE, or Nardilysin might make a substantial contribution to the in vivo proteolysis <ref type="bibr" target="#b5">(Geier et al. 1999;</ref><ref type="bibr" target="#b33">Shen et al. 2008</ref><ref type="bibr" target="#b34">Shen et al. , 2011;;</ref><ref type="bibr" target="#b14">Kessler et al. 2011</ref>).</s><s>The best described example of in vivo proteolytic activity that is not observed in vitro is the cleavage after Lysine residues.</s><s>This activity is required to generate ligands for HLA-A*03 and HLA-A*11 that bind peptides with a Lysine at the C-terminus <ref type="bibr" target="#b31">(Seifert et al. 2003;</ref><ref type="bibr" target="#b17">Kloetzel 2004;</ref><ref type="bibr" target="#b18">Kloetzel and Ossendorp 2004)</ref>.</s><s>A welldescribed example of such peptides is the HIV Nef-derived epitope at positions 73 to 82 with a Lysine at its C-terminus, and it was shown that the generation of this peptide depends on TPPII activity <ref type="bibr" target="#b31">(Seifert et al. 2003)</ref>.</s><s>However, it is not yet known how dominant this endopeptidase activity is within the TPPII enzyme complex <ref type="bibr" target="#b5">(Geier et al. 1999)</ref>, and therefore it is not yet clear whether TPPII is responsible for all the activities creating the peptides with a Lysine at its C-terminal.</s><s>More recently, a more detailed analysis of the Fig. <ref type="figure">4</ref> Predicting in vivo proteolysis by combining proteolysis and TAP transport predictor scores.</s><s>For the different proteasome cleavage predictors, the proteasome cleavage prediction score was added to the TAP transport prediction score (as proposed by <ref type="bibr" target="#b37">Tenzer et al. (2005)</ref>).</s><s>Prediction performance was measured as the AUC of an ROC-curve (Y-axis), using the shuffled sequences as non-cleavage sites (see Fig. <ref type="figure" target="#fig_0">2</ref> and "Methods" section).</s><s>When combining scores, the weight of the TAP transport score was changed by the factor W (on the X-axis).</s><s>The combined score (C), based on the TAP transport (T ) and proteolysis (P ) score would be C = W * T + P .</s><s>As a result, the proteasome cleavage or the TAP transport predictor has a larger influence in the combined score if W is smaller or larger, respectively.</s><s>See Fig. <ref type="figure">3</ref> for color coding substrate specificity of TPPII has been published , which suggests that the endopeptidase activity of TPPII is very much dependent on the length of the substrate and thus is not likely to be a very general enzymatic activity of TPPII.</s><s>We show that only NetChop-3.0</s><s>Cterm captures this hallmark of in vivo proteolysis (Fig. <ref type="figure">5</ref>).</s><s>As this activity has not been contributed to the proteasome, we conclude that NetChop Cterm has learned to incorporate non-proteasomal proteolytic activity.</s></p><p><s>A biased recognition of TAP transportable peptide is not explaining the increased performance of NetChop Cterm on the prediction of in vivo cleavage sites derived from MHC-I ligand data (Figs. <ref type="figure">4 and 5</ref>).</s><s>Similarly, one could think that a bias to recognize MHC-I presented ligands should be controlled.</s><s>NetChop Cterm, was trained on in vivo cleavage sites derived from a set of pMHCs with a homogenous distribution of MHC-I molecules with various binding preferences <ref type="bibr" target="#b23">(Nielsen et al. 2005</ref>) to minimize such a bias that would be due to the recognition of MHC-I binding peptides.</s><s>In addition, the in vivo cleavage/non-cleavage site data sets in this study are derived from peptides that were not used to train NetChop Cterm and that were eluted from many different MHC-I molecules.</s></p><p><s>The evaluation of different proteasome cleavage predictors depends on the construction of a set of non-cleavage Fig. <ref type="figure">5</ref> Proteolytic activity after Lysine residues is only predicted by NetChop-3.0</s><s>Cterm.</s><s>For every proteasome cleavage predictor, 5 % of the true cleavage sites with the lowest prediction scores were determined.</s><s>The amino acid profile at P1' (i.e., the C-terminus of the presented MHC-I ligand) of these cleavage sites with a low prediction score was analyzed.</s><s>The height of the letters represents their frequency in the amino acid profile sites, as the performance on these and on the true cleavage sites needs to be compared.</s><s>Unfortunately, a substantial set of true non-cleavage sites is not available, and therefore we have to rely on assumptions when compiling a set of non-cleavage sites.</s><s>To prevent a bias as a result of such assumptions, we have followed two different sets of assumptions when constructing the non-cleavage sites.</s><s>First, non-cleavage sites were made by shuffling the sequence around a cleavage site to destroy any motif that is used by the proteasome while keeping the same distribution of amino acids.</s><s>Second, we considered other positions in the source protein as non-cleavage sites.</s><s>Although identical conclusions were drawn from the analyses with the different sets non-cleavage sites, identification of true in vivo noncleavage sites is required to permanently settle this issue or to describe sequence motifs that truly inhibit proteasomal cleavage.</s></p><p><s>The development of proteasome predictors serves two goals.</s><s>First, to understand the specificity and biochemical processes that underly proteolysis.</s><s>Second, to predict and understand how this process influences the MHC-I ligandome.</s><s>With respect to the first goal, we show that profound differences between proteasome activity in vitro and cellular proteolysis in vivo exist, suggesting a non-negligible role of non-proteasomal proteases.</s><s>Evidently, the specificity of these additional proteases should be taken into account for optimal MHC-I ligand predictions.</s><s>Therefore, we conclude that NetChop Cterm or future proteolysis predictors trained on in vivo data should be used in MHC-I ligandome predictions.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data collection</head><p><s>Proteasomal in vitro cleavage patterns were derived from a digestion of HIV-1 peptides with constitutive or immunoproteasomes, as explained in <ref type="bibr" target="#b25">(Peters et al. 2002)</ref>.</s><s>Sixteen peptides from the HIV-1 proteins GAG and TAT, with a length of 17 to 30 amino acids, were degraded.</s><s>After 0, 1, 2, 4, 8, and 24 h of degradation, peptide fragments were analyzed using mass spectrometry (as in <ref type="bibr" target="#b25">Peters et al. (2002)</ref>).</s><s>To avoid analyzing secondary cleavage products, peptide fragments found after 4 h of degradation were used to infer cleavage sites.</s><s>Of 368 possible cleavage sites, 150 were efficiently cleaved by the immunoproteasome after 4 h and 148 were efficiently cleaved by the constitutive proteasome; 103 sites (69 %) were shown to be cleaved by both proteasome subtypes (Supplementary Table <ref type="table" target="#tab_0">S1</ref>).</s><s>The Pro-teaSMM proteasome cleavage predictors require six amino acids N-terminal and four amino acids C-terminal of a possible cleavage site.</s><s>Therefore, cleavage predictions cannot be made at the beginning and end a peptide sequence.</s><s>As a result of this limitation, only 240 (of the 368) sites could be used to compare the different proteasome predictions.</s><s>Of these 240 sites, 99 were efficiently cleaved by the immunoproteasome and 99 were efficiently cleaved by the constitutive proteasome; 68 sites were put in both sets.</s></p><p><s>In vivo cleavage sites were inferred from MHC-I ligand data.</s><s>Ligands that were identified in MHC-I elution studies were downloaded from the SYFPHEITI database <ref type="bibr" target="#b28">(Rammensee et al. 1999</ref>) and the IEDB database <ref type="bibr" target="#b39">(Vita et al. 2010)</ref>.</s><s>Source proteins of the MHC-I ligands were downloaded from the NCBI via links that were provided by the SYFPHEITI and IEDB databases.</s><s>The C-terminal residue of an MHC-I ligand was regarded as position P1' of a cleavage site (Fig. <ref type="figure" target="#fig_0">2</ref>).</s><s>In total, 3076 MHC-I ligands with their source protein were derived from the SYFPHEITI database and 457 MHC-I ligands with their source protein were derived from the IEDB database.</s><s>Identical peptides, or peptides that were either a C-or N-terminal extension of each other, were regarded as redundant.</s><s>In addition, the ligands and their corresponding source proteins that were published before 2005, or which were redundant/identical to an MHC-I ligand published before 2005, were excluded because they could have been used for training of NetChop-3.0</s><s>Cterm.</s><s>This filtering resulted in 832 MHC-ligands and their source proteins, of which every MHC-I ligand corresponds to a peptide fragment that is generated by in vivo proteolytic activity (Fig. <ref type="figure">1</ref>).</s></p><p><s>Detecting in vivo non-cleavage sites based on the absence of a peptide in the MHC-I ligand databases is not possible, as many other reasons might underlie the absence of an MHC-I ligand, e.g., further degradation of the fragment or low affinity to MHC-I molecules.</s><s>Therefore, non-cleavage sites were generated in two ways: (1) by shuffling of an area of 19 amino acids around the cleavage site (the longest flanking region used by a proteasome predictor method plus one extra amino acid on each side, as indicated in Fig. <ref type="figure" target="#fig_0">2</ref>).</s><s>After shuffling, the middle position, previously corresponding to the cleavage site, was assigned as a noncleavage site.</s><s>For every cleavage site, 100 non-cleavage sites were generated, i.e., in total 83.200 non-cleavages sites (Fig. <ref type="figure">1</ref>).</s><s>The advantage of this method is that the amino acid frequencies of cleavage and non-cleavage sites remain identical.</s><s>(2) All sites in the source proteins of the MHC-I ligands, that were not assigned as a cleavage site were assumed to be non-cleavage sites (N = 507.538,</s><s>Fig. <ref type="figure">1</ref>).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Prediction performance measures</head><p><s>Proteasome cleavage and TAP transport predictions were performed as suggested by the developers of the different prediction methods <ref type="bibr" target="#b26">(Peters et al. 2003;</ref><ref type="bibr" target="#b37">Tenzer et al. 2005;</ref><ref type="bibr" target="#b23">Nielsen et al. 2005)</ref>.</s><s>The different proteasome predictors were assessed for their performance in discriminating cleavage from non-cleavage sites.</s><s>First, the performance of the proteasome predictors was tested using receiver operator characteristic (ROC) curves <ref type="bibr" target="#b35">(Swets 1988)</ref>.</s><s>In a ROC curve, true positive proportions (TPP) and false positive predictions (FPP) are plotted on the y-and x-axis, respectively, for every threshold.</s><s>The area under the ROC curve (AUC) is a measure of the predictor's performance.</s><s>If a predictor performs well, the TPPs increase faster than the FPP, and the AUC becomes larger than 0.5; the maximal AUC is 1.0.</s></p><p><s>The AUC can only be determined on a single set of prediction scores.</s><s>However, we aimed to compare the prediction performance of the proteasome predictors in combination with the TAP transport predictor.</s><s>Therefore, we developed an alternative performance measure: for every TAP transport prediction value, based on the cleavage and non-cleavage sites that exceeded the TAP transport value (T ), the AUC was determined (AU C T ).</s><s>If less than 25 cleavage sites or non-cleavage sites exceeded the TAP threshold, it was discarded.</s><s>A score was derived by integrating over all the AUCs with respect to the TAP threshold values and subsequent normalization by the range of TAP thresholds (1).</s><s>The resulting score ranges between 0 and 1, a random predictor would score 0.5 and a perfect predictor would score 1, similar to the scores obtained in an AUC analysis.</s><s>This score reflects the predictive performance of the proteolysis predictor for different data sets which have been selected over a range of possible TAP values.</s><s>We call this performance measure volume under the plane (VUP):</s></p><formula xml:id="formula_0">V UP = n i=1 (T i−1 − T i ) × AU C T i−1 + (T i−1 −T i )×(AU C T i−1 −AU C T i ) 2</formula><p><s>Max(T ) − Min(T )</s></p><p><s>(1)</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Statistics</head><p><s>Statistical tests were performed using the stats-package from the scipy-module in Python.</s><s>The difference between AUC/VUP performance measures was determined by deriving AUCs/VUPs on 50 new data sets that were generated by bootstrapping the original data set.</s><s>The derived AUCs/VUPs were compared using a paired two-tailed t test; p values less than 0.001 were considered significant (as in <ref type="bibr" target="#b37">Tenzer et (2005)</ref>).</s><s>We refer to this test as the ROC-comparison test.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 2</head><label>2</label><figDesc><div><p><s>Fig.2Constructing non-cleavage sites by shuffling.</s><s>The C-terminus of an MHC-I ligand (between P1' and P1) is defined as a cleavage site.</s><s>An area of 19 amino acids (from P10' to P9) around a cleavage site was shuffled and the middle position was assigned as a non-cleavage site.</s><s>For every cleavage site, 100 non-cleavage sites were constructed.</s><s>The positions that are used by NetChop-3.0</s><s>(P9' to P8) and ProteaSMM (P6' to P4) for predicting cleavage probabilities are indicated</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc><div><p></p></div></figDesc><graphic coords="5,127.11,60.44,357.64,144.28" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1</head><label>1</label><figDesc><div><p><s>Predictor performances on in vitro proteasomal cleavage pattern predictions</s></p></div></figDesc><table><row><cell>Constitutive cleavage</cell><cell>Immunoproteasomal cleavage</cell></row></table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgments</head><p><s>We thank Morten Nielsen, Becca Asquith, Bjoern Peters, Berend Snel, Ilka Hoof, Hanneke van Deutekom, and Xiangyu Rao for discussion on this research project and technical support.</s><s>This study was financially supported by the Netherlands Organization for Scientific Research (www.nwo.nl,</s><s>Computational Life Sciences Program, grant number 635.100.025), and by Utrecht University (www.uu.nl).</s><s>The funders had no role in study design, data collection and analysis, decision to publish, or preparation of the manuscript.</s></p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Interferon-gamma induces different subunit organizations and functional diversity of proteasomes</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Aki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Shimbara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Takashina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Akiyama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kagawa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Tamura</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Tanahashi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Yoshimura</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Tanaka</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ichihara</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Biochem</title>
+		<imprint>
+			<biblScope unit="volume">115</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="257" to="269" />
+			<date type="published" when="1994">1994</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">The spindle checkpoint, APC/CC(dc20), and APC/CC(dh1) play distinct roles in connecting mitosis to S phase</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Clijsters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ogink</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Wolthuis</surname></persName>
+		</author>
+		<idno type="DOI">10.1083/jcb.201211019</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J Cell Biol</title>
+		<imprint>
+			<biblScope unit="volume">201</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="1013" to="1026" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">The human 26 S and 20 S proteasomes generate overlapping but different sets of peptide fragments from a model protein substrate</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">P</forename><surname>Emmerich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">K</forename><surname>Nussbaum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Stevanovic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Priemer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">E</forename><surname>Toes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">G</forename><surname>Rammensee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Schild</surname></persName>
+		</author>
+		<idno type="DOI">10.1074/jbc.M000740200</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J Biol Chem</title>
+		<imprint>
+			<biblScope unit="volume">275</biblScope>
+			<biblScope unit="issue">28</biblScope>
+			<biblScope unit="page">148</biblScope>
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Activity-based profiling reveals reactivity of the murine thymoproteasome-specific subunit beta5t</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">I</forename><surname>Florea</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Verdoes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">A</forename><surname>Van Der Linden</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">P</forename><surname>Geurink</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Van Den Elst</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hofmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>De Ru</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">A</forename><surname>Van Veelen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Tanaka</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Sasaki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Murata</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Den Dulk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Brouwer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">A</forename><surname>Ossendorp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">F</forename><surname>Kisselev</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">S</forename><surname>Overkleeft</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.chembiol.2010.05.027</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Chem Biol</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="795" to="801" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Gamma-interferon and expression of MHC genes regulate peptide hydrolysis by proteasomes</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Gaczynska</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">L</forename><surname>Rock</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">L</forename><surname>Goldberg</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/365264a0</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">365</biblScope>
+			<biblScope unit="issue">6443</biblScope>
+			<biblScope unit="page" from="264" to="267" />
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">A giant protease with potential to substitute for some functions of the proteasome</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Geier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Pfeifer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Wilm</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Lucchiari-Hartz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Baumeister</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Eichmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Niedermann</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">283</biblScope>
+			<biblScope unit="issue">5404</biblScope>
+			<biblScope unit="page" from="978" to="981" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Protein degradation and protection against misfolded or damaged proteins</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Ginodi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Vider-Shalit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Tsaban</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Louzoun</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nature02263</idno>
+		<idno>doi:10.1038/nature02263</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="895" to="899" />
+			<date type="published" when="2003">2008. 2003</date>
+		</imprint>
+	</monogr>
+	<note>Nature</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">PA28 and the proteasome immunosubunits play a central and independent role in the production of MHC class I-binding peptides in vivo</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>De Graaf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mjg</forename><surname>Van Helden</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Textoris-Taube</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Chiba</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Topham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">M</forename><surname>Kloetzel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Dmw</forename><surname>Zaiss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ajam</forename><surname>Sijts</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/eji.201041040</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Eur J Immunol</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="926" to="935" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Two abundant proteasome subtypes that uniquely process some antigens presented by HLA class I molecules</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Guillaume</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Chapiro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Stroobant</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Colau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">V</forename><surname>Holle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Parvizi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">P</forename><surname>Bousquet-Dubouch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Theate</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Parmentier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bjv</forename><surname>Den Eynde</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.1009778107</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Proc Natl Acad Sci</title>
+		<imprint>
+			<biblScope unit="volume">107</biblScope>
+			<biblScope unit="issue">43</biblScope>
+			<biblScope unit="page" from="599" to="617" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">The ubiquitin system for protein degradation</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Hershko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ciechanover</surname></persName>
+		</author>
+		<idno type="DOI">10.1146/annurev.bi.61.070192.003553</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Annu Rev Biochem</title>
+		<imprint>
+			<biblScope unit="volume">61</biblScope>
+			<biblScope unit="page" from="761" to="807" />
+			<date type="published" when="1992">1992</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">A kinetic model of vertebrate 20S proteasome accounting for the generation of major proteolytic fragments from oligomeric peptide substrates</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">G</forename><surname>Holzhutter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">M</forename><surname>Kloetzel</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0006-3495(00)76374-0</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biophys J</title>
+		<imprint>
+			<biblScope unit="volume">79</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1196" to="1205" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">A theoretical approach towards the identification of cleavage-determining amino acid motifs of the 20 S proteasome</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">G</forename><surname>Holzhutter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Frommel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">M</forename><surname>Kloetzel</surname></persName>
+		</author>
+		<idno type="DOI">10.1006/jmbi.1998.2530</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J Mol Biol</title>
+		<imprint>
+			<biblScope unit="volume">286</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1251" to="1265" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Prediction of proteasome cleavage motifs by neural networks</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Kesmir</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">K</forename><surname>Nussbaum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Schild</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Detours</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Brunak</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Protein Eng</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="287" to="296" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Bioinformatic analysis of functional differences between the immunoproteasome and the constitutive proteasome</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Kesmir</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Van Noort</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">De</forename><surname>Boer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Hogeweg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename></persName>
+		</author>
+		<idno type="DOI">10.1007/s00251-003-0585-6</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Immunogenetics</title>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="437" to="449" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Antigen processing by nardilysin and thimet oligopeptidase generates cytotoxic T cell epitopes</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Kessler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Khan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Seifert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">L</forename><surname>Gall</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">M</forename><surname>Chow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Paschen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Bres-Vloemans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>De Ru</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Van Montfoort</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Klmc</forename><surname>Franken</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">E</forename><surname>Benckhuijsen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Brooks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Van Hall</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Ray</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mulder</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Doxiadis</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Iin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">F</forename><surname>Van Swieten</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">S</forename><surname>Overkleeft</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Prat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Tomkinson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Neefjes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">M</forename><surname>Kloetzel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">W</forename><surname>Rodgers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">B</forename><surname>Hersh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">W</forename><surname>Drijfhout</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">A</forename><surname>Van Veelen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Ossendorp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Cjm</forename><surname>Melief</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/ni.1974</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Immunol</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="45" to="53" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Mice completely lacking immunoproteasomes show major changes in antigen presentation</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">Z</forename><surname>Kincaid</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">W</forename><surname>Che</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>York</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Escobar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Reyes-Vargas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Delgado</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">M</forename><surname>Welsh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">L</forename><surname>Karow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Murphy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Valenzuela</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">D</forename><surname>Yancopoulos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">L</forename><surname>Rock</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/ni.2203</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Immunol</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="129" to="135" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Antigen processing by the proteasome</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">M</forename><surname>Kloetzel</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/35056572</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Rev Mol Cell Biol</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="179" to="187" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Generation of major histocompatibility complex class I antigens: functional interplay between proteasomes and TPPII</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">M</forename><surname>Kloetzel</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/ni1090</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Immunol</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="661" to="669" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Proteasome and peptidase function in MHC-class-I-mediated antigen presentation</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">M</forename><surname>Kloetzel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Ossendorp</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Curr Opin Immunol</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="76" to="81" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">An algorithm for the prediction of proteasomal cleavages</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Kuttler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">K</forename><surname>Nussbaum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">P</forename><surname>Dick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">G</forename><surname>Rammensee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Schild</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">P</forename><surname>Hadeler</surname></persName>
+		</author>
+		<idno type="DOI">10.1006/jmbi.2000.3683</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J Mol Biol</title>
+		<imprint>
+			<biblScope unit="volume">298</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="417" to="429" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">To cell cycle, swing the APC/C</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Van Leuken</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Clijsters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Wolthuis</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.bbcan.2008.05.002</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biochim Biophys Acta</title>
+		<imprint>
+			<biblScope unit="volume">1786</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="49" to="59" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Regulation of CD8+ T cell development by thymus-specific proteasomes</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Murata</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Sasaki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Kishimoto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">I</forename><surname>Niwa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hayashi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Takahama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Tanaka</surname></persName>
+		</author>
+		<idno type="DOI">10.1126/science.1141915</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">316</biblScope>
+			<biblScope unit="issue">5829</biblScope>
+			<biblScope unit="page" from="1349" to="1353" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Towards a systems understanding of MHC class I and MHC class II antigen presentation</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Neefjes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Mlm</forename><surname>Jongsma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Paul</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Bakke</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nri3084</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Rev Immunol</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="823" to="836" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">The role of the proteasome in generating cytotoxic T-cell epitopes: insights obtained from improved predictions of proteasomal cleavage</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Nielsen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Lund</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Kesmir</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename></persName>
+		</author>
+		<idno type="DOI">10.1007/s00251-005-0781-7</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Immunogenetics</title>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="issue">1-2</biblScope>
+			<biblScope unit="page" from="33" to="41" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">PAProC: a prediction algorithm for proteasomal cleavages available on the WWW</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">K</forename><surname>Nussbaum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Kuttler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">P</forename><surname>Hadeler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">G</forename><surname>Rammensee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Schild</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Immunogenetics</title>
+		<imprint>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="87" to="94" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Assessment of proteasomal cleavage probabilities from kinetic analysis of time-dependent product formation</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Peters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Janek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Kuckelkorn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">G</forename><surname>Holzhutter</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0022-2836(02)00167-5</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J Mol Biol</title>
+		<imprint>
+			<biblScope unit="volume">318</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="847" to="862" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Identifying MHC class I epitopes by predicting the TAP transport efficiency of epitope precursors</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Peters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bulik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Tampe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pmv</forename><surname>Endert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">G</forename><surname>Holzhutter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Immunol</title>
+		<imprint>
+			<biblScope unit="volume">171</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="1741" to="1749" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Molecular ruler of tripeptidylpeptidase II: mechanistic principle of exopeptidase selectivity</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Peters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Schönegge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Rockel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Baumeister</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.bbrc.2011.09.058</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biochem Biophys Res Commun</title>
+		<imprint>
+			<biblScope unit="volume">414</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="209" to="214" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">SYFPEITHI: database for MHC ligands and peptide motifs</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Rammensee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Bachmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">P</forename><surname>Emmerich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><forename type="middle">A</forename><surname>Bachor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Stevanovic</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Immunogenetics</title>
+		<imprint>
+			<biblScope unit="volume">50</biblScope>
+			<biblScope unit="issue">3-4</biblScope>
+			<biblScope unit="page" from="213" to="219" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Peptide diffusion, protection, and degradation in nuclear and cytoplasmic compartments before antige presentation by MHC class I</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Reits</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Griekspoor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Neijssen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Groothuis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Jalink</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Van Veelen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Janssen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Calafat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">W</forename><surname>Drijfhout</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Neefjes</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Immunity</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="97" to="108" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Predicting proteasomal cleavage sites: a comparison of available methods</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Saxova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Buus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Brunak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Kesmir</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int Immunol</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="781" to="787" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">An essential role for tripeptidyl peptidase in the generation of an MHC class I epitope</title>
+		<author>
+			<persName><forename type="first">U</forename><surname>Seifert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Maranon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Shmueli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">F</forename><surname>Desoutter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Wesoloski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Janek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Henklein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Diescher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Andrieu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>De La Salle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Weinschenk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Schild</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Laderach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Galy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Haas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">M</forename><surname>Kloetzel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Reiss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Hosmalin</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/ni905</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Immunol</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="375" to="379" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Immunoproteasomes preserve protein homeostasis upon interferon-induced oxidative stress</title>
+		<author>
+			<persName><forename type="first">U</forename><surname>Seifert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">P</forename><surname>Bialy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Ebstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Bech-Otschir</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Voigt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Schroter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Prozorovski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Lange</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Steffen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rieger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Kuckelkorn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Aktas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">M</forename><surname>Kloetzel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Kruger</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cell.2010.07.036</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Cell</title>
+		<imprint>
+			<biblScope unit="volume">142</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="613" to="624" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Expression of angiotensin-converting enzyme changes major histocompatibility complex class I peptide presentation by modifying C termini of peptide precursors</title>
+		<author>
+			<persName><forename type="first">X</forename><forename type="middle">Z</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Lukacher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Billet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">R</forename><surname>Williams</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">E</forename><surname>Bernstein</surname></persName>
+		</author>
+		<idno type="DOI">10.1074/jbc.M709574200</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J Biol Chem</title>
+		<imprint>
+			<biblScope unit="volume">283</biblScope>
+			<biblScope unit="issue">15</biblScope>
+			<biblScope unit="page" from="9957" to="9965" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">The carboxypeptidase ACE shapes the MHC class I peptide repertoire</title>
+		<author>
+			<persName><forename type="first">X</forename><forename type="middle">Z</forename><surname>Shen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Billet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Okwan-Duodu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Lukacher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">E</forename><surname>Bernstein</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/ni.2107</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Immunol</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="1078" to="1085" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Measuring the accuracy of diagnostic systems</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Swets</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">240</biblScope>
+			<biblScope unit="issue">4857</biblScope>
+			<biblScope unit="page" from="1285" to="1293" />
+			<date type="published" when="1988">1988</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Quantitative analysis of prion-protein degradation by constitutive and immuno-20S proteasomes indicates differences correlated with disease susceptibility</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Tenzer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Stoltze</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Schonfisch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Dengjel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Muller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Stevanovic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">G</forename><surname>Rammensee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Schild</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Immunol</title>
+		<imprint>
+			<biblScope unit="volume">172</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="1083" to="1091" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Modeling the MHC class I pathway by combining predictions of proteasomal cleavage, TAP transport and MHC class I binding</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Tenzer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Peters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bulik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Schoor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Lemmel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">M</forename><surname>Schatz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">M</forename><surname>Kloetzel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">G</forename><surname>Rammensee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Schild</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">G</forename><surname>Holzhutter</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s00018-005-4528-2</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Cell Mol Life Sci</title>
+		<imprint>
+			<biblScope unit="volume">62</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="1025" to="1037" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Discrete cleavage motifs of constitutive and immunoproteasomes revealed by quantitative analysis of cleavage products</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">E</forename><surname>Toes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">K</forename><surname>Nussbaum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Degermann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Schirle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">P</forename><surname>Emmerich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kraft</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Laplace</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Zwinderman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">P</forename><surname>Dick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Muller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Schonfisch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Schmid</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">J</forename><surname>Fehling</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Stevanovic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">G</forename><surname>Rammensee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Schild</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Exp Med</title>
+		<imprint>
+			<biblScope unit="volume">194</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="12" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">The immune epitope database 2.0</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Vita</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Zarebski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Greenbaum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Emami</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Hoof</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Salimi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Damle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sette</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Peters</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/nar/gkp1004</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="D854" to="D862" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

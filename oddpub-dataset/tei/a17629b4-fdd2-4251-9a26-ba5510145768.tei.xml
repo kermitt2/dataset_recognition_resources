@@ -1,0 +1,1528 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">A hierarchical stochastic model for bistable perception</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2017-11-20">November 20, 2017</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Stefan</forename><surname>Albert</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Institute of Mathematics</orgName>
+								<orgName type="institution">Goethe University</orgName>
+								<address>
+									<settlement>Frankfurt (Main), Germany</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Katharina</forename><surname>Schmack</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Psychiatry and Psychotherapy</orgName>
+								<address>
+									<settlement>Charite ´Universita ¨tsmedizin Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Philipp</forename><surname>Sterzer</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Psychiatry and Psychotherapy</orgName>
+								<address>
+									<settlement>Charite ´Universita ¨tsmedizin Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName><forename type="first">Gaby</forename><surname>Schneider</surname></persName>
+							<email>schneider@math.uni-frankfurt.de</email>
+							<affiliation key="aff0">
+								<orgName type="department">Institute of Mathematics</orgName>
+								<orgName type="institution">Goethe University</orgName>
+								<address>
+									<settlement>Frankfurt (Main), Germany</settlement>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff2">
+								<orgName type="institution">Technische Universitat Chemnitz</orgName>
+								<address>
+									<country key="DE">GERMANY</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff3">
+								<orgName type="institution">Berlin Institute of Health</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">A hierarchical stochastic model for bistable perception</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2017-11-20">November 20, 2017</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">502C351A33EAEA3B93B94A787805CB9E</idno>
+					<idno type="DOI">10.1371/journal.pcbi.1005856</idno>
+					<note type="submission">Received: July 25, 2017 Accepted: October 29, 2017</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:45+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Viewing of ambiguous stimuli can lead to bistable perception alternating between the possible percepts.</s><s>During continuous presentation of ambiguous stimuli, percept changes occur as single events, whereas during intermittent presentation of ambiguous stimuli, percept changes occur at more or less regular intervals either as single events or bursts.</s><s>Response patterns can be highly variable and have been reported to show systematic differences between patients with schizophrenia and healthy controls.</s><s>Existing models of bistable perception often use detailed assumptions and large parameter sets which make parameter estimation challenging.</s><s>Here we propose a parsimonious stochastic model that provides a link between empirical data analysis of the observed response patterns and detailed models of underlying neuronal processes.</s><s>Firstly, we use a Hidden Markov Model (HMM) for the times between percept changes, which assumes one single state in continuous presentation and a stable and an unstable state in intermittent presentation.</s><s>The HMM captures the observed differences between patients with schizophrenia and healthy controls, but remains descriptive.</s><s>Therefore, we secondly propose a hierarchical Brownian model (HBM), which produces similar response patterns but also provides a relation to potential underlying mechanisms.</s><s>The main idea is that neuronal activity is described as an activity difference between two competing neuronal populations reflected in Brownian motions with drift.</s><s>This differential activity generates switching between the two conflicting percepts and between stable and unstable states with similar mechanisms on different neuronal levels.</s><s>With only a small number of parameters, the HBM can be fitted closely to a high variety of response patterns and captures group differences between healthy controls and patients with schizophrenia.</s><s>At the same time, it provides a link to mechanistic models of bistable perception, linking the group differences to potential underlying mechanisms.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p><s>The phenomenon of bistable perception has fascinated researchers for a long time <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b1">2,</ref><ref type="bibr" target="#b2">3]</ref>.</s><s>Recently, the description of response patterns to bistable stimuli such as the Necker Cube, Rubin's vase or rotating spheres with switching rotation direction gained increasing interest in computational neuroscience <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b4">5,</ref><ref type="bibr" target="#b5">6,</ref><ref type="bibr" target="#b6">7,</ref><ref type="bibr" target="#b7">8]</ref>.</s><s>By modeling dynamic changes of perception during viewing of one and the same stimulus, one aims at providing potential explanations for neuronal mechanisms underlying perception and perceptual changes and to identify related brain areas as well as potential dysfunctions, e.g. in schizophrenia <ref type="bibr" target="#b8">[9,</ref><ref type="bibr" target="#b9">10]</ref>.</s></p><p><s>Interestingly, the response patterns to continuously shown bistable stimuli often share common properties <ref type="bibr" target="#b6">[7,</ref><ref type="bibr" target="#b10">11]</ref>.</s><s>Typically, the distribution of intervals of constant perception, termed dominance times, is unimodal and right-skewed, and extremely short dominance times, i.e., rapidly fluctuating precepts, are rare <ref type="bibr" target="#b11">[12,</ref><ref type="bibr" target="#b12">13,</ref><ref type="bibr" target="#b13">14]</ref>.</s><s>The dominance times under continuous stimulation are therefore often modeled as Gamma distributed <ref type="bibr" target="#b14">[15,</ref><ref type="bibr" target="#b15">16,</ref><ref type="bibr" target="#b16">17,</ref><ref type="bibr" target="#b17">18,</ref><ref type="bibr" target="#b18">19,</ref><ref type="bibr" target="#b19">20]</ref>.</s><s>The mean of dominance times can be highly variable across subjects <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b19">20]</ref>, whereas the coefficient of variation (CV) is often comparable <ref type="bibr" target="#b20">[21]</ref>.</s></p><p><s>In comparison to a continuous presentation, intermittent presentation of a bistable stimulus, i.e., by repetitive interruption of stimulation for short time periods, has been observed to stabilize the percept if the interruption period is long enough, typically longer than 0.7 seconds <ref type="bibr" target="#b14">[15,</ref><ref type="bibr" target="#b17">18,</ref><ref type="bibr" target="#b21">22,</ref><ref type="bibr" target="#b22">23,</ref><ref type="bibr" target="#b23">24,</ref><ref type="bibr" target="#b24">25]</ref>.</s><s>In this case, dominance times get longer and can also show a certain degree of periodicity <ref type="bibr" target="#b13">[14]</ref>.</s><s>In addition, such stable phases with long dominance times during intermittent presentation can also interchange with unstable phases of rapid percept changes.</s><s>Fig <ref type="figure" target="#fig_0">1</ref> shows examples of response patterns to continuous and intermittent presentation of a bistable stimulus from the dataset reported in <ref type="bibr" target="#b9">[10]</ref>.</s></p><p><s>Modeling studies with elaborated mathematical models have been proposed that can explain a number of properties of bistable perception like the distribution of dominance times under continuous stimulation <ref type="bibr" target="#b7">[8,</ref><ref type="bibr" target="#b16">17,</ref><ref type="bibr" target="#b18">19,</ref><ref type="bibr" target="#b19">20,</ref><ref type="bibr" target="#b20">21,</ref><ref type="bibr" target="#b25">26]</ref> or cyclic behavior and the impact of the duration of the stimulus presentation on the dominance times in intermittent stimulation <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b17">18]</ref>.</s><s>One key ingredient of these models of bistable perception is typically a competition between neuronal populations that correspond to the different percepts <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b16">17,</ref><ref type="bibr" target="#b17">18,</ref><ref type="bibr" target="#b19">20,</ref><ref type="bibr" target="#b26">27]</ref>.</s><s>In order to account for stabilized perception in intermittent viewing, the use of multiple timescales for memory traces of past perception has been proposed by <ref type="bibr" target="#b13">[14]</ref> and <ref type="bibr" target="#b17">[18]</ref>.</s></p><p><s>Many such models require a high number of parameters in order to describe the variety of response patterns.</s><s>As a consequence, they can often hardly be fitted to experimental data, especially in the typical cases when only a few dozen dominance times are observed.</s><s>In addition, the majority of models focus either on continuous or on intermittent viewing.</s><s>Interesting models that are applicable to both cases have been proposed by <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b16">17,</ref><ref type="bibr" target="#b17">18]</ref>.</s></p><p><s>The relevance of a joint description of continuous and intermittent viewing is illustrated here on a dataset including responses of patients with schizophrenia and of healthy controls to continuous and intermittent presentation of a rotating sphere with ambiguous rotation direction reported earlier in <ref type="bibr" target="#b8">[9,</ref><ref type="bibr" target="#b9">10]</ref>.</s><s>In <ref type="bibr" target="#b9">[10]</ref>, an enhanced alternation rate for the group of patients with schizophrenia during intermittent presentation was reported.</s><s>Interestingly, when we analyzed previously unpublished data recorded in the same participants during continuous presentation, the opposite could be observed [Fig <ref type="figure" target="#fig_14">2</ref>; the data was collected during an initial training run for which the experimental procedures but not the results are described in 10].</s><s>Due to the differences in patterns and time scales between continuous and intermittent  <ref type="figure">, A,  B</ref>) and intermittent (blue, C-F) presentation from the dataset reported in <ref type="bibr" target="#b9">[10]</ref>.</s><s>While the distribution of dominance times tends to be unimodal in the continuous case, stable and unstable phases interchange in intermittent stimulation.</s><s>In addition, response patterns can be highly variable across subjects.</s><s>https://doi.org/10.1371/journal.pcbi.1005856.g001</s><s>Fig 2 <ref type="figure">.</ref></s><s>Alternation rates in control subjects and subjects with schizophrenia.</s><s>During continuous presentation healthy controls (C) showed higher alternation rates compared to patients with schizophrenia (S) (left), while the opposite could be observed for intermittent presentation (right).</s><s>Each grey dot indicates the perceptual alternation rate from one individual participant, colored diamonds and lines indicate group medians with 25%/75% quantiles.</s><s>Two-sided Wilcoxon tests yielded p &lt; .1 for both continuous and intermittent stimulation.</s></p><p><s>https://doi.org/10.1371/journal.pcbi.1005856.g002</s><s>presentation, the potential neuronal mechanisms underlying the transitions between the different response properties remain unclear.</s></p><p><s>Therefore, we propose here a new model for the description of response patterns to bistable perception that links the observed behavior in continuous and intermittent stimulation to potential underlying neuronal processes.</s><s>First, the model should be able to describe the high variety of both, continuous and intermittent stimulation within one model framework.</s><s>Second, we use a minimal number of parameters in order to allow parameter estimation and model fitting to the typically short experimental data.</s><s>This can then allow the statistical investigation of differences between clinical groups.</s></p><p><s>Note that strictly speaking, the term 'dominance time' refers to slightly different objects in continuous and intermittent viewing.</s><s>While during continuous presentation, switches occur from a dominant to a suppressed percept (percept-switch), dominance times during intermittent presentation consist of multiple continuous presentation periods, and switches typically occur because of different perceptual choices at the onset of the presentation (percept-choice) <ref type="bibr" target="#b27">[28]</ref>.</s><s>In the present model, the observed sequences of dominance times are treated as conceptually similar.</s><s>This simplification allows for a parsimonious model description in both continuous and intermittent viewing but may not fully capture the relation between the perceptual processes in the two regimes.</s></p><p><s>The remainder of the article is organized as follows.</s><s>First, we use a simple Hidden Markov Model (HMM) that describes the observed perceptual processes with a few parameters.</s><s>For continuous presentation, one state produces independent and identically distributed dominance times with a two-parametric distribution.</s><s>For intermittent presentation, switching between stable and unstable phases requires two hidden states with short and long dominance times, respectively.</s><s>The HMM has the advantage that it allows straightforward model fitting and data description with a minimal number of parameters.</s><s>However, it remains descriptive and lacks relations to potential underlying mechanisms.</s><s>Therefore, we link the HMM to a hypothetical underlying stochastic model.</s><s>This model is termed here Hierarchical Brownian Model (HBM) and intends to describe aggregated underlying neuronal activity, producing the observed behavioral responses.</s></p><p><s>The HBM is based on two main ideas: First, it assumes that switching between percepts results from two conflicting neuronal populations [cmp., e.g. <ref type="bibr">, 18]</ref>.</s><s>In order to minimize the number of parameters, this process is reduced to a simple Brownian motion with drift that fluctuates between two thresholds, where the first passage times indicate state changes [similar to 21].</s><s>For continuous presentation, one therefore requires only two parameters, i.e., the drift of the Brownian motion and the threshold.</s><s>The distribution of the resulting first passage times-i.e., dominance times-is then the same as in the HMM, with a simple relation between the two HBM and the two HMM parameters.</s><s>Second, in order to describe intermittent presentation in the same model framework, we use a hierarchical model.</s><s>The idea is to describe the switching between stable and unstable phases that is typical for intermittent presentation by using an analogous threshold crossing mechanism of conflicting neuronal populations.</s><s>Specifically, we assume a second pair of neuronal populations whose corresponding Brownian motion modulates the drift and threshold of the first population pair and thus causes switching between stable and unstable phases.</s><s>We give a set of model assumptions under which the HBM parameters are comparable to the HMM parameters, thus allowing both model fitting to experimental data sets and potential relation to underlying mechanisms.</s><s>The parameter estimation is straightforward using maximum likelihood and the HBM can reproduce both, the unimodal distribution in the continuous presentation and the bimodal distribution of dominance times in the intermittent presentation, including also various different response patterns.</s><s>Moreover, it allows the identification of specific differences between the clinical groups in <ref type="bibr" target="#b9">[10]</ref> and relates these to the hypothesized underlying processes.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A simple Hidden Markov Model for perceptual responses</head><p><s>As a first step to describe the processes observed in bistable perception, we reduce data analysis to the dominance times, i.e., the times between reported changes of the percept.</s><s>As described above, the distribution of dominance times tends to be unimodal in the continuous case, while stable and unstable phases interchange in intermittent stimulation.</s></p><p><s>We denote the dominance times by d i , i = 1, 2, . .</s><s>., n.</s><s>In the unimodal continuous case, we assume the d i to be the realizations of independent and identically (i.i.d.) distributed random variables D i , i = 1, 2, . .</s><s>., n (Fig 3A <ref type="figure">)</ref>, where the Gamma or the Inverse Gaussian (IG) distribution are suitable two-parametric distributions <ref type="bibr" target="#b16">[17,</ref><ref type="bibr" target="#b17">18,</ref><ref type="bibr" target="#b18">19,</ref><ref type="bibr" target="#b20">21]</ref>.</s><s>For comparability with the HBM, we focus on the Inverse Gaussian distribution here.</s><s>For the intermittent case, we assume a HMM with a stable and an unstable state, which are hidden and produce long and short dominance times, respectively (Fig <ref type="figure" target="#fig_1">3B</ref>).</s><s>This requires two parameters for the switches between states, and two parameters for the distribution of dominance times in each state.</s></p><p><s>Formally, let Y ≔ (Y i ) i = 1,. .</s><s>.,n describe a Markov chain on {S, U}, where S and U denote the stable and unstable state, respectively.</s><s>Let p SU = 1 − p SS and p US = 1 − p UU denote the transition probabilities.</s><s>The dominance times (d i ) i2{1,2,. .</s><s>.,n} are assumed to be Inverse Gaussian distributed and conditionally independent given Y, with mean and standard deviation given by (μ S , σ S ) for</s></p><formula xml:id="formula_0">Y i = S and (μ U , σ U ) for Y i = U.</formula><p><s>Note that independence of dominance times is assumed here in continuous presentation.</s><s>This assumption enables straightforward parameter estimation and is in agreement with the observation that serial correlations of dominance times are typically not reported [e.g., <ref type="bibr" target="#b28">29,</ref><ref type="bibr" target="#b29">30]</ref>.</s><s>However, weak long-term dependencies of dominance times reported under continuous presentation <ref type="bibr" target="#b30">[31]</ref> cannot be reproduced in the HMM.</s><s>As such long-term dependence was not observed in the majority of cases in the present data set, also showing no group differences, we use here the simple assumption of independence.</s><s>In addition, the two used HMM parameters are sufficient to capture the main group difference in the response properties reflected in the alternation rate.</s></p><p><s>Parameter estimation and precision of parameter estimates.</s><s>Continuous presentation.</s><s>For parameter estimation in the continuous case, we simply estimate the parameters of the Inverse Gaussian distribution from the dominance times d 1 , . .</s><s>., d n , assuming these are</s></p><formula xml:id="formula_1">" m d ≔ 1 n X n i¼1 d i</formula><p><s>denote the sample mean of the observed dominance times.</s><s>For the Inverse Gaussian (IG) distribution <ref type="bibr" target="#b31">[32]</ref> with mean μ and standard deviation σ, the maximum likelihood (ML) estimators are given by</s></p><formula xml:id="formula_2">m ¼ " m d and ŝ ¼ ffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffi " m 3 d 1 n X n i¼1 1 d i À 1 " m d s :<label>ð1Þ</label></formula><p><s>The precision of these ML estimators is investigated by parametric bootstrap for the parameter values estimated from the 61 response patterns to continuous presentation in the sample dataset of <ref type="bibr" target="#b9">[10]</ref>.</s><s>For each parameter combination (μ i , σ i ) i = 1,. .</s><s>.,61 we simulated 1000 response patterns with length T = 240 as in the original data.</s><s>We then compared the estimators ðm i ; ŝi Þ i¼1;...;61 with the parameter values underlying the simulation using the relative error (RE), defined e.g. for μ as REðmÞ ≔ jm À mj=m.</s><s>The median relative errors for the 61 parameter constellations are shown in Fig 4A <ref type="figure">.</ref></s><s>Out of these, 54 (89%) showed estimation errors with median REs less than 0.25 (across the two parameters μ and σ, black).</s><s>The remaining simulations (gray) showed only few percept changes, n &lt; 20, as well as large CVs (σ/μ, Fig <ref type="figure" target="#fig_2">4B</ref>).</s></p><p><s>Intermittent presentation.</s><s>In order to estimate the parameters in the two-state HMM in intermittent presentation, we use the Baum-Welch-Alghorithm [BWA, <ref type="bibr" target="#b32">33,</ref><ref type="bibr" target="#b33">34,</ref><ref type="bibr" target="#b34">35]</ref>.</s><s>See section 'Intermittent presentation: Baum-Welch-Algorithm' in the Materials and methods for details on the BWA, the choice of starting values and specifications in the sample data set.</s><s>For details on HMMs see, e.g., <ref type="bibr" target="#b35">[36,</ref><ref type="bibr" target="#b36">37]</ref>.</s></p><p><s>In order to investigate the estimation precision of this approach, we again apply parametric bootstrap to the 61 parameter combinations estimated from the response patterns to intermittent presentation in the sample data set.</s><s>Fig <ref type="figure" target="#fig_3">5</ref> shows the median errors obtained in 1000 simulations for every parameter constellation for T 1 = 1200 s and T 2 = 3600 s.</s><s>For p SS and p UU the absolute errors (i.e., AEðp SS Þ ≔ jp SS À p SS j) are presented due to the small values of the two parameters.</s><s>For the time horizon of the data, T 1 (panel A), 50 of the 61 parameter combinations yielded average errors (i.e.</s><s>mean median errors across all parameters) smaller than 0.25 (black).</s><s>The remaining cases (gray) showed a large μ U , i.e., less distinguishable stable and unstable distribution, or small sample size n % 10.</s><s>For the larger time horizon T 2 (panel B), almost all parameter combinations showed errors smaller than 0.25.</s></p><p><s>Application of the HMM to the sample data set.</s><s>Here we use the described methods in order to apply the HMM to the sample dataset presented in <ref type="bibr" target="#b9">[10]</ref> consisting of responses to continuous and intermittent stimulation obtained from each of 29 patients with schizophrenia and 32 healthy controls (for details on experimental procedures see Materials and methods).</s><s>While response patterns were highly variable across subjects, the CV of dominance times (mean 0.79, SEM 0.04) was comparable to other studies reported in <ref type="bibr" target="#b20">[21]</ref>.</s><s>Serial correlation of adjacent dominance times of the same percept was typically small (mean of Kendall's rank correlation " t ¼ 0:02), and statistically significant on the 5% level in less than 7% of the cases, which is about chance level.</s><s>Concerning long-term dependence [cmp.</s><s>31], deviations from the assumption of independent dominance times were not observed in 81% of the cases, and no differences were observed between the experimental groups (p &gt; .1,</s><s>Wilcoxon test, for details on the analysis see Materials and methods).</s><s>A correlation between the alternation rates in continuous and intermittent stimulation across subjects was not observed in either group, comparable to the results of <ref type="bibr" target="#b13">[14]</ref>.</s></p><p><s>Model fit.</s><s>By fitting the HMM to response patterns in continuous and intermittent presentation as described above, the typical properties of the observed response patterns can be reproduced in simulations, including unimodal distributions for continuous presentation and changes between stable and unstable stages in intermittent presentation and a high variety of response patterns <ref type="bibr">(Fig 6)</ref>.</s><s>For example, subject C shows rather regular stable phases, separated by unstable phases, while subject D shows an irregular response pattern, subject E shows only stable phases, while subject F shows almost only unstable phases.</s><s>The parameter estimates of these example subjects are given in Tables <ref type="table" target="#tab_1">1 and 2</ref>. Note also that the response patterns of seven of the 61 subjects were described better by only one (stable or unstable) distribution than by the two-state HMM.</s></p><p><s>In addition to the good correspondence in the response patterns, no strong deviations could be observed from the model assumption of Inverse Gaussian distributed dominance times ( <ref type="bibr">Fig 7)</ref>.</s></p><p><s>Comparison of repeated trials.</s><s>The HMM approach also allows studying the reproducibility of response parameters of subjects across multiple sessions.</s><s>To this end, we used an additional dataset from 105 healthy individuals that contained two separate sessions of continuous presentation [see 9, here we used the first two training runs from Behavioral Experiment 2 as described in this previous work].</s><s>These showed highly reproducible response patterns, i.e., a high correlation of parameter estimates of the IG distribution of the same individuals across different sessions (Fig <ref type="figure">8</ref>).</s><s>In addition, we also used a likelihood ratio test <ref type="bibr" target="#b37">[38]</ref> to investigate the null hypothesis of equality of the parameters of two Inverse Gaussian distributed samples with sample sizes n 1 and n 2 , i.e.</s><s>H 0 : μ 1 = μ 2 and σ 1 = σ 2 .</s><s>The likelihood ratio derives as</s></p><formula xml:id="formula_3">Q n ¼ Y 2 i¼1 ðn=n i Þ n i =2 ðS i =SÞ n i =2 ;</formula><p><s>with</s></p><formula xml:id="formula_4">S i ¼ P n i j¼1 ðd À 1 ij À mÀ 1 i Þ for i = 1, 2, S 3 ¼ n 1 =m 1 þ n 2 =m 2 À n 2 ðn 1 m1 þ n 2 m2 Þ À 1 , n = n 1 + n 2 and S = S 1 + S 2 + S 3 . Under H 0 the quantity Q Ã n ≔ À 2ð1 À 1=6½1=n 1 þ 1=n 2 À<label>1=½12nÞ</label></formula><p><s>log Q n is approximately chi-square distributed with two degress of freedom.</s><s>Thus, the test rejects the null hypothesis at level 5% if Q Ã n exceeds the 95%-th-quantile of the χ 2 (2)-distribution.</s><s>In the  <ref type="table" target="#tab_1">1 and 2</ref> sample data set, the likelihood ratio test did not reject the null hypothesis of equal parameter sets in 83 out of 105 subjects (about 79%).</s><s>For a comparison, we performed 10000 permutations by randomly assigning a first trial of one subject to a second trial of another subject and performing the likelihood ratio tests on the permuted data sets.</s><s>In the mean, the null hypothesis was not rejected in only about 36% of the randomly assigned pairs, with a maximum percentage across all permutations of 51%.</s></p><p><s>In summary, the response patterns of the same subject across multiple sessions showed a high degree of reproducibility, with a Pearson correlation coefficient of up to r = 0.76 between log(μ 1 ) and log(μ 2 ) (Fig <ref type="figure">8</ref>).</s><s>The similarity of response patterns for the same subject across multiple sessions was significantly higher than the similarity of response patterns between subjects.</s></p><p><s>Group differences.</s><s>Finally, the HMM provides a relation between the underlying model parameters and the observed group differences reported in the introduction and in <ref type="bibr" target="#b9">[10]</ref>.</s><s>In the continuous case, the decreased alternation rate in the patients with schizophrenia is simply reflected in an increased mean dominance time m (Fig 9A <ref type="figure">)</ref> in the one-state HMM.</s><s>For intermittent presentation, we had observed an increased alternation rate in the patients with schizophrenia.</s><s>The interpretation of this observation was not obvious due to the high variability of response patterns and particularly due to the fluctuation between stable and unstable state.</s><s>The HMM provides a first explanation of this phenomenon by capturing important response properties in the parameter estimates, which showed the following group differences: In particular, the expected relative time spent in the stable state,</s></p><formula xml:id="formula_5">φ S ≔</formula><p><s>E½length of a stable phase E½length of a stable phase þ length of an unstable phase was higher in the control group (Fig 9B, detailed formula given in Eq <ref type="bibr" target="#b12">(13)</ref> in the Materials and methods).</s><s>As the main variable contributing to this difference, we observe that the probability pSS to stay in the stable state was higher in healthy controls.</s><s>In addition, the mean dominance time mU in the unstable state was slightly larger in the patients with schizophrenia.</s><s>The degree of statistical significance was highly similar to the one reported in <ref type="bibr" target="#b9">[10]</ref> (p &lt; .1 for m, mU , pSS and φS , two-sided Wilcoxon test).</s><s>In the following section, we present a model that links these observed differences to potential underlying neuronal mechanisms.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A hierarchical Brownian motion model</head><p><s>As described in the previous section, the HMM captures a high variety of response patterns both in continuous and intermittent viewing, including uni-and bimodal distributions of dominance times with alternations between stable and unstable states and a high variability across subjects.</s><s>With its small number of parameters, the HMM can be fitted also to short data sections available empirically and therefore also capture differences between experimental groups.</s><s>However, the HMM description remains phenomenological and does not provide insight into potential neuronal processes.</s><s>Also, it cannot provide explanations for potential effects that different lengths of blank displays could have on the response patterns, as discussed for example by <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b21">22,</ref><ref type="bibr" target="#b23">24,</ref><ref type="bibr" target="#b24">25]</ref>.</s><s>In addition, the HMM cannot represent the following interesting empirical observation: Before changing from stable to unstable state, the last dominance time tends to be shorter.</s><s>Therefore, we introduce here a new model, called Hierarchical Brownian Model (HBM), which provides a potential link between the phenomonological description of the response and potential underlying neuronal processes.</s><s>The HBM assumptions can also provide hypotheses on the effects of different lengths of blank displays and naturally yields shorter dominance times before a state change to the unstable state.</s></p><p><s>The HBM assumes two competing neuronal populations which indicate perception of right and left rotation, respectively.</s><s>As has been proposed by various authors <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b17">18]</ref>, we implicitly assume mechanisms of self-excitation, cross-inhibition and adaptation across these neuronal populations, without explicitly modeling them in order to reduce the number of parameters and to allow for model fitting to short trials.</s><s>In order to obtain a parsimonious model description, we again assume independence of dominance times by neglecting potential mechanisms of week long-term adaptation <ref type="bibr" target="#b30">[31]</ref>.</s><s>For possible model extensions compare section 'Applicability and model extensions' in the discussion.</s><s>We use the simplified assumption that perception arises from the difference in the activity of the two populations, which is modeled here by a Brownian motion with drift [similar to 21] that fluctuates between two thresholds, where the first passage times indicate state changes.</s><s>This results in two parameters for the case of continuous presentation that are directly linked to the two parametric distribution of dominance times in the HMM.</s><s>Further, we describe switching between stable and unstable states in intermittent presentation by applying an analogous mechanism, which leads to a hierarchical model.</s><s>We assume another hierarchical layer of neuronal populations and a corresponding Brownian motion which modulates the drift of the first population pair and thus causes switching between stable and unstable phases.</s></p><p><s>Continuous presentation.</s><s>The HBM in continuous presentation (HBMc) simply assumes a Brownian motion with drift ±ν 0 between two borders, ±b, where the first hitting times of the borders indicate a percept change and lead to a sign change in the drift.</s><s>As a potential neurophysiological interpretation, b could be considered the size of the activity difference between the L and R population required for a perception change and thereby be related to the respective population sizes.</s><s>Roughly speaking, the speed of the drift ν 0 could be considered related to the inverse of the connection strengths within and across populations that engage in self excitation and cross inhibition.</s></p><p><s>Formally, let b &gt; 0 be a fixed border, ν 0 &gt; 0 be a drift and T &gt; 0 a time horizon, and let (W t ) t2[0,T] be a standard Brownian motion.</s><s>The perception process P ≔ (P t ) t2[0,T] is then defined by</s></p><formula xml:id="formula_6">dP t ¼ S t n 0 dt þ dW t ;</formula><p><s>where</s></p><formula xml:id="formula_7">P 0 ¼ À b;</formula><p><s>and the process S t ≔ S(P t , t) takes the value −1 if P t last hit b and 1 if P t last hit −b, with S 0 ≔ 1.</s><s>For t 2 (0, T] let t Ã ≔ t Ã ðtÞ ≔ sup fxjx &lt; t; jP x j ¼ bg; where t Ã ð0Þ ¼ 0 be the last time before t that P t hit either b or −b.</s><s>Then</s></p><formula xml:id="formula_8">S t ≔ SðP t ; tÞ ≔ À sgnðP t Ã Þ:</formula><p><s>The perception at time t !</s><s>0 takes the value L (left) if S t = 1 and R (right) if S t = −1 and switches at the first-hitting times (H i ) i of the borders ±b defined by H 0 ≔ 0 and</s></p><formula xml:id="formula_9">H i ≔ inf ft Tjt &gt; H iÀ 1 ; P t ¼ S t bg i ¼ 1; 2; . . .<label>ð2Þ</label></formula><p><s>An example of such a process is shown in Fig 10 <ref type="figure">.</ref></s><s>Panel A shows the process P, where the sign of the drift changes at each first hitting time of b or −b indicated by the process (H i ) i , which also marks switches in the percept (panel B).</s></p><p><s>Parameter estimation in the HBMc makes use of the fact that the resulting dominance times</s></p><formula xml:id="formula_10">d i ≔ H i À H iÀ 1 ; i ¼ 1; 2; . . .<label>ð3Þ</label></formula><p><s>are independent and IG distributed, with a known relation between the HBMc parameters b and ν 0 and the parameters μ and σ of the IG distribution, given by μ = 2b/ν 0 and s ¼ ffiffiffiffiffiffiffiffiffiffiffi 2b=n 3 0 p <ref type="bibr" target="#b31">[32]</ref>.</s><s>Note that the CV of the dominance time distribution is therefore given by 1/(2bν 0 ).</s><s>Thus, an increase in the border b also increases the mean dominance time and decreases the CV.</s><s>An increase in the drift ν 0 decreases the mean dominance time, while again decreasing the CV.</s></p><p><s>The ML estimators b and n0 can be derived via</s></p><formula xml:id="formula_11">b ¼ ð1=2Þ Á ffiffiffiffiffiffiffiffiffiffiffiffi m3 =ŝ 2 p and n0 ¼ ffiffiffiffiffiffiffiffiffiffi m=ŝ 2 p ;</formula><p><s>where m and ŝ are derived from Eq <ref type="bibr" target="#b0">(1)</ref>.</s><s>Explicit expressions are given in the Materials and methods.</s></p><p><s>The precision of parameter estimates is directly comparable to the HMM for continuous presentation.</s></p><p><s>Intermittent presentation.</s><s>In the Hierarchical Brownian Motion model for intermittent presentation (HBMi), we require mechanisms for long dominance times in the stable state as well as for short dominance times in the unstable state.</s><s>In order to describe the responses to intermittent and continuous presentation in one model framework, we assume the identical perceptual process as in the HBMc during phases of stimulus presentation.</s><s>The periods of blank display represent the only difference to continuous presentation.</s><s>In these periods, we assume additional neuronal mechanisms.</s><s>In particular, we assume that the perceptual process then takes on one of two mean drifts, ν S in the stable state and ν U ! ν S in the unstable state, with potentially opposite signs of ν 0 and ν S for increased stability ( <ref type="bibr">Fig 11)</ref>.</s><s>Note that the drifts ν S and ν U are not necessarily constant across the whole period of blank display, but they denote the mean drift of the process, which is sufficient to describe the distribution of dominance times.</s><s>Interestingly, additional assumptions on the temporal behavior of the drift terms could also allow describing the impact of the lengths of blank displays (cmp.</s><s>Discussion).</s><s>Further, in the unstable state the border b U at which perception and drift direction change is assumed smaller than the border b S during stable perception.</s><s>Switches between the stable and unstable state will be caused by a similar mechanism in a so-called background process B described later in this section.</s></p><p><s>Within a state (S or U), the fluctuation of the perception process between the borders is assumed analogous to the HBMc, except that the borders are dependent on the hidden state and that the drift is ν 0 during presentation and ν S or ν U during blank display.</s><s>Formally, we denote by PR and BL the sets of all periods of stimulus presentation and blank display, respectively.</s><s>Assuming that we start a trial with a presentation interval and then switch regularly between presentation intervals of length l p and blank display of length l b , PR and BL are given by PR ¼</s></p><formula xml:id="formula_12">[ T=l b i¼1 ½ði À 1Þðl p þ l b Þ; ði À 1Þðl p þ l b Þ þ l p Þ BL ¼ [ T=l b i¼1 ½ði À 1Þðl p þ l b Þ þ l p ; iðl p þ l b ÞÞ<label>ðFig11Þ</label></formula><formula xml:id="formula_13">:</formula><p><s>The perception process (P t ) t is then given by</s></p><formula xml:id="formula_14">dP t ¼ S t n 0 dt þ dW t ; if t 2 PR S t n Ỹ t dt þ dW t ; if t 2 BL; 8 &lt; :</formula><p><s>where Ỹ t 2 fS; Ug denotes the hidden state and (W t ) t denotes a standard Brownian motion.</s><s>As a result, the mean drift per second is given by</s></p><formula xml:id="formula_15">n Ã S ≔ l b Á n S þ l p Á n 0 l b þ l p and n Ã U ≔ l b Á n U þ l p Á n 0 l b þ l p<label>ð4Þ</label></formula><p><s>for states S and U, respectively.</s><s>Because the periods l b and l p are typically short in relation to a dominance time, the behavior of P can be approximated by a Brownian motion with absolute drifts n Ã S and n Ã U , respectively.</s><s>As in the HBMc, the sign of the drift S t ≔ S(P t , t) changes at every first hitting time of the respective border, i.e.,</s></p><formula xml:id="formula_16">SðP t ; tÞ ≔ À sgnðP t Ã Þ where t Ã ≔ t Ã ðtÞ ≔ sup fxjx &lt; t; jP x j ¼ b Ỹ x g with t Ã ð0Þ ¼ 0:</formula><p><s>We initialize P 0 ¼ À b Ỹ 0 for the initial state Ỹ 0 which is the stable state with probability p S ≔ Pð Ỹ 0 ¼ SÞ.</s><s>The perception then takes the value L if S t = 1 and R if S t = −1 and switches at the first-hitting times (H i ) i of the borders ±b i comparable to Eq <ref type="bibr" target="#b1">(2)</ref>.</s><s>Note that perception also changes during blank display.</s><s>The dominance times are therefore again given by</s></p><formula xml:id="formula_17">d i ≔ H i − H i−1 , i = 1, 2, . . ..</formula><p><s>In order to describe the switching between the two states S and U, we use an analogous upper hierarchical level with another pair of conflicting neuronal populations.</s><s>Their difference activity is described by a so-called background process B ≔ (B t ) t (Fig 12A, middle panel).</s><s>B is also assumed to be a Brownian motion with drift.</s><s>Its drift is assumed to vanish during presentation and to take the value ν B &gt; 0 during blank display, i.e.,</s></p><formula xml:id="formula_18">dB t ¼ ( d W t ; if t 2 PR n b dt þ d W t ; if t 2 BL; Ỹ t ¼ S À n b dt þ d W t ; if t 2 BL; Ỹ t ¼ U;<label>ð5Þ</label></formula><p><s>where ð W t Þ t is a Brownian motion independent of (W t ) t .</s><s>Again, the mean drift across PR and BL intervals is n Ã B ≔ l b Án B l b þl p .</s><s>The background process B evokes changes between the stable and the unstable state.</s><s>Specifically, at the time of a percept change t Ã , the question of whether the process stays in the former state (S or U) or switches to the other state depends only on the value of B. Two borders, b U &lt; b S determine this switching as follows (see <ref type="bibr">Fig 12)</ref>.</s><s>If the former state is S, the process remains stable if and only if B t Ã &gt; bS (first light blue arrow in panel A), while switching to the unstable state if B t Ã bS (blue arrow, panel A).</s><s>Analogously, if the former state is U, the process switches to S if and only if B t Ã &gt; bU (right light blue arrow, panel A), while staying in U if B t Ã bU (blue arrow, panel B).</s><s>After the percept change, the background process B is reset to zero and then follows its usual dynamic (Eq (5)), i.e., the sign of its drift changes if and only if the state has changed.</s><s>Finally, as the perception process P fluctuates between ±b S in the stable state and between ±b U in the unstable state, the value of P is reset when the state changes, to the value sgn(P)b S when changing to the stable state and to sgn(P)b U when changing to the unstable state.</s></p><p><s>Discussion of assumptions and interpretation of parameters.</s><s>The technical advantage of the HBMi is that the resulting dominance times agree in most parts with the dominance times resulting from the HMM assumptions, which allows model fitting also to short data sections and comparison across clinical groups.</s><s>In addition, the HBMi also provides a relation to potential underlying neuronal processes, as discussed in the following and illustrated in Fig <ref type="figure" target="#fig_21">13</ref>.</s></p><p><s>Both HBMi-processes P and B are assumed Brownian motions with drift which may be interpreted as the activity difference between neuronal populations.</s><s>Implicitly, this assumes mechanisms of self-excitation, cross-inhibition and adaptation across these neuronal populations, as proposed by various authors <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b17">18]</ref>.</s><s>Without explicitly modeling such mechanisms in order to reduce the number of parameters and allow model fitting, the parameter sets are reduced to the mean drifts ν and the borders b.</s><s>Analogously to the HBMc, the speed of the drifts could be considered related to the inverse of the connection strengths within and across populations that engage in self excitation and cross inhibition.</s><s>The border b, in analogy to the HBMc, could be considered related to the size of the respective populations under consideration.</s><s>The use of different borders allows fitting of highly various response patterns and can be motivated as follows.</s></p><p><s>In the HBMi, the perception process P has two borders, b S &gt; b U for the stable and the unstable state.</s><s>This suggests different population sizes of neurons involved in the stable and unstable state.</s><s>Typically b S &gt; b &gt; b U , suggesting that in the stable state, the activity of the dominant population is increased by joining additional neurons to the population, for example by positive feedback mediated by population S. Vice versa, in the unstable state, only a minimal population is involved in the respective percept, leading to fast changes.</s><s>Thus, one could assume that the dominant percept population size is decreased by the population U (red arrows).</s><s>The active population sizes are indicated by different circle sizes in the first line of The background process B models the activity difference between S and U and is also associated with two borders, bS and bU .</s><s>The assumption regarding resetting of B at percept change is technically necessary to generate independent dominance times and to thus allow straightforward model fitting (cmp.</s><s>section 'Parameter estimation').</s><s>In the picture of Fig <ref type="figure" target="#fig_21">13</ref> it can be motivated as follows.</s><s>Population S is capable of offering positive feedback to the currently active population, L or R, which results in an increased population size as described above.</s><s>S is also activated by the active population.</s><s>Therefore, a percept change causes a reseting to zero.</s><s>However, if S had shown high previous activation (above bS ), the activity of S can increase rapidly again, causing another stable dominance time.</s><s>In contrast, in case of weak previous activation (below bS ), the unstable population U is taking over, marking the transition to an unstable state.</s><s>With opposite signs, i.e., negative drift and a small new border bU , the process proceeds analogously.</s><s>Similar to the mean drift terms ν S and ν U , the drift ν B is not necessarily constant but describes the mean drift of B during the period of blank display.</s></p><p><s>In addition to the potential neurophysiological interpretations of the model parameters, we give here a relation of the parameters to the response patterns.</s><s>Interestingly, the seven HBMi parameters allow the reproduction of highly variable response patterns as are also observed in the empirical data sets (e.g., <ref type="bibr">Fig 1)</ref>.</s><s>The following quantities, which are easily derived from the parameters, offer a straightforward pattern interpretation.</s></p><p><s>First, the parameter sets ðb S ; n Ã S Þ and ðb U ; n Ã U Þ can be interpreted analogously to the parameters (b, ν 0 ) in continuous stimulation.</s><s>That means, an increase in the border (b S or b U ) increases the mean dominance time and decreases the CV in the respective state.</s><s>An increase in the drift (n Ã S or n Ã U ) decreases the mean dominance time, while also decreasing the CV.</s><s>Recall that the CVs of dominance times during stable and unstable states are given by  The quantities for panels A-H were CV Ã S ¼ f0:2; 0:2; 0:2; 0:</s></p><formula xml:id="formula_19">CV Ã S ≔ 1= ffiffiffiffiffiffiffiffiffiffi ffi 2b S n Ã S p and CV Ã U ≔ 1= ffiffiffiffiffiffiffiffiffiffiffiffi 2b U n Ã</formula><formula xml:id="formula_20">¼ 2b S =n Ã S bS =n Ã B ¼ 2b S n Ã B bS n Ã S ;</formula><p><s>which is related to the transition probability from stable to unstable state.</s><s>In case of a small background border bS &lt; b S and small n Ã S , the probability of B crossing bS until percept change is high, such that the process remains stable.</s><s>Fig 14A <ref type="figure" target="#fig_21">, 14B</ref>, 14E and 14F show such parameter combinations.</s><s>An analogous term can be derived in comparison to the parameters bU and n Ã U .</s><s>Third, the parameter bU is related to the number of dominance times in the unstable state before changing to the stable state.</s><s>Recall that the drift of B is negative during unstable periods.</s><s>Therefore, a large value of bU implies a low probability to reach bU until the percept change.</s><s>This implies a high expected number of dominance times in the unstable state, or a low transition probability from the unstable to the stable state.</s><s>Relation of the HBMi to the two state HMM.</s><s>The relation of the HBMc to the one state HMM is simple as is represents only a reparameterization.</s><s>Both the one state HMM and the HBMc yield independent and IG distributed dominance times.</s><s>For the intermittent case, the relation of the HBMi to the two state HMM is not as straightforward.</s><s>The two models are highly similar in the sense that they use two parameters to describe long and short dominance times, respectively (e.g., (μ S , σ S ) and ðb S ; n Ã S Þ for the stable state).</s><s>In the HMM, the dominance times are IG distributed, given the state with the respective parameters.</s><s>In the HBMi, the dominance times are approximately IG distributed, where the minor deviation from the IG distribution originates from the minor deviation of P from a Brownian motion with drift n Ã S (or n Ã U ), instead of exactly assuming drift ν 0 during stimulation and ν S (or ν U ) during blank display.</s><s>However, the marginal distribution of P at multiples of such intervals l p + l b is identical to the marginal distribution of a Brownian motion with drift n Ã S (or n Ã U ) at these time points, and the differences can only be observed in the meantime.</s><s>Because dominance times usually span multiple trials of duration l p + l b , the approximation is very close.</s><s>As another similarity, both models use additional parameters ((p SS , p UU ) and ð bS ; bU ; n B Þ) to describe the transition probabilities between the stable and the unstable state.</s></p><p><s>The main difference between the HBMi and the two state HMM concerns the dynamic of the state transitions between stable and unstable state.</s><s>In the HMM, transition probabilities are given by (1 − p SS ) and (1 − p UU ) and are independent of the duration of the previous dominance time.</s><s>In contrast, in the HBMi, a transition from stable to unstable state requires that B has not reached bS at the end of the respective dominance time.</s><s>Therefore, the transition probability pSU ðd i Þ depends on the duration d i of the i-th dominance time, where shorter dominance times yield higher transition probabilities.</s><s>Note that the position of B at the end of a dominance time d i is given by an increment of a Brownian motion with drift n Ã B in the fixed time interval d i .</s><s>Therefore the position is normally distributed with mean d i Á n Ã B and variance d i and the probability to remain in the stable state (which is the probability that the background process exceeds bS ) is given by</s></p><formula xml:id="formula_21">pSS ðd i Þ ¼ PðY iþ1 ¼ SjY i ¼ S; d i Þ % 1 À F n Ã B d i ;d i ð bS Þ;<label>ð6Þ</label></formula><p><s>where F μ,σ 2() denotes the distribution function of the normal distribution with mean μ and variance σ 2 and Y i is the hidden state of the i-th dominance time.</s><s>Analogously, for the transition from unstable to stable state, the transition probability pUS ðd i Þ tends to decrease with longer dominance times, and we find</s></p><formula xml:id="formula_22">pUU ðd i Þ ¼ PðY iþ1 ¼ UjY i ¼ U; d i Þ % F À n Ã B d i ;d i ð bU Þ:<label>ð7Þ</label></formula><p><s>Note that we use the approximate sign '%' because the drift of B is not exactly n Ã B throughout, but is assumed to change between ν 0 and ν B during stimulation and blank display, respectively, yielding a mean drift of n Ã B .</s><s>Analogously to the above explanation, differences caused by the approximation can be considered minimal.</s></p><p><s>In order to obtain quantities comparable to the transition probabilities p SS and p UU in the HMM, we derive the marginal transition probabilities in the HBMi as the expected value of pSS and pUU .</s><s>As shown by <ref type="bibr" target="#b38">[39]</ref>, the positions X S and X U of B at the end of an independent stable or unstable IG distributed dominance time follow the Normal Inverse Gauss (NIG) distribution.</s><s>The resulting transition probabilities in the HBMi can then be calculated as</s></p><formula xml:id="formula_23">p Ã SS ¼ PðX S &gt; bS Þ and p Ã UU ¼ PðX U bU Þ:<label>ð8Þ</label></formula><p><s>where X S is NIG-distributed with parameters (0,</s></p><formula xml:id="formula_24">ffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffi n Ã S 2 þ Ã B 2 p , n Ã B , 2b S ) and X U is NIG- distributed with parameters (0, ffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffi n Ã U 2 þ n Ã B 2 p , À n Ã B , 2b U ).</formula><p><s>One should note that due to the difference in transition probabilities of the two models, the parameters ðb S ; n Ã S Þ are not direct reparameterizations of (μ S , σ S ) (and similarly for the unstable state).</s><s>Furthermore, the dependence of the transition probability on the length of the previous dominance time is one important new aspect of the HBMi not described in the HMM, which will also be used in the section 'Application of the HBM to the sample data set' for comparison of models and empirical observations.</s></p><p><s>Parameter estimation.</s><s>In order to estimate the HBMi parameter set</s></p><formula xml:id="formula_25">Y ¼ ðb S ; n Ã S ; b U ; n Ã U ; bS ; bU ; n Ã B Þ,</formula><p><s>where the forward variable α j (i) denotes the probability of being in state j at time i while observing (d 1 , . .</s><s>., d i ).</s><s>The approximation is again due to the averaging of drifts during blank display and stimulus presentation.</s><s>The forward variables can be derived recursively <ref type="bibr" target="#b33">[34,</ref><ref type="bibr" target="#b39">40]</ref> by</s></p><formula xml:id="formula_27">a j ðiÞ ¼ ( p j f j ðd i Þ if i ¼ 1 f j ðd i Þ X j2fS;Ug a j ði À 1Þp ij ðd iÀ 1 Þ if i &gt; 1<label>ð10Þ</label></formula><p><s>with π j as starting distribution and f S and f U denoting the densities of IGð2b S =n Ã S ;</s></p><formula xml:id="formula_28">ffiffiffiffiffiffiffiffiffiffiffiffiffiffi ffi 2b S =n Ã S 3 p Þ and IGð2b U =n Ã U ; ffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffi 2b U =n Ã U 3 p</formula><p><s>Þ distributed random variables, respectively.</s><s>Details on the maximization algorithm can be found in the Materials and methods.</s><s>After estimation of Θ, the estimates of nS and nU can be obtained using Eq (4), and analogously for nB .</s></p><p><s>Precision of parameter estimation.</s><s>The variability of the parameter estimates in the HBMi is studied analogously to the HMM, using the RE and the AE of the parameter estimates obtained in 1000 simulations of the 61 parameter combinations estimated from the empirical data set.</s><s>For the border parameters b S , b U , bS , bU , we use the RE, while for the typically small drift parameters n Ã S , n Ã U , n Ã B , the AE is used.</s><s>Again, one set of simulations uses the time horizon of the empirical data, T 1 = 1200s (Fig 15A <ref type="figure">)</ref>, and a second simulation was performed using T 2 = 3600s (Fig <ref type="figure" target="#fig_21">15B</ref>).</s><s>According to the simulation results, the precision of parameter estimation in the given parameter range is not always satisfactory for the given parameterization ðb S ; b U ; bS ; bU ; n Ã S ; n Ã U ; n Ã B Þ, yielding average errors (i.e., mean REs or AEs across all variables) smaller than 0.25 in only 24 out of 61 cases for the empirical time horizon T 1 and still in only 44 out of 61 for the tripled sample size of T 2 .</s><s>This suggests that these raw parameters yield less reliable estimates because different combinations of b and ν can yield the same mean stable dominance time.</s><s>In contrast, the following set of derived parameters that are more easily comparable to the HMM parameters shows better properties.</s><s>We denote by ðm Ã S ; s Ã S Þ and ðm Ã U ; s Ã U Þ the mean and standard deviation of dominance times in the HBMi in the stable and unstable state, respectively.</s><s>These have analogous interpretations as (μ S , σ S ) and (μ U , σ U ) in the HMM and are given by</s></p><formula xml:id="formula_29">m Ã S % 2b S =n Ã S and s Ã S % ffiffiffiffiffiffiffiffiffiffiffiffiffiffi ffi 2b S =n Ã S 3 p ;<label>ð11Þ</label></formula><p><s>and analogously for m Ã U and s Ã U , where the approximation is again due to the minimal difference between the mean drift n Ã S and the changing drift ν S + ν 0 during presentation and blank display.</s><s>In addition, we consider the transition probabilities between the states, p Application of the HBM to the sample data set.</s><s>For the analysis of the sample data set, the HBMc and HBMi were fitted to the dataset of <ref type="bibr" target="#b9">[10]</ref> containing responses to continuous and intermittent stimulation for each of 29 patients with schizophrenia and 32 control subjects, using the parameter estimation described in the section 'Parameter estimation'.</s></p><p><s>Model fit.</s><s>Because the HBMc represents only a reparameterization of the one-state HMM, results are completely analogous for continuous presentation.</s><s>Thus, a high variability of response patterns can be described with the two parametric distribution (see Fig <ref type="figure" target="#fig_21">16A and  16B</ref>), including also different means and variances of dominance times.</s><s>For intermittent presentation, the HBMi and the two-state HMM are similar, but also show a number of differences.</s><s>As a first similarity to the two-state HMM, the HBMi can also describe and reproduce a high variety of response pattens (Fig 16C <ref type="figure" target="#fig_21">-16F</ref>).</s><s>For example, these include highly regular stable states that may or may not be interrupted by short unstable phases (C,E) or response patterns with different degrees of regularity (D, F) and different alternation rates.</s><s>Note also that the response patterns to intermittent stimulation of six out of the 61 subjects were described better by the one-parametric HBMc (e.g., E).</s></p><p><s>In addition to the close description and reproduction of the patterns in the empirical data, one interesting additional aspect is captured by the HBMi, which cannot be described in the two-state HMM.</s><s>As explained in the section 'Relation of the HBMi to the two state HMM', the probability of a transition from stable to unstable state decreases with the length of the dominance time in the HBMi.</s><s>The same is true for the reverse transition.</s><s>Indeed, the same observation can be made in the empirical data set, while this dependence cannot be captured within the HMM (Fig <ref type="figure" target="#fig_17">17</ref>).</s></p><p><s>Group differences.</s><s>Due to the high correspondence of the HBMi response patterns with the empirical data and the neurophysiologically related parameterization, the HBMi provides potential additional links to underlying neuronal processes of the observed differences between control subjects and patients with schizophrenia.</s><s>Here, we consider three aspects related to continuous and intermittent stimulation and to the transition between these two conditions.</s></p><p><s>First, concerning continuous stimulation, we note that the one-state-HMM and the HBMc yield identically distributed sequences of dominance times.</s><s>Note that the mean dominance time m in the HMM (Fig <ref type="figure">9A</ref>) therefore equals the corresponding value 2 b=n 0 in the HBMc.</s><s>As a consequence, the results and interpretation were identical, i.e., the higher alternation rate of the control subjects during continuous presentation ( Second, regarding intermittent presentation, we focussed on the derived parameters ðm Ã S ; s Ã S ; m Ã U ; s Ã U ; p Ã SS ; p Ã UU Þ, which show correspondence to the HMM and good estimation properties, instead of testing the border and drift parameters individually.</s><s>Similar to the HMM, we found an increased mean unstable dominance time in the group of patients with schizophrenia as compared to healthy controls.</s><s>More importantly and also consistent with the HMM, we also found that patients with schizophrenia showed a decreased relative time spent in S, φ Ã S (p &lt; .1,</s><s>two-sided Wilcoxon test, see Eq <ref type="bibr" target="#b16">(17)</ref> in the Materials and methods).</s><s>Again, the probability p Ã SS to stay in the stable state seemed to be the main variable contributing to this difference, being significantly reduced in patients with schizophrenia (Fig <ref type="figure" target="#fig_21">18C, p</ref>   interpretation, this would suggest an increased population size involved in stable perception processing as a potential main underlying mechanism.</s></p><p><s>Third, a similar observation resulted from the derived parameter b S /b, which describes a transition of population sizes from continuous to intermittent stimulus processing.</s><s>In the data set, we observed increased values of b S /b for the control group (Fig 18B <ref type="figure">)</ref> as compared to the group of patients with schizophrenia.</s><s>Again, applying a potential neurophysiological interpretation, this would suggest that in the control group, the neuronal pool that is additionally recruited during intermittent presentation in stable states could be higher than in the group of patients with schizophrenia.</s><s>Note that this result could not be obtained in the HMM, which does not explicitly describe a potential transition between continuous and intermittent presentation.</s><s>However, note that this result should be interpreted carefully due to reduced estimation precision of the parameters b S = bS and b S /b.</s><s>In summary, this analysis of the HBM model parameters suggests the following explanation for the observed phenomenon that the alternation rate of the perceived percepts is increased for patients with schizophrenia during intermittent stimulation, while being decreased during continuous stimulation.</s><s>In general, the relative time spent in the unstable state was increased in patients with schizophrenia.</s><s>According to the HBM, this was attributed to an increased probability of transition from the stable to the unstable state, which could be potentially related to a decreased recruitment of neurons in the stable state.</s><s>More specifically, a larger neuronal pool is hypothesized to account for the increased stability, and we accordingly observe a smaller increase in the neuronal pool from continuous to intermittent stable presentation in the patients with schizophrenia, which is suggested by the HBM as a main mechanism for the observed group differences.</s><s>This analysis of a potential underlying mechanism, explaining the observed group differences also in the transition from continuous to intermittent presentation, In the empirical data set, the mean dominance time before a state transition SU is shorter than the mean dominance time before SS (A).</s><s>This observation can be reproduced in the HBMi (C), while the expected dominance time in the HMM (B) is equally long for intervals with and without transition, i.e., independent from transition between states.</s><s>In the empirical data set <ref type="bibr" target="#b9">[10]</ref>, the state transitions were estimated using the Viterbi paths <ref type="bibr" target="#b33">[34]</ref>.</s><s>Analogous results were obtained using a fixed threshold.</s><s>For the HBMi, the expected dominance times were derived from the HBMi parameters according to Eq <ref type="bibr" target="#b14">(15)</ref> in the Materials and methods.</s><s>In the HMM, expected dominance times correspond to mS .</s><s>https://doi.org/10.1371/journal.pcbi.1005856.g017 is a particular advantage of the HBM over the HMM, because the HBM provides mechanistic explanations and variables with potential neurophysiological interpretations.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Summary and implications</head><p><s>In the present article we have proposed a model framework for the description and analysis of perceptual responses to bistable stimuli.</s><s>In particular, the first goal was to describe a high number of observed patterns in responses to continuous and intermittent stimulation and their differences between a group of patients with schizophrenia and healthy controls.</s><s>The variety of patterns includes more or less regular dominance times during continuous stimulation and a switching between long and short dominance times, i.e., stable and unstable states, during intermittent stimulation, with a tendency for periodically occurring percept changes.</s><s>We started on a descriptive level, assuming that dominance times were generated by a simple HMM with only one state for continuous presentation and a stable and an unstable state in intermittent presentation.</s><s>The HMM was sufficiently small to allow model fit to short empirical data sets and could also describe the high variety of empirically observed response patterns in continuous and intermittent presentation.</s><s>Interestingly, it also revealed a high degree of reproducibility of response patterns of the same subject across different sessions.</s><s>In addition, it allowed to relate observed group differences in the rate of percept alternations to HMM parameters, suggesting that especially the relative time spent in the stable state was reduced in the patients with schizophrenia.</s></p><p><s>Our second goal was to relate the observed response patterns and group differences to potential underlying mechanisms and thus, to build a link to models with detailed  neurophysiological assumptions <ref type="bibr" target="#b6">[7,</ref><ref type="bibr" target="#b12">13,</ref><ref type="bibr" target="#b13">14,</ref><ref type="bibr" target="#b17">18,</ref><ref type="bibr" target="#b19">20]</ref> that may not include all types or response patterns and/or may not allow fitting to short data sets.</s><s>To that end, we proposed a hierarchical model of interacting Brownian motions (HBM).</s><s>The HBM is based on the common assumption that the sequence of percept changes results from a competition of conflicting neuronal populations <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b16">17,</ref><ref type="bibr" target="#b17">18,</ref><ref type="bibr" target="#b19">20,</ref><ref type="bibr" target="#b26">27]</ref>.</s><s>Instead of modeling these in detail, we describe the activity difference by a Brownian motion P with drift ν 0 <ref type="bibr" target="#b20">[21]</ref> between two borders ±b, where the first hitting times of the borders indicate percept changes.</s><s>Roughly speaking, the drift ν 0 could be considered related to the neuronal interactions within and between the populations, while the border b could be considered related to the population sizes.</s><s>In order to describe responses to intermittent presentation, this mechanism is adapted in another population pair.</s><s>These populations exhibit a corresponding background process B that evokes switching between stable and unstable states, similar to switching between the two percepts.</s><s>In particular, B causes the perception process P to change parameters from small drift ν S and large border b S in the stable state to fast drift ν U and small border b U in the unstable state.</s><s>The HBM could be fitted nicely to the given empirical data set, reproducing a high variety of response patterns to continuous and intermittent stimulation in healthy subjects and patients with schizophrenia.</s><s>In particular, the model fit was even improved over the descriptive HMM by reproducing shorter stable dominance times before a change to the unstable state.</s><s>The HBM also provided more detailed explanations for the observed group difference that patients with schizophrenia showed higher alternation rates during intermittent stimulation, while percept alternation was decreases during continuous presentation.</s><s>In particular, the HBM contains additional mechanisms of switching between stable and unstable state for intermittent presentation, which is assumed inactive during continuous presentation.</s><s>The HBM, similar to the HMM, suggests an increased probability of switching to the unstable state for the patients with schizophrenia and thus, a longer relative time spent in the unstable state.</s></p><p><s>The HBM also provides additional potential explanations related to the borders, or assumed population sizes, suggesting a higher increase from continuous (border b) to stable intermittent presentation (border b S ) in the healthy subjects.</s><s>This is a first finding on the transition from continuous to intermittent presentation, which results from including both continuous and intermittent presentation in one model.</s></p><p><s>These findings suggested by the HBM, which include a longer relative time spent in the unstable state for the patients with schizophrenia and a smaller population size involved in percept stabilization, are also in agreement with recent findings of <ref type="bibr" target="#b40">[41]</ref>.</s><s>They studied the learning behavior of healthy subjects of whom the degree of delusional ideation <ref type="bibr" target="#b41">[42]</ref> had been measured.</s><s>In compliance with earlier studies [for a review see 43], they reported that subjects with larger delusion proneness made decisions on the basis of less information and were also less resilient against irrelevant information [compare also the literature about jumping to conclusions, e.g.</s><s><ref type="bibr" target="#b43">44,</ref><ref type="bibr" target="#b44">45]</ref>.</s><s>In the present setting, the ambiguous stimulus represents a constant source of partly contradicting visual information [see also <ref type="bibr" target="#b4">5,</ref><ref type="bibr" target="#b7">8]</ref>.</s><s>In that sense, the unstable state could be considered a state in which one is less resilient against this contradicting visual information, which yields a high rate of percept changes.</s><s>The fact that the patients with schizophrenia spent more time in the unstable state is therefore highly consistent with the findings of <ref type="bibr" target="#b40">[41]</ref>.</s><s>Moreover, this finding is also compatible with current models of schizophrenia in the framework of predictive coding <ref type="bibr" target="#b45">[46]</ref> that propose a reduced top-down influence of stored predictions.</s><s>However, it goes beyond previous work by highlighting the role of a background process that controls the balance between stable and unstable states in perceptual inference.</s><s>In addition, the population sizes could be considered related to the amount of information taken into consideration to create a percept.</s><s>Again, consistently with <ref type="bibr" target="#b40">[41]</ref>, we find, in the stable state, larger estimated population sizes, b S , of the perceptual populations L and R in healthy controls than in patients with schizophrenia.</s><s>Also, these population sizes are typically much larger than the population sizes in the unstable state (b S &gt;&gt; b U ), which would be consistent with the notion that subjects in the unstable state need less information to change their perception.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Applicability and model extensions</head><p><s>The HBM may also be used to describe dominance times resulting from other experiments with ambiguous visual stimuli studying, e.g., motion-induced-blindness, binocular rivalry, moving plaids, the Necker Cube, orthogonal gratings or the house/face-paradoxon [e.g.</s><s><ref type="bibr" target="#b20">21,</ref><ref type="bibr" target="#b46">47]</ref> or also bistable auditory stimuli <ref type="bibr" target="#b47">[48]</ref>.</s><s>The HBM is, however, not designed for tristable stimuli, and transient stimulus manipulations as used in after-effect studies cannot be captured by the HBM in its current form.</s><s>In different bistable settings, the HBM cannot be applied directly, but would allow for potential extensions.</s><s>For example, in its present form, the HBM describes only balanced perception.</s><s>However, it could be extended with respect to unbalanced bistable displays, e.g., for different eye contrasts during binocular rivalry <ref type="bibr" target="#b48">[49]</ref>, by choosing different drift parameters for the positive and the negative drift direction during presentation.</s><s>Similarly, the drift could be chosen to vary as a function of attention <ref type="bibr" target="#b49">[50,</ref><ref type="bibr" target="#b50">51]</ref> or as a function of longterm history (e.g., the cumulative history H proposed in <ref type="bibr" target="#b30">[31]</ref>).</s><s>In studies on mixed perception during binocular rivalry <ref type="bibr" target="#b18">[19]</ref>, one might use an additional border to define an intermediate range for the perception process in which mixed perception is described.</s></p><p><s>One should note that the HBMi in its current form is restricted to a duration of blank displays l b l p Á ν 0 /ν S .</s><s>For longer blank displays, the mean drift of P during stable states, n Ã S , will be negative, yielding no perception change with high probability.</s><s>However, it would be possible to extend the model accordingly, assuming a temporal evolution in the drift parameters, given corresponding extended empirical observations.</s><s>In addition, note that the border of the perception process is assumed to be b during continuous stimulation and b S (or b U ) during intermittent stimulation.</s><s>Therefore, an instantaneous change of intermittent to continuous presentation is not yet described.</s><s>Here, we qualitatively assume that the border jumps very fast from b to b S with the onset of a blank display, while going back slowly during stimulation.</s><s>A transition from continuous to intermittent presentation would therefore instantly change the response pattern, while a reverse transition would gradually reverse the change back to the one-state process.</s><s>Quantitative validation and fitting of this assumption would be interesting, but requires corresponding empirical observations, in which the length of the presentation period l p is varied.</s><s>This would also allow investigation of potential relations between the HBMc and HBMi parameters and thus, between the mechanisms assumed to underlie the identified group differences.</s></p><p><s>Concerning the impact of the duration of the blank display l b , two aspects should be discussed.</s><s>First, the HBM can theoretically reproduce a phenomenon reported earlier in <ref type="bibr" target="#b13">[14]</ref>.</s><s>Conditional that one percept has been present for a short while, the probability of a percept change rises with the blank duration l b .</s><s>In the HBMi, the same is observed during the unstable state with typically short dominance times: During the unstable state the drift in the blank displays, ν U , is typically larger than the drift ν 0 during stimulation.</s><s>Therefore, longer blank displays speed up P, thereby reducing perceptual stability.</s></p><p><s>Second, one interesting potential model extension is concerned with the relationship between the length of the blank display and the alternation rate.</s><s>As reported earlier by <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b14">15,</ref><ref type="bibr" target="#b17">18]</ref>, the mean dominance time in intermittent presentation has been found to be a function of the relationship between the presentation length l p (or 'ON'-period) and the length of the blank display l b (or 'OFF'-period).</s><s>Particularly, the dependence between l b and the alternation rate is non-monotonic, as would be implied in the HBMi, but follows an inverted U-shape <ref type="bibr" target="#b21">[22,</ref><ref type="bibr" target="#b23">24,</ref><ref type="bibr" target="#b24">25]</ref> with a peak roughly at 0.4 s.</s><s>Such an inverted U-shape would be possible in a model extension of the HBMi.</s><s>As discussed in the Results, the drift terms ν S , ν U only represent the mean drift across the period of blank display, which is sufficient and parsimonious in the given data set with fixed length of blank display.</s><s>However, the model would be fully consistent with the assumption that the drifts change during the 'OFF'-period, such that the mean drifts ν S (l b ) and ν U (l b ) are functions of the length of the blank display l b .</s><s>In Fig 19A these mean drifts ν S , ν U decrease with l b , where the stronger drifts at the beginning of the blank display could be effects of the recent stimulation.</s><s>Panel B shows the resulting mean alternation rate, which has an inverted U-shape with a maximum around 0.4 s and shows increased stability under intermittent stimulation for l b &gt; 0.7.</s><s>This increased stability is caused first by a small drift ν S &lt; ν 0 in that range.</s><s>Second, it is also caused by the fact that the time interval l b in which the background process B has positive drift is longer, leading to an increased probability to reach bS and thus, to stay in the stable state.</s><s>Estimation of the functions ν S (l b ) and ν U (l b ) from a suitable data set with variable lengths of blank displays would be an interesting task.</s></p><p><s>In summary, the proposed HBM intends to provide a link between empirical data analysis and mechanistic modeling.</s><s>On the one hand, it aims at precisely describing the high variety of response patterns observed in perceptual responses to bistable stimuli.</s><s>On the other hand, it aims at bridging the gap to detailed mechanistic models of bistable perception, allowing assumed processes to be fitted to short empirical data sets and thus, also the analysis of group differences.</s><s>Various extension possibilities show a potential of the HBM to investigate related experimental contexts.</s><s>By including both continuous and intermittent stimulation, the HBM can thus provide interesting new hypotheses on potential neuronal mechanisms of cognitive phenomena.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Materials and methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Estimation of HMM parameters</head><p><s>Here we describe the estimation procedures of the HMM parameters for continuous presentation and for intermittent presentation.</s><s>We denote by d ≔ (d 1 , d 2 , . .</s><s>., d n ) the set of dominance times modeled as realizations of random variables D = (D 1 , . .</s><s>., D n ).</s></p><p><s>Continuous presentation: ML estimation.</s><s>The HMM for continuous presentation assumes that all dominance times d i are independent and Inverse Gaussian distributed with  <ref type="table" target="#tab_6">3 and 4</ref>, which is the same subject during continuous and intermittent presentation.</s><s>A) The mean drifts ν S , ν U decrease with the length of the blank display l b .</s><s>B) The resulting mean alternation rate ρ under intermittent stimulation (black) is derived using formula (18) (Materials and methods).</s><s>The empirical mean alternation rates per minute of the subject during intermittent viewing with l b = 0.8 and during continuous viewing are marked by blue and green lines, respectively.</s><s>https://doi.org/10.1371/journal.pcbi.1005856.g019</s><s>mean μ and standard deviation σ.</s><s>The log-likelihood function is then given by log Lðdjm; sÞ ¼ 1 2</s></p><formula xml:id="formula_30">X n i¼1 log m 3 2ps 2 d 3 i À m s 2 ðd i À mÞ 2 d i :<label>ð12Þ</label></formula><p><s>Setting the partial derivatives with respect to μ and σ to zero yields the estimates of Eq (12) <ref type="bibr" target="#b31">[32]</ref>:</s></p><formula xml:id="formula_31">m ¼ " m d ≔ 1 n X n i¼1 d i and ŝ ¼ ffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffiffi " m 3 d n X n i¼1 ð1=d i À 1=" m d Þ r :</formula><p><s>Intermittent presentation: Baum-Welch-Algorithm.</s><s>The HMM for intermittent presentation uses the parameter set ϑ = (μ S , σ S , μ U , σ U , p SS , p UU ) for the mean and standard deviation in the stable and unstable state, respectively, and the transition probabilities between these two states.</s><s>This parameter set is estimated with the Baum-Welch-Algorithm <ref type="bibr">[BWA,</ref><ref type="bibr" target="#b32">33]</ref> which is an iteratively working instance of the EM-Algorithm maximizing the model likelihood locally.</s><s>Here, we explain it briefly [for details see, e.g., 34].</s><s>In the first step one applies the so called Forward-and Backward-Algorithm.</s><s>The forward-variable α j (i) is defined as the probability of observing the sequence d 1 , d 2 , . .</s><s>., d i and being in state j at time i, given the model parameters.</s><s>The backward-variable β j (i) denotes the analogous probability of observing the ending partial sequence d i+1 , d i+2 , . .</s><s>., d n and being in state j at time i.</s><s>To avoid underflow we normalize both variables [e.g.</s><s>34], resulting in the normalized variables ãj ðiÞ, bj ðiÞ.</s><s>The normalized variables can be derived iteratively as follows</s></p><formula xml:id="formula_32">a Ã j ð1Þ ≔ p j f IG m j ;s j ðd 1 Þ; c i ≔ a Ã S ðiÞ þ a Ã U ðiÞ; ãj<label>ðiÞ</label></formula><formula xml:id="formula_33">p jk f IG m k ;s k ðd iþ1 Þ bk ði þ 1Þ=c i for i ¼ n À 1; . . . ; 1;</formula><p><s>where π j denotes the probability that the Markov chain starts in state j, p SU = 1 − p SS , p US = 1 − p UU and f IG m;s ðxÞ denotes the density of the IG distribution with expectation μ and standard deviation σ evaluated at x.</s><s>Note that we suppress the dependence of ãj ðiÞ and bj ðiÞ on the parameter set ϑ for convenience.</s></p><p><s>The forward and backward variables are used to derive the probability γ j (i|ϑ) of being in state j at time i, given the whole sequence d ≔ (d 1 , . .</s><s>., d n ) and the parameters ϑ g j ðijWÞ ¼ ãj ðiÞ bj ðiÞ ãS ðiÞ bS ðiÞ þ ãU ðiÞ bU ðiÞ :</s></p><p><s>Moreover, we need the probability ξ j,k (i|ϑ) of being in state j at time i and in state k at time i + 1, given the data d and the parameters ϑ,</s></p><formula xml:id="formula_34">x j;k ðijWÞ ¼ ãj ðiÞp jk bk ði þ 1Þf IG m k ;s k ðd iþ1 Þ P j P k ãj ðiÞp jk bk ði þ 1Þf IG m k ;s k ðd iþ1 Þ :</formula><p><s>To iteratively derive the parameter estimates, the BWA applies expectation maximization as follows.</s><s>Let ϑ (m) denote the parameter estimates after the m-th iteration step, and let Y denote i.e., the expectation of the complete-data log-likelihood L across all possible paths y 2 Y.</s><s>The updated parameter set ϑ (m+1) is chosen such that it maximizes Q.</s><s>For a fixed state sequence y = (y 1 , . .</s><s>., y n ) the log-likelihood of the data is log Lðd; yjWÞ</s></p><formula xml:id="formula_35">¼ log p y 1 þ log f IG m y 1 s y 1 ðd 1 Þ þ X n i¼2 ð log ðp y iÀ 1 y i Þ þ</formula><formula xml:id="formula_36">ðd i À m y i Þ 2 d i ! :</formula><p><s>Note that the first line depends only on the initial distribution π, the second line depends on the transition probabilities and the third line depends on the parameters of the Inverse Gaussian distributions.</s><s>Therefore, iterative parameter estimation separately maximizes these terms.</s><s>Note further that we can rewrite PðY i ¼ y i jd; W ðmÞ Þ ¼ g y i ðijW m Þ and PðY iÀ 1 ¼ y iÀ 1 ; Y i ¼ y i jd; W ðmÞ Þ ¼ x y iÀ 1 y i ði À 1jW m Þ, which yields the following estimates in the m + 1-st iteration step.</s></p><p><s>For the entries of the transition matrix, Lagrange maximization of the second line under the constraints p SS + p SU = p UU + p US = 1 yields the estimate The big bracket in the last line of the Q-function is analogous to the likelihood function of the IG distribution (Eq <ref type="bibr" target="#b11">(12)</ref>) given in the section 'Continuous presentation: ML estimation' (with the additional indices y i and the weighting factors PðY i ¼ y i jd; W ðmÞ Þ).</s><s>Therefore, setting the partial derivatives to zero yields for j 2 {S, U} the analogous estimates which are the updates for parameters of the Inverse Gaussian distributions in the (m + 1)-th step of the BWA.</s><s>In order to update the starting distribution, we do not maximize the respective summand of Q but we assume the stationary distribution as the starting distribution π.</s><s>The stationary distribution is derived using the eigenvectors of the transpose of the transition matrix <ref type="bibr" target="#b51">[52]</ref> In order to reduce the probability that the Baum-Welch-Algorithm will be captured in a local extremum, we chose ten equidistant values for m ðsÞ S ranging between 60 and 0.95max i d i , and for each value of m ðsÞ S we choose ten equidistant values for s ðsÞ S between 10 and 1:1m ðsÞ S .</s><s>Out of the resulting one hundred sets of parameter estimates we chose the parameter set with the highest log-likelihood.</s><s>If the response pattern shows only dominance times larger than 30 seconds we reduce the model to the stable phase.</s><s>The parameters μ S and σ S are derived by ML as described in the section 'Continuous presentation: ML estimation', and we set p SS ≔ 1.</s><s>If the dominance time are only smaller than 30 seconds, we only estimate μ U and σ U by ML and use p UU = 1.</s></p><p><s>For subjects with relatively clear distinction between long and short dominance times this procedure yields reasonable estimates.</s><s>For subjects with less clear distinction, we added the following constraints based on the idea that short dominance times should not affect estimation of the stable parameters and long dominance times should not affect estimation of unstable parameters.</s><s>Note that in continuous presentation where no state exists, about 90% of the dominance times are shorter than 15 seconds, while only about two percent are larger than 30 seconds.</s><s>Therefore, we first require ŝS &gt; 1 such that not just the largest dominance time is estimated as stable and all others are categorized as unstable (which may increase the likelihood).</s><s>Second, we do not accept HMMs with mS &lt; 0:98m 15 where m15 ≔ ð1=jd1 d&gt;15 jÞ P n i¼1 d i 1 d i &gt;15 .</s><s>This prevents dominance times smaller than 15 seconds to be considered for the estimation of μ S .</s><s>Third, we require mS &lt; 1:02m 75 where m75 ≔ ð1=jd1 d&gt;75 jÞ P n i¼1 d i 1 d i &gt;75 if any dominance time is larger than 75 seconds and m75 ¼ 75 otherwise such that rather stable dominance times longer than 75 seconds are not classified as unstable.</s></p><p><s>Expected relative time spent in the stable state.</s><s>Here we derive the formula for the expected time φ S spent in the stable state investigated in Fig 9 <ref type="figure">.</ref></s><s>To that end, let N j , j 2 {S, U}, denote the (random) number of dominance times in state j before a state change.</s><s>As the number of dominance times before a state change is geometrically distributed with probability 1 − p jj , we have for the expectation</s></p><formula xml:id="formula_37">E½N j ¼ 1 1 À p jj :</formula><p><s>Moreover, let ðD S i Þ i!1 be a sequence of independent IG(μ S , σ S )-distributed random variables and ðD U i Þ i!1 be a sequence of IG(μ U , σ U )-distributed random variables.</s><s>We derive φ S as φ S ≔ E½length of a stable phase E½length of a stable phase þ length of an unstable phase :</s></p><p><s>The length of a stable phase is a random variable distributed like P N S i¼1 D S i , where D S 1 ; . . .</s><s>; D S N S are independent from each other and also independent of N S .</s><s>Therefore we have p Þ-distributed random stable dominance time.</s><s>Further, let p Ã SS denote the probability to stay in the stable state <ref type="bibr" target="#b7">(8)</ref>, and let Y i denote the hidden state during the i-th correlation coefficient c H between the dominance times and the cumulative history H as introduced in <ref type="bibr" target="#b30">[31]</ref>.</s><s>The history H is a function of the length and recency of previously dominated percepts.</s><s>For each of the 57 subjects with at least five dominance times, c H is estimated as explained in <ref type="bibr" target="#b30">[31]</ref>.</s><s>To assess statistical significance, 1000 data sets are obtained for each subject by permutation of the dominance times to approximate the distribution of c H under the null hypothesis of independent and identically distributed dominance times.</s><s>Statistical significance on the 5% level is obtained by comparison of the empirical history c H to the 95% quantile of the distribution of c H derived from the permuted data sets.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Supporting information</head><p><s>S1 Data.</s><s>Raw data including dominance times from the studies <ref type="bibr" target="#b8">[9,</ref><ref type="bibr" target="#b9">10]</ref>.</s><s>Data include dominance times for intermittent (AlbertetalDataINT2015.RData) and continuous (AlbertetalData-CON2015.RData) stimulation for each of the 61 subjects of <ref type="bibr" target="#b9">[10]</ref>, and dominance times of two trials of continuous stimulation for each of the 105 subjects of <ref type="bibr" target="#b8">[9]</ref> (AlbertetalDataCON2013.</s><s>RData).</s><s>A pdf file (AlbertetalDataDescription.pdf)</s><s>provides a detailed description of the datasets.</s><s>The data files and pdf file are packed in the supporting information file S1_Data.zip.</s><s>(ZIP)</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig 1 .</head><label>1</label><figDesc><div><p><s>Fig 1. Examples of response patterns to a bistable stimulus.</s><s>Response patterns to continuous (green, A, B) and intermittent (blue, C-F) presentation from the dataset reported in<ref type="bibr" target="#b9">[10]</ref>.</s><s>While the distribution of dominance times tends to be unimodal in the continuous case, stable and unstable phases interchange in intermittent stimulation.</s><s>In addition, response patterns can be highly variable across subjects.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig 3 .</head><label>3</label><figDesc><div><p><s>Fig 3. A simple HMM for bistable perception.</s><s>(A) One state describes a unimodal distribution of dominance times under continuous presentation.</s><s>(B) Two states (stable, S, and unstable, U) produce long and short dominance times under intermittent presentation.</s><s>https://doi.org/10.1371/journal.pcbi.1005856.g003</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig 4 .</head><label>4</label><figDesc><div><p><s>Fig 4. Precision of parameter estimates in the one-state HMM.</s><s>For each of 61 parameter constellations in continuous presentation, 1000 simulations were performed with sample sizes as in the original data.</s><s>(A) Median of the relative error (RE) for each parameter.</s><s>(B) The CV as a function of the number n of simulated dominance times.</s><s>Black points indicate constellations with mean RE across the parameters smaller than 0.25.</s><s>https://doi.org/10.1371/journal.pcbi.1005856.g004</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig 5 .</head><label>5</label><figDesc><div><p><s>Fig 5. Precision of parameter estimates in the two-state HMM.</s><s>For each of 61 parameter constellations in intermittent presentation, 1000 simulations were performed.</s><s>Log(median) of RE (for μ S , σ S , μ U , σ U ) or of AE (for p SS , p UU ) for T 1 = 1200 (A) and T 2 = 3600 (B).</s><s>Black lines indicate constellations with mean errors across the parameters &lt;0.25.</s><s>https://doi.org/10.1371/journal.pcbi.1005856.g005</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig 6 .</head><label>6</label><figDesc><div><p><s>Fig 6.</s><s>Comparison of empirical response patterns to patterns simulated with the HMM.</s><s>Examples of response patterns to continuous (green, panels A and B) and intermittent (blue, C-F) stimulation repeated from Fig 1 and corresponding simulations within the HMM (orange).</s><s>The parameter estimates are given in Tables1 and 2, respectively.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig 8 .Fig 9 .</head><label>89</label><figDesc><div><p><s>Fig 8. Reproducibility of response patterns.</s><s>Parameter estimates of log(μ) (A) and log(σ) (B) of the IG distribution in two sessions with the same individuals, dataset reported in [9].</s><s>The logarithm was applied due to asymmetric distributions of the parameter estimates.</s><s>Stars indicate highly significant (p &lt; .0001)</s><s>correlation of parameter estimates across different sessions.</s><s>https://doi.org/10.1371/journal.pcbi.1005856.g008</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Fig 10 .</head><label>10</label><figDesc><div><p><s>Fig 10.</s><s>The HBMc.</s><s>The first passage times (H i ) (green) of a Brownian motion P t (black, panel A) with drift ±ν 0 at borders ±b indicate the times of the percept changes (orange, panel B).</s><s>The Brownian motion is assumed to summarize the activity difference of two conflicting neuronal populations with only two parameters.</s><s>https://doi.org/10.1371/journal.pcbi.1005856.g010</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Fig 11 .</head><label>11</label><figDesc><div><p><s>Fig 11.</s><s>The perception process P in the HBMi during intermittent presentation.</s><s>During presentation, P has drift ν 0 .</s><s>During blank displays (yellow), P has drift ν S in the stable phase (A), and drift ν U in the unstable phase (B).</s><s>Typically, we have ν S ν 0 and ν U ! ν 0 .</s><s>The borders are b S (light blue horizontal line) in the stable phase and b U (blue horizontal line) in the unstable phase.</s><s>https://doi.org/10.1371/journal.pcbi.1005856.g011</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Fig 12 .</head><label>12</label><figDesc><div><p><s>Fig 12.</s><s>The HBMi.</s><s>The perception process P, the background process B and the resulting percept.</s><s>A: A simulation on [0, 500].</s><s>B: The same realization, zoomed in on the time interval [408, 458].</s><s>Stable phases indicated by white background, unstable phases indicated by gray background.</s><s>The beginnings of stable and unstable phases are marked with light blue and blue arrows, respectively.</s><s>https://doi.org/10.1371/journal.pcbi.1005856.g012</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head></head><label></label><figDesc><div><p><s>Fig 13 and are assumed modulated by the background populations S and U.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Fig 14</head><label>14</label><figDesc><div><p><s>Fig 14 illustrates examples with small CV Ã S (panels A-D) and large CV Ã S (panels E-H).</s><s>Second, the parameters bS and n Ã B can be interpreted best when compared to b S and n Ã S as follows.</s><s>Consider the expected fraction of bS reached by the background process at the end of a</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_11"><head>Fig 13 .Fig 14 .</head><label>1314</label><figDesc><div><p><s>Fig 13.</s><s>Motivation of HBMi model assumptions.</s><s>For explanation and details see text.</s><s>https://doi.org/10.1371/journal.pcbi.1005856.g013</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_12"><head></head><label></label><figDesc><div><p><s>Fig 14B, 14D, 14F and 14H show examples with large values of bU .</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_13"><head>Fig 15 .</head><label>15</label><figDesc><div><p><s>Fig 15.</s><s>Precision of parameter estimates in the HBMi.</s><s>For each of the 61 parameter constellations estimated from the sample data set, 1000 simulations were performed with the HBMi.</s><s>(A) and (B): log(median(REs)) of the border parameters b S , b U , bS , bU , and log(median(AEs)) of the drift parameters n Ã S , n Ã U , n Ã B with T = 1200s (A) and T = 3600s (B).</s><s>(C) and (D) log(median(REs)) for the derived model parameters m Ã S , s Ã S , m Ã U , s Ã U and log(median(AEs)) for the parameters p Ã SS and p Ã UU for T = 1200s (C) and T = 3600s (D).</s><s>Parameter combinations with mean errors &lt; 0.25 across all variables plotted in black.</s><s>https://doi.org/10.1371/journal.pcbi.1005856.g015</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_14"><head>Fig 2 )</head><label>2</label><figDesc><div><p><s>was reflected in a smaller value of 2 b=n 0 .</s><s>When analyzing the individual parameters b and ν 0 , we found no group differences in the drift ν 0 , but a tendency for a larger neuronal pool b involved in sensory processing in the group of patients with schizophrenia (Fig 18A, p &lt; .1,</s><s>two-sided Wilcoxon test).</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_15"><head></head><label></label><figDesc><div><p><s>&lt; .1,</s><s>two-sided Wilcoxon test).</s><s>In order to identify potential neurophysiological mechanisms underlying this group difference, we further investigated the components of p Ã SS .</s><s>Noting that no difference was observed in the mean stable dominance time m Ã S ¼ 2b S =n Ã S and in the relation n Ã S =n Ã B of the drift in stable state and the drift of the background process, one interesting parameter is b S = bS .</s><s>Keeping all other parameters constant, an increase in this quantity means an increase in p Ã SS because the crossing of bS at the end of a stable dominance time, i.e., staying in the stable state, gets more likely.</s><s>In the empirical data set, we found increased values of b S = bS in the control group (Fig 18C, p &lt; .1,</s><s>two-sided Wilcoxon test).</s><s>In terms of the potential neurophysiological</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_16"><head>Fig 16 .</head><label>16</label><figDesc><div><p><s>Fig 16.</s><s>HBM: Examples of simulated response patterns.</s><s>Example empirical response patterns from Fig 1 and response patterns simulated by the HBM (orange).</s><s>Responses to continuous and intermittent presentation are plotted in green and blue, respectively.</s><s>The estimated parameters used for simulation are given in Tables 3 and 4, respectively.</s><s>(A) and (B) Continuous presentation and HBMc.</s><s>(C)-(F): Intermittent presentation and HBMi.</s><s>Below the orange response patterns, one can see the perception process P and (for the HBMi) the background process B corresponding to the respective simulation.</s><s>https://doi.org/10.1371/journal.pcbi.1005856.g016</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_17"><head>Fig 17 .</head><label>17</label><figDesc><div><p><s>Fig 17.Mean dominance times in stable state as a function of the successive state.</s><s>In the empirical data set, the mean dominance time before a state transition SU is shorter than the mean dominance time before SS (A).</s><s>This observation can be reproduced in the HBMi (C), while the expected dominance time in the HMM (B) is equally long for intervals with and without transition, i.e., independent from transition between states.</s><s>In the empirical data set<ref type="bibr" target="#b9">[10]</ref>, the state transitions were estimated using the Viterbi paths<ref type="bibr" target="#b33">[34]</ref>.</s><s>Analogous results were obtained using a fixed threshold.</s><s>For the HBMi, the expected dominance times were derived from the HBMi parameters according to Eq<ref type="bibr" target="#b14">(15)</ref> in the Materials and methods.</s><s>In the HMM, expected dominance times correspond to mS .</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_18"><head>Fig 18 .</head><label>18</label><figDesc><div><p><s>Fig 18. Group differences between patients with schizophrenia and control subjects in the HBM.</s><s>The HBMc parameter b (A) and the relation b= bS (B).</s><s>(C): Differences in bS = bS and pÃ SS .</s><s>The raw data together with the median (colored diamonds) and 25%-and 75%-quantiles are shown.</s><s>All p-values of a two-sided Wilcoxon test were below.1.</s><s>https://doi.org/10.1371/journal.pcbi.1005856.g018</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_19"><head>Fig 19 .</head><label>19</label><figDesc><div><p><s>Fig 19.</s><s>HBMi extension for different lengths of blank display.</s><s>Parameters derived for subject B and C in Tables3 and 4, which is the same subject during continuous and intermittent presentation.</s><s>A) The mean drifts ν S , ν U decrease with the length of the blank display l b .</s><s>B) The resulting mean alternation rate ρ under intermittent stimulation (black) is derived using formula (18) (Materials and methods).</s><s>The empirical mean alternation rates per minute of the subject during intermittent viewing with l b = 0.8 and during continuous viewing are marked by blue and green lines, respectively.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_20"><head></head><label></label><figDesc><div><p><s>the set of all possible state sequences of the hidden Markov chain.</s><s>Let Y = (Y 1 , . .</s><s>., Y n ) denote a Y-valued random variable and y = (y 1 , . .</s><s>., y n ) a realization of Y.</s><s>The BWA then iteratively maximizes the Q-function [e.g.</s><s>35] over Y, Q ≔ QðWjW ðmÞ Þ ¼ X y2Y log Lðd; yjWÞPðY ¼ yjd; W ðmÞ Þ;</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_21"><head>1</head><label>1</label><figDesc><div><p><s>i¼1 x j;k ðijW ðmÞ Þ P nÀ 1 i¼1 g j ðijW ðmÞ Þ ; in the (m + 1)-th step of the BWA [e.g.</s><s>34].</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 . Estimated HMM parameters of the response pattens to continuous presentation shown in Fig 1A and 1B.</head><label>1</label><figDesc></figDesc><table><row><cell>,</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 . Estimated HMM parameters of the response pattens to intermittent presentation shown in Fig 1C-1F.</head><label>2</label><figDesc></figDesc><table><row><cell>com.</cell><cell>mS</cell><cell>ŝS</cell><cell>mU</cell><cell>ŝU</cell><cell>pSS</cell><cell>pUU</cell></row><row><cell>C</cell><cell>186.45</cell><cell>30.50</cell><cell>5.01</cell><cell>3.06</cell><cell>0.67</cell><cell>0.96</cell></row><row><cell>D</cell><cell>67.12</cell><cell>50.81</cell><cell>3.25</cell><cell>2.76</cell><cell>0.33</cell><cell>0.82</cell></row><row><cell>E</cell><cell>372.28</cell><cell>68.30</cell><cell>NA</cell><cell>NA</cell><cell>1.00</cell><cell>NA</cell></row><row><cell>F</cell><cell>77.13</cell><cell>9.99</cell><cell>5.37</cell><cell>6.26</cell><cell>0.00</cell><cell>0.99</cell></row></table><note><p><s>https://doi.org/10.1371/journal.pcbi.1005856.t002</s><s>Fig 7. Comparison of distribution of dominance times with theoretical distribution.</s><s>The theoretical IG distribution in the HMM fitted to the empirical distribution of dominance times for continuous (A) and intermittent (B) presentation shown in Fig 6A and 6C.</s><s>https://doi.org/10.1371/journal.pcbi.1005856.g007</s></p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head></head><label></label><figDesc><div><p><s>UU obtained in the 1000 simulations of length T 1 (panel C) and T 2 (panel D).</s><s>Concerning this parameterization, 51 parameter combinations yielded average errors smaller than 0.25 across all variables for T 1 , while as many as 58 out of 61 cases showed errors smaller than 0.25 for T 2 .</s><s>These simulations suggest that the parameterization ðm Ã</s></p></div></figDesc><table><row><cell>Ã SS and p Ã UU</cell></row><row><cell>(cmp. Eq (8)). Fig 15C and 15D show the median REs for m Ã S , s Ã S , m Ã U , s Ã U and median AEs for</cell></row><row><cell>p Ã SS , p Ã</cell></row><row><cell>S ; s Ã S ; m Ã U ; s Ã U ; p Ã SS ; p Ã UU Þ yields</cell></row><row><cell>more reliable parameter estimates in the HBMi than the original parameterization of borders</cell></row><row><cell>and drifts.</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 3 . Estimated HBMi parameter combinations of the typical response pattens to continuous pre- sentation shown in Fig 1A and 1B.</head><label>3</label><figDesc></figDesc><table><row><cell>com.</cell><cell>b</cell><cell>n0</cell></row><row><cell>A</cell><cell>2.08</cell><cell>0.40</cell></row><row><cell>B</cell><cell>2.42</cell><cell>0.72</cell></row></table><note><p><s>https://doi.org/10.1371/journal.pcbi.1005856.t003</s></p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table 4 . Estimated HBMi parameter combinations of the typical response pattens to intermittent presentation shown in Fig 1C-1F.</head><label>4</label><figDesc></figDesc><table><row><cell>com.</cell><cell>n0</cell><cell>bS</cell><cell>nS</cell><cell>bU</cell><cell>nU</cell><cell>bS</cell><cell>bU</cell><cell>nB</cell></row><row><cell>C</cell><cell>0.72</cell><cell>41.74</cell><cell>0.24</cell><cell>1.84</cell><cell>0.74</cell><cell>49.71</cell><cell>2.39</cell><cell>0.54</cell></row><row><cell>D</cell><cell>0.27</cell><cell>5.42</cell><cell>0.08</cell><cell>1.06</cell><cell>0.93</cell><cell>4.56</cell><cell>1.13</cell><cell>0.06</cell></row><row><cell>E</cell><cell>0.32</cell><cell>52.58</cell><cell>0.25</cell><cell>NA</cell><cell>NA</cell><cell>0.00</cell><cell>NA</cell><cell>17.5</cell></row><row><cell>F</cell><cell>0.57</cell><cell>13.5</cell><cell>0.24</cell><cell>1.00</cell><cell>0.24</cell><cell>110.28</cell><cell>0.77</cell><cell>1.90</cell></row></table><note><p><s>https://doi.org/10.1371/journal.pcbi.1005856.t004</s></p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_8"><head></head><label></label><figDesc><div><p><s>log ðf IG PðY 1 ¼ y 1 jd; W ðmÞ Þ PðY iÀ 1 ¼ y iÀ 1 ; Y i ¼ y i jd; W ðmÞ Þ</s></p></div></figDesc><table><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>m y i</cell><cell>;s y i</cell><cell>ðd i ÞÞÞ:</cell></row><row><cell>Insertion into Q yields</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>X y 1 2fS;Ug X log p j þ QðWjW ðmÞ Þ ¼ X y iÀ 1 2fS;Ug y i 2fS;Ug log p y iÀ 1 y i þ X n i¼2 X y i 2fS;Ug X n i¼1 1 2 PðY i ¼ y i jd; W ðmÞ Þ log</cell><cell>m 3 y i 2s 2 y i pd 3 i</cell><cell>!</cell><cell>À</cell><cell>m y i s 2 y i</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_9"><head></head><label></label><figDesc><div><p><s>These iterative steps are repeated until a desired level of convergence is reached.</s><s>Starting values and constraints.</s><s>As starting values m ðsÞ S , s ðsÞ S , m ðsÞ U , s ðsÞ U , p ðsÞ SS , p ðsÞ UU for the Baum-Welch algorithm we chose, in correspondence with the data set, p ðsÞ SS ¼ p ðsÞ UU ¼ 0:5; m ðsÞ S ¼ 4; s ðsÞ U ¼ 5.</s></p></div></figDesc><table><row><cell></cell><cell></cell><cell></cell><cell></cell><cell>,</cell></row><row><cell>which yields</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>p ðmþ1Þ S</cell><cell>¼</cell><cell>p ðmþ1Þ UU p ðmþ1Þ SS þ p ðmþ1Þ À 1 UU</cell><cell>À 2</cell><cell>; and p ðmþ1Þ</cell></row></table><note><p><s>U ¼ 1 À p ðmþ1Þ S :</s></p></note></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">PLOS Computational Biology | https://doi.org/10.1371/journal.pcbi.1005856November 20, 2017  </note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgments</head><p><s>We thank Brooks Ferebee and Michael Messer for inspiring discussions.</s></p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>and analogously for the expected length of an unstable phase.</s><s>This yields</s></p><p><s>Estimation of HBM parameters</s></p><p><s>Here we describe the estimation procedures of the HBM parameters for continuous presentation and for intermittent presentation.</s><s>HBMc.</s><s>Recall that the HBMc describes the perception process P as a Brownian motion with drift ±ν 0 , where the sign of the drift changes at the first hitting time of the borders ±b.</s><s>The two parameters (b, ν 0 ) are estimated using the ML method.</s><s>Due to transformation invariance of the ML estimates, we can therefore use the ML estimators from the section 'Continuous presentation: ML estimation' applying that the resulting dominance times are IG distributed with expectation μ = 2b/ν 0 and variance s 2 ¼ 2b=n U Þ denote the border and drift parameters of the perception process P in the stable and the unstable state, respectively.</s><s>bS , bU , n Ã B are the border and drift parameters of the background process B which determines the hidden state.</s><s>Recall that the likelihood of the whole model given the data and the parameter vector Θ is approximately LðdjYÞ % a S ðnÞ þ a U ðnÞ; using the forward variables α j (i) defined recursively in Eq <ref type="bibr" target="#b9">(10)</ref>.</s><s>Note again that we suppress dependence on the parameters Θ for convenience.</s><s>In practice we need to avoid underflow when calculating α j (i).</s><s>To that end the forward variables are normalized such that ∑ j α j (i) = 1 for all time points i, using the following steps <ref type="bibr" target="#b39">[40]</ref>.</s><s>For j 2 {S, U},</s></p><p><s>The likelihood then derives as</s></p><p><s>Parameter estimation is then obtained by maximizing ∑ i log(c i ), which is a function of the model parameters Θ.</s><s>To that end we apply the Newton-type algorithm <ref type="bibr" target="#b53">[54]</ref> implemented in the R-function nlm().</s><s>Alternatively the COBYLA-Algorithm <ref type="bibr" target="#b54">[55]</ref> for maximization under non-linear constraints can be applied.</s></p><p><s>Next  <ref type="bibr" target="#b14">15</ref>, and pS ¼ 1=2 otherwise.</s><s>Alternatively and comparable to the HMM the stationary distribution can be used for the initial distribution, thereby reducing the number of parameters by one.</s><s>As this, however, requires numerical integration and increases the computational effort considerably and the differences between the two approaches were negligible we used the simpler rule.</s></p><p><s>The maximization algorithm is applied using all combinations of starting values.</s><s>We then take the set of parameter estimates which yields the highest log-likelihood and fulfills the following constraints</s></p><p><s>Constraints A) to D) result from the model assumptions, E) prevents dominance times smaller than 15 seconds to be considered for the estimation of μ S , analogously to the HMM procedure.</s><s>Constraint F) prevents too big estimates of standard deviations, which would yield implausible results.</s></p><p><s>In cases in which only dominance times larger than 30 seconds are observed, we apply the algorithm described for the HBMc, where b S , n Ã S are estimated like in the section 'HBMc' and bS is set to zero.</s><s>In cases in which only dominance times up to 30 seconds are observed, we proceed analogously, where b U , n Ã U are estimated like in the section 'HBMc' and set bU ¼ 10 10 .</s><s>In either case we set n Ã b ¼ 10 and do not estimate the other variables.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>HBMi: Dominance time before state changes</head><p><s>Stable dominance time before a change to the unstable state.</s><s>In the section 'Relation of the HBMi to the two state HMM' we discussed that in the HBMi, stable dominance times are shorter when occurring directly before a state change to the unstable state than when followed by another stable dominance time.</s><s>The same observation was also made in the sample dataset (Fig 17</s></p><p><s>Now we integrate across all possible values t that D S 1 can take, using independence of B and P during D S 1 , IG distribution of D S 1 and normal distribution of B D S</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>1</head><p><s>. Further we note that the probability in the denominator equals p Ã SS , which yields</s></p><p><s>Analogously, we obtain</s></p><p><s>Expected relative time spent in the stable state.</s><s>In this section we derive the formula for the expected relative time φ Ã S spent in the stable state in the HBMi analyzed in the section 'Application of the HBM to the sample data set'.</s><s>To that end, let N Ã j , j 2 {S, U}, denote the (random) number of dominance times of the HBMi in state j before a state change.</s><s>As the number of dominance times before a state change is geometrically distributed with probability 1 À p Ã jj its expectation is given by E½N</s></p><p><s>(Again, due to taking the mean of different drifts, this derivation is only a close approximation, but we omit approximation signs here for convenience.)</s><s>Again, we derive φ Ã S as</s></p><p><s>E½length of a stable phase E½length of a stable phase þ length of an unstable phase :</s></p><p><s>The length of a stable phase is a random variable distributed like</s></p><p><s>denote the random stable dominance times.</s><s>Given N Ã S , we use linearity of expectation to compute the conditional expectation</s></p><p><s>Now we take expectation over N Ã S to find</s></p><p><s>An analogous result holds for the expected length of an unstable phase.</s><s>This yields</s></p><p><s>HBMi: Derivation of the alternation rate ρ as used in Fig 19B</s></p><p><s>Here B are derived using Eq (4).</s><s>Then, we use Eqs ( <ref type="formula">8</ref>) and ( <ref type="formula">11</ref>) to derive the values ðm Ã S ; s Ã S ; m Ã U ; s Ã U ; p Ã SS ; p Ã UU Þ given the mean drifts per second, and we recall Eq <ref type="bibr" target="#b16">(17)</ref> for φ Ã S , and analogously for φ Ã</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>U</head><p><s>We now show that the alternation rate can be described as</s></p><p><s>where N Ã (Δ) denotes the number of perceptual changes in an interval of length Δ.</s><s>We split up N Ã ðDÞ ¼ N Ã S ðDÞ þ N Ã U ðDÞ, where N Ã S ðDÞ and N Ã U ðDÞ denote the number of perceptual changes in the respective stable and unstable phases in the interval of length Δ.</s><s>We then show</s></p><p><s>and analogously for the unstable state.</s><s>To that end, let Δ S be the time spent in the stable state in a time interval of length Δ.</s><s>By the Elementary Renewal Theorem [e.g.</s><s>56] it holds</s></p><p><s>According to the definition of φ Ã S as the expected relative time spent in the stable state, we get D S =D !</s><s>φ Ã S in probability.</s><s>This yields the claim</s></p><p><s>Experimental protocol and data preprocessing Details on experimental protocol.</s><s>The sample data set for main analysis was collected as described in <ref type="bibr" target="#b9">[10]</ref>, the sample data for the analysis of reproducibility was collected as described in <ref type="bibr" target="#b8">[9]</ref>.</s><s>In both cases, participants took part in a behavioral experiment including continuous and intermittent stimulation with the same ambiguous stimulus.</s><s>This stimulus was a structure-from-motion stimulus that appears as a rotating sphere.</s><s>The rotation direction of the sphere is ambiguous and equally compatible with leftward and rightward percepts.</s><s>For continuous stimulation, the sphere was presented throughout four minutes in which participants' perception spontaneously alternated between the two percepts.</s><s>Participants indicated perceptual alternations via button presses on a keyboard.</s><s>For intermittent stimulation, the sphere was presented for twenty minutes repeatedly for short intervals of 0.6 s interleaved by blank screens of 0.8 s duration.</s><s>Here, participants indicated the perceived rotation direction at every 1.4 s at each presentation of the sphere.</s><s>Please refer to <ref type="bibr" target="#b8">[9,</ref><ref type="bibr" target="#b9">10]</ref> for a detailed description of the data collection.</s><s>As suggested in <ref type="bibr" target="#b9">[10]</ref>, missing responses during intermittent stimulation were replaced by their preceding responses because the reported percept typically persisted to the next available response.</s></p><p><s>Investigation of history dependence in the response patterns.</s><s>Long-term dependencies in the data set of <ref type="bibr" target="#b9">[10]</ref> during continuous presentation are analyzed using the Pearson</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Author Contributions</head></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Observations on some remarkable optical phaenomena seen in Switzerland; and on an optical phaenomenon which occurs on viewing a figure of a crystal or geometical solid</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">A</forename><surname>Necker</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Philosophical Magazine and Journal of Science</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="329" to="337" />
+			<date type="published" when="1832">1832</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">H</forename><surname>Von Helmholtz</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="s">Treatise on Physiological Optics</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<date type="published" when="1866">1866</date>
+			<publisher>The Optical Society of America</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">Institute for Perception</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Levelt</surname></persName>
+		</author>
+		<ptr target="https://pdfs.semanticscholar.org/7d66/4283485e4297924fe0abd03c7c75812c74a7.pdf" />
+		<imprint>
+			<date type="published" when="1965">1965</date>
+			<pubPlace>Soesterberg, The Netherlands</pubPlace>
+		</imprint>
+	</monogr>
+	<note>On binocular rivalry</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Multistable phenomena:changing views in perception</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">A</forename><surname>Leopold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">K</forename><surname>Logothetis</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S1364-6613(99)01332-7</idno>
+		<idno type="PMID">10377540</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Trends Cogn Sci</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="254" to="264" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Predictive coding explains binocular rivalry: An epistemological review</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hohwy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Roepstorff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Friston</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cognition.2008.05.010</idno>
+		<idno type="PMID">18649876</idno>
+		<ptr target="https://doi.org/10.1016/j.cognition.2008.05.010" />
+	</analytic>
+	<monogr>
+		<title level="j">Cognition</title>
+		<imprint>
+			<biblScope unit="volume">108</biblScope>
+			<biblScope unit="page" from="687" to="701" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">The neural bases of multistable perception</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Sterzer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kleinschmidt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Rees</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.tics.2009.04.006</idno>
+		<idno type="PMID">19540794</idno>
+		<ptr target="https://doi.org/10.1016/j.tics.2009.04.006" />
+	</analytic>
+	<monogr>
+		<title level="j">Trends Cogn Sci</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="310" to="318" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Attractors and noise: Twin drivers of decisions and multistability</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Braun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mattia</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuroimage.2009.12.126</idno>
+		<idno type="PMID">20083212</idno>
+		<ptr target="https://doi.org/10.1016/j.neuroimage.2009.12.126" />
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage</title>
+		<imprint>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="740" to="751" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">A predictive coding account of bistable perception-a model-based fMRI study</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Weilnhammer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Stuke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Hesselmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Sterzer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Schmack</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pcbi.1005536</idno>
+		<idno type="PMID">28505152</idno>
+		<ptr target="https://doi.org/10.1371/journal.pcbi.1005536" />
+	</analytic>
+	<monogr>
+		<title level="j">PLOS Comput Biol</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page">e1005536</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Delusions and the Role of Beliefs in Perceptual Inference</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Schmack</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Gòmez-Carrillo De Castro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rothkirch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Sekutowicz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Ro ¨ssler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Haynes</surname></persName>
+		</author>
+		<idno type="DOI">10.1523/JNEUROSCI.1778-13.2013</idno>
+		<idno type="PMID">23966692</idno>
+		<ptr target="https://doi.org/10.1523/JNEUROSCI.1778-13.2013" />
+	</analytic>
+	<monogr>
+		<title level="j">J Neurosci</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="issue">34</biblScope>
+			<biblScope unit="page" from="13701" to="13712" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Perceptual instability in schizophrenia: Probing predictive coding accounts of delusions with ambiguous stimuli</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Schmack</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Schnack</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Priller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Sterzer</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.scog.2015.03.005</idno>
+		<ptr target="https://doi.org/10.1016/j.scog.2015.03.005" />
+	</analytic>
+	<monogr>
+		<title level="j">Schizophr Res Cog</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="72" to="77" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">The&apos;laws&apos; of binocular rivalry: 50 years of Levelt&apos;s propositions</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">W</forename><surname>Brascamp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">C</forename><surname>Klink</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">J</forename><surname>Levelt</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.visres.2015.02.019</idno>
+		<idno type="PMID">25749677</idno>
+		<ptr target="https://doi.org/10.1016/j.visres.2015.02.019" />
+	</analytic>
+	<monogr>
+		<title level="j">Vision Res</title>
+		<imprint>
+			<biblScope unit="volume">109</biblScope>
+			<biblScope unit="page" from="20" to="37" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Note on the distribution of dominance times in binocular rivalry</title>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">J</forename><surname>Levelt</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.2044-8295.1967.tb01068.x</idno>
+		<idno type="PMID">5582864</idno>
+		<ptr target="https://doi.org/10.1111/j.2044-8295.1967.tb01068.x" />
+	</analytic>
+	<monogr>
+		<title level="j">Br J Psychol</title>
+		<imprint>
+			<biblScope unit="volume">58</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="143" to="145" />
+			<date type="published" when="1967">1967</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Noise-induced alternations in an attractor network model of perceptual bistability</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Moreno-Bote</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Rinzel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Rubin</surname></persName>
+		</author>
+		<idno type="DOI">10.1152/jn.00116.2007</idno>
+		<idno type="PMID">17615138</idno>
+		<ptr target="https://doi.org/10.1152/jn.00116.2007" />
+	</analytic>
+	<monogr>
+		<title level="j">J Neurophysiol</title>
+		<imprint>
+			<biblScope unit="volume">98</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1125" to="1139" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Intermittent ambiguous stimuli: Implicit memory causes periodic perceptual alternations</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">W</forename><surname>Brascamp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Pearson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Blake</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">V</forename><surname>Van Den Berg</surname></persName>
+		</author>
+		<idno type="DOI">10.1167/9.3.3</idno>
+		<idno type="PMID">19757942</idno>
+		<ptr target="https://doi.org/10.1167/9.3.3" />
+	</analytic>
+	<monogr>
+		<title level="j">J Vis</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="3" to="4" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Stable perception of visually ambiguous patterns</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">A</forename><surname>Leopold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Wilke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Maier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">K</forename><surname>Logothetis</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nn0602-851</idno>
+		<idno type="PMID">11992115</idno>
+		<ptr target="https://doi.org/10.1038/nn0602-851" />
+	</analytic>
+	<monogr>
+		<title level="j">Nat Neurosci</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="605" to="609" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Discrete stochastic process underlying perceptual rivalry</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Murata</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Matsui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Miyauchi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Kakita</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Yanagida</surname></persName>
+		</author>
+		<idno type="DOI">10.1097/00001756-200307180-00013</idno>
+		<idno type="PMID">12876471</idno>
+		<ptr target="https://doi.org/10.1097/00001756-200307180-00013" />
+	</analytic>
+	<monogr>
+		<title level="j">NeuroReport</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="1347" to="1352" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Minimal physiological conditions for binocular rivalry and rivalry memory</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">R</forename><surname>Wilson</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.visres.2007.07.007</idno>
+		<idno type="PMID">17764714</idno>
+		<ptr target="https://doi.org/10.1016/j.visres.2007.07.007" />
+	</analytic>
+	<monogr>
+		<title level="j">Vision Res</title>
+		<imprint>
+			<biblScope unit="volume">47</biblScope>
+			<biblScope unit="issue">21</biblScope>
+			<biblScope unit="page" from="2741" to="2750" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Bistable Perception Modeled as Competing Stochastic Integrations at Two Levels</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Gigante</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mattia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Braun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Del</forename><surname>Giudice</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pcbi.1000430</idno>
+		<idno type="PMID">19593372</idno>
+		<ptr target="https://doi.org/10.1371/journal.pcbi.1000430" />
+	</analytic>
+	<monogr>
+		<title level="j">PLOS Comput Biol</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page">e1000430</biblScope>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Multistability and Perceptual Inference</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Gershman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Vul</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">B</forename><surname>Tenenbaum</surname></persName>
+		</author>
+		<idno type="DOI">10.1162/NECO_a_00226</idno>
+		<idno type="PMID">22023198</idno>
+		<ptr target="https://doi.org/10.1162/NECO_a_00226" />
+	</analytic>
+	<monogr>
+		<title level="j">Neural Comput</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="24" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Multi-stable perception balances stability and sensitivity</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Pastukhov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Garcia-Rodriguez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Haenicke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Guillamon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Deco</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Braun</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/fncom.2013.00017</idno>
+		<idno type="PMID">23518509</idno>
+		<ptr target="https://doi.org/10.3389/fncom.2013.00017" />
+	</analytic>
+	<monogr>
+		<title level="j">Front Comput Neurosci</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">17</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Collective Activity of Many Bistable Assemblies Reproduces Characteristic Dynamics of Multistable Perception</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Pastukhov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mattia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Braun</surname></persName>
+		</author>
+		<idno type="DOI">10.1523/JNEUROSCI.4626-15.2016</idno>
+		<idno type="PMID">27358454</idno>
+		<ptr target="https://doi.org/10.1523/JNEUROSCI.4626-15" />
+	</analytic>
+	<monogr>
+		<title level="j">J Neurosci</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="issue">26</biblScope>
+			<biblScope unit="page" from="6957" to="6972" />
+			<date type="published" when="2016">2016. 2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Reversibility of the Necker cube. I. An examination of the concept of&apos;satiation or orientation</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Orbach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Ehrlich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Heath</surname></persName>
+		</author>
+		<idno type="DOI">10.2466/pms.1963.17.2.439</idno>
+		<idno type="PMID">14065532</idno>
+		<ptr target="https://doi.org/10.2466/pms.1963.17.2.439" />
+	</analytic>
+	<monogr>
+		<title level="j">Percept Mot Skills</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="page" from="439" to="458" />
+			<date type="published" when="1963">1963</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Perception of temporally interleaved ambiguous patterns</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Maier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Wilke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">K</forename><surname>Logothetis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Leopold</forename><surname>Da</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0960-9822(03)00414-7</idno>
+		<idno type="PMID">12842006</idno>
+		<ptr target="https://doi.org/10.1016/" />
+	</analytic>
+	<monogr>
+		<title level="j">Curr Biol</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">13</biblScope>
+			<biblScope unit="page" from="1076" to="1085" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Early neural activity in Necker-cube reversal: Evidence for low-level processing of a gestalt phenomenon</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kornmeier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Bach</surname></persName>
+		</author>
+		<idno type="DOI">10.1046/j.1469-8986.2003.00126.x</idno>
+		<idno type="PMID">14692995</idno>
+		<ptr target="https://doi.org/10.1046/j.1469-8986.2003.00126.x" />
+	</analytic>
+	<monogr>
+		<title level="j">Psychophysiology</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="8" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Structure-from-motion: dissociating perception, neural persistence, and sensory memory of illusory depth and illusory rotation</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Pastukhov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Braun</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/s13414-012-0390-0</idno>
+		<idno type="PMID">23150214</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Atten Percept Psychophys</title>
+		<imprint>
+			<biblScope unit="volume">75</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="322" to="340" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Stochastic Accumulation by Cortical Columns May Explain the Scalar Property of Multistable Perception</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Braun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mattia</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRevLett.113.098103</idno>
+		<idno type="PMID">25216009</idno>
+		<ptr target="https://doi.org/10.1103/PhysRevLett.113.098103" />
+	</analytic>
+	<monogr>
+		<title level="j">Phys Rev Lett</title>
+		<imprint>
+			<biblScope unit="volume">113</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page">98103</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">A Spiking Neuron Model for Binocular Rivalry</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">R</forename><surname>Laing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">C</forename><surname>Chow</surname></persName>
+		</author>
+		<idno type="DOI">10.1023/A:1014942129705</idno>
+		<idno type="PMID">11932559</idno>
+		<ptr target="https://doi.org/10.1023/A:1014942129705" />
+	</analytic>
+	<monogr>
+		<title level="j">J Comput Neurosci</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="39" to="53" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Percept-choice sequences driven by interrupted ambiguous stimuli: A low-level neural model</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Noest</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Van Ee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">M</forename><surname>Nijs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rja</forename><surname>Van Wezel</surname></persName>
+		</author>
+		<idno type="DOI">10.1167/7.8.10</idno>
+		<idno type="PMID">17685817</idno>
+		<ptr target="https://doi.org/10.1167/7.8.10" />
+	</analytic>
+	<monogr>
+		<title level="j">J Vis</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="1" to="14" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Stochastic properties of binocular rivalry alternations</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Walker</surname></persName>
+		</author>
+		<idno type="DOI">10.3758/BF03204122</idno>
+		<ptr target="https://doi.org/10.3758/BF03204122" />
+	</analytic>
+	<monogr>
+		<title level="j">Percept Psychophys</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="467" to="473" />
+			<date type="published" when="1975">1975</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Binocular rivalry is not chaotic</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">R</forename><surname>Lehky</surname></persName>
+		</author>
+		<idno type="DOI">10.1098/rspb.1995.0011</idno>
+		<ptr target="https://doi.org/10.1098/rspb.1995.0011" />
+	</analytic>
+	<monogr>
+		<title level="j">Proc R Soc Lond B Biol Sci</title>
+		<imprint>
+			<biblScope unit="volume">259</biblScope>
+			<biblScope unit="page" from="71" to="76" />
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Cumulative history quantifies the role of neural adaptation in multistable perception</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Pastukhov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Braun</surname></persName>
+		</author>
+		<idno type="DOI">10.1167/11.10.12</idno>
+		<idno type="PMID">21931128</idno>
+		<ptr target="https://doi.org/10.1167/11.10.12" />
+	</analytic>
+	<monogr>
+		<title level="j">J Vis</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="1" to="10" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<author>
+			<persName><forename type="first">V</forename><surname>Seshadri</surname></persName>
+		</author>
+		<title level="m">The Inverse Gaussian Distribution</title>
+				<imprint>
+			<publisher>Oxford University Press</publisher>
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">A maximization technique occurring in the statistical analysis of probabilistic functions of Markov chains</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">E</forename><surname>Baum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Petrie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Soules</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Weiss</surname></persName>
+		</author>
+		<idno type="DOI">10.1214/aoms/1177697196</idno>
+		<ptr target="https://doi.org/10.1214/aoms/1177697196" />
+	</analytic>
+	<monogr>
+		<title level="j">Annals of Mathematical Statistics</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="164" to="171" />
+			<date type="published" when="1970">1970</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">A tutorial on hidden markov models and selected applications in speech recognition</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">R</forename><surname>Rabiner</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans Inf Theory</title>
+		<imprint>
+			<biblScope unit="volume">77</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="257" to="284" />
+			<date type="published" when="1989">1989</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<title level="m" type="main">A gentle tutorial of the EM algorithm and its application to parameter estimation for gaussian mixture and hidden markov models. International Computer Science Institute</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Bilmes</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1998">1998</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Hidden Markov and other models for discrete-valued time series</title>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">L</forename><surname>Macdonald</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Zucchini</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Monographs on Statistics and Applied Probability. Chapman&amp;Hall</title>
+		<imprint>
+			<biblScope unit="volume">70</biblScope>
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Hidden Markov processes</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Ephraim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Merhav</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TIT.2002.1003838</idno>
+		<ptr target="https://doi.org/10.1109/TIT.2002.1003838" />
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans Inf Theory</title>
+		<imprint>
+			<biblScope unit="volume">48</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1518" to="1569" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">On Tests Of Equality Of Two Inverse Gaussian Distributions</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Samanta</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">S Afr Stat J</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="83" to="95" />
+			<date type="published" when="1985">1985</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Normal Inverse Gaussian Distributions and Stochastic Volatility Modeling</title>
+		<author>
+			<persName><forename type="first">O</forename><forename type="middle">E</forename><surname>Barndorff-Nielsen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scand Stat Theory Appl</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="13" />
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Direct maximization of the likelihood of a hidden Markov model</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Turner</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.csda.2008.01.029</idno>
+		<ptr target="https://doi.org/10.1016/j.csda.2008.01.029" />
+	</analytic>
+	<monogr>
+		<title level="j">Comput Stat Data Anal</title>
+		<imprint>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="4147" to="4160" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Psychotic Experiences and Overhasty Inferences Are Related to Maladaptive Learning</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Stuke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Stuke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">A</forename><surname>Weilnhammer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Schmack</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pcbi.1005328</idno>
+		<idno type="PMID">28107344</idno>
+		<ptr target="https://doi.org/10.1371/journal.pcbi.1005328" />
+	</analytic>
+	<monogr>
+		<title level="j">PLOS Comput Biol</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">e1005328</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Measurement of delusional ideation in the normal population: introducing the PDI (Peters et al. Delusions Inventory)</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Peters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Joseph</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Garety</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/oxfordjournals.schbul.a033401</idno>
+		<ptr target="https://doi.org/10.1093/oxfordjournals.schbul.a033401" />
+	</analytic>
+	<monogr>
+		<title level="j">Schizophr Bull</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="533" to="576" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Perceiving is believing: a Bayesian approach to explaining the positive symptoms of schizophrenia</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">C</forename><surname>Fletcher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">D</forename><surname>Frith</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nrn2536</idno>
+		<idno type="PMID">19050712</idno>
+		<ptr target="https://doi.org/10.1038/nrn2536" />
+	</analytic>
+	<monogr>
+		<title level="j">Nat Rev Neurosci</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page" from="48" to="58" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Jumping to conclusions in schizophrenia</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">L</forename><surname>Evans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">B</forename><surname>Averbeck</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Furl</surname></persName>
+		</author>
+		<idno type="DOI">10.2147/NDT.S56870</idno>
+		<idno type="PMID">26170674</idno>
+		<ptr target="https://doi.org/10.2147/NDT.S56870" />
+	</analytic>
+	<monogr>
+		<title level="j">Neuropsychiatr Dis Treat</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page" from="1615" to="1624" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Jumping to Conclusions About the Beads Task? A Metaanalysis of Delusional Ideation and Data-Gathering</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">M</forename><surname>Ross</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Mckay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Coltheart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Langdon</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/schbul/sbu187</idno>
+		<idno type="PMID">25616503</idno>
+		<ptr target="https://doi.org/10.1093/schbul/sbu187" />
+	</analytic>
+	<monogr>
+		<title level="j">Schizophr Bull</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1183" to="1191" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<monogr>
+		<title level="m" type="main">The computational anatomy of psychosis. Front Psychiatry</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Adams</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">E</forename><surname>Stephan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">R</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">D</forename><surname>Frith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">J</forename><surname>Friston</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/fpsyt.2013.00047</idno>
+		<idno type="PMID">23750138</idno>
+		<ptr target="https://doi.org/10.3389/fpsyt.2013.00047" />
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page">47</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Dynamics of perceptual bi-stability for stereoscopic slant rivalry and a comparison with grating, house-face, and Necker cube rivalry</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Van Ee</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.visres.2004.07.039</idno>
+		<idno type="PMID">15571736</idno>
+		<ptr target="https://doi.org/10.1016/j.visres.2004.07.039" />
+	</analytic>
+	<monogr>
+		<title level="j">Vision Res</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="29" to="40" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Neuromechanistic Model of Auditory Bistability</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Rankin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Sussman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Rinzel</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pcbi.1004555</idno>
+		<idno type="PMID">26562507</idno>
+		<ptr target="https://doi.org/10.1371/journal.pcbi.1004555" />
+	</analytic>
+	<monogr>
+		<title level="j">PLOS Comput Biol</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page">e1004555</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">The time course of binocular rivalry reveals a fundamental role of noise</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">W</forename><surname>Brascamp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Van Ee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Noest</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rah</forename><surname>Jacobs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Van Den Berg</surname></persName>
+		</author>
+		<idno type="DOI">10.1167/6.11.8</idno>
+		<idno type="PMID">17209732</idno>
+		<ptr target="https://doi.org/10.1167/6.11.8" />
+	</analytic>
+	<monogr>
+		<title level="j">J Vis</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="1244" to="1256" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Perceptual reversals need no prompting by attention</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Pastukhov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Braun</surname></persName>
+		</author>
+		<idno type="DOI">10.1167/7.10.5</idno>
+		<idno type="PMID">17997674</idno>
+		<ptr target="https://doi.org/10.1167/7.10.5" />
+	</analytic>
+	<monogr>
+		<title level="j">J Vis</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="1" to="17" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Does visual attention drive the dynamics of bistable perception?</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">C</forename><surname>Dieter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Brascamp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">T</forename><surname>Blake</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename></persName>
+		</author>
+		<idno type="DOI">10.3758/s13414-016-1143-2</idno>
+		<idno type="PMID">27230785</idno>
+		<ptr target="https://doi.org/10.3758/s13414-016-1143-2" />
+	</analytic>
+	<monogr>
+		<title level="j">Atten Percept Psychophys</title>
+		<imprint>
+			<biblScope unit="volume">78</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="1861" to="1873" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<monogr>
+		<title level="m" type="main">Probability and random processes</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Grimmett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Stirzaker</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2001">2001</date>
+			<publisher>Oxford University Press</publisher>
+			<pubPlace>New York</pubPlace>
+		</imprint>
+	</monogr>
+	<note>3rd ed</note>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">On cumulative sums of random variables</title>
+		<author>
+			<persName><forename type="first">Wald</forename><forename type="middle">A</forename></persName>
+		</author>
+		<idno type="DOI">10.1214/aoms/1177731235</idno>
+		<ptr target="https://doi.org/10.1214/aoms/1177731235" />
+	</analytic>
+	<monogr>
+		<title level="j">The Annals of Mathematical Statistics</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="7283" to="7296" />
+			<date type="published" when="1944">1944</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<monogr>
+		<title level="m" type="main">Numerical Methods for Unconstrained Optimization and Nonlinear Equations</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">E</forename><surname>Dennis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">B</forename><surname>Schnabel</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1983">1983</date>
+			<publisher>Prentice-Hall</publisher>
+			<pubPlace>Englewood Cliffs, NJ</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">A direct search optimization method that models the objective and constraint functions by linear interpolation</title>
+		<author>
+			<persName><forename type="first">Mjd</forename><surname>Powell</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Optimization and Numerical Analysis</title>
+				<editor>
+			<persName><forename type="first">S</forename><surname>Gomez</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Hennart</surname></persName>
+		</editor>
+		<imprint>
+			<date type="published" when="1994">1994</date>
+			<biblScope unit="page" from="51" to="67" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<monogr>
+		<title level="m" type="main">Stochastic processes</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Ross</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1996">1996</date>
+			<pubPlace>Wiley, New York</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

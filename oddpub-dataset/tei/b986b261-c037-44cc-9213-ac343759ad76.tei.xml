@@ -1,0 +1,769 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Pure FPGA Implementation of an HOG Based Real-Time Pedestrian Detection System</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018-04-12">12 April 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Jian</forename><surname>Hua</surname></persName>
+							<idno type="ORCID">0000-0003-3646-3261</idno>
+						</author>
+						<author>
+							<persName><forename type="first">Luo</forename><surname>Chang</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Hong</forename><surname>Lin</surname></persName>
+							<idno type="ORCID">0000-0003-3646-3261</idno>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Electronic and Computer Engineering</orgName>
+								<orgName type="institution">National Taiwan University of Science and Technology</orgName>
+								<address>
+									<addrLine>#43, Sec. 4</addrLine>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff1">
+								<orgName type="institution">Keelung Rd</orgName>
+								<address>
+									<postCode>106</postCode>
+									<settlement>Taipei</settlement>
+									<country key="TW">Taiwan</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Pure FPGA Implementation of an HOG Based Real-Time Pedestrian Detection System</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018-04-12">12 April 2018</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">89621EB5FC939812D9FB7B086900DFFB</idno>
+					<idno type="DOI">10.3390/s18041174</idno>
+					<note type="submission">Received: 7 February 2018; Accepted: 9 April 2018;</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:19+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>HOG</term>
+					<term>SVM</term>
+					<term>FPGA</term>
+					<term>hardware acceleration</term>
+					<term>pedestrian detection</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>In this study, we propose a real-time pedestrian detection system using a FPGA with a digital image sensor.</s><s>Comparing with some prior works, the proposed implementation realizes both the histogram of oriented gradients (HOG) and the trained support vector machine (SVM) classification on a FPGA.</s><s>Moreover, the implementation does not use any external memory or processors to assist the implementation.</s><s>Although the implementation implements both the HOG algorithm and the SVM classification in hardware without using any external memory modules and processors, the proposed implementation's resource utilization of the FPGA is lower than most of the prior art.</s><s>The main reasons resulting in the lower resource usage are: (1) simplification in the Getting Bin sub-module; (2) distributed writing and two shift registers in the Cell Histogram Generation sub-module; (3) reuse of each sum of the cell histogram in the Block Histogram Normalization sub-module; and (4) regarding a window of the SVM classification as 105 blocks of the SVM classification.</s><s>Moreover, compared to Dalal and Triggs's pure software HOG implementation, the proposed implementation's average detection rate is just about 4.05% less, but can achieve a much higher frame rate.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p><s>Real-time pedestrian detection is an important technology for modern society <ref type="bibr" target="#b0">[1]</ref> in many applications, such as surveillance <ref type="bibr" target="#b1">[2]</ref>, intelligence vehicle systems <ref type="bibr" target="#b2">[3]</ref>, and robot navigation <ref type="bibr" target="#b3">[4]</ref>.</s><s>Some studies have extracted diverse features from an image and have found appropriate classification methods to perform robust pedestrian detection <ref type="bibr" target="#b4">[5]</ref><ref type="bibr" target="#b5">[6]</ref><ref type="bibr" target="#b6">[7]</ref><ref type="bibr" target="#b7">[8]</ref><ref type="bibr" target="#b8">[9]</ref>.</s><s>An excellent algorithm, the histogram of oriented gradients (HOG) <ref type="bibr" target="#b9">[10]</ref>, was proposed by <ref type="bibr" target="#b9">Dalal and Triggs in 2005.</ref></s><s>It is an efficient feature extraction algorithm, and it can accurately detect a pedestrian in difficult conditions, such as deformation, rotation, or illumination changes.</s><s>However, the calculation cost of the HOG is very high because of its repeated and complex computation.</s><s>However, several studies have realized pedestrian detection based on a central processing unit (CPU) or graphics processing units (GPUs), or the combination of both <ref type="bibr" target="#b10">[11]</ref><ref type="bibr" target="#b11">[12]</ref><ref type="bibr" target="#b12">[13]</ref><ref type="bibr" target="#b13">[14]</ref><ref type="bibr" target="#b14">[15]</ref>, they are not suitable to many applications, such as surveillance.</s><s>Since such applications are contingent on hardware cost and power consumption, field programmable gate arrays (FPGA), with better speed and power consumption, are more suitable than GPUs.</s><s>Some prior works have realized pedestrian detection based on a FPGA, such as <ref type="bibr" target="#b15">[16]</ref><ref type="bibr" target="#b16">[17]</ref><ref type="bibr" target="#b17">[18]</ref><ref type="bibr" target="#b18">[19]</ref><ref type="bibr" target="#b19">[20]</ref><ref type="bibr" target="#b20">[21]</ref><ref type="bibr" target="#b21">[22]</ref>.</s><s>In early years, Kadota et al. <ref type="bibr" target="#b15">[16]</ref> proposed several methods to simplify the computation, such as the square root and arctangent.</s><s>Negi et al. <ref type="bibr" target="#b16">[17]</ref> proposed an implementation by using binary-patterned HOG features, adaptive boosting (AdaBoost) classifiers <ref type="bibr" target="#b22">[23]</ref>, and some approximation arithmetic strategies.</s><s>Hsiao et al. <ref type="bibr" target="#b17">[18]</ref> realized an implementation in an embedded hardware/software co-design.</s><s>Komorkiewicz et al. <ref type="bibr" target="#b18">[19]</ref> proposed an accurate system using single-precision 32-bit floating point computations in all stages of image processing.</s><s>Hiromoto et al. <ref type="bibr" target="#b19">[20]</ref> proposed a window-based scanning architecture.</s><s>Mizuno et al. <ref type="bibr" target="#b20">[21]</ref> proposed a simplified HOG algorithm with cell-based scanning and utilized an external SRAM to assist support vector machine (SVM) calculation <ref type="bibr" target="#b23">[24]</ref>.</s><s>Hahnle et al. <ref type="bibr" target="#b21">[22]</ref> proposed a cell-based scanning method, as well.</s></p><p><s>The above implementations have at least one characteristic from the following list: (a) they implement the HOG without implementing any classification; (b) they use external memory or an external processor in their implementation; and (c) they use large hardware resources in their implementation.</s></p><p><s>To avoid using additional resources, the proposed implementation is all in a FPGA with a digital image sensor, which is responsible for capturing images and it does not use any external memory modules and processors.</s><s>Moreover, the implementation can be suited to certain environments, such as surveillance, under reasonable resolution and resource utilization.</s></p><p><s>Shown in the experimental results, although the proposed implementation implements both the HOG algorithm and the SVM classification in hardware without using any external memory modules and processors, the implementation's resource utilization of the FPGA is lower than most of the prior art.</s><s>The main reasons resulting in the lower resource utilization are shown as follows:</s></p><p><s>1.</s></p><p><s>Through simplifications in the Getting Bin, the proposed system can use fewer hardware resources to obtain bins.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>2.</head><p><s>Through the distributed writing and two shift registers in the Cell Histogram Generation sub-module, the proposed system can easily deal with each intermediate cell histogram without any address decoder.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>3.</head><p><s>To decrease the number of calculations, the proposed system reuses each sum of the cell histogram, which is overlapped between each block in the Block Histogram Normalization sub-module.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>4.</head><p><s>The same as some previous state of the art, we regard a window of the SVM classification as 105 blocks of the SVM classification.</s></p><p><s>The detail of this article is organized as follows: The background knowledge of the HOG feature extraction algorithm and SVM classification are introduced in Section 2. Section 3 explains how the pedestrian detection is implemented using the HOG algorithm and the SVM classification on a FPGA.</s><s>Subsequently, the implementation's hardware resource utilization, detection rates, and comparisons with previous works are shown in Section 4. Finally, the article concludes in Section 5.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Background Knowledge</head><p><s>This study implements not only the HOG feature extraction algorithm, but also the SVM classification on a single FPGA.</s><s>The pedestrian detection in each frame is performed using a sliding window.</s><s>As shown in Figure <ref type="figure" target="#fig_0">1</ref>, the detection window in the proposed scheme consists of 64 × 128 pixels in size, and it contains 7 × 15 blocks.</s><s>A block further contains 2 × 2 cells and a cell contains 8 × 8 pixels.</s><s>It slides the detection window rightward or downward by eight pixels (the width of a cell) per time in a frame.</s></p><p><s>The pedestrian detection process consists of two parts: First, it obtains the descriptors of each detection window by using the HOG feature extraction algorithm.</s><s>Afterwards, the descriptors are classified by using the SVM classification.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.">HOG Feature Extraction Algorithm</head><p><s>The process of the HOG feature extraction consists of three steps:</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Calculation of Gradients</head><p><s>Before calculating the gradients, the proposed system converts RGB values of pixels to gray values of pixels.</s><s>In this scheme, the converted method is realized by the Equation (1) [25]:</s></p><formula xml:id="formula_0">Gray = R × 0.299 + G × 0.587 + B × 0.144<label>(1)</label></formula><p><s>Let Gray(i, j) be the gray values of the pixel (i, j).</s><s>The horizontal differences of gray Gx(i, j) and vertical differences of gray Gy(i, j) are defined as shown in Equations ( <ref type="formula" target="#formula_1">2</ref>) and (3):</s></p><formula xml:id="formula_1">Gx(i, j) = Gray(i + 1, j) − Gray(i − 1, j)<label>(2)</label></formula><p><s>Gy(i, j) = Gray(i, j + 1) − Gray(i, j − 1)</s></p><p><s>Using these values, gradient magnitudes M(i, j) and gradient orientations θ(i, j) are calculated according to Equations ( <ref type="formula">4</ref>) and <ref type="bibr" target="#b4">(5)</ref>, respectively:</s></p><formula xml:id="formula_3">M(i, j) = Gx(i, j) 2 + Gy(i, j) 2 (4) θ(i, j) = tan −1 Gy(i, j) Gx(i, j)<label>(5)</label></formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Cell Histogram Generation</head><p><s>When magnitudes M(i, j) and orientations θ(i, j) are obtained, they are utilized to vote for generating cell histograms.</s><s>In this scheme, orientations are divided into nine bins.</s><s>In each cell, gradient magnitudes of all pixels are voted on their respective bins.</s><s>The contributions of all pixels in a cell are added up to create a histogram.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Block Normalization</head><p><s>In this scheme, each group of 2 × 2 cells, which is regarded as a block, is normalized by using the L1-sqrt normalization method:</s></p><formula xml:id="formula_4">v → v ( v 1 + e) (<label>6</label></formula><formula xml:id="formula_5">)</formula><p><s>where v is an unnormalized descriptor vector in a block, v 1 is its 1-norm, and e is a small constant.</s><s>Finally, all of normalized blocks are concatenated as HOG descriptors x.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.">SVM Classification</head><p><s>When obtaining HOG descriptors, they are classified by the linear SVM classification equation:</s></p><formula xml:id="formula_6">y(x) = ω T •x + b<label>(7)</label></formula><p><s>In the training section of this study, firstly, every 64 × 128 pixels of an image would be converted into 3780 HOG features through the HOG feature extraction algorithm.</s><s>Two classes are used in the HOG: with a pedestrian and without a pedestrian.</s><s>Subsequently, the library of the SVM supported in OpenCV would use these HOG features to train the weight vector ω and the bias b.</s><s>When the weight vector ω and the bias b are determined after the training section, they would be stored into the ROM on the FPGA, and then the implementation on the FPGA utilizes it to classify new 64 × 128 pixels of the detection windows.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Proposed Hardware Implementation</head><p><s>This section explains how the proposed system implements pedestrian detection using the HOG algorithm and the SVM classification in real-time on a FPGA.</s><s>From the inputs of the pixels to the outputs of the results, the entire implementation is accomplished entirely in hardware.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">Flow of Pedestrian Detection Algorithm</head><p><s>As shown in Figure <ref type="figure" target="#fig_1">2</ref>, each pixel (i, j) in the input frame (resolution of 800 × 600), which is captured by the digital image sensor is converted to gray values, Gray(i, j) by Equation ( <ref type="formula" target="#formula_0">1</ref>).</s><s>The key performance parameters of the digital image sensor are listed in Table <ref type="table" target="#tab_0">1</ref>.</s></p><formula xml:id="formula_7">V I/O 1.7 V-3.1 V</formula><p><s>To avoid expensive floating point computations, the RGB weights are shifted by eight bits (0.299 &lt;&lt; 8 ≈ 77, 0.587 &lt;&lt; 8 ≈ 150, 0.144 &lt;&lt; 8 ≈ 29) to retain their decimal information.</s><s>The HOG Computation module, which contains three sub-modules and the SVM Classification module are run at a 150 MHz operating frequency.</s><s>The Gray(i, j) are continually streamed into the Gradient Calculation sub-module and then their gradients are determined.</s><s>When their magnitude and their orientation are produced, the cell histogram is generated in the Cell Histogram Generation sub-module.</s><s>Finally, in the Block Histogram Normalization sub-module, a group of cell histograms (2 × 2 cells comprise a block) is normalized as the final HOG features for the SVM classification.</s><s>After classification, three signals are outputted:</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>•</head><p><s>The row of the detection window position, Rw.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>•</head><p><s>The column of the detection window position, Cw.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>•</head><p><s>The result of the detection window (1 with pedestrian, 0 without pedestrian), Dec.</s><s>In the following sections each sub-module and the SVM Classification module in Figure <ref type="figure" target="#fig_1">2</ref> are individually described.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Gradient Calculation</head><p><s>Figure <ref type="figure" target="#fig_2">3</ref> is the implementation of the gradient calculation sub-module in the proposed structure.</s><s>The Gray(i, j) is continually streamed into a shift register, which is composed of three line buffers.</s><s>Each line buffer consists of 800 8-bit words to suit the system's column size of a frame.</s><s>When the shift register is appropriate for computing differences, data is buffered to calculate horizontal differences Gx(i, j) and vertical differences Gy(i, j).</s><s>When Gx(i, j) and Gy(i, j) are obtained, magnitudes M(i, j) and orientations θ(i, j) are calculated simultaneously.</s><s>The result of sqrt in Figure <ref type="figure" target="#fig_2">3</ref> is obtained by the Altera's ALTSQRT IP core <ref type="bibr" target="#b24">[26]</ref>.</s><s>The Getting Bins (computing orientations) is described in Figure <ref type="figure" target="#fig_2">3</ref>. Results of the Getting Bins are buffered because the results of the Getting Bins are faster than the results of the computing magnitudes.</s><s>The original HOG divided the orientations of gradients into several bins, and used the magnitudes of each gradient as the weight to generate the cell histogram in the Cell Histogram Generation sub-module.</s><s>Then, the distribution of the cell histogram is computed in the Block Histogram Normalization sub-module to obtain the final feature.</s><s>In the proposed scheme, it divides orientations into nine bins (as shown in Figure <ref type="figure" target="#fig_3">4</ref>).</s><s>To avoid the expensive floating point computation of arctangents, this study refers to the scheme of Kadota et al. <ref type="bibr" target="#b15">[16]</ref> and Zhou et al. <ref type="bibr" target="#b25">[27]</ref>, which uses a compared method to obtain corresponding bins.</s><s>Firstly, the study utilizes Algorithm 1 to determine θ(i, j)'s rough range.</s></p><p><s>Algorithm 1. Determine θ(i, j)'s rough range.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Input:</head><p><s>Gx(i, j), Gy(i, j)</s></p><p><s>Output:</s></p><p><s>Gx_r(i, j): absolute values of Gx(i, j) Gy_r(i, j): absolute values of Gy(i, j) GxGy_xor(i, j): values determining Gx(i, j) and Gy(i, j) have same sign or not</s></p><formula xml:id="formula_8">1 if (Gy(i, j) == 0) begin //θ(i, j) = 0 • , bin (i, j) = 8</formula><p><s>GxGy_xor(i, j) = 0; Gx_r(i, j) = 10;</s></p><formula xml:id="formula_9">Gy_r(i, j) = 1 &lt;&lt; 8; 2 end else if (Gx(i, j) == 0) begin //θ(i, j) = 90 • , bin (i, j) = 4 GxGy_xor(i, j) = 1; Gx_r(i, j) = 1; Gy_r(i, j) = 3 &lt;&lt; 8;</formula><p><s>3 end else begin //0 • &lt; θ(i, j) &lt; 90 • or 90 • &lt; θ(i, j) &lt; 180 • , bin (i, j) hasn't been determined GxGy_xor(i, j) = Gx[bit of sign] (i, j) ˆGy[bit of sign] (i, j); Gx_r(i, j) = Gx[bit of sign] (i, j) ?</s><s>(~Gx[bit of sign-1:0] (i, j)) + 1 : Gx[bit of sign-1:0] (i, j); Gy_r(i, j) = Gy[bit of sign] (i, j) ?</s><s>((~Gy[bit of sign-1:0] (i, j)) + 1) &lt;&lt; 8: (Gy[bit of sign-1:0] (i, j)) &lt;&lt; 8; end Afterwards, the nearest tangent value of Gy(i, j) is determined in Algorithm 2. Finally, the exact bin (i, j) is obtained in Algorithm 3.</s></p><p><s>Algorithm 2. Determine the nearest tangent value of Gy_r(i, j).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Input:</head><p><s>Gx_r(i, j), Gy_r(i, j)</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Output:</head><p><s>Distance_sign k (i, j): indicate Gx_r(i, j) × tanθ(i, j) &lt; Gy_r(i, j) or Gx_r(i, j) × tanθ(i, j) ≥ Gy_r(i, j) NearestDeg (i, j): flag of the nearest degree 1 //fixed tanθ are shifted by 8 bits to retain their decimal information.</s><s>Distance 0 (i, j) = Gx_r(i, j) × (tan10</s></p><formula xml:id="formula_10">• &lt;&lt; 8)-Gy_r(i, j) Distance 1 (i, j) = Gx_r(i, j) × (tan30 • &lt;&lt; 8)-Gy_r(i, j) Distance 2 (i, j) = Gx_r(i, j) × (tan50 • &lt;&lt; 8)-Gy_r(i, j) Distance 3 (i, j) = Gx_r(i, j) × (tan70 • &lt;&lt; 8)-Gy_r(i, j) 2 Distance_abs k (i, j) = Distance k (i, j) &lt; 0, Distance k (i, j) takes 2 s complement otherwise, Distance k (i, j) Distance_sign k (i, j) = Distance k [bit o f sign] (i, j), 0 ≤ k ≤ 3 3 NearestDeg (i, j) = minDegree(Distance_abs k (i, j), 0 ≤ k ≤ 3), minDegree() = k</formula><p><s>Through proposed Algorithms 1-3, the proposed system only uses 220 LUTs, 235 registers, and four DSP blocks to implement the comparison method to get bins.</s><s>The four DSP blocks are mainly used to implement the step 1 in Algorithm 2.</s></p><p><s>Algorithm 3. Obtain bin (i, j) according to the property of tanθ.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Input:</head><p><s>GxGy_xor(i, j), NearestDeg (i, j), Distance_sign k (i, j) Output:</s></p><p><s>bin (i, j)</s></p><formula xml:id="formula_11">1 if (GxGy_xor(i, j) == 0) //Same sign case(NearestDeg (i, j)) 0: θ(i, j) = 10 • 1: θ(i, j) = 30 • 2: θ(i, j) = 50 • 3: θ(i, j) = 70 • end case if Distance_sign k (i, j) == 1 (|Gx(i, j)| × |tanθ(i, j)| &lt; |Gy(i, j)|)</formula><p><s>the bin (i, j) is at big degree side of the nearest θ(i, j) Else the bin (i, j) is at small degree side of the nearest θ(i, j)</s></p><p><s>2 else //GxGy_xor(i, j) == 1 (Different sign): case(NearestDeg (i, j))</s></p><formula xml:id="formula_12">0: θ(i, j) = 170 • 1: θ(i, j) = 150 • 2: θ(i, j) = 130 • 3: θ(i, j) = 110 • end case if Distance_sign k (i, j) == 1</formula><p><s>the bin (i, j) is at small degree side of the nearest θ(i, j) Else the bin (i, j) is at big degree side of the nearest θ(i, j)</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.">Cell Histogram Generation</head><p><s>When the magnitudes M(i, j) and bin (i, j) are obtained, they are utilized to vote for generating cell histograms (as shown in Figure <ref type="figure" target="#fig_4">5</ref>).</s><s>Each M(i, j), which is regarded as a weight, refers to bin (i, j) to vote, directly.</s><s>In the proposed scheme, the results of voting magnitude for every pixel are not written into Shift Register 1 until the results of voting magnitudes for eight pixels (width of a cell) are completed.</s></p><p><s>Shift Register 1 contains eight buffer lines and each buffer line stores 100 partial cell histograms.</s><s>Because a frame in the scheme contains 100 columns of cells and every cell contains nine bins, a buffer line contains 900 12-bit words, and every word stores a partial value of a certain bin.</s><s>Storing Bin Counter is able to compute how many partial values have been stored into Shift Register 1.</s><s>When the amount of the stored partial values are suitable for summing, every partial value in the same bin would be read out and summed to the whole cell histograms.</s><s>The whole cell histograms would be stored into Shift Register 2. When 100 columns by one row of whole cell histograms are obtained, the next 100 columns by eight rows of partial cell histograms would be computed in the same way.</s></p><p><s>Shift Register 2 contains two buffer lines, because the shift register could be suited to block overlapping.</s><s>Each buffer line in the shift register contains 900 13-bit words to store the histogram of the whole cell.</s><s>Since every block overlaps adjacent blocks in a cell, this study utilizes the two buffer lines of the shift register to easily assemble the blocks.</s><s>When the shift register is appropriate for the next phase, the data in the shift register would be read by the Block Histogram Normalization sub-module.</s></p><p><s>Through the proposed distributed writing and two shift registers, it can easily deal with each intermediate cell histogram without any address decoder.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.4.">Block Histogram Normalization</head><p><s>In the Block Histogram Normalization sub-module (as shown in Figure <ref type="figure" target="#fig_5">6</ref>), this study uses the L1-sqrt normalization method to realize the normalization.</s><s>Firstly, the cell histograms read from the shift register are inputted to Left Shift and Sum.</s><s>Normally, results of the block histogram normalization are less than 1, so Left Shift shifts the data for saving their decimal information.</s><s>Through these left shifts in Figure <ref type="figure" target="#fig_5">6</ref>, results of Divide and sqrt (both from Altera's IP core <ref type="bibr" target="#b24">[26]</ref>) would not be zeroes.</s><s>Since Divide would not be run until the cell histograms are added as a sum of the blocks, the proposed system inputs these data into FIFOs.</s><s>When the cell histograms are added as a sum of the blocks, the data would be read from FIFOs into Divide and then the data would be divided by the sum of the blocks.</s><s>To reduce the computational workload, this study exploits the property of block overlapping.</s><s>Every block overlaps adjacent blocks by the width of a cell.</s><s>When the overlapping cell is read into Divide, it would be also write into another FIFO for the next block histogram computation.</s><s>For the same reason, a sum of the cells would be stored and it would be added for the next sum of the blocks.</s><s>Finally, the results of Divide are shifted and inputted into the sqrt to produce the final HOG descriptors.</s><s>Through an address decoder, four descriptors, which individually indicate a cell of a block (a block has four cells), would be buffered to the Final Descriptor Buffer.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.5.">SVM Classification</head><p><s>This section explains the SVM Classification module, which was implemented on the FPGA as well.</s><s>The linear SVM classification (Equation ( <ref type="formula" target="#formula_6">7</ref>)) is implemented in this module.</s><s>The weight vectors ω and the bias b are stored in a ROM on the FPGA.</s><s>The detection window in the proposed scheme contains 7 × 15 blocks and every block contains 36 descriptors, so a detection window contains 7 × 15 × 36 = 3780 descriptors.</s><s>If it waits for all of the descriptors to consist of a whole window (3780 descriptors) to begin the SVM classification, it has to use a large amount of memory to store the previous descriptors.</s><s>To reduce the memory utilization, the same as some previous states of the art, the SVM Classification module in this study uses a cell-based scanning structure.</s><s>It modifies the linear SVM classification Equation <ref type="bibr" target="#b6">(7)</ref> as Equation ( <ref type="formula" target="#formula_13">8</ref>), in which the x Bi means descriptors of a block in a window:</s></p><formula xml:id="formula_13">y(x) = 105 ∑ i=0 (ω T i •x Bi ) + b<label>(8)</label></formula><p><s>Since a window contains 7 × 15 = blocks, a window of the SVM classification can be regarded as 105 blocks of the SVM classification.</s><s>Hence, when the descriptors of a block are completed, we can begin these partial SVM classifications.</s><s>In this case, rather than store descriptors of many windows, it just stores the results of partial SVM classifications.</s></p><p><s>Since a window contains 15 rows of blocks, the Block RAM in Figure <ref type="figure" target="#fig_6">7</ref> consists of 15 rows of RAM.</s><s>Each row of RAM consists of a row of 93 windows in which each word stores their results of partial SVM classifications individually.</s><s>The proposed system uses two multiply-accumulators (MACs) for a row of RAM, so it has 30 MACs in the SVM Classification module.</s><s>Since a block may overlap 105 windows, at most, descriptors of a block may have to take the dot product of the whole weight vectors in ROM.</s><s>Hence, two descriptors read from the Final Descriptor Buffer are inputted to each MAC, and 15 weight vectors read from ROM are used for each descriptor (30 vectors in total).</s><s>A MAC Address Decoder is responsible for reading/writing the Final Descriptor Buffer and determines which weight vectors should the current descriptors to be taken dot product to.</s><s>When a block is completed, these 15 results of partial SVM classifications are added to their previous results of partial SVM classifications stored in Block RAM and then the results are judged whether a window is completed.</s><s>If a window is completed, the completed result is added to judge whether the window contains any pedestrians, the according word in the RAM would be zeroed, and another 14 results would be rewritten according to the words.</s><s>If a window is not completed, 15 results would all be rewritten according to the words.</s><s>After the words in a row of RAM are zeroed, the next row of partial results would be stored to these zeroed words.</s><s>Hence, the 15 rows of RAM can be reused for all windows.</s><s>Since the blocks (except the first one) in a frame need 126 cycles to be completed for partial SVM classifications, a frame of blocks would be completed in 126 × 99 × 74 (a frame contains 99 × 74 blocks) = 923,076 cycles.</s><s>If the operating frequency of the proposed hardware is 150 MHz, it can achieve around 162 fps.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Results and Discussion</head><p><s>The proposed system is implemented on an Altera tPad FPGA board, developed by Terasic (Hsinchu City, Taiwan), which has a DE2-115 evaluation board with a Cyclone IV EP4CE115 FPGA.</s><s>The entire implementation is accomplished all in hardware without using any external memory modules.</s><s>this section, we show the hardware resource utilization in this study and compare the results with other previous works.</s><s>In addition, it also compares this study's implementation method with some previous works.</s></p><p><s>Since it is difficult to evaluate the detection rate on a FPGA, a simulation is conducted using software to estimate the accuracy degradation of the proposed system with the fixed-point implementation.</s><s>The software with a fixed-point implementation has the same behavior as the proposed system with a fixed-point implementation.</s><s>We also implement floating-point arithmetic in the software and compare it with its fixed-point implementation to estimate the accuracy degradation.</s><s>Finally, we compared the fixed-point implementation of the software with Dalal's implementation <ref type="bibr" target="#b9">[10]</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.1.">Implementation Method and Resource Utilization</head><p><s>Table <ref type="table" target="#tab_1">2</ref> compares this study's implementation method with other previous works and Table <ref type="table" target="#tab_2">3</ref> compares this study's resource utilization with other previous works.</s><s>Compared to the implementation from Kadota et al. <ref type="bibr" target="#b15">[16]</ref>, which just concentrates on the HOG feature extraction without implementing the classification, this study implements not only the HOG feature extraction, but also the SVM classification.</s><s>Although they do not use any memory in their platform, this study uses significantly less LUTs and registers.</s><s>Compared to the implementation from Negi et al. <ref type="bibr" target="#b16">[17]</ref>, the memory utilization in this study is significantly lower than theirs, and the resolution is higher.</s><s>In the implementation from Hsiao et al. <ref type="bibr" target="#b17">[18]</ref>, their LUTs, registers, DSP blocks, and memory are all less than this study's.</s><s>However, their implementation is not accomplished all in hardware.</s><s>Their implementation is accomplished in an embedded hardware/software co-design.</s><s>They just implement the HOG feature extraction in FPGA hardware and implement the SVM classification in an embedded ARM processor.</s><s>Comparing this study's resource utilization of HOG (without the SVM classification) with their resource utilization, the resource utilization between this study's and theirs does not have significant difference, but the proposed implementation can achieve a higher frame rate.</s><s>Compared to the implementation from Komorkiewicz et al. <ref type="bibr" target="#b18">[19]</ref>, their implementation used the single-precision floating point representation in all stages of image processing, so their resource utilization was very large.</s><s>In the implementation from Hiromoto et al. <ref type="bibr" target="#b19">[20]</ref>, although they used fewer DSP blocks than the proposed system, the proposed system used significantly fewer LUTs and memory than theirs.</s><s>Compared to the implementation from Mizuno et al. <ref type="bibr" target="#b20">[21]</ref>, theirs and this study use the same platforms, but the study does not use any external memory modules.</s><s>Especially in the SVM classification module, they use an external SRAM to store SVM coefficients and intermediate results.</s><s>In this case, the SRAM can help the FPGA to reduce its memory utilization significantly, but it does not indicate that they truly reduce the memory utilization.</s><s>They just use the external memory (SRAM) instead of the internal memory (the memory of the FPGA).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.2.">Detection Rate</head><p><s>To evaluate the detection rate of this study, a simulation is conducted using software for object detection to estimate the performance and the accuracy degradation   The second database used in this study is the INRIA person database <ref type="bibr" target="#b26">[28]</ref>.</s><s>This study selects 1208 images with at least a person each as positive training examples, together with their left-right reflections (2416 images in all).</s><s>A total of 12,180 patches sampled randomly from 1218 person-free scenes are selected as negative training examples.</s><s>In the testing period, this study selects another 566 images as positive testing examples, together with their left-right reflections (1132 images in all), and this study selects another 4530 patches sampled randomly from 453 person-free scenes as negative testing examples.</s><s>Figure <ref type="figure" target="#fig_9">9</ref> shows the detection accuracy of our fixed-point and floating-point implementations.</s><s>The miss rate of the fixed-point is 3% higher than the floating-point at 10−3 FPPW, with the same miss rate at 10−2 FPPW, and 0.17% higher at 10−1 FPPW.</s><s>On average, the fixed-point has a 1.42% higher miss rate than the floating-point.</s></p><p><s>There are several factors that would cause the differences in the miss rate when the fixed point parameters are used to replace the floating-point parameters, such as:</s></p><p><s>1.</s></p><p><s>Quantization errors in the weights when converting RGB channels to the gray channel.</s><s>2.</s></p><p><s>Quantization errors in the values of tanθ when computing the bin boundaries.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>3.</head><p><s>Truncation of the non-integer parts when taking square roots in the gradient magnitude calculation.</s><s>4.</s></p><p><s>Truncation of the non-integer parts when taking square roots and divisions in the block normalization calculation.</s><s>In addition to evaluating the detection rate of fixed-point and floating-point implementations, this study also compares fixed-point implementations to Dalal and Triggs's pure software implementation <ref type="bibr" target="#b9">[10]</ref>.</s><s>As shown in Figure <ref type="figure" target="#fig_10">10</ref> our miss rate is about 8.66% higher at 10 −3 FPPW, 1.77% higher at 10 −2 FPPW, and 0.04% higher at 10 −1 FPPW.</s><s>On average, the proposed hardware implementation has about a 4.05% higher miss rate than the original software-only HOG design.</s><s>Other than the quantization errors described previously, the additional differences in the miss rate is caused by the omission of bilinear interpolation in bin voting.</s><s>Compared to previous implementations, this study realizes both the HOG algorithm and the SVM classification on a FPGA without using any external memory modules to achieve a real-time pedestrian detection under a resolution of 800 × 600.</s><s>Shown in experimental results, the proposed system's resource utilization of the FPGA is lower than these implementations, relatively, and the average detection rate is slightly decreased.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc><div><p><s>Figure 1.</s><s>Division of a detection window in a frame in the proposed scheme.</s></p></div></figDesc><graphic coords="3,115.72,87.89,363.84,180.96" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc><div><p><s>Figure 2. Flow of the proposed system's pedestrian detection algorithm.</s></p></div></figDesc><graphic coords="5,158.92,142.87,277.44,151.20" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc><div><p><s>Figure 3. Diagram of the Gradient Calculation sub-module in the proposed structure.</s></p></div></figDesc><graphic coords="5,78.20,522.36,438.88,130.77" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 .</head><label>4</label><figDesc><div><p><s>Figure 4. Dividing orientations into nine bins in the proposed scheme.</s></p></div></figDesc><graphic coords="6,167.80,87.89,259.68,56.64" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 .</head><label>5</label><figDesc><div><p><s>Figure 5. Diagram of the Cell Histogram Generation sub-module in the proposed structure.</s></p></div></figDesc><graphic coords="8,77.73,87.88,439.82,318.46" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6 .</head><label>6</label><figDesc><div><p><s>Figure 6.</s><s>Diagram the Block Histogram Normalization sub-module in the proposed structure.</s></p></div></figDesc><graphic coords="9,79.22,87.89,436.84,225.79" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 7 .</head><label>7</label><figDesc><div><p><s>Figure 7. Diagram of the SVM classification in the proposed structure.</s></p></div></figDesc><graphic coords="10,76.54,151.54,445.44,240.96" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head></head><label></label><figDesc><div><p><s>. The software has the same behavior as the FPGA implementation and it is implemented by using Microsoft Visual C++ 2013 Express Edition with the OpenCV library version 3.1 and two different databases.</s><s>The first database used in this study is the well-established MIT pedestrian database [28].</s><s>This study selects 624 images with at least one person each as positive training examples and 300 images with at least one person each is selected as positive testing examples.</s><s>In negative examples, since the MIT pedestrian database does not have person-free images, we selected 3120 patches sampled randomly from 312 person-free scenes in the INRIA person database [29] as negative training examples.</s><s>Subsequently, we select another 1160 patches sampled randomly from 116 person-free scenes in the INRIA person database as negative testing examples.Figure8shows the detection accuracy of fixed-point and floating-point implementations in this study, which presents a graph of false positives per window (FPPW) versus the miss rate.</s><s>The detection accuracy of both implementations in this study are less than, or equal to, 1% at any location on the FPPW axis.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 8 .</head><label>8</label><figDesc><div><p><s>Figure 8.</s><s>Detection accuracy of fixed-point and floating-point implementations on the MIT pedestrian database.</s></p></div></figDesc><graphic coords="11,156.56,575.10,282.15,158.57" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure 9 .</head><label>9</label><figDesc><div><p><s>Figure 9. Detection accuracy of fixed-point and floating-point implementations on the INRIA person database.</s></p></div></figDesc><graphic coords="13,136.30,363.59,322.68,184.08" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Figure 10 .</head><label>10</label><figDesc><div><p><s>Figure 10.</s><s>Comparing our fixed-point implementation with Dalal's on the INRIA person database</s></p></div></figDesc><graphic coords="14,135.64,87.89,324.00,191.40" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 .</head><label>1</label><figDesc><div><p><s>Key performance parameters of the digital image sensor.</s></p></div></figDesc><table><row><cell cols="2">Parameter</cell><cell>Value</cell></row><row><cell cols="2">Active Pixels</cell><cell>2592 H × 1944 V</cell></row><row><cell cols="2">Pixel size</cell><cell>2.2 µm × 2.2 µm</cell></row><row><cell cols="2">Color filter array</cell><cell>RGB Bayer pattern</cell></row><row><cell cols="2">Shutter type</cell><cell>Global reset release (GRR)</cell></row><row><cell cols="2">Maximum data rate/master clock</cell><cell>96 Mp/s at 96 MHz</cell></row><row><cell>Frame rate</cell><cell>Full resolution VGA mode</cell><cell>Programmable up to 15 fps Programmable up to 70 fps</cell></row><row><cell cols="2">ADC resolution</cell><cell>12-bit</cell></row><row><cell cols="2">Responsivity</cell><cell>1.4 V/lux-sec (550 nm)</cell></row><row><cell cols="2">Pixel dynamic range</cell><cell>70.1 dB</cell></row><row><cell cols="2">SNRMAX</cell><cell>38.1 dB</cell></row><row><cell>Supply Voltage</cell><cell>Power</cell><cell>3.3</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 .</head><label>2</label><figDesc><div><p><s>Comparing this study's implementation methods with other previous works.</s></p></div></figDesc><table><row><cell></cell><cell>[16]</cell><cell>[17]</cell><cell>[18]</cell><cell>[19]</cell><cell>[20]</cell><cell>[21]</cell><cell>Proposed</cell></row><row><cell>Implementaion Device</cell><cell>HOG-FPGA SVM-No</cell><cell>HOG-FPGA AdaBoost-FPGA</cell><cell>HOG-FPGA SVM-ARM Processor</cell><cell>HOG-FPGA SVM-FPGA</cell><cell>HOG-FPGA SVM-FPGA</cell><cell>HOG-FPGA SVM-FPGA</cell><cell>HOG-FPGA SVM-FPGA</cell></row><row><cell>External memory</cell><cell>×</cell><cell>×</cell><cell>ARM processor</cell><cell>×</cell><cell>×</cell><cell>SRAM</cell><cell>×</cell></row><row><cell>Distributed writing and two shift registers in Cell Histogram Generation</cell><cell>×</cell><cell>×</cell><cell>×</cell><cell>×</cell><cell>×</cell><cell>×</cell><cell></cell></row><row><cell>105 blocks of the SVM classification</cell><cell>×</cell><cell>AdaBoost</cell><cell>×</cell><cell>×</cell><cell>×</cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 3 .</head><label>3</label><figDesc><div><p><s>Comparing this study's resource utilization with other previous works.</s></p></div></figDesc><table><row><cell>Platform</cell><cell>[16]</cell><cell>[17]</cell><cell>[18]</cell><cell>[19]</cell><cell>[20]</cell><cell>[21]</cell><cell>Proposed</cell></row><row><cell></cell><cell>Altera Stratix II</cell><cell cols="2">Xilinx Virtex-5 Xilinx Spartan-6</cell><cell>Xilinx Virtex-6</cell><cell cols="3">Xilinx Virtex-5 Altera Cyclone IV Altera Cyclone IV</cell></row><row><cell>Resolution</cell><cell>640 × 480</cell><cell>320 × 240</cell><cell>various 1</cell><cell>640 × 480</cell><cell>320 × 240</cell><cell>800 × 600</cell><cell>800 × 600</cell></row><row><cell>Frame rate (fps)</cell><cell>30</cell><cell>62</cell><cell>about 15 1</cell><cell>60</cell><cell>38</cell><cell>72</cell><cell>162</cell></row><row><cell>Operating frequency (MHz)</cell><cell>127</cell><cell>44</cell><cell>192</cell><cell>25</cell><cell>167</cell><cell>40</cell><cell>150</cell></row><row><cell># of LUTs</cell><cell>37,940</cell><cell>17,383</cell><cell>4169</cell><cell>113,359</cell><cell>28,495</cell><cell>34,403</cell><cell>16,060</cell></row><row><cell># of registers</cell><cell>66,990</cell><cell>2181</cell><cell>3533</cell><cell>75,071</cell><cell>5980</cell><cell>23,247</cell><cell>7220</cell></row><row><cell># of DSP blocks</cell><cell>120</cell><cell>no data</cell><cell>10</cell><cell>72</cell><cell>2</cell><cell>68</cell><cell>69</cell></row><row><cell>Memory (kBit)</cell><cell>no data</cell><cell>1327</cell><cell>243</cell><cell>4284</cell><cell>2196</cell><cell>348</cell><cell>334</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="1">In the implementation of Hsiao et al., their inputted images are from four datasets, which have various size of images. They just say their implementation can reach about 15 fps.</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgments:</head><p><s>The authors would like to thank the Ministry of Science and Technology in Taiwan for supporting this research under the project MOST104-2220-E-011-001-.</s></p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Author Contributions: J.H. Luo studied the algorithms, conceived and designed the experiments, analyzed the data, and drafted the manuscript; and C.H. Lin participated in the algorithm studies, supervised the work, and helped to draft the manuscript.</s><s>Both authors read and approved the manuscript.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conflicts of Interest:</head><p><s>The authors declare no conflict of interest.</s></p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Survey of pedestrian detection for advanced driver assistance systems</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Geronimo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Lopez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">D</forename><surname>Sappa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Graf</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TPAMI.2009.122</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Pattern Anal. Mach. Intell</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="page" from="1239" to="1258" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+	<note>PubMed</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">FPGA-GPU architecture for kernel SVM pedestrian detection</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bauer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Köhler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Doll</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Brunsmann</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2010 IEEE Computer Society Conference on Computer Vision and Pattern Recognition Workshops (CVPRW)</title>
+				<meeting>the 2010 IEEE Computer Society Conference on Computer Vision and Pattern Recognition Workshops (CVPRW)<address><addrLine>San Francisco, CA, USA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2010-06">June 2010</date>
+			<biblScope unit="page" from="61" to="68" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Pedestrian detection on a moving vehicle: An investigation about near infra-red images</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Broggi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">I</forename><surname>Fedriga</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Tagliati</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Graf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Meinecke</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE Intelligent Vehicles Symposium</title>
+				<meeting>the IEEE Intelligent Vehicles Symposium<address><addrLine>Tokyo, Japan</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2006-06">June 2006</date>
+			<biblScope unit="page" from="431" to="436" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">A real-time pedestrian legs detection and tracking system used for autonomous mobile robots</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">S</forename><surname>Fahn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">P</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">S</forename><surname>Yeh</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the International Conference on Applied System Innovation (ICASI)</title>
+				<meeting>the International Conference on Applied System Innovation (ICASI)<address><addrLine>Sapporo, Japan</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2017-05">May 2017</date>
+			<biblScope unit="page" from="1122" to="1125" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Person surveillance using visual and infrared imagery</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Krotosky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">M</forename><surname>Trivedi</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TCSVT.2008.928217</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Circuits Syst. Video Technol</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="page" from="1096" to="1105" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">A trainable system for object detection</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Papageorgiou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Poggio</surname></persName>
+		</author>
+		<idno type="DOI">10.1023/A:1008162616689</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Comput. Vis</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="15" to="33" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Pedestrian detection using wavelet templates</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Oren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Papageorgiou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Sinha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Osuna</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Poggio</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE Computer Society Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE Computer Society Conference on Computer Vision and Pattern Recognition<address><addrLine>San Juan, Puerto Rico, USA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="1997-06">June 1997</date>
+			<biblScope unit="page" from="193" to="199" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Distinctive image features from scale-invariant keypoints</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">G</forename><surname>Lowe</surname></persName>
+		</author>
+		<idno type="DOI">10.1023/B:VISI.0000029664.99615.94</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Comput. Vis</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="page" from="91" to="110" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Pedestrian detection using sparse Gabor filter and support vector machine</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Qin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE Intelligent Vehicles Symposium</title>
+				<meeting>the IEEE Intelligent Vehicles Symposium<address><addrLine>Las Vegas, NV, USA, 6-8</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2005-06">June 2005</date>
+			<biblScope unit="page" from="583" to="587" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Histograms of oriented gradients for human detection</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Dalal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Triggs</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE Computer Society Conference on Computer Vision and Pattern Recognition (CVPR)</title>
+				<meeting>the IEEE Computer Society Conference on Computer Vision and Pattern Recognition (CVPR)<address><addrLine>San Diego, CA, USA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2005-06">June 2005</date>
+			<biblScope unit="page" from="886" to="893" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Open Source Computer Vision (OpenCV) Library (Released under a BSD License and Free for Both Academic and Commercial)</title>
+		<ptr target="https://opencv.org/" />
+		<imprint>
+			<date type="published" when="2018-02">February 2018</date>
+		</imprint>
+	</monogr>
+	<note>Available online</note>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Efficient use of geometric constraints for sliding-window object detection in video</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Sudowe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Leibe</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the International Conference on Computer Vision Systems (ICVS)</title>
+				<meeting>the International Conference on Computer Vision Systems (ICVS)<address><addrLine>Sophia Antipolis, France</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2011-09">September 2011</date>
+			<biblScope unit="page" from="11" to="20" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">GPU &amp; CPU cooperative accelerated pedestrian and vehicle detection</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Machida</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Naito</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE International Conference on Computer Vision Workshops (ICCV Workshops)</title>
+				<meeting>the IEEE International Conference on Computer Vision Workshops (ICCV Workshops)<address><addrLine>Barcelona, Spain</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2011-11">November 2011</date>
+			<biblScope unit="page" from="506" to="513" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Fast HOG feature computation based on CUDA</title>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">P</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">Z</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><forename type="middle">M</forename><surname>Lin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE International Conference on Computer Science and Automation Engineering (CSAE)</title>
+				<meeting>the IEEE International Conference on Computer Science and Automation Engineering (CSAE)<address><addrLine>Shanghai, China</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2011-06">June 2011</date>
+			<biblScope unit="page" from="748" to="751" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Fast human detection with cascaded ensembles on the GPU</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Bilgic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">K P</forename><surname>Horn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Masaki</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE Intelligent Vehicles Symposium</title>
+				<meeting>the IEEE Intelligent Vehicles Symposium<address><addrLine>San Diego, CA, USA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2010-06">June 2010</date>
+			<biblScope unit="page" from="325" to="332" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Hardware architecture for HOG feature extraction</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Kadota</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Sugano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hiromoto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Ochi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Miyamoto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Nakamura</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the International Conference on Intelligent Information Hiding and Multimedia Signal Processing</title>
+				<meeting>the International Conference on Intelligent Information Hiding and Multimedia Signal Processing<address><addrLine>Kyoto, Japan</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2009-09">September 2009</date>
+			<biblScope unit="page" from="1330" to="1333" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Deep pipelined one-chip FPGA implementation of a real-time image-based human detection algorithm</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Negi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Dohi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Shibata</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Oguri</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the International Conference on Field-Programmable Technology (FPT)</title>
+				<meeting>the International Conference on Field-Programmable Technology (FPT)<address><addrLine>New Delhi, India</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2011-12">December 2011</date>
+			<biblScope unit="page" from="1" to="8" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">A real-time FPGA based human detector</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">Y</forename><surname>Hsiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">Y</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">Y</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2016 International Symposium on Computer, Consumer and Control (IS3C)</title>
+				<meeting>the 2016 International Symposium on Computer, Consumer and Control (IS3C)<address><addrLine>Xi&apos;an, China</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2016-07">July 2016</date>
+			<biblScope unit="page" from="4" to="6" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Floating point HOG implementation for real-time multiple object detection</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Komorkiewicz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kluczewski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Gorgon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 22nd International Conference on Field Programmable Logic and Applications (FPL)</title>
+				<meeting>the 22nd International Conference on Field Programmable Logic and Applications (FPL)<address><addrLine>Oslo, Norway</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2012-08">August 2012</date>
+			<biblScope unit="page" from="711" to="714" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Hardware architecture for high-accuracy real-time pedestrian detection with CoHOG features</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hiromoto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Miyamoto</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE 12th International Conference on Computer Vision Workshops (ICCV Workshops)</title>
+				<meeting>the IEEE 12th International Conference on Computer Vision Workshops (ICCV Workshops)<address><addrLine>Kyoto, Japan</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2009-10-04">27 September-4 October 2009</date>
+			<biblScope unit="page" from="894" to="899" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Architectural study of HOG feature extraction processor for real-time object detection</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Mizuno</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Terachi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Takagi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Izumi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Kawaguchi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Yoshimoto</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2012 IEEE Workshop on Signal Processing Systems (SiPS)</title>
+				<meeting>the 2012 IEEE Workshop on Signal Processing Systems (SiPS)<address><addrLine>Quebec City, QC, Canada</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2012-10-19">19 October 2012</date>
+			<biblScope unit="page" from="197" to="202" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">FPGA-based real-time pedestrian detection on high-resolution images</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hahnle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Saxen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hisung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Brunsmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Doll</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition Workshops (CVPRW)</title>
+				<meeting>the IEEE Conference on Computer Vision and Pattern Recognition Workshops (CVPRW)<address><addrLine>Portland, OR, USA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2013-06">June 2013</date>
+			<biblScope unit="page" from="629" to="635" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">A decision-theoretic generalization of on-line learning and an application to boosting</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Freund</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">E</forename><surname>Schapire</surname></persName>
+		</author>
+		<idno type="DOI">10.1006/jcss.1997.1504</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Comput. Syst. Sci</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="page" from="273" to="297" />
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">MathWorks: Rgb2ntsc: Convert RGB Color Values to NTSC Color Space</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Cortes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Vapnik</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/BF00994018</idno>
+		<ptr target="http://www.mathworks.com/help/images/ref/rgb2ntsc.html" />
+	</analytic>
+	<monogr>
+		<title level="j">Mach. Learn</title>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="page">25</biblScope>
+			<date type="published" when="1997-02">1997. February 2018</date>
+		</imprint>
+	</monogr>
+	<note>Support-vector networks</note>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">Intel: Intel FPGA Integer Arithmetic IP Cores User Guide</title>
+		<ptr target="https://www.altera.com" />
+		<imprint>
+			<date type="published" when="2018-02">February 2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">A pipeline architecture for traffic sign classification on an FPGA</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Huang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE International Symposium on Circuits and Systems (ISCAS)</title>
+				<meeting>the IEEE International Symposium on Circuits and Systems (ISCAS)<address><addrLine>Lisbon, Portugal</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2015-05">May 2015</date>
+			<biblScope unit="page" from="24" to="27" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title/>
+		<author>
+			<persName><surname>Mit Pedestrian Data</surname></persName>
+		</author>
+		<ptr target="http://cbcl.mit.edu/software-datasets/PedestrianData.html" />
+		<imprint>
+			<date type="published" when="2018-02">February 2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">Dataset</forename><surname>Inria Person</surname></persName>
+		</author>
+		<ptr target="http://pascal.inrialpes.fr/data/human" />
+		<imprint>
+			<date type="published" when="2018-02">February 2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

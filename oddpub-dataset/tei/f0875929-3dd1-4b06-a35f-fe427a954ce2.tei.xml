@@ -1,0 +1,1444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Computational methods for prediction of in vitro effects of new chemical structures</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Priyanka</forename><surname>Banerjee</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Institute for Physiology</orgName>
+								<orgName type="laboratory">Structural Bioinformatics Group</orgName>
+								<orgName type="institution">Charité -University Medicine Berlin</orgName>
+								<address>
+									<settlement>Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Vishal</forename><forename type="middle">B</forename><surname>Siramshetty</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Institute for Physiology</orgName>
+								<orgName type="laboratory">Structural Bioinformatics Group</orgName>
+								<orgName type="institution">Charité -University Medicine Berlin</orgName>
+								<address>
+									<settlement>Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName><forename type="first">Malgorzata</forename><forename type="middle">N</forename><surname>Drwal</surname></persName>
+							<email>malgorzata.drwal@alumni.charite.de</email>
+							<affiliation key="aff0">
+								<orgName type="department">Institute for Physiology</orgName>
+								<orgName type="laboratory">Structural Bioinformatics Group</orgName>
+								<orgName type="institution">Charité -University Medicine Berlin</orgName>
+								<address>
+									<settlement>Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Robert</forename><surname>Preissner</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Institute for Physiology</orgName>
+								<orgName type="laboratory">Structural Bioinformatics Group</orgName>
+								<orgName type="institution">Charité -University Medicine Berlin</orgName>
+								<address>
+									<settlement>Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Computational methods for prediction of in vitro effects of new chemical structures</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">4F17FCB07643767FDB2FF44960949E22</idno>
+					<idno type="DOI">10.1186/s13321-016-0162-2</idno>
+					<note type="submission">Received: 2 December 2015 Accepted: 5 September 2016</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:27+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Similarity searching</term>
+					<term>Machine learning</term>
+					<term>Toxicity prediction</term>
+					<term>Tox21 challenge</term>
+					<term>Molecular fingerprints</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Background: With a constant increase in the number of new chemicals synthesized every year, it becomes important to employ the most reliable and fast in silico screening methods to predict their safety and activity profiles.</s><s>In recent years, in silico prediction methods received great attention in an attempt to reduce animal experiments for the evaluation of various toxicological endpoints, complementing the theme of replace, reduce and refine.</s><s>Various computational approaches have been proposed for the prediction of compound toxicity ranging from quantitative structure activity relationship modeling to molecular similarity-based methods and machine learning.</s><s>Within the "Toxicology in the 21st Century" screening initiative, a crowd-sourcing platform was established for the development and validation of computational models to predict the interference of chemical compounds with nuclear receptor and stress response pathways based on a training set containing more than 10,000 compounds tested in high-throughput screening assays.</s></p><p><s>Results: Here, we present the results of various molecular similarity-based and machine-learning based methods over an independent evaluation set containing 647 compounds as provided by the Tox21 Data Challenge 2014.</s><s>It was observed that the Random Forest approach based on MACCS molecular fingerprints and a subset of 13 molecular descriptors selected based on statistical and literature analysis performed best in terms of the area under the receiver operating characteristic curve values.</s><s>Further, we compared the individual and combined performance of different methods.</s><s>In retrospect, we also discuss the reasons behind the superior performance of an ensemble approach, combining a similarity search method with the Random Forest algorithm, compared to individual methods while explaining the intrinsic limitations of the latter.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusions:</head><p><s>Our results suggest that, although prediction methods were optimized individually for each modelled target, an ensemble of similarity and machine-learning approaches provides promising performance indicating its broad applicability in toxicity prediction.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Background</head><p><s>The number of new chemical entities launched every year has been steadily increasing over the last decades irrespective of the number of successful drug approvals.</s><s>High attrition rates in late stage of clinical trials are one of the most important reasons for the significantly low number of new drug approvals.</s><s>The lack of efficacy and unfavourable safety profiles contribute the most to high attrition rates.</s><s>Reviews indicate an increasing number of 'me-too' drugs that hardly provide an advantage over the existing therapeutics <ref type="bibr" target="#b0">[1]</ref>.</s><s>In an attempt to evaluate different drug discovery strategies, it was observed that the percentage of newly approved small molecule drugs with a novel molecular mechanism of action is less than 20 % of the total approvals during the study duration considered <ref type="bibr" target="#b1">[2]</ref>.</s><s>Currently, the majority of drug candidates are aimed at cancer treatment and are therefore studied for activity at multiple, possibly novel biological targets, presenting a high probability of multiple unique toxicological profiles <ref type="bibr" target="#b2">[3]</ref>.</s><s>Therefore, it is essential to employ novel strategies that can predict the fate of the chemicals in early stages of development to overcome the failure rates and accelerate the development and approval of promising candidates.</s><s>Predictive toxicology, more commonly known as in silico toxicology, plays a key role in the optimization of hits by parallel investigation of safety and activity, thereby permitting a more efficient drug development process <ref type="bibr" target="#b3">[4]</ref>.</s><s>Along with in vitro assays, predictive toxicology received, in recent times, great attention as a method to evaluate various toxicological endpoints and reduce animal experiments, complementing the theme of replace, reduce and refine (3Rs) <ref type="bibr" target="#b4">[5]</ref>.</s><s>Additional factors that motivate the development of toxicological prediction methods include considerable progress with legislations in both the European Union and North America and the need for the reduction of costs involved in experimental testing of an increasing number of chemicals, as well as advances in the understanding of the biology and chemistry of the active chemical compounds.</s></p><p><s>The early efforts for prediction of toxicity date back to the 1890s, as emphasized by the work of Richet <ref type="bibr" target="#b5">[6]</ref>, Meyer <ref type="bibr" target="#b6">[7]</ref> and Overton <ref type="bibr" target="#b7">[8]</ref> on the relationship between toxicity and solubility followed by their hypothesis that narcosis could be related to partitioning between water and oil phases.</s><s>Since then, steady progress has been observed in predictive toxicology, highly complemented by advances in cheminformatics approaches such as quantitative structure-activity relationship (QSAR) modeling <ref type="bibr" target="#b8">[9]</ref>, physicochemical property and molecular descriptor based modeling <ref type="bibr" target="#b9">[10,</ref><ref type="bibr" target="#b10">11]</ref> and statistical methods <ref type="bibr" target="#b11">[12]</ref>.</s><s>Later, a number of commercial and open-source expert systems have been developed for the prediction of pharmacokinetic parameters including TOPKAT ® [13], ADMET Predictor ™ <ref type="bibr" target="#b12">[14]</ref>, ADME-Tox Prediction <ref type="bibr" target="#b13">[15]</ref>, DEREK <ref type="bibr" target="#b14">[16]</ref> and Toxicity Estimation Software Tools <ref type="bibr">[17]</ref>.</s><s>Machine learning methods have been widely used in the areas of bioactivity and ADMET (absorption, distribution, metabolism, excretion and toxicity) properties prediction <ref type="bibr" target="#b15">[18]</ref><ref type="bibr" target="#b16">[19]</ref><ref type="bibr" target="#b17">[20]</ref><ref type="bibr" target="#b18">[21]</ref><ref type="bibr" target="#b19">[22]</ref><ref type="bibr" target="#b20">[23]</ref>.</s><s>It has been demonstrated that models built with machine learning methods which take into account high-dimensional descriptors are very successful and robust for external predictions <ref type="bibr" target="#b21">[24,</ref><ref type="bibr" target="#b22">25]</ref>.</s></p><p><s>The US toxicology initiative, Toxicology in the 21st Century (Tox21), started in 2008, aims to develop fast and effective methods for large-scale assessment of toxicity in order to identify chemicals that could potentially target various biological pathways within the human body and lead to toxicity <ref type="bibr" target="#b23">[26]</ref>.</s><s>The objectives of this initiative, after the initial screening, are to prioritize chemicals for further investigation of toxic effects and progressively build toxicity models as well as develop assays that measure responses of human pathways towards these chemicals.</s><s>As a part of the screening initiative, a library comprising more than 10,000 chemicals was screened in high-throughput assays against a panel of 12 different biological targets involved in two major groups of biochemical pathways: the nuclear receptor pathway and the stress response pathway.</s><s>Further, during the Tox21 Data Challenge 2014 <ref type="bibr" target="#b24">[27]</ref>, the development of computational models which can predict the interference of these chemicals in the two groups of pathways was crowd-sourced to researchers across the globe.</s><s>Our previous work <ref type="bibr" target="#b25">[28]</ref> illustrates the usefulness of a combination of chemical similarity and machine-learning approaches in predicting the activity of the Tox21 dataset with high accuracy for a majority of the targets considered in the challenge <ref type="bibr" target="#b26">[29]</ref>.</s><s>In this study, we present and discuss various computational methods, ranging from molecular similarity to different machine-learning approaches and their intrinsic limitations by comparing them with the best prediction models from our previous work <ref type="bibr" target="#b25">[28]</ref> that ranked top among the submissions to the challenge.</s><s>In order to keep the comparison simple, we limit ourselves to a set of three targets: aryl hydrocarbon receptor (AhR), estrogen nuclear receptor alpha ligand-binding domain (ER-LBD) and heat shock protein beta-1 (HSE).</s><s>We also emphasize on the factors that can be attributed to a mixed performance of these models via illustration of example compounds.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p><s>We compared the performance of four different algorithms as well as four different molecular fingerprints for the prediction of the AhR, ER-LBD and HSE assays for the Tox21 10 K compound library (for more details, see Additional file 1: Tables <ref type="table" target="#tab_1">S1, S2</ref>).</s><s>In particular, similarityweighted k-nearest neighbors (kNN) approaches as well as three types of machine learning algorithms (Fig. <ref type="figure" target="#fig_0">1</ref>) were investigated, as described in detail in the Methods section.</s><s>In order to evaluate the performance of different fingerprints used as a hybrid fingerprint in our previous work <ref type="bibr" target="#b25">[28]</ref>, we investigated MACCS <ref type="bibr" target="#b27">[30]</ref>, ECFP4 <ref type="bibr" target="#b28">[31]</ref> and ToxPrint <ref type="bibr" target="#b29">[32]</ref><ref type="bibr" target="#b30">[33]</ref><ref type="bibr" target="#b31">[34]</ref> fingerprints individually.</s><s>While MACCS fingerprints are based on generic substructure keys, ToxPrint fingerprints encode generic substructures considering genotoxic carcinogen rules and structurebased thresholds relevant to toxicology.</s><s>Extended connectivity fingerprints such as ECFP4 are based on the circular topology of molecules and have been designed for both similarity searching and structure-activity modeling.</s><s>In addition, we chose to use ESTATE <ref type="bibr" target="#b32">[35]</ref> fingerprints, to examine whether molecular fragments based on the electronic, topological and valence state indices of atom types can help in prediction of toxic activity.</s><s>In addition to fingerprints alone, we also tested the concatenation of fingerprints with 13 selected molecular descriptors characterising the molecule's topology and physicochemical properties (see "Methods" section and Supplementary Information).</s><s>The performance of all models was investigated in cross-validation and external validatio.</s><s>The best classifier for each target was selected based on the AUC values of the models generated.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Similarity search based predictions</head><p><s>In the first step, we implemented a similarity-weighted kNN search with three different 'k' parameters <ref type="bibr">(3, 5 and 7)</ref>.</s><s>It was noted that all three kNN approaches based on the MACCS fingerprint performed better than those based on ECFP4, ESTATE and ToxPrint fingerprints in cross-validation and external validation.</s><s>The AUC values achieved with the best performing fingerprint for each target are presented in Fig. <ref type="figure" target="#fig_1">2</ref> (cross-validation with error bars) and Fig. <ref type="figure">3</ref> (external validation) and those for all other fingerprints are available in the Supplementary Information (Additional file 1: Tables <ref type="table" target="#tab_3">S3, S4</ref>).</s><s>With all the kNN models for AhR and HSE, ESTATE and ToxPrint fingerprints performed similarly to MACCS fingerprints followed by ECFP4 with the least performance.</s><s>All models for ER-LBD showed the worst performance compared to the other two targets.</s></p><p><s>For AhR and ER-LBD, the 5NN approach performed better than the 3NN and 7NN approaches.</s><s>The 3NN method, however, achieved clearly better performance for HSE.</s><s>These observations were true for both cross-validation (Additional file 1: Table <ref type="table">S5</ref>) and external validation (Additional file 1: Table <ref type="table">S6</ref>) results.</s></p><p><s>Overall, the similarity-weighted kNN approaches showed target-dependent results with better performance on AhR (mean AUC = 0.81) and HSE (mean AUC = 0.8) compared to ER-LBD (mean AUC = 0.71) in both cross-validation and external validation.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Machine learning predictions</head><p><s>Three different models, a Naïve Bayes (NB), random forest (RF) and probabilistic neural network (PNN) classifier (see "Methods" section for details) were developed.</s><s>Additionally, we have tested support vector machine (SVM) models with both a linear and a polynomial kernel function.</s><s>However, the performance was not consistent across different targets and descriptors, and was therefore not considered further.</s><s>A small description as well as the results of SVM can be found in the Supplementary Information (Additional file 1: Tables <ref type="table">S7 and  S8</ref>).</s></p><p><s>In this study, almost all the classifiers reached prediction accuracies around 80 %.</s><s>Since the data set used in this study is highly imbalanced (Additional file 1: Tables <ref type="table" target="#tab_1">S1, S2</ref>), accuracy alone cannot reflect the performance of the models.</s><s>We have further evaluated the models based on the ROC AUCs that represent more accurately the performance of the models.</s><s>Based on our analysis using cross-validation and external validation, RF models perform best for all the three targets and PNN models show the least performance (Additional file 1: Tables <ref type="table" target="#tab_3">S3, S4</ref>).</s><s>A comparison of different molecular fingerprints and their combination with the molecular property based descriptors for different models on cross-validation sets as well as external validation set have been provided in the Supplementary Information (Additional file 1: Tables <ref type="table">S7, S8</ref>).</s></p><p><s>The RF based model for AhR showed a good performance with MACCS, ECFP4 and ToxPrint with an AUC value of above 0.88 on the cross-validation sets as well as the external validation set.</s><s>However, the MACCS fingerprint individually and combined with molecular property-based descriptors obtained the highest AUC value of 0.90 and 0.91 (cross-validation) and an AUC of 0.90 and 0.87 (external set) (Figs. <ref type="figure" target="#fig_1">2, 3</ref>).</s><s>The combination of descriptors did not improve the external set performance Fig. <ref type="figure">3</ref> External validation performance results of classifiers.</s><s>Plot representing the external validation results, in terms of AUC, for the three targets (AhR, ER-LBD and HSE) comparing different best performing models (3NN, 5NN, 7NN, RF, NB, PNN, Ensemble (5NN + RF)) with our previous work <ref type="bibr" target="#b25">[28]</ref> and Tox21 challenge winners for respective targets in this case.</s><s>Similarly, MACCS fingerprints scored highest with AUC values of 0.83 and 0.80 (cross-validation) and 0.81 and 0.86 (external set) for ER-LBD and HSE, respectively (Figs. <ref type="figure" target="#fig_1">2, 3</ref>).</s></p><p><s>Furthermore, the NB based model with MACCS fingerprints in combination with molecular property-based descriptors and ToxPrint fingerprints performed comparatively good for AhR with an AUC value of 0.84 and 0.82 respectively.</s><s>The performance for ER-LBD and HSE were relatively poor with an AUC value below 0.75 for both cross-validation sets and external set.</s><s>The PNN classifier performed better for AhR, with an AUC value above 0.80 for almost all the descriptor combinations (Additional file 1: Tables <ref type="table">S7, S8</ref>).</s><s>These results could be explained by the lack of a balanced dataset which could have a negative impact on the performance of PNN and NB based models.</s><s>On the other hand, it is observed that the RF algorithm performs well on imbalanced datasets.</s></p><p><s>To generalize, it is observed that MACCS fingerprints based on RF classifier, similarly to the similarity-weighted kNN approach, exhibit the best performance (Additional file 1: Tables <ref type="table" target="#tab_3">S3, S4</ref>).</s><s>An exception is the AhR assay, where in ToxPrint fingerprints performed equally well with an AUC value of 0.89 and 0.88 (Additional file 1: Tables <ref type="table">S7, S8</ref>) for the external dataset and cross-validation sets respectively, when compared to the method reported in our previous work <ref type="bibr" target="#b25">[28]</ref>.</s><s>Since the training set as well as the number of active molecules available for AhR was relatively large when compared to ER-LBD and HSE, it reflects that the size of the training set as well as the ratio between active and inactive molecules is one of the factors contributing to its better performance (Additional file 1: Tables <ref type="table" target="#tab_1">S1, S2</ref>).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Comparison and combination of similarity and machine learning methods</head><p><s>In comparison to similarity search approaches, the RF based machine-learning models performed better for all three targets in external validation (Fig. <ref type="figure">3</ref>).</s><s>However, both approaches performed equally well in cross-validation.</s><s>Assuming that the inferior performance of similarity-based approaches is due to the fact that the actives in the external set share little structural similarity with the actives in the training set, we combined our best performing similarity approach with the best performing RF model in order to improve the prediction.</s><s>For each of the three targets, the scores from the 5NN method and the RF model (5NN + RF), both based on MACCS fingerprints, were combined.</s><s>It was observed that the performance improved for ER-LBD with an AUC value of 0.83 in external validation (Fig. <ref type="figure">3</ref>) and 0.85 in cross-validation, using a minimum of the prediction scores from both models.</s><s>However, the RF model remained the best performer for the targets AhR and HSE as no additional improvement was observed with the 5NN + RF model.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Analysis of chemical space based on RF and NB based models</head><p><s>In the next step, we evaluated the patterns associated with active chemical structures by analysing the compounds, which were correctly and incorrectly predicted by respective models in case of ER-LBD for the external set (Tables <ref type="table" target="#tab_1">1, 2</ref>).</s><s>Since we achieved the best performance for ER-LBD using an ensemble method, it is of particular interest to investigate which chemical characteristics were correctly predicted by different methods and fingerprints (MACCS, ECFP4).</s></p><p><s>All the active chemical structures predicted by the RF model were also correctly predicted by the NB model as illustrated in Fig. <ref type="figure" target="#fig_2">4</ref>. Additionally, the NB model predicted five additional active compounds correctly whereas the PNN model failed to predict a single active compound.</s><s>Furthermore, most of the actives in the ER-LBD were correctly predicted by both MACCS and ECFP fingerprints if the functional groups (chloride, bromide, and alcohol) were present in the structures and were found in 'ortho' or 'meta' position of the ring.</s><s>On the other hand, the number of false positives in NB models was the highest with 80 incorrect predictions, followed by RF with 4. PNN based models predicted all the inactive structures correctly supporting the fact that the model is biased towards majority class coverage (Table <ref type="table" target="#tab_0">1</ref>).</s></p><p><s>Additionally, it was observed that the NB based model with both ECFP4 and MACCS fingerprints predicted the active compounds with higher prediction scores compared to RF models (Table <ref type="table" target="#tab_1">2</ref>).</s><s>It could be because RF fails to predict the active class when the molecules become more complex irrespective of the fingerprints considered (Fig. <ref type="figure" target="#fig_2">4</ref>).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Comparison with Tox21 challenge winners</head><p><s>Finally, we compared the prediction values of the best performing models for all the three targets with those from our previous work <ref type="bibr" target="#b25">[28]</ref> and the winning teams from the Tox21 data challenge <ref type="bibr" target="#b26">[29]</ref>.</s><s>Our best performing model, based on RF using MACCS fingerprints, showed slightly better performance than our previous work <ref type="bibr" target="#b25">[28]</ref> and performed equally well compared to the challenge winner team for each of the three targets.</s><s>Furthermore, our combined relatively simple model based on 5NN and RF using MACCS fingerprints showed, to a small degree, better performance than the Tox21 challenge winner for ER-LBD (Fig. <ref type="figure">3</ref>).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p><s>In the current study, we present a comprehensive comparison of different similarity-based and machine learning methods in predicting the interference of chemical compounds in two major groups of biological pathways, the nuclear receptor pathway and stress response pathway, using the Tox21 screening data.</s><s>The data, being generated in an uniform experimental setup, provided a gold standard for evaluating performance of different prediction methods.</s><s>We noticed that the similarity-weighted kNN methods did not perform equally well compared to other machinelearning models for all three targets investigated in this study.</s><s>A major limitation of the kNN approach implemented in this study, although being simple, is that the prediction score for every external set compound heavily depends on the number and diversity of structurally similar active and inactive molecules in the training set, which indirectly determines the number of active and inactive molecules within the k neighbours considered.</s><s>The degree of similarity also plays a key role in deciding which compounds rank among the top k neighbours.</s><s>The average similarity values (Tables <ref type="table" target="#tab_3">3, 4</ref>) of the training set molecules towards individual subsets of actives and inactives of the training set, using three different fingerprints, suggest that the evaluation set compounds are more similar to inactives rather than actives within the training set, explaining the inferior performance of these methods when used individually.</s><s>It is also widely acknowledged that the "similar-property principle" has exceptions (e.g.</s><s>activity cliffs) <ref type="bibr" target="#b33">[36,</ref><ref type="bibr" target="#b34">37]</ref>.</s><s>However, examining the chemical structures of the ER-LBD training set revealed that several compounds consistently have similar molecular frameworks, suggesting that similarity-based approaches play a key role in improving prediction rates, however fail to identify a rare event.</s><s>The two-dimensional structures of some active molecules containing similar core structures and inactive molecules that are structurally distinct from the former are shown in Fig. <ref type="figure" target="#fig_3">5</ref>.</s><s>This also explains the improvement in performance associated with the ensemble model.</s><s>Moreover, we observed that the RF model is the most accurate classifier producing the most precise results for all three targets.</s><s>The superior performance of RF models can be attributed to the tuning parameters chosen for individual targets as well as its ability to predict rare events.</s><s>On the other hand, the inferior performance of PNN models The values correspond to the prediction scores for a compound to be active Colour denotes different molecules illustrated in the Fig. <ref type="figure" target="#fig_2">4</ref> can be explained by its strong inclination towards the majority class (inactive) of the training dataset.</s><s>Analysing the prediction results revealed that PNN models were able to correctly predict all the negatives in the external validation with a prediction score higher than 0.9 but failed to correctly predict any of the true positives for any target.</s><s>NB models predicted the highest number of true positives, with prediction scores higher than 0.99, compared to other two methods but the true negative rate was low.</s><s>However, RF models incorrectly predicted only 4 negatives.</s><s>This   shows that RF models are able to identify the patterns important for the preferred class even when there is a large imbalance in the class distribution within training dataset.</s></p><p><s>It should be noted that the external validation set is also highly imbalanced (Additional file 1: Table <ref type="table" target="#tab_1">S2</ref>).</s><s>Additionally, it is observed that ToxPrint and Estate fingerprints do not show superior performance compared to standards MACCS and ECFP4 when used with different methods.</s><s>This could be due to the fact that compounds specific to the targets and assays as such do not have any associated toxicity related alert.</s><s>However, the presence of substructure patterns in compounds specific to their individual target is more important to predict their activity.</s><s>Therefore, MACCS fingerprint performed better and consistent with both machine learning and similarity-based approaches.</s><s>This further adds to the fact that toxicity prediction cannot always be encountered with global approaches such as identification of certain toxic alerts in a chemical compound.</s><s>Target specificity and local patterns limited to the chemical space used in the study play an important role to predict the activity of new compounds.</s><s>At the same time, selection of optimal descriptors, which could represent these patterns and an unbiased classifier that can learn the patterns is the essence of a predictive science.</s></p><p><s>Overall, we emphasize that a simple RF based classifier consistently demonstrated robust prediction for all three targets considered in this study.</s><s>The prediction accuracies achieved with our best performing machine-learning models were better for all the targets when compared to results based on the RF/ADTree classifier in a recent study performed on the same Tox21 dataset <ref type="bibr" target="#b35">[38]</ref>.</s><s>Furthermore, an ensemble approach that integrates a similarity-weighted kNN method with an RF based classifier boosted the performance in case of ER-LBD with an AUC value of 0.83, slightly better than the winning team of the Tox21 Data Challenge <ref type="bibr" target="#b24">[27]</ref>.</s><s>In general, an ensemble model can be effective when an incorrect prediction by one of the individual methods can be compensated by taking into account the prediction of other models <ref type="bibr" target="#b36">[39,</ref><ref type="bibr" target="#b37">40]</ref>.</s><s>It was also observed in our previous study <ref type="bibr" target="#b25">[28]</ref> that predictions obtained using an ensemble model that combines predictions from multiple methods improved the overall prediction.</s></p><p><s>Finally, the computational costs associated with the training of our best models were very low compared to the Tox21 challenge winning models based on deep learning techniques <ref type="bibr" target="#b38">[41]</ref>.</s><s>This further adds to the usability of our simple yet optimised methods.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusions</head><p><s>In this study, we emphasize the importance of in silico toxicology as a fast and reliable alternative to reduce the number of animal studies required for evaluation of toxic effects of the ever-increasing new chemical structures.</s><s>We evaluated different chemical similarity and machinelearning methods using four different types of structural fingerprints as well as molecular descriptors for their performance in predicting the activity of chemicals made available via the Tox21 Data Challenge 2014.</s><s>The challenge provided a platform for researchers from both academia and industry to evaluate and establish their toxicity/activity prediction models.</s></p><p><s>Our results suggest that a hybrid strategy that combines similarity-based and machine-learning based prediction models can improve the accuracies of prediction for one of the investigated targets.</s><s>However, in general, the machine-learning model based on the Random Forest classifier showed the most robust performance.</s><s>Furthermore, our prediction models were highly consistent with the best-ranked methods from the data challenge and performed better than all the top ten models for ER-LBD.</s></p><p><s>The findings of our study complement the theme of 3Rs, providing promising and time-saving alternatives to animal trials in evaluating different toxicological endpoints for newly synthesized chemical structures.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Compound datasets, fingerprints and molecular descriptors</head><p><s>The Tox21 10K library is a collection of environmental chemicals and approved drugs with potential to disrupt biological pathways resulting in toxic effects.</s><s>The chemical structures were directly downloaded from the Tox21 challenge website in structural data format (SDF).</s><s>The data has now been made freely available on PubChem by the challenge organizers.</s><s>The complete training sets consist of approximately 10,000 compounds (the total number of molecules varies for different targets) and an external validation set contains 647 chemical structures.</s><s>Both datasets were standardized using a pipeline explained in our previous work <ref type="bibr" target="#b25">[28]</ref>.</s><s>The steps involved in standardization are removal of water and salts, aromatization, neutralization of charges and addition of explicit hydrogens.</s><s>Four different types of fingerprints, namely 166-bit MACCS <ref type="bibr" target="#b27">[30]</ref>, ECFP4 <ref type="bibr" target="#b28">[31]</ref>, ESTATE <ref type="bibr" target="#b32">[35]</ref> and Tox-Print <ref type="bibr" target="#b29">[32]</ref><ref type="bibr" target="#b30">[33]</ref><ref type="bibr" target="#b31">[34]</ref>, and 13 molecular property-based descriptors using RDKit descriptors calculation node in KNIME (Additional file 1: Table <ref type="table">S9</ref>) were used in our methods.</s><s>While MACCS, ECFP4 and ESTATE fingerprints and descriptors were calculated using RDKit <ref type="bibr" target="#b39">[42]</ref> nodes in KNIME v.2.12.0 [43, 44], ToxPrint fingerprints were generated using the ChemoTyper software version 1.0 <ref type="bibr">[45]</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Similarity search</head><p><s>Three different similarity-weighted kNN searches were performed <ref type="bibr" target="#b40">[46]</ref> i.e., 3NN, 5NN and 7NN, employing all four types of fingerprints.</s><s>The Tanimoto coefficient (T) <ref type="bibr" target="#b41">[47]</ref> was calculated as the similarity measure.</s><s>In kNN calculations, each evaluation set compound is compared to all training set compounds and the top k compounds with highest T values were selected as the nearest neighbours (NNs).</s><s>The final score was calculated based on the types of the NNs (active or inactive), to arrive at the prediction score for each evaluation set compound.</s></p><p><s>In particular, if all NNs are either active or inactive, the score was calculated as score1 or score2, respectively.</s></p><p><s>where k is the total number of NNs.</s></p><p><s>Otherwise, the final score is calculated as follows:</s></p><formula xml:id="formula_0">score1 = k n=1 T n k , score2 = 1 − score1</formula><p><s>where k a is the number of active molecules (n) and k in is the number of inactive molecules (m) among the NNs.</s><s>All the kNN-based predictions, including the cross-validations, were implemented using existing KNIME nodes (Additional file 1: Figures <ref type="figure" target="#fig_1">S1, S2</ref>) and an additional Java program.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Machine learning</head><p><s>There are multiple algorithms, which have been used in the field of predictive modeling.</s><s>Nevertheless we attempted three most popular classification algorithms used in machine learning approaches; NB <ref type="bibr" target="#b42">[48]</ref>, RF <ref type="bibr" target="#b43">[49]</ref> and PNN <ref type="bibr" target="#b44">[50]</ref> as shown in Fig. <ref type="figure" target="#fig_0">1</ref>.</s><s>All three classifiers have been previously determined as efficient in terms of classification accuracies as well as computational time <ref type="bibr" target="#b45">[51]</ref><ref type="bibr" target="#b46">[52]</ref><ref type="bibr" target="#b47">[53]</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Naïve Bayes</head><p><s>The NB classifier is based on assumption of the Bayesian theorem of conditional probability, that is for a given target value, the description of each predictor is independent of the other predictions.</s><s>This method takes into account all descriptor-based properties for the final prediction <ref type="bibr" target="#b42">[48]</ref>.</s><s>This classifier was implemented using the existing NB Learner and Predictor nodes in KNIME (Additional file 1: Figure <ref type="figure">S3</ref>).</s><s>The maximum number of unique nominal values per attribute was set as 20.</s><s>The predictor node takes the NB model, test data as input, and as output classifies the test data with an individual prediction score and predicted class.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Random Forest</head><p><s>The Random Forest classification is based on decision trees, where each tree is independently constructed and each node is split using the best among the subset of predictors (i.e.</s><s>individual trees) randomly chosen at the node.</s><s>RF based model was implemented using the Tree Ensemble Learner and Predictor nodes in KNIME (Additional file 1: Figure <ref type="figure" target="#fig_2">S4</ref>), which is similar to the RF classifier <ref type="bibr" target="#b43">[49]</ref>.</s><s>The split criterion Gini is used, which has been proven to be a good choice as explained previously <ref type="bibr" target="#b43">[49]</ref> and gave the maximum predictive performance for AhR.</s><s>On the other hand, for ER-LBD and HSE information gain ratio was the optimal split criterion.</s><s>The number of models (trees) was limited to 1000 and a data sample of 0.8 for AhR and 0.7 for both ER-LBD and HSE was chosen with replacement for each tree; this is similar to bootstrapping.</s><s>Additionally, a square root function was used for attribute sampling and different sets of attributes</s></p><formula xml:id="formula_1">score3 = k a n=1 T n k a + 1 − k in m=1 T m k in</formula><p><s>were chosen for all the trees.</s><s>The Predictor node predicts the activity of the test data based on a majority vote in a tree ensemble model with an overall prediction score and individual prediction scores for each class.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Probabilistic neural network</head><p><s>A PNN is based on a statistical algorithm known as kernel discriminant analysis <ref type="bibr" target="#b48">[54]</ref>.</s><s>PNN operates via a multilayered feed forward network with four layers.</s><s>The input layer or the first layer consists of sets of measurements.</s></p><p><s>The pattern layer or the second layer consists of the Gaussian function which uses the given set of data points as centres.</s><s>The summation layer or the third layer performs an average operation of the outputs from the second layer for each class.</s><s>The output layer or the fourth layer predicts the class based on votes from largest value <ref type="bibr" target="#b44">[50,</ref><ref type="bibr" target="#b48">[54]</ref><ref type="bibr" target="#b49">[55]</ref><ref type="bibr" target="#b50">[56]</ref>.</s><s>PNN based model was implemented with the PNN learner and predictor nodes in KNIME (Additional file 1: Figure <ref type="figure" target="#fig_3">S5</ref>).</s><s>All the parameters were kept as default except the maximum number of Epochs was set to 42 to reduce the computational time complexity.</s><s>The learner node takes numerical data as input and via predictor node the test data is predicted with a score and class.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Construction of models</head><p><s>A 13-fold cross-validation was performed on the training dataset as described earlier <ref type="bibr" target="#b25">[28]</ref> to generate test sets with size similar to the external validation set provided by the Tox21 challenge organizers.</s><s>This independent set contained 647 chemical structures was used as a second validation set over which the performance (external AUC) of the trained models was evaluated.</s><s>Four kinds of molecular fingerprints and 13 selected physicochemical descriptors (see Additional file 1: Table <ref type="table">S9</ref>) were used to represent chemical structures.</s><s>It was observed that the Tox21 dataset is highly imbalanced with respect to active (minority) and inactive (majority) classes.</s><s>Detailed statistics on the number of active and inactive molecules for each target are provided in Additional file 1: Tables <ref type="table" target="#tab_1">S1 and S2</ref>.</s><s>Since it was not feasible to enrich the minority class with more compounds for any target, we employed stratified sampling technique during data partitioning to handle this imbalance.</s><s>Therefore, it was ensured that in each crossvalidation run, the ratio of number of active molecules to number of inactive molecules in the test set is similar to that in the training set.</s><s>Cross-validation <ref type="bibr" target="#b51">[57]</ref> was implemented using a meta-node in KNIME that divides training dataset via stratified sampling.</s><s>A schematic representation of the study methodology is presented in Fig. <ref type="figure" target="#fig_0">1</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Performance evaluation</head><p><s>A receiver operating characteristic (ROC) curve <ref type="bibr" target="#b52">[58]</ref><ref type="bibr" target="#b53">[59]</ref><ref type="bibr" target="#b54">[60]</ref>, that plots the true positive rate against the false positive rate, was generated to evaluate every model on both cross-validation and external validation test sets.</s><s>The AUC value was used as a measure to compare the performance of a model with that of other models.</s><s>The AUC values were calculated using ROC Curve node in KNIME.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1</head><label>1</label><figDesc><div><p><s>Fig. 1 Workflow of the methodology involved in the classification process.</s><s>Schematic representation of the methodology: data points, feature selection, model development (machine learning and similarity search methods) and validation, implemented in the study</s></p></div></figDesc><graphic coords="3,85.43,94.96,425.16,236.16" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2</head><label>2</label><figDesc><div><p><s>Fig.2Cross-validation performance results of classifiers.</s><s>Plot representing the 13-fold cross-validation results, in terms of AUC, for the three targets (AhR, ER-LBD and HSE) comparing different best performing models (3NN, 5NN, 7NN, RF, NB, and PNN)<ref type="bibr" target="#b25">[28]</ref></s></p></div></figDesc><graphic coords="4,62.75,94.96,470.52,205.92" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 4</head><label>4</label><figDesc><div><p><s>Fig. 4 Analysis of chemical space used by descriptors for classification of actives in external sets for ER-LBD target.</s><s>The above figure shows the different actives present in the external set of ER-LBD.</s><s>The compounds highlighted in pink (MACCS), green (ECFP4) are predicted by RF model and blue (ECFP4), red (MACCS) are predicted by NB models.</s><s>The respective prediction scores for each classifier are shown in Table 2</s></p></div></figDesc><graphic coords="7,62.75,94.96,470.52,390.36" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 5</head><label>5</label><figDesc><div><p><s>Fig. 5 Two-dimensional structures of actives and inactives in the training set for ER-LBD target.</s><s>A set of training set compounds which are active (1) and inactive (0) against ER-LBD</s></p></div></figDesc><graphic coords="8,62.75,94.96,470.52,168.36" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 Classification of actives and inactives in external set by different models for ER-LBD</head><label>1</label><figDesc></figDesc><table><row><cell>ER-LBD</cell><cell>True positives/actives (out of 20)</cell><cell>True negatives/inactives (out of 580)</cell><cell>Cross-validation AUC</cell><cell>External set AUC</cell></row><row><cell>NB with ECFP4</cell><cell>9</cell><cell>500</cell><cell>0.76</cell><cell>0.71</cell></row><row><cell>NB with MACCS</cell><cell>8</cell><cell>468</cell><cell>0.73</cell><cell>0.69</cell></row><row><cell>RF with ECFP4</cell><cell>2</cell><cell>574</cell><cell>0.82</cell><cell>0.78</cell></row><row><cell>RF with MACCS</cell><cell>4</cell><cell>576</cell><cell>0.83</cell><cell>0.81</cell></row><row><cell>PNN with ECFP4</cell><cell>0</cell><cell>580</cell><cell>0.77</cell><cell>0.69</cell></row><row><cell>PNN with MACCS</cell><cell>0</cell><cell>580</cell><cell>0.78</cell><cell>0.69</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 ER-LBD Active compounds correctly predicted in External set using RF and NB models using MACCS and ECFP4 fingerprints Prediction scores for activity (models + fingerprints)</head><label>2</label><figDesc></figDesc><table><row><cell></cell><cell>NB with</cell><cell>RF with</cell><cell>NB with</cell><cell>RF with ECFP4</cell></row><row><cell></cell><cell>MACCS</cell><cell>MACCS</cell><cell>ECFP4</cell><cell></cell></row><row><cell>NCGC00261424-01</cell><cell>0.99</cell><cell>0.58</cell><cell>1</cell><cell>0.57</cell></row><row><cell>NCGC00261052-01</cell><cell>0.57</cell><cell>0.07</cell><cell>0.02</cell><cell>0.12</cell></row><row><cell>NCGC00357055-01</cell><cell>0.95</cell><cell>0.01</cell><cell>0.01</cell><cell>0.06</cell></row><row><cell>NCGC00357018-01</cell><cell>0.99</cell><cell>0.94</cell><cell>1</cell><cell>0.94</cell></row><row><cell>NCGC00357052-01</cell><cell>0.99</cell><cell>0.04</cell><cell>0.99</cell><cell>0.16</cell></row><row><cell>NCGC00357021-01</cell><cell>0.99</cell><cell>0.68</cell><cell>0.99</cell><cell>0.31</cell></row><row><cell>NCGC00356994-01</cell><cell>0.99</cell><cell>0.52</cell><cell>0.99</cell><cell>0.36</cell></row><row><cell>NCGC00357111-01</cell><cell>0.99</cell><cell>0.06</cell><cell>1</cell><cell>0.15</cell></row><row><cell>NCGC00261828-01</cell><cell>0 .13</cell><cell>0 .05</cell><cell>1</cell><cell>0.20</cell></row><row><cell>NCGC00261342-01</cell><cell>0 .01</cell><cell>0 .02</cell><cell>0.99</cell><cell>0.08</cell></row><row><cell>NCGC00357230-01</cell><cell>0 .04</cell><cell>0 .05</cell><cell>0.98</cell><cell>0.02</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 3 Average similarity values of external set mol- ecules towards active and inactive subsets of training set for ER-LBD</head><label>3</label><figDesc></figDesc><table><row><cell>Fingerprint</cell><cell>Average T against</cell><cell>Average T</cell></row><row><cell></cell><cell>actives</cell><cell>against inactives</cell></row><row><cell>MACCS</cell><cell>0.59</cell><cell>0.82</cell></row><row><cell>ECFP4</cell><cell>0.29</cell><cell>0.56</cell></row><row><cell>ESTATE</cell><cell>0.7</cell><cell>0.91</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 4 Average similarity values of external set mol- ecules (only actives) towards active and inactive subsets of training set for ER-LBD</head><label>4</label><figDesc></figDesc><table><row><cell>Fingerprint</cell><cell>Average T against</cell><cell>Average T</cell></row><row><cell></cell><cell>actives</cell><cell>against inactives</cell></row><row><cell>MACCS</cell><cell>0.71</cell><cell>0.79</cell></row><row><cell>ECFP4</cell><cell>0.41</cell><cell>0.5</cell></row><row><cell>ESTATE</cell><cell>0.78</cell><cell>0.94</cell></row></table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgements</head></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abbreviations</head><p><s>AhR: aryl hydrocarbon receptor; AUC: area under the curve; ER-LBD: estrogen receptor ligand binding domain; HSE: heat-shock element; NB: Naїve Bayes classifier; NN: nearest neighbor; PNN: probabilistic neural network; QSAR: quantitative structure-activity relationship; RF: random forest; ROC: receiver operating characteristic; T: Tanimoto coefficient; Tox21: toxicology in the 21st century.</s></p><p><s>Authors' contributions PB, VBS, MND and RP conceived the study.</s><s>PB and VBS designed the study.</s><s>PB: Machine learning methods.</s><s>VBS: Similarity-based methods.</s><s>VBS and PB: Writing of manuscript.MND, VBS, PB: Proofreading of manuscript.</s><s>MND and RP: Project coordination.</s><s>All authors read and approved the final manuscript.</s></p><p><s>Author details 1 Structural Bioinformatics Group, Institute for Physiology, Charité -University Medicine Berlin, Berlin, Germany. 2 Structural Bioinformatics Group, Experimental and Clinical Research Center (ECRC), Charité -University Medicine Berlin, Berlin, Germany. 3 Graduate School of Computational Systems Biology, Humboldt University of Berlin, Berlin, Germany. 4 BB3R -Berlin Brandenburg 3R Graduate School, Free University of Berlin, Berlin, Germany. 5</s><s>Present Address: Laboratoire d'innovation thérapeutique, Université de Strasbourg, Illkirch, France.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Competing interests</head><p><s>The authors declare that they have no competing interests.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Additional file</head><p><s>Additional file 1.</s><s>Additional information on the data set and performance of different models and descriptors used in the study.</s><s>This file contains information on the distribution of training set and external set molecules among active and inactive classes, cross-validation and external validation results for all the models implemented in this study and description of molecular property based descriptors used in this study.</s><s>The file also contains the methodology and results of SVM approach.</s></p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Keynote review: is declining innovation in the pharmaceutical industry a myth?</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">F</forename><surname>Schmid</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">A</forename><surname>Smith</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Drug Discov Today</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page" from="1031" to="1039" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">How were new medicines discovered?</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">C</forename><surname>Swinney</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Anthony</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Rev Drug Discov</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page" from="507" to="519" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Predictive toxicology approaches for small molecule oncology drugs</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Maziasz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">J</forename><surname>Kadambi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Silverman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Fedyk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">L</forename><surname>Alden</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Toxicol Pathol</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="148" to="164" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Xing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Peng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Xiong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Zheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Jiang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">silico ADME/T modelling for rational drug design</title>
+				<imprint>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="volume">48</biblScope>
+			<biblScope unit="page" from="488" to="515" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">In silico toxicology in drug discoveryconcepts based on three-dimensional models</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Vedani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Smiesko</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Altern Lab Anim ATLA</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="page" from="477" to="496" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m">Lipophilicity in drug action and toxicology</title>
+				<editor>
+			<persName><forename type="first">V</forename><surname>Pliska</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">B</forename><surname>Testa</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">H</forename><surname>Van De Waterbeemd</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Weinheim</addrLine></address></meeting>
+		<imprint>
+			<publisher>VCH Publishers</publisher>
+			<date type="published" when="1996">1996</date>
+			<biblScope unit="volume">134</biblScope>
+			<biblScope unit="page" from="49" to="71" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Aqueous two-phase partitioning. Physical chemistry and bioanalytical applications</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">A</forename><surname>Giuliano</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">FEBS Lett</title>
+		<imprint>
+			<biblScope unit="volume">98</biblScope>
+			<biblScope unit="page" from="98" to="102" />
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Quantitative structure-activity relationships. 2. A mixed approach, based on Hansch and free-Wilson analysis</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Kubinyi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Med Chem</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="page" from="587" to="600" />
+			<date type="published" when="1976">1976</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">The expanding role of quantitative structure-activity relationships (QSAR) in toxicology</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Hansch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Hoekman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Leo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Toxicol Lett</title>
+		<imprint>
+			<biblScope unit="volume">79</biblScope>
+			<biblScope unit="page" from="45" to="53" />
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Handbook of molecular descriptors</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Todeschini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Consonni</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2000">2000</date>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page">688</biblScope>
+			<pubPlace>New York</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Handbook of property estimation methods for chemicals, environmental and health sciences</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sheppard</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2001">2001</date>
+			<publisher>Lewis Publishers/CRC Press LLC</publisher>
+			<biblScope unit="volume">30</biblScope>
+			<pubPlace>Boca Raton, Florida</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Computational techniques for the prediction of toxicity</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Livingstone</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Toxicol Vitro</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="873" to="877" />
+			<date type="published" when="1994">1994</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">™</forename><surname>Admet Predictor</surname></persName>
+		</author>
+		<ptr target="http://www.simulations-plus.com/" />
+		<imprint>
+			<publisher>Simulations Plus, Inc., USA</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Prediction (Advanced Chemistry Development</title>
+		<author>
+			<persName><surname>Adme-Tox</surname></persName>
+		</author>
+		<ptr target="http://www.acdlabs.com/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<ptr target="http://www2.epa.gov/chemical-research/toxicity-estimation-software-tool-test" />
+		<title level="m">Toxicity Estimation Software Tools</title>
+				<imprint/>
+		<respStmt>
+			<orgName>DEREK (Lhasa Limited ; U.S. Environmental Protection Agency</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Machine learning methods in chemoinformatics</title>
+		<author>
+			<persName><forename type="first">Jbo</forename><surname>Mitchell</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Wiley Interdiscip Rev Comput Mol Sci</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page" from="468" to="481" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">Novel machine learning methods for computational chemistry</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Hansen</surname></persName>
+		</author>
+		<ptr target="https://deposi-tonce.tu-berlin.de/bitstream/11303/3606/1/Dokument_30.pdf" />
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<pubPlace>Berlin</pubPlace>
+		</imprint>
+		<respStmt>
+			<orgName>Technical University of Berlin</orgName>
+		</respStmt>
+	</monogr>
+	<note type="report_type">PhD thesis</note>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Machine-learning approaches in drug discovery: methods and applications</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Lavecchia</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Drug Discov Today</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="page" from="318" to="331" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">A comparison of machine learning algorithms for chemical toxicity classification using a simulated multi-scale data model</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Judson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Elloumi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">W</forename><surname>Setzer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Shah</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Bioinform</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page">241</biblScope>
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Evaluation of different machine learning methods for ligand-based virtual screening</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Kurczab</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Smusz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bojarski</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Cheminform</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">P41</biblScope>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+	<note>Suppl</note>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Feature combination networks for the interpretation of statistical machine learning models: application to Ames mutagenicity</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Webb</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hanser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Howlin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Krause</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Vessey</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Cheminform</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Machine learning in virtual screening</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Melville</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">K</forename><surname>Burke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Hirst</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Comb Chem High Throughput Screen</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="332" to="343" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Machine learning methods for property prediction in chemoinformatics: Quo Vadis?</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Varnek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Baskin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Chem Inf Model</title>
+		<imprint>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="page" from="1413" to="1437" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Toxicity testing in the 21st century: a vision and a strategy</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Krewski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Acosta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Andersen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Anderson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Bailar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Boekelheide</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Brent</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Charnley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">G</forename><surname>Cheung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Green</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">T</forename><surname>Kelsey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">I</forename><surname>Kerkvliet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">A</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Mccray</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Meyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">D</forename><surname>Patterson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pennie</forename><forename type="middle">W</forename><surname>Scala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Solomon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">M</forename><surname>Stephens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Yager</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Zeise</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Toxicol Environ Health B</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="page" from="51" to="138" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Tox21 challenge to build predictive models of nuclear receptor and stress response pathways as mediated by exposure to environmental chemicals and drugs</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Xia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Nguyen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sakamuru</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Front Environ Sci</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="1" to="9" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Molecular similarity-based predictions of the Tox21 screening outcome</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">N</forename><surname>Drwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">B</forename><surname>Siramshetty</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Banerjee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Goede</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Preissner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Dunkel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Front Environ Sci</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="1" to="9" />
+			<date type="published" when="2015-07">2015. July</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title level="m" type="main">Tox21 Data Challenge</title>
+		<ptr target="https://tripod.nih.gov/tox21/challenge/lead-erboard.jsp" />
+		<imprint>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<monogr>
+		<ptr target="http://accelrys.com/" />
+		<title level="m">MACCS Structural keys; Accelrys</title>
+				<meeting><address><addrLine>San Diego, CA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Extended-connectivity fingerprints</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Rogers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hahn</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Chem Inf Model</title>
+		<imprint>
+			<biblScope unit="volume">50</biblScope>
+			<biblScope unit="page" from="742" to="754" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<title/>
+		<author>
+			<persName><surname>Toxprint</surname></persName>
+		</author>
+		<ptr target="https://toxprint.org/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Chemical structure, Salmonella mutagenicity and extent of carcinogenicity as indicators of genotoxic carcinogenesis among 222 chemicals tested in rodents by the U.S. NCI/NTP</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ashby</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">W</forename><surname>Tennant</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Mutat Res</title>
+		<imprint>
+			<biblScope unit="volume">204</biblScope>
+			<biblScope unit="page" from="17" to="115" />
+			<date type="published" when="1988">1988</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">European branch of the International Life Sciences Institute: structure-based thresholds of toxicological concern (TTC): guidance for application to substances present at low levels in the diet</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Kroes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Renwick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Cheeseman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kleiner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Mangelsdorf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Piersma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Schilter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Schlatter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Van Schothorst</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">G</forename><surname>Vos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Würtzen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Food Chem Toxicol</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="page" from="65" to="83" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Electrotopological state indices for atom types: a novel combination of electronic, topological, and valence state information</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">H</forename><surname>Hall</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">B</forename><surname>Kier</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Chem Inf Model</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page" from="1039" to="1045" />
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">A characterization of molecular similarity methods for property prediction</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Basak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Maggiora</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Math Comput Model</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page" from="630" to="634" />
+			<date type="published" when="1988">1988</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Molecular similarity in medicinal chemistry</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Maggiora</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Vogt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Stumpfe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Bajorath</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Med Chem</title>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="page" from="3186" to="3204" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Prediction of compounds activity in nuclear receptor signaling and stress pathway assays using machine learning algorithms and low-dimensional molecular descriptors</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Stefaniak</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Front Environ Sci</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="1" to="7" />
+			<date type="published" when="2015-12">2015. December</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">BRAINSTORMING: consensus learning in practice</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Plewczynski</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Front Neuroinform</title>
+		<imprint>
+			<biblScope unit="volume">679</biblScope>
+			<biblScope unit="page">14</biblScope>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Predicting hepatotoxicity using ToxCast in vitro bioactivity and chemical structure</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Mansouri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">S</forename><surname>Judson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">T</forename><surname>Martin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">S</forename><surname>Thomas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Shah</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chem Res Toxicol</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="page" from="738" to="751" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">DeepTox: toxicity prediction using deep learning</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mayr</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Klambauer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Unterthiner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hochreiter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Front Environ Sci</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">80</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">KNIME: the Konstanz information miner</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">R</forename><surname>Berthold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Cebron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Dill</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">R</forename><surname>Gabriel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Kötter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Meinl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Ohl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Sieb</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Kilian</forename><surname>Thiel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">W</forename></persName>
+		</author>
+		<ptr target="https://www.molecular-networks.com/" />
+	</analytic>
+	<monogr>
+		<title level="m">RDKit: Open-Source Cheminformatics Software</title>
+				<meeting><address><addrLine>Berlin</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2008">2008</date>
+			<biblScope unit="page">44</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Comparison of fingerprint-based methods for virtual screening using multiple bioactive reference structures</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Willett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Wilton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Acklin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Azzaoui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Jacoby</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Schuffenhauer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Chem Inf Comput Sci</title>
+		<imprint>
+			<biblScope unit="volume">44</biblScope>
+			<biblScope unit="page" from="1177" to="1185" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Similarity-based approaches to virtual screening</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Willett</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biochem Soc Trans</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="page" from="603" to="606" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+	<note>Pt 3</note>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<author>
+			<persName><forename type="first">R</forename><surname>Schapire</surname></persName>
+		</author>
+		<ptr target="http://www.cs.princeton.edu/~schapire/talks/picasso-minicourse.pdf" />
+		<title level="m">Machine learning algorithms for classification</title>
+				<imprint>
+			<date type="published" when="2015-11">Nov 2015</date>
+			<biblScope unit="volume">1</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Random Forests</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Breiman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Mach Learn</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="page" from="5" to="32" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Probabilistic neural networks</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">F</forename><surname>Specht</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neural Netw</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="109" to="118" />
+			<date type="published" when="1990">1990</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Open source Bayesian models. 1. Application to ADME/Tox and drug discovery datasets</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Clark</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Dole</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Coulon-Spektor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mcnutt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Grass</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Freundlich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">C</forename><surname>Reynolds</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ekins</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Chem Inf Model</title>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="page" from="1231" to="1245" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Data mining and machine learning techniques for the identification of mutagenicity inducing substructures and structure activity relationships of noncongeneric compounds</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Helma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Cramer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kramer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">De</forename><surname>Raedt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Chem Inf Comput Sci</title>
+		<imprint>
+			<biblScope unit="volume">44</biblScope>
+			<biblScope unit="page" from="1402" to="1411" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">In silico prediction of chemical toxicity on avian species using chemical category approaches</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Zhuang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">W</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chemosphere</title>
+		<imprint>
+			<biblScope unit="volume">122</biblScope>
+			<biblScope unit="page" from="280" to="287" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Constructive training of probabilistic neural networks</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">R</forename><surname>Berthold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Diamond</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neurocomputing</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="page" from="167" to="183" />
+			<date type="published" when="1998">1998</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<title level="m" type="main">An introduction to probabilistic neural networks</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Cheung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Cannons</surname></persName>
+		</author>
+		<ptr target="http://www.wi.hs-wismar.de/~cleve/vorl/projects/dm/ss13/PNN/Quellen/CheungCannons_AnIntroductiontoPNNs.pdf.Accessed" />
+		<imprint>
+			<date type="published" when="2015-11">Nov 2015</date>
+			<biblScope unit="volume">15</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<monogr>
+		<title level="m">Probabilistic neural network (PNN)</title>
+				<imprint>
+			<biblScope unit="page" from="1" to="9" />
+		</imprint>
+		<respStmt>
+			<orgName>The University of Reading Website</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Cross-validation methods</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Browne</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Math Psychol</title>
+		<imprint>
+			<biblScope unit="volume">44</biblScope>
+			<biblScope unit="page" from="108" to="132" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Receiver operating characteristic (ROC) analysis: basic principles and applications in radiology</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">R</forename><surname>Van Erkel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">M</forename><surname>Pattynama</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Eur J Radiol</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="page" from="88" to="94" />
+			<date type="published" when="1998">1998</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Receiver operating characteristic methodology</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">S</forename><surname>Pepe</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Am Stat Assoc</title>
+		<imprint>
+			<biblScope unit="volume">95</biblScope>
+			<biblScope unit="page" from="308" to="311" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Statistics review 13: receiver operating characteristic curves</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Bewick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Cheek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ball</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Crit Care</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="508" to="512" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

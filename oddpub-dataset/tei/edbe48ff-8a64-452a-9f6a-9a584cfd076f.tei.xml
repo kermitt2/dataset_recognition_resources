@@ -1,0 +1,1858 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Inferring symmetric and asymmetric interactions between animals and groups from positional data</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018-12-12">December 12, 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Edward</forename><surname>Hollingdale</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="institution">University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Francisco</forename><forename type="middle">Javier</forename><surname>Pe ´rez-Barberı</surname></persName>
+							<idno type="ORCID">0000-0001-7513-5418</idno>
+							<affiliation key="aff0">
+								<orgName type="institution">University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">David</forename><surname>2☯</surname></persName>
+							<idno type="ORCID">0000-0001-7513-5418</idno>
+							<affiliation key="aff0">
+								<orgName type="institution">University</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Walker</forename><surname>Mcpetrie</surname></persName>
+							<idno type="ORCID">0000-0001-9322-6743</idno>
+							<affiliation key="aff0">
+								<orgName type="institution">University</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Inferring symmetric and asymmetric interactions between animals and groups from positional data</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018-12-12">December 12, 2018</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">2E7C521860CD84BA62CD70D06ADCBBA1</idno>
+					<idno type="DOI">10.1371/journal.pone.0208202</idno>
+					<note type="submission">Received: July 27, 2018 Accepted: November 13, 2018</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:27+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Interactions between domestic and wild species has become a global problem of growing interest.</s><s>Global Position Systems (GPS) allow collection of vast records of time series of animal spatial movement, but there is need for developing analytical methods to efficiently use this information to unravel species interactions.</s><s>This study assesses different methods to infer interactions and their symmetry between individual animals, social groups or species.</s><s>We used two data sets, (i) a simulated one of the movement of two grazing species under different interaction scenarios by-species and by-individual, and (ii) a real time series of GPS data on the movements of sheep and deer grazing a large moorland plot.</s><s>Different time series transformations were applied to capture the behaviour of the data (convex hull area, k th nearest neighbour distance, distance to centre of mass, Voronoi tessellation area, distance to past position) to assess their efficiency in inferring the interactions using different techniques (cross correlation, Granger causality, network properties).</s><s>The results indicate that the methods are more efficient assessing by-group interaction than by-individual interaction, and different transformations produce different outputs of the nature of the interaction.</s><s>Both species maintained a consistent by-species grouping structure.</s><s>The results do not provide clear evidence of inter-species interaction based on the traditional framework of niche partitioning in the guild of large herbivores.</s><s>In view of the transformation-dependent results, it seems that in our experimental framework both species co-exist showing complex interactions.</s><s>We provide guidelines for the use of the different transformations with respect to study aims and data quality.</s><s>The study attempts to provide behavioural ecologists with tools to infer animal interactions and their symmetry based on positional data recorded by visual observation, conventional telemetry or GPS technology.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p><s>Assessing animal interactions in species assemblages is key for the understanding of competition and facilitation processes <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b1">2]</ref>, species conservation <ref type="bibr" target="#b2">[3]</ref>, habitat use <ref type="bibr" target="#b3">[4]</ref><ref type="bibr" target="#b4">[5]</ref><ref type="bibr" target="#b5">[6]</ref>, group-living decision-making mechanisms <ref type="bibr" target="#b6">[7,</ref><ref type="bibr" target="#b7">8]</ref>, energy expenditure <ref type="bibr" target="#b8">[9]</ref> and spread of zoonotic diseases <ref type="bibr" target="#b9">[10,</ref><ref type="bibr" target="#b10">11]</ref>.</s><s>The booming economies of developing countries have increased pressure for space in natural areas, while in developed countries rural abandonment is causing an increase in numbers of some wild species.</s><s>As a result, interactions between domestic and wild species has become a global problem of growing interest <ref type="bibr" target="#b2">[3,</ref><ref type="bibr" target="#b11">12]</ref>.</s><s>This is especially important in ungulate species, as they are paramount in human development, the economy, conservation of ecosystems and climate change <ref type="bibr" target="#b12">[13,</ref><ref type="bibr" target="#b13">14]</ref>.</s></p><p><s>The affordability and precision of Global Position Systems (GPS) have made possible to record the spatial movement of a variety of terrestrial and marine taxa <ref type="bibr" target="#b14">[15]</ref>.</s><s>Despite the large development on GPS technology and integrated behavioural and environmental recording sensors <ref type="bibr" target="#b14">[15]</ref>, there is need for developing analytical protocols to efficiently use this type of information to unravel intra-and inter-species interactions <ref type="bibr" target="#b15">[16,</ref><ref type="bibr" target="#b16">17]</ref>.</s></p><p><s>Extracting animal interaction from time series of animal movement is inherently complicated because of (i) the large number of potential interactions when many animals are under study, (ii) the vast number of spatial records when using GPS data of marked animals, (iii) the arbitrary choice of defining an interaction based on positional data, (iv) the problem of establishing the symmetry of the interaction, (v) the assessment of whether the interaction takes place at individual, social or taxonomic level, and (vi) the almost inevitable presence of missing records within positional data time series.</s><s>A number of methods have been used in the animal behaviour literature to deal with some of these issues, but there are not well-established protocols for accounting for all.</s><s>Methods which can be used to establish animal interactions include those based on the area (range) an animal uses over a fixed period of time <ref type="bibr" target="#b17">[18,</ref><ref type="bibr" target="#b18">19]</ref>; a second approach is based on spatial proximity, such as metric or topological distance, to other animals <ref type="bibr" target="#b16">[17,</ref><ref type="bibr" target="#b19">20]</ref>.</s><s>Based on the size or overlap of the animal range in comparison with those of others, or the proximity to other animals, interaction between two animals, social units or species can be established across time by fixing arbitrary thresholds of interaction <ref type="bibr" target="#b16">[17]</ref>.</s><s>The construction of scalar time series to infer interactions can be undertaken by either using data <ref type="bibr" target="#b18">[19,</ref><ref type="bibr" target="#b20">21]</ref> or functions, such as black box radial basis, which can then be fitted to data <ref type="bibr" target="#b1">[2,</ref><ref type="bibr" target="#b8">9,</ref><ref type="bibr" target="#b21">[22]</ref><ref type="bibr" target="#b22">[23]</ref><ref type="bibr" target="#b23">[24]</ref><ref type="bibr" target="#b24">[25]</ref>.</s></p><p><s>In order to infer from spatial movement processes of competition and/or facilitation it is crucial to assess the direction or symmetry of the interaction, that is, does A drive B, or B drive A? (an asymmetric interaction); or rather movement of A and B are symmetrically coupled.</s><s>There have been attempts of inferring the symmetry of the interactions between grazing species (sheep and deer) but with inconclusive results <ref type="bibr" target="#b1">[2,</ref><ref type="bibr" target="#b8">9,</ref><ref type="bibr" target="#b18">19]</ref>.</s><s>The direction of the interaction can be assessed by testing for causality.</s><s>Many approaches exist to examine possibly causal relationships between two time series.</s><s>Among these are cross-correlation and Granger causality <ref type="bibr" target="#b25">[26]</ref>, which have been used to analyze dependence between factors in a variety of fields, such as finance, econometrics <ref type="bibr" target="#b26">[27]</ref><ref type="bibr" target="#b27">[28]</ref><ref type="bibr" target="#b28">[29]</ref>, neuroscience <ref type="bibr" target="#b29">[30]</ref> and parasitology <ref type="bibr" target="#b10">[11]</ref>.</s></p><p><s>Cross-correlation is a measure of similarity of two time series as a function of the displacement of one over the other.</s><s>It is not a measure of causality but strong correlation is suggestive of a possible causal relationship between time series to be investigated further such as with Granger causality.</s><s>Granger causality is determined by testing whether one variable can be better predicted when including information from another <ref type="bibr" target="#b25">[26,</ref><ref type="bibr" target="#b30">31]</ref>.</s><s>Inherent to this approach is the assumption that a variable can be predicted using information of past values of the same variable.</s><s>Defining interaction causality across pairs of animals does not solve the problem of unravelling the complexity of multiple interactions.</s><s>Network theory is well-suited for summarizing complex relationships between subjects <ref type="bibr" target="#b31">[32]</ref>.</s><s>Indeed, if the causality structure is clear then one can consruct causality trees as is done in <ref type="bibr" target="#b32">[33]</ref> for sequences of mobile phone calls.</s><s>Complex interactions can be represented as a network in which vertices are subjects (animals, social units, species, etc.) connected by edges that represent interaction and direction.</s><s>Network theory has been successfully used to model animal aggregation and swarming behavior based on time series of positional data.</s><s>For example, in studies to understand the drivers and dynamics of murmurations and flocking of pigeons and starlings <ref type="bibr" target="#b19">[20,</ref><ref type="bibr" target="#b33">34,</ref><ref type="bibr" target="#b34">35]</ref>, schools of fish <ref type="bibr" target="#b22">[23,</ref><ref type="bibr" target="#b35">36]</ref>, collective decisions in intermittent flocking, sexual segregation in sheep <ref type="bibr" target="#b18">[19,</ref><ref type="bibr" target="#b20">21]</ref>, and sheep and deer interaction during grazing <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b8">9]</ref>.</s></p><p><s>Furthermore, scalar time series to infer species interactions have also been constructed using binary behavioural data, such as grazing activity budgets (resting vs. grazing) to unravel intra-species sexual synchronicity as a potential explanation for spatial and social segregation <ref type="bibr" target="#b15">[16,</ref><ref type="bibr" target="#b18">19,</ref><ref type="bibr" target="#b36">37]</ref>.</s></p><p><s>The aims of this study is to assess the efficiency of different methods to infer interactions and their symmetry between individual animals, social groups or species.</s><s>To further aid interpretation of how meaningful any uncovered evidence of interaction is, we first test the methods on simulated positional data extracted from artificial models of animal movement patterns, then we apply the methods to real GPS datasets of the spatial positions of grazing sheep and deer in a moorland area.</s><s>The study attempts to provide behavioural ecologists with tools to infer animal interactions and their symmetry based on positional data recorded by visual observation, conventional telemetry or GPS technology.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Materials and methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Animal data</head><p><s>We used information of the spatial positions of 8-23 Scottish blackface ewes (Ovis aries) and 7-18 red deer hinds (Cervus elaphus scoticus) (Table <ref type="table" target="#tab_0">1</ref>) fitted with GPS collars of the study <ref type="bibr" target="#b8">[9]</ref>.</s><s>The experiments were carried out between August (2006) and December (2008) in North East Scotland in a stock-proof fenced plot of 1.04 km 2 located in a moorland area, dominated by a mosaic of heather-grass vegetation.</s><s>These animals were part of a group of 20 red deer adult hinds and 60 ewes that freely grazed the plot under no human disturbance.</s></p><p><s>GPS collars weighed 330 g, which was between 0.4% and 0.7% of the winter average body mass of the hinds and sheep, respectively (0.5% and 0.9% of the lightest hind and sheep), a negligible extra load to the animals.</s><s>Animals were gathered every 6 months to download the information from the GPS collars, change the collars' batteries, and at this time both deer and sheep received the standard preventative veterinary treatments used on the farm.</s><s>On a regular basis, observations from a distance were carried out to assess the welfare of the animals and no apparent discomfort due to GPS collars fitting was observed in the animals, which was confirmed by close inspection of the neck around the collars every time that GPS units' batteries were changed.</s><s>After the experiment the collars were removed and the animals inspected by a veterinary surgeon before being returned to the main herd/flock.</s><s>The study did not involve endangered or protected species, and GPS collar deployment on sheep or farmed red deer is not a regulated procedure under the revised Animals (Scientific Procedures) Act 1986 (See, https://protect-eu.mimecast.com/s/GYVbCk59DIAymBI2QAnR?domain=gov.uk.) that came into force on 1 January 2013 and that complies with European Directive 2010/63/EU on the protection of animals used for scientific purposes.</s><s>Furthermore, the experiment was reviewed by the Animal Welfare and Ethical Review Body (AWERB) of the scientific establishment.</s><s>Time acquisition interval of positional fixes was 1 h, on the hour, and 95% of the fixes were within a 14 m radius of their actual position <ref type="bibr" target="#b8">[9]</ref>.</s><s>We selected eight time segments of length between 668 h and 2732 h (Table <ref type="table" target="#tab_0">1</ref>), in which there were almost continuous hourly fixes for sheep and deer, and occurrences of missing values (&lt;2%) were linearly interpolated.</s><s>We tested the robustness of this interpolation approach by selecting a contiguous sequence of observations with no missing data and randomly removed an observation.</s><s>We then interpolated the value of this missing observation and compared how the time series transformations (see below) were affected.</s><s>We found that linear interpolation compared to higher-order interpolation methods produced, on average, the smallest differences between the full data transformation and the interpolated transformation.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Analytical design</head><p><s>We proceeded by (i) creating testing data of simulated spatial positions of sheep and deer using modified versions of <ref type="bibr" target="#b21">[22]</ref> and <ref type="bibr" target="#b22">[23]</ref> models on self-driven particles; (ii) transforming the testing animal position data into scalar time series of intra-and inter-species interactions using different methods from the literature (convex hull area CHA, mean k th nearest neighbour distance MDNN, mean distance to centre of mass MDCM, distance to centre of mass DCM, Voronoi tessellation area VTA); (iii) testing inter-species (inter-groups) interactions by computing the cross-correlation between the transformed scalar time series and also testing for Granger causality (1969); (iv) at an individual level significant interactions between subjects were conveniently represented by a complex network whose network properties (degree, geodesic path length) helped to summarize and infer animal interactions; results obtained in (iii) followed by (iv) aided selection of the methods in (ii) that best reflected the simulated interactions; and finally (v) applying points (ii), (iii) and (iv) to our experimental data on sheep and deer movements (Fig 1, Table <ref type="table">2</ref>).</s><s>By transforming the positional data to scalar time series the complexity of the data was reduced, making analysis possible, while the information to understand and extract meaningful interaction was maintained.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Simulation</head><p><s>The model created for the purposes of generating testing data is an adaptation of the <ref type="bibr" target="#b22">[23]</ref> model, which is itself a variation of the <ref type="bibr" target="#b21">[22]</ref> model (hereafter Couzin model and Vicsek model).</s><s>The core principle of the Vicsek model is that particles (representing animals) move with a constant velocity and align the direction of their motion with the direction of the particles around them.</s><s>The Couzin model extends this by creating three different zones of: repulsion; orientation; and attraction, illustrated in Fig 2 <ref type="figure">.</ref></s><s>We simplified simulation to a twodimensional version outlined as follows: an individual animal i moves with velocity of a constant magnitude v, and its position at time t+ 1 is given by:</s></p><formula xml:id="formula_0">x i ðt þ 1Þ ¼ x i ðtÞ þ v cos y i ðtÞ sin y i ðtÞ ! ;<label>ð1Þ</label></formula><p><s>where θ i is the direction of movement.</s><s>Individual animals attempt to maintain a minimum distance r r from others (repulsion zone).</s><s>If the number of animals within r r of animal i, n r is greater than 0, then i will move in a direction opposite to the mean direction of those individuals relative to i.</s><s>If n r = 0 (no neighbours are within the repulsion zone) then the individual observes the positions and directions of movement of the animals around it and moves according to these.</s><s>If animals are within the orientation zone (distance &gt; r r and � r o ) then the individual will match its direction to the mean direction of those neighbours.</s><s>If an individual animal j has direction θ j then the direction of animal i will be:</s></p><formula xml:id="formula_1">y o ðt þ 1Þ ¼ tan À 1 P j sin y j P j cos y j ! for all j where r r &lt; kx i À x j k � r o :<label>ð2Þ</label></formula><p><s>If animals are within the attraction zone (distance � r a and &gt; r o ) then the direction of animal i will be the mean direction of those animals relative to animal i.</s><s>If each animal j in the zone of attraction has a direction β j from animal i then:</s></p><formula xml:id="formula_2">y a ðt þ 1Þ ¼ tan À 1 P j sin b j P j cos b j ! for all j where r o &lt; kx i À x i k � r a :<label>ð3Þ</label></formula><p><s>If n r = 0 and both n o and n a (the number of neighbours in the zone of orientation and the zone of attraction, respectively) are greater than zero then the animal i moves in the mean direction of θ o and θ a .</s></p><p><s>If an individual animal has no neighbours in any zone (distance to neighbours � r a ) then they continue in the same direction, that is θ i (t + 1) = θ i (t).</s><s>Bounds on the positions were instituted, preventing animals from continuing to walk away from the group, if an animal reached the boundary of the simulated plot then its direction of travel was rotated by 180˚.</s><s>The final direction (either the opposite direction of any animals within the zone of repulsion, θ o , θ a or the mean of the two) is then adjusted by an angle taken at random from a wrapped Gaussian distribution, with standard deviation σ.</s><s>The probability density function of the wrapped Gaussian with a mean angle μ and variance σ 2 is given by:</s></p><formula xml:id="formula_3">f ðy; m; sÞ ¼ 1 s ffi ffi ffi ffi ffiffi 2p p X 1 k¼À 1 exp À ðy À m þ 2pkÞ 2 2s 2 � � :<label>ð4Þ</label></formula><p><s>Contrary to the Couzin model we assumed that the anatomy and behavior of the animals create no blind-volume in their visual field, and so no penalties are applied to any direction of movement around them.</s><s>For consistency with the experimental data, the plot size created in the model was 1 km by 1 km.</s><s>To approximately match the densities observed in the data 20 sheep and 20 deer were modelled.</s><s>Animals were initially randomly distributed over the plot, and the first 240 hours of movement was not included in the analysis.</s><s>Time series of length 2000 hours were created.</s><s>The speed, v, was selected as 30 m h −1 (median distance travelled by a sheep in our actual dataset).</s><s>The radius of repulsion was chosen as 10 m and the radius of orientation as 40 m.</s><s>In <ref type="bibr" target="#b8">[9]</ref> it was found that the distance where sheep-deer interaction went from slight repulsion to attraction was 55 m, and for deer-sheep interaction it was 25 m.</s><s>The radius of attraction was selected as 150 m, about as far as a sheep and deer can feasibly see given the hilly terrain in the actual data.</s><s>Finally, the variance of the noise term, σ was chosen as 0.1 rad, the middle of the range of variances tested by <ref type="bibr" target="#b22">[23]</ref>.</s></p><formula xml:id="formula_4">convex hull 1 all ✖ ✖ ✔ ✔ ✔ ✔ 3 all ✖ ✖ ✔ ✔ ✔ ✔ 5 all ✖ ✖ ✔ ✔ ✔ ✔ mean distance to k th nearest neighbour 1 1 ✔ ✔ ✖ ✔ ✔ ✔ 1 2 ✖ ✖ ✖ ✔ ✔ ✔ 1 3 ✖ ✖ ✖ ✔ ✔ ✔ 1 4 ✖ ✔ ✖ ✔ ✔ ✔ 1 5 ✔ ✖ ✖ ✔ ✔ ✔ 1 6 ✔ ✔ ✔ ✔ ✔ ✔ mean distance</formula><p><s>In order to test the methods for different levels of interaction (intra-species, inter-species), additional neighbour selection requirements were set.</s><s>The model took a relationship matrix R (a binary matrix) of interactions, only if an animal i and potential neighbour j were related (R ij = 1) could neighbour j be used when calculating the direction of travel for animal i.</s><s>We designated the first m = 20 of the N = 40 animals deer, and the remaining N − m sheep, so that the movements of animals of different species given a particular relationship matrix could be set.</s><s>The ability to impose specific interaction scenarios via the matrix R was the primary motivation for using a modified Couzin model.</s><s>If a specific leader-follower scenario is of interest then an alternative model of behaviour may be more appropriate, for instance, the framework described in <ref type="bibr" target="#b37">[38]</ref> whose behaviour could be aptly analyzed using causality trees <ref type="bibr" target="#b32">[33]</ref>.</s></p><p><s>Using the described model, test data with three different relationship matrices were generated (Fig <ref type="figure" target="#fig_0">1)</ref>.</s><s>Data 1 allowed all animals to interact (deer !</s><s>deer, sheep !</s><s>sheep, deer $ sheep, where the direction of the arrow indicates "influences").</s><s>This was undertaken by including all animals when applying the model to calculate the direction for a particular animal; Data 2 allowed only deer !</s><s>deer, sheep !</s><s>sheep, deer !</s><s>sheep interactions (i.e., only the positions of deer were used to update the positions of deer, but both deer and sheep positions were used to update sheep positions); and Data 3 allowed interactions only to their own species, this was done by excluding from the calculations animals of the opposite species (i.e, deer !</s><s>deer, sheep !</s><s>sheep, and no inter-species influence).</s><s>The output of the model runs were multivariate position data of all animals every hour for 2000 hours.</s></p><p><s>We also used these multivariate position data to construct individual animal time series and attempted to recover the exact form of the relationship matrix for each of the three test data sets above.</s><s>For each time series method, a conditional Granger causality test (described below) was carried out, testing whether the time series of a particular animal Granger-caused the time series of another, conditional on the time series of the other individual animals present.</s><s>In the Granger causality modelling we investigated models orders of up to q = 10.</s><s>The p-values of these tests allowed summary complex networks of the interaction to be created-with a network edge between two individual animals (vertices of the network) being constructed if there was a significant Granger causality test p-value (α = 0.05).</s><s>To circumvent possible type I errors (misidentification of interactions), and to prevent the creation of multitudinous networks for each set of generated data, summarized networks were used.</s><s>That is a network edge representing a significant interaction between two individual animals is only created if the interaction is significant over several orders q of the Granger causality modelling process.</s><s>Here, networks for each method and relationship structure were created with edges formed where the conditional Granger causality test p-value was significant for at least 3 values of q.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Construction of scalar time series by species</head><p><s>Using the testing data sets of animal movement described above, we created scalar (univariate) time series from the animal positions for each species (Table <ref type="table">2</ref>).</s><s>In total, 10 functions per species were used on the testing data.</s><s>These come under three different categories: convex hull area (using hourly positions, and accumulated positions after 3 and 5 hours), mean k th nearest neighbour distance (k = 1 to 6), mean distance to the centre of mass of the group, where groups are all sheep, or all deer, or all animals (sheep + deer).</s></p><p><s>Convex hull area CHA.</s><s>The convex hull of a set of points is the smallest convex set that contains all of the points.</s><s>The convex hull area offers a simplistic measure for the extent to which the members of a particular species aggregate or spread out in space at a particular time.</s><s>If the use of space by a group of animals is affected by the proximity of another group, the changing level of clustering may be captured in the measure.</s><s>Convex hull areas have previously been applied to analyze sheep positional data <ref type="bibr" target="#b20">[21]</ref> and are used extensively in ecology as a means of estimating the home range and the utilization distributions of an individual animal or a group of animals <ref type="bibr" target="#b38">[39]</ref><ref type="bibr" target="#b39">[40]</ref><ref type="bibr" target="#b40">[41]</ref><ref type="bibr" target="#b41">[42]</ref><ref type="bibr" target="#b42">[43]</ref>. CHA was calculated using the positions of all the animals of a particular species over periods of 1, 3 or 5 hours.</s><s>When using 3 or 5 hour timespans the positions of each individual animal occur multiple times.</s><s>The inclusion of multiple hours of positional data acts as a smoother on the constructed convex hull time series, partially offsetting any noise from individual movements, especially of outlying animals, or from short-time scale cluster-dispersion behaviours.</s><s>The use of convex hulls over a longer timespan is common practice when calculating animal home-range <ref type="bibr" target="#b43">[44]</ref> or by adding an additional time dimension and using a time-weighting <ref type="bibr" target="#b40">[41]</ref>.</s></p><p><s>Mean distance to k th nearest neighbour MDNN.</s><s>MDNN is based on two hypothesis, (i) that the closer the distance between two animals the higher the likelihood of interaction between them, and (ii) the distance itself can be an indication that an interaction has occurred, as in general, interaction would be expected to be at least at visual range to interact (i.e.</s><s>excluding interactions by vocal calling and olfactory communication <ref type="bibr" target="#b44">[45]</ref>).</s><s>MDNN is calculated by finding the k th nearest neighbour of the same species to an individual animal at a given time, and calculating the distance to it.</s><s>The mean of these distances over a particular species, or group, is then calculated.</s></p><p><s>We define K(s, k, t) as the mean k th nearest neighbour distance for sheep at time t for some given number of neighbours:</s></p><formula xml:id="formula_5">Kðs; k; tÞ ¼ P m i¼1 ks i ðtÞ À s kðkÞ ðtÞk m :<label>ð5Þ</label></formula><p><s>Similarly, for deer:</s></p><formula xml:id="formula_6">Kðd; k; tÞ ¼ P n i¼1 kd i ðtÞ À d hðkÞ ðtÞk n :<label>ð6Þ</label></formula><p><s>Similar measures have been previously used, for example, <ref type="bibr" target="#b1">[2]</ref> and <ref type="bibr" target="#b8">[9]</ref> to assess sheep and deer interactions during grazing by measuring the difference in position to each of the M nearest neighbours (M = 5 and 6, respectively).</s><s>In another study <ref type="bibr" target="#b19">[20]</ref> used the average of the positional difference vectors of the M nearest neighbours when modelling flocking behavior in pigeons (with M = 4 for a low density of pigeons and M = 30 for a high density).</s><s>Consequently, when computing the time series K(s, k, t) and K(d, k, t) values of k from 1 to 6 were used.</s></p><p><s>Mean distance to centre of mass MDCM.</s><s>Defining the centre of mass of a species as the mean position of all the members of that species gives, for sheep:</s></p><formula xml:id="formula_7">cðs; tÞ ¼ P m i¼1 s i ðtÞ m :<label>ð7Þ</label></formula><p><s>MDCM is the average distance of a member of a species to the centre of mass of that species.</s><s>For sheep, this is:</s></p><formula xml:id="formula_8">Cðs; tÞ ¼ P m i¼1 kS i ðtÞ À cðs; tÞk m ;<label>ð8Þ</label></formula><p><s>and, defining c(d, t) as for sheep but with d j 's instead of s i 's and replacing m with n, the mean centre of mass distance, for deer, is:</s></p><p><s>Cðd; tÞ ¼ P n j¼1 kd j ðtÞ À cðd; tÞk n : ð9Þ</s></p><p><s>As with the convex hull area, MDCM offers a measure of how spread out the species is.</s><s>It overcomes the issue with the convex hull area of far-flung individual animals having a disproportionate effect on the value.</s><s>However it does not factor in any variations in density in local neighbourhoods, as the mean k th nearest neighbour distance does.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Construction of scalar time series by individual animal</head><p><s>To help infer interactions at the individual animal level we, similarly, used the testing data and created scalar time series from the multivariate animal positions (Table <ref type="table">3</ref>).</s><s>In contrast to the species level time series transformation, different methods of construction were necessary: kth nearest neighbour distance, distance to centre of mass, area of the Voronoi tessellation (as an analog for convex hull area), and distance from past position.</s></p><p><s>Distance to k th Nearest Neighbour DNN.</s><s>Following MDNN, the distance of a given animal to each of its k = 1 to k = 6 closest neighbours was computed.</s><s>This offers a measure of how isolated an animal is at a particular moment in time.</s><s>For each animal three different time series were created for each value of k: DNN of the same species; DNN of the opposite species; and DNN of the combined species.</s></p><p><s>For sheep i, at time t, these would be defined as: Distance to centre of mass DCM.</s><s>Following computation of the mean centre of mass distance at species level, the distance of an individual animal to the centre of mass (the mean position) of its own species, the opposite species, or to the mean position of all animals, was used.</s><s>This offers another measure of how isolated an individual animal is in relation to members of Table <ref type="table">3</ref>. Out-degree of summarized networks inferred using different methods of constructing scalar time series from positional data of individual animals, using three data sets (Data 1, 2, 3) constructed using a modified Couzin model, each with different embedded inter-species interactions (intra-species interaction is present and assumed and so not tested for) to test the following three interaction hypotheses H i .</s><s>D: deer; S: sheep; H 1 .</s><s>D$S: deer drives sheep and sheep drives deer; H 2 .</s><s>D!S: deer drives sheep; H 3 .</s><s>D ↮ S: no interaction between species.</s><s>Interaction is assessed by the connectedness of the inferred interaction networks, in particular, the out-degree of intra-species network edges to inter-species networks edges.</s><s>Bold font used if hypothesis supported: successful detection of the interaction.</s><s>Timespan: number of hours within spatial data area pooled for analysis (GPS fix acquisition time = 1 h).</s><s>k: number of nearest neighbours in the analysis, either all other animals, or all animals of same species.</s><s>Voronoi tessellation area VTA.</s><s>A Voronoi tessellation is a partitioning of a plane into areas of influence about a set of sites, where for each site there is a corresponding polygon of points that are closer to that site than any other <ref type="bibr" target="#b38">[39,</ref><ref type="bibr" target="#b42">43]</ref>.</s><s>The area of the Voronoi polygon formed about an individual animal can be used as a measure for its isolation <ref type="bibr" target="#b38">[39]</ref>.</s><s>Voronoi tessellations for neighbourhood construction have been used successfully for characterizing flocking and school behavior in birds, fish and for animal movement prediction and modelling <ref type="bibr" target="#b35">[36,</ref><ref type="bibr" target="#b38">39,</ref><ref type="bibr" target="#b42">43,</ref><ref type="bibr" target="#b45">46,</ref><ref type="bibr" target="#b46">47]</ref>.</s></p><formula xml:id="formula_9">K</formula><p><s>Two scalar time series can be produced for each individual animal based on Voronoi tessellations.</s><s>The first (V s ) is the area of the Voronoi polygon of an individual animal with the tessellation constructed using the positions of all members of the same species.</s><s>This is a measure of how isolated the animal is in relation to all the members of its own species.</s><s>The second (V c ) is the area of the Voronoi polygon of an individual animal with the positions of all animals in the data set at the given time t used in the formation of the Voronoi tessellation.</s><s>This is a measure of how isolated the animal is in relation to all the animals, including those of the opposite species.</s></p><p><s>Distance from past position DPP.</s><s>The final method to transform animal positional data into scalar time series is the distance from a previous position of that animal.</s><s>The change in position has been previously used as a model input for animal movement <ref type="bibr" target="#b19">[20]</ref>.</s><s>For a sheep i at time t, using the change in position over T hours, the function is: PDði; T; tÞ ¼ ks i ðtÞ À s i ðt À TÞk: ð13Þ</s></p><p><s>It is similarly defined for a deer j as:</s></p><formula xml:id="formula_10">PDðj; T; tÞ ¼ kd j ðtÞ À d j ðt À TÞk:<label>ð14Þ</label></formula><p><s>The values of T chosen were 1 h (the change since the last measurement), and also 2 h and 4 h, to reflect the same span of data used in the multi-hour convex hull area time series transformation.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Inferring interactions</head><p><s>Cross-correlation.</s><s>The cross-correlation between two time series for a given lag τ is the correlation between the first time series and the second offset by τ.</s><s>This is given by: r XY ðtÞ ¼ P nÀ t t¼1 ðx t À xÞðy tþt À yÞ ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffi ffiffi P nÀ t t¼1 ðx t À xÞ 2 P nÀ t t¼1 ðy t À yÞ 2 q ; ð15Þ where x t and y t , are the observed values of X and Y respectively and x and y their respective sample means.</s></p><p><s>We used cross-correlation as a measure to test for correlation between two of the scalar time series generated.</s><s>Correlation is not causality, however, evidence of correlation is suggestive of possible interactions.</s><s>To test for cross-correlation, the time series pairs have to be free of autocorrelation.</s><s>This was undertaken by fitting an ARIMA model to each time series and taking the residuals.</s><s>This was done in R software using the forecast package, which used the Akaike information criterion (AIC) for model selection <ref type="bibr" target="#b47">[48]</ref><ref type="bibr" target="#b48">[49]</ref><ref type="bibr" target="#b49">[50]</ref>.</s><s>The significance of crosscorrelation values was tested non-parametrically by constructing a null distribution from the cross-correlations calculated when one of the time series had its order randomized.</s><s>For example, when applied to the time series constructed for each of two species, it could be interpreted as interaction between the species causing one to modify the behavior of the other after τ observations of the behaviour of the other.</s><s>If significant values exist only for one sign of τ (i.e.</s><s>only negative or positive values of τ are significant) this could indicate a directional interaction, possibly causal, where one species is driving the behaviour of the other but not vice-versa.</s></p><p><s>Granger causality.</s><s>According to definition 1 of <ref type="bibr" target="#b25">[26]</ref> (p.</s><s>428), a time series "Y t is causing X t if we are better able to predict X t using all available information than if the information apart from Y t had been used".</s><s>We note that inherent in this assertion is that the behaviour of X t can be predicted using past behaviour of X t .</s><s>To be able to assess if Y Granger-causing X the Granger Causality Index (GCI) is defined as the log of the ratios between the variances in the error terms of a model using only X as a prediction of X (restricted model) compared to a model using X and Y for prediction of X (unrestricted model).</s></p><p><s>Defining the restricted model (no Y) as:</s></p><formula xml:id="formula_11">x t ¼ X q i¼1 a i x tÀ i þ e R;t ;<label>ð16Þ</label></formula><p><s>where q is the order, or number of terms, of the model and e R,t is the error term for the restricted model.</s></p><p><s>Then defining the unrestricted model as:</s></p><formula xml:id="formula_12">x t ¼ X q i¼1 a i x tÀ i þ X q i¼1 b i y tÀ i þ e U;t ;<label>ð17Þ</label></formula><p><s>with q as before and e U,t the unrestricted model error term.</s><s>The GCI is defined as:</s></p><formula xml:id="formula_13">GCI Y!X ¼ ln Varð c e R;t Þ Varð c e U;t Þ :<label>ð18Þ</label></formula><p><s>Clearly, if the GCI is greater than zero, then Y contains information that can better predict X, as the variance of the unrestricted model is lower.</s><s>A significance test can be undertaken using an F-distribution, with the F-statistic given by:</s></p><formula xml:id="formula_14">F ¼ ðSSE R À SSE U Þ=q SSE U =ððn À qÞ À 2qÞ ;<label>ð19Þ</label></formula><p><s>where n is the length of each time series, SSE is the sum of squared errors of the subscripted regression (restricted, R, or unrestricted, U).</s><s>The significance value is given by the relevant critical value of the F distribution with q and n − 3q degrees of freedom.</s><s>These tests were carried out in R using the lmtest package <ref type="bibr" target="#b47">[48,</ref><ref type="bibr" target="#b50">51]</ref>.</s></p><p><s>To be able to gauge causality between two time series in the presence of a third, or additional time series, Granger causality was extended to the conditional case by <ref type="bibr" target="#b30">[31]</ref>.</s><s>This is the case we must consider when we examine interactions at the individual animal level.</s><s>As for Granger causality, Y conditionally Granger-causes X, conditioning on Z, if X can be better predicted using previous values of X, Y and Z as opposed to just previous values of X and Z.</s><s>The restricted model becomes:</s></p><formula xml:id="formula_15">x t ¼ X q i¼1 a i x tÀ i þ X q i¼1 A i z tÀ i þ e R;t :<label>ð20Þ</label></formula><p><s>While the unrestricted model is:</s></p><formula xml:id="formula_16">x t ¼ X q i¼1 a i x tÀ i þ X q i¼1 b i y tÀ i þ X q i¼1 A i z tÀ i þ e U;t :<label>ð21Þ</label></formula><p><s>The value of the conditional Granger causality index for Y causing X (CGCI Y!X|Z ) is the same as in the two time series unconditional case.</s><s>Its significance is also tested with an F-statistic <ref type="bibr" target="#b27">[28]</ref>, given by:</s></p><formula xml:id="formula_17">F ¼ ðSSE R À SSE U Þ=q SSE U =ððn À qÞ À KqÞ ;<label>ð22Þ</label></formula><p><s>where Kq is the total number of coefficients in the unrestricted model.</s><s>The significance is tested by the critical value of the F distribution with q and n − q − Kq degrees of freedom.</s></p><p><s>In the unconditional case, when applied to the time series at the species level, a significant Granger causality test for one species' time series against that of the opposite species would indicate causality between the two.</s><s>If the opposing test in the opposite direction were not significant, this would indicate directional causality, while if both directions were significant it would indicate a symmetric interaction where the behavior of one species influence the behaviour of the other and vice-versa.</s><s>We note that we can only test for the presence or absence of inter-species interactions.</s><s>Intra-species interactions are assumed as we Granger causality test against the restricted model.</s></p><p><s>In the conditional case, when applied to time series by individual animal, a significant conditional Granger causality test for one individual animal against another individual animal, conditional on all other animals present, would indicate causality between the two.</s><s>This may indicate particular lead animals in the group, or be reflective of the broader underlying interspecies dynamics.</s><s>Given the number of conditional Granger causality tests required for all of the animals present, using the results to expose underlying inter-species behaviour is made possible through the construction and analysis of complex networks.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Complex network methods</head><p><s>A network is a set of vertices with connections between them called edges <ref type="bibr" target="#b51">[52]</ref>.</s><s>We followed a similar approach to that taken in <ref type="bibr" target="#b15">[16]</ref> by constructing networks from the time series created using the methods described above.</s><s>Each vertex represents an individual animal (sheep or deer), with connections being formed by a significant conditional Granger causality test pvalue between the time series of that individual and the time series of another.</s><s>(The time series of all other animals comprises the z terms in Eqs 20 and 21.)</s><s>A network can be created for each transformation method of time series, and for each order q (1 � q � 10) of the conditional Granger causality test.</s><s>To help minimize subsequent network analysis we collocated the information across data segments and each order q.</s><s>In particular, we created summarized networks where edges were defined only if the conditional Granger causality was determined to be significant for at least three values of q and, for the real data sets, that this condition persisted across the experimental data segments.</s><s>Thus in the 2006 data set the interaction had to be deemed significant in each of the three data segments and in the 2008 data set in each of the five segments (Table <ref type="table" target="#tab_0">1</ref>).</s></p><p><s>Two main network properties were used in the analysis of these summarized networks to extract information about species interaction.</s><s>The first, degree, is the number of edges connected to a vertex, or the number of other vertices that vertex is directly connected to <ref type="bibr" target="#b51">[52]</ref><ref type="bibr" target="#b52">[53]</ref><ref type="bibr" target="#b53">[54]</ref>.</s><s>In directional networks, such as those constructed here, each vertex in turn has an in-degree (the number of incoming edges) and an out-degree (the number of outgoing edges) <ref type="bibr" target="#b51">[52,</ref><ref type="bibr" target="#b53">54]</ref>.</s><s>The second, geodesic path length, is the length of the shortest path through the network from one vertex to another <ref type="bibr" target="#b51">[52]</ref><ref type="bibr" target="#b52">[53]</ref><ref type="bibr" target="#b53">[54]</ref>.</s></p><p><s>These two measures both offer an indication of how well connected an individual animal is to the group as a whole.</s><s>For the understanding of the inter-and intra-species dynamics of the network we examined the differences between averages of out-degree and geodesic path length when examining sheep-sheep, deer-deer, sheep-deer edges.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results and discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Testing data</head><p><s>Performance of time series by species methods.</s><s>Tests for Granger causality were carried out for testing inter-species interactions and their direction (sheep !</s><s>deer, deer !</s><s>sheep), using each time series transformation method (CHA, MDNN, MDCM) and for test Data 1, 2 and 3 (Fig <ref type="figure" target="#fig_0">1</ref>).</s><s>A summary of the results is provided in Table <ref type="table">2</ref>.</s><s>For the case where all animals were allowed to interact (Data 1), only MDCM and MDNN (k = 1, 6) were efficient to detect sheep !</s><s>deer, and, deer !</s><s>sheep interactions (α = 0.05).</s><s>MDNN was also efficient to detect sheep !</s><s>deer (k = 4) and deer !</s><s>sheep (k = 5).</s><s>MDCM was especially significant, with p-values of the order 10 −16 in both directions for a Granger causality test of model order q = 3.</s><s>This is unsurprising, since in the generated data it is the centre of mass of animals in the zone of attraction that individuals move towards.</s><s>CHA performed poorly across the range of time intervals used to pool GPS fixes (1, 3 and 5 h), as it failed to detect any inter-species interaction.</s><s>For test Data 2 (relationship matrix interactions: deer !</s><s>deer, sheep !</s><s>sheep, deer !</s><s>sheep), there were significant Granger causality tests for deer !</s><s>sheep for MDCM, MDNN (k = 6) and 1, 3, 5 h CHA.</s><s>For sheep !</s><s>deer there were only 5, non-expected by construction, significant tests out of 100, which we interpreted as type I errors.</s><s>For the same species only interaction data (Data 3), most Granger causality tests were not significant for all of the time series creation methods.</s><s>Indeed, for some model orders and some functions there were only 12 significant tests out of the 200 tests performed.</s><s>This is again as expected since the relationship matrix for test Data 3 has no inter-species interactions built in.</s><s>Although different transformations to scalar time series did not perform equally well to identify interactions, and in general, the case of no interactions were easier to detect than interactions, the methods were able to distinguish no interaction from interaction and determine the direction in the test data, suggesting it is valid to apply them to the real data.</s></p><p><s>Performance of time series by individual animal methods.</s><s>For k th nearest neighbour distance and distance from past position time series transformation methods, the summary networks created for all three test data sets were disconnected with few edges.</s><s>Since the model used to create the data uses a constant speed for each animal, it can be expected that the distance from past position is not meaningful.</s><s>The k th nearest neighbour distance not producing many significant values is unexpected since the mean k th nearest neighbour distance was useful in the time series by species case.</s></p><p><s>The networks created using the centre of mass distance and the Voronoi tessellation area transformation methods possessed large connected components, however, they were not able to replicate the network structures as defined by the relationship matrices (i.e., either all vertices connected (Data 1), all deer-deer, sheep-sheep and deer-sheep connections, but no sheepdeer edges (Data 2), and vertices only connected to the same species (Data 3)).</s><s>This was mainly due to a much lower number of connections detected by the methods.</s><s>We quantified this by calculating the average out-degree of the vertices in the reconstructed networks.</s><s>For the centre of mass distance networks the average out-degree was 7.03, 6.</s><s>While the correct overall network structure could not be inferred from the transformed time series and Granger causality methods, broader results can be.</s><s>In the all connected case (Data 1) the mean intra-species out-degree (the mean number of connections an animal has with members of the same species) for the three centre of mass distance networks (Eq 13) was 3.59, while the mean inter-species out-degree was 3.43 (a difference of 4.5%).</s><s>This suggests detection of similar levels of inter-and intra-species interactions, which is the case.</s><s>In the intra-species interaction only case (Data 3), the mean inter-species out-degree for the centre of mass distance networks was 34% lower than the mean intra-species out-degree.</s><s>This captured the level of inter-species interaction compared to intra-species interaction, in this case, zero by design.</s></p><p><s>For the Voronoi tessellation area calculated using the same species networks, the mean number of deer a sheep was connected to in the intra-species interaction only for deer case (Data 2) was 0.45, while for deer-sheep connections the mean was 1.75.</s><s>In the all connected case (Data 1) these numbers were comparable (differing by 11%).</s><s>Thus the Voronoi tessellation area of the same species may be able to determine the direction of inter-species interaction, if it existed.</s><s>In Table <ref type="table">3</ref> we summarize the results of average out-degree of the summarized networks for the different types of connection.</s><s>An example network structure which is informative of the capability of the approach for test Data 2 is shown in Fig <ref type="figure" target="#fig_5">3</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Actual data</head><p><s>Scalar time series by species.</s><s>The transformations outlined in Table <ref type="table">2</ref> were applied to the experimental data and species interaction was tested for using cross-correlation and Granger causality tests.</s><s>Examples of CHA time series using time intervals of 1, 2 and 3 h, and MDNN (k = 5) are shown in Figs <ref type="figure">4 and 5</ref>.</s></p><p><s>Cross-correlation-Prior to calculating cross-correlation the autocorrelation of the transformed time series was first calculated and then removed (i.e.</s><s>pre-whitened).</s><s>All transformed time series exhibited significant autocorrelation, showing a 24 h circadian cycle (Fig <ref type="figure">6</ref>).</s><s>However, in general, the cross-correlation of the pre-whitened time series showed no consistency of significant correlation structure.</s></p><p><s>This indicates that there is no interaction between the two species or, more likely, cross-correlation between species time series subject to the transformation methods failed to detect any relationship interaction.</s><s>This lack of structure is shown in Fig <ref type="figure">7</ref>.</s></p><p><s>Granger Causality-Granger causality tests on pairs of transformed time series after applying a particular transformation method (Table <ref type="table">2</ref>) and with values of q = 1 to 10 were used to assess deer !</s><s>sheep, sheep !</s><s>deer.</s><s>If both of these types of interactions were significant then this implied deer $ sheep causality.</s><s>We present the results for the CHA transformation methods for the eight data segments of Table <ref type="table" target="#tab_0">1</ref>.</s><s>In Table <ref type="table" target="#tab_5">4</ref> we show for the CHA transformation methods for the eight data segments of Table <ref type="table" target="#tab_0">1</ref> the calculated p-values for each order q = 1 to 10 in the Granger causality tests.</s><s>The 3 h and 5 h convex hull area time series revealed significant deer $ sheep interactions for greater than three values of q for four and five of the eight time series segments, respectively, but no deer $ sheep interaction for 1 h interval (Table <ref type="table" target="#tab_5">4</ref>).</s><s>Asymmetric interactions deer !</s><s>sheep for greater than three values of q were detected for three time series segments at 1 h interval, and sheep !</s><s>deer interactions for one segment at 1, 3 and 5 h intervals (Table <ref type="table" target="#tab_5">4</ref>).</s><s>These results are summarized in Table <ref type="table">5</ref> which also includes summarized interactions obtained using the other time series transformation methods.</s><s>At a species group level the data supports the hypothesis of symmetrical inter-species interaction, where sheep influences deer behaviour and vice-versa.</s></p><p><s>The p-values for the other time series transformation methods (MDCM, MDNN for 1 � k � 4) showed that where significant Granger causality tests did occur, they mostly revealed In test Data 2 there should be no sheep !</s><s>deer edges; only nine have been incorrectly inferred (red arrows).</s><s>Although the exact relationship matrix for Data 2 has not been replicated, the overall propensity of inter and intra interactions have been captured, as reflected by the relative average out-degree of the different connection types (Table <ref type="table">3</ref>).</s><s><ref type="table" target="#tab_5">4</ref>. Granger causality test p-values (for order of model from q = 1 to q = 10) for 1h, 3 h and 5 h convex hull area.</s><s>Significant values are bold highlighted.</s><s>See Table <ref type="table">2</ref>  the time series transformation method was the k = 4 nearest neigbour in the case of the three segments of 2006 data.</s><s>We observe from this summary network that most of the detected interactions are intra-species as there are far more connections of the sheep-sheep and deerdeer type and only four inter-species connections and three of these are sheep !</s><s>deer.</s><s>We note that there are three deer with no connections and their behaviour with respect to their k = 4 nearest neighbour is completely independent.</s><s>The summary networks for the VTA transformed time series in both 2006 and 2008 data sets also had a high number of connections.</s><s>Similarly, summary complex networks from time series created by computing DCM using Eq 13 for either the same species, the opposite species or of both species produced highly connected networks.</s><s>The time series from the DNN (particularly for 3 � k � 6) also had many significant conditional Granger causality p-values, of which Fig 8 is a k = 4 example.</s><s>To the contrary, the DPP time series transformation method produced disconnected networks without large connected components, with many vertices having a degree of zero (no incoming or outgoing edges, cf. the three isolated deer in <ref type="bibr">Fig 8)</ref>.</s></p><p><s>We analyzed the summarized networks for each time series transformation method by examining the average degree and the average geodesic (shortest) path length between vertices in the networks (see Figs 9 and 10 respectively for the k nearest neighbour transformation method using the same, opposite or combined species in the 2006 data).</s><s>The summarized networks for the 2008 data set exhibited similar profiles.</s><s>Several general trends are evident suggestive of the possible interaction behaviour between sheep and deer in these experiments.</s><s>We observe that the average degree for intra-species edges (deer-deer, sheep-sheep) is higher than for inter-species (deer-sheep, sheep-deer) edges.</s><s>This suggests that inter-species interaction is less dominant than intra-species interaction.</s><s>Similar conclusions can be drawn from the geodesic path lengths.</s><s>Typically, the shortest paths between intra-species individuals are lower than inter-species shortest paths suggesting more densely connected intra-species subgraphs compared to inter-species connections.</s><s>Consequently, the interaction between an individual Table <ref type="table">5</ref>. Detected species interactions across data segments for the various time series transformations methods using Granger causality.</s><s>Interaction was judged to be detected if the p-values calculated were significant for at least three model orders (for q = 1 to 10) of the Granger causality tests.</s><s>A ! B means A Granger causes B, A $ B means symmetric interaction,-means less than three model order were significant hence no interaction detected.</s><s>and members of its own species is stronger than the interaction between individuals and members of the opposite species.</s></p><formula xml:id="formula_18">Timespan k 2006-S1 2006-S2 2006-S3 2008-S1 2008-S2 2008-S3 2008-S4 2008-S5 CHA 1 S ! D - - - D ! S D ! S D ! S - 3 S ! D S ! D - S $ D S $ D S $ D S ! D S $ D 5 S ! D - S $ D S $ D S $ D S $ D - S $ D MDNN 1 - - - - D ! S - - - 2 - - - - D ! S D ! S D ! S - 3 - - - - - - - - 4 - - - - S ! D - D ! S S ! D MDCM - - D ! S - D ! S D ! S - S !</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Performance of methods on testing data</head><p><s>Our results clearly show that the methods assessed differ in their efficiency to detect animal interactions and their symmetry.</s><s>The main factor that characterizes their efficiency is whether interactions take place between groups or individuals, and all methods are more efficient to detect interaction between species than between individuals.</s><s>In our data this is unsurprising as the complexity of individual interactions was higher than the inter-species interactions (40 individual animals versus 2 species).</s><s>Although fair comparisons between methods are not straightforward due to their different nature, CHA, MDNN and MDCM methods applied to inter-species relationship matrices performed well.</s><s>MDCM was able to detect all different interactions and symmetry embedded in the simulated animal movement, followed in efficiency by MDNN and CHA methods.</s><s>MDNN performance depended on the number of nearest neighbours included in the transformation method, and although the response was not linear, when the number of neighbours was k = 6 MDNN was able to correctly detect all interactions and their symmetry (Table <ref type="table">2</ref>).</s><s>CHA performed well for different timespans (1, 3, 5 hours) on matrices that contained interactions driven by one species, and in the case where there were no interactions between species, but CHA failed to detect symmetric interactions (i.e. when each species were allowed to modify the movement behaviour of the other).</s><s>As a result of this issue CHA was the worst performer of the three methods.</s></p><p><s>One of the issues with convex hull areas is its high dependence on specific individual animals that segregate far away from the main core of the group.</s><s>This high dependence on outliers means that the convex hull area may not be reflective of the state of all members of the group.</s><s>In real experiments, missing data for one or two influencing animals due to temporary GPS failure may also have a large effect on the convex hull area.</s><s>The poor performance of CHA in the test data may also be due to the simplifications of the model (see below: Assessing interactions on experimental data).</s><s><ref type="bibr" target="#b20">[21]</ref> noted that the Couzin model could not replicate the cluster-disperse cycle in animal movement that drove changing convex hull areas in their experiments.</s><s>MDCM performed best probably, in part, due to the inherent smoothing intraspecies effect of the transformation because distances are taken from the species center of mass, which minimizes the effect of spatial outliers.</s></p><p><s>The four methods applied to infer interactions at an individual level (DNN, DPP, DCM, VTA) performed poorly in uncovering the exact structure of the test data interaction matrices.</s><s>The transformations DPP and DNN, in particular, were unexpectedly poor.</s><s>DPP is based on the distance an animal moved from a previous position, and in view of our results it seems a poor criterion to capture the movement of the simulated data movement, given that the networks created were highly disconnected.</s><s><ref type="bibr" target="#b19">[20]</ref>, however, used this criterion to reconstruct a state-space to model the flocking behavior in flight of pigeons with nonlinear basis functions to capture interaction behaviour.</s><s>The fact that DNN and DPP are bad performers may be an indication that linear models within the Granger causality tests are not adequate to capture the true behaviour at the resolution of individual animals.</s><s>This shortcoming of Granger causality has been recognized and palliative measures have been suggested to better deal with nonlinearity.</s><s>These include information theory measures such as transfer entropy <ref type="bibr" target="#b54">[55,</ref><ref type="bibr" target="#b55">56]</ref> and statespace methods <ref type="bibr" target="#b29">[30,</ref><ref type="bibr" target="#b56">57]</ref>.</s><s>The other two methods applied (DCM, VTA) enabled the creation of networks with large connected components but not as expected by the construction rules of the simulated relationship matrices (see, Fig <ref type="figure" target="#fig_5">3</ref> for VTA on test Data 2).</s><s>However, they were able to capture the levels of intra-and inter-species interactions embedded in the relationship matrices, which again reinforce the idea that the methods used perform better to infer interspecies than inter-individual relationships.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Movement model limitations</head><p><s>Before discussing the results of applying the different methods to our experimental data on sheep and deer movement, we should highlight the limitations of the simulation model used here to replicate actual sheep and deer movements.</s><s>We reiterate that the purpose of the model was to investigate if the structure of the embedded relationship matrices could be recovered using our methods and was not to propose a realistic animal movement model.</s><s>Nevertheless, it is instructive to discuss some of the shortfalls of the model and its assumptions so that better and more appropriate models can be proposed in future.</s></p><p><s>The model makes many simplifications in its structure, such as not allowing for different animal states, e.g.</s><s>grazing activity <ref type="bibr" target="#b18">[19]</ref>, changes in distance travelled, temporal simultaneous orientation and attraction, or orientation and repulsion <ref type="bibr" target="#b6">[7,</ref><ref type="bibr" target="#b20">21]</ref>.</s><s>In reality there may be different values of movement speed (v) based on species, underpinned by differences in body size and energy requirements <ref type="bibr" target="#b57">[58,</ref><ref type="bibr" target="#b58">59]</ref>, and different values of r r , r o and r a for each species <ref type="bibr" target="#b59">[60]</ref>, and for inter-and intra-species interactions <ref type="bibr" target="#b8">[9]</ref>.</s><s>Additionally, updating of the position based only on the direction, velocity and previous position does not allow for accounting for the effect of physical environmental factors on behaviour, such as the circadian rhythm.</s><s>However, the model used is general enough to capture basic animal movement behaviours in order to test the effectiveness of the approach taken to produce scalar time series by either species or individual animals from the data.</s></p><p><s>One of the issues with recording time series of animal movement is the selection of the appropriate time interval at which animal positions are collected <ref type="bibr" target="#b16">[17,</ref><ref type="bibr" target="#b60">61]</ref>.</s><s>To infer different behaviours one might need the use of different time intervals, or the same behavior might need different time intervals with respect to different species.</s><s>When it is feasible to select different time intervals of data gathering, a way to avoid making assumptions on the most appropriate interval is to assess the robustness of the results against interval changes.</s><s><ref type="bibr" target="#b16">[17]</ref> assessed how GPS fixes acquisition interval was instrumental to capture complex social dynamics in sheep movement around parturition.</s><s>At short time intervals their models were able to predict how likely a ewe changed its dynamic social unit, but the longer the interval the less reliable was the prediction.</s><s>Thus an additional task to ask of any simulated model is to test the effect of different sampling schemes on the proposed methods.</s></p><p><s>[21] used convex hull area as a measure for the clustering and dispersion behaviours of sheep.</s><s>They found that sheep slowly disperse (increasing convex hull area) before rapidly forming into a tight cluster (sudden decrease in convex hull area) before slowly dispersing again with a period of around 10 minutes.</s><s>Our experimental data in use is hourly and we sampled the simulation to mimic this situation, and so social structures with shorter time-span will not be adequately captured in the CHA time series transformation measure.</s><s>This effect also means that any time-span trends that occur in the spread of sheep due to the behaviour of the other species will have a large amount of noise depending on where in the cluster-disperse cycle of sheep the data was captured.</s></p><p><s>Another issue to consider is the effect of spatial scale on movement behaviour.</s><s>Under spatial restrictions, such as experimental plots or in larger areas where animals are attracted by preferred resources <ref type="bibr" target="#b11">[12,</ref><ref type="bibr" target="#b61">62]</ref>, frequent interaction between species that compete for resources is likely and the need for finer resolution (more frequently sampled) time series is less crucial than in conditions when species interact with less frequency.</s><s>The flexibility of GPS technology allows for very short intervals between fixes but at a cost of battery life, so careful planning is needed to balance detailed time series and battery life, especially when GPS time deployment should be maximized because animal handling (to recharge collars) is logistically difficult or impossible.</s><s>These considerations are important not only for logistical experimental design but in meta-analysis that use results from studies carried out in very different conditions, possibly making comparison difficult or even incomparable.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Assessing interactions on experimental data</head><p><s>The results clearly indicate that interaction between sheep and deer is more complex than expected under the traditional framework of niche partitioning in the guild of large herbivores <ref type="bibr" target="#b62">[63,</ref><ref type="bibr" target="#b63">64]</ref>.</s><s>Expected predictions of the interaction between two grazing species are based on the functional response: the relationship between the two competing terms that define intake rate.</s><s>These are bite mass and bite rate <ref type="bibr" target="#b64">[65]</ref>.</s><s><ref type="bibr" target="#b65">[66]</ref> created a model in which coexistence between grazers differing in body size was possible if a single-resource type offered variation in height structure.</s><s>Large grazers could facilitate food availability for smaller species as intake rate varies between species that differ in bite width and bite depth <ref type="bibr" target="#b66">[67]</ref>.</s><s>On these premises it would be predicted that in our data set larger red deer (92 kg) graze on a higher sward than smaller sheep (47 kg) <ref type="bibr" target="#b8">[9]</ref> facilitating grazing for sheep, and consequently, deer driving sheep movement.</s><s>However, with reference to Table <ref type="table">5</ref> which itself is a summary of Table <ref type="table" target="#tab_5">4</ref> for CHA and other time series tables (not shown), at the species-level analysis this prediction was only supported by 17% of the tests (11 of the 64 entries).</s><s>Almost 13% of these tests across the different data segments and time series transformation methods supported the opposite, i.e., sheep drives the movement of deer.</s><s>Moreover, 14% of the tests show that the interaction between sheep and deer is symmetric, and in 56% of the cases no significant inter-species interaction could be detected.</s><s>It is worth noting that the methods showed a bias for non-detection on the test data and the figure of 56% is reported assuming all methods were equally good at detecting interaction if it exists.</s><s>We have also chosen to report the results of all methods investigated and not just the "good" or "bad" methods which would lower or increase the success rate.</s></p><p><s>It is relevant to note the fact that within each transformation method the nature of the inter-species interaction was not consistent across different time series segments, nor did we observe consistency of the methods performance between the testing and the actual data.</s><s>This suggests three main explanations, (i) the movement drivers of the actual data are more complex than those used to create the testing data, (ii) the driving dynamics of inter-species interactions change across time, a possible seasonal and resource effect, and (iii) the levels of interaction forces vary across individuals of the same and different species, as corroborated by the lack of consistency in the nature of the interactions across MDNN k-values, and by the byindividual methods.</s><s>In general, the inconsistency of the methods on the real data and as supported by the testing data results suggests the weakness of the approach is the number of false negatives-not always detecting a genuine interactions-as opposed to the number of false positives-detecting a spurious interaction.</s></p><p><s>Since more than half of the tests carried out did not detect any significant interaction it may be interpreted as sheep and deer do not interact strongly.</s><s>Although this is possible, this interpretation should be taken with precaution.</s><s>Consider the following situation in which there is behavioural synchronization between species, for example, in rumination bouts or night resting.</s><s>The methods would be more likely to detect bouts of no significant interaction since little new information to predict one species behaviour is available from the behaviour of the other species.</s><s>On the other hand if the within species behaviour is highly synchronized, this can also produce bouts of no significant interaction that depend only on the behaviour of one species, for example, when one species lie down regardless of the other moving away.</s></p><p><s>Sheep and red deer commonly graze in large numbers within grass-heather dominated mosaic areas in northern Britain and other parts of Europe <ref type="bibr" target="#b67">[68,</ref><ref type="bibr" target="#b68">69]</ref>.</s><s>In a grass-heather mosaic and under controlled conditions <ref type="bibr" target="#b69">[70]</ref> found that both red deer and sheep consumed similar proportions of grass and heather year round, even when grass availability declined.</s><s>Only small differences in the use of the mosaic were found with sheep showing preferences in the use of small grass patches whereas deer make spatial use of grass and heather patches more evenly.</s><s>Although <ref type="bibr" target="#b69">[70]</ref> did not carry out a spatial analysis to assess for species interaction they suggested that due to their tight range overlap the overall patterns of foraging behaviour by sheep and deer were little affected by the presence or absence of the other species.</s><s>Our results support these findings, as we have not found clear evidence or consistency across different methods of analysis that one species drives the movement behaviour of the other species.</s></p><p><s>Our actual data is affected by two main factors of noise, (i) the number of GPS marked animals varied between some of the time series segments (Table <ref type="table" target="#tab_0">1</ref>), (ii) not all animals in the experimental plot were GPS marked.</s><s>The latter was especially true in the case of sheep when on average there were 31% of individuals marked vs. 80% in deer.</s><s>This was a compromise in the experimental design between a large size plot, similar grazing densities to the ones found in open hill farming systems and the number of GPS units available.</s><s>The effect of the variation in the number of animals across the experiment was controlled by creating different time series segments that were homogeneous in the number of animals and applying the methods to each segment separately.</s><s>The fact that only part of the population was marked could not be controlled in the analyses, but we assumed that in most real situations only a small part of the population can be marked and conclusions have to be derived from the data.</s></p><p><s>Our results suggest that methods which assess the interaction based on proximity, rather than on topological metrics, provide results easy to interpret in terms of behavioural interaction and can facilitate their incorporation on to layers of geographical information, such as vegetation communities, mosaic fragmentation, land cover, which adds extra information for the understanding of the factors that drive movement behaviour <ref type="bibr" target="#b8">[9]</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods for aims</head><p><s>The lack of consistency of the results obtained across different methods, in both the testing and actual data, suggests that depending on the aims of the analysis different methods are better suited to uncovering different types of interactions than others.</s><s>All transformations, as evidenced by the autocorrelation revealing a strong circadian rhythm, contain useful information and extract different features and aspects of the animal's behaviour which may be useful in determining interactions.</s><s>Furthermore, because of the different analytical requirements for the application of the methods, specific data properties will also determine the choice of methods to use.</s><s>Based on our experience with the testing data and the experimental data we suggest if the aim is to unravel interactions between individuals or to uncover association between sub-groups of individuals within a population or within an assemblage of species, then individual-individual and individual-group distance based methods (DNN, DPP, VTA, DCM, Table <ref type="table" target="#tab_6">6</ref>) are more appropriate.</s><s>Within these methods individual-individual based distance calculations require high quality datasets as the construction of their metrics are more sensitive to the presence of missing data and timescale acquisition time (DNN, DPP, Table <ref type="table" target="#tab_6">6</ref>).</s><s>Datasets with missing data, noisy (outliers) or poor positional time schedule can be analyzed using methods that smooth these issues (VTA, DCM) because their metrics are based on the properties of the spatial distribution of the group unit, which can also be pooled across time if required.</s><s>When assessing interactions between pre-established groups (social units, sexes, taxa, experimentally defined units) MDNN, CHA and MDCM are desirable methods (Table <ref type="table" target="#tab_6">6</ref>).</s><s>MDNN is sensitive to data quality, especially to the presence of missing data and outliers, as it has an important individual distance component in their construction (i.e.</s><s>distance to k-nearest neighbour), while CHA and MDCM can best mitigate this issue.</s><s>However, the application of a number of methods is always recommended as this provides a more realistic picture of the complexity of the problem, whether consistent conclusions, or not, can be obtained across the different methods.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig 1 .</head><label>1</label><figDesc><div><p><s>Fig 1. Analytical design.</s><s>Analytical design to extract species interaction from time series of positional data.</s><s>https://doi.org/10.1371/journal.pone.0208202.g001</s></p></div></figDesc><graphic coords="5,180.00,78.01,396.00,521.52" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Table 2 .</head><label>2</label><figDesc><div><p><s>Methods of constructing scalar time series from positional data of species using three data sets (Data 1, 2, 3, Fig 1) constructed using a modified Couzin model, each with different embedded intra-and inter-species interactions to test the following hypotheses H i .</s><s>D: deer; S: sheep; H 1 .</s><s>D !</s><s>S: deer drives sheep; H 2 .</s><s>S !</s><s>D: sheep drives deer; H 3 .</s><s>D ↛ S, S ↛ D: no interaction between species; ✔: results support hypothesis; ✖: results do not support hypothesis.</s><s>Timespan: number of hours within spatial data area pooled for analysis (GPS fix acquisition time = 1 h).</s><s>k: number of nearest neighbours in the analysis.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig 2 .</head><label>2</label><figDesc><div><p><s>Fig 2. Simulation model zones.</s><s>Zones of repulsion, orientation and attraction for an animal within a two dimensions Couzin model.</s><s>The individual is at position x i travelling in direction θ i at speed v.</s><s>The zone of repulsion is the region (in dark grey) of points within r r , the zone of orientation is the region (in light grey) of points between r r and r o of x i and the zone of attraction is points between r o and r a of x i .</s><s>https://doi.org/10.1371/journal.pone.0208202.g002</s></p></div></figDesc><graphic coords="7,95.98,78.01,479.96,470.38" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>method timespan k Data 1 (H 1 :</head><label>11</label><figDesc><div><p><s>D $ S) Data 2 (H 2 : D !</s><s>S) Data 3 (H 3 : D ↮ S) D !</s><s>D S ! S D ! S S !</s><s>D D !</s><s>D S ! S D ! S S !</s><s>D D !</s><s>D S ! S D ! S S !</s><s>D distance to centre</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head></head><label></label><figDesc><div><p><s>52 and 6.78 for test Data 1, Data 2 and Data 3 respectively (for 40 animals, 20 deer + 20 sheep, Data1, 2 and 3 structure fully recovered would have average out-degree of 39, 29 and 19, respectively).</s><s>The respective outdegrees for test Data 1, Data 2 and Data 3 for the Voronoi tessellation networks were 8.50, 7.88 and 7.46.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig 3 .</head><label>3</label><figDesc><div><p><s>Fig 3. Simulated data example network.</s><s>Inferred network for the Voronoi tesselation area transformation applied to test Data 2. Triangles denote vertices corresponding to deer and circles denote those vertices corresponding to sheep.</s><s>Directed edges represent tail vertex Granger causing head vertex.In test Data 2 there should be no sheep !</s><s>deer edges; only nine have been incorrectly inferred (red arrows).</s><s>Although the exact relationship matrix for Data 2 has not been replicated, the overall propensity of inter and intra interactions have been captured, as reflected by the relative average out-degree of the different connection types (Table3).</s></p></div></figDesc><graphic coords="16,95.98,78.01,479.96,358.07" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head></head><label></label><figDesc><div><p><s>https://doi.org/10.1371/journal.pone.0208202.g003</s><s>deer !</s><s>sheep interaction (n = 8) against sheep !</s><s>deer (n = 4) in five time segments but no symmetric deer $ sheep interaction (Table5).Scalar time series by individual animal.</s><s>For both the 2006 and 2008 data sets most of the time series transformation methods performed well in the sense that they created networks with a reasonable number of edges.</s><s>That is, the Granger causality tests between transformed time series of pairs of individual animals revealed significant p-values for at least three model orders q.</s><s>Furthermore, such significance persisted across the data segments (segments 1 to 3 for 2006 data and segments 1 to 5 for 2008 data sets).</s><s>Thus an edge between vertices representing such pairs of animals was created and consequently these summary networks possessed a large connected component.</s><s>An example of such a summary network is shown inFig 8, where</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Fig 4 .Fig 5 .Fig 6 .Fig 7 .</head><label>4567</label><figDesc><div><p><s>Fig 4. Time series of CHA.</s><s>Convex hull area time series for sheep using time intervals of 1 h, 2 h and 3 h.</s><s>Starting time 04:00 h on 20th of October 2006.</s><s>Multi-hour intervals provides a greater area and are smoother than convex hulls calculated at 1 h interval.</s><s>https://doi.org/10.1371/journal.pone.0208202.g004</s></p></div></figDesc><graphic coords="17,200.01,78.01,299.96,199.67" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Fig 8 .Fig 9 .Fig 10 .</head><label>8910</label><figDesc><div><p><s>Fig 8. MDNN network.</s><s>A visualization of the summarized network produced using conditional Granger causality to create edges using the distance to the k = 4 nearest neighbour of the same species time series for each individual animal within the 2006 (S1-S3) data set.</s><s>Deer are represented by triangles, and sheep are represented as circles.</s><s>https://doi.org/10.1371/journal.pone.0208202.g008</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc><div><p></p></div></figDesc><graphic coords="18,200.01,78.01,299.96,275.24" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc><div><p></p></div></figDesc><graphic coords="18,200.01,420.66,360.00,210.22" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc><div><p></p></div></figDesc><graphic coords="21,200.01,78.01,360.00,187.43" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc><div><p></p></div></figDesc><graphic coords="21,95.98,348.32,479.96,119.96" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc><div><p></p></div></figDesc><graphic coords="21,95.98,546.41,479.96,117.81" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 . Time series and dates of GPS fixes, number of sheep and red deer used in this study.</head><label>1</label><figDesc></figDesc><table><row><cell></cell><cell>2006-S1</cell><cell>2006-S2</cell><cell>2006-S3</cell><cell>2008-S1</cell><cell>2008-S2</cell><cell>2008-S3</cell><cell>2008-S4</cell><cell>2008-S5</cell></row><row><cell>Length (h)</cell><cell>950</cell><cell>688</cell><cell>1552</cell><cell>1554</cell><cell>2732</cell><cell>1508</cell><cell>668</cell><cell>1458</cell></row><row><cell>No. sheep</cell><cell>13</cell><cell>13</cell><cell>8</cell><cell>23</cell><cell>23</cell><cell>23</cell><cell>23</cell><cell>23</cell></row><row><cell>No. deer</cell><cell>18</cell><cell>18</cell><cell>7</cell><cell>17</cell><cell>17</cell><cell>17</cell><cell>17</cell><cell>17</cell></row><row><cell>Start date</cell><cell>19/08/2006</cell><cell>05/10/2006</cell><cell>06/11/2006</cell><cell>01/01/2008</cell><cell>19/03/2008</cell><cell>17/07/2008</cell><cell>23/09/2008</cell><cell>01/11/2008</cell></row><row><cell>End date</cell><cell>28/09/2006</cell><cell>03/11/2006</cell><cell>10/01/2007</cell><cell>05/03/2008</cell><cell>10/07/2008</cell><cell>17/09/2008</cell><cell>20/10/2008</cell><cell>31/12/2008</cell></row></table><note><p><s>https://doi.org/10.1371/journal.pone.0208202.t001</s></p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head></head><label></label><figDesc><div><p><s>is the DCM for the same species, C o is the DCM for the opposite species, and C c is the DCM to the combined species.</s><s>These could be similarly defined for deer j at time t by replacing all instances of s i (t) with d j (t) and switching c(s, t) and c(d, t).</s></p></div></figDesc><table><row><cell cols="2">of mass 1</cell><cell>all</cell><cell>4.00</cell><cell>3.60</cell><cell>3.20</cell><cell>3.90</cell><cell>3.55</cell><cell>3.1</cell><cell>3.00</cell><cell>3.35</cell><cell>3.85</cell><cell>3.95</cell><cell>3.00</cell><cell>2.65</cell></row><row><cell></cell><cell>1</cell><cell>species</cell><cell>3.90</cell><cell>3.55</cell><cell>3.20</cell><cell>3.50</cell><cell>3.75</cell><cell>3.15</cell><cell>2.80</cell><cell>2.80</cell><cell>3.95</cell><cell>3.50</cell><cell>2.80</cell><cell>2.90</cell></row><row><cell>Voronoi tessellation area</cell><cell>1</cell><cell>all</cell><cell>3.75</cell><cell>4.10</cell><cell>3.65</cell><cell>2.85</cell><cell>3.35</cell><cell>3.35</cell><cell>2.30</cell><cell>2.90</cell><cell>3.55</cell><cell>3.55</cell><cell>2.10</cell><cell>1.90</cell></row><row><cell></cell><cell>1</cell><cell>species</cell><cell>8.15</cell><cell>8.95</cell><cell>1.35</cell><cell>1.20</cell><cell>8.05</cell><cell>9.35</cell><cell>1.75</cell><cell>0.45</cell><cell>7.95</cell><cell>8.35</cell><cell>1.15</cell><cell>1.30</cell></row></table><note><p><s>https://doi.org/10.1371/journal.pone.0208202.t003its</s><s>own species, members of the opposite species, or to all animals.Specifically, the combined mean position at time t as:cðc; tÞ ¼ P m i¼1 s i ðtÞ þ P n j¼1 d j ðtÞ m þ n : ð11Þ The three DCM for sheep i at time t are: C s ði; tÞ ¼ ks i ðtÞ À cðs; tÞk C o ði; tÞ ¼ ks i ðtÞ À cðd; tÞk; C c ði; tÞ ¼ ks i ðtÞ À cðc; tÞk ð12Þ where C s</s></p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head></head><label></label><figDesc><div><p><s>for arrow acronyms.</s></p></div></figDesc><table><row><cell>Interval</cell><cell>Interaction</cell><cell>Segment</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>q</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell>1</cell><cell>2</cell><cell>3</cell><cell>4</cell><cell>5</cell><cell>6</cell><cell>7</cell><cell>8</cell><cell>9</cell><cell>10</cell><cell></cell></row><row><cell>1</cell><cell>D ! S</cell><cell>2006-S1</cell><cell>0.261</cell><cell>0.035</cell><cell>0.054</cell><cell>0.113</cell><cell>0.175</cell><cell>0.233</cell><cell>0.304</cell><cell>0.262</cell><cell>0.371</cell><cell>0.478</cell></row><row><cell></cell><cell></cell><cell>2006-S2</cell><cell>0.383</cell><cell>0.876</cell><cell>0.320</cell><cell>0.518</cell><cell>0.259</cell><cell>0.339</cell><cell>0.257</cell><cell>0.353</cell><cell>0.437</cell><cell>0.512</cell></row><row><cell></cell><cell></cell><cell>2006-S3</cell><cell>0.207</cell><cell>0.121</cell><cell>0.210</cell><cell>0.235</cell><cell>0.291</cell><cell>0.392</cell><cell>0.530</cell><cell>0.564</cell><cell>0.514</cell><cell>0.655</cell></row><row><cell></cell><cell></cell><cell>2008-S1</cell><cell>0.407</cell><cell>0.375</cell><cell>0.471</cell><cell>0.600</cell><cell>0.195</cell><cell>0.218</cell><cell>0.182</cell><cell>0.237</cell><cell>0.166</cell><cell>0.197</cell></row><row><cell></cell><cell></cell><cell>2008-S2</cell><cell>0.018</cell><cell>0.044</cell><cell>0.080</cell><cell>0.067</cell><cell>0.007</cell><cell>0.000</cell><cell>0.000</cell><cell>0.000</cell><cell>0.000</cell><cell>0.001</cell></row><row><cell></cell><cell></cell><cell>2008-S3</cell><cell>0.035</cell><cell>0.003</cell><cell>0.006</cell><cell>0.001</cell><cell>0.002</cell><cell>0.002</cell><cell>0.001</cell><cell>0.002</cell><cell>0.004</cell><cell>0.005</cell></row><row><cell></cell><cell></cell><cell>2008-S4</cell><cell>0.209</cell><cell>0.448</cell><cell>0.208</cell><cell>0.005</cell><cell>0.013</cell><cell>0.024</cell><cell>0.049</cell><cell>0.066</cell><cell>0.098</cell><cell>0.106</cell></row><row><cell></cell><cell></cell><cell>2008-S5</cell><cell>0.006</cell><cell>0.023</cell><cell>0.056</cell><cell>0.079</cell><cell>0.092</cell><cell>0.075</cell><cell>0.097</cell><cell>0.140</cell><cell>0.199</cell><cell>0.213</cell></row><row><cell>1</cell><cell>S ! D</cell><cell>2006-S1</cell><cell>0.002</cell><cell>0.012</cell><cell>0.045</cell><cell>0.064</cell><cell>0.087</cell><cell>0.132</cell><cell>0.143</cell><cell>0.201</cell><cell>0.277</cell><cell>0.229</cell></row><row><cell></cell><cell></cell><cell>2006-S2</cell><cell>0.147</cell><cell>0.372</cell><cell>0.581</cell><cell>0.742</cell><cell>0.834</cell><cell>0.287</cell><cell>0.388</cell><cell>0.330</cell><cell>0.326</cell><cell>0.353</cell></row><row><cell></cell><cell></cell><cell>2006-S3</cell><cell>0.728</cell><cell>0.859</cell><cell>0.744</cell><cell>0.728</cell><cell>0.406</cell><cell>0.523</cell><cell>0.330</cell><cell>0.399</cell><cell>0.537</cell><cell>0.551</cell></row><row><cell></cell><cell></cell><cell>2008-S1</cell><cell>0.534</cell><cell>0.210</cell><cell>0.265</cell><cell>0.405</cell><cell>0.503</cell><cell>0.512</cell><cell>0.621</cell><cell>0.688</cell><cell>0.771</cell><cell>0.817</cell></row><row><cell></cell><cell></cell><cell>2008-S2</cell><cell>0.062</cell><cell>0.243</cell><cell>0.364</cell><cell>0.145</cell><cell>0.051</cell><cell>0.098</cell><cell>0.083</cell><cell>0.093</cell><cell>0.131</cell><cell>0.161</cell></row><row><cell></cell><cell></cell><cell>2008-S3</cell><cell>0.964</cell><cell>0.913</cell><cell>0.870</cell><cell>0.810</cell><cell>0.765</cell><cell>0.808</cell><cell>0.870</cell><cell>0.927</cell><cell>0.857</cell><cell>0.542</cell></row><row><cell></cell><cell></cell><cell>2008-S4</cell><cell>0.882</cell><cell>0.895</cell><cell>0.911</cell><cell>0.260</cell><cell>0.131</cell><cell>0.237</cell><cell>0.309</cell><cell>0.248</cell><cell>0.244</cell><cell>0.347</cell></row><row><cell></cell><cell></cell><cell>2008-S5</cell><cell>0.049</cell><cell>0.565</cell><cell>0.821</cell><cell>0.885</cell><cell>0.719</cell><cell>0.767</cell><cell>0.468</cell><cell>0.457</cell><cell>0.563</cell><cell>0.652</cell></row><row><cell>3</cell><cell>D ! S</cell><cell>2006-S1</cell><cell>0.789</cell><cell>0.847</cell><cell>0.682</cell><cell>0.383</cell><cell>0.774</cell><cell>0.883</cell><cell>0.846</cell><cell>0.345</cell><cell>0.225</cell><cell>0.299</cell></row><row><cell></cell><cell></cell><cell>2006-S2</cell><cell>0.845</cell><cell>0.967</cell><cell>0.353</cell><cell>0.185</cell><cell>0.270</cell><cell>0.383</cell><cell>0.531</cell><cell>0.304</cell><cell>0.349</cell><cell>0.301</cell></row><row><cell></cell><cell></cell><cell>2006-S3</cell><cell>0.153</cell><cell>0.215</cell><cell>0.507</cell><cell>0.530</cell><cell>0.718</cell><cell>0.812</cell><cell>0.605</cell><cell>0.599</cell><cell>0.661</cell><cell>0.751</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 4 .</head><label>4</label><figDesc><div><p><s>(Continued)</s></p></div></figDesc><table><row><cell>Interval</cell><cell>Interaction</cell><cell>Segment</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table 6 . Suggested use of time series transformation methods in relation to the type of interactions aimed and the quality of the data available. Aims Data quality Individual interactions, sub-groups associations Group, social, taxon interactions</head><label>6</label><figDesc></figDesc><table><row><cell>Accurate, complete, appropriate</cell><cell>DNN</cell><cell>MDNN</cell></row><row><cell>timescale</cell><cell>DPP</cell><cell></cell></row><row><cell cols="2">Noisy, missing, unsuitable timescale VTA</cell><cell>CHA</cell></row><row><cell></cell><cell>DCM</cell><cell>MDCM</cell></row><row><cell cols="2">https://doi.org/10.1371/journal.pone.0208202.t006</cell><cell></cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">PLOS ONE | https://doi.org/10.1371/journal.pone.0208202December 12, 2018  </note>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0" />			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Evolutionary diversification, coevolution between populations and their antagonists, and the filling of niche space</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">E</forename><surname>Ricklefs</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.0913626107</idno>
+		<ptr target="https://doi.org/10.1073/pnas.0913626107" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">107</biblScope>
+			<biblScope unit="page" from="1265" to="1272" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Unraveling complexity in interspecies interaction through nonlinear dynamical models</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">D</forename><surname>Kattas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">J</forename><surname>Pe ´rez-Barberı ´a</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Small</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Walker</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10211-012-0134-0</idno>
+		<ptr target="https://doi.org/10.1007/s10211-012-0134-0" />
+	</analytic>
+	<monogr>
+		<title level="j">Acta Ethologica</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="page" from="21" to="30" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">The hidden dimensions of human-wildlife conflict: Health impacts, opportunity and transaction costs</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Barua</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Bhagwat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Jadhav</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.biocon.2012.07.014</idno>
+		<ptr target="https://doi.org/10.1016/j.biocon.2012.07.014" />
+	</analytic>
+	<monogr>
+		<title level="j">Biological Conservation</title>
+		<imprint>
+			<biblScope unit="volume">157</biblScope>
+			<biblScope unit="page" from="309" to="316" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Understanding foraging behaviour in spatially heterogeneous environments</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Marion</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">L</forename><surname>Swain</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">R</forename><surname>Hutchings</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jtbi.2004.08.005</idno>
+		<idno type="PMID">15498600</idno>
+		<ptr target="https://doi.org/10.1016/j.jtbi.2004.08.005" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Theoretical Biology</title>
+		<imprint>
+			<biblScope unit="volume">232</biblScope>
+			<biblScope unit="page" from="127" to="142" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Exploration as a key component of natal dispersal: dispersers explore more than philopatric individuals in roe deer</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Debeffe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Morellet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Cargnelutti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Lourtet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Gaillard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Bon</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.anbehav.2013.05.005</idno>
+		<ptr target="https://doi.org/10.1016/j.anbehav.2013.05.005" />
+	</analytic>
+	<monogr>
+		<title level="j">Animal Behaviour</title>
+		<imprint>
+			<biblScope unit="volume">86</biblScope>
+			<biblScope unit="page" from="143" to="151" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Factors driving variation in movement rate and seasonality of sympatric ungulates</title>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">M</forename><surname>Van Beest</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">V</forename><surname>Wal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">V</forename><surname>Stronen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">K</forename><surname>Brook</surname></persName>
+		</author>
+		<idno type="DOI">10.1644/12-MAMM-A-080.1</idno>
+		<ptr target="https://doi.org/10.1644/12-MAMM-A-080.1" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Mammalogy</title>
+		<imprint>
+			<biblScope unit="volume">94</biblScope>
+			<biblScope unit="page" from="691" to="701" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Personality and collective decision-making in foraging herbivores</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Michelena</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Jeanson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Deneubourg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Sibbald</surname></persName>
+		</author>
+		<idno type="DOI">10.1098/rspb.2009.1926</idno>
+		<idno type="PMID">19955156</idno>
+		<ptr target="https://doi.org/10.1098/rspb.2009.1926" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the Royal Society B: Biological Sciences</title>
+		<imprint>
+			<biblScope unit="volume">277</biblScope>
+			<biblScope unit="page" from="1093" to="1099" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Fast and accurate decisions through collective vigilance in fish shoals</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Ward</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">E</forename><surname>Herbert-Read</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Sumpter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Krause</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.1007102108</idno>
+		<ptr target="https://doi.org/10.1073/pnas.1007102108" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">108</biblScope>
+			<biblScope unit="page" from="2312" to="2315" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">State-space modelling of the drivers of movement behaviour in sympatric species</title>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">J</forename><surname>Pe ´rez-Barberı ´a</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Small</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Hooper</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Soriguer-Escofet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">S</forename><surname>Bakken</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">J</forename><surname>Gordon</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0142707</idno>
+		<idno type="PMID">26580801</idno>
+		<ptr target="https://doi.org/10.1371/journal.pone.0142707" />
+	</analytic>
+	<monogr>
+		<title level="j">PLoS ONE</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page">e0142707</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Comparison of ranging behaviour in a multi-species complex of free ranging hosts of bovine tuberculosis in relation to their use as disease sentinels</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Yockney</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Nugent</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Latham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Perry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Cross</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Byrom</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/S0950268813000289</idno>
+		<idno type="PMID">23433406</idno>
+		<ptr target="https://doi.org/10.1017/S0950268813000289" />
+	</analytic>
+	<monogr>
+		<title level="j">Epidemiology and Infection</title>
+		<imprint>
+			<biblScope unit="volume">141</biblScope>
+			<biblScope unit="page" from="1407" to="1416" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Networks and the ecology of parasite transmission: A framework for wildlife parasitology</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">S</forename><surname>Godfrey</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.ijppaw.2013.09.001</idno>
+		<idno type="PMID">24533342</idno>
+		<ptr target="https://doi.org/10.1016/j.ijppaw.2013.09.001" />
+	</analytic>
+	<monogr>
+		<title level="j">International Journal for Parasitology: Parasites and Wildlife</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="235" to="245" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Long term density-dependent changes in habitat selection in red deer Cervus elaphus</title>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">J</forename><surname>Pe ´rez-Barberı ´a</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Hooper</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">J</forename><surname>Gordon</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s00442-013-2686-8</idno>
+		<idno type="PMID">23719900</idno>
+		<ptr target="https://doi.org/10.1007/s00442-013-2686-8" />
+	</analytic>
+	<monogr>
+		<title level="j">Oecologia</title>
+		<imprint>
+			<biblScope unit="volume">173</biblScope>
+			<biblScope unit="page" from="837" to="847" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Isotopic niche structure of a mammalian herbivore assemblage from a West African savanna: Body mass and seasonality effect</title>
+		<author>
+			<persName><forename type="first">Cama</forename><surname>Djagoun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Codron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Sealy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">A</forename><surname>Mensah</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.mambio.2016.09.001</idno>
+		<ptr target="https://doi.org/10.1016/j.mambio.2016.09.001" />
+	</analytic>
+	<monogr>
+		<title level="j">Mammalian Biology</title>
+		<imprint>
+			<biblScope unit="volume">81</biblScope>
+			<biblScope unit="page" from="644" to="650" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Scaling methane emissions in ruminants and global estimates in wild populations</title>
+		<author>
+			<persName><forename type="first">'</forename><surname>Pe ´rez-Barberı</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Fj</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.scitotenv.2016.11.175</idno>
+		<ptr target="https://doi.org/10.1016/j.scitotenv.2016.11.175" />
+	</analytic>
+	<monogr>
+		<title level="j">Science of the Total Environment</title>
+		<imprint>
+			<biblScope unit="volume">579</biblScope>
+			<biblScope unit="page" from="1572" to="1580" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Global positioning system and associated technologies in animal behaviour and ecological research</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Tomkiewicz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">R</forename><surname>Fuller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">G</forename><surname>Kie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">K</forename><surname>Bates</surname></persName>
+		</author>
+		<idno type="DOI">10.1098/rstb.2010.0090</idno>
+		<ptr target="https://doi.org/10.1098/rstb.2010.0090" />
+	</analytic>
+	<monogr>
+		<title level="j">Philosophical Transactions of the Royal Society B: Biological Sciences</title>
+		<imprint>
+			<biblScope unit="volume">365</biblScope>
+			<biblScope unit="page" from="2163" to="2176" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Pe ´rez-Ferna ´ndez E. Inferring networks from multivariage symbolic time series to unravel behavioural interactions among animals</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Walker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Carmeli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">J</forename><surname>Pe ´rez-Barberı ´a</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Small</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.anbehav.2009.11.011</idno>
+		<ptr target="https://doi.org/10.1016/j.anbehav.2009.11.011" />
+	</analytic>
+	<monogr>
+		<title level="j">Animal Behaviour</title>
+		<imprint>
+			<biblScope unit="volume">79</biblScope>
+			<biblScope unit="page" from="351" to="359" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Dynamics of social behaviour at parturition in a gregarious ungulate</title>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">J</forename><surname>Pe ´rez-Barberı ´a</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Walker</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.beproc.2018.01.013</idno>
+		<idno type="PMID">29360558</idno>
+		<ptr target="https://doi.org/10.1016/j.beproc.2018.01.013" />
+	</analytic>
+	<monogr>
+		<title level="j">Behavioural Processes</title>
+		<imprint>
+			<biblScope unit="volume">150</biblScope>
+			<biblScope unit="page" from="75" to="84" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">The effect of season, sex and feeding style on home range area versus body mass scaling in temperate ruminants</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mysterud</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">J</forename><surname>Pe ´rez-Barberı ´a</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">J</forename><surname>Gordon</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s004420000562</idno>
+		<idno type="PMID">28547167</idno>
+		<ptr target="https://doi.org/10.1007/s004420000562" />
+	</analytic>
+	<monogr>
+		<title level="j">Oecologia</title>
+		<imprint>
+			<biblScope unit="volume">127</biblScope>
+			<biblScope unit="page" from="30" to="39" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">Pe ´rez-Ferna ´ndez E. Why do polygynous ungulates segregate in space? Testing the activity-budget hypothesis in soay sheep. Ecological Monographs</title>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">J</forename><surname>Pe ´rez-Barberı ´a</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Robertson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Soriguer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Aldezabal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mendizabal</surname></persName>
+		</author>
+		<idno type="DOI">10.1890/06-2088.1</idno>
+		<ptr target="https://doi.org/10.1890/06-2088.1" />
+		<imprint>
+			<date type="published" when="2007">2007</date>
+			<biblScope unit="volume">77</biblScope>
+			<biblScope unit="page" from="631" to="647" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Dynamical Modeling of Collective Behavior from Pigeon Flight Data: Flock Cohesion and Dispersion</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">D</forename><surname>Kattas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Small</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pcbi.1002449</idno>
+		<ptr target="https://doi.org/10.1371/journal.pcbi.1002449" />
+	</analytic>
+	<monogr>
+		<title level="j">PLoS Computational Biology</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">e1002449</biblScope>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Intermittent collective dynamics emerge from conflicting imperatives in sheep herds</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Ginelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Peruani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">H</forename><surname>Pillot</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">´h</forename><surname>Chate</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Theraulaz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Bon</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.1503749112</idno>
+		<ptr target="https://doi.org/10.1073/pnas.1503749112" />
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">112</biblScope>
+			<biblScope unit="page" from="12729" to="12734" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Novel type of phase transition in a system of selfdriven particles</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Vicsek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">C</forename><surname>Ben-Jacob</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Cohen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Shochet</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRevLett.75.1226</idno>
+		<idno type="PMID">10060237</idno>
+		<ptr target="https://doi.org/10.1103/PhysRevLett.75.1226" />
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review Letters</title>
+		<imprint>
+			<biblScope unit="volume">75</biblScope>
+			<biblScope unit="page" from="1226" to="1229" />
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Collective memory and spatial sorting in animal groups</title>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">D</forename><surname>Couzin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Krause</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>James</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">D</forename><surname>Ruxton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">R</forename><surname>Franks</surname></persName>
+		</author>
+		<idno type="DOI">10.1006/jtbi.2002.3065</idno>
+		<idno type="PMID">12297066</idno>
+		<ptr target="https://doi.org/10.1006/jtbi.2002.3065" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Theoretical Biology</title>
+		<imprint>
+			<biblScope unit="volume">218</biblScope>
+			<biblScope unit="page" from="1" to="11" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Moving and staying together without a leader</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Gre ´goire</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">´h</forename><surname>Chate</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tu</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0167-2789(03)00102-7</idno>
+		<idno>S0167-2789(03)00102-7</idno>
+		<ptr target="https://doi.org/10.1016/" />
+	</analytic>
+	<monogr>
+		<title level="j">Physica D</title>
+		<imprint>
+			<biblScope unit="volume">181</biblScope>
+			<biblScope unit="page" from="157" to="170" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Collective motion of self-propelled particles interacting without cohesion</title>
+		<author>
+			<persName><forename type="first">´h</forename><surname>Chate</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Ginelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Gre ´goire</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Raynaud</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRevE.77.046113</idno>
+		<ptr target="https://doi.org/10.1103/PhysRevE.77.046113" />
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review E</title>
+		<imprint>
+			<biblScope unit="volume">77</biblScope>
+			<biblScope unit="page">46113</biblScope>
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Investigating Causal Relations by Econometric Models and Cross-spectral</title>
+		<author>
+			<persName><forename type="first">Cwj</forename><surname>Granger</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/1912791</idno>
+		<ptr target="https://doi.org/10.2307/1912791" />
+	</analytic>
+	<monogr>
+		<title level="j">Methods. Econometrica</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="page" from="424" to="438" />
+			<date type="published" when="1969">1969</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Estimation of connectivity measures in gappy time series</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Papadopoulos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Kugiumtzis</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.physa.2015.05.032</idno>
+		<ptr target="https://doi.org/10.1016/j.physa.2015.05.032" />
+	</analytic>
+	<monogr>
+		<title level="j">Physica A</title>
+		<imprint>
+			<biblScope unit="volume">436</biblScope>
+			<biblScope unit="page" from="387" to="398" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Granger Causality in Multivariate Time Series Using a Time-Ordered Restricted Vector Autoregressive Model</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Siggiridou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Kugiumtzis</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TSP.2015.2500893</idno>
+		<ptr target="https://doi.org/10.1109/TSP.2015.2500893" />
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Signal Processing</title>
+		<imprint>
+			<biblScope unit="volume">64</biblScope>
+			<biblScope unit="page" from="1759" to="1773" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Financial networks based on Granger causality: A case study</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Papana</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Kyrtsou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Kugiumtzis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Diks</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.physa.2017.04.046</idno>
+		<ptr target="https://doi.org/10.1016/j.physa.2017.04.046" />
+	</analytic>
+	<monogr>
+		<title level="j">Physica A</title>
+		<imprint>
+			<biblScope unit="volume">482</biblScope>
+			<biblScope unit="page" from="65" to="73" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Nonuniform state-space reconstruction and coupling detection</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Vlachos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Kugiumtzis</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRevE.82.016207</idno>
+		<ptr target="https://doi.org/10.1103/PhysRevE.82.016207" />
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review E</title>
+		<imprint>
+			<biblScope unit="volume">82</biblScope>
+			<biblScope unit="page">16207</biblScope>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Measurement of Linear Dependence and Feedback Between Multiple Time Series</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Geweke</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01621459.1982.10477803</idno>
+		<ptr target="https://doi.org/10.1080/01621459.1982.10477803" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">77</biblScope>
+			<biblScope unit="page" from="304" to="313" />
+			<date type="published" when="1982">1982</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">L</forename><surname>Baraba ´si</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Po</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Network Science</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<publisher>Cambridge University Press</publisher>
+			<pubPlace>Cambridge, United Kingdom</pubPlace>
+		</imprint>
+	</monogr>
+	<note>1st Edition</note>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Directedness of information flow in mobile phone communication networks</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Peruani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Tabourier</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0028860</idno>
+		<idno type="PMID">22216128</idno>
+		<ptr target="https://doi.org/10.1371/journal.pone.0028860" />
+	</analytic>
+	<monogr>
+		<title level="j">PLoS ONE</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<monogr>
+		<title level="m" type="main">Interaction ruling animal collective behavior depends on topological rather than metric distance: Evidence from a field study. Proceedings of the National Academy of Sciences</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ballerini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Calbibbo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Candeleir</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Cavagna</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Cisbani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Giardina</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.0711437105</idno>
+		<ptr target="https://doi.org/10.1073/pnas.0711437105" />
+		<imprint>
+			<date type="published" when="2008">2008</date>
+			<biblScope unit="volume">105</biblScope>
+			<biblScope unit="page" from="1232" to="1237" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Hierarchical group dynamics in pigeon flocks</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Nagy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Biro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Vicsek</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nature08891</idno>
+		<idno type="PMID">20376149</idno>
+		<ptr target="https://doi.org/10.1038/nature08891" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">464</biblScope>
+			<biblScope unit="page" from="890" to="893" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Deciphering interactions in moving animal groups</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Gautrais</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Ginelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Fournier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Blanco</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Soria</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">´h</forename><surname>Chate</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pcbi.1002678</idno>
+		<idno type="PMID">23028277</idno>
+		<ptr target="https://doi.org/10.1371/journal.pcbi.1002678" />
+	</analytic>
+	<monogr>
+		<title level="j">PLoS Computational Biology</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">e1002678</biblScope>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Sexual segregation in ungulates: A new approach</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">E</forename><surname>Ruckstuhl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Neuhaus</surname></persName>
+		</author>
+		<idno type="DOI">10.1163/156853900502123</idno>
+		<ptr target="https://doi.org/10.1163/156853900502123" />
+	</analytic>
+	<monogr>
+		<title level="j">Behaviour</title>
+		<imprint>
+			<biblScope unit="volume">137</biblScope>
+			<biblScope unit="page" from="361" to="377" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Imitation combined with a characteristic stimulus duration results in robust collective decision-making</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Toulet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Gautrais</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Bon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Peruani</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0140188</idno>
+		<idno type="PMID">26465751</idno>
+		<ptr target="https://doi.org/10.1371/journal.pone.0140188" />
+	</analytic>
+	<monogr>
+		<title level="j">PLoS ONE</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page">e0140188</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Using patch isolation metrics to predict animal movement in binary landscapes</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Bender</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Tischendorf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Fahrig</surname></persName>
+		</author>
+		<idno type="DOI">10.1023/A:1022937226820</idno>
+		<ptr target="https://doi.org/10.1023/A:1022937226820" />
+	</analytic>
+	<monogr>
+		<title level="j">Landscape Ecology</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="page" from="17" to="39" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Bias in species range estimates from minimum convex polygons: implications for conservation and options for improved planning</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Burgman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Fox</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/S1367943003003044</idno>
+		<ptr target="https://doi.org/10.1017/S1367943003003044" />
+	</analytic>
+	<monogr>
+		<title level="j">Animal Conservation</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page" from="19" to="28" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Convex hull of N planar Brownian motions: exact results and an application to ecology</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Randon-Furling</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">N</forename><surname>Majumdar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Comtet</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRevLett.103.140602</idno>
+		<idno type="PMID">19905556</idno>
+		<ptr target="https://doi.org/10.1103/PhysRevLett.103.140602" />
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review Letters</title>
+		<imprint>
+			<biblScope unit="volume">103</biblScope>
+			<biblScope unit="page">140602</biblScope>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Estimating utilization distributions with kernel versus local convex hull methods</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">I</forename><surname>Lichti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">K</forename><surname>Swihart</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/jwmg.48</idno>
+		<ptr target="https://doi.org/10.1002/jwmg.48" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Wildlife Management</title>
+		<imprint>
+			<biblScope unit="volume">75</biblScope>
+			<biblScope unit="page" from="413" to="422" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">The selfish herd: Noise effects in Local Crowded Horizon and Voronoi models</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">J</forename><surname>Ose</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">R</forename><surname>Ohmann</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jtbi.2017.04.024</idno>
+		<idno type="PMID">28456461</idno>
+		<ptr target="https://doi.org/10.1016/j.jtbi.2017.04.024" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Theoretical Biology</title>
+		<imprint>
+			<biblScope unit="volume">424</biblScope>
+			<biblScope unit="page" from="84" to="90" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">A local nearest-neighbor convex-hull construction of home ranges and utilization distributions</title>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">M</forename><surname>Getz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">C</forename><surname>Wilmers</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.0906-7590.2004.03835.x</idno>
+		<ptr target="https://doi.org/10.1111/j.0906-7590.2004.03835.x" />
+	</analytic>
+	<monogr>
+		<title level="j">Ecography</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="page" from="489" to="505" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<monogr>
+		<title level="m" type="main">Vocal communication and reproduction in deer</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Reby</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Mccomb</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0065-3454(03)33005-0</idno>
+		<idno>S0065-3454(03)33005-0</idno>
+		<ptr target="https://doi.org/10.1016/" />
+		<imprint>
+			<date type="published" when="2003">2003</date>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="231" to="264" />
+		</imprint>
+	</monogr>
+	<note>Advances in the Study of Behavior</note>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Relevance of Metric-Free Interactions in Flocking Phenomena</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Ginelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">´h</forename><surname>Chate</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRevLett.105.168103</idno>
+		<idno type="PMID">21231019</idno>
+		<ptr target="https://doi.org/10.1103/PhysRevLett.105.168103" />
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review Letters</title>
+		<imprint>
+			<biblScope unit="volume">105</biblScope>
+			<biblScope unit="page">168103</biblScope>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Visual sensory networks and effective information transfer in animal groups</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Strandburg-Peshkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">R</forename><surname>Twomey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Nwf</forename><surname>Bode</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">B</forename><surname>Kao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Katz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">C</forename><surname>Ioannou</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cub.2013.07.059</idno>
+		<idno type="PMID">24028946</idno>
+		<ptr target="https://doi.org/10.1016/j.cub.2013.07.059" />
+	</analytic>
+	<monogr>
+		<title level="j">Current Biology</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="page" from="R709" to="R711" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<monogr>
+		<title level="m" type="main">R: A Language and Environment for Statistical Computing</title>
+		<author>
+			<persName><surname>R Core Team</surname></persName>
+		</author>
+		<ptr target="https://www.R-project.org" />
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Automatic time series forecasting: the forecast package for R</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Hyndman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Khandakar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Statistical Software</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="1" to="22" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<monogr>
+		<title level="m" type="main">forecast: Forecasting functions for time series and linear models</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Hyndman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Athanasopoulos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Bergmeir</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Caceres</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Chhay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>O'hara-Wild</surname></persName>
+		</author>
+		<ptr target="http://pkg.robjhyndman.com/forecast" />
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Diagnostic checking in regression relationships</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Zeileis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hothorn</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">R News</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="7" to="10" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">The Structure and Function of Complex Networks</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Newman</surname></persName>
+		</author>
+		<idno type="DOI">10.1137/S003614450342480</idno>
+		<ptr target="https://doi.org/10.1137/S003614450342480" />
+	</analytic>
+	<monogr>
+		<title level="j">SIAM Review</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="page" from="167" to="256" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Complex networks: Structure and dynamics</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Boccaletti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Latora</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Moreno</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Chavez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">U</forename><surname>Hwang</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.physrep.2005.10.009</idno>
+		<ptr target="https://doi.org/10.1016/j.physrep.2005.10.009" />
+	</analytic>
+	<monogr>
+		<title level="j">Physics Reports</title>
+		<imprint>
+			<biblScope unit="volume">424</biblScope>
+			<biblScope unit="page" from="175" to="308" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Characterization of complex networks: A survey of measurements</title>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">L</forename><surname>Da Costa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">A</forename><surname>Rodrigues</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Travieso</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Prv</forename><surname>Boas</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/00018730601170527</idno>
+		<ptr target="https://doi.org/10.1080/00018730601170527" />
+	</analytic>
+	<monogr>
+		<title level="j">Advances in Physics</title>
+		<imprint>
+			<biblScope unit="volume">56</biblScope>
+			<biblScope unit="page" from="167" to="242" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Measuring information transfer</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Schreiber</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRevLett.85.461</idno>
+		<idno type="PMID">10991308</idno>
+		<ptr target="https://doi.org/10.1103/PhysRevLett.85.461" />
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review Letters</title>
+		<imprint>
+			<biblScope unit="volume">85</biblScope>
+			<biblScope unit="page" from="461" to="464" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Directionality of coupling from bivariate time series: how to avoid false causalities and missed connections</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Palus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Vejmelka</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRevE.75.056211</idno>
+		<ptr target="https://doi.org/10.1103/PhysRevE.75.056211" />
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review E</title>
+		<imprint>
+			<biblScope unit="volume">75</biblScope>
+			<biblScope unit="page">56211</biblScope>
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">Direct coupling information measure from non-uniform embedding</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Kugiumtzis</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRevE.87.062918</idno>
+		<ptr target="https://doi.org/10.1103/PhysRevE.87.062918" />
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review E</title>
+		<imprint>
+			<biblScope unit="volume">87</biblScope>
+			<biblScope unit="page">62918</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<monogr>
+		<title level="m" type="main">The ecological implications of body size</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">H</forename><surname>Peters</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1983">1983</date>
+			<publisher>Cambridge University Press</publisher>
+			<pubPlace>Cambridge, United Kingdom</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">The dynamics and scaling of foraging velocity and encounter rate in mammalian herbivores</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">A</forename><surname>Shipley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">E</forename><surname>Spalinger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">E</forename><surname>Gross</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">T</forename><surname>Hobbs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">A</forename><surname>Wunder</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/2389848</idno>
+		<ptr target="https://doi.org/10.2307/2389848" />
+	</analytic>
+	<monogr>
+		<title level="j">Functional Ecology</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page" from="234" to="244" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">The dynamics of herds: From individuals to aggregations</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Gueron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Levin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">I</forename><surname>Rubenstein</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Theoretical Biology</title>
+		<imprint>
+			<biblScope unit="volume">182</biblScope>
+			<biblScope unit="page" from="85" to="98" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<monogr>
+		<title level="m" type="main">Measuring behaviour. An introductory guide</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Martin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Bateson</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1993">1993</date>
+			<publisher>Cambridge University Press</publisher>
+			<pubPlace>Cambridge, United Kingdom</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">Optimal patch time under exploitative competition</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Yamamura</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Tsuji</surname></persName>
+		</author>
+		<idno type="DOI">10.1086/284657</idno>
+		<ptr target="https://doi.org/10.1086/284657" />
+	</analytic>
+	<monogr>
+		<title level="j">The American Naturalist</title>
+		<imprint>
+			<biblScope unit="volume">129</biblScope>
+			<biblScope unit="page" from="553" to="567" />
+			<date type="published" when="1987">1987</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<analytic>
+		<title level="a" type="main">Selection of vegetation components by grazing ungulates in the Serengeti National Park</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">D</forename><surname>Gwynne</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rhv</forename><surname>Bell</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/220390a0</idno>
+		<idno type="PMID">5684885</idno>
+		<ptr target="https://doi.org/10.1038/220390a0" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">220</biblScope>
+			<biblScope unit="page" from="390" to="393" />
+			<date type="published" when="1968">1968</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<monogr>
+		<title level="m" type="main">The use of the herbaceous layer by grazing ungulates in the Serengeti National Park, Tanzania</title>
+		<author>
+			<persName><forename type="first">Rhv</forename><surname>Bell</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1969">1969</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title level="a" type="main">The Comparative Feeding Bahaviour of Large Browsing and Grazing Herbivores</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">R</forename><surname>Searle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">A</forename><surname>Shipley</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">The Ecology of Browsing and Grazing</title>
+				<meeting><address><addrLine>Berlin, Heidelberg</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2008">2008</date>
+			<biblScope unit="page" from="117" to="148" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title level="a" type="main">Grassland-herbivore interactions: how do grazers coexist?</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">D</forename><surname>Farnsworth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Focardi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Beecham</surname></persName>
+		</author>
+		<idno type="DOI">10.1086/324114</idno>
+		<idno type="PMID">18707399</idno>
+		<ptr target="https://doi.org/10.1086/324114" />
+	</analytic>
+	<monogr>
+		<title level="j">The American Naturalist</title>
+		<imprint>
+			<biblScope unit="volume">159</biblScope>
+			<biblScope unit="page" from="24" to="39" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title level="a" type="main">The allometry of food-intake in grazing ruminants</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">W</forename><surname>Illius</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">J</forename><surname>Gordon</surname></persName>
+		</author>
+		<idno type="DOI">10.2307/4961</idno>
+		<ptr target="https://doi.org/10.2307/4961" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Animal Ecology</title>
+		<imprint>
+			<biblScope unit="volume">56</biblScope>
+			<biblScope unit="page" from="989" to="999" />
+			<date type="published" when="1987">1987</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title level="a" type="main">Heath conservation by sheep grazing: A cost-benefit analysis</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">J</forename><surname>Kottmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Schwo ¨ppe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Willers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Wittig</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/0006-3207(85)90034-5</idno>
+		<ptr target="https://doi.org/10.1016/0006-3207(85)90034-5" />
+	</analytic>
+	<monogr>
+		<title level="j">Biological Conservation</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="page" from="67" to="74" />
+			<date type="published" when="1985">1985</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<monogr>
+		<title level="m" type="main">Red deer in the Highlands</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">H</forename><surname>Clutton-Brock</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Albon</forename><surname>Sd</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1989">1989</date>
+			<publisher>Blackwell Scientific Publications</publisher>
+			<pubPlace>Oxford, United Kingdom</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title level="a" type="main">Foraging behaviour of sheep and red deer within natural heather grass mosaics</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Hester</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">J</forename><surname>Gordon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">J</forename><surname>Baillie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Tappin</surname></persName>
+		</author>
+		<idno type="DOI">10.1046/j.1365-2664.1999.00387.x</idno>
+		<ptr target="https://doi.org/10.1046/j.1365-2664.1999.00387.x" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Applied Ecology</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="page" from="133" to="146" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

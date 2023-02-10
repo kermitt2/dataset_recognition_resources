@@ -1,0 +1,1359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Detection of Cattle Using Drones and Convolutional Neural Networks</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018-06-27">27 June 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Alberto</forename><surname>Rivas</surname></persName>
+							<email>rivis@usal.es</email>
+							<idno type="ORCID">0000-0002-9558-9895</idno>
+						</author>
+						<author>
+							<persName><forename type="first">Pablo</forename><surname>Chamo</surname></persName>
+							<email>chamoso@usal.es</email>
+							<idno type="ORCID">0000-0001-5109-3583</idno>
+						</author>
+						<author>
+							<persName><forename type="first">Alfonso</forename><surname>González-Briones</surname></persName>
+							<email>alfonsogb@usal.es</email>
+							<idno type="ORCID">0000-0002-3444-4393</idno>
+						</author>
+						<author>
+							<persName><forename type="first">Juan</forename><forename type="middle">Manuel</forename><surname>Corchado</surname></persName>
+							<email>corchado@usal.es</email>
+							<idno type="ORCID">0000-0002-2829-1829</idno>
+						</author>
+						<author>
+							<persName><surname>Id</surname></persName>
+						</author>
+						<author>
+							<affiliation>
+								<orgName>1 BISITE Digital Innovation Hub, University of Salamanca, </orgName>
+								<address><addrLine>Edificio Multiusos I+D+i, Calle Espejo 2, 37007 Salamanca, Spain</addrLine></address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation>
+								<orgName> 2 Department of Electronics, Information and Communication, Faculty of Engineering, Osaka Institute of Technology, </orgName>
+								<address><addrLine> Osaka 535-8585, Japan Karung Berkunci 36, Pengkaan Chepa, Kota Bharu 16100, Malaysia</addrLine></address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation>
+								<orgName> 3 Pusat Komputeran dan Informatik, Universiti Malaysia Kelantan,</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Detection of Cattle Using Drones and Convolutional Neural Networks</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018-06-27">27 June 2018</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">853B7074D2451DDB5ECF247323906BF6</idno>
+					<idno type="DOI">10.3390/s18072048</idno>
+					<note type="submission">Received: 29 May 2018; Accepted: 25 June 2018;</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:47+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>cattle detection</term>
+					<term>convolutional neural network</term>
+					<term>multirotor</term>
+					<term>drone</term>
+					<term>Unmanned Aerial Vehicle</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Multirotor drones have been one of the most important technological advances of the last decade.</s><s>Their mechanics are simple compared to other types of drones and their possibilities in flight are greater.</s><s>For example, they can take-off vertically.</s><s>Their capabilities have therefore brought progress to many professional activities.</s><s>Moreover, advances in computing and telecommunications have also broadened the range of activities in which drones may be used.</s><s>Currently, artificial intelligence and information analysis are the main areas of research in the field of computing.</s><s>The case study presented in this article employed artificial intelligence techniques in the analysis of information captured by drones.</s><s>More specifically, the camera installed in the drone took images which were later analyzed using Convolutional Neural Networks (CNNs) to identify the objects captured in the images.</s><s>In this research, a CNN was trained to detect cattle, however the same training process could be followed to develop a CNN for the detection of any other object.</s><s>This article describes the design of the platform for real-time analysis of information and its performance in the detection of cattle.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p><s>Drones are already an inseparable part of our lives.</s><s>They have important technological and functional roles in our society.</s><s>Computationally and mechanically, they are equipped with electronic materials that are easy to integrate and at the same time have considerable power and precision.</s><s>The simplicity of the system means that users can quickly learn how to fly multirotors and that their price is considerably low.</s><s>Their high computational power allows processing thousands of commands per second, resulting in precise and controlled movements defined remotely by the user.</s><s>In terms of their functionality, they are applied to a wider range of professional areas.</s></p><p><s>However, legislation must also be drawn up to regulate the new possibilities provided by technology.</s><s>Many countries including the USA, the UK, Germany and Spain <ref type="bibr" target="#b0">[1]</ref> are still drafting new guidelines and developing legislation to define the way in which multirotors can be used and the areas over which they can fly.</s><s>Moreover, legislation must determine what uses are prohibited and establish licensing requirements for pilots.</s></p><p><s>This paper presents a platform that may provide solutions to some of the current legal issues.</s><s>Moreover, it makes it possible to incorporate new computing and telecommunications developments to improve the performance of multirotors.</s></p><p><s>The platform is based on establishing a high-speed local network, as has already been proposed in previous works <ref type="bibr" target="#b1">[2]</ref>.</s><s>This local network is built over a set of long-range WiFi access points, which can be connected to each other if the area to be flown over is known (e.g., a city or a forest).</s><s>The proposed system incorporates mechanisms that provide it with security, control of access to legally protected areas, prevention of collision with other drones connected to the platform and mechanisms that prevent the loss of network connection.</s><s>In addition, all the information associated with the flight is stored and the flights can be recreated from a series of log files that are reproduced in telemetry visualization software.</s></p><p><s>Although current drones and platforms can already be utilized in many professional sectors <ref type="bibr" target="#b2">[3,</ref><ref type="bibr" target="#b3">4]</ref>, we have tried to provide added value to pilots by incorporating new features in the platform.</s><s>The case study presented in this article used the platform and its new features to conduct a livestock census on a farm.</s><s>Similarly, these developments could be used in wildlife management and for hunting.</s></p><p><s>The research described in this article presents a system for the autonomous monitoring of an area with the use of a drone (the user simply has to indicate the perimeter of the area that they want to monitor).</s><s>The features newly added to the platform allow counting the livestock in the area.</s><s>CNN is used to this end as it makes it possible to identify objects captured on images, and is one of the most widely used image recognition techniques in recent research <ref type="bibr" target="#b4">[5]</ref>.</s></p><p><s>A moving camera was used to acquire images in which certain elements may also be in motion (in this case, livestock).</s><s>In addition to the movement of both the camera and the object of interest, several other aspects may contribute to this difficulty: the lighting conditions may vary, the background is non-static, etc.</s><s>We chose to apply artificial vision techniques to deal with the changes in the numerical representation of each frame.</s><s>Another problem that complicates the identification of targets may be the presence of shadows generated by animals.</s><s>These situations are intractable for the majority of traditional image treatment techniques, such as Chan-Vese segmentation <ref type="bibr" target="#b5">[6,</ref><ref type="bibr" target="#b6">7]</ref>, which performed exceptionally well in numerous image separation tasks, but does not work with the type of data dealt with in this research.</s></p><p><s>CNNs were originally designed to solve image processing problems in which the number of inputs is variable <ref type="bibr" target="#b7">[8,</ref><ref type="bibr" target="#b8">9]</ref>, as in the case presented in this paper.</s><s>This type of technique is based on Multilayer Artificial Neural Networks (ANNs) with a built-in feature extraction process and translational tolerance of the input image space.</s><s>For this reason, CNNs are very precise at identifying targets in an image, even if the images have a lot of background noise <ref type="bibr" target="#b9">[10]</ref>.</s><s>Their precision comes from their ability to learn the distinctive features that represent the type of object that the user wants to detect, even though their relative position in the image may change.</s></p><p><s>This case study was performed over a private field, in a rural area located in the province of Salamanca (Spain) and promising results in the detection of cattle were obtained, as described further on in the article.</s><s>The main novelty of the article is the application of CNNs using a drone platform that allows for the detection of cattle in flight (with 3.2 s of delay).</s><s>For this reason, the drones platform and image analysis are presented separately, while their results are presented together.</s><s>This novelty allows the user to obtain the results instantaneously, as they do not have to analyze the images on a remote computer.</s><s>The use of the platform provides the computing capacity necessary to apply CNN while the flight is in progress.</s></p><p><s>The rest of the article is structured as follows: Section 2 reviews current state of the art in livestock detection, the use of multirotors in professional areas as well as the existing platforms.</s><s>We also look into the use of CNNs in the detection and identification of targets from images.</s><s>Section 3 outlines the technical aspects of the platform used in the conducted case study, this platform facilitates the application of image recognition techniques and description techniques in real-time.</s><s>Section 4 describes the layout of the case study which tested the system.</s><s>Section 5 presents the obtained results.</s><s>Finally, Section 6 presents the conclusions from the conducted research and also discusses future lines of work.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Background</head><p><s>This section explores the three key areas that were the focus of this work: (i) cattle detection techniques; (ii) Ground Control Stations (GCSs) that are composed of at least one computer which runs the software required for the control and monitoring of multirotors as well as the professional areas in which multirotors can be used; and (iii) CNN, which is the main technology used in the developed platform for the detection of cattle while the flight is in progress.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.">Cattle Detection</head><p><s>Hunting, biological studies and farm management can all be optimized through the use of drones which allow us to detect, monitor and count different species.</s><s>There have been several studies on hunting <ref type="bibr" target="#b10">[11,</ref><ref type="bibr" target="#b11">12]</ref> that consider its positive and negative impacts <ref type="bibr" target="#b12">[13]</ref> on the environment, tourism and economy.</s><s>The main problem with using drones for this task is due to the existence of changing terrain (even at different seasons of the year), specie-specific features, and the distribution of the animals throughout the area under analysis <ref type="bibr" target="#b13">[14]</ref>.</s><s>In this regard, approaches based on statistical and biological methods have been published <ref type="bibr" target="#b14">[15]</ref><ref type="bibr" target="#b15">[16]</ref><ref type="bibr" target="#b16">[17]</ref>, which for years have tried to provide a solution to this problem, but none have had a validated commercial use.</s><s>However, technological advances have made it possible to conduct studies <ref type="bibr" target="#b17">[18]</ref><ref type="bibr" target="#b18">[19]</ref><ref type="bibr" target="#b19">[20]</ref> that strive to achieve the goal of automatic cattle counting.</s></p><p><s>UAVs have been used previously to monitor cattle, but the number of studies is very low.</s><s>Few academic investigations on this subject have been dedicated to animal detection and counting <ref type="bibr" target="#b20">[21]</ref>, while others have focused on the monitoring of herd health <ref type="bibr" target="#b21">[22]</ref> or feeding behavior <ref type="bibr" target="#b22">[23]</ref>, but all of them have encountered technical difficulties that have impeded their progress.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.">Professional Uses of Multirotors and Existing Ground Control Stations</head><p><s>Over the last five years, the use of multirotors and other type of UAVs (Unmanned Aerial Vehicles) for professional tasks has increased significantly <ref type="bibr" target="#b23">[24]</ref>.</s><s>In addition, the range of potential applications is getting wider due to the rapid advances in technology that allow reducing the size of devices and their cost.</s><s>Currently, UAVs are used for social purposes, for example in search and rescue operations <ref type="bibr" target="#b24">[25]</ref>, disaster management <ref type="bibr" target="#b25">[26]</ref> or even forest fire monitoring and measurement in an autonomous way <ref type="bibr" target="#b26">[27]</ref>.</s><s>Professional uses also appear within sectors such as surveillance <ref type="bibr" target="#b27">[28]</ref>, construction <ref type="bibr" target="#b28">[29]</ref>, agriculture <ref type="bibr" target="#b29">[30]</ref>, mapping and geology <ref type="bibr" target="#b30">[31]</ref> or in the cinema industry <ref type="bibr" target="#b31">[32]</ref>.</s><s>This list of applications is constantly growing: insurance claim validation, wind turbine inspection, first aid, railway safety, pipeline leak detection, delivery, journalism, oil spill monitoring, and so on.</s></p><p><s>The low cost of multirotors compared to other types of UAVs used as traditional helicopters or aircraft has led to a significant increase in interest in their application.</s><s>In addition to its cost, its mechanical simplicity and great functionality (such as vertical take-off and great stability) have also made the interest rise.</s><s>The most common way to control them is manually via a radio-controlled transmitter that is connected directly to the multirotor; it sends signals that are processed and translated by the multirotor's microcontroller unit into flight commands.</s><s>However, the platforms that are being designed now provide the multirotor with autonomous flight modes (autopilots), meaning that their computer is the pilot and not the user.</s></p><p><s>There are three prominent platforms among the existing commercial platforms and multirotors: Mikrokopter, ArduPilot and DJI.</s><s>Mikrokopter is a German company that has been manufacturing multirotors since 2006, becoming one of the pioneers in the commercial field.</s><s>Initially, only manual flights were performed, but they were replaced with fully autonomous flights which are achieved through GPS and other sensors that provide stability.</s><s>Further developments incorporated an onboard GPS, accelerometers, gyros and a barometric sensor for altitude control, enabling greater manoeuvrability and making autonomous flight possible.</s><s>ArduPilot is one of the best known platforms, mainly because it is open source and has the largest community of collaborators on the Internet.</s><s>It makes manual flights possible, but also has software (Mission Planner) that allows controlling all types of UAVs (not just multirotors) that carry one of their controllers on board (ArduPilot Mega).</s><s>Since it is an open source platform, many developers have worked with it <ref type="bibr" target="#b32">[33]</ref>.</s><s>There are also studies on flying this platform indoors (e.g., <ref type="bibr" target="#b33">[34]</ref>).</s><s>DJI is a Chinese company that currently has one of the most stable multi-rotor solutions and provides numerous models and other professional filming solutions on the market.</s></p><p><s>Needless to say, there are an increasing number of platforms similar to the one presented in this article.</s><s>They are used by developers from all over the world, who choose platforms depending on their needs or combine two platforms to make up for their weaknesses.</s><s>In addition to dealing with different legal issues, the platform presented in this article (commercially known as Hawk Multicopter) incorporates novel functionalities.</s><s>For example, it allows for multiple multirotors to be connected to one platform at the same time.</s><s>To guarantee their safety, software controls the figure on the platform's air traffic controller, avoiding collisions between drones or access to unsafe places.</s><s>Similarly, the telemetry storage system is novel and can be used as electronic evidence in a trial.</s><s>This article focuses on the application of artificial intelligence techniques for the detection of cattle in the images captured by an auxiliary camera, all this is done through the developed platform.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3.">Convolutional Neural Networks</head><p><s>Deep Neural Networks are a combination of the new ANN architectures and the new learning algorithms, providing very powerful frameworks for supervised learning.</s></p><p><s>Today, CNNs are the most widely used model in image recognition because they are capable of achieving very successful results <ref type="bibr" target="#b9">[10,</ref><ref type="bibr" target="#b34">35,</ref><ref type="bibr" target="#b35">36]</ref>.</s></p><p><s>Nowadays, there are numerous convolutional neural network architectures, such as those presented in <ref type="bibr" target="#b36">[37,</ref><ref type="bibr" target="#b37">38]</ref>.</s><s>However, we should point to the fact that these implementations and ideas about CNNs have existed since the 1980s.</s><s>In 1998, LeCun et al. <ref type="bibr" target="#b8">[9]</ref> laid down the most important foundations of what today is known as CNNs, and focused on their application in the field of image recognition.</s></p><p><s>This type of neural network consists of three layers: (1) a convolutional layer that is responsible for applying various filters to an image to extract its main features; (2) a layer that decreases the dimensions of the image by enhancing the most important features; and (2) a layer consisting of a Multi-Layer Neural Network that is responsible for classification.</s></p><p><s>The main advantage of this type of network is that the number of parameters that must be trained is much smaller than that of a fully connected ANN with the same number of layers, thus the training is much faster.</s></p><p><s>CNNs have a wide range of applications, including the detection and erasure of faces and license plates on cars for privacy protection in Google Street View <ref type="bibr" target="#b38">[39]</ref>.</s><s>They are even able to work using the frames generated by a video for the detection of elements such as intruder detection <ref type="bibr" target="#b39">[40]</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Proposed System</head><p><s>This section describes the proposed system.</s><s>First, we outline how any multirotor can be adapted and then connected to the developed platform and how it can benefit from all of its functionalities.</s><s>Then, the software running on the GCS is detailed.</s><s>The final part of this section describes the cattle detection system incorporated into the functionalities provided by the platform.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">Connection of Existing Mutirotor Systems</head><p><s>One of the main features of the platform is that it is suitable for any model of the current commercial brands specialized in multirotors.</s><s>Thus, any user can incorporate each of the platform features in their multirotor.</s><s>For this reason, during the initial stage of system development, current systems were analyzed to enable their integration on a single platform.</s><s>This was possible thanks to the design of a hardware module that is incorporated into the multirotor and makes it possible to communicate with the platform.</s><s>Therefore, to connect any multirotor, it must be purchased (it costs only 30 e).</s><s>The module consists of a Raspberry Pi model 3, which is a low cost and lightweight SBC (Small Board Computer), based on the Raspbian operating system (a modified version of Debian, the well-known operative system) connected to a USB WiFi antenna to connect to the deployed WiFi access points.</s></p><p><s>The module is in charge of translating the digital information received from the user to PWM (Pulse Width Modulation) signals, which is the most common type of information that commercial multirotors receive to allow their control (movements, flight modes, etc.). Figure <ref type="figure" target="#fig_0">1</ref> shows a schema of the connections on board.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>USB</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Ground Control Station Software</head><p><s>The software developed to support the work described in the article was designed to provide a solution to the different legal aspects that are still being legislated today.</s><s>This is addressed by allowing for different functionalities: (i) all the exchanged information is stored in log files that can be viewed with telemetry software; (ii) a person with a controller role can view the status of all the multirotors connected to the platform to ensure that everything works correctly, similar to what air traffic controllers do; (iii) the system prevents access to restricted areas (such as airports and their vicinity) defined by the controller, which is achieved by blocking all the movements that imply access to a limited area; and (iv) it prevents collisions between the multirotors connected to the platform.</s></p><p><s>However, the description of security mechanisms is not the purpose of this article, as they have already been described in <ref type="bibr" target="#b0">[1]</ref>.</s><s>The main goal of the GCS is to offer the possibility of incorporating new functionalities in the platform, allowing pilots to take full advantage of new technological advances.</s></p><p><s>To incorporate large real-time information processing capabilities, the communication system is based on the creation of local networks based on WiFi.</s><s>In this way, a large bandwidth is available to transmit all types of information in a bidirectional, encrypted and secure manner.</s><s>In addition, the signal range is completely scalable and if the ground to be flown over is properly marked, a multirotor could be controlled from distances far greater than those allowed by the radio control systems currently in use.</s></p><p><s>Once a multirotor is connected to the GCS, it can be controlled with different modes: manually through a gamepad (replacing the radio stations that are traditionally used) or through the different autonomous flight modes that the GCS provides: waypoint tracking or analysis of the area within a perimeter determined by the user.</s></p><p><s>The developed software is responsible for managing the entire information exchange between the multirotor and the GCS, displaying the information received in real time and providing the pilot with the necessary functionality to define the behavior of the multirotor and its flight modes.</s><s>An example is shown in Figure <ref type="figure" target="#fig_1">2</ref>.</s></p><p><s>The most interesting flight mode for this case study is the autonomous flight in which the user can mark the perimeter of the area they want to travel.</s><s>The multirotor will autonomously traverse this area in such a way as to ensure that it makes the optimum layout for capturing the entire area with its auxiliary camera at least once with the least possible overlap.</s><s>To do this, the user must know the camera's view frustum and introduce it into the GCS.</s><s>In this case, the auxiliary camera is placed at the bottom of the multirotor, perpendicular to the ground, while the main camera is placed at the front of the multirotor.</s><s>The telemetry information is exchanged by sending and receiving messages based on the secure version of MAVLink <ref type="bibr" target="#b41">[42,</ref><ref type="bibr" target="#b42">43]</ref> protocol which is transmitted using MQTT (Message Queue Telemetry Transport) <ref type="bibr" target="#b43">[44]</ref> between a broker and two clients, one onboard the multirotor and the other included in the GCS software.</s><s>Two streaming videos are sent from the multicopter to the GCS when using both the flight view camera and an auxiliary camera to capture images perpendicular to the ground.</s><s>The user can select the video that the software plays and exchange them in real time.</s></p><p><s>In addition to the software that runs on the GCS, the system has other software that allows the controller to visualize the status of the multirotors connected to the platform.</s><s>It is very similar to the GCS software and allows seeing the position of each multirotor and view the parameters of the flight which are being exchanged between the GCS and the multirotor.</s></p><p><s>Software has also been developed (Figure <ref type="figure" target="#fig_2">3</ref>) to display telemetry in the same way as for a real-time flight.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.">Cattle Recognition</head><p><s>To detect objects in the video taken by the auxiliary camera, individual frames are analyzed at runtime.</s><s>This is done by adopting the sliding window method, which sequentially analyzes small, adjacent, and overlapping image tails positioned in a grid pattern over the frame.</s><s>Every single tile is evaluated by the proposed CNN which must be trained previously.</s><s>Then, the output (the possibility that there is a target in the image or background) is obtained.</s><s>The dataset used to train the neural network in this case study, as well as its structure, is detailed in Section 4.</s></p><p><s>The sliding window method is reproduced at three different scales: (i) a mid-range scale, which is selected to approximate the relative size at which the targets are expected to be seen (a value which can be calculated trigonometrically based on the current flight altitude of the multirotor); (ii) then, a second scale is set at 85% of the mid-range scale window size; and, finally, (iii) the third scale is set at 115% of the mid-range scale window size.</s><s>The use of more than one scale allows obtaining new information by increasing the number of total readings for every grid coordinate.</s></p><p><s>The height at which the drone flies determines the pixels that occupy a medium-sized piece of cattle in the images.</s><s>The application of two windows, one larger and the other smaller, makes it possible to identify smaller and larger cattle.</s></p><p><s>The output values obtained from the CNN are processed at each of the analyzed windows.</s><s>For this purpose, softmax <ref type="bibr" target="#b44">[45]</ref> is the selected activation function, which is defined in Equation ( <ref type="formula" target="#formula_0">1</ref>).</s><s>y i represents the result of the CNN for neuron i of the output layer.</s><s>Thus, the transformation represents the probability of any given class (represented by neuron i, in this case target of background).</s><s>The probability value is represented by P(i).</s></p><formula xml:id="formula_0">P(i) ≡ σ(y, i) = e y i ∑ N n=0 e y n<label>(1)</label></formula><p><s>L xys is also a probability value.</s><s>It is defined in Equation ( <ref type="formula">2</ref>), but, in this case, it represents the probability at coordinate (x; y) and scale s that the analyzed window belongs to the target class.</s><s>When the values from the whole grid are combined for all x, y points and all s scales, a discrete 2D probability distribution is obtained from that corresponding input image (the frame captured by the auxiliary camera).</s><s>The discrete 2D probability distribution indicates the coordinates at which target objects have been found.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>L xys ≡ P(target|x, y, s)</head><p><s>(2)</s></p><formula xml:id="formula_1">B xy = x+1 ∑ i=x−1 y+1 ∑ j=y−1 2 ∑ s=0 L ijs , if L ijs ≥ 1 2 0, if L ijs &lt; 1 2 (3)</formula><p><s>Equation ( <ref type="formula">3</ref>) details how the values in each coordinate are boosted.</s><s>B xy is the boosted value.</s><s>Then, a threshold (which is calculated ad hoc) is applied to the value obtained for this particular application so that a quantized representation of the probability distribution is produced.</s><s>It also eliminates the majority of false positives since the ANN often finds reinforcement values in neighboring positions.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Case Study</head><p><s>As mentioned in the introduction, the case study was conducted in the province of Salamanca (Spain) on a 1.24 ha cattle farm, in a village called La Fuente de San Esteban.</s><s>The perimeter and the area of the enclosure are shown in Figure <ref type="figure" target="#fig_3">4</ref>. To provide connectivity throughout the area, three access points were established at which directory antennas (Ubiquiti Unifi Ac Long Range 1300 Mbps) were deployed as reflected in the yellow icons in Figure <ref type="figure" target="#fig_3">4</ref>.</s><s>The black computer icon represents the GCS, which executes the software displayed by the user.</s><s>Although the platform has an offline mode, to connect to the platform and record all telemetry, Internet connection is required.</s><s>In this case, a 3G router was used to send the exchanged telemetry messages and to allow the platform controller to visualize the status of the multirotor in real time.</s><s>Telemetry messages, being based on MAVLink, take up few kilobytes (depending on their type), and a 30-min flight does not exceed 10 megabytes of Internet traffic (the video is not sent for privacy reasons).</s></p><p><s>The goal of multirotors is to detect animals as they search an area.</s><s>Internally, they keep a record of the number of detected animals, although errors may occur in the case of groupings and the same animals crossing the path of the drone several times.</s><s>However, a video with the detection display is composed and exported together with the original video.</s><s>In the case of a counting error, it can easily be detected by a supervisor.</s></p><p><s>The architecture used by CNN for cattle detection is 64x64-18C7-MP4-96C5-MP2-4800L-2, as shown in Figure <ref type="figure" target="#fig_5">5</ref>, wherein there is a convolutional feature extraction stage and a pooling stage, both stages are repeated two times, and finally followed by an ANN, a fully connected Multi-Layer Perceptron (MLP).</s></p><p><s>The main goal of the convolutional layer is to get the main features of the initial image.</s><s>In a previously published paper <ref type="bibr" target="#b40">[41]</ref>, it was demonstrated that the architecture followed for the CNN used, provided good results.</s><s>The results of the training are described again in Section 5 to facilitate the reader's understanding.</s><s>This task is done by applying a filter which is a small square matrix of input data to a complete matrix created from the original image (note that an image is a matrix of pixels with values from 0 to 255, with three channels for a RGB (Red, Green, Blue) image).</s><s>This filter is slid over the original image matrix by one pixel and for every position computing an element wise operation between the two matrices.</s><s>Finally, the output forms a new matrix which is called Feature Map.</s><s>This process is applied to the original image with k filters, having as many Features Maps as k filters applied.</s><s>k is the number of filters applied, in this case 18 filters for the first convolutional stage and 96 filters for the second one, as explained in Figure <ref type="figure" target="#fig_5">5</ref>.</s><s>An additional non-linear operation is applied after the convolutional stage.</s><s>The aim of this operation is to replace all the negative pixel values in the Feature Map by zero.</s><s>Concretely, the operation applied is ReLU (Rectified Linear Unit <ref type="bibr" target="#b45">[46]</ref>), which is described in Equation (4).</s></p><formula xml:id="formula_2">f (x) = 0 for x &lt; 0 x, for x ≥ 0 (<label>4</label></formula><formula xml:id="formula_3">)</formula><p><s>where x is the value of each pixel.</s><s>Second stage is the pooling step.</s><s>The goal is to reduce the dimensionality of every rectified Feature Map taking the most relevant information.</s><s>This is done by applying a Max Pooling operation, which consists in defining a small window that is applied to the rectified Feature Map.</s><s>Then, the largest value of the window is taken to create a new matrix that is smaller than the previous one, in this way the goal of reducing the dimensionality of the rectified Feature Map is achieved.</s></p><p><s>The last stage is a fully connected MLP ANN based on the features of convolution and pooling stages.</s><s>This neural network is trained with the training dataset to finally classify the initial image among two groups, whether the images are related to cattle or not.</s><s>The MLP contains one hidden layer which has 2n + 1 neurons, where n is the number of neurons in the input layer (in this case, n = 4800).</s><s>The structure has been made according to the theorem of Kolmogorov <ref type="bibr" target="#b46">[47]</ref>, which states that a MLP with one hidden layer of sufficient size (2n + 1) can approximate any continuous function to any desired accuracy.</s></p><p><s>As mentioned above, the training set consists of samples with the target and the background, as shown in Figure <ref type="figure" target="#fig_6">6</ref>.</s><s>Since there are no public datasets that exactly match the data we need (aerial images of livestock, their shadows and possible backgrounds), the dataset was built from recordings made by the multirotor at different heights and during different times of the year (it can influence the background color).</s></p><p><s>The animals, shadows and background have been cut by hand, totalling 100 different animals, 100 shadow images and 100 background images.</s><s>Three new, 90-degree rotations have been applied to each one, creating a total of 400 images for each type and, again, slight perspective deformations have been applied to each one to generate a total of 1200 animal images, 1200 shadow images and 1200 background images.</s><s>The different detection stages that run while the flight is in progress are shown in Figure <ref type="figure" target="#fig_7">7</ref>.</s><s>It can be seen that the result displayed by the user in the GCS highlights the detected animals.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">Results</head><p><s>In this paper, we present a system that consists of a multirotor capable of travelling independently through an area to carry out hunting studies.</s><s>The main novelty is the analysis of the images captured by the auxiliary camera of the multirotor (which is placed perpendicularly to the ground) to determine how many animals exist in the studied area.</s><s>This methodology's highly accurate results are shown below.</s></p><p><s>To evaluate the obtained results, the efficiency of the CNN must be analyzed.</s><s>It should be noted that the training phase is quite fast and reaches a plateau for the training criterion (MSE (mean squared error) on classification) after just a few SGD (Stochastic Gradient Descent <ref type="bibr" target="#b47">[48]</ref>) epochs.</s></p><p><s>13,520 images have been used, which have been divided between the images used for training (10,816 samples) and the images used for testing (2704 samples).In both Training Data Classification and Testing Data Classification there are two classes depending on the target or background.</s><s>In the training process an average accuracy of 97.1% has been obtained (96.2% target sample classification and 98%) and in the testing process 95.5% (91.8% in target samples and 99.3% background samples).</s></p><p><s>In each of the analyzed frames, the number of detected animals is considered by the system.</s><s>This is achieved by executing an algorithm based on connected component-labeling over the boosted and thresholded B xy values in the frame.</s><s>The results obtained from the processing of each frame during the 3-min flight; these frames were captured by the multirotor's auxiliary camera (while flying just above the area where most of the animals were located).</s></p><p><s>Of the total of 443 frames, collected by the camera, a total of 70 frames included cattle.</s><s>Two frames per second were extracted from the video, on which the analysis was performed with three different scales, so only during 35 s the cattle were detected.</s><s>Those frames were processed with the CNN which was developed in Python.</s></p><p><s>Video images were captured and broadcast with a GoPro Hero 5 in Full HD (1080 p).</s><s>The image transmission itself includes a delay of 0.38 s on average (it oscillates slightly, up to ±0.153 s, with the distance the drone is at).</s><s>Each of the analyzed frames occupies an average of 594 KB.</s></p><p><s>From the frames obtained in the results it becomes evident that most errors occur in overcrowded frames, when there is an average of 10 or more visible targets.</s><s>In other cases, when there are fewer than 10 targets, the accuracy improves up to 98.78 percent.</s></p><p><s>Other systems that achieve great precision focus only on the detection of one target in the image, and the results obtained when comparing the most similar system with our multi-target detection proposal are also quite similar.</s><s>For example, the study presented in <ref type="bibr" target="#b48">[49]</ref>, uses aerial images which are analyzed with the accuracy of 99.69 percent for the background and 98.16 percent for the targets.</s><s>In <ref type="bibr" target="#b49">[50]</ref>, the accuracy varies between 77 percent and 88 percent.</s></p><p><s>The image processing results are presented to the user on the GCS software, while the flight is in progress.</s><s>A video is stored for subsequent viewing.</s><s>Even though the results are displayed while the flight is in progress, the processing takes 3.2 s on average (with an Intel i7-8700K processor and 32 GB RAM) and there is some delay in the display of the result on the auxiliary camera (one of the reasons for which a camera is used is the delay).</s><s>A screenshot and the result shown in the GCS software is shown in Figure <ref type="figure" target="#fig_8">8</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">Conclusions and Future Work</head><p><s>The platform allows connecting, using and monitoring multirotors of different commercial brands, and incorporates new functionalities that could for example be used in wildlife management.</s></p><p><s>The presented cattle detection system has a high success rate in the identification of livestock from the images captured by the auxiliary camera.</s><s>The target recognition problem is complex because the camera is in constant movement.</s></p><p><s>A user who wishes to manage their livestock using the platform does not have to worry about controlling the flight of the multirotor, since the system guarantees that the defined area is covered in an optimal and autonomous way, adapting the height of the flight according to the characteristics of the auxiliary camera carried by the multirotor.</s><s>During the flight, the system is can analyze the captured video and the one processed by the recognition system.</s></p><p><s>With regard to future work, we are currently working on a better analysis of animal groups to determine with greater precision the number of animals that are grouped together.</s><s>Currently, animals are identified in clusters with an accuracy of 87 percent, but the goal is to reach an accuracy of over 99 percent.</s><s>We are already working on the algorithm and intend to be publish our study once this accuracy is achieved.</s><s>However, the achieved accuracy is satisfactory and slightly improves the results achieved in other studies <ref type="bibr" target="#b34">[35]</ref>, where the accuracy is of up to 85 percent.</s></p><p><s>In the same way, we will try to solve the problems that can occur when the same animal crosses several times on the path of the multirotor.</s><s>The use of tracking techniques and animal identifiers (such as size and color) will be considered.</s></p><p><s>Once the problems that a multirotor may encounter in animal counting are solved, we will work on creating a distributed counting system that will be executed on several multirotors simultaneously, dividing the area to be analyzed among all participants equally.</s></p><p><s>In future work, we will not focus as much on the technical aspects, and instead will conduct an experiment in which the system will be used to detect the movement of animals and their preferred locations based on different parameters.</s><s>This means that it would no longer be necessary to attach GPS devices to animals.</s></p><p><s>Author Contributions: P.C., A.G.-B.</s><s>and A.R. developed, the software, the hardware and the communication system.</s><s>J.M.C. led the research.</s><s>All authors participated in the writing of the article Funding: This work was developed as part of "MOVIURBAN: Máquina social para la gestión sostenible de ciudades inteligentes: movilidad urbana, datos abiertos, sensores móviles".</s><s>ID: SA070U 16.</s><s>Project co-financed with Junta Castilla y León, Consejería de Educación and FEDER funds.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc><div><p><s>Figure 1.</s><s>Diagram showing the connections on board.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc><div><p><s>Figure 2. Software developed to monitor all the information in real time [41].</s></p></div></figDesc><graphic coords="6,87.59,138.03,420.10,228.66" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc><div><p><s>Figure 3. Software developed to visualize the telemetry recorded.</s></p></div></figDesc><graphic coords="6,87.59,468.64,420.09,219.40" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 .</head><label>4</label><figDesc><div><p><s>Figure 4. Location where the case study was conducted.</s></p></div></figDesc><graphic coords="8,76.54,187.13,442.19,286.85" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 5 .</head><label>5</label><figDesc><div><p><s>Figure 5. Architecture of the Convolutional Neural Network.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 6 .</head><label>6</label><figDesc><div><p><s>Figure 6.</s><s>A sample of the data used to train the CNN.</s><s>Two classes are used: target (a); and background (b).</s></p></div></figDesc><graphic coords="10,170.08,217.07,255.13,101.42" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 7 .</head><label>7</label><figDesc><div><p><s>Figure 7.</s><s>One of the frames captured by the auxiliary camera (top-left); analyzed by the CNN over a grid pattern producing a probability distribution L xys (top-right); values which can then be boosted and quantized as B xy to differentiate every single target (bottom-left); and visualization of the result for the user (bottom-right).</s></p></div></figDesc><graphic coords="10,87.59,376.71,420.08,315.15" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 8 .</head><label>8</label><figDesc><div><p><s>Figure 8. Software developed showing the analyzed video.</s></p></div></figDesc><graphic coords="12,76.54,87.88,442.20,236.21" type="bitmap" /></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Acknowledgments: To William Raveane, who started the work of applying convolutional neural networks and who is no longer at the University of Salamanca.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conflicts of Interest:</head><p><s>The authors declare no conflict of interest.</s></p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">The Use of Drones in Spain: Towards a Platform for Controlling UAVs in Urban Environments</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Chamoso</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>González-Briones</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Rivas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">D M</forename><surname>Bueno</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Corchado</surname></persName>
+		</author>
+		<idno type="DOI">10.3390/s18051416</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Sensors</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<date type="published" when="1416">2018. 1416</date>
+		</imprint>
+	</monogr>
+	<note>PubMed</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">UAV payload and mission control hardware/software architecture</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Pastor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lopez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Royo</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/MAES.2007.384074</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Aerosp. Electron. Syst. Mag</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="page" from="3" to="8" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Robust UAV mission planning</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Evers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Dollevoet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">I</forename><surname>Barros</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Monsuur</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10479-012-1261-8</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Ann. Oper. Res</title>
+		<imprint>
+			<biblScope unit="volume">222</biblScope>
+			<biblScope unit="page" from="293" to="315" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Accurate ortho-mosaicked six-band multispectral UAV images as affected by mission planning for precision agriculture proposes</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Mesas-Carrascosa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Clavero Rumbao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Torres-Sánchez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>García-Ferrer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Peña</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>López Granados</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01431161.2016.1249311</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Remote Sens</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="2161" to="2176" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Deep residual learning for image recognition</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Sun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE Conference on Computer Vision and Pattern Recognition<address><addrLine>Las Vegas, NV, USA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2016-07-01">26 June-1 July 2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Chan-vese segmentation. Image Process</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Getreuer</surname></persName>
+		</author>
+		<idno type="DOI">10.5201/ipol.2012.g-cv</idno>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="214" to="224" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Social computing for image matching</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Chamoso</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Rivas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Sánchez-Torres</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Rodríguez</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0197576</idno>
+	</analytic>
+	<monogr>
+		<title level="j">PLoS ONE</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<date type="published" when="2018">2018. e0197576</date>
+		</imprint>
+	</monogr>
+	<note>PubMed</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Neocognitron: A self-organizing neural network model for a mechanism of visual pattern recognition</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Fukushima</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Miyake</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Competition and Cooperation in Neural Nets</title>
+				<meeting><address><addrLine>Berlin, Germany</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="1982">1982</date>
+			<biblScope unit="page" from="267" to="285" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Gradient-based learning applied to document recognition</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Lecun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Bottou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Bengio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Haffner</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/5.726791</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. IEEE</title>
+				<meeting>IEEE</meeting>
+		<imprint>
+			<date type="published" when="1998">1998</date>
+			<biblScope unit="volume">86</biblScope>
+			<biblScope unit="page" from="2278" to="2324" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Imagenet classification with deep convolutional neural networks</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Krizhevsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">E</forename><surname>Hinton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+				<meeting><address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Curran Associates, Inc</publisher>
+			<date type="published" when="2012">2012</date>
+			<biblScope unit="page" from="1097" to="1105" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">Á</forename><surname>Farfán</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Guerrero</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Real</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Barbosa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Vargas</surname></persName>
+		</author>
+		<title level="m">Caracterización del aprovechamiento cinegético de los mamíferos en Andalucía. Galemys</title>
+				<imprint>
+			<date type="published" when="2004">2004</date>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="page" from="41" to="59" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Una reflexión a propósito de los cercados cinegéticos</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">V</forename><surname>Buenestado</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">España</forename><surname>Aprovechamiento Y Gestión De La Caza En</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Actas del VI Coloquio de Geografía Rural</title>
+				<meeting><address><addrLine>Madrid, Spain</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="1991">1991</date>
+			<biblScope unit="page" from="257" to="272" />
+		</imprint>
+		<respStmt>
+			<orgName>Universidad Autónoma de Madrid</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Aprovechamiento cinegético del monte mediterráneo. Problemática y situación actual de las comunidades arbustivas</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>San Miguel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ochoa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Pérez-Carral</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Cañellas</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1994">1994</date>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page" from="1" to="9" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">The excess-zero problem in soil animal count data and choice of appropriate models for statistical inference</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Sileshi</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.pedobi.2007.11.003</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Pedobiologia</title>
+		<imprint>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="page" from="1" to="17" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Crops and Soil Fertility. Concepts and Research Methods</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">L</forename><surname>Williams</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Trees</surname></persName>
+		</author>
+		<editor>Schroth, G., Sinclair, F.L.</editor>
+		<imprint>
+			<date type="published" when="2003">2003</date>
+			<publisher>CABI Publishing</publisher>
+			<biblScope unit="page">437</biblScope>
+			<pubPlace>Wallingford, UK</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">A Handbook of Methods; CAB International</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Anderson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ingram</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1993">1993</date>
+			<biblScope unit="volume">221</biblScope>
+			<pubPlace>Wallingford, Oxfordshire, UK</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Integrating Count Effort by Seasonally Correcting Animal Population Estimates (ICESCAPE): A method for estimating abundance and its uncertainty from count data using Adélie penguins as a case study</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Mckinlay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Southwell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Trebilco</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">CCAMLR Sci</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="page" from="213" to="227" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Real-time face detection and tracking of animals</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Burghardt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Calic</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2006 8th Seminar on Neural Network Applications in Electrical Engineering</title>
+				<meeting>the 2006 8th Seminar on Neural Network Applications in Electrical Engineering<address><addrLine>Belgrade/Montenegro, Serbia</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2006-09">September 2006</date>
+			<biblScope unit="page" from="27" to="32" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Animal detection in natural scenes: Critical features revisited</title>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">A</forename><surname>Wichmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Drewes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Rosas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">R</forename><surname>Gegenfurtner</surname></persName>
+		</author>
+		<idno type="DOI">10.1167/10.4.6</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Vis</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+	<note>PubMed</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Animal detection using template matching algorithm</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Parikh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Patel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Bhatt</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Res. Mod. Eng. Emerg. Technol</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="26" to="32" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Adapting astronomical source detection software to help detect animals in thermal images obtained by unmanned aerial systems</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Longmore</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Collins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Pfeifer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Fox</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mulero-Pázmány</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Bezombes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Goodwin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>De Juan Ovelar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Knapen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Wich</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01431161.2017.1280639</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Remote Sens</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="2623" to="2638" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Developing Protocols for Using a UAV to Monitor Herd Health</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Webb</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Mehlhorn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Smartt</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2017 ASABE Annual International Meeting</title>
+				<meeting>the 2017 ASABE Annual International Meeting<address><addrLine>Spokane, WA, USA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2017-07">July 2017</date>
+			<biblScope unit="page" from="16" to="19" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Use of an unmanned aerial vehicle-Mounted video camera to assess feeding behavior of raramuri criollo cows</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Nyamuryekung'e</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">F</forename><surname>Cibils</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">E</forename><surname>Estell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">L</forename><surname>Gonzalez</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.rama.2016.04.005</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Rangel. Ecol. Manag</title>
+		<imprint>
+			<biblScope unit="volume">69</biblScope>
+			<biblScope unit="page" from="386" to="389" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Unmanned aircraft systems: Surveillance, ethics and privacy in civil applications</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">L</forename><surname>Finn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Wright</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.clsr.2012.01.005</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Comput. Law Secur. Rev</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="page" from="184" to="194" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Supporting search and rescue operations with UAVs</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Waharte</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Trigoni</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2010 International Conference on Emerging Security Technologies (EST)</title>
+				<meeting>the 2010 International Conference on Emerging Security Technologies (EST)<address><addrLine>Canterbury, UK</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2010-09">September 2010</date>
+			<biblScope unit="page" from="6" to="7" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Networked UAVs as aerial sensor network for disaster management applications. e &amp; i Elektrotech</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Quaritsch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Kruggl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Wischounig-Strucl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bhattacharya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Shah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Rinner</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Informationstech</title>
+		<imprint>
+			<biblScope unit="volume">127</biblScope>
+			<biblScope unit="page" from="56" to="63" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">An unmanned aircraft system for automatic forest fire monitoring and measurement</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Merino</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Caballero</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Martínez-De Dios</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Maza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ollero</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10846-011-9560-x</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Intell. Robot. Syst</title>
+		<imprint>
+			<biblScope unit="volume">65</biblScope>
+			<biblScope unit="page" from="533" to="548" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<monogr>
+		<title level="m" type="main">Surveillance Drones: Privacy Implications of the Spread of Unmanned Aerial Vehicles (UAVs) in Canada</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Bracken-Roche</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Lyon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Mansour</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Molnar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Saulnier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Thompson</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<pubPlace>Kingston, UK</pubPlace>
+		</imprint>
+		<respStmt>
+			<orgName>Queen&apos;s University</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<title level="m" type="main">Visual monitoring of civil infrastructure systems via camera-equipped Unmanned Aerial Vehicles (UAVs): A review of related works</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Ham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">K</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">J</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Golparvar-Fard</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/s40327-015-0029-z</idno>
+		<idno>s40327-015-0029-z</idno>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<pubPlace>Vis. Eng</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Assessing the accuracy of mosaics from unmanned aerial vehicle (UAV) imagery for precision agriculture purposes in wheat</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Gómez-Candón</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>De Castro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>López-Granados</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s11119-013-9335-4</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Precis. Agric</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="page" from="44" to="56" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Ground-based and UAV-based photogrammetry: A multi-scale, high-resolution mapping tool for structural geology and paleoseismology</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">P</forename><surname>Bemis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Micklethwaite</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Turner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">R</forename><surname>James</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Akciz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">T</forename><surname>Thiele</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">A</forename><surname>Bangash</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jsg.2014.10.007</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Struct. Geol</title>
+		<imprint>
+			<biblScope unit="volume">69</biblScope>
+			<biblScope unit="page" from="163" to="178" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Generic Drone Control Platform for Autonomous Capture of Cinema Scenes</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Fleureau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Galvane</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">L</forename><surname>Tariolle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Guillotel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2nd Workshop on Micro Aerial Vehicle Networks, Systems, and Applications for Civilian Use</title>
+				<meeting>the 2nd Workshop on Micro Aerial Vehicle Networks, Systems, and Applications for Civilian Use<address><addrLine>Singapore</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2016-06">June 2016</date>
+			<biblScope unit="page" from="35" to="40" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">The design of an unmanned aerial vehicle based on the ArduPilot</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Bin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Justice</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Indian J. Sci. Technol</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="12" to="15" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<monogr>
+		<title level="m" type="main">Navigation and Autonomous Control of a Hexacopter in Indoor Environments</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Fogelberg</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<pubPlace>Lund, Sweden</pubPlace>
+		</imprint>
+		<respStmt>
+			<orgName>Lund University</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Rich feature hierarchies for accurate object detection and semantic segmentation</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Girshick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Donahue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Darrell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Malik</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE Conference on Computer Vision and Pattern Recognition<address><addrLine>Columbus, OH, USA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2014-06">June 2014</date>
+			<biblScope unit="page" from="580" to="587" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Towards real-time object detection with region proposal networks</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Girshick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Faster R-Cnn</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+				<meeting><address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Curran Associates, Inc</publisher>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="91" to="99" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<title level="m" type="main">Neural Network Architectures. Towards Data Science</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Culurciello</surname></persName>
+		</author>
+		<ptr target="https://towardsdatascience.com/neural-network-architectures-156e5bad51ba" />
+		<imprint>
+			<date type="published" when="2017-06">2017. June 2018</date>
+			<biblScope unit="page">26</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<monogr>
+		<title level="m" type="main">Improving Inception and Image Classification in Tensorflow</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Alemi</surname></persName>
+		</author>
+		<imprint>
+			<publisher>Google Research Blog</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Large-scale privacy protection in google street view</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Frome</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Cheung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Abdulkader</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Zennaro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bissacco</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Adam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Neven</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Vincent</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2009 IEEE 12th International Conference on Computer Vision</title>
+				<meeting>the 2009 IEEE 12th International Conference on Computer Vision<address><addrLine>Kyoto, Japan</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2009-10-02">29 September-2 October 2009</date>
+			<biblScope unit="page" from="2373" to="2380" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Human tracking using convolutional neural networks</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Gong</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Neural Netw</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="page" from="1610" to="1623" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">UAVs applied to the counting and monitoring of animals</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Chamoso</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Raveane</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Parra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>González</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Ambient Intelligence-Software and Applications</title>
+				<meeting><address><addrLine>Cham, Switzerland</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="page" from="71" to="80" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Data analysis of the MAVLink communication protocol</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Atoev</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">R</forename><surname>Kwon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">H</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Moon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2017 International Conference on Information Science and Communications Technologies (ICISCT)</title>
+				<meeting>the 2017 International Conference on Information Science and Communications Technologies (ICISCT)<address><addrLine>Tashkent, Uzbekistan</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2017-11-04">2-4 November 2017</date>
+			<biblScope unit="page" from="1" to="3" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<title level="m" type="main">Securing the Mavlink Communication Protocol for Unmanned Aircraft Systems</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Butcher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Stewart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Biaz</surname></persName>
+		</author>
+		<ptr target="https://docs.google.com/viewer?a=v&amp;pid=sites&amp;srcid=ZGVmYXVsdGRvbWFpbnxzZWN1cmV1YXN8Z3g6M2NkNDQwMTRhMjg3NDEz" />
+		<imprint>
+			<date type="published" when="2018-06">June 2018</date>
+			<biblScope unit="page">26</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Secure mqtt for internet of things (iot)</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Singh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rajan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Shivraj</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Balamuralidhar</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2015 Fifth International Conference on Communication Systems and Network Technologies (CSNT)</title>
+				<meeting>the 2015 Fifth International Conference on Communication Systems and Network Technologies (CSNT)<address><addrLine>Gwalior, India</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2015-04">April 2015</date>
+			<biblScope unit="page" from="746" to="751" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Joint fine-tuning in deep neural networks for facial expression recognition</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Jung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kim</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2015 IEEE International Conference on Computer Vision (ICCV)</title>
+				<meeting>the 2015 IEEE International Conference on Computer Vision (ICCV)<address><addrLine>Santiago, Chile</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2015-12">December 2015</date>
+			<biblScope unit="page" from="2983" to="2991" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Improving deep neural networks for LVCSR using rectified linear units and dropout</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">E</forename><surname>Dahl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">N</forename><surname>Sainath</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">E</forename><surname>Hinton</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 2013 IEEE International Conference on Acoustics, Speech and Signal Processing</title>
+				<meeting>the 2013 IEEE International Conference on Acoustics, Speech and Signal Processing<address><addrLine>Vancouver, BC, Canada</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2013-05">May 2013</date>
+			<biblScope unit="page" from="8609" to="8613" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<monogr>
+		<title level="m" type="main">Foundations of the Theory of Probability</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">N</forename><surname>Kolmogorov</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<publisher>Courier Dover Publications</publisher>
+			<pubPlace>New York, NY, USA</pubPlace>
+		</imprint>
+	</monogr>
+	<note>2nd ed.</note>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Large-scale machine learning with stochastic gradient descent</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Bottou</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of COMPSTAT&apos;2010</title>
+				<meeting>COMPSTAT&apos;2010<address><addrLine>Berlin, Germany</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2010">2010</date>
+			<biblScope unit="page" from="177" to="186" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<monogr>
+		<title level="m" type="main">Deep learning for end-to-end automatic target recognition from synthetic aperture radar imagery</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Furukawa</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1801.08558</idno>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Optimized CNN Based Image Recognition Through Target Region Selection</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Hao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Bie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.ijleo.2017.11.153</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Optik-Int. J. Light Electron. Opt</title>
+		<imprint>
+			<biblScope unit="volume">156</biblScope>
+			<biblScope unit="page" from="772" to="777" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

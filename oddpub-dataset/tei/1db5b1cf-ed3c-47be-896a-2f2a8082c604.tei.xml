@@ -1,0 +1,832 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Merging K-means with hierarchical clustering for identifying general-shaped groups</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2019-01-17">2019 January 17.</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Anna</forename><forename type="middle">D</forename><surname>Peterson</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Statistics</orgName>
+								<orgName type="institution">Iowa State University</orgName>
+								<address>
+									<settlement>Ames</settlement>
+									<region>Iowa</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Arka</forename><forename type="middle">P</forename><surname>Ghosh</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Statistics</orgName>
+								<orgName type="institution">Iowa State University</orgName>
+								<address>
+									<settlement>Ames</settlement>
+									<region>Iowa</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName><forename type="first">Ranjan</forename><surname>Maitra</surname></persName>
+							<email>maitra@iastate.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Statistics</orgName>
+								<orgName type="institution">Iowa State University</orgName>
+								<address>
+									<settlement>Ames</settlement>
+									<region>Iowa</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Merging K-means with hierarchical clustering for identifying general-shaped groups</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2019-01-17">2019 January 17.</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">B544C70C5F35332F64DFE9054F7BFB93</idno>
+					<idno type="DOI">10.1002/sta4.172</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:30+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>K-means algorithm</term>
+					<term>hierarchical clustering</term>
+					<term>single linkage</term>
+					<term>complete linkage</term>
+					<term>distance measure</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Clustering partitions a dataset such that observations placed together in a group are similar but different from those in other groups.</s><s>Hierarchical and K-means clustering are two approaches but have different strengths and weaknesses.</s><s>For instance, hierarchical clustering identifies groups in a tree-like structure but suffers from computational complexity in large datasets while K-means clustering is efficient but designed to identify homogeneous spherically-shaped clusters.</s><s>We present a hybrid non-parametric clustering approach that amalgamates the two methods to identify general-shaped clusters and that can be applied to larger datasets.</s><s>Specifically, we first partition the dataset into spherical groups using K-means.</s><s>We next merge these groups using hierarchical methods with a data-driven distance measure as a stopping criterion.</s><s>Our proposal has the potential to reveal groups with general shapes and structure in a dataset.</s><s>We demonstrate good performance on several simulated and real datasets.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p><s>Clustering partitions a dataset into subsets called clusters without any prior knowledge of group assignment.</s><s>The general objective is that observations placed in the same cluster are similar in some sense while being different to those in other groups.</s><s>The substantial body of literature <ref type="bibr" target="#b5">(Everitt et al., 2001;</ref><ref type="bibr" target="#b8">Fraley &amp; Raftery, 2002;</ref><ref type="bibr" target="#b10">Hartigan, 1985;</ref><ref type="bibr" target="#b15">Kaufman &amp; Rousseuw, 1990;</ref><ref type="bibr" target="#b16">Kettenring, 2006;</ref><ref type="bibr" target="#b27">Melnykov &amp; Maitra, 2011;</ref><ref type="bibr" target="#b25">McLachlan &amp; Basford, 1988;</ref><ref type="bibr" target="#b29">Murtagh, 1985;</ref><ref type="bibr" target="#b31">Ramey, 1985)</ref> dedicated to the topic reflects the difficulty and diversity of clustering applications.</s><s>Most unsupervised clustering techniques are broadly hierarchical or partition-optimization-based.</s><s>Traditionally, hierarchical algorithms provide a tree-like structure for demarcating groups, with the property that all observations in a group at some branch are also in the same group higher up the tree.</s><s>Hierarchical algorithms may be agglomerative (cluster-merging) or divisive (cluster-breaking).</s><s>Agglomerative algorithms successively merge smaller clusters together whereas divisive algorithms successively break larger clusters apart.</s><s>Most hierarchical clustering methods use some dissimilarity measure between groups to decide whether to merge (or split) groups.</s><s>The result can be represented as a dendrogram that can visually express the data structure.</s><s>Generally, a linkage criteria specifies the dissimilarity between each branch of the dendrogram as a function of the pairwise distances of observations in the sets.</s><s>The linkage criterion can influence cluster shapes: for example, single linkage is commonly associated with stringy groups while Ward's linkage is more commonly used for spherical clusters <ref type="bibr" target="#b14">(Johnson &amp; Wichern, 2007)</ref>.</s><s>Although the nesting structure provides a broad understanding of the relationships between observations within a dataset, clusters lose homogeneity at higher branches of the tree.</s><s>Further, hierarchical clustering requires calculating all pairwise distances between observations which is computationally expensive in processor speed (and, more so, in memory) for larger datasets.</s></p><p><s>Partitional clustering, on the other hand, directly divides a dataset into groups, so that the data in each subset (ideally) share some common trait.</s><s>Typically the algorithm involves minimizing some measure of dissimilarity between observations within each cluster, while maximizing the dissimilarity between observations in different clusters.</s><s>The K-means algorithm is a very popular choice even though more formal approaches are provided by model-based clustering <ref type="bibr" target="#b8">(Fraley &amp; Raftery, 2002;</ref><ref type="bibr" target="#b24">McLachlan &amp; Peel, 2000;</ref><ref type="bibr" target="#b27">Melnykov &amp; Maitra, 2011)</ref>.</s><s>The K-means algorithms minimizes the within group sum-of-squares and can be implemented efficiently <ref type="bibr" target="#b11">(Hartigan &amp; Wong, 1979)</ref>.</s><s>But K-means requires the number of groups (K) to be provided or alternatively decided from the data <ref type="bibr" target="#b20">(Maitra et al., 2012)</ref>.</s><s>Further, different initialization strategies often produce strikingly different groupings.</s><s>Also, the algorithm is not as successful with groups that do not have the same and spherical dispersion structure.</s></p><p><s>We illustrate some shortcomings of these algorithms through the Bullseye dataset of <ref type="bibr" target="#b32">Stuetzle &amp; Nugent (2010)</ref> which has 400 observations from a spherical cluster surrounded by a ring of observations (which form the second group).</s><s>Figure <ref type="figure" target="#fig_1">1(a-b</ref>) shows the clustering using 2and 6-means.</s><s>In addition, Figure <ref type="figure" target="#fig_1">1</ref>(c) shows the grouping based on hierarchical clustering with single linkage and K = 2. Neither approach clusters into their true groupings.</s><s>Although Figure <ref type="figure" target="#fig_1">1</ref>(b) captures the center group, we required 5 groups to create the outer ring.</s><s>One possibility of improving this solution is to merge these groups using some objective mechanism and we will explore this approach in this paper.</s></p><p><s>The idea of merging clusters is not new in the literature.</s><s><ref type="bibr" target="#b9">Fred &amp; Jain (2005)</ref> introduced evidence accumulation clustering (EAC) for combining the results from multiple applications of K-means.</s><s>The idea behind EAC is that each partition gives independent evidence on the organization of the data.</s><s>The authors proposed independent runs of K-means on the dataset and created a similarity (frequency) matrix between all pairs of data points with the (i, j)th entry representing the number of times the ith and jth observations were placed in the same group.</s><s>The final data partition is obtained by applying a hierarchical agglomerative clustering algorithm using this similarity matrix.</s><s>The motivation here is that observations that are together in the majority of partitions should also be so in the final chosen partition.</s><s>This procedure is novel in that it chooses among several different partitions but it is computationally expensive since it involves performing either single linkage or average linkage on an n × n distance matrix, where n is the number of observations.</s><s>Stuetzle groups correspond to modes of the density.</s><s><ref type="bibr" target="#b32">Stuetzle &amp; Nugent (2010)</ref> find the modes within a dataset and assign observations to the "domain of attraction" of a mode.</s><s>The collection of high density modes is used to create a hierarchical structure where dissimilarity between modes is based on the lowest density observed between any pair of groups.</s><s><ref type="bibr" target="#b3">Baudry et al. (2010)</ref> propose a cluster merging method using a model-based clustering approach.</s><s>They propose first selecting the total number of Gaussian mixtures components, K 0 , using BIC and then combining them hierarchically.</s><s>This yields a unique soft clustering for each K less than K 0 .</s><s>Further refinements to this method were provided by the DEMP <ref type="bibr" target="#b12">(Hennig, 2010)</ref> and DEMP+ <ref type="bibr" target="#b26">(Melnykov, 2016)</ref> algorithms.</s><s>However, model-based clustering is computationally slower and typically more difficult to apply on to larger datasets.</s></p><p><s>In this paper, we propose a K-means hierarchical (K -mH) cluster merging algorithm which combines the computational benefits of K-means with agglomerative hierarchical clustering.</s></p><p><s>The general methodology and our algorithm are detailed in Section 2. We present several examples of datasets with clusters of complicated/general shapes in Section 3 to illustrate and evaluate our algorithm.</s><s>We end with a short discussion.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Methodology</head><p><s>Let = {X 1 ,X 2 , …,X n } be a dataset of n p-dimensional observations that are presumed to be in a partition P comprising defined categories 1 , 2 , …, K according to some similarity measure between observations.</s><s>Suppose we have N such partitions of a dataset where ψ = {P 1 , P 2 , …, P N } is the set of the N partitions.</s><s>Then we define</s></p><formula xml:id="formula_0">P i = {𝒞 1 i , 𝒞 2 i , …, 𝒞 K i i } as a</formula><p><s>candidate partition where  j i is cluster j of partition P i , |  j i | is the number of observations in  j i , K i is the number of clusters in partition P i and ∑ j = 1</s></p><formula xml:id="formula_1">K i | 𝒞 j i | = n for all i.</formula><p><s>Then the goal is to find, among the N partitions in ψ, the optimal partition P * that ideally provides a close match to the true partition.</s><s>Our objective in this paper is to provide methodology to identify the partitions P i and the optimal P * .</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.">Background and Preliminaries</head><p><s>The development of our algorithm borrows ideas from K-means and hierarchical clustering, so we revisit them briefly.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.1.">K-means-</head><p><s>The K-means algorithm starts with K 0 p-dimensional seeds { μ k (0)</s></p><p><s>; 1 ≤ k ≤ K 0 } and then iterates between cluster assignments and mean updates till convergence.</s><s>Therefore, at the ith step, we update our partitions to be</s></p><formula xml:id="formula_2">𝒞 k (i) = {X j : ‖X j − μ k (i) ‖ = min 1 ≤ l ≤ K ‖X j − μ k (l) ‖ j = 1, …, n}, for k = 1, 2, …, K 0 , with ‖x‖ = x′x.</formula><p><s>These updates are followed by recalculated cluster means, with</s></p><formula xml:id="formula_3">μ k (i + 1) = ∑ j ∈ 𝒞 k (i) X j / | 𝒞 k (i) |.</formula><p><s>The algorithm continues until there are no further changes in</s></p><formula xml:id="formula_4">{ 𝒞 k (i) : k = 1, …, K 0 } (or, equivalently, in the μ k (i) s).</formula><p><s>Initialization: Initialization can greatly impact performance of K-means <ref type="bibr" target="#b19">(Maitra, 2009</ref>) so we adopt MacQueen (1967)'s suggestion that samples K distinct observations from the dataset as initial seeds and runs the algorithm to convergence.</s><s>We run this procedure I times, with the converged solution having the smallest within-group sum-of-squares chosen as our K-groups partition.</s><s>This approach is the default setting of the kmeans() function in R (R Core Team, 2017), with the number of initializations set by the nstart argument.</s></p><p><s>Choosing K 0 : Many methods (for example, <ref type="bibr" target="#b22">Marriott, 1971;</ref><ref type="bibr" target="#b34">Tibshirani et al., 2003;</ref><ref type="bibr" target="#b23">McLachlan, 1987;</ref><ref type="bibr" target="#b33">Sugar &amp; James, 2003;</ref><ref type="bibr" target="#b20">Maitra et al., 2012)</ref> exist for choosing K 0 .</s><s>Here we discuss the <ref type="bibr" target="#b17">Krzanowski &amp; Lai (1988)</ref> criterion which uses the trace of the pooled withingroup variance-covariance matrix, which we denote as W g for a K-groups partition.</s><s>Following <ref type="bibr" target="#b17">Krzanowski &amp; Lai (1988)</ref>, trace(W K ) should decrease dramatically as K increases provided that K &lt; K ̃, where K ̃ is the true number of spherical groups, but that this decrease should slow down once K ≥ K ̃.</s><s>Based on this rationale, and defining Diff (K) = (K − 1) 2/p trace(W K−1 ) − K 2/p trace(W K ), the number of homogeneous spherically-dispersed groups K 0 can be obtained as follows: The algorithm initially places every observation in its own group, that is, by setting  ̃j(0) = X j for all j = 1, 2, …, n.</s><s>Then, we successively merge clusters at each stage, so that at the ith stage, we have n − i clusters, with (n − i − 2) many of those groups unchanged from the previous stage.</s><s>That is, we have</s></p><formula xml:id="formula_5">Let C K = |Diff (K)/Diff (K + 1)| and K 1 ,K 2 , …, K l be such that C K 1 ≥ C K 2 ≥, …,≥ C K l . Then choose K 0 = K 1 .</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.2.">Agglomerative</head><formula xml:id="formula_6">𝒞 ∼ j (i) ≡ 𝒞 ∼ j (i − 1) for all j ∈ {1, …, n − i} \ (k.l)</formula><p><s>where k, l are such that k &lt; l and</s></p><formula xml:id="formula_7">d(𝒞 ∼ k i − 1 , 𝒞 ∼ l i − 1 ) = min 1 ≤ m &lt; q ≤ n − i + 1 d(𝒞 ∼ m (i − 1) , 𝒞 ∼ q (i − 1) ). Set 𝒞 ∼ k (i) = 𝒞 ∼ k (i − 1) ∪ 𝒞 ∼ l (i − 1) and if l &lt; n − i + 1 then 𝒞 ∼ l (i) = 𝒞 ∼ n − i + 1 (i − 1)</formula><p><s>. Set i = i + 1.</s><s>The merging continues until the entire hierarchy has been built, or a hierarchy with a pre-specified number of groups K • have been obtained.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.">The K-means hierarchical (K-mH) cluster merging algorithm</head><p><s>Our proposed algorithm removes scatter and then creates multiple partitions, each formed by combining K-means and hierarchical clustering.</s><s>The algorithm has the following steps.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>1.</head><p><s>Removing scatter from the dataset: The algorithm first removes scatter from the dataset from consideration.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>2.</head><p><s>Finding a partition: Our algorithm has two phases.</s><s>The first focuses on finding a (potentially) large number (K 0 ) of homogeneous spherical groups while the next merges these groups according to some criterion.</s><s>We call these phases the Kmeans and hierarchical phases.</s><s>The exact details of these phases are as follows:</s></p><p><s>a.</s></p><p><s>The K-means phase: For a given K 0 and initialization, the K-means phase uses its namesake algorithm with multiple (m) initializations to identify K 0 homogeneous spherically-distributed groups.</s><s>This phase yields K 0 groups { 1 , 2 , …, K 0 } with means μ 1 ,μ 2 , …,μ K 0 .</s><s>Each obtained cluster k is now considered to be one entity.</s><s>Therefore, we now have K 0 entities labeled as 1 , 2 , …, K 0 for consideration.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>b.</head><p><s>Hierarchical phase: For given K * and distance d(•, •), we successively merge the K-means groups as follows:</s></p><p><s>i.</s></p><p><s>Set i * = 1 and d 1 * = 1.</s><s>Define  ̃j(1) = j for all j.</s></p><p><s>ii.</s></p><formula xml:id="formula_8">For j ∈ 1…(K 0 − i * ) 𝒞 ∼ j (i * + 1) = 𝒞 ∼ j (i * )</formula><p><s>. Find k, l such that k &lt; l and d(</s></p><formula xml:id="formula_9">∼ k i * , 𝒞 ∼ l i * ) = min 1 ≤ m &lt; q ≤ (K 0 − i * + 1) d(𝒞 ∼ m i * , 𝒞 ∼ q i * ). Set 𝒞 ∼ k (i * + 1) = 𝒞 ∼ k (i * ) ∪ 𝒞 ∼ l (i * ) and if l &lt;K 0 − i * + 1 then 𝒞 ∼ l (i * + 1) = 𝒞 ∼ K 0 − i * + 1 (i * )</formula><p><s>, define</s></p><formula xml:id="formula_10">d i * * = d(𝒞 ∼ k i * , 𝒞 ∼ l i * ). Set i * = i * + 1.</formula><p><s>iii.</s></p><formula xml:id="formula_11">If i * = K 0 or i * = K 0 − K * + 1 terminate, else return to Step 2(b).</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>3.</head><p><s>Forming multiple partitions and choosing the optimal P * : Repeat Step 2 N = ML times with M different K 0 s and L different K * s to form multiple partitions.</s><s>Determine the optimal hierarchical partition P * .</s></p><p><s>Our outlined algorithm has several aspects that need clarification.</s><s>We do this next.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.1.">Scatter</head><p><s>Removal-Outliers or scatter can greatly influence clustering performance <ref type="bibr" target="#b21">(Maitra &amp; Ramler, 2009)</ref>.</s><s>Although many methods <ref type="bibr" target="#b4">(Byers &amp; Raftery, 1998;</ref><ref type="bibr" target="#b35">Tseng &amp; Wong, 2005;</ref><ref type="bibr" target="#b21">Maitra &amp; Ramler, 2009</ref>) exist, we adopt the following straightforward approach to eliminating scatter.</s><s>We use K-means with the largest of our candidate group sizes (G) and multiple initializations ( K np) to obtain a G-means partition.</s><s>Observations in any of the G groups that have less than 0.1% of the size of the dataset are labeled as scatter and eliminated from further consideration.</s><s>This leaves us with n * observations X 1 ,X 2 , …,X n * (say) which we proceed with clustering using K − mH.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.2.">Distance between entities-For the hierarchical phase of</head><p><s>Step 2, we calculate the distance between two clusters obtained from the K-means step by assuming (nonhomogeneous) spherically-dispersed Gaussian-distributed groups in the dataset.</s><s>Specifically, we let X 1 ,X 2 , …,X n * be independent p-variate observations with</s></p><formula xml:id="formula_12">X i N p (μ ζ i , σ ζ i 2 I), where ζ i ∈ {1, 2, …, K} for i = 1, 2, …, n * .</formula><p><s>Here we assume that μ k 's are all distinct and that n k is the number of observations in cluster k.</s><s>Then the density for the X i 's is given by</s></p><formula xml:id="formula_13">f (X) = ∑ k = 1 K I(X ∈ 𝒞 k )ϕ(X; μ k , σ k 2 I),</formula><p><s>where k is a cluster indexed by the N p (μ k , σ k 2 I) density and I(X ∈ k ) is an indicator function specifying whether observation X belongs to the kth group having a p-dimensional multivariate normal density</s></p><formula xml:id="formula_14">ϕ(X; μ k , σ k 2 I) ∝ σ k − p exp − 1 2σ k 2 (X − μ k )′(X − μ k ) , k = 1, …, K. Define the distance measure 𝒟 k (X i ) = (X i − μ k )′(X i − μ k ) σ k 2 (1)</formula><p><s>and the variable</s></p><formula xml:id="formula_15">Y j, l (X) = 𝒟 j (X) − 𝒟 l (X), where X ∈ 𝒞 l ,<label>(2)</label></formula><p><s>and Y l,j (X) similarly.</s><s>Using the spherically-dispersed Gaussian models formulated above, Y j,l (X) is a random variable which represents the difference in squared distances of X ∈ l to the center of j and to the center of l.</s><s>Then p l j = Pr [Y j, l (X) &lt; 0] is the probability that an observation from l is classified into j and is calculated as follows.</s></p><p><s>Theorem 1:</s></p><formula xml:id="formula_16">Let X ~ N p (μ l, Σ l ), with Σ l a positive-definite matrix. Further, let Y j,l (X) = j (X)− l (X), where 𝒟 k (X) = (X − μ k )′∑ k −1 (X − μ k ) for k ∈ {j, l}. Let λ 1 , λ 2 , …, λ p be the eigenvalues of ∑ j | l ≡ ∑ l 1 2 ∑ j −1 ∑ l 1 2 with corresponding eigenvectors γ 1 , γ 2 , … γ p . Then Y j,l (X) is distributed as ∑ i = 1 p I(λ i ≠ 1) [(λ i − 1)U i − λ i δ i 2 /(λ i − 1)] + ∑ i = 1 p I(λ i = 1)δ i (2Z i + δ i ),</formula><p><s>where U i ′s are independent non-central χ 2 random variables with one degree of freedom and non-centrality parameter λ i</s></p><formula xml:id="formula_17">2 δ i 2 /(λ i − 1) 2 with δ i = γ i ′∑ l − 1 2 (μ l − μ j ) for i ∈ {1, 2, …, p} ∩ {i : λ l ≠ 1}, independent of Z i 's, which are independent standard normal random variables, for i ∈ {1, 2, …, p} ∩ {i : λ i = 1}. Proof: Let ξ ~ N p (0, I). Since X = d ∑ l 1 2 ξ + μ l , we have Y j, l (X) = X′(∑ j −1 − ∑ l −1 )X + 2X′(∑ l −1 μ l − ∑ j −1 μ j ) + μ j ′∑ j −1 μ j − μ l ′∑ l −1 μ l = d (∑ l 1 2 ξ + μ l )′(∑ j −1 − ∑ l −1 )(∑ l 1 2 ξ + μ l ) + 2(∑ l 1 2 ξ + μ l )′(∑ l −1 μ l − ∑ j −1 μ j ) + μ j ′∑ j −1 μ j − μ l ′∑ l −1 μ l = ξ′(∑ j | l − I)ξ + 2ξ′∑ l 1 2 ∑ j −1 (μ l − μ j ) + (μ l − μ j )′(∑ j −1 )(μ l − μ j )<label>(3)</label></formula><p><s>where</s></p><formula xml:id="formula_18">∑ j | l = ∑ l 1 2 ∑ j −1 ∑ l 1 2 .</formula><p><s>Let the spectral decomposition of Σ j|l be given by</s></p><formula xml:id="formula_19">∑ j | l = Γ j | l Λ j | l Γ j | l ′</formula><p><s>, where Λ j|l is a diagonal matrix containing the eigenvalues λ 1 , λ 2 , … λ p of Σ j|l, and Γ j|l is an orthogonal matrix containing the eigenvectors γ 1 , γ 2 , …, γ p of Σ j|l.</s></p><p><s>Since Z ≡ Γ j|l ′ξ ~ N p (0, I) as well, we get from (3) that</s></p><formula xml:id="formula_20">Y j, l (X) = d ξ′(Γ j | l Λ j | l Γ j | l ′ − Γ j | l Γ j | l ′ )ξ + 2ξ′(Γ j | l Λ j | l Γ j | l ′ ∑ 1 − 1 2 )(μ l − μ j ) + (μ l − μ j )′ (∑ 1 − 1 2 Γ j | l Λ j | l Γ j | l ′ ∑ l − 1 2 )(μ l − μ j ) = (Γ j | l ′ ξ)′(Λ j | l − I)(Γ j | l ′ ξ) + 2(Γ j | l ′ ξ)′(Λ j | l Γ j | l ∑ l − 1 2 )(μ l − μ j ) + (μ l − μ j )′ (∑ l − 1 2 Γ j | l Λ j | l Γ j | l ′ ∑ l − 1 2 )(μ l − μ j ) = d ∑ i = 1 p [(λ i − 1)Z i 2 + 2λ i δ i Z i + λ i δ i 2 ],<label>(4)</label></formula><p><s>where δ i, i = 1, 2, …, p are as in the statement of the theorem.</s><s>We can simplify (4) further based on the values of λ i : If</s></p><formula xml:id="formula_21">λ i &gt; 1: (λ i − 1)Z i 2 + 2λ i δ i Z i + λ i δ i 2 = ( λ i − 1Z i + λ i δ i / λ i − 1) 2 − λ i δ i</formula><p><s>2 /(λ i − 1), while for</s></p><formula xml:id="formula_22">λ i &lt; 1: (λ i − 1)Z i 2 + 2λ i δ i Z i + λ i δ i 2 = − ( 1 − λ i Z i − λ i δ i / 1 − λ i ) 2 − λ i δ i 2 /(λ i − 1).</formula><p><s>In both cases,</s></p><formula xml:id="formula_23">(λ i − 1)Z i 2 + 2λ i δ i Z i + λ i δ i 2 is distributed as a (λ i − 1) χ l, λ i 2 δ i 2 /(λ i − 1) 2 2</formula><p><s>-random variable shifted by</s></p><formula xml:id="formula_24">−λ i δ i 2 /(λ i − 1). When λ i = 1, (λ i − 1)Z i 2 + 2λ i δ i Z i + λ i δ i 2 = 2δ i Z i + δ i 2</formula><p><s>. The theorem follows from some further minor rearrangement of terms.</s></p><p><s>Corollary 1: Let X N p (μ l , σ l 2 I).</s><s>Define k (X) as in (1).</s><s>If σ l = σ j, we have</s></p><formula xml:id="formula_25">Y j, l (X) N(‖μ j − μ l ‖ 2 /σ l 2 , 4‖μ j − μ l ‖ 2 /σ l 2 ), otherwise Y j, l (X) (σ l 2 /σ j 2 − 1) χ p; ‖μ l − μ j ‖ 2 /(σ j 2 − σ l 2 ) 2 2 − ‖μ l − μ j ‖ 2 /(σ l 2 − σ j 2 ).</formula><p><s>Proof: Here, λ i ≡ σ l 2 /σ j 2 , γ i is the ith unit vector, and</s></p><formula xml:id="formula_26">∑ i = 1 p δ i 2 = ‖μ l − μ j ‖ 2 /σ l 2</formula><p><s>. Also, the sum of p independent χ 1; τ i 2 2 random variables has the same distribution as a χ p; ∑ i = 1 p τ i 2 2 random variable.</s><s>The proof follows from Theorem 1.</s></p><p><s>Corollary 1 provides an easy calculation for p l j and p j l .</s><s>Note, however, that for large δ This is important because our hierarchical phase uses the distance measure between groups j and l that we define to be</s></p><formula xml:id="formula_27">(</formula><formula xml:id="formula_28">d(𝒞 j , 𝒞 l ) = 1 − (p l j + p j l )/2. (<label>5</label></formula><formula xml:id="formula_29">)</formula><p><s>We now adapt this distance measure to the initial and iterative parts of the hierarchical phase.</s><s>At the beginning of the hierarchical phase (equivalently, the conclusion of the Kmeans phase), we have K 0 entities with labels 1 , …, K 0 .</s><s>For 1 ≤ k ≤ K 0 , we already have the μ ̂ks while the covariance matrix ( σ k 2 I) is estimated by setting σ k 2 as the trace of the variance-covariance matrix of k scaled by p.</s><s>For subsequent stages, ( <ref type="formula" target="#formula_28">5</ref>) is updated by replacing the distance between an entity (say, l ) and a merged entity (say, j ∪ k ) as d( l, j ∪ k ) = min{d( l, j ), d( l, k )}.</s><s>A convenient aspect of this strategy is that off-the-shelf hierarchical clustering software (for example, the hclust function in R) with single linkage can be used to implement the hierarchical phases of our K-mH algorithm.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.3.">Forming N partitions and choosing P * -</head><p><s>Step 2 of the K − mH algorithm produces one partition starting with K 0 entities ending with K * clusters.</s></p><p><s>Step 3 runs Step 2 N = ML times, where M is the number of K 0 s and L is the number of K * s used.</s><s>We discuss choosing K 0 and K * next.</s></p><p><s>Choosing candidate K 0 : Our proposal for K 0 involves chooses a range of values {k 1 , k 2 , …, k m }, m ≥ M for which we calculate C k 1 , C k 2 , …, C k m using <ref type="bibr" target="#b17">Krzanowski &amp; Lai (1988)</ref>'s suggestions of Section 2.1.1.</s><s>We sort these values to get C g 1 ≥ C g 2 ≥, …,≥ C g m , where the set {g 1 , g 2 , …, g m } = {k 1 , k 2 , …, k m }.</s><s>However, instead of setting K 0 ≡ g 1 as recommended by <ref type="bibr" target="#b17">Krzanowski &amp; Lai (1988)</ref>, we propose running Step 2 of our algorithm for each</s></p><formula xml:id="formula_30">K 0 = K o (i)</formula><p><s>, where K 0</s></p><p><s>(1) = g 1 , K 0 (2) = g 2 , …, K 0 (M) = g M , that is, for the numbers of clusters corresponding to the M highest C g j s.</s><s>So we run the K-means phase M times with</s></p><formula xml:id="formula_31">K 0 = K 0 (i) for i = 1, 2, …, M, with K 0 (1) = g 1 , K 0 (2) = g 2 , …, K 0 (M) = g M .</formula><p><s>For each of these runs, we set K * ≡ K * (i) in the hierarchical phase and in the manner described next.</s></p><p><s>Choosing candidate K * : For each value of K 0 (i) , we use K * if the number of desired generalshaped clusters is known and then we set L = 1.</s><s>When K * is unknown, we obtain a range of K * s by defining change-points (CPs) as</s></p><formula xml:id="formula_32">CP k = d k + 1 * − d k * (for k = 1, …, K 0 (i) )</formula><p><s>where</s></p><formula xml:id="formula_33">d 1 * ≤ d 2 * ≤ … ≤ d K 0 (i) * are calculated during</formula><p><s>Step 2b of the algorithm.</s><s>We sort these CP-values</s></p><formula xml:id="formula_34">to get CP q 1 ≥ CP q 2 ≥ , …, ≥ CP q K 0 (i) − 1</formula><p><s>, where the set {q 1 , q 2 , …,</s></p><formula xml:id="formula_35">q K 0 (i) − 1</formula><p><s>} is some appropriate permutation of the set {2, 3, …, K o (i) }.</s><s>We consider the first L of these values.</s></p><p><s>That is, we define k i,1 = q 1 , k i,2 = q 2 , …, k i,L = q L as in Section 2.2.3 for when we have i) .</s><s>Then for each K 0 (i) we obtain L partitions using K * = k i,j for j ∈ {1, 2, …, L}.</s></p><formula xml:id="formula_36">K 0 = K 0<label>(</label></formula><p><s>Thus, we arrive at N = ML partitions {P 1 , P 2 , …, P N } for all combinations of K 0 and K * .</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>2.2.4.</head><p><s>Visualizing partitions and choosing optimal K * -We extend Fred &amp; Jain (2005)'s ideas to visualize the stability and variability in our partitions.</s><s>Consider the n × n similarity matrix ψ with (i, j)th entry ψ ij = n i,j /N, where n ij is the number of times that the ith and jth observations are in the same cluster across the N partitions obtained from Section 2.2.3.</s><s>We display ψ via a clustered heatmap.</s><s>The heatmap provides indication into both the structure and stability of the clustering.</s><s>We can use this heatmap to decide on K * by determining all partitions which remain after thresholding below ψ ij = 0.5.</s><s>We use two alternative choices in forming these partitions.</s><s>In the first case, if the off-diagonal ψ ij s are generally small or uncertain (i.e.</s><s>their mean is small or their coefficient of variation is high), we use single-linkage otherwise we use complete linkage.</s><s>As with <ref type="bibr" target="#b9">Fred &amp; Jain (2005)</ref>, heatmaps create very large files for large n so we then use a random sample of the observations.</s><s>We replicate this process B times to assess the variability in K * .</s></p><p><s>Final partition: With K * known or determined through the methods of Section 2.2.4,</s><s>we have L = 1 as per Section 2.2.3.</s><s>Then, with the N = M partitions, we pick the clustering that is most similar to the other N − 1 partitions.</s><s>This is operationally implemented by defining the N × N matrix where i,j = ℛ i,j, where ℛ i,j is the value for the Adjusted Rand Index <ref type="bibr" target="#b13">(Hubert &amp; Arabie, 1985)</ref> between partitions P i and P j.</s><s>Define the objective function:  ̄i = Σ j i,j /N.</s><s>Then, we choose P * to be the partition that best matches ψ in the sense of maximizing the objective function.</s><s>Thus, P * = {P i :  i = max 1 &lt; j &lt; N  j } is our choice for the final clustering and represents the partition that is most similar to all the other candidate partitions.</s></p><p><s>In this section, we have developed an algorithm that combines elements of K-means and hierarchical clustering to identify general-shaped clusters.</s><s>All steps in our algorithm are easily implemented using existing software libraries and functions in R (R Core Team, 2017) and other programming languages.</s><s>We next evaluate performance of our algorithm on several datasets.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Performance Evaluations</head><p><s>We now evaluate K-mH on simulated and real datasets to highlight the strengths and weaknesses of our methodology.</s><s>We compare K-mH to the EAC (FJ) of <ref type="bibr" target="#b9">Fred &amp; Jain (2005)</ref> (FJ), cluster merging (CM) of <ref type="bibr" target="#b3">Baudry et al. (2010)</ref>, generalized single linkage with nearestneighbor density estimate (GSL-NN) <ref type="bibr" target="#b32">(Stuetzle &amp; Nugent, 2010)</ref>, DEMP <ref type="bibr" target="#b12">(Hennig, 2010)</ref> and DEMP+ <ref type="bibr" target="#b26">(Melnykov, 2016)</ref>.</s><s>We used R (R Core Team, 2017) for all methods except for CM which used Matlab code provided in the supplemental material of <ref type="bibr" target="#b3">Baudry et al. (2010)</ref>.</s><s>For CM, we used the "elbow rule" on the plot of entropy variation against K to determine K <ref type="bibr" target="#b3">(Baudry et al., 2010)</ref> while for GSL-NN, we used the procedure in Section 7 of <ref type="bibr" target="#b32">Stuetzle &amp; Nugent (2010)</ref>.</s><s>For FJ, er used the method in Section 3.3 of <ref type="bibr" target="#b9">Fred &amp; Jain (2005)</ref>.</s><s>Our K-mH algorithm used M = min {10, ⌊ np/10⌋} (where ⌊x⌋ is the smallest integer less than or equal to x), L = 3 (before estimating K * ), B = 100 and G = ⌊ n⌋.</s><s>In all cases, we used ℛ <ref type="bibr" target="#b13">(Hubert &amp; Arabie, 1985)</ref> calculated between the true and estimated partitions to quanitify performance.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">Two-dimensional Examples</head><p><s>We first illustrate and evaluate performance on many two-dimensional examples found in the literature.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.1.">Smaller-sized Datasets-</head><p><s>The Banana-clump dataset (Figure <ref type="figure" target="#fig_2">2a</ref>) of Stuetzle &amp; Nugent (2010) has 200 observations.</s><s>FJ, DEMP+, GSL-NN and K-mH all reproduce the original partitioning but DEMP and the "elbow" approach of CM suggest three groups with the banana essentially halved.</s><s>Figure <ref type="figure" target="#fig_2">2b</ref> displays the heatmap obtained as part of K-mH.</s></p><p><s>Two large clustered blocks are indicated with uncertainty over whether the upper right block should be partitioned further.</s><s>(It is this partitioning that DEMP and CM go for.)</s><s>Therefore, the heatmap displays the uncertainty and structure in the partitioning, but the K-mH algorithm chooses two groups.</s></p><p><s>Revisiting the Bullseye dataset of Figure <ref type="figure" target="#fig_1">1</ref>, we find that FJ, GSL-NN and K-mH produce good partitions (Figure <ref type="figure" target="#fig_3">3a</ref>) with ℛ ≥ 0.99 but DEMP, DEMP+ and CM perform poorly with the outer ring broken into several further groups.</s><s>The heatmap (Figure <ref type="figure" target="#fig_3">3b</ref>) indicates a lot of uncertainty but the methodology of Section 2.2.4 suggests two groups.</s></p><p><s>3.1.2.</s><s>The Banana-spheres dataset-This dataset has two separated banana-shaped half rings of 250 observations each that are surrounded by a third group in the shape of a full ring of 1500 observations.</s><s>The observations in each group were simulated using pseudorandom realizations from different bivariate normal distributions with means that followed the central path of each shape.</s><s>An additional 15 outlying observations from each cluster were added to provide a dataset of 3015 observations.</s><s>Figures <ref type="figure" target="#fig_4">4a-c</ref> display the top three performers.</s><s>K-mH chooses three groups with ℛ = 0.99 while FJ chooses a 5-groups partition: however, the partitioning is still quite good (ℛ = 0.95).</s><s>GSL-NN suggests 2 clusters while the elbow plot of CM provides K = 11 and ℛ = 0.53.</s><s>Both DEMP (ℛ = 0.29)and DEMP+ (ℛ = 0.45) do worse.</s><s>Further the heatmap (Figure <ref type="figure" target="#fig_4">4d</ref>) shows the structure in the dataset.</s><s>While there are between 2 and 3 clear groups, there is also indication of the complicated structure of each group as well as the outliers.</s></p><p><s>3.1.3.</s><s>The SCX Dataset-This dataset has a variety of cluster shapes and sizes, with three separated C-shaped groups rotated at different angles, a large S-shaped group and four small X-shaped groups.</s><s>Twenty outlying observations are added to the clusters for a total of 3420 observations.</s><s>Here, K-mH partitioning (Figure <ref type="figure" target="#fig_5">5</ref>) is near-perfect (with two observations misclassified as scatter and not displayed in the dataset) while FJ is the next best performer.</s><s>CM, DEMP and DEMP+ perform similarly, but GSL-NN finds 7 groups (ℛ = 0.53) clusters, with the S and 4 crosses all placed in one group and the two lower C's split into 2 and three groups, respectively.</s><s>The heatmap indicates uncertainty with 4 large groups with further definition and K * not easily identified.</s><s>This uncertainty is reflected in the estimated K * s which were 7, 8, 9, and 10, with frequency of occurrence 28, 48, 22, and 2% of the time, respectively.</s><s>The median estimated K * = 8 yields the perfect solution of Figure <ref type="figure" target="#fig_5">5a</ref>.</s></p><p><s>3.1.4.</s><s>The Cigarette-Bullseye dataset-We have another complex-structured dataset with 3 concentric ringed groups, 2 long groups above 2 small spherical ones and 1 group that is actually a superset of 2 overlapping Gaussian groups.</s><s>K-mH and FJ perform similarly while CM finds 6 clusters but ℛ = 0.99 because the smaller groups are the ones not identified clearly.</s><s>GSL-NN also underestimates the number of groups to be 6, with ℛ = 0.78.</s><s>Both DEMP (ℛ = 0.62) and DEMP+ (ℛ = 0.64) exhibit poorer performance.</s><s>The heatmap has similar characteristics as SCX, with 3-4 large groups but no clear choice for K * beyond that even though there are suggestions of sub-groups within each of the large groups.</s><s>However, estimates of K * were 8 (50% of the time), 9 (42%) and 10 (8% of the time).</s><s>The median K * = 8 yields the perfect K-mH solution of Figure <ref type="figure" target="#fig_6">6a</ref> while K * = 9 breaks the leftmost long cluster further into two groups, yielding a similar partitioning as FJ (Figure <ref type="figure" target="#fig_6">6c</ref>).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Higher-Dimensional Datasets</head><p><s>We next present performance evaluations on three higher-dimensional datasets often used in the literature.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>3.2.1.</head><p><s>Olive Oils-This dataset <ref type="bibr" target="#b7">(Forina &amp; Tiscornia, 1982;</ref><ref type="bibr">Forina et al., 1983)</ref> has measurements on 8 chemical components for 572 samples of olive oil taken from 9 different areas in Italy which are from three regions: Sardiania and Northern and Southern Italy.</s><s>For this dataset, GSL-NN is the only method that identifies 9 groups (ℛ = 0.61) while FJ identifies 8 groups (ℛ = 0.54).</s><s>CM (ℛ = 0.75), DEMP (ℛ = 0.82)and DEMP+ (ℛ = 0.85) are the best (ℛ = 0.75) performers even though they identify only 7 groups.</s><s>The visualization step of the K-mH algorithm on the other hand largely identifies 8 kinds of olive oils (88% of the time) and also 7 (2%) and 9 (12%) kinds of olive oils.</s><s>The median estimated K * = 11 yields a partitioning with ℛ = 0.67.</s><s>A closer look at the K-mH partitions reveals that oils from the southern areas of Calabria, Sicily and South Apulia are mainly grouped together in our second cluster while the remaining southern area of North-Apulia primarily populates our ninth cluster.</s><s>Coastal and Inland Sardinian olive oils are identified very well by our groupings.</s><s>Our partitioning aligns very well with the three regions with our groups 3, 4, 5, 10 and 11 (with the exception of one oil) all exclusively from the north, groups 7 and 8 from Sardinia and groups 1, 2, 6 and 9 exclusively from the south.</s><s>The nearperfect embedding of our groups within the three regions indicates that the nine areas drawn using political geography may not distinguish the different kinds of olive oils as well as a different characterization using a different set of sub-regions that are based on physical geography.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.2.">Zipcode Images-</head><p><s>The zipcode images dataset made available by <ref type="bibr" target="#b32">Stuetzle &amp; Nugent (2010)</ref> has been used in machine learning to evaluate clustering and classification algorithms and consists of 2000 16 × 16 images of handwritten Hindu-Arabic numerals.</s><s>Thus, p = 256 here.</s><s><ref type="bibr" target="#b32">Stuetzle &amp; Nugent (2010)</ref> report that GSL-NN "vaguely" finds 9 groups (ℛ = 0.64) but that their 10-groups solution is worse (ℛ = 0.54).</s><s>We normalized the measurements for each digit to have zero mean and unit variance so that the Euclidean distance between any two observations is negatively but affinely related to the correlation between them.</s><s>We reduced dimensions by principal components analysis and used the projection of the observations into the space spanned by the first 54 principal components which explain at least 90% of the variation in the data.</s><s>This dataset is perhaps too cumbersome for CM, DEMP and DEMP+ while FJ finds 6 groups but the assignment is not very far from random (ℛ = 0.05).</s><s>The K-mH heatmap (Figure <ref type="figure" target="#fig_8">8</ref>) indicates lack of clarity in the number of groups with K * chosen at between 29 and 30 most of the time.</s><s>The median K * = 30 yields the grouping (ℛ = 0.54) of Figure <ref type="figure" target="#fig_8">8</ref>. Inspection indicates five main types of handwritten digits for 0 and 2, four kinds for 6, three kinds of 4 and 9, two major kinds of 3, 5 and 7 and one major kind for each of 1 and 8. Our groups correspond very reasonably to handwriting styles for digits and are very interpretable.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.3.">Handwritten Digits-The</head><p><s>Handwritten Digits dataset <ref type="bibr" target="#b0">(Alimoglu, 1996;</ref><ref type="bibr">Alimoglu &amp; Alpaydin, 1996)</ref> available from <ref type="bibr" target="#b30">Newman et al. (1998)</ref> measured 16 attributes from 250 handwritten samples of 30 writers.</s><s>With eight samples unavailable, this dataset has 10992 records.</s><s>We used the first 7 principal component scores which explained 90% of the variation in the dataset.</s><s>We were only able to apply FJ and K-mH (the other methods all threw up errors).</s><s>FJ identified 10 groups but performs very poorly (ℛ = 0.097) while the K-mH heatmap (Figure <ref type="figure">9</ref>) identifies a range of K * = 19 through 27, with a median of 24.</s><s>The K-mH grouping for K * = 24 yielded moderately good performance (ℛ = 0.64).</s></p><p><s>Interestingly, our groups identified 2, 4 and 6 well, but not with a simpler digit like 1, which, in the light of our findings in Section 3.2.2, may suggest that the 16 attributes used to characterize the samples may have focused more on some features of the handwriting of digits.</s></p><p><s>The performances of K-mH, FJ, CM, DEMP and DEMP+ for all cases are summarized in Table <ref type="table">1</ref> and shows that K-mH is always among the top performers.</s><s>This happens with very complicated as well as simpler structures.</s><s>Even when performance is not outstanding, as happened with higher-dimensional real-life datasets, K-mH is still a top performer, often producing results that are interpretable.</s><s>FJ is also a good performer in the two-dimensional examples but this performance degraded more in higher dimensions than with K-mH.</s><s>DEMP ad DEMP+ was a good performer only on the Olive Oils dataset where it performed very well despite underestimating the number of groups by 2. Our algorithm was also able to handle computations for the larger handwritten digits dataset.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Discussion</head><p><s>In this paper we propose a new K-means hierarchical clustering algorithm that builds on the idea of <ref type="bibr" target="#b9">Fred &amp; Jain (2005)</ref> that different clusterings of a dataset each provide different discrete evidence of a grouping.</s><s>We compare several different clusterings of the data and choose the final grouping that is most similar to the proposed partitions.</s><s>Our algorithm is among the top performing methods for both simulated datasets with complicated shapes as well as several real datasets.</s><s>We also present an automated clustering approach for finding the optimal parition and number of groups that is shown to perform well.</s><s>In addition, we use a graphical method introduced in Fred &amp; Jain (2005) that we use to investigate uncertainty and structural stability of the clustering and to determine the correct number of groups.</s><s>Our K-mH algorithm is computationally efficient for larger datasets in comparison to several other cluster merging algorithms.</s><s>Indeed, the main computational cost is that of performing K-means for different K, which can be expensive given the number of initializing runs for each K. Further, it is very easily coded: simple R functions doing the same are available on request.</s></p><p><s>There are several directions for future work.</s><s>One possibility is to compare other distance measures in the hierarchical step of the K-mH algorithm.</s><s>It may be worthwhile to further use other different distance measures as candidate partitions when choosing the optimal partition P * .</s><s>Another aspect worthy of investigation would be to explore additional ways for determining K * .</s><s>It is worth noting in this context that the hierarchical map for visualizing structural stability can be a memory-intensive operation.</s><s>Thus, we see that while we have put forward a promising algorithm, issues meriting further attention remain.</s><s>Table <ref type="table">1</ref> Performance in terms of ℛ (first row of each block) and estimated number of groups K ̂</s></p><p><s>(second row of each block) for all datasets used in the experiment.</s></p><p><s>A "-" indicates that the algorithm failed to converge or returned an error message.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc><div><p><s>Hierarchical clustering-Here, we successively merge current groups assuming a distance d(A,B) between any two groups A and B and a mechanism (or linkage) to recalculate the distances when groups are merged.</s><s>Examples of linkages are single where d(A,B) = min{||x − y|| : x ∈ A, y ∈ B} or average with d(A,B) = Σ x∈A Σ y∈B ||x − y||/(|A||B|).</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 .</head><label>1</label><figDesc><div><p><s>Figure 1.</s><s>Partition (using both color and symbol) of the Bullseye dataset with (a) 2-means, (b) 6means and (c) single linkage hierarchical clustering with 2 groups.</s></p></div></figDesc><graphic coords="16,90.84,62.00,490.32,180.48" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 .</head><label>2</label><figDesc><div><p><s>Figure 2. (a) K-mH partitioning of the Banana-clump dataset and (b) heatmap illustrating clustering uncertainty and stability.</s></p></div></figDesc><graphic coords="17,157.44,62.00,357.12,179.88" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 .</head><label>3</label><figDesc><div><p><s>Figure 3. (a) K-mH partitioning of the Banana-clump dataset and (b) heatmap illustrating clustering uncertainty and stability.</s></p></div></figDesc><graphic coords="18,140.88,62.00,390.24,199.32" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 4 .</head><label>4</label><figDesc><div><p><s>Figure 4. Top three partitionings of the Bananas-sphere dataset using (a) K-mH (b) FJ and (c) GSL-NN.</s><s>Captions indicate estimated number of groups and ℛ between estimated and true groupings.</s><s>(d) K-mH heatmap for stability of groupings.</s></p></div></figDesc><graphic coords="19,88.44,62.00,495.12,136.08" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 5 .</head><label>5</label><figDesc><div><p><s>Figure 5. Top three performers for SCX: (a) K-mH (b) FJ and (c) CM and (d) the K-mH heatmap.</s></p></div></figDesc><graphic coords="20,94.76,62.00,482.49,132.48" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 6 .</head><label>6</label><figDesc><div><p><s>Figure 6.</s><s>Top three performers on the Cigarette-Bullseye dataset: (a) K-mH, (b) CM, (c) FJ and (d) the K-mH heatmap.</s></p></div></figDesc><graphic coords="21,90.24,62.00,491.52,185.04" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 7 .</head><label>7</label><figDesc><div><p><s>Figure 7.</s><s>The K-mH heatmap and the results by region and area obtained from K-mH clustering of the Olive Oils dataset.</s></p></div></figDesc><graphic coords="22,91.68,62.00,488.64,138.24" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 8 .</head><label>8</label><figDesc><div><p><s>Figure 8.</s><s>The K-mH heatmap and the results by digit obtained from K-mH clustering of the Zipcode dataset.</s></p></div></figDesc><graphic coords="23,95.16,62.00,481.68,248.16" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc><div><p></p></div></figDesc><graphic coords="24,103.44,62.00,465.12,208.80" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head></head><label></label><figDesc><div><p><s>and/or p) the χ p; δ 2 cumulative distribution function is not evaluated accurately so we approximate this quantity by the corresponding cumulative distribution function of the N(p + δ, 2(p + 2δ)) random variable (for details, seeMuirhead, 2005, pages 22-24 and problem   1.8).</s><s>The net result is that we have approximate but very speedy and accurate calculations.</s></p></div></figDesc><table /></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">&amp; Nugent (2010) adopt a nonparametric approach to clustering based on the premise that</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgments</head><p><s>This research was supported, in part, by National Science Foundation (NSF) grants DMS-0707069, DMS-CAREER-0437555 and by the National Institutes of Health grant R21EB0126212.</s><s>The content of this paper however is solely the responsibility of the authors and does not represent the official views of the NSF or the NIH.</s></p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0" />			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Combining Multiple Classifiers for Pen-Based Handwritten Digit Recognition</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Alimoglu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1996">1996</date>
+		</imprint>
+		<respStmt>
+			<orgName>Bogazici University</orgName>
+		</respStmt>
+	</monogr>
+	<note>Master&apos;s thesis. Institute of Graduate Studies in Science and Engineering</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Methods of combining multiple classifiers based on different representations for pen-based handwriting recognition</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Alimoglu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Alpaydin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Fifth Turkish Artificial Intelligence and Artificial Neural Networks Symposium (TAINN 96)</title>
+				<meeting>the Fifth Turkish Artificial Intelligence and Artificial Neural Networks Symposium (TAINN 96)</meeting>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">Turkey</forename><surname>Istanbul</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Combining mixture components for clustering</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Baudry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Raftery</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Celeux</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Lo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Gottardo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Computational and Graphical Statistics</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="332" to="353" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Nearest neighbor clutter removal for estimating features in spatial point processes</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Byers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Raftery</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">93</biblScope>
+			<biblScope unit="page" from="577" to="584" />
+			<date type="published" when="1998">1998</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<monogr>
+		<title level="m" type="main">Cluster Analysis. 4. Hodder Arnold</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">S</forename><surname>Everitt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Landau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Leesem</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2001">2001</date>
+			<pubPlace>New York</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">Applied Science Publishers; London: 1983. Classification of olive oils from their fatty acid composition</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Forina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Armanino</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lanteri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Tiscornia</surname></persName>
+		</author>
+		<imprint>
+			<biblScope unit="page" from="189" to="214" />
+		</imprint>
+	</monogr>
+	<note>Food Research and Data Analysis</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Pattern recognition methods in the prediction of italian olive oil origin by their fatty acid content</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Forina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Tiscornia</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Annali di Chimica</title>
+		<imprint>
+			<biblScope unit="volume">72</biblScope>
+			<biblScope unit="page" from="143" to="155" />
+			<date type="published" when="1982">1982</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Model-based clustering, discriminant analysis, and density estimation</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Fraley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Raftery</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">97</biblScope>
+			<biblScope unit="page" from="611" to="631" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Combining multiple clusterings using evidence accumulation</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">L</forename><surname>Fred</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">K</forename><surname>Jain</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Pattern Analysis and machine Intelligence</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="835" to="850" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+	<note>PubMed: 15943417</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Statistical theory in clustering</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Hartigan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Classification</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="63" to="76" />
+			<date type="published" when="1985">1985</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">A k-means clustering algorithm</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Hartigan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Wong</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Applied Statistics</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="page" from="100" to="108" />
+			<date type="published" when="1979">1979</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Methods for merging Gaussian mixture components. Advances in Data Analysis and Classification</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Hennig</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s11634-010-0058-3</idno>
+		<imprint>
+			<date type="published" when="2010">2010</date>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page" from="3" to="34" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Comparing partitions</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Hubert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Arabie</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Classification</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="193" to="218" />
+			<date type="published" when="1985">1985</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Applied Multivate Statical Analysis</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">W</forename><surname>Wichern</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2007">2007</date>
+			<publisher>Prentice-Hall</publisher>
+			<biblScope unit="volume">6</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">Finding Groups in Data</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Kaufman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Rousseuw</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1990">1990</date>
+			<publisher>John Wiley and Sons, Inc</publisher>
+			<pubPlace>New York</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">The practice of cluster analysis</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Kettenring</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of classification</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="page" from="3" to="30" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">A criterion for determining the number of groups in a data set using sum-ofsquares clustering</title>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">J</forename><surname>Krzanowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">T</forename><surname>Lai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biometrics</title>
+		<imprint>
+			<biblScope unit="volume">44</biblScope>
+			<biblScope unit="page" from="23" to="34" />
+			<date type="published" when="1988">1988</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Some methods of classification and analysis of multivariate observations</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Macqueen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the Fifth Berkeley Symposium on Mathematical Statistics and Probability</title>
+				<meeting>the Fifth Berkeley Symposium on Mathematical Statistics and Probability</meeting>
+		<imprint>
+			<date type="published" when="1967">1967</date>
+			<biblScope unit="page" from="281" to="297" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Initializing partition-optimization algorithms</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Maitra</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TCBB.2007.70244</idno>
+		<ptr target="http://doi.ieeecomputersociety.org/10.1109/TCBB.2007.70244" />
+	</analytic>
+	<monogr>
+		<title level="j">IEEE/ACM Transactions on Computational Biology and Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page" from="144" to="157" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+	<note>PubMed: 19179708</note>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Bootstrapping for significance of compact clusters in multidimensional datasets</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Maitra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Melnykov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lahiri</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/01621459.2011.646935</idno>
+		<ptr target="http://dx.doi.org/10.1080/01621459.2011.646935" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">107</biblScope>
+			<biblScope unit="issue">497</biblScope>
+			<biblScope unit="page" from="378" to="392" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Clustering in the presence of scatter</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Maitra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">P</forename><surname>Ramler</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biometrics</title>
+		<imprint>
+			<biblScope unit="volume">65</biblScope>
+			<biblScope unit="page" from="341" to="352" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+	<note>PubMed: 18537949</note>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Practical problems in a method of cluster analysis</title>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">H</forename><surname>Marriott</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biometrics</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="page" from="501" to="514" />
+			<date type="published" when="1971">1971</date>
+		</imprint>
+	</monogr>
+	<note>PubMed: 5116570</note>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">On bootstrapping the likelihood ratio test statistic for the number of components in a normal mixture</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Mclachlan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Applied Statistics</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="page" from="318" to="324" />
+			<date type="published" when="1987">1987</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">Finite Mixture Models</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Mclachlan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Peel</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2000">2000</date>
+			<publisher>John Wiley and Sons, Inc</publisher>
+			<pubPlace>New York</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Mixture Models: Inference and Applications to Clustering</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">J</forename><surname>Mclachlan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">E</forename><surname>Basford</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Marcel Dekker</title>
+		<imprint>
+			<date type="published" when="1988">1988</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Merging mixture components for clustering through pairwise overlap</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Melnykov</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Computational and Graphical Statistics</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="66" to="90" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">CARP: Software for fishing out good clustering algorithms</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Melnykov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Maitra</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="69" to="73" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<title level="m" type="main">Aspects of Multivariate Statistical Theory. 2</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Muirhead</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2005">2005</date>
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<title level="m" type="main">Multi-dimensional clustering algorithms</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Murtagh</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1985">1985</date>
+			<publisher>Berlin</publisher>
+			<pubPlace>New York</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">UCI repository of machine learning databases</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Newman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Hettich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">L</forename><surname>Blake</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Merz</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">R Core Team. R: A Language and Environment for Statistical Computing. R Foundation for Statistical Computing</title>
+				<meeting><address><addrLine>Vienna, Austria</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="1998">1998. 2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Nonparametric clustering techniques</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Ramey</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Encyclopedia of Statistical Science</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page" from="318" to="319" />
+			<date type="published" when="1985">1985</date>
+			<publisher>Wiley</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">A generalized single linkage method for estimating the cluster tree of a density</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Stuetzle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Nugent</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">JCGS</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="397" to="418" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Finding the number of clusters in a dataset</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">A</forename><surname>Sugar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">M</forename><surname>James</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the American Statistical Association</title>
+		<imprint>
+			<biblScope unit="volume">98</biblScope>
+			<biblScope unit="issue">463</biblScope>
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Estimating the number of clusters in a dataset via the gap statistic</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Tibshirani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Walther</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">J</forename><surname>Hastie</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society</title>
+		<imprint>
+			<biblScope unit="volume">63</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="411" to="423" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Tight clustering: A resampling-based approach for identifying stable and tight patterns in data</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">C</forename><surname>Tseng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">H</forename><surname>Wong</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biometrics</title>
+		<imprint>
+			<biblScope unit="volume">61</biblScope>
+			<biblScope unit="page" from="10" to="16" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+	<note>PubMed: 15737073</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

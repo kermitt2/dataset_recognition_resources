@@ -1,0 +1,1944 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Prediction of Human Phenotype Ontology terms by means of hierarchical ensemble methods</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Marco</forename><surname>Notaro</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Max</forename><surname>Schubach</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Peter</forename><forename type="middle">N</forename><surname>Robinson</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Giorgio</forename><surname>Valentini</surname></persName>
+						</author>
+						<title level="a" type="main">Prediction of Human Phenotype Ontology terms by means of hierarchical ensemble methods</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">3C0B2E23E24D0D8425AC7DC0CB038CA2</idno>
+					<idno type="DOI">10.1186/s12859-017-1854-y</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:39+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Human Phenotype Ontology</term>
+					<term>Hierarchical multi-label classification</term>
+					<term>Hierarchical ensemble methods</term>
+					<term>Gene-Abnormal phenotype association</term>
+					<term>Human Phenotype Ontology term prediction</term>
+					<term>Phenotype gene prioritization</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Background:</head><p><s>The prediction of human gene-abnormal phenotype associations is a fundamental step toward the discovery of novel genes associated with human disorders, especially when no genes are known to be associated with a specific disease.</s><s>In this context the Human Phenotype Ontology (HPO) provides a standard categorization of the abnormalities associated with human diseases.</s><s>While the problem of the prediction of gene-disease associations has been widely investigated, the related problem of gene-phenotypic feature (i.e., HPO term) associations has been largely overlooked, even if for most human genes no HPO term associations are known and despite the increasing application of the HPO to relevant medical problems.</s><s>Moreover most of the methods proposed in literature are not able to capture the hierarchical relationships between HPO terms, thus resulting in inconsistent and relatively inaccurate predictions.</s><s>Results: We present two hierarchical ensemble methods that we formally prove to provide biologically consistent predictions according to the hierarchical structure of the HPO.</s><s>The modular structure of the proposed methods, that consists in a "flat" learning first step and a hierarchical combination of the predictions in the second step, allows the predictions of virtually any flat learning method to be enhanced.</s><s>The experimental results show that hierarchical ensemble methods are able to predict novel associations between genes and abnormal phenotypes with results that are competitive with state-of-the-art algorithms and with a significant reduction of the computational complexity.</s><s>Conclusions: Hierarchical ensembles are efficient computational methods that guarantee biologically meaningful predictions that obey the true path rule, and can be used as a tool to improve and make consistent the HPO terms predictions starting from virtually any flat learning method.</s><s>The implementation of the proposed methods is available as an R package from the CRAN repository.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Background</head><p><s>In contrast to its general meaning that usually refers to the traits or characteristics of an organism, in medical contexts, the word "phenotype" is defined as a deviation from normal morphology, physiology, or behavior <ref type="bibr" target="#b0">[1]</ref>.</s><s>The analysis of phenotype is essential for understanding the pathophysiology of cellular networks and plays a key role in medical research and in the mapping of disease genes *Correspondence: valentini@di.unimi.it 1 Anacleto Lab -Dipartimento di Informatica, Universitá degli Studi di Milano, Via Comelico 39, 20135 Milan, Italy Full list of author information is available at the end of the article <ref type="bibr" target="#b1">[2,</ref><ref type="bibr" target="#b2">3]</ref>.</s><s>The Human Phenotype Ontology (HPO) project <ref type="bibr" target="#b3">[4]</ref> provides a standard categorization of the human abnormal phenotypes and of their semantic relationships.</s><s>It is worth noting that each HPO term does not represent a disease, but rather denotes individual signs or symptoms or other clinical abnormalities that characterize a disease.</s><s>The HPO is currently developed using the medical literature, and OMIM <ref type="bibr" target="#b4">[5]</ref>, Orphanet <ref type="bibr" target="#b5">[6]</ref> and DECIPHER <ref type="bibr" target="#b6">[7]</ref> databases, and contains approximately 11,000 terms and over 115,000 annotations to hereditary diseases.</s><s>The HPO is structured as a direct acyclic graph (DAG), where more general terms are found on the top levels of hierarchy and the term specificity increases moving towards the lower levels of hierarchy, i.e. from root to leaves.</s><s>As a consequence, differently from tree-structured taxonomies such as FunCat <ref type="bibr" target="#b7">[8]</ref>, each HPO term may have more than one parent.</s><s>The HPO is governed by true-pathrule (also known as annotation propagation rule) <ref type="bibr" target="#b1">[2]</ref>: if a gene is annotated with a given functional term, then it is annotated with all the "parent" terms, and with all its ancestors in a recursive way.</s><s>On the contrary if a gene is not annotated to a term, it cannot be annotated to its offspring.</s></p><p><s>While the problem of the prediction of gene-disease associations has been widely investigated <ref type="bibr" target="#b8">[9]</ref>, the related problem of gene-HPO term prediction has been only considered in a few studies <ref type="bibr" target="#b9">[10]</ref>, despite the fact that no HPO term associations are known for most human genes, and the quickly growing application of the HPO to relevant medical problems <ref type="bibr" target="#b10">[11,</ref><ref type="bibr" target="#b11">12]</ref>.</s></p><p><s>"Flat" classification methods have been applied to the prediction of gene-HPO term associations <ref type="bibr" target="#b12">[13]</ref>.</s><s>Unfortunately these methods can introduce major inconsistencies in the classification, because labels are independently predicted without taking into account the hierarchical relationships within the ontology <ref type="bibr" target="#b13">[14]</ref>.</s><s>For example, if we use the HPO to predict gene-phenotype relations, a flat learner can associate the HPO term "Hyperplasia of metatarsal bones" to a gene.</s><s>But it might not associate the parent term "Abnormality of the metatarsal bones", thus leading to an inconsistent prediction.</s><s>In addition flat methods do not exploit a priori knowledge about the topology of the ontology, which may result in a reduction in the prediction accuracy.</s></p><p><s>To properly handle the hierarchical relationships between terms that characterize the HPO, we can apply two main classes of structured output methods, i.e. methods able to exploit in the learning process the hierarchical structure of terms <ref type="bibr" target="#b14">[15]</ref>.</s><s>The first category of methods exploits joint input and output kernelization techniques based on large margin methods for structured and interdependent output variables <ref type="bibr" target="#b15">[16,</ref><ref type="bibr" target="#b16">17]</ref>.</s><s>The second general class of structured output methods is based on ensembles of learning machines able to exploit the hierarchical relationship between classes; theoretical studies <ref type="bibr" target="#b17">[18]</ref>, as well as applications in several domains <ref type="bibr" target="#b18">[19]</ref> showed the effectiveness of this approach.</s><s>Both these classes of methods have been applied to several bioinformatics problems, ranging from enzyme function prediction <ref type="bibr" target="#b16">[17,</ref><ref type="bibr" target="#b19">20]</ref> to the hierarchical prediction of Gene Ontology terms <ref type="bibr" target="#b20">[21,</ref><ref type="bibr" target="#b21">22]</ref>.</s><s>In the context of HPO, Kahanda and coworkers <ref type="bibr" target="#b9">[10]</ref> proposed a structured output method, based on a joint kernel constructed through the product of the input and the output kernel, and showed that the proposed approach outperforms existing methods.</s></p><p><s>To our knowledge no methods based on hierarchical ensembles have been proposed in the context of structured output prediction of HPO terms associated with human genes.</s><s>Indeed most of the hierarchical ensemble methods proposed in literature are conceived for treestructured taxonomies <ref type="bibr" target="#b22">[23]</ref>, and the few ones specific for DAGs have been mainly applied to the prediction of the gene and protein functions <ref type="bibr" target="#b21">[22,</ref><ref type="bibr" target="#b23">24]</ref>.</s><s>Nevertheless, several of these methods, mainly proposed in the context of GO term classification, could be in principle applied to the prediction of HPO terms.</s><s>For a review of these approaches we refer the reader to <ref type="bibr" target="#b14">[15]</ref>.</s></p><p><s>To fill this gap, we propose two distinct hierarchical ensemble methods, the Hierarchical Top-Down (HTD-DAG) and True Path Rule (TPR-DAG) for Directed Acyclic Graphs (DAG), able to provide consistent predictions of HPO terms and to scale nicely both in terms of the complexity of the taxonomy and the cardinality of the examples.</s><s>In this paper we show that the proposed approaches present several advantages with respect to state-of-the-art structured output methods, including their competitive accuracy together with low computational complexity, their modularity and capacity to enhance the predictions of both semi-supervised and supervised flat methods, and their ability to in principle provide any biologically consistent prediction of structured association between a gene and HPO terms.</s></p><p><s>A preliminary version of HTD-DAG and TPR-DAG were presented at IWBBIO and MCS workshops <ref type="bibr" target="#b24">[25,</ref><ref type="bibr" target="#b25">26]</ref>, but these methods have not been previously published in any journal.</s><s>Here for the first time we present a detailed explanation of the algorithms and provide formal proofs of the consistency of the predictions for both HTD-DAG and TPR-DAG.</s><s>Moreover we introduce completely new variants, such as the Adaptive Threshold (AT) and the Descendant (D) algorithms (see below the "Methods" section for more details).</s><s>We also discuss how the proposed methods can improve flat predictions, and we provide several examples of the biological consistency of the predictions obtained with both HTD and TPR-DAG algorithms.</s><s>In the "Results and discussion" section we propose a completely new and enlarged experimental setup involving a genome-wide experimental comparison of our proposed hierarchical ensembles with state-of-theart methods for HPO term prediction.</s><s>Finally we perform the prediction of new HPO annotations based on earlier annotations and we also propose novel HPO annotations for several genes, showing how such predictions are confirmed by the literature or by up-to-date HPO annotations not used during the training of the algorithm.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head><p><s>We present two algorithms, Hierarchical Top-Down (HTD-DAG) and True Path Rule (TPR-DAG) for Directed Acyclic Graphs (DAG), specifically designed to exploit the DAG structure of the relationships between HPO terms to predict associations between genes and sets of HPO terms.</s><s>Both hierarchical ensemble methods adopt a twostep learning strategy:</s></p><p><s>1. Flat learning of the terms of the ontology: each base classifier learns a specific and individual class (HPO term) resulting in a set of dichotomic classification problems which are independent of each other.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Hierarchical combination of the predictions:</head><p><s>aggregation of the classifications performed by the base learners trained in the previous step.</s><s>The resulting consensus predictions of the ensemble take the hierarchical relationships of the ontology into account.</s></p><p><s>This ensemble approach is highly modular: in principle any learning algorithm can be used to train the classifiers in the first step, and in the second step the hierarchical relationships between the HPO terms are exploited to achieve the final ensemble predictions of the set of HPO terms associated with a specific gene.</s></p><p><s>The main limitation of the flat learning of the HPO terms is that each term is separately learned without taking into account the relationships between classes.</s><s>Other methods, such as the ensemble approach proposed in <ref type="bibr" target="#b26">[27]</ref> can overcome this limitation by applying global models for the multi-label classification, thus explicitly considering class interactions during the learning process.</s><s>On the other hand hierarchical ensemble methods are able to correct flat predictions, by splitting in two separate steps the process of learning HPO terms and the process of evaluating the hierarchical relationships between classes.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Basic notation and definitions</head><p><s>The directed acyclic graph G =&lt; V , E &gt; represents the HPO taxonomy, its vertices V = {1, 2, . . .</s><s>, |V |} the terms of the ontology and the directed edges (i, j) ∈ E the hierarchical relationships between the parent terms i and their children j.</s><s>We define child(i) as the children of a term i, par(i) as the set of its parents, anc(i) as its ancestors and desc(i) as the set of its descendants.</s></p><p><s>A "flat multi-label scoring" predictor f :</s></p><formula xml:id="formula_0">X → Y pro- vides a score f (x) = ŷ, ŷ ∈ Y =[ 0, 1] |V | for a given example x ∈ X,</formula><p><s>where X is a suitable input space for the predictor f.</s><s>In other words a flat predictor provides a score ŷi ∈[ 0, 1] that represents the likelihood that a given gene belongs to a given node/HPO term i ∈ V of the DAG G, and ŷ =&lt; ŷ1 , ŷ2 , . . .</s><s>, ŷ|V| &gt;.</s><s>We say that the multi-label scoring y is consistent if it obeys the true path rule:</s></p><formula xml:id="formula_1">y is consistent ⇐⇒ ∀i ∈ V , j ∈ par(i) ⇒ y j ≥ y i (1)</formula><p><s>It is straightforward to show that (1) holds even with flat classifiers that do not provide a score but a label ŷi ∈ {0, 1} indicating that a given gene belongs (ŷ i = 1) or does not (ŷ i = 0) to a given HPO term i.</s></p><p><s>It is very unlikely that the true path rule could be satisfied by a flat multi-label scoring predictor, but with an additional topology-aware score/label modification step we can easily satisfy the constraints imposed by the true path rule.</s><s>More precisely, we can provide a prediction function g f (x) : Y → Y such that the true path rule (1) holds for all the predictions g f (x) = ȳ: ∀i ∈ V , j ∈ par(i) ⇒ ȳj ≥ ȳi .</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Flat learning of the terms of the ontology</head><p><s>The algorithm first utilizes a flat ensemble learning strategy by which each term i ∈ V of the HPO is independently learned through a term specific predictor f i : X →[ 0, 1].</s><s>Accordingly, the output of the flat classifier f :</s></p><formula xml:id="formula_2">X → Y on the instance x ∈ X is f (x) = ŷ: f (x) =&lt; f 1 (x), f 2 (x), . . . , f |V | (x) &gt;=&lt; ŷ1 , ŷ2 , . . . , ŷ|V| &gt;</formula><p><s>To this end any supervised or semi-supervised base predictor can be used, including also flat binary classifiers.</s><s>Indeed both learners able to provide a probability or a score related to the likelihood that a gene is annotated with a HPO term (that is scores ŷi ∈[ 0, 1]), and base binary classifiers that can directly provide a label (but not a score) about the association gene-HPO term (that is a label ŷi ∈ {0, 1}) can be used to generate the flat predictions.</s><s>Note that the training of per-class predictors f 1 , f 2 , . . .</s><s>, f |V | can be performed in parallel, and it is easy to achieve a linear speed-up in the number of the available processors by adopting simple parallel computational techniques.</s></p><p><s>For the HPO predictions we used semi-supervised (RANKS, <ref type="bibr" target="#b27">[28]</ref>) and supervised (Support Vector Machines -SVM <ref type="bibr" target="#b28">[29]</ref>) machine learning methods to implement the base learners of the proposed hierarchical ensemble methods.</s></p><p><s>The semi-supervised approach RAnking of Nodes with Kernalized Score functions (RANKS) is a network-based method, that adopts a local as well as a global prediction strategy.</s><s>By using local learning, RANKS measures the similarity between a gene and its neighbors using different score functions.</s><s>Global learning is accomplished through graph kernels that exploit the overall topology of the network to predict node labels.</s><s>In principle any valid kernel function can be applied here.</s><s>In this work we apply the average score function and a 1, 2 and 3step random walk kernels (that are respectively able to explore direct neighbors and genes at 2 or three steps away in the network).</s><s>RANKS was previously successfully applied in the prioritization of disease genes <ref type="bibr" target="#b29">[30]</ref>, the prediction of gene function <ref type="bibr" target="#b30">[31]</ref> as well as for drug repositioning problems <ref type="bibr" target="#b31">[32]</ref>.</s></p><p><s>It is worth noting that RANKS returns a score and not a probability, that represents the likelihood that a gene belongs to a given class, but the "magnitude" of the scores may vary across different classes <ref type="bibr" target="#b30">[31]</ref>.</s><s>To make the scores comparable across classes, we considered two distinct normalization procedures:</s></p><p><s>1. Normalization in the sense of the maximum: the score of each class is normalized by dividing the score values for the maximum score of that class; 2. Quantile normalization: a method originally designed for the normalization of probe intensity levels for high density oligonucleotide microarray data across multiple experiments <ref type="bibr" target="#b33">[34]</ref>.</s><s>In our case we applied quantile normalization to make the scores comparable across different HPO terms.</s></p><p><s>SVMs were trained for each term using the R interface of the machine learning library LiblineaR <ref type="bibr" target="#b34">[35]</ref> with default parameter settings.</s><s>Because of the high running time of SVMs we implemented a multicore version of LiblineaR using doParallel and foreach R packages.</s><s>The parallel implementation of SVMs is available upon request from the authors.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Hierarchical Top-Down (HTD-DAG) ensembles</head><p><s>The main idea behind the Hierarchical top-down algorithm (HTD-DAG) consists in modifying the predictions of each base learner from "top to bottom", i.e. from the least to the most specific terms by exploiting at each step the predictions provided by the less specific predictors, e.g.</s><s>predictors associated to parent HPO terms.</s><s>This is performed in a recursive way by transmitting the predictions from each node to the their children, and from the children to the children of the children through a propagation of the information towards the descendants of each node of the ontology.</s><s>For instance in Fig. <ref type="figure" target="#fig_0">1a</ref> the information can flow along the path traversing nodes 1, 5, 6, 7 or 1, 3, 7, and a prediction for e.g. the node 5 depends on the predictions performed by the base learners for the parent nodes 4, 1 and 3.</s><s>This operating mode of the ensemble is performed in an ordered way from the top to the bottom nodes (Fig. <ref type="figure" target="#fig_0">1a</ref>).</s></p><p><s>More precisely, the HTD-DAG algorithm modifies through a unique run across the nodes of the graph the flat scores according to the hierarchy of a DAG.</s><s>The flat predictions f (x) = ŷ are hierarchically corrected to ȳ by top-down per-level traversing the nodes of the DAG, and by applying recursively this rule:</s></p><formula xml:id="formula_3">ȳi := ⎧ ⎨ ⎩ ŷi if i ∈ root(G) min j∈par(i) ȳj if min j∈par(i) ȳj &lt; ŷi ŷi otherwise<label>(2)</label></formula><p><s>The maximum path length from the root is used to define the node levels.</s><s>More precisely, given that p(r, i) represents a path from the root node r and a node i ∈ V , l (p (r, i)) the length of p(r, i), L = {0, 1, . . .</s><s>, ξ } the observed levels, and ξ the maximum node level, then we can define a level function ψ : V −→ L:</s></p><formula xml:id="formula_4">ψ(i) = max p(r,i) l (p(r, i))<label>(3)</label></formula><p><s>The above level function ψ assigns each node i ∈ V to its level ψ(i).</s><s>For instance, from this definition root nodes are {i|ψ(i) = 0}, while nodes lying at a maximum distance ξ from the root are {i|ψ(i) = ξ }.</s></p><p><s>The consistency of the predictions is guaranteed if and only if the levels are defined according to the maximum path length from the root (Correctness and consistency of the predictions section provides a formal proof of this fact).</s></p><p><s>Figure <ref type="figure" target="#fig_1">2</ref> shows the pseudo code of the second step of HTD-DAG algorithm, by which the flat predictions ŷ computed in the first step are combined and updated according to top-down per-level traversal of the DAG.</s></p><p><s>The block A of the algorithm (row 1) computes the maximum distance of each node from the root; to this end the classical Bellman-Ford algorithm or the methods based on the Topological Sorting algorithm can be applied <ref type="bibr" target="#b35">[36]</ref>.</s></p><p><s>A top-down per-level traversal of the graph is implemented in the block B: for each level of the graph, starting from the nodes just below the root, the flat predictions ŷi are top-down corrected, according to Eq. 2, and the consensus ensemble predictions ȳi are obtained.</s><s>More precisely, the nested loops starting respectively at line 04 and 06 ensure that nodes are processed by level in an increasing order.</s><s>Lines 07-11 perform the hierarchical correction of the flat predictions ŷi , i ∈ {1, . . .</s><s>, |V |}.</s><s>The algorithm ends when nodes at distance ξ from the root are processed (last iteration of the external loop within lines 04-13) and it finally provides the hierarchically corrected predictions ȳ.</s></p><p><s>The complexity of block A is O(|V | + |E|) (if the Topological Sort algorithm is used to implement Com-puteMaxDist), while it is easy to see that the complexity</s></p><formula xml:id="formula_5">(|V | + |E|))</formula><p><s>, that is linear in the number of nodes of the HPO, considering that its underlying DAG is sparse.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Hierarchical true path rule (TPR-DAG) ensembles</head><p><s>By considering the opposite flow of information "from bottom to top", we can construct the prediction of the ensemble by recursively propagating the predictions provided by the the most specific nodes toward their parents and ancestors.</s></p><p><s>For instance in Fig. <ref type="figure" target="#fig_0">1b</ref> a possible flow of information could be along the path 8, 5, 4, 2, 1 or 7, 6, 5, 1, and the prediction of the ensemble for e.g.</s><s>node 3 depends on children nodes 5, 6 and 7.</s><s>The proposed True Path Rule for DAG (TPR-DAG) adopts this bottom-up flow of information, to take into account the predictions of the most specific HPO terms, but also the opposite flow from top to bottom to consider the predictions of the least specific terms.</s><s>Figure <ref type="figure" target="#fig_3">3</ref>  This algorithm is related to the TPR algorithm for tree-structured taxonomies <ref type="bibr" target="#b36">[37]</ref>, but despite the similarity of their names, the TPR for trees cannot be applied to the HPO, since it does not work on DAG-structured taxonomies and provides inconsistent predictions when applied to the HPO.</s><s>In contrast to the per-level tree traversal proposed in <ref type="bibr" target="#b36">[37]</ref>, the DAG per-level traversal has two distinct and strictly separated steps: (1) the DAG is inspected bottom-up per-level, followed by (2) a topdown visit.</s><s>This separation is necessary to assure the true path rule consistency of the predictions in DAGstructured taxonomies (see "Correctness and consistency of the predictions" section for details).</s><s>The other main difference consists in the way the levels are computed: in this new DAG version the levels are constructed according to the maximum distance from the root, since this guarantees that in the top-down step all the ancestor nodes have been processed before their descendants, thus assuring the true path rule consistency of the predictions (see "Correctness and consistency of the predictions" section for a formal proof of this fact).</s><s>Moreover in this paper we also propose novel algorithms for the bottom-up propagation of the predictions from the most to the least specific terms of the HPO.</s></p><p><s>TPR-DAG provides "consensus" ensemble predictions by integrating the flat predictions ŷi through a per-level visit of the DAG:</s></p><formula xml:id="formula_6">ȳi := 1 1 + |φ i | ⎛ ⎝ ŷi + j∈φ i ȳj ⎞ ⎠<label>(4)</label></formula><p><s>where φ i are the "positive" children of i.</s><s>Note that only positive predictions of the children obey the true path rule.</s><s>Indeed, according to this rule, we may have a gene annotated to a term t, but not annotated to a terms s ∈ child(t).</s><s>Hence if we have a negative prediction for the terms s it is not meaningful to use this prediction to predict the term t.</s><s>It is worth noting that we can combine children predictions using aggregation strategies other than the average.</s><s>For instance using the maximum, we could likely improve the sensitivity, but with a likely decrement of the precision.</s><s>Different strategies to select the "positive" children φ i can be applied, according to the usage of a specific threshold to separate positive from negative examples:</s></p><p><s>1. Constant Threshold (T) strategy.</s><s>For each node the same threshold t is a priori selected: t j = t, ∀j ∈ V .</s><s>In this case ∀i ∈ V we have:</s></p><formula xml:id="formula_7">φ i := {j ∈ child(i)|ȳ j &gt; t}<label>(5)</label></formula><p><s>For instance if the predictions represent probabilities it could be meaningful to a priori select t = 0.5.</s><s>2. Adaptive Threshold (AT) strategy.</s><s>The threshold is selected to maximize some performance metric M estimated on the training data, e.g. the F-score or the AUROC.</s><s>In other words the threshold is selected to maximize some measure of accuracy of the predictions M(j, t) on the training data for the class j with respect to the threshold t.</s><s>The corresponding set of positives ∀i ∈ V is:</s></p><formula xml:id="formula_8">φ i := j ∈ child(i)|ȳ j &gt; t * j , t * j = arg max t M(j, t)<label>(6)</label></formula><p><s>For instance internal cross-validation can be used to select t * j from a set of t ∈ (0, 1). 3. Threshold Free (TF) strategy.</s><s>This strategy does not require an a priori or experimentally selected threshold.</s><s>We select as positive those children that increment the score of their parent node i :</s></p><formula xml:id="formula_9">φ i := {j ∈ child(i)|ȳ j &gt; ŷi }<label>(7)</label></formula><p><s>Accordingly, we can derive three different algorithmic variants of the basic TPR: a) TPR-T : TPR with constant threshold, corresponding to strategy 1); b) TPR-AT : TPR with adaptive thresholds, corresponding to strategy 2); c) TPR-TF : TPR threshold-free, corresponding to strategy 3).</s></p><p><s>All three TPR algorithms move positive predictions recursively towards the ancestors so that the predictions are propagated bottom-up.</s><s>The pseudo-code of the TPR-DAG algorithm is shown in Fig. <ref type="figure" target="#fig_4">4</ref> and it is structured into three parts.</s><s>At first in part A, the maximum distance for every node V i to the root is computed via the Bellman-Ford algorithm.</s><s>Second, block B updates the predictions ŷi using Eq. 4 together with one of the three positive selection strategies by a bottom-up visit.</s><s>After this step the true path rule have to be fulfilled, since the bottom up step assures the propagation of positive predictions, but not their consistency.</s><s>the sparseness of the HPO, the algorithm is linear with respect to the number of the terms of the HPO.</s></p><p><s>To modulate the contribution to the ensemble prediction of the parent node and its children, a TPR-DAG variant similar to the weighted True Path Rule algorithms for tree-structured taxonomies <ref type="bibr" target="#b22">[23]</ref> can be designed for DAGs.</s><s>The TPR-W, i.e.</s><s>TPR-Weighted, can be obtained by weighting the predictions according to this rule:</s></p><formula xml:id="formula_10">ȳi := wŷ i + (1 − w) |φ i | j∈φ i ȳj<label>(8)</label></formula><p><s>In this approach a weight w ∈[ 0, 1] is added to balance between the contribution of the node i and that of its "positive" children.</s><s>If w = 1 no weight is attributed to the children and the TPR-DAG reduces to the HTD-DAG algorithm, since in this way only the prediction for node i is used in the bottom-up step of the algorithm.</s><s>If w = 0 only the predictors associated to the children nodes "vote" to predict node i.</s><s>In the intermediate cases we attribute more importance to the predictor for the node i or to its children depending on the values of w.</s><s>A different way to implement a weighting strategy could be also pursued not only considering balancing between the predictions on node i and nodes j ∈ child(i), but including also weighting with respect to the estimated accuracy of each base learner, estimated e.g. by internal cross-validation.</s></p><p><s>As shown in <ref type="bibr" target="#b36">[37]</ref> for the tree version of the TPR algorithm, the contribution of the descendants of a given node decays exponentially with their distance from the node itself, and it is easy to see that this is true also for the TPR-DAG algorithm.</s><s>To enhance the contribution of the most specific nodes to the overall decision of the ensemble, a linear decaying or a constant contribution of the "positive" descendants could be considered instead:</s></p><formula xml:id="formula_11">ȳi := 1 1 + | i | ⎛ ⎝ ŷi + j∈ i ȳj ⎞ ⎠<label>(9)</label></formula><p><s>where i = j ∈ desc(i)|ȳ j &gt; t j <ref type="bibr" target="#b9">(10)</ref> In this way all the "positive" descendants of node i provide the same contribution to the ensemble prediction ȳi .</s><s>We named this TPR variant as TPR-D.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Correctness and consistency of the predictions</head><p><s>Hierarchical ensemble methods can improve flat predictions by reducing the number of both false positives (FP) and false negatives (FN).</s><s>For instance, the Additional file 1 (Figure <ref type="figure" target="#fig_0">S1a</ref>) shows that hierarchical ensembles can correct FN flat predictions to TP for the gene RGS9 (regulator of G-protein signaling 9) that encodes a member of the RGS family of GTPase whose mutations cause bradyopsia <ref type="bibr" target="#b37">[38]</ref>, while the Additional file 1: Figure <ref type="figure" target="#fig_0">S1b</ref> of the same additional file shows the ability of hierarchical ensembles of correcting FP to TN for the gene ENAM (enamelin) that encodes the largest protein in the enamel matrix whose deficiency is associated with amelogenesis imperfecta type 1C <ref type="bibr" target="#b39">[39]</ref>.</s><s>More precisely, in the Additional file 1: Figure <ref type="figure" target="#fig_0">S1a</ref> the hierarchical ensemble TPR-W "recovered" four TP (red rectangles), while in Additional file 1: Figure <ref type="figure" target="#fig_0">S1b</ref> TPR-W corrected six FP to TN.</s><s>It is worth nothing that the hierarchical ensemble methods can improve the correctness, but they cannot of course guarantee the correctness of all the predictions: when, e.g. the flat predicted scores are too bad, hierarchical ensembles may fail in improving the recovery of FP or FN.</s><s>For instance, in Additional file 1: Figure <ref type="figure" target="#fig_0">S1a</ref> TPR-W failed in removing three FN (orange rectangles), and in Additional file 1: Figure <ref type="figure" target="#fig_0">S1b</ref> was not able to remove three FP.</s></p><p><s>Hierarchical ensemble methods can guarantee consistent predictions, that is predictions that obey the true path rule.</s><s>To this end, the per-level visit of the hierarchical taxonomy should be realized by using the maximum and not the minimum distance from the root (see the Additional file 2 for an intuitive example showing this fact).</s><s>An example of the capability of obtaining hierarchically corrected consistent predictions from inconsistent flat predictions is shown in Fig. <ref type="figure">5</ref> for the gene C1QC (complement C1q C chain), that encodes a 18 polypeptide chains protein whose deficiency is associated with lupus erythematosus and glomerulonephritis <ref type="bibr" target="#b40">[40]</ref>.</s></p><p><s>The consistency of the predictions of both the HTD-DAG and TPR-DAG is proved through the following theorems (proofs are available in the Additional file 3):</s></p><p><s>Theorem 1 Given a DAG G =&lt; V , E &gt;, a level function ψ that assigns to each node its maximum path length from the root and the set of HTD-DAG flat predictions ŷ =&lt; ŷ1 , ŷ2 , . . .</s><s>, ŷ|V| &gt;, the top-down hierarchical correction of the HTD-DAG algorithm assures that the set of ensemble predictions ȳ =&lt; ȳ1 , ȳ2 , . . .</s><s>, ȳ|V| &gt; satisfies the following property: ∀i ∈ V , j ∈ par(i) ⇒ ȳj ≥ ȳi An immediate consequence of this theorem is that HTD-DAG assures consistent predictions not only for the parents, but also for all the ancestors of any node of a hierarchical DAG-structured taxonomy:</s></p><p><s>Corollary 1 Given a DAG G =&lt; V , E &gt;, the level function ψ and the set of flat predictions ŷ =&lt; ŷ1 , ŷ2 , . . .</s><s>, ŷ|V| &gt;, the HTD-DAG algorithm assures that for the set of ensemble predictions ȳ =&lt; ȳ1 , ȳ2 , . . .</s><s>, ȳ|V| &gt; the following property holds: ∀i ∈ V , j ∈ anc(i) ⇒ ȳj ≥ ȳi .</s></p><p><s>Independently of the choice of the positive children ("Hierarchical true path rule (TPR-DAG) ensembles" Fig. <ref type="figure">5</ref> Flat and hierarchical (TPR-W) HPO predictions for the gene C1QC.</s><s>The numbers close to each predicted HPO term represent flat (yellow rectangles) and hierarchically corrected (green) scores.</s><s>The TPR-W predictions obey the true-path rule (the scores of the parent nodes are always larger or equal than that of their children nodes), while flat predictions are inconsistent for 5 HPO terms highlighted in light-red: Autoimmunity, Abnormality of complement system, Abnormal renal physiology, Abnormality of the nephron and Glomerulonephritis subsection), the following consistency theorem holds for TPR-DAG: Theorem 2 Given a DAG G =&lt; V , E &gt;, a set of flat predictions ŷ =&lt; ŷ1 , ŷ2 , . . .</s><s>, ŷ|V| &gt; for each class associated to each node i ∈ {1, . . .</s><s>, |V |}, the TPR-DAG algorithm assures that for the set of ensemble predictions ȳ =&lt; ȳ1 , ȳ2 , . . .</s><s>, ȳ|V| &gt; the following property holds: ∀i ∈ V , j ∈ anc(i) ⇒ ȳj ≥ ȳi .</s></p><p><s>Finally a good property of TPR-DAG is that its sensitivity is always equal or better than that of the HTD-DAG: Theorem 3 The TPR-DAG ensemble algorithm with "positive" children selected according to <ref type="bibr" target="#b6">(7)</ref> achieves always a sensitivity equal or higher than the HTD-DAG ensemble algorithm.</s></p><p><s>Unfortunately there is no guarantee that the precision of TPR-DAG is always larger or equal than that of the HTD-DAG algorithm.</s></p><p><s>All the proofs and details about the above theorems are available in the Additional file 3.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results and discussion</head><p><s>We performed two different sets of experiments to compare our proposed hierarchical ensemble approach with state-of-the-art methods for the prediction of abnormal human phenotypes structured according to the HPO.</s><s>In the first set of experiments ("Prediction of Human Phenotype Ontology terms" subsection) we compared HTD and TPR ensembles with state-of-the-art methods using the same data and experimental set-up adopted by <ref type="bibr" target="#b9">[10]</ref>.</s><s>In the second set of experiments ("HPO Prediction of newly annotated genes" subsection) we evaluated the ability of our proposed hierarchical ensemble methods to predict newly annotated genes of the April 2016 HPO release, by using annotations of a previous release (January 2014).</s><s>Finally we provided a list of currently unannotated genes that could be possible candidate genes for novel annotations, on the basis of the predictions performed by our proposed hierarchical ensemble methods.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Prediction of Human Phenotype Ontology terms</head><p><s>We compared the hierarchical ensemble methods for DAGs (HTD, "Hierarchical Top-Down (HTD-DAG) ensembles" subsection) and TPR and its variants, ("Hierarchical true path rule (TPR-DAG) ensembles" subsection) against several state-of-the-art and baseline methods:</s></p><p><s>• PHENOstruct, a state-of-the art joint-kernel structured support vector machine approach <ref type="bibr" target="#b9">[10]</ref>.</s><s>This method uses the product of the input and output space kernel to construct the joint kernel.</s><s>The rationale behind this approach is that two input/output pairs are considered similar if they are similar in both their input feature space and their output label space.</s><s>• Clus-HMC-Ens, a state-of-the art Hierarchical Multilabel classification (HMC) based on decision tree ensembles <ref type="bibr" target="#b26">[27]</ref>.</s><s>Differently from the proposed HTD-DAG and TPR-DAG methods, where each base learner solves a separate binary classification problem, each decision tree in the Clus-HMC-Ens ensemble is a "global" model built to predict all classes at the same time, thus allowing to explicitly take into account the relationships between the classes just at the level of each base learner.</s><s>• SSVM → disease → HPO method, an indirect two-step method that first predicts gene-disease associations and then maps them to HPO terms using the associations available on the HPO website <ref type="bibr" target="#b9">[10]</ref>.</s><s>• PhenoPPIOrth, a computational tool that can predict a set of OMIM diseases for given human genes using protein-protein interaction and orthologous proteins data and then maps the predicted OMIM terms to HPO terms by direct mapping <ref type="bibr" target="#b12">[13]</ref>.</s><s>• Probabilistic support vector machines (SVMs) <ref type="bibr" target="#b41">[41]</ref>.</s><s>This is a variant of the classical SVM algorithm, by which the output of the SVM is fitted to a sigmoid in order to provide an estimation of the probability that a given example belongs to the class to be predicted.</s><s>• RANKS, a semi-supervised method base on kernelized score functions <ref type="bibr" target="#b27">[28]</ref>, resulted one of the top-ranked methods in the recent CAFA2 challenge for HPO term prediction <ref type="bibr" target="#b42">[42]</ref>.</s><s>This is a semi-supervised node-label ranking algorithm that applies graph kernels to the gene network to exploit its global topological characteristics, and then simple local learning functions on the resulting kernelized graph to provide a ranking of the nodes (genes).</s></p><p><s>We used both a semi-supervised (RANKS <ref type="bibr" target="#b27">[28]</ref>) and a supervised (Support Vector Machines -SVM) machine learning method to implement the base learners of the proposed hierarchical ensemble methods (see "Flat learning of the terms of the ontology" subsection for more details).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data and experimental set-up</head><p><s>We used the same data and the same experimental setup applied in <ref type="bibr" target="#b9">[10]</ref> for a fair comparison with previously proposed methods <ref type="bibr" target="#b9">[10,</ref><ref type="bibr" target="#b12">13,</ref><ref type="bibr" target="#b26">27]</ref>.</s><s>Indeed, to our knowledge, <ref type="bibr" target="#b9">[10]</ref> presented one of the largest comparative evaluation of different methods for the prediction of HPO terms at genome-wide level.</s><s>Moreover PHENOStruct, described in the same paper, was one one of the top-ranked method in the recent CAFA2 challenge <ref type="bibr" target="#b42">[42]</ref>.</s><s>The generalization performance of the methods was evaluated through a classical 5-fold cross-validation procedure, according to <ref type="bibr" target="#b9">[10]</ref>.</s></p><p><s>It is worth noting in the training phase we selected the negative examples (genes) according to a "basic" selection strategy <ref type="bibr" target="#b22">[23]</ref>, i.e. for positives we used all the instances annotated with that HPO term, while for negatives we simply used all the not annotated instances.</s><s>In principle other more refined strategies to select negatives may lead to improved performances <ref type="bibr" target="#b43">[43,</ref><ref type="bibr" target="#b44">44]</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data sources</head><p><s>We used the same version of the the STRING (v.</s><s>9.1, <ref type="bibr" target="#b45">[45]</ref>) and BioGRID (v.</s><s>3.2.106,</s><s><ref type="bibr" target="#b46">[46]</ref>) databases used in <ref type="bibr" target="#b9">[10]</ref>.</s><s>More precisely we downloaded physical and genetic experimental interactions relative to 4970 proteins from BioGRID 3.2.106,</s><s>and the integrated protein-protein interaction and functional association data for 18172 human proteins from STRING 9.1.</s><s>From the same STRING website we also downloaded the protein aliases file to map proteins to genes, using as identifiers respectively the Locus STRING ID and the ENTREZ Gene ID.</s><s>Moreover, starting from the Gene Ontology annotations for the three main sub-ontologies (Biological Process, Molecular Function and Cellular Component <ref type="bibr" target="#b47">[47]</ref>) and from OMIM annotations <ref type="bibr" target="#b48">[48]</ref>, both represented as binary feature vectors, we constructed 4 more networks by using the classical Jaccard index to represent the edge weight (functional similarity) between the nodes (genes) of the resulting network.</s><s>In our context the Jaccard index of two genes measures the ratio between the cardinality of their common annotations and the cardinality of the union of their annotations.</s><s>The rationale behind the usage of this index is that two genes are similar if they share most of their annotations.</s><s>All these annotations were obtained by parsing the raw text annotation files made available by Uniprot knowledge-base considering only its SWIS-Sprot component (release May 2013).</s><s>Finally the resulting n = 6 networks were integrated by averaging the edge weights w d ij between the genes i and j of each network d ∈ {1, n} after normalizing their weights in the same range of values w d ij ∈[ 0, 1] (Unweighted Average (UA) network integration, <ref type="bibr" target="#b29">[30]</ref>):</s></p><formula xml:id="formula_12">wij = 1 n n d=1 w d ij (<label>11</label></formula><formula xml:id="formula_13">)</formula><p><s>The weighted adjacency matrices representing the obtained networks have been directly used as the input of network-based transductive methods (e.g.</s><s>RANKS), while the input for supervised feature-based inductive methods (e.g.</s><s>SVM) has been constituted by the rows of the same adjacency matrices.</s><s>In other words for each gene its input features are represented by the interactions and functional similarities with all the other genes of the network.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>HPO DAG and annotations</head><p><s>Following the same experimental set-up of <ref type="bibr" target="#b9">[10]</ref>, we considered separately the three main sub-ontologies of the HPO (January 2014 release): Organ Abnormality, Mode of Inheritance and Onset and Clinical Course.</s><s>Organ Abnormality is the main ontology and includes terms related to clinical abnormalities.</s><s>Mode of Inheritance is a relatively small ontology and describes the inheritance pattern of the phenotypes.</s><s>Onset and Clinical Course contains classes that describe typical modifiers of clinical symptoms, as the speed of progression, and the variability or the onset.</s><s>For the sake of simplicity for the rest of the paper we refer to these subontologies respectively as Organ, Inheritance and Onset.</s><s>Following the experimental set-up of <ref type="bibr" target="#b9">[10]</ref>, we pruned the HPO terms having less than 10 annotations in the January 2014 release, thus resulting in DAGs having respectively 2134 (Organ), 13 (Inheritance) and 23 (Onset) terms.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Performance metrics</head><p><s>Since typically molecular biologists and physicians are interested in knowing both the set of genes associated with a certain HPO term and the phenotypic abnormalities associated with a particular human gene, we evaluated the results using two different performance metrics: (i) term-centric and (ii) gene-centric.</s><s>These two types of evaluations were chosen to address the following related questions: (i) what are the genes associated with a specific abnormal phenotype?</s><s>and (ii) what are the abnormal phenotypes associated with a particular gene?</s></p><p><s>1. Gene-centric metric.</s><s>Precision (Pr), Recall (Rc) and the maximum achievable F −score (F max ) using thresholds τ ∈[ 0, 1] are calculated as follows:</s></p><formula xml:id="formula_14">Pr(τ ) = 1 N N j=1 i 1 i ∈ P g j (τ ) ∧ i ∈ T g j i 1 i ∈ P g j (τ ) (<label>12</label></formula><formula xml:id="formula_15">)</formula><formula xml:id="formula_16">Rc(τ ) = 1 N N j=1 i 1 i ∈ P g j (τ ) ∧ i ∈ T g j i 1 i ∈ T g j (<label>13</label></formula><formula xml:id="formula_17">)</formula><formula xml:id="formula_18">F max = max τ 2 • Pr(τ ) • Rc(τ ) Pr(τ ) + Rc(τ ) (<label>14</label></formula><formula xml:id="formula_19">)</formula><p><s>where i denotes an abnormal phenotype (HPO term) in the human ontology (excluding the root node), P g j (τ ) denotes the set of terms that have a predicted scores greater than or equal to τ for a given gene g j , T g j denotes the set of experimentally determined terms for a given gene g j , N the number of examples having at least one annotation with an HPO term and 1 indicates a standard indicator function.</s><s>In other words the F max measure is the maximum hierarchical F-score achievable by "a posteriori" setting the optimal decision threshold <ref type="bibr" target="#b42">[42]</ref>.</s></p><p><s>We warn the reader that the hierarchical F − score as defined in eq.</s><s>14 provides an over-optimistic assessment of the hierarchical score.</s><s>Indeed the threshold τ in eq.</s><s>14 is by definition "a posteriori" selected, by choosing the optimal τ * that optimizes the F − score having a set of pre-computed scores.</s><s>An unbiased evaluation should embed the selection of the optimal τ within the learning process.</s><s>Nevertheless, we use this measure since it is the reference gene-centric metric within the computational biology community, as witnessed by its usage in the CAFA2 international challenge <ref type="bibr" target="#b42">[42]</ref>, and in the ongoing CAFA3 challenge.</s></p><p><s>2. Term-centric metric.</s><s>For each term i we computed the classical Area Under the Receiver Operating Characteristic Curve (AUROC).</s><s>The ROC curve is created by plotting the sensitivity (or recall) against false positive rate (or 1 − specificity), measured at different threshold levels.</s><s>The sensitivity (Sn) and specificity (Sp) at at a given score threshold τ for a particular functional term i are defined as:</s></p><formula xml:id="formula_20">Sn i (τ ) = j 1 y g j i &gt; τ ∧ g j ∈ i j 1 g j ∈ i (<label>15</label></formula><formula xml:id="formula_21">)</formula><formula xml:id="formula_22">Sp i (τ ) = j 1 y g j i ≤ τ ∧ g j / ∈ i j 1 g j / ∈ i (<label>16</label></formula><formula xml:id="formula_23">)</formula><p><s>where y g j i ∈[ 0, 1] is the predicted score (probability) that gene g j is associated with the HPO term i and τ ∈[ 0, 1] is a given threshold, and 1 indicates the standard indicator function.</s><s>The ROC curve is computed by computing the sensitivity and 1 -specificity at different values of τ ∈[ 0, 1].</s><s>The AUROC can assume values in [ 0 . . .</s><s>1]; values close to 0.5 denote random predictions and values substantially larger than 0.5 denote good predictive ability.</s></p><p><s>For both measures, by averaging across genes or terms, we can obtain an overall picture of the prediction performance of the methods.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Experimental results</head><p><s>The best results have been obtained with the STRING network ("Data and experimental set-up" subsection) and among the different variants of the TPR algorithm, TPR-W (Eq.</s><s>8), with the Threshold Free (TF) strategy (Eq.</s><s>7) to select the set of "positive" children, achieved the best results.</s><s>For this reason we firstly report the results obtained with STRING and the TPR-W ensemble, while the detailed results obtained with the other variants of the TPR algorithm as well as those obtained with the UA integrated network are available in the Additional files 4 and 5.</s></p><p><s>Table <ref type="table" target="#tab_1">1</ref> summarizes the results achieved by the proposed hierarchical ensemble methods HTD and TPR , using as base learner RANKS (TPR-W-RANKS and HTD-RANKS) and a linear SVM (TPR-W-SVM and HTD-SVM).</s><s>The results were compared with those achieved by stateof-the-art methods and the two flat methods used as base learner by the hierarchical ensembles (RANKS and SVM).</s></p><p><s>HTD and TPR ensembles achieve statistically significant better results than state-of-the-art methods in terms of term-centric measures, independently of the base learner used: indeed, by applying the Wilcoxon rank sum test, the Bonferroni corrected p-value for multiple hypothesis testing resulted in a family wise error rate FWER ≤ 10 −4 .</s></p><p><s>Considering the hierarchical multi-label score (F max ), TPR-W-SVM achieves significantly better results with respect to the other methods, with the only exception of the smallest HPO sub-ontology (Inheritance) that includes only 13 HPO terms (Table <ref type="table" target="#tab_1">1</ref>).</s><s>Interestingly enough, the hierarchical ensemble methods are always able to improve the results of the flat methods used as base learner; in particular we have large improvement of the F max when RANKS is used as base learner, while the improvement is smaller with the AUROC, for which RANKS alone achieves relatively high values.</s><s>These results also show that the performance of hierarchical ensembles largely depends on that of the flat base learners: for instance HTD-RANKS and TPR-W-RANKS achieve a significantly larger average AUROC than HTD-SVM and TPR-W-SVM (Table <ref type="table" target="#tab_1">1</ref>).</s><s>This is not surprising since the improvement introduced by hierarchical methods depends also on the ability of the underlying flat base learners to provide correct and at least partially consistent predictions.</s><s>Indeed not always flat scores can be improved by hierarchical ensemble methods, as shown for instance in (Additional file 1: Figure <ref type="figure" target="#fig_0">S1</ref>): when very noisy or incorrect flat scores are provided, it is unlikely that hierarchical ensemble methods can improve the predictions.</s><s>In the opposite case too, i.e. when flat scores are very close to optimal Bayes predictions, it is of course hard to improve performances for any method, including also HTD-DAG and TPR-DAG.</s></p><p><s>Overall, these results show that the proposed hierarchical ensemble methods are competitive with state-of-theart methods such as PHENOstruct and Clus-HMC-Ens and moreover show that they can improve the results of different flat methods, such as the network-based semisupervised RANKS algorithm and the supervised SVM classifier.</s><s>Detailed results obtained with different variants of TPR, including TPR-W, TPR-TF, TPR-T and TPR-D ("Hierarchical true path rule (TPR-DAG) ensembles" subsection) are shown in additional file 4: TPR-W achieves most times the best results thanks to the tuning of the w parameter.</s><s>The w parameter was selected through a classical double cross-validation procedure: the generalization performance was evaluated by the external crossvalidation, while the "optimal" w parameter was chosen by internal cross-validation at each step of the external crossvalidation.</s><s>In this way we never accessed the examples of the test set for the selection of the w parameter.</s><s>It is worth noting that the performance of other competing methods such as PHENOstruct or Clus-HMC-Ens could be enhanced by finely tuning their learning parameters.</s><s>Nevertheless, TPR-W can further enhance its performance, by fine tuning the learning parameters of its base learners.</s><s>We also observe that other TPR variants achieve competitive results without the need of tuning any parameter.</s><s>For instance TPR-D-SVM shows an average F max very close to that of TPR-W-SVM with the largest sub-ontology (Organ), and TPR-TF-SVM an average F max very close to that of TPR-W-SVM with the Inheritance sub-ontology.</s><s>Additional file 5 shows the results attained through the UA integrated network.</s><s>Results are in most cases worse than those obtained with STRING data alone: this is not so surprising since STRING just combines different sources of information to construct the integrated network.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>HPO Prediction of newly annotated genes</head><p><s>In this section we assess the capacity of our proposed hierarchical ensemble methods to predict novel HPO annotations for human genes.</s><s>To this end we used annotations of an old HPO release (January 2014) to predict the newly annotated genes of a recent HPO release (April 2016).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data sources</head><p><s>As data source we used the STRING 9.1 network, i.e one of the data sets used in the previous experiments (paragraph "Data sources").</s><s>Indeed the previous experiments as well as the experiments performed by <ref type="bibr" target="#b9">[10]</ref> revealed that STRING 9.1 was the most informative source of information for the prediction of HPO terms.</s><s>We did not use the most recent release of the STRING database (v.10, <ref type="bibr" target="#b49">[49]</ref>), since we might introduce an indirect bias in the prediction, considering that STRING 10 was not available when the January 2014 HPO version was released.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>HPO DAG and annotations</head><p><s>The experiments presented here are based on the January 2014 HPO release (10,320 terms and 13,549 between-term relationships) to predict the newly annotated genes of the April 2016 HPO release <ref type="bibr">(11,673 terms and 15</ref>,459 between-term relationships).</s><s>Since in different releases some terms could have been removed, others changed or become obsolete, we mapped the old HPO terms to the new ones by parsing the annotation file of the January 2014 HPO release using as key the alt-ID taken from the obo file of the April 2016 HPO release.</s><s>From the same HPO releases we downloaded all the corresponding gene-term associations.</s><s>Then we pruned HPO terms having less than 10 annotations obtaining a final HPO DAG composed of 2445 terms and 3059 between-terms relationships, to avoid the prediction of HPO terms having a too few annotations for a reliable assessment.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Experimental set-up and performance metrics</head><p><s>We compared the generalization performance of HTD and TPR hierarchical ensemble methods versus PHENOstruct, the best performing state-of-the-art method in the previous set of experiments ("Prediction of Human Phenotype Ontology terms" subsection).</s></p><p><s>We denote with T the set of genes having at least 1 annotation with an HPO term of the "old" January 2014 HPO release (2804 genes) and with S the set of newly annotated genes, i.e. genes having at least one new annotation in the "new" April 2016 HPO release, but previously unannotated in the January 2014 HPO release (608 genes).</s><s>Hence we have that S ∩ T = ∅.</s><s>We used the set T as training set and the set S as test set, and we applied a classical hold-out procedure to assess the capability of predicting newly annotated genes using only the annotations of the previous HPO release.</s><s>In this way we predicted the newly annotated 608 genes of the test set, having on the average about 100 annotations per gene, distributed across 2445 HPO terms.</s><s>For the HTD and TPR methods we used the SVMs as base learners.</s><s>To evaluate the performance of PHENOstruct, we downloaded and adapted the freely available C++ PHENOstruct code to perform the hold-out procedure described above.</s></p><p><s>As performance metrics we used the same gene-centric and term-centric measures mentioned in "Performance metrics" subsection.</s><s>In addition we added a further termcentric measure: the Area Under the Precision Recall Curve (AUPRC), to take into account the imbalance of annotated vs. unannotated HPO terms <ref type="bibr" target="#b50">[50]</ref>.</s><s>Unlike the previous experimental part ("Prediction of Human Phenotype Ontology terms" subsection), in the experiments presented here we considered the whole HPO, without splitting it up in its main sub-ontologies.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Experimental results</head><p><s>Table <ref type="table" target="#tab_2">2</ref> shows that TPR-W and HTD are able to predict newly annotated genes, even if with a certain decay in the overall performance, as expected, with respect to the cross-validated results of Table <ref type="table" target="#tab_1">1</ref>.</s><s>Hierarchical ensemble methods attain significantly better results than PHENOstruct both in terms of average AUPRC and F max (Wilcoxon paired rank sum test, p-value &lt; 10 −9 ), while PHENOstruct achieves the best AUROC results.</s><s>It is worth noting that the precision of TPR-W and HTD is higher than that of PHENOstruct at any recall level (Fig. <ref type="figure" target="#fig_5">6a</ref>), and these results are confirmed also by the "pergene" hierarchical F max score: TPR-W "wins" with 431 and "loses" with 177 human genes (Fig. <ref type="figure" target="#fig_5">6b</ref>).</s><s>Results obtained with other different TPR variants are comparable with those obtained by TPR-W (see Additional file 6).</s><s>We observe that on this task the SVM performance is close to that of the hierarchical ensemble methods.</s><s>If on the one hand TPR-W achieves better results than the SVM, on the other hand not always the difference is statistically significant: more precisely the difference is statistically significant with the F max measure, while for the per-term metric AUPRC no statistical difference is detected.</s><s>These results show that on this task is difficult to improve also on relatively simple baseline methods, and more research is needed to significantly enhance the performance.</s><s>We note that the best method (TPR-W ) for about half of the newly annotated genes (296) obtained a reasonable accuracy, i.e.</s><s>F max &gt; 0.3, as well as a relatively large area under the curve (AUROC&gt; 0.7) for about 800 HPO terms.</s><s>Results limited to these best predicted genes and terms are summarized in Table <ref type="table" target="#tab_3">3</ref>).</s><s>Figure <ref type="figure" target="#fig_6">7</ref> shows the distribution of the best "per-term" AUROC and AUPRC results of HTD and different variants of TPR, and in the Additional file 7 are shown their best results in terms of average AUROC, AUPRC and F max .</s></p><p><s>While the results of Fig. <ref type="figure" target="#fig_6">7</ref> and those shown in Additional file 7 are biased in favor of TPR-W (only the genes and terms best predicted by TPR-W are included), Fig. <ref type="figure" target="#fig_7">8</ref> shows that hierarchical ensemble methods achieve competitive results in terms of precision at any recall level independently if the best predicted HPO terms are selected with respect to TPR-W or PHENOstruct best predictions.</s></p><p><s>The empirical computational time of hierarchical ensemble methods is significantly lower than that of stateof-the-art joint kernel structured output methods.</s><s>Indeed the overall training and test time for the hold-out processing is about 12 min with HTD and about 18 h with PHENOstruct using an Intel Xeon CPU E5-2630 2.60GHz with 128 GB of RAM.</s><s>The overall computation time with TPR-W is significantly larger than HTD (about 3 h), due to the tuning of the w parameter of the algorithm, but in any case significantly lower than PHENOstruct.</s><s>It is worth noting that the overall computational time of the hierarchical ensemble methods depend on the training time of the base learner, and may of course vary with the complexity of the base learner used.</s><s>We can also observe that TPR-W usually achieves slightly better results than HTD (Tables <ref type="table" target="#tab_3">1 and 3</ref>), but if the computational time is an issue, we can safely use HTD or other TPR variants with lower computational complexity, such as TPR-TF or TPR-D, with only a small decay in performance.</s><s>New "candidate genes" predicted by the hierarchical ensemble</s></p><p><s>In this section we provide a list of currently unannotated genes that could be possible candidate for novel annotations.</s><s>To this purpose we at first selected a list of the HPO terms best predicted by the hierarchical ensemble methods, and then we selected among these HPO terms, those currently unannotated genes that achieved a hierarchical score larger than those of the annotated genes.</s><s>More precisely, by exploiting the scores computed by TPR-W in the hold-out experiments ("HPO Prediction of newly annotated genes" subsection), we selected genes not annotated in the April 2016 release of HPO, but predicted to be annotated by our method to specific HPO terms, thus resulting to be possible candidate genes for being annotated with that term.</s><s>First of all, by considering the hierarchical ensemble TPR-W-SVM, that achieved the best results in the detection of newly annotated genes ("HPO Prediction of newly annotated genes" subsection), we selected the HPO terms best predicted by our method, i.e. terms predicted with AUROC larger than a given threshold.</s><s>To this end we considered the 130 HPO terms that obtained an AUROC value higher than 0.95 (Additional file 8).</s><s>From this set of HPO terms we selected the most specific nodes of the hierarchy, that is those that correspond to the leaves of the HPO DAG (65 HPO terms).</s></p><p><s>Finally we selected for these most specific and best predicted terms, the genes candidate to be annotated for that term.</s><s>To this end, for each of the selected 65 HPO terms we adopted the following procedure:</s></p><p><s>1. Sort in descending order all the genes on the basis of the TPR-W-SVM scores; 2. Select the first top 5 ranked genes (set S ); 3. Select the top ranked genes in S annotated for the HPO term (set A ⊆ S); 4. Select the maximum score s among the annotated genes belonging to A ; 5. The candidate genes are those unannotated genes in S (the top ranked 5 genes) having a score larger or equal than s, or all the genes in S if A = ∅.</s></p><p><s>As a result, for each HPO term we selected the top ranked unannotated genes having a TPR-W-SVM score higher or equal than the highest score achieved by the genes annotated for that term.</s><s>In other words the procedure selects those unannotated genes that TPR-W strongly thinks to be annotated for that term.</s><s>The procedure limits the analysis to the top 5 ranked genes for each best predicted and most specific term, in order to provide a list of genes well-characterized about their abnormal phenotype and possibly reliable, according to the performance of the TPR-W-SVM ensemble.</s><s>It is worth noting that following the above procedure for selecting the candidate genes, not necessarily for each HPO leaf term we have always five candidate genes.</s><s>Indeed it may happen that for a given HPO term an annotated gene fills, e.g., the third position in the rank, and hence for that term we will have only two candidate genes.</s><s>The full list of the the genes candidate to be annotated for the best predicted and most specific 65 HPO terms are available in the Additional file 9. We note that some of the newly predicted associations gene-HPO term have been confirmed in the most recent HPO release (March 2017).</s><s>For instance the predicted association of the gene XRCC2 with HPO term HP:0100760 (Clubbing of toes) has been confirmed in the March 2017 HPO release, as well as the association of the gene LIPE (that encodes the protein LIPE E) with the HPO term HP:0000831 (Insulinresistant diabetes mellitus).</s><s>Interestingly enough LIPE is correlated also with the disease LIPE-related familial partial Lipodystrophy (ORPHA:435660).</s><s>The March 2017 HPO release also confirmed the predicted association of gene IGF2, that encodes a member of the insulin family of polypeptide growth factor, with the phenotype HP:0100631 (Neoplasm of the adrenal gland), and moreover recent works postulated the association of IGF2 with adrenal tumors ed in particular with adrenocortical carcinomas and pheochromocytomas <ref type="bibr" target="#b51">[51]</ref>.</s><s>Besides the aforementioned evidence of associations, the novel predicted gene-HPO term pairs show a clear relationship with specific diseases, according to the most recent literature.</s><s>For example the human gene ECHS1, that encodes the enzyme that catalyzes the second step of the mitochondrial fatty acid β-oxidation (FAO) pathway, is correlated with the phenotype HP:0004359 (Abnormality of fatty-acid metabolism) and from literature is also known being associated with FAO disorders and in particular with the Leigh syndrome <ref type="bibr" target="#b52">[52]</ref>.</s><s>Moreover the predicted association between the Complement factor B (CFB) and the term HP:0002725 (Systemic lupus erythematosus) is supported by recent literature, since CFB is an important activator of the alternative complement pathway and increasing evidence supports reducing factor B as a potential novel therapy to lupus nephritis <ref type="bibr" target="#b53">[53]</ref>.</s><s>Another strong evidence of associations between the gene-HPO term pair predicted by our ensemble method and the corresponding disease is given by the work of Hersh et al. <ref type="bibr" target="#b54">[54]</ref>.</s><s>In this work the authors demonstrated the importance of TGFBR3 gene (encoding the transforming growth factor (TGF)-beta type III</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 1</head><label>1</label><figDesc><div><p><s>Fig. 1 Flow of information in hierarchical ensembles.</s><s>a Top-down flow, b Bottom-up flow.</s><s>See text for more explanations</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 2</head><label>2</label><figDesc><div><p><s>Fig.2The Hierarchical Top-Down algorithm for DAGs (HTD-DAG)</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head></head><label></label><figDesc><div><p><s>provides a pictorial toy example of the operating mode of the TPR-DAG algorithm.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 3 A</head><label>3</label><figDesc><div><p><s>Fig. 3 A toy example of the operating mode of the TPR-DAG method.</s><s>Left: The nodes represent different HPO terms and the numeric values the flat scores associated to each node of the graph.</s><s>The different colors represent the levels, i.e. the maximum distance of the node from the root node A.Center: The bottom-up step introduces a correction of the flat scores by taking into account the scores of the children of each node.</s><s>This procedure is methodically repeated from the bottom to the top nodes of the DAG; as an example, the bottom part shows that the correction for the F node is performed by averaging the flat score of the F parent node with those of the "positive" children, i.e. that children nodes having a value larger than that of the F parent node.</s><s>Right: The Top-down step introduces a further correction by taking into account the scores of the parent nodes, by methodically parsing this time the DAG from the root node A down to descendant nodes; as an example, the bottom part of the figure shows that the score of the F node is set to the minimum of the bottom-up scores of F and that of its parents A, B and C</s></p></div></figDesc><graphic coords="6,126.82,93.54,340.36,226.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 4</head><label>4</label><figDesc><div><p><s>Fig. 4 Hierarchical True Path Rule algorithm for DAGs (TPR-DAG)</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig. 6</head><label>6</label><figDesc><div><p><s>Fig. 6 (a) Compared precision at different recall levels averaged across 2444 HPO terms.</s><s>(b) Scatter plot of F max values.</s><s>Each point represent one of the 608 genes of the test set.</s><s>PHENOstruct values are in abscissa, TPR-W values in ordinate</s></p></div></figDesc><graphic coords="14,126.82,94.47,340.36,125.68" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Fig. 7</head><label>7</label><figDesc><div><p><s>Fig. 7 Distribution of the AUROC and AUPRC values across the best predicted terms (778 HPO terms).</s><s>a AUROC, b AUPRC.</s><s>HTD and different TPR variants are compared with PHENOstruct</s></p></div></figDesc><graphic coords="15,127.96,95.10,327.16,128.80" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Fig. 8</head><label>8</label><figDesc><div><p><s>Fig. 8 Precision at different recall levels of the newly annotated genes, considering only the best predicted terms.</s><s>a Results considering only the HPO terms predicted with AUROC &gt; 0.7 by TPR-W (778 terms); b results considering only the HPO terms predicted with AUROC &gt; 0.7 by PHENOstruct (852 terms)</s></p></div></figDesc><graphic coords="15,127.96,550.68,340.33,127.06" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head></head><label></label><figDesc><div><p><s>To this end, in the final block C, the hierarchical top-down step is performed, like in the HTD-DAG algorithm.</s><s>The complexity of the TPR-DAG algorithm is quadratic in the number of nodes for the block A, but can be O(|V |+ |E|) if the Topological Sort algorithm is used instead.</s><s>It is easy to see that the complexity is O(|V |) for both the B and C blocks when graphs are sparse.</s><s>Hence, considering</s></p></div></figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 1</head><label>1</label><figDesc><div><p><s>Cross-validated prediction of genes associated with HPO terms of the Organ, Inheritance and Onset sub-ontology</s></p></div></figDesc><table><row><cell></cell><cell>AUROC</cell><cell>F max</cell><cell>Precision</cell><cell>Recall</cell></row><row><cell>Organ sub-ontology</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>TPR-W-RANKS</cell><cell>0.89</cell><cell>0.40</cell><cell>0.34</cell><cell>0.48</cell></row><row><cell>TPR-W-SVM</cell><cell>0.77</cell><cell>0.44</cell><cell>0.38</cell><cell>0.51</cell></row><row><cell>HTD-RANKS</cell><cell>0.88</cell><cell>0.37</cell><cell>0.30</cell><cell>0.49</cell></row><row><cell>HTD-SVM</cell><cell>0.75</cell><cell>0.43</cell><cell>0.37</cell><cell>0.49</cell></row><row><cell>PHENOstruct</cell><cell>0.73</cell><cell>0.42</cell><cell>0.35</cell><cell>0.56</cell></row><row><cell>Clus-HMC-Ens</cell><cell>0.65</cell><cell>0.41</cell><cell>0.39</cell><cell>0.43</cell></row><row><cell>PhenoPPIOrth</cell><cell>0.52</cell><cell>0.20</cell><cell>0.27</cell><cell>0.15</cell></row><row><cell>SSVM→ Dis →HPO</cell><cell>0.49</cell><cell>0.23</cell><cell>0.16</cell><cell>0.41</cell></row><row><cell>RANKS</cell><cell>0.87</cell><cell>0.30</cell><cell>0.23</cell><cell>0.43</cell></row><row><cell>SVM</cell><cell>0.74</cell><cell>0.42</cell><cell>0.36</cell><cell>0.50</cell></row><row><cell>Inheritance sub-ontology</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>TPR-W-RANKS</cell><cell>0.91</cell><cell>0.57</cell><cell>0.45</cell><cell>0.80</cell></row><row><cell>TPR-W-SVMs</cell><cell>0.82</cell><cell>0.69</cell><cell>0.59</cell><cell>0.82</cell></row><row><cell>HTD-RANKS</cell><cell>0.90</cell><cell>0.57</cell><cell>0.44</cell><cell>0.81</cell></row><row><cell>HTD-SVMs</cell><cell>0.81</cell><cell>0.69</cell><cell>0.59</cell><cell>0.82</cell></row><row><cell>PHENOstruct</cell><cell>0.74</cell><cell>0.74</cell><cell>0.68</cell><cell>0.81</cell></row><row><cell>Clus-HMC-Ens</cell><cell>0.73</cell><cell>0.73</cell><cell>0.64</cell><cell>0.84</cell></row><row><cell>PhenoPPIOrth</cell><cell>0.55</cell><cell>0.12</cell><cell>0.16</cell><cell>0.10</cell></row><row><cell>SSVM→ Dis →HPO</cell><cell>0.46</cell><cell>0.11</cell><cell>0.07</cell><cell>0.25</cell></row><row><cell>RANKS</cell><cell>0.90</cell><cell>0.56</cell><cell>0.43</cell><cell>0.81</cell></row><row><cell>SVMs</cell><cell>0.82</cell><cell>0.69</cell><cell>0.59</cell><cell>0.82</cell></row><row><cell>Onset sub-ontology</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>TPR-RANKS</cell><cell>0.86</cell><cell>0.44</cell><cell>0.33</cell><cell>0.70</cell></row><row><cell>TPR-SVMs</cell><cell>0.75</cell><cell>0.48</cell><cell>0.38</cell><cell>0.66</cell></row><row><cell>HTD-RANKS</cell><cell>0.86</cell><cell>0.42</cell><cell>0.30</cell><cell>0.69</cell></row><row><cell>HTD-SVMs</cell><cell>0.74</cell><cell>0.46</cell><cell>0.37</cell><cell>0.67</cell></row><row><cell>PHENOstruct</cell><cell>0.64</cell><cell>0.39</cell><cell>0.31</cell><cell>0.52</cell></row><row><cell>Clus-HMC-Ens</cell><cell>0.58</cell><cell>0.35</cell><cell>0.27</cell><cell>0.48</cell></row><row><cell>PhenoPPIOrth</cell><cell>0.53</cell><cell>0.25</cell><cell>0.25</cell><cell>0.24</cell></row><row><cell>SSVM→ Dis →HPO</cell><cell>0.49</cell><cell>0.07</cell><cell>0.06</cell><cell>0.10</cell></row><row><cell>RANKS</cell><cell>0.83</cell><cell>0.41</cell><cell>0.30</cell><cell>0.67</cell></row><row><cell>SVMs</cell><cell>0.74</cell><cell>0.47</cell><cell>0.37</cell><cell>0.63</cell></row><row><cell cols="5">Average AUROC across terms and average F max , Precision and Recall across genes</cell></row><row><cell cols="5">of HTD, TPR-W ensembles and state-of-the-art methods. Best results for each metric</cell></row><row><cell>highlighted in bold</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 2</head><label>2</label><figDesc><div><p><s>Prediction of newly annotated human genes</s></p></div></figDesc><table><row><cell>Method</cell><cell>AUROC</cell><cell>AUPRC</cell><cell>F max</cell><cell>Precision</cell><cell>Recall</cell></row><row><cell>SVM</cell><cell>0.6506</cell><cell>0.1230</cell><cell>0.3774</cell><cell>0.3457</cell><cell>0.4155</cell></row><row><cell>HTD</cell><cell>0.6464</cell><cell>0.1207</cell><cell>0.3794</cell><cell>0.3581</cell><cell>0.4033</cell></row><row><cell>TPR-W</cell><cell>0.6512</cell><cell>0.1237</cell><cell>0.3826</cell><cell>0.3512</cell><cell>0.4202</cell></row><row><cell>PHENOstruct</cell><cell>0.6661</cell><cell>0.1089</cell><cell>0.3635</cell><cell>0.3040</cell><cell>0.4519</cell></row></table><note><p><s>Average AUROC and AUPRC across terms and average F max , Precision and Recall across genes.</s><s>Results significantly better than the others according to the Wilcoxon Rank Sum test (α = 10 −9 ) are highlighted in bold</s></p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 3</head><label>3</label><figDesc><div><p><s>Prediction of newly annotated human genes considering only the best predictions</s></p></div></figDesc><table><row><cell>Method</cell><cell>AUROC</cell><cell>AUPRC</cell><cell>F max</cell><cell>Precision</cell><cell>Recall</cell></row><row><cell>SVM</cell><cell>0.8208</cell><cell>0.1589</cell><cell>0.4727</cell><cell>0.4560</cell><cell>0.4908</cell></row><row><cell>HTD</cell><cell>0.8155</cell><cell>0.1551</cell><cell>0.4716</cell><cell>0.4429</cell><cell>0.5042</cell></row><row><cell>TPR-W</cell><cell>0.8219</cell><cell>0.1594</cell><cell>0.4793</cell><cell>0.4572</cell><cell>0.5037</cell></row><row><cell>PHENOstruct</cell><cell>0.7565</cell><cell>0.1241</cell><cell>0.4297</cell><cell>0.3583</cell><cell>0.5366</cell></row></table><note><p><s>Results significantly better than the others according to the Wilcoxon Rank Sum test (α = 10 −9 ) are highlighted in bold</s></p></note></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgments</head><p><s>The authors would like to thank the anonymous reviewers and the editor for their thorough comments and suggestions.</s></p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>receptor) in the Chronic Obstructive Pulmonary Disease (COPD), confirming the prediction made by our method which associated TGFBR3 gene with the HPO term Emphysema (HP:0002097).</s><s>Furthermore the predicted association between the gene BARD1 and Nephroblastoma, also known as Wilms' tumor (HP:0002667), is supported in the very recent work of Fu et al. <ref type="bibr" target="#b55">[55]</ref>, in which the authors claim that the BARD1 gene polymorphism is significantly associated with increased nephroblastoma risk.</s><s>As stated in <ref type="bibr" target="#b56">[56]</ref>, frameshift mutations in the MSH3 gene play an important role in the development of breast cancer (HP:0003002), supporting in this way the selfsame gene-HPO term association predicted by our methods.</s><s>The predicted association between the CAD gene (encoding for a tri-functional enzyme involved in the pyrimidine biosynthesis) and the phenotype HP:0004353 (Abnormality of pyrimidine metabolism) is confirmed by the fact that a mutation in CAD impairs de novo pyrimidine biosynthesis <ref type="bibr" target="#b57">[57]</ref>.</s><s>Another interesting example is represented by the predicted association between the COX10 gene (Cytochrome c Oxidase) and the phenotype Abnormal mitochondria in muscle tissue (HP:0008316), supported by literature evidence that correlates the COX10 dysfunction with mitochondrial disease <ref type="bibr" target="#b58">[58]</ref>.</s><s>Overall, the novel annotations in the recent (March 2017) HPO release as well as recent bio-medical literature support the novel predictions obtained with our hierarchical ensemble methods.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusions</head><p><s>The experimental results show that hierarchical ensemble methods are able to predict associations between genes and abnormal phenotypes with results competitive with state-of-the-art algorithms.</s><s>The low computational complexity of the hierarchical correction step of both HTD and TPR (linear with respect the number of nodes of the HPO) enables its efficient application using different types of base learners.</s><s>Indeed we showed that the proposed hierarchical algorithms are able to improve the predictions of both semi-supervised flat methods, such as the RANKS algorithm, that resulted one of the top ranked method in the recent CAFA2 challenge for HPO term prediction <ref type="bibr" target="#b42">[42]</ref>, and of supervised methods such as SVM.</s><s>By exploiting the modular structure of HTD and TPR, we speculate that in principle any flat method, used as base learner within our proposed hierarchical algorithms, can in principle improve its performance for the prediction of HPO terms.</s><s>We also proved that both HTD and TPR always provide consistent predictions that obey the true path rule, a fundamental fact to assure biologically coherent predictions of HPO terms.</s><s>Moreover we provided a list of currently unannotated genes that could be possible candidate for novel HPO annotations, and we showed that several predicted gene -HPO term associations have been confirmed in the current HPO release (March 2017) and in recent bio-medial literature.</s><s>Since for several disorders no disease genes have been discovered (e.g. for about half of Mendelian diseases no causative genes are known <ref type="bibr" target="#b59">[59]</ref>), our methods can contribute to the discovery of such genes, and to unravel the full spectrum of phenotypes associated with them.</s></p><p><s>Even if the overall results show the effectiveness of stateof-the-art methods for the prediction of HPO terms, the estimated absolute value of both AUPRC and F max for genome-wide HPO term predictions cannot be considered fully satisfactory, showing that there is room for further research on this topic.</s></p><p><s>Finally we point out that our methods are general enough to be applied to other prediction problems in computational biology characterized by taxonomies structured as directed acyclic graphs.</s><s>For instance, the proposed approach could be safely applied to the prediction of Gene Ontology terms, assuring biological consistency of the predictions and at the same time likely improving predictions obtained with flat learning methods.</s><s>Furthermore, since a tree is a DAG, our proposed algorithms can be also safely applied to tree-structured taxonomies, such as the FunCat <ref type="bibr" target="#b7">[8]</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Additional files</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Availability of data and materials</head><p><s>The HEMDAG R package implementing the hierarchical ensemble methods for DAG is publicly available from the CRAN repository: HEMDAG (https://CRAN.R-project.org/package=HEMDAG)</s><s>under the GNU General Public License, version 3 (GPL-3.0).</s><s>The dataset analyzed during this study was generated using the following public databases: BioGRID (https://thebiogrid.org/); STRING (http://string-db.org/);</s><s>HPO (http://human-phenotype-ontology.github.io/);</s><s>GO (http://www.geneontology.org/).</s><s>The data in compressed R format for the hierarchical prediction of HPO terms are available from https://homes.di.unimi.it/notaro/DATA/DATA_BMC/.</s></p><p><s>Authors' contributions MN implemented the methods, performed computational experiments and wrote the manuscript.</s><s>GV designed the methods and wrote the manuscript.</s><s>PNR, MS, GV, and MN designed the study and the experimental set-up.</s><s>All the authors evaluated the experimental results, and revised and approved the final version of the manuscript.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Ethics approval and consent to participate</head><p><s>Not applicable.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Consent for publication</head><p><s>Not applicable.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Competing interests</head><p><s>The authors declare that they have no competing interests.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Publisher's Note</head><p><s>Springer Nature remains neutral with regard to jurisdictional claims in published maps and institutional affiliations.</s></p><p><s>Author details 1 Anacleto Lab -Dipartimento di Informatica, Universitá degli Studi di Milano, Via Comelico 39, 20135 Milan, Italy. 2 Institute for Medical and Human Genetics, Charité -Universitätsmedizin Berlin, Augustenburger Platz 1, 13353 Berlin, Germany. 3 Max Planck Institute for Molecular Genetics, Ihnestraße 63-73, 14195 Berlin, Germany. 4 The Jackson Laboratory for Genomic Medicine, 10 Discovery Dr, 06032 Farmington, CT, USA. 5 Institute for Systems Genomics, University of Connecticut, 10 Discovery Dr, 06032 Farmington, CT, USA. 6</s></p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Deep phenotyping for precision medicine</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">N</forename><surname>Robinson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Hum Mutat</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="777" to="780" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Strategies for exome and genome sequence data analysis in disease-gene discovery projects</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">N</forename><surname>Robinson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Krawitz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Mundlos</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cin Genet</title>
+		<imprint>
+			<biblScope unit="volume">80</biblScope>
+			<biblScope unit="page" from="127" to="132" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">The human phenotype ontology in 2017</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Köhler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">A</forename><surname>Vasilevsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Engelstad</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Foster</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="page">865</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">The Human Phenotype Ontology: a tool for annotating and analyzing human hereditary disease</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">N</forename><surname>Robinson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kohler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bauer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Seelow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Horn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Mundlos</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Am J Hum Genet</title>
+		<imprint>
+			<biblScope unit="volume">83</biblScope>
+			<biblScope unit="page" from="610" to="615" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Online mendelian inheritance in man (omim), a knowledgebase of human genes and genetic disorders</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Hamosh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">F</forename><surname>Scott</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Amberger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">A</forename><surname>Bocchini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Valle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">A</forename><surname>Mckusick</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="page" from="52" to="55" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Networking for rare diseases: a necessity for europe</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Aymé</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Schmidtke</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cin Genet</title>
+		<imprint>
+			<biblScope unit="volume">50</biblScope>
+			<biblScope unit="page" from="1477" to="1483" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">DECIPHER: database for the interpretation of phenotype-linked plausibly pathogenic sequence and copy-number variation</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Bragin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">A</forename><surname>Chatzimichali</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">F</forename><surname>Wright</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">E</forename><surname>Hurles</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">V</forename><surname>Firth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">P</forename><surname>Bevan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">J</forename><surname>Swaminathan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="page" from="993" to="1000" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">The FunCat, a functional annotation scheme for systematic classification of proteins from whole genomes</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ruepp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Zollner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Maier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Albermann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mokrejs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Tetko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Guldener</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Mannhaupt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Munsterkotter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">W</forename><surname>Mewes</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="issue">18</biblScope>
+			<biblScope unit="page" from="5539" to="5545" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Computational tools for prioritizing candidate genes: boosting disease gene discovery</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Moreau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">C</forename><surname>Tranchevent</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature Rev Genet</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="page" from="523" to="536" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Prediction of human phenotype ontology terms using heterogeneous data sources</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Kahanda</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Funk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Verspoor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ben-Hur</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Phenostruct</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015">F1000Research. 2015</date>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page">259</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Effective diagnosis of genetic disease by computational phenotype analysis of the disease-associated genome</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Zemojtel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Köhler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Mackenroth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Jäger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hecht</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Krawitz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Graul-Neumann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Doelken</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Ehmke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Spielmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">C</forename><surname>Oien</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">R</forename><surname>Schweiger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Krüger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Frommer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Fischer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Kornak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Flöttmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ardeshirdavani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Moreau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">E</forename><surname>Lewis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Haendel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Smedley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Horn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Mundlos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">N</forename><surname>Robinson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Sci Transl Med</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page" from="123" to="252" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">A whole-genome analysis framework for effective identification of pathogenic regulatory variants in mendelian disease</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Smedley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Schubach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Job</forename><surname>Jacobsen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Köhler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Zemojtel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Spielmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Jäger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hochheiser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">L</forename><surname>Washington</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Mcmurry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Haendel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Mungall</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">E</forename><surname>Lewis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Groza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Valentini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">N</forename><surname>Robinson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Am J Hum Genet</title>
+		<imprint>
+			<biblScope unit="volume">99</biblScope>
+			<biblScope unit="page" from="595" to="606" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Inference of gene-phenotype associations via protein-protein interaction and orthology</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Wang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PLoS ONE</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="1" to="8" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Novel cardiovascular gene functions revealed via systematic phenotype prediction in zebrafish</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Musso</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Development</title>
+		<imprint>
+			<biblScope unit="volume">141</biblScope>
+			<biblScope unit="page" from="224" to="235" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Hierarchical ensemble methods for protein function prediction</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Valentini</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ISRN Bioinforma</title>
+		<imprint>
+			<biblScope unit="page">34</biblScope>
+			<date type="published" when="2014">2014. 2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Large margin methods for structured and interdependent output variables</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Tsochantaridis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Joachims</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hoffman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Altun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Mach Learn Res</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page" from="1453" to="1484" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Structured output prediction of novel enzyme function with reaction kernels</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Astikainen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Holm</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Pitkänen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Szedmak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Rousu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Biomedical Engineering Systems and Technologies. BIOSTEC 2010</title>
+				<editor>
+			<persName><forename type="first">A</forename><surname>Fred</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">J</forename><surname>Filipe</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">H</forename><surname>Gamboa</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Berlin, Heidelberg</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2011">2011</date>
+			<biblScope unit="page" from="367" to="379" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Modelling Progressive Filtering. Fundam Informaticae</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Armano</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="volume">138</biblScope>
+			<biblScope unit="page" from="385" to="405" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">A survey of hierarchical classification across different application domains</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Silla</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Freitas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Data Min Knowl Disc</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="page" from="31" to="72" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Towards structured output prediction of enzyme function</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Astikainen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Holm</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Pitkanen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Szedmak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Rousu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Proc</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Hierarchical classification of gene ontology terms using the gostruct method</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sokolov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ben-Hur</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Bioinforma Comput Biol</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="357" to="376" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Predicting gene function in a hierarchical context with an ensemble of classifiers</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Guan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">L</forename><surname>Myers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">C</forename><surname>Hess</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Barutcuoglu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Caudy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><forename type="middle">G</forename><surname>Troyanskaya</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Genome Biol</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page">3</biblScope>
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Synergy of multi-label hierarchical ensembles, data fusion, and cost-sensitive methods for gene functional inference</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Cesa-Bianchi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Re</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Valentini</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Mach Learn</title>
+		<imprint>
+			<biblScope unit="volume">88</biblScope>
+			<biblScope unit="page" from="209" to="241" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Consistent probabilistic output for protein function prediction</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Obozinski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Lanckriet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Grant</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Noble</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">S</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Genome Biol</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page" from="135" to="142" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Prediction of human gene -phenotype associations by exploiting the hierarchical structure of the human phenotype ontology</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Valentini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Köhler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Re</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Notaro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">N</forename><surname>Robinson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics and Biomedical Engineering</title>
+		<editor>Ortuño F, Rojas I</editor>
+		<imprint>
+			<biblScope unit="page" from="66" to="77" />
+			<date type="published" when="2015">2015. 2015</date>
+			<publisher>Springer</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">A hierarchical ensemble method for dag-structured taxonomies</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">N</forename><surname>Robinson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Frasca</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Köhler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Notaro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Re</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Valentini</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Multiple Classifier Systems. MCS 2015. Lecture Notes in Computer Science</title>
+				<editor>
+			<persName><forename type="first">F</forename><surname>Schwenker</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">F</forename><surname>Roli</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">J</forename><surname>Kittler</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Cham</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="page" from="15" to="26" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Predicting gene function using hierarchical multi-label decision tree ensembles</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Schietgat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Vens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Struyf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Blockeel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Dzeroski</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Bioinforma</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">RANKS: a flexible tool for node label ranking and classification in biological networks</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Valentini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Armano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Frasca</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mesiti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Re</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="page">2872</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Support vector networks</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Cortes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Vapnik</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Mach Learn</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="page" from="273" to="297" />
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">An extensive analysis of disease-gene associations using network integration and fast kernel-based gene prioritization methods</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Valentini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Paccanaro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Caniza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Romero</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Re</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Artif Intell Med</title>
+		<imprint>
+			<biblScope unit="volume">61</biblScope>
+			<biblScope unit="page" from="63" to="78" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">A fast ranking algorithm for predicting gene functions in biomolecular networks</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Re</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mesiti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Valentini</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE ACM Trans Comput Biol Bioinforma</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page" from="1812" to="1818" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Network-based Drug Ranking and Repositioning with respect to DrugBank Therapeutic Categories</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Re</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Valentini</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE/ACM Trans Comput Biol Bioinforma</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page" from="1359" to="1371" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Kernels and regularization on graphs</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Smola</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Kondor</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Learning Theory and Kernel Machines</title>
+		<title level="s">Lecture Notes in Computer Science</title>
+		<editor>
+			<persName><forename type="first">B</forename><surname>Schölkopf</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">M</forename><forename type="middle">K</forename><surname>Warmuth</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Berlin, Heidelberg</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2003">2003</date>
+			<biblScope unit="page" from="144" to="158" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">A comparison of normalization methods for high density oligonucleotide array data based on variance and bias</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">M</forename><surname>Bolstad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Irizarry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Astrand</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">P</forename><surname>Speed</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="page" from="185" to="193" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">LIBLINEAR: A library for large linear classification</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">E</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">W</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Hsieh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><forename type="middle">R</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Lin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Mach Learn Res</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page" from="1871" to="1874" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<monogr>
+		<title level="m" type="main">Introduction to Algorithms</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Cormen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Leiserson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Rivest</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Rl S</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+			<publisher>MIT Press</publisher>
+			<pubPlace>Boston</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">True Path Rule hierarchical ensembles for genome-wide gene function prediction</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Valentini</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE ACM Trans Comput Biol Bioinforma</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="832" to="847" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<monogr>
+		<author>
+			<persName><forename type="first">M</forename><surname>Michaelides</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">A</forename><surname>Rana</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">C</forename><surname>Richardson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">G</forename><surname>Hykin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">T</forename><surname>Moore</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">E</forename><surname>Holder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">R</forename><surname>Webster</surname></persName>
+		</author>
+		<title level="m">Novel mutations and electrophysiologic findings in rgs9-and r9ap-associated retinal dysfunction (bradyopsia)</title>
+				<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title/>
+	</analytic>
+	<monogr>
+		<title level="j">Ophthalmology</title>
+		<imprint>
+			<biblScope unit="volume">117</biblScope>
+			<biblScope unit="page" from="120" to="1271" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Mutation of the gene encoding the enamel-specific protein, enamelin, causes autosomal-dominant amelogenesis imperfecta</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rajpar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Harley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Laing</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Davies</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Dixon</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Hum Mol Genet</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page" from="1673" to="1677" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Thomson syndrome and glomerulonephritis in a homozygous C1q-deficient patient due to a Gly164Ser C1qC mutation</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Lopez-Lera</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Torres-Canizales</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Garrido</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Morales</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Lopez-Trascasa</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Investig Dermatol</title>
+		<imprint>
+			<biblScope unit="volume">134</biblScope>
+			<biblScope unit="page" from="1152" to="1154" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Probabilistic outputs for support vector machines and comparisons to regularized likelihood methods</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Platt</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Large Margin Classifiers</title>
+				<editor>
+			<persName><forename type="first">A</forename><surname>Smola</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">P</forename><surname>Bartlett</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">B</forename><surname>Scholkopf</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">D</forename><surname>Schuurmans</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Cambridge, MA</addrLine></address></meeting>
+		<imprint>
+			<publisher>MIT Press</publisher>
+			<date type="published" when="1999">1999</date>
+			<biblScope unit="page" from="61" to="74" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">An expanded evaluation of protein function prediction methods shows an improvement in accuracy</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Jiang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Genome Biol</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="page">184</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Neggoa: negative go annotations selection using ontology structure</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Yu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="page" from="2996" to="3004" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Exploiting negative sample selection for prioritizing candidate disease genes</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Frasca</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Malchiodi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Genomics Comput Biol</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page">47</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">STRING v9.1: protein-protein interaction networks, with increased coverage and integration</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Franceschini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Szklarczyk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Frankild</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kuhn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Simonovic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Roth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Minguez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Bork</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Von Mering</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">J</forename><surname>Jensen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="page" from="808" to="815" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">The BioGRID interaction database: 2013 update</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Chatr-Aryamontri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">J</forename><surname>Breitkreutz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Heinicke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Boucher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Winter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Stark</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Nixon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Ramage</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Kolas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O'</forename><surname>Donnell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Reguly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Breitkreutz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sellam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Chang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Rust</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Livstone</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">S</forename><surname>Oughtred</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Dolinski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Tyers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="page" from="816" to="823" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">The Gene Ontology Consortium. Gene ontology: tool for the unification of biology</title>
+	</analytic>
+	<monogr>
+		<title level="j">Nature Genet</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="page" from="25" to="29" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">A new face and new challenges for online mendelian inheritance in man (OMIM)</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Amberger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Bocchini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Amosh</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Hum Mutat</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="page" from="564" to="567" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">STRING v10: protein-protein interaction networks, integrated over the tree of life</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Szklarczyk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Franceschini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Wyder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Forslund</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Heller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Huerta-Cepas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Simonovic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Roth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Santos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Tsafou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kuhn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Bork</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">J</forename><surname>Jensen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Von Mering</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<biblScope unit="page" from="447" to="452" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">The precision-recall plot is more informative than the roc plot when evaluating binary classifiers on imbalanced datasets</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Saito</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rehmsmeier</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PLOS ONE</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page" from="1" to="21" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Copy number variations alter methylation and parallel IGF2 overexpression in adrenal tumors</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">M</forename><surname>Nielsen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>How-Kit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Guerin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Castinetti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hkm</forename><surname>Vollan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Endocrine-Related Cancer</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="page" from="953" to="967" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">ECHS1 mutations cause combined respiratory chain deficiency resulting in leigh syndrome</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Chika</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Seijin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Masayuki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Yusaku</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Yuichi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yu-Ichi</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Hum Mutat</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="page" from="232" to="239" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Inhibition of the alternative complement pathway by antisense oligonucleotides targeting complement factor b improves lupus nephritis in mice</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">R</forename><surname>Grossman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">A</forename><surname>Hettrick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">B</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Hung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Peralta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Watt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">P</forename><surname>Henry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Adamson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">P</forename><surname>Monia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">L</forename><surname>Mccaleb</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Immunobiology</title>
+		<imprint>
+			<biblScope unit="volume">221</biblScope>
+			<biblScope unit="page" from="701" to="708" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Silverman EK, the ICGN Investigators. Transforming growth factor-β receptor-3 is associated with pulmonary emphysema</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">P</forename><surname>Hersh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">N</forename><surname>Hansel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">C</forename><surname>Barnes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">A</forename><surname>Lomas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">G</forename><surname>Pillai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">O</forename><surname>Coxson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Mathias</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">M</forename><surname>Rafaels</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Wise</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">E</forename><surname>Connett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">J</forename><surname>Klanderman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">L</forename><surname>Jacobson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Gill</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">A</forename><surname>Litonjua</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Sparrow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">J</forename><surname>Reilly</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Am J Respir Cell Mol Biol</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="page" from="324" to="331" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">BARD1 gene polymorphisms confer nephroblastoma susceptibility</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Fua</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Zhuc</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">W</forename><surname>Xiongd</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Jiaa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhaoa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">B</forename><surname>Zhua</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Hua</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">H</forename><surname>Wanga</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Xiaa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hea</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">C</forename><surname>Liua</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Am J Respir Cell Mol Biol</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="page" from="101" to="105" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">MSH3 rs26279 polymorphism increases cancer risk: a meta-analysis</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">K</forename><surname>Miao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">P</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">J</forename><surname>Kong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int J Clin Exp Pathol</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="11060" to="11067" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Biallelic mutations in CAD, impair de novo pyrimidine biosynthesis and decrease glycosylation precursors</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">N</forename><surname>Bobby</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">A</forename><surname>Wolfe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ichikawa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Markello</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Tifft</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">A</forename><surname>Gahl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">H</forename><surname>Freeze</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Hum Mol Genet</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="page" from="3050" to="3057" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">COX10 mutations resulting in complex multisystem mitochondrial disease that remains stable into adulthood</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Pitceathly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Taanman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Rahman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">JAMA Neurol</title>
+		<imprint>
+			<biblScope unit="volume">70</biblScope>
+			<biblScope unit="page" from="1556" to="1561" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">The genetic basis of mendelian phenotypes: Discoveries, challenges, and opportunities</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">X</forename><surname>Chong</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Am J Hum Genet</title>
+		<imprint>
+			<biblScope unit="volume">97</biblScope>
+			<biblScope unit="page" from="199" to="215" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,655 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">NGL Viewer: a web application for molecular visualization</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2015-04-29">29 April 2015</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Alexander</forename><forename type="middle">S</forename><surname>Rose</surname></persName>
+							<email>alexander.rose@charite.de</email>
+							<affiliation key="aff0">
+								<orgName type="department">Institut f ür Medizinische Physik und Biophysik</orgName>
+								<orgName type="institution">AG ProteInformatics</orgName>
+								<address>
+									<addrLine>Charit éplatz 1</addrLine>
+									<postCode>10117</postCode>
+									<settlement>Charit é-Universit ätsmedizin Berlin, Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Peter</forename><forename type="middle">W</forename><surname>Hildebrand</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Institut f ür Medizinische Physik und Biophysik</orgName>
+								<orgName type="institution">AG ProteInformatics</orgName>
+								<address>
+									<addrLine>Charit éplatz 1</addrLine>
+									<postCode>10117</postCode>
+									<settlement>Charit é-Universit ätsmedizin Berlin, Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">NGL Viewer: a web application for molecular visualization</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2015-04-29">29 April 2015</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">6D3116A366E610514C72E09E083BE0CE</idno>
+					<idno type="DOI">10.1093/nar/gkv402</idno>
+					<note type="submission">Received March 05, 2015; Revised April 11, 2015; Accepted April 15, 2015</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:24+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>The NGL Viewer (http://proteinformatics.charite.de/</s><s>ngl) is a web application for the visualization of macromolecular structures.</s><s>By fully adopting capabilities of modern web browsers, such as WebGL, for molecular graphics, the viewer can interactively display large molecular complexes and is also unaffected by the retirement of third-party plug-ins like Flash and Java Applets.</s><s>Generally, the web application offers comprehensive molecular visualization through a graphical user interface so that life scientists can easily access and profit from available structural data.</s><s>It supports common structural fileformats (e.g.</s><s>PDB, mmCIF) and a variety of molecular representations (e.g.</s><s>'cartoon, spacefill, licorice').</s><s>Moreover, the viewer can be embedded in other web sites to provide specialized visualizations of entries in structural databases or results of structure-related calculations.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>INTRODUCTION</head><p><s>Visualizing 3D molecular structures of biopolymers has become a common task in the life sciences <ref type="bibr" target="#b0">(1,</ref><ref type="bibr" target="#b1">2)</ref>.</s><s>The depiction of, for instance, ligand-binding pockets or other details in macromolecular assemblies helps to elucidate the relationship between protein structure and function.</s><s>The web in turn has long been a platform for providing access to 3D structural data itself and also to visualizations of it.</s><s>Ongoing advances in web browser software facilitate this trend and allow the creation of rich visualization applications.</s><s>Specifically, integration of browser-based visualizations simplifies access to results of structure-related calculations from web tools <ref type="bibr" target="#b2">(3,</ref><ref type="bibr" target="#b3">4)</ref> and allows for quick depiction of entries in online structural databases <ref type="bibr" target="#b4">(5)</ref><ref type="bibr" target="#b5">(6)</ref><ref type="bibr" target="#b6">(7)</ref>.</s><s>Hence, web browsers are extensively used for the visualization of molecular structures.</s></p><p><s>Until recently web browsers could not display 3D content without additional plug-ins.</s><s>Therefore, programs like 'Jmol' <ref type="bibr" target="#b7">(8)</ref> or the 'OpenAstexViewer' <ref type="bibr" target="#b8">(9)</ref> needed to be embedded as Java Applets within a web page.</s><s>However, the rise of the web as a platform for applications has resulted in more and more capabilities being added to the web browsers themselves.</s><s>These include the HTML5 feature set and tremendous performance gains of JavaScript, the programming language available within web browsers.</s><s>Eventually, this progress allowed the compilation of 'Jmol' into a pure JavaScript version called 'JSmol' <ref type="bibr" target="#b9">(10)</ref>, demonstrating the feasibility of browser-based molecular graphics without recourse to third-party plug-ins like Flash or Java Applets.</s><s>In addition to molecular graphics, 'JSmol' provides the same features as 'Jmol', including user-scripts and sessions.</s></p><p><s>Another feature modern web browsers have is access to dedicated graphics hardware through the WebGL application programming interface (API).</s><s>For desktop programs, shifting calculations to the graphics processor unit (GPU) has greatly improved rendering performance and quality <ref type="bibr" target="#b10">(11)</ref>.</s><s>So by using the new capabilities of web browsers it is possible to provide hardware-accelerated graphics while coping with the increasing retirement of plug-ins.</s><s>Some libraries have already been developed which leverage We-bGL and can be embedded in web pages to provide molecular visualizations.</s><s>Notable libraries include 'pv', as used in the SWISS-MODEL server <ref type="bibr" target="#b11">(12)</ref>, and '3Dmol.js'</s><s><ref type="bibr" target="#b12">(13)</ref>.</s><s>They provide developers with an API for the creation of molecular visualizations.</s><s>Further, the 'GLmol'-based (tinyurl.com/glmol)</s><s>'iview' employs GPU acceleration and provides an interface for viewing protein-ligand complexes <ref type="bibr" target="#b13">(14)</ref>.</s></p><p><s>Note that while WebGL is widely adopted by web browsers, there are still installations in which WebGL is not available, either due to missing software updates or older, unsupported hardware.</s><s>To enable molecular graphics for these, 'JSmol' is an option, as it neither relies on WebGL for rendering nor requires a plug-in.</s></p><p><s>Here we introduce the 'NGL Viewer', which provides a rich graphical user interface (GUI) for customization of molecular scenes in addition to a developer API for embedding and controlling the viewer.</s><s>Leveraging the features of modern web browsers, the 'NGL Viewer' can supply fast, hardware-accelerated molecular graphics and brings a familiar GUI to the web.</s><s>The web application offers general- purpose molecular visualization and as it does not require the installation of specialized software it can simplify access 3D structural data for life scientists.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IMPLEMENTATION</head><p><s>The 'NGL Viewer' web application is written mostly in JavaScript, with some code in HTML and CSS to create the GUI.</s><s>Fast 3D graphics are enabled by GPU acceleration available through WebGL, a standard based on the OpenGL ES 2.0 API and built directly into the browser without the need for any plug-ins.</s><s>All major web browsers support WebGL in their current versions through a 3D context for the HTML5 canvas element.</s><s>Bindings to JavaScript in turn provide a flexible and low-level API to the GPU for web-based applications.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Architecture</head><p><s>The source code is organized into task-specific modules: parsing and processing of molecular structures; transforming molecular structures into display representations such as spheres for atoms, sticks for bonds or tubes tracing a protein backbone; rendering of display representations on the GPU with WebGL; and, finally, creating an interactive GUI.</s><s>A goal of this organization is a layered architecture with a clear separation of modules to facilitate reuse and refactoring in development.</s><s>At the center of the implementation is the stage class.</s><s>It supplies an instance of the viewer class for rendering and hosts component instances that contain, for example, the molecular structures for visualization.</s><s>The component instances in turn host representation instances containing the geometry to be rendered.</s><s>The GUI is decoupled from the stage class and reacts only to signals.</s><s>For example, a stage instance emits a 'component loaded' signal to which the GUI reacts with the creation of an interface element for the loaded component.</s><s>By that, no GUI-specific code is needed within the non-GUI parts.</s><s>Generally, this architecture simplifies creation of custom GUIs and facilitates embedding the viewer into other web applications.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Structures</head><p><s>Molecular structures are parsed and converted into an internal format based on the common structure-model-chainresidue-atom hierarchy of biomolecules.</s><s>Parsers are currently implemented for the PDB, GRO and mmCIF fileformats.</s><s>For large structures, each type of atomic data such as the coordinates or the element name is stored in a single JavaScript typed array.</s><s>This saves memory compared to storing the data in properties of JavaScript objects for each atom individually.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Visualization</head><p><s>To minimize time-consuming data exchange between CPU and GPU, the geometries of molecular representations are sent to the GPU in few but large arrays.</s><s>The geometries in each of the arrays can then be rendered by a single draw call to the WebGL API.</s><s>For the rendering of spheres and cylinders, ray-casted impostors are used to greatly reduce the geometric complexity and enable display of very large macromolecules with sphere-and cylinder-based representations <ref type="bibr" target="#b14">(15,</ref><ref type="bibr" target="#b15">16)</ref>.</s><s>For older hardware that does not support the required EXT frag depth WebGL extension, spheres and cylinders are rendered as meshes of triangles forming the geometric primitives.</s><s>Ray-casting is also used to provide an implementation of the 'HyperBalls' representation <ref type="bibr" target="#b16">(17)</ref> in which atoms are smoothly connected by an elliptic hyperboloid (Figures <ref type="figure" target="#fig_2">1G and 2B</ref>).</s></p><p><s>The line and point primitives available in the WebGL API provide visually simple but very fast representations for huge macromolecules or when older hardware is used.</s><s>All remaining representations such as a tube tracing the backbone atoms are rendered as triangle meshes.</s></p><p><s>The 'three.js'</s><s>library (threejs.org) is used to create and render the scene containing the geometries of molecular representations.</s><s>The library also provides the camera implementations and mouse controls.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Interaction</head><p><s>Picking atoms with pixel-level accuracy is implemented GPU-based by rendering the scene off screen with colors that uniquely identify all pickable elements.</s><s>Upon clicking on the canvas, the color of the pixel under the mouse pointer is read identifying the corresponding element, for instance a specific atom.</s></p><p><s>A concise language for selecting parts of molecular structures from models and chains to atoms was created, with a syntax inspired by the atom expressions available in the scripting language of 'Jmol/JSmol'.</s><s>Strings written in the selection language are parsed and transformed into testing functions that can be applied at all levels of the structure-model-chain-residue-atom hierarchy to efficiently determine if an entity belongs to the selection or not.</s><s>For example, the selection string ALA and .CA breaks down to tests for 'alanine' residues and 'C-alpha' atoms.</s><s>All atoms for which both tests evaluate to true are selected.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>WEB APPLICATION</head><p><s>The 'NGL Viewer' web application enables interactive display of large macromolecules and allows complex manipulations of the visualization through a GUI.</s><s>Structures in PDB, mmCIF or GRO format can be loaded into the application from local and remote sources.</s><s>For instance, local files can be loaded via drag'n'drop and PDB entries are retrieved from the RCSB archive (www.rcsb.org)</s><s>by their ID.</s><s>Moreover, compressed files in 'gz' or 'zip' format are automatically unpacked upon loading.</s></p><p><s>Structures loaded into the viewer are displayed using a variety of representations that can be combined to create complex molecular views (Figure <ref type="figure" target="#fig_0">1</ref>).</s><s>Multiple representation types are supported, including cylinders and spheres for bonds and atoms ('spacefill, ball+stick, licorice, line, point') as well as secondary structure depictions based on backbone atoms ('cartoon, tube, ribbon, trace, backbone, rocket').</s><s>The appearance of the representations is tunable by parameters to create unique styles and also to trade quality for performance.</s><s>Most representations have a color and a radius parameter that can use data from the underlying structure.</s><s>For instance, a representation can be colored uniformly or according to the element, residue or secondary structure type of the atoms from which the representation is derived.</s><s>The size of representation objects, such as sphere and cylinder radii in a 'ball+stick' representation, is set similarly.</s><s>The GUI provides controls to add new representations to a structure and to change the parameters of existing ones (Figure <ref type="figure" target="#fig_2">2C</ref>).</s><s>Clicking on a representation prints the full name of the entity (i.e.</s><s>atom, residue, chain, model, structure) it belongs to (Figure <ref type="figure" target="#fig_2">2D</ref>).</s></p><p><s>Display of representations is easily limited to specific atoms, residues or chains via a concise selection language.</s><s>This allows detailed control of which parts of a biomolecule are shown to highlight important aspects or are not shown for clarity (Figure <ref type="figure" target="#fig_2">2B and C</ref>).</s><s>For example, the side-chain and C-alpha atoms plus the backbone nitrogen in the case of proline are selected with side-chain or .CA or (PRO and .N).</s><s>For convenience, the shorthand sidechainAttached is available.</s><s>A detailed description of the selection language can be found in the online documentation.</s></p><p><s>Large systems of biomolecules are often available as coarse-grained structures where only the backbone atoms are resolved.</s><s>Here, visualization of coarse-grained structures is supported by special treatment when calculating backbone and side-chain bonds as well as by automatic alpha-helix detection.</s><s>Thus, representations such as 'car-Nucleic Acids Research, 2015, Vol.</s><s>43, Web Server issue W579 toon or ribbon' are available for coarse-grained structures despite their missing atoms.</s><s>Also provided is a 'rope'like protein fold abstraction especially suitable for coarsegrained structures.</s><s>In this representation a tube follows a local axis similar to what is done in 'Bendix' <ref type="bibr" target="#b17">(18)</ref>.</s></p><p><s>Structure files from the PDB include data on biologically relevant assemblies and provide information about crystallographic symmetries.</s><s>Display of the corresponding assemblies can be controlled via the parameter menu of structures and representations (Figure <ref type="figure" target="#fig_2">2C</ref>).</s></p><p><s>The molecular views created can be exported as antialiased high-resolution images for use elsewhere.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Embedding</head><p><s>The viewer can be embedded into other websites by including a single JavaScript file and then calling API methods to create a stage instance that allows loading and subsequent manipulation of molecular structures.</s><s>Instructions and examples for embedding and controlling the viewer are available in the online documentation along with a description of the API methods.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CONCLUSION</head><p><s>By leveraging modern web technologies such as WebGL, the 'NGL Viewer' provides scalable molecular graphics allowing the display of large macromolecular assemblies including ribosomes and virus capsids (Figure <ref type="figure" target="#fig_0">1</ref>).</s><s>It is accessible through a user-friendly GUI (Figure <ref type="figure" target="#fig_2">2</ref>) but can also be embedded in other websites as a library.</s><s>The viewer supports common structure file formats, including PDB and mmCIF.</s><s>To create complex molecular views, a wide array of molecular representations is available, including the atomistic display of atoms and bonds as well as secondary structure depictions based on backbone atoms.</s><s>Moreover, we implemented state-of-the-art representations known from desktop applications, including ray-casted primitives, 'Hy-perBalls' and a 'Bendix-like' representation <ref type="bibr" target="#b14">(15)</ref><ref type="bibr" target="#b15">(16)</ref><ref type="bibr" target="#b16">(17)</ref><ref type="bibr" target="#b17">(18)</ref>.</s></p><p><s>The web application is free and open to all users and there is no log-in requirement.</s><s>Moreover, the full source code is available at https://github.com/arose/ngl/</s><s>under an open-source license.</s><s>Extensive documentation can be found at http://proteinformatics.charite.de/ngl/doc.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc><div><p><s>Figure 1.</s><s>Gallery of molecular visualizations showing various representations of differently sized macromolecules.</s><s>(A) Structure of the Noro virus capsid (PDB entry 1IHM) that forms the outer shell of the virus, colored by chainindex.</s><s>The front of the capsid is clipped away and depicted inside the virus capsid is, for size comparison, the structure of a conserved retroviral RNA packaging element from the Moloney murine leukemia virus (PDB entry 2LIF).</s><s>(B) System of a peptide derived from the C-terminus of 'transducin' (blue cartoon) surrounded by a box of water molecules (spacefill representation) in preparation for a molecular dynamics simulation.</s><s>(C) Structure of a mammalian 80S 'ribosome' (PDB entry 4UJD) colored by chainindex.</s><s>(D) Structure of light-activated 'rhodopsin' in complex with a peptide derived from the C-terminus of 'transducin' (PDB entry 3PQR), colored by residueindex.</s><s>(E) HIV-1 capsid structure (PDB entry 3J3Y) showing the backbone colored by chainindex.</s><s>(F) Example usage of the rope representation (solid tube) to display the protein fold in a more abstract way as compared to the cartoon representation (translucent).</s><s>The structure shown is that of 'crambin' (PDB entry 1CRN) colored by secondary structure with magenta alpha-helices and yellow beta-strands.</s><s>(G) The secondary structure of 'ferredoxin' (PDB entry 1BLU) and its two [4Fe-4S] clusters highlighted with the 'HyperBall' representation.</s></p></div></figDesc><graphic coords="2,71.64,68.87,481.86,208.44" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>W578</head><label></label><figDesc><div><p><s>Nucleic Acids Research, 2015, Vol.</s><s>43, Web Server issue</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 .</head><label>2</label><figDesc><div><p><s>Figure 2. Screenshot of the 'NGL Viewer' GUI, magnified for clarity.</s><s>A more detailed description of the GUI can be found in the online documentation.</s><s>(A) The menu bar at the top provides access to general commands.</s><s>The 'File' menu includes commands to load files or export images.</s><s>Buttons to change the theme or to go fullscreen are in the 'View' menu.</s><s>The 'Examples' menu includes various possible use cases.</s><s>Help-related items like a preferences section and a link to the documentation can be found in the 'Help' menu.</s><s>(B) Molecular visualizations are rendered to the viewport at the center.</s><s>Here the structure of 'crambin' (PDB entry 1CRN) is shown highlighting the three disulfide bridges.</s><s>(C) The sidebar hosts an interface element for each loaded structure and added representations.</s><s>A number of buttons are available to quickly access commands: hide/show (eye icon), center (bulls eye icon), delete (trash bin icon) and parameters menu (stacked bars icon).</s><s>Input fields for atom selections (funnel icon) restrict the display of representations.</s><s>Here the 'hyperball' representation is limited to CYS and sidechainAttached.</s><s>(D) The status bar at the bottom notes the last picked atom, in this case the 'SG' atom in the 'cysteine' with residue number '4' in chain 'A' of model '0'.</s></p></div></figDesc><graphic coords="3,46.76,69.65,238.14,159.66" type="bitmap" /></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ACKNOWLEDGEMENT</head><p><s>We thank Heiko Bittner, Johanna Tiemann and Jochen Ismer for testing the software and suggesting features.</s></p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Conflict of interest statement.</s><s>None declared.</s></p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Visualization of macromolecular structures</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">I</forename><surname>O'donoghue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">S</forename><surname>Goodsell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">S</forename><surname>Frangakis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Jossinet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Laskowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Nilges</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">R</forename><surname>Saibil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Schafferhans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">C</forename><surname>Wade</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Westhof</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat. Methods</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="S42" to="S55" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">An introduction to biomolecular graphics</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Mura</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Mccrimmon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Vertrees</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">R</forename><surname>Sawaya</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PLoS Comput. Biol</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page">e1000918</biblScope>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">ConSurf 2010: calculating evolutionary conservation in sequence and structure of proteins and nucleic acids</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Ashkenazy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Erez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Martz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Pupko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Ben-Tal</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="529" to="533" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Voronoia4RNA--a database of atomic packing densities of RNA structures and their complexes</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ismer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">S</forename><surname>Rose</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">K S</forename><surname>Tiemann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Goede</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Rother</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">W</forename><surname>Hildebrand</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="page" from="D280" to="D284" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">PDBe: protein data bank in Europe</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Gutmanas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Alhroub</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">M</forename><surname>Battle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Berrisford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Bochet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Conroy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Dana</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Fernandez Montecelo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Van Ginkel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">P</forename><surname>Gore</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="page" from="285" to="291" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">MP:PD--a data base of internal packing densities, internal packing defects and internal waters of helical membrane proteins</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">S</forename><surname>Rose</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Theune</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Goede</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">W</forename><surname>Hildebrand</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="page" from="D347" to="D351" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">The RCSB Protein Data Bank: new resources for research and education</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">W</forename><surname>Rose</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Bi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">F</forename><surname>Bluhm</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">H</forename><surname>Christie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Dimitropoulos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Dutta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">K</forename><surname>Green</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">S</forename><surname>Goodsell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Prlic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Quesada</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<biblScope unit="page" from="D345" to="D356" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Jmol--a paradigm shift in crystallographic visualization</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">M</forename><surname>Hanson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. Appl. Crystallogr</title>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<biblScope unit="page" from="1250" to="1260" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">AstexViewer: a visualisation aid for structure-based drug design</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Hartshorn</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. Comput. Aided Mol. Des</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="page" from="871" to="881" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">JSmol and the next-generation web-based representation of 3D molecular structure as applied to Proteopedia</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">M</forename><surname>Hanson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Prilusky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Renjian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Nakane</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Sussman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Isr. J. Chem</title>
+		<imprint>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="page" from="207" to="216" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">GPU-powered tools boost molecular visualization</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Chavent</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Lévy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Krone</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Bidmon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J.-P</forename><surname>Nominé</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Ertl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Baaden</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Brief. Bioinform</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="689" to="701" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">SWISS-MODEL: modelling protein tertiary and quaternary structure using evolutionary information</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Biasini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bienert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Waterhouse</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Arnold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Studer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Schmidt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Kiefer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">G</forename><surname>Cassarino</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Bertoni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Bordoli</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="1" to="7" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">js: molecular visualization with WebGL</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Rego</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Koes</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="1322" to="1324" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">iview: an interactive WebGL visualizer for protein-ligand complex</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K.-S</forename><surname>Leung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Nakane</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M.-H</forename><surname>Wong</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="page">56</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">GPU-based ray-casting of quadratic surfaces</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Sigg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Weyrich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Botsch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Gross</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Symp. Point-Based Graph. The Eurographics Association</title>
+				<editor>
+			<persName><forename type="first">M</forename><surname>Botsch</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">B</forename><surname>Chen</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Pauly</forename><surname>Zwicker</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">M</forename></persName>
+		</editor>
+		<meeting><address><addrLine>Aire-la-Ville</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2006">2006</date>
+			<biblScope unit="page" from="59" to="65" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Ambient occlusion and edge cueing to enhance real time molecular visualization</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Tarini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Cignoni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Montani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Vis. Comput. Graph</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="1237" to="1244" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">GPU-accelerated atom and dynamic bond visualization using hyperballs: a unified algorithm for balls, sticks, and hyperboloids</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Chavent</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Vanel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Tek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Levy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Robert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Raffin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Baaden</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. Comput. Chem</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="page" from="2924" to="2935" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Bendix: intuitive helix geometry analysis and abstraction</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">C E</forename><surname>Dahl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Chavent</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">S P</forename><surname>Sansom</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="page" from="2193" to="2194" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

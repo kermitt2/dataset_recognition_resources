@@ -1,0 +1,2179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Deterministic construction of nodal surfaces within quantum Monte Carlo: the case of FeS</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2017-12-13">13 Dec 2017</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Anthony</forename><surname>Scemama</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="laboratory">Laboratoire de Chimie et Physique Quantiques</orgName>
+								<orgName type="institution" key="instit1">Université de Toulouse</orgName>
+								<orgName type="institution" key="instit2">CNRS</orgName>
+								<orgName type="institution" key="instit3">UPS</orgName>
+								<address>
+									<country key="FR">France</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Yann</forename><surname>Garniron</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="laboratory">Laboratoire de Chimie et Physique Quantiques</orgName>
+								<orgName type="institution" key="instit1">Université de Toulouse</orgName>
+								<orgName type="institution" key="instit2">CNRS</orgName>
+								<orgName type="institution" key="instit3">UPS</orgName>
+								<address>
+									<country key="FR">France</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Michel</forename><surname>Caffarel</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="laboratory">Laboratoire de Chimie et Physique Quantiques</orgName>
+								<orgName type="institution" key="instit1">Université de Toulouse</orgName>
+								<orgName type="institution" key="instit2">CNRS</orgName>
+								<orgName type="institution" key="instit3">UPS</orgName>
+								<address>
+									<country key="FR">France</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Pierre-François</forename><surname>Loos</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="laboratory">Laboratoire de Chimie et Physique Quantiques</orgName>
+								<orgName type="institution" key="instit1">Université de Toulouse</orgName>
+								<orgName type="institution" key="instit2">CNRS</orgName>
+								<orgName type="institution" key="instit3">UPS</orgName>
+								<address>
+									<country key="FR">France</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Deterministic construction of nodal surfaces within quantum Monte Carlo: the case of FeS</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2017-12-13">13 Dec 2017</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">D84A194D0D5BCC078B51A74338E4E4E6</idno>
+					<idno type="arXiv">arXiv:1712.05034v1[physics.chem-ph]</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:44+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>quantum Monte Carlo</term>
+					<term>diffusion Monte Carlo</term>
+					<term>full configuration interaction</term>
+					<term>multireference trial wave function</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>In diffusion Monte Carlo (DMC) methods, the nodes (or zeroes) of the trial wave function dictate the magnitude of the fixed-node (FN) error.</s><s>Within standard DMC implementations, they emanate from short multideterminant expansions, stochastically optimized in the presence of a Jastrow factor.</s><s>Here, following a recent proposal, we follow an alternative route by considering the nodes of selected configuration interaction (sCI) expansions built with the CIPSI (Configuration Interaction using a Perturbative Selection made Iteratively) algorithm.</s><s>In contrast to standard implementations, these nodes can be systematically and deterministically improved by increasing the size of the sCI expansion.</s><s>The present methodology is used to investigate the properties of the transition metal sulfide molecule FeS.</s><s>This apparently simple molecule has been shown to be particularly challenging for electronic structure theory methods due to the proximity of two low-energy quintet electronic states of different spatial symmetry.</s><s>In particular, we show that, at the triple-zeta basis set level, all sCI results -including those extrapolated at the full CI (FCI) limit -disagree with experiment, yielding an electronic ground state of 5 Σ + symmetry.</s><s>Performing FN-DMC simulation with sCI nodes, we show that the correct 5 ∆ ground state is obtained if sufficiently large expansions are used.</s><s>Moreover, we show that one can systematically get accurate potential energy surfaces and reproduce the experimental dissociation energy as well as other spectroscopic constants.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p><s>From an experimental point of view, transition metal sulfides have proven to be useful in a variety of fields including biological chemistry, <ref type="bibr" target="#b0">1</ref> catalysis, <ref type="bibr" target="#b1">2</ref> and electrochemistry. <ref type="bibr" target="#b2">3</ref></s><s>From the computational side, the apparently simple FeS diatomic molecule has been giving nightmares to computational chemists.</s><s>The challenging features of the electronic structure of FeS originate from the energetic proximity of two electronic states with same multiplicity that compete for being the ground state.</s><s>To make things worse, the equilibrium bond lengths associated with these two states are extremely close to each other.</s></p><p><s>Experimentally, the ground state of FeS is assigned to be 5 ∆, 4,5 with an equilibrium bond length r e = 2.017 Å, <ref type="bibr" target="#b4">5</ref> and a dissociation energy D 0 = 3.31 (15) eV. <ref type="bibr" target="#b5">6</ref></s><s>For this state, the harmonic frequency ω e has been estimated to 518 ± 5 cm −1 . <ref type="bibr" target="#b6">7</ref></s><s>Very recently, a much more accurate value of the dissociation energy D 0 = 3.240(3) eV has been obtained by Matthew et al. using predissociation threshold technique. <ref type="bibr" target="#b7">8</ref></s><s>eS has been extensively studied by density-functional theory (DFT) and post-Hartree-Fock methods.</s><s>In short, a) Corresponding author: scemama@irsamc.ups-tlse.fr</s><s>b) Corresponding author: loos@irsamc.ups-tlse.fr</s><s>most (but not all) DFT functionals correctly predict a <ref type="bibr" target="#b4">5</ref> ∆ ground state, <ref type="bibr" target="#b8">[9]</ref><ref type="bibr" target="#b9">[10]</ref><ref type="bibr" target="#b10">[11]</ref><ref type="bibr" target="#b11">[12]</ref><ref type="bibr" target="#b12">[13]</ref> while CAS-based multireference methods such as CASSCF/ACPF, 14 CASPT2, <ref type="bibr" target="#b14">15</ref> or CASSCF/ICACPF <ref type="bibr" target="#b15">16</ref> systematically predict 5 Σ + lower than <ref type="bibr" target="#b4">5</ref> ∆.</s></p><p><s>Here, we investigate this problem using quantum Monte Carlo (QMC).</s><s>In recent years, QMC has been applied with great success to a large variety of main group compounds (see e.g.</s><s>17-20 for recent applications).</s><s>Transition metal systems are more challenging but a number of successful studies have also been reported.  When</s><s>ltireference effects are weak, QMC is seen as a very accurate method providing benchmark results of a quality similar or superior to the gold-standard CCSD(T).</s><s>However, when multireference effects are dominantas it is usually the case for metallic compounds with partially-filled d shells -the situation is more complicated.</s><s>Indeed, the results may depend significantly on the trial wave function Ψ T used to guide the walkers through configuration space.</s><s>In theory, QMC results should be independent of the choice of Ψ T .</s><s>However, it is not true in practice because of the fixed-node approximation which imposes the Schr ödinger equation to be solved with the additional constraint that the solution vanishes at the zeroes (nodes) of the trial wave function.</s><s>Using an approximate Ψ T leads to approximate nodes and, thus, to an approximate energy, known as the FN energy.</s><s>The FN energy being an upper bound of the exact energy, this gives us a convenient variational principle for characterizing the nodal quality: "the lower the FN energy, the better the nodes".</s><s>In situations where multireference effects are strong, getting accurate nodes may be difficult.</s><s>As we shall see, this is the main challenge we are facing in the present work.</s></p><p><s>Most QMC studies for transition metal-containing systems have been performed with pseudopotentials.</s><s>In this case, an additional source of error, the so-called localization error, is introduced.</s><s>This error, specific to QMC, adds up to the standard error associated with the approximate nature of pseudopotentials.</s><s>Similarly to the FN error, the localization error depends on Ψ T and vanishes only for the exact wave function.</s><s>Therefore, to get accurate and reliable QMC results, both sources of error have to be understood and controlled.</s></p><p><s>In 2011, Petz and L üchow reported a FN diffusion Monte Carlo (FN-DMC) study of the energetics of diatomic transition metal sulfides from ScS to FeS using pseudopotentials and single-determinant trial wave functions. <ref type="bibr" target="#b33">34</ref></s><s>The pseudopotential dependence was carefully investigated, and comparisons with both DFT and CCSD(T) as well as experimental data were performed.</s><s>In short, it was found that FN-DMC shows a higher overall accuracy than both B3LYP and CCSD(T) for all diatomics except for CrS and FeS that appeared to be particularly challenging.</s></p><p><s>Very recently, Haghighi-Mood and L üchow had a second look at the difficult case of FeS. <ref type="bibr" target="#b40">41</ref></s><s>In particular, they explored the impact of the level of optimization on the parameters of multideterminant trial wave functions (partial or full optimization of the Jastrow, determinant coefficients and molecular orbitals) on both the FN and localization errors.</s><s>Their main conclusions can be summarized as follows.</s><s>Using a single-determinant trial wave function made of B3LYP orbitals or fully-optimized orbitals in the presence of a Jastrow factor is sufficient to yield the correct state ordering.</s><s>However, in both cases, the dissociation energy is far from the experimental value and thus multideterminant trial wave functions must be employed.</s><s>Although a natural choice would be to take into account the missing static correlation via a CASSCF-based trial wave function, they showed that it is insufficient and that a full optimization is essential to get both the correct electronic ground state and reasonable estimates of the spectroscopic constants.</s></p><p><s>3]<ref type="bibr" target="#b43">[44]</ref><ref type="bibr" target="#b44">[45]</ref><ref type="bibr" target="#b45">[46]</ref><ref type="bibr" target="#b46">[47]</ref> In the conventional protocol, prevailing in the QMC community and employed by Haghighi-Mood and L üchow, the nodes of the Slater-Jastrow (SJ) trial wave function</s></p><formula xml:id="formula_0">Ψ SJ T = exp(J) Ψ det<label>(1)</label></formula><p><s>are obtained by partially-or fully-optimizing the Jastrow factor J and the multiderminant expansion Ψ det (containing typically a few hundreds or thousands of determinants).</s><s>9]<ref type="bibr" target="#b49">[50]</ref><ref type="bibr" target="#b50">[51]</ref> We note that, in practice, the optimization must be carefully monitored because of the large number of parameters (several hundreds or thousands), the nonlinear nature of most parameters (several minima may appear) and the inherent presence of noise in the function to be minimized.</s><s>Within our protocol, we rely on configuration interaction (CI) expansions in order to get accurate nodal surfaces, without resorting to the stochastic optimization step.</s><s>Our fundamental motivation is to take advantage of all the machinery and experience developed these last decades in the field of wave function methods.</s><s>In contrast to the standard protocol described above, the CI nodes can be improved deterministically and systematically by increasing the size of the CI expansion.</s><s>In the present work, we do not introduce any Jastrow factor, essentially to avoid the expensive numerical quadrature involved in the calculation of the pseudopotential, and to facilitate the control of the localization error.</s><s>To keep the size of the CI expansion reasonable and retain only the most important determinants, we propose to use selected CI (sCI) algorithms, such as CIPSI (Configuration Interaction using a Perturbative Selection made Iteratively). <ref type="bibr" target="#b41">42</ref></s><s>Using a recently-proposed algorithm to handle large numbers of determinants in FN-DMC <ref type="bibr" target="#b43">44</ref> we are able to consider up to a few million determinants in our simulations.</s></p><p><s><ref type="bibr" target="#b44">[45]</ref> Although these various approaches appear under diverse acronyms, most of them rely on the very same idea of selecting determinants iteratively according to their contribution to the wave function or energy, an idea that goes back to 1969 in the pioneering works of Bender and Davidson, <ref type="bibr" target="#b51">52</ref> and Whitten and Hackmeyer. <ref type="bibr" target="#b52">53</ref></s><s>Importantly, we note that any sCI variants can be employed here.</s></p><p><s>The price to pay for using sCI expansions instead of optimized SJ trial wave functions is the need of much larger multideterminant expansions as well as the presence of larger statistical and systematic errors (such as time-step and basis set incompleteness errors).</s><s>However, these disadvantages are compensated by the appealing features of sCI nodes: i) they are built in a fully-automated way; ii) they are unique and reproducible; iii) they can be systematically improved by increasing the level of selection and/or the basis set (with the possibility of complete basis set extrapolation <ref type="bibr" target="#b44">45</ref> ), and iv) they easily produce smooth potential energy surfaces. <ref type="bibr" target="#b42">43</ref></s><s>Unless otherwise stated, atomic units are used throughout.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. COMPUTATIONAL DETAILS</head><p><s>All trial wave functions have been generated with the electronic structure software QUANTUM PACKAGE, <ref type="bibr" target="#b75">76</ref> while the QMC calculations have been performed with the QMC=CHEM suite of programs. <ref type="bibr" target="#b76">77,</ref><ref type="bibr" target="#b77">78</ref></s><s>Both softwares are developed in our laboratory and are freely available.</s><s>For all calculations, we have used the triple-zeta basis sets of Burkatzki et al. <ref type="bibr" target="#b78">79,</ref><ref type="bibr" target="#b79">80</ref> (VTZ-ANO-BFD for Fe and VTZ-BFD for S) in conjunction with the corresponding Burkatzki-Filippi-Dolg (BFD) small-core pseudopotentials including scalar relativistic effects.</s><s>For more details about our implementation of pseudopotentials within QMC, we refer the interested readers to Ref. 46.</s><s>As pointed out by Hammond and coworkers, <ref type="bibr" target="#b80">81</ref> thanks to the absence of Jastrow factor in our trial wave functions, the non-local pseudopotential can be localized analytically and the usual numerical quadrature over the angular part of the non-local pseudopotential can be eschewed.</s></p><p><s>In practice, the calculation of the localized part of the pseudopotential represents only a small overhead (about 15%) with respect to a calculation without pseudopotential (and the same number of electrons).</s></p><p><s>In order to compare our results for the dissociation energy of FeS with the experimental value of Matthew et al. <ref type="bibr" target="#b7">8</ref> and the (theoretical) benchmark value of Haghighi-Mood and L üchow, <ref type="bibr" target="#b40">41</ref> we have taken into account the zero-point energy (ZPE) correction, the spin-orbit effects as well as the core-valence correlation contribution the same way as Ref. 41.</s><s>For the <ref type="bibr" target="#b4">5</ref> ∆ state, this corresponds to an increase of the dissociation energy by 0.06 eV, and a 0.02 eV stabilization of 5 ∆ compared to 5 Σ + .</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Jastrow-free trial wave functions</head><p><s>Within the spin-free formalism used in QMC, a CIbased trial wave function is written as</s></p><formula xml:id="formula_1">Ψ T (R) = N det ∑ I=1 c I D I (R) = N det ∑ I=1 c I D ↑ I (R ↑ )D ↓ I (R ↓ ),<label>(2)</label></formula><p><s>where R = (r 1 , ..., r N ) denotes the full set of electronic spatial coordinates, R ↑ and R ↓ are the two subsets of spin-up (↑) and spin-down (↓) electronic coordinates, and</s></p><formula xml:id="formula_2">D σ I (R σ ) (σ = ↑ or ↓) are spin-specific determinants.</formula><p><s>In practice, the various products D ↑ I D ↓ I contain many identical spin-specific determinants.</s><s>For computational efficiency, it is then advantageous to group them and compute only once their contribution to the wave function and its derivatives. <ref type="bibr" target="#b43">44</ref></s><s>Therefore, the Jastrow-free CI trial wave functions employed in the present study are rewritten in a "spin-resolved" form</s></p><formula xml:id="formula_3">Ψ T (R) = N ↑ det ∑ i=1 N ↓ det ∑ j=1 c ij D ↑ i (R ↑ )D ↓ j (R ↓ ),<label>(3)</label></formula><p><s>where D σ i i=1,...,N σ det denotes the set of all distinct spinspecific determinant appearing in Eq. ( <ref type="formula" target="#formula_1">2</ref>).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Quantum Monte Carlo calculations</head><p><s>To avoid handling too many determinants in Ψ T , a truncation scheme has to be introduced.</s><s>In most CI and/or QMC calculations, the expansion is truncated by either introducing a cutoff on the CI coefficients or on the norm of the wave function.</s><s>Here, we use an alternative truncation scheme knowing that most of the computational effort lies in the calculation of the spin-specific determinants and their derivatives.</s><s>Removing a product of determinants whose spin-specific determinants are already present in other products does not change significantly the computational cost.</s><s>Accordingly, a natural choice is then to truncate the wave function by removing independently spin-up and spin-down determinants.</s><s>To do so, we decompose the norm of the wave function as</s></p><formula xml:id="formula_4">N = N ↑ det ∑ i=1 N ↓ det ∑ j=1 c ij 2 = N ↑ det ∑ i=1 N ↑ i = N ↓ det ∑ j=1 N ↓ j .<label>(4)</label></formula><p><s>A determinant</s></p><formula xml:id="formula_5">D ↑ i is retained in Ψ T if N ↑ i = N ↓ det ∑ j=1 c ij 2 &gt; ,<label>(5)</label></formula><p><s>where is a user-defined threshold.</s><s>A similar formula is used for D ↓ j .</s><s>When = 0, the entire set of determinants is retained in the QMC simulation.</s></p><p><s>In order to treat the two electronic states ( 5 Σ + and 5 ∆) on equal footing, a common set of spin-specific determinants D σ i i=1,...,N σ det is used for both states.</s><s>In addition, a common set of molecular orbitals issued from a preliminary state-averaged CASSCF calculation is employed.</s><s>These CASSCF calculations have been performed with the GAMESS package <ref type="bibr" target="#b81">82</ref> while, for the atoms, we have performed ROHF calculations.</s><s>The active space contains 12 electrons and 9 orbitals (3d and 4s orbitals of Fe and 3p orbitals of S).</s><s>44]<ref type="bibr" target="#b44">[45]</ref><ref type="bibr" target="#b64">65</ref> A n s -state truncated sCI expansion (here n s = 2) is obtained via a natural generalization of the state-specific criterion introduced in Eq. ( <ref type="formula" target="#formula_5">5</ref>): a determinant</s></p><formula xml:id="formula_6">D ↑ i is retained in Ψ T if N ↑ i = 1 n s n s ∑ k=1 N ↓ det ∑ j=1 c (k) ij 2 &gt; ,<label>(6)</label></formula><p><s>with a similar formula for D ↓ j .</s><s>The characteristics of the various trial wave functions considered here (and their acronyms) at r FeS = 2.0 Å are presented in Table <ref type="table" target="#tab_0">I</ref>  <ref type="table" target="#tab_2">II</ref>) only contains 630 and 500 determinants for the 5 Σ + and 5 ∆ states, respectively. <ref type="bibr" target="#b40">41</ref></s><s>However, as discussed in the introduction, fully-optimized SJ trial wave functions require much smaller multireference expansions.</s></p><p><s>Based on these trial wave functions, we performed FN-DMC calculations with the stochastic reconfiguration algorithm developed by Assaraf et al. <ref type="bibr" target="#b82">83</ref> In order to remove the time-step error, all our FN-DMC results have been extrapolated to zero time-step using a two-point linear extrapolation with τ = 2 × 10 −4 and 4 × 10 −4 . <ref type="bibr" target="#b83">84</ref></s><s>Note that, because the variance of the local energy is larger than in SJ calculations, time-step errors are enhanced and shorter time steps are required.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. RESULTS AND DISCUSSION</head><p><s>In Table <ref type="table" target="#tab_2">II</ref>, we report FN-DMC energies at equilibrium geometry as well as other quantities of interest such as the dissociation energy D 0 , the equilibrium distance r e and harmonic frequency ω e obtained with various trial wave functions.</s><s>These values are obtained via the standard four-parameter Morse potential representation of the numerical values gathered in Tables <ref type="table" target="#tab_3">III and IV</ref>. <ref type="bibr" target="#b84">85</ref></s><s>For comparison purposes, Haghighi-Mood and L üchow's results are also reported based on their best trial wave function. <ref type="bibr" target="#b40">41</ref></s><s>6]<ref type="bibr" target="#b6">[7]</ref><ref type="bibr" target="#b7">[8]</ref> The value of D 0 is always calculated with respect to the 5 ∆ state adding the corresponding corrections for ZPE, spin-orbit effects and core-valence correlation, as described above (see Sec. II A).</s><s>The dissociation profile of FeS obtained with FN-DMC is depicted in Fig. <ref type="figure">1</ref> for various trial wave functions.</s></p><p><s>For the variational results gathered in Tables III and IV, the FCI limit has been reached by the method recently proposed by Holmes, Umrigar and Sharma <ref type="bibr" target="#b73">74</ref> in the context of the (selected) heat-bath CI method. <ref type="bibr" target="#b69">70,</ref><ref type="bibr" target="#b72">73,</ref><ref type="bibr" target="#b73">74</ref></s><s>In order to obtain FCI results, they proposed to linearly extrapolate the sCI energy E sCI as a function of the second-order Epstein-Nesbet energy</s></p><formula xml:id="formula_7">E PT2 = ∑ α α| Ĥ|Ψ sCI 2 E sCI − α| Ĥ|α ,<label>(7)</label></formula><p><s>which is an estimate of the truncation error in the sCI algorithm, i.e E PT2 ≈ E FCI − E sCI . <ref type="bibr" target="#b53">54</ref></s><s>In Eq. ( <ref type="formula" target="#formula_7">7</ref>), the sum runs over all external determinants |α (i.e.</s><s>not belonging to the sCI expansion) connected via Ĥ to the sCI wave function Ψ sCI , i.e. α| Ĥ|Ψ sCI = 0.</s><s>When E PT2 = 0, the FCI limit has effectively been reached.</s><s>In our case, E PT2 is efficiently evaluated thanks to our recently-proposed hybrid stochastic-deterministic algorithm, <ref type="bibr" target="#b64">65</ref> which explains the error bar on E PT2 in Tables <ref type="table" target="#tab_3">III and IV</ref>.</s><s>The extrapolated FCI results are labeled exFCI from hereon.</s></p><p><s>To obtain the FN-DMC curve with an effective FCI trial wave function, we have generalized the extrapolation procedure described above, and we have performed a three-point linear extrapolation of the FN-DMC energy as a function of E exFCI − E sCI using the sCI(4), sCI(5) and sCI( <ref type="formula" target="#formula_6">6</ref>) results (see Fig. <ref type="figure">2</ref>).</s></p><p><s>The first observation we would like to make is that, at the variational level, the 5 ∆ state is never found lower in energy than the 5 Σ + state, even after performing the extrapolation to the FCI limit (see Table <ref type="table" target="#tab_3">IV</ref>).</s><s>Because all post-Hartree-Fock methods are indeed an approximation of FCI, they are expected to predict a 5 Σ + ground state for this particular basis set.</s><s>5]<ref type="bibr" target="#b15">[16]</ref> Thus, one can attribute the wrong state ordering to basis set incompleteness, the only remaining approximation.</s></p><p><s>At the FN-DMC level, one must include at least a few hundred thousand determinants in order to find the proper ground state.</s><s>For larger values (10 −4 and 10 −5 ), D 0 is underestimated due to the unbalanced treatment of the isolated atoms compared to the dimer at equilibrium geometry.</s><s>Indeed, for a given number of determinants, the energy of the atomic species is much closer to the FCI limit than the energy of FeS.</s><s>For = 10 −6 , our approach correctly predicts a 5 ∆ ground state.</s><s>However, although our FN-DMC energies are much lower than those obtained with the HML trial wave function, our estimate of the dissociation energy (D 0 = 3.062(39) eV) is still below the experimental value.</s><s>This underestimation of D 0 can be ultimately tracked down to the lack of size-consistency of the truncated CI wave function.</s><s>With more than 10 6 determinants in the variational space, the wave function is still 150 mE h higher than the exFCI wave function, while the atoms are much better described by the sCI wave function.</s><s>To remove the size-consistency error, we then extrapolate the FN-DMC energies to the (size-consistent) FCI limit of the trial wave function, as described above.</s></p><p><s>In that case, using the extrapolated FN-DMC energies of the molecule and isolated atoms reported in Table <ref type="table" target="#tab_2">II</ref>, we obtain a value of D 0 = 3.267 (49) eV, which nestles nicely between the experimental values of Matthew et al. <ref type="bibr" target="#b7">8</ref> (3.240(3) eV) and Drowart et al. <ref type="bibr" target="#b5">6</ref> (3.31(15) eV).</s><s>As a final remark, we note that other spectroscopic constants, such as the equilibrium geometry and the harmonic frequency, are fairly well reproduced by our approach.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. CONCLUSION</head><p><s>In this article, the potential energy curves of two electronic states -5 ∆ and 5 Σ + -of the FeS molecule have been calculated using the sCI algorithm CIPSI and the stochastic FN-DMC method.</s><s>In all our sCI calculations, 5 Σ + is found to be the ground state, in disagreement with experiment.</s><s>It is not only true for all CIPSI expansions with up to 8 million determinants but also for the estimated FCI limit obtained using the extrapolation procedure recently proposed by Holmes et al. <ref type="bibr" target="#b73">74</ref> This conclusion agrees with other high-level ab initio wave function calculations which all wrongly predict a ground state of 5 Σ + symmetry.</s><s>FN-DMC calculations have been performed using CIPSI expansions including up to 1 127 071 selected determinants as trial wave functions.</s><s>Contrary to standard QMC calculations, we do not introduce any Jastrow factor: the CI expansions have been used as they are (no optimization).</s><s>It is found that, when the number of determinants in the trial wave function reaches few hundred thousands, the FN-DMC ground state switches from the 5 Σ + state to the correct 5 ∆ state, as predicted experimentally.</s></p><p><s>Generalizing the extrapolation procedure of Holmes et al., <ref type="bibr" target="#b73">74</ref> an estimate of the FN-DMC potential energy curves corresponding to the FCI nodes can be obtained.</s><s>The resulting dissociation energy is found to be 3.267 (49)  eV, in agreement with the recent experimental value of Matthew et al. (3.240(3) eV). <ref type="bibr" target="#b7">8</ref></s><s>As already observed in previous applications, the FN-DMC energy obtained with CIPSI nodes is found to systematically decrease as a function of the number of selected determinants. <ref type="bibr" target="#b35">36,</ref><ref type="bibr" target="#b36">37,</ref><ref type="bibr" target="#b41">42,</ref><ref type="bibr" target="#b42">43,</ref><ref type="bibr" target="#b44">45,</ref><ref type="bibr" target="#b45">46</ref></s><s>or the largest expansion, our fixed-node energies are lower than the values recently reported by Haghighi-Mood and L üchow 41 using a fully-optimized SJ trial wave function.</s><s>This important result illustrates that "pure" sCI nodes is a realistic alternative to stochasticallyoptimized SJ trial wave functions, even for a challenging system such as FeS.</s><s>A similar conclusion had already been drawn in our recent study of the water molecule. <ref type="bibr" target="#b44">45</ref></s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>FIG. 1 .FIG. 2 .</head><label>12</label><figDesc><div><p><s>FIG.1.</s><s>E DMC (in Hartrees) for the<ref type="bibr" target="#b4">5</ref> Σ + (solid) and 5 ∆ (dashed) states of FeS as a function of r FeS (in Å) for various trial wave functions.</s><s>The error bar corresponds to one standard error.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>TABLE I .</head><label>I</label><figDesc><div><p><s>Characteristics of the various sCI expansions at r FeS = 2.0 Å for various levels of truncation.</s><s>The characteristics of the extrapolated FCI (exFCI) expansion are also reported.</s></p></div></figDesc><table><row><cell>Method sCI</cell><cell>10 −4</cell><cell>N det 15 723</cell><cell>N det ↑ 191</cell><cell>N det ↓ 188</cell><cell>acronym sCI(4)</cell></row><row><cell></cell><cell>10 −5</cell><cell>269 393</cell><cell>986</cell><cell>1 191</cell><cell>sCI(5)</cell></row><row><cell></cell><cell>10 −6</cell><cell>1 127 071</cell><cell>3 883</cell><cell>4 623</cell><cell>sCI(6)</cell></row><row><cell></cell><cell>0</cell><cell cols="3">8 388 608 364 365 308 072</cell><cell>sCI(∞)</cell></row><row><cell>exFCI</cell><cell>-</cell><cell>∼ 10 27</cell><cell>∼ 10 16</cell><cell>∼ 10 11</cell><cell>exFCI</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head></head><label></label><figDesc><div><p><s>. For other r FeS values, the numbers of determinants are slightly different.</s><s>Our largest sCI trial wave function contains 8 388 608 determinants and is labeled sCI(∞).</s><s>The sCI(n) wave functions with n = 4, 5, and 6 are obtained by truncation of the sCI(∞) expansion setting = 10 −n .</s><s>They contain respectively 15 723, 269 393, and 1 127 071 determinants.</s><s>At this stage, we are not able to use the entire 8 388 608 determinants of the sCI(∞) wave function within our FN-DMC simulations.</s><s>In comparison, Haghighi-Mood and L üchow's CASSCFbased trial wave function (labelled as HML in Table</s></p></div></figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>TABLE II .</head><label>II</label><figDesc><div><p><s>FN-DMC energies E DMC (in Hartrees) at equilibrium geometry, dissociation energy D 0 (in eV), equilibrium distance r e (in Å), harmonic frequency ω e (in cm −1 ) for the 5 Σ + and 5 ∆ of FeS obtained with various trial wave functions Ψ T .The error bar corresponding to one standard error is reported in parenthesis.TABLE III.</s><s>sCI energy E sCI , second-order perturbation correction E PT2 and FN-DMC energy E DMC (in Hartrees) for the Fe ( 5 D state) and S ( 3 P state) atoms obtained with various methods.</s><s>The error bar corresponding to one standard error is reported in parenthesis.</s></p></div></figDesc><table><row><cell>Ψ T</cell><cell cols="2">FeS ( 5 Σ + )</cell><cell></cell><cell></cell><cell>FeS ( 5 ∆)</cell><cell></cell><cell>Fe ( 5 D)</cell><cell>S ( 3 P)</cell><cell>D 0</cell><cell>Ref.</cell></row><row><cell></cell><cell>E DMC</cell><cell>r e</cell><cell>ω e</cell><cell>E DMC</cell><cell>r e</cell><cell>ω e</cell><cell>E DMC</cell><cell>E DMC</cell><cell></cell></row><row><cell cols="10">HML −134.057 1(4) 2.00(1) 518(7) −134.057 9(4) 2.031(7) 499(11) −123.812 6(4) −10.131 4(1) 3.159(15)</cell><cell>41</cell></row><row><cell cols="11">sCI(4) −134.010 1(8) 1.994(7) 532(20) −134.004 0(7) 2.029(7) 502(15) −123.802 8(9) −10.127 9(2) 2.055(20) This work</cell></row><row><cell cols="11">sCI(5) −134.047 9(10) 1.992(8) 551(24) −134.040 2(10) 2.048(11) 489(21) −123.823 4(10) −10.131 2(2) 2.389(28) This work</cell></row><row><cell cols="11">sCI(6) −134.061 7(14) 1.994(12) 497(35) −134.067 1(14) 2.004(11) 550(32) −123.830 0(12) −10.133 4(3) 3.062(39) This work</cell></row><row><cell cols="11">exFCI −134.086 3(15) 1.990(12) 523(37) −134.088 5(18) 2.016(14) 525(40) −123.837 2(12) −10.133 6(3) 3.267(49) This work</cell></row><row><cell>Exp.</cell><cell>-</cell><cell>-</cell><cell>-</cell><cell>-</cell><cell>2.017</cell><cell>518(5)</cell><cell>-</cell><cell>-</cell><cell cols="2">3.240(3) 5, 7, and 8</cell></row><row><cell>Method</cell><cell></cell><cell></cell><cell>Fe ( 5 D)</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>S ( 3 P)</cell><cell></cell></row><row><cell></cell><cell>E sCI</cell><cell></cell><cell>E PT2</cell><cell></cell><cell>E DMC</cell><cell>E sCI</cell><cell></cell><cell>E PT2</cell><cell>E DMC</cell></row><row><cell>sCI(4)</cell><cell cols="2">−123.418 124</cell><cell>−0.316 44(3)</cell><cell></cell><cell>−123.802 8(9)</cell><cell cols="2">−10.093 850</cell><cell>−0.023 348(2)</cell><cell cols="2">−10.127 9(2)</cell></row><row><cell>sCI(5)</cell><cell cols="2">−123.607 608</cell><cell>−0.127 40(1)</cell><cell cols="2">−123.823 4(10)</cell><cell cols="2">−10.108 576</cell><cell>−0.007 941(1)</cell><cell cols="2">−10.131 2(2)</cell></row><row><cell>sCI(6)</cell><cell cols="2">−123.673 435</cell><cell>−0.063 698(6)</cell><cell cols="2">−123.830 0(12)</cell><cell cols="2">−10.113 926</cell><cell>−0.002 179(0)</cell><cell cols="2">−10.133 4(3)</cell></row><row><cell>sCI(∞)</cell><cell cols="2">−123.720 629</cell><cell>−0.016 987(2)</cell><cell></cell><cell>-</cell><cell cols="2">−10.115 844</cell><cell>−0.000 188(0)</cell><cell>-</cell></row><row><cell>exFCI</cell><cell cols="2">−123.738 264</cell><cell>0</cell><cell cols="2">−123.837 2(12)</cell><cell cols="2">−10.115 996</cell><cell>0</cell><cell cols="2">−10.133 4(3)</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>TABLE IV .</head><label>IV</label><figDesc><div><p><s>sCI energy E sCI , second-order perturbation correction E PT2 and FN-DMC energy E DMC (in Hartrees) for the 5 Σ + and 5 ∆ of FeS obtained with various methods.</s><s>The error bar corresponding to one standard error is reported in parenthesis.</s></p></div></figDesc><table><row><cell>Method</cell><cell>r FeS</cell><cell></cell><cell>FeS ( 5 Σ + )</cell><cell></cell><cell></cell><cell>FeS ( 5 ∆)</cell><cell></cell></row><row><cell></cell><cell></cell><cell>E sCI</cell><cell>E PT2</cell><cell>E DMC</cell><cell>E sCI</cell><cell>E PT2</cell><cell>E DMC</cell></row><row><cell cols="2">sCI(4) 1.8 sCI(∞) 1.8</cell><cell>−133.850 093</cell><cell>−0.071 305(7)</cell><cell>-</cell><cell>−133.836 804</cell><cell>−0.073 473(7)</cell><cell>-</cell></row><row><cell></cell><cell>1.9</cell><cell>−133.868 551</cell><cell>−0.069 523(7)</cell><cell>-</cell><cell>−133.857 909</cell><cell>−0.071 490(7)</cell><cell>-</cell></row><row><cell></cell><cell>2.0</cell><cell>−133.874 845</cell><cell>−0.067 992(7)</cell><cell>-</cell><cell>−133.866 607</cell><cell>−0.069 933(7)</cell><cell>-</cell></row><row><cell></cell><cell>2.1</cell><cell>−133.873 424</cell><cell>−0.066 144(7)</cell><cell>-</cell><cell>−133.867 130</cell><cell>−0.068 250(7)</cell><cell>-</cell></row><row><cell></cell><cell>2.2</cell><cell>−133.868 534</cell><cell>−0.063 444(6)</cell><cell>-</cell><cell>−133.864 246</cell><cell>−0.065 508(7)</cell><cell>-</cell></row><row><cell></cell><cell>2.3</cell><cell>−133.856 234</cell><cell>−0.063 467(6)</cell><cell>-</cell><cell>−133.858 730</cell><cell>−0.061 578(6)</cell><cell>-</cell></row><row><cell></cell><cell>2.4</cell><cell>−133.849 753</cell><cell>−0.058 745(6)</cell><cell>-</cell><cell>−133.849 494</cell><cell>−0.059 879(6)</cell><cell>-</cell></row><row><cell></cell><cell>2.5</cell><cell>−133.839 274</cell><cell>−0.056 324(6)</cell><cell>-</cell><cell>−133.840 801</cell><cell>−0.057 100(6)</cell><cell>-</cell></row><row><cell>exFCI</cell><cell>1.8</cell><cell>−133.924 967</cell><cell>0</cell><cell>−134.068 7(24)</cell><cell>−133.913 076</cell><cell>0</cell><cell>−134.065 9(25)</cell></row><row><cell></cell><cell>1.9</cell><cell>−133.941 175</cell><cell>0</cell><cell>−134.080 6(24)</cell><cell>−133.932 524</cell><cell>0</cell><cell>−134.083 6(25)</cell></row><row><cell></cell><cell>2.0</cell><cell>−133.945 859</cell><cell>0</cell><cell>−134.087 5(24)</cell><cell>−133.939 854</cell><cell>0</cell><cell>−134.090 8(26)</cell></row><row><cell></cell><cell>2.1</cell><cell>−133.942 722</cell><cell>0</cell><cell>−134.083 3(25)</cell><cell>−133.938 821</cell><cell>0</cell><cell>−134.084 0(25)</cell></row><row><cell></cell><cell>2.2</cell><cell>−133.934 789</cell><cell>0</cell><cell>−134.074 4(24)</cell><cell>−133.932 709</cell><cell>0</cell><cell>−134.072 3(23)</cell></row><row><cell></cell><cell>2.3</cell><cell>−133.922 799</cell><cell>0</cell><cell>−134.061 8(24)</cell><cell>−133.923 119</cell><cell>0</cell><cell>−134.069 5(24)</cell></row><row><cell></cell><cell>2.4</cell><cell>−133.910 763</cell><cell>0</cell><cell>−134.050 2(24)</cell><cell>−133.911 892</cell><cell>0</cell><cell>−134.051 0(25)</cell></row><row><cell></cell><cell>2.5</cell><cell>−133.897 709</cell><cell>0</cell><cell>−134.039 1(24)</cell><cell>−133.900 371</cell><cell>0</cell><cell>−134.028 7(24)</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="5">∆: σ 2 π 4 σ 2 δ 3 σ 1 π 2 , 5 Σ + : σ 2 π 4 σ 2 δ 2 σ 2 π 2 ,</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ACKNOWLEDGMENTS</head><p><s>The authors would like to thank Arne L üchow for numerous stimulating discussions.</s><s>This work was performed using HPC resources from CALMIP (Toulouse)   under allocation 2016-0510 and from GENCI-TGCC (Grant 2016-08s015).</s></p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Crack</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Green</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Thomson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">E L</forename><surname>Brun</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/ar5002507</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Accounts of Chemical Research</title>
+		<imprint>
+			<biblScope unit="volume">47</biblScope>
+			<biblScope unit="page">3196</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">I</forename><surname>Stiefel</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/bk-1996-0653.ch001</idno>
+		<title level="m">Transition Metal Sulfur Chemistry</title>
+				<imprint>
+			<date type="published" when="1996">1996</date>
+			<biblScope unit="volume">2</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">S</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Guan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cej.2016.05.068</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Chemical Engineering Journal</title>
+		<imprint>
+			<biblScope unit="volume">306</biblScope>
+			<biblScope unit="page">251</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">N</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hayase</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Kawamata</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Nakao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Nakajima</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Kaya</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.471048</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">104</biblScope>
+			<biblScope unit="page">3413</biblScope>
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">S</forename><surname>Takano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Yamamoto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Saito</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.jms.2004.01.003</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Molecular Spectroscopy</title>
+		<imprint>
+			<biblScope unit="volume">224</biblScope>
+			<biblScope unit="page">137</biblScope>
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">J</forename><surname>Drowart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Pattoret</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Smoes</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proc. Br. Ceram. Soc</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">67</biblScope>
+			<biblScope unit="page">88</biblScope>
+			<date type="published" when="1967">1967</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">L</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Zhen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Chen</surname></persName>
+		</author>
+		<idno type="DOI">10.1088/1674-0068/24/01/1-3</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Chinese Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="page">1</biblScope>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Matthew</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Tieu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">D</forename><surname>Morse</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.4979679</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">146</biblScope>
+			<biblScope unit="page">144310</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Bridgeman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Rothery</surname></persName>
+		</author>
+		<idno type="DOI">10.1039/a906523g</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Chemical Society</title>
+		<imprint>
+			<biblScope unit="page">211</biblScope>
+			<date type="published" when="2000">2000</date>
+			<publisher>Dalton Transactions</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">Y.-N</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C.-Y</forename><surname>Geng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y.-W</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Jiao</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/cphc.201201043</idno>
+	</analytic>
+	<monogr>
+		<title level="j">ChemPhysChem</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page">1182</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">B</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Andrews</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/jp900994c</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Physical Chemistry A</title>
+		<imprint>
+			<biblScope unit="volume">113</biblScope>
+			<biblScope unit="page">5375</biblScope>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">E</forename><surname>Schultz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">G</forename><surname>Truhlar</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/jp0539223</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Physical Chemistry A</title>
+		<imprint>
+			<biblScope unit="volume">109</biblScope>
+			<biblScope unit="page">11127</biblScope>
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">Z</forename><forename type="middle">J</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><forename type="middle">M</forename><surname>Su</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/jcc.20603</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Computational Chemistry</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="page">703</biblScope>
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">O</forename><surname>Übner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Termath</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Berning</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Sauer</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/s0009-2614(98)00792-1</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Chemical Physics Letters</title>
+		<imprint>
+			<biblScope unit="volume">294</biblScope>
+			<biblScope unit="page">37</biblScope>
+			<date type="published" when="1998">1998</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">S</forename><surname>Clima</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">F</forename><surname>Hendrickx</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cplett.2007.01.073</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Chemical Physics Letters</title>
+		<imprint>
+			<biblScope unit="volume">436</biblScope>
+			<biblScope unit="page">341</biblScope>
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">W</forename><surname>Bauschlicher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Maître</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s002140050068</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Theoretica Chimica Acta</title>
+		<imprint>
+			<biblScope unit="volume">90</biblScope>
+			<biblScope unit="page">189</biblScope>
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">J</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Zen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">G</forename><surname>Brandenburg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Alfè</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Michaelides</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRevB.94.220102</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Phys. Rev. B</title>
+		<imprint>
+			<biblScope unit="volume">94</biblScope>
+			<biblScope unit="page">220102</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><surname>Dubeck Ý</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Mitáš</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Jurečka</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/acs.chemrev.5b00577</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Chemical Reviews</title>
+		<imprint>
+			<biblScope unit="volume">116</biblScope>
+			<biblScope unit="page">5188</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/jcc.24750</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Computational Chemistry</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page">798</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">R</forename><surname>Guareschi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zulfikri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Daday</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">M</forename><surname>Floris</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Amovilli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Mennucci</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Filippi</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/acs.jctc.6b00044</idno>
+		<idno>pMID: 26959751</idno>
+		<ptr target="http://dx.doi.org/10.1021/acs.jctc.6b00044" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Chemical Theory and Computation</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page">1674</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">A</forename><surname>Christiansen</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.461491</idno>
+		<ptr target="https://doi.org/10.1063/1.461491" />
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">95</biblScope>
+			<date type="published" when="1991">1991</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<author>
+			<persName><forename type="first">L</forename><surname>Mitáš</surname></persName>
+		</author>
+		<title level="m">Computer Simulations Studies in Condensed Matter V</title>
+				<editor>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Landau</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">K</forename><forename type="middle">K</forename><surname>Mon</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">H</forename><forename type="middle">B</forename><surname>Sch</surname></persName>
+		</editor>
+		<meeting><address><addrLine>Berlin</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="1993">1993</date>
+			<biblScope unit="page">94</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">P</forename><surname>Belohorec</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Rothstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Vrbik</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.464838</idno>
+		<ptr target="https://doi.org/10.1063/1.464838" />
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">98</biblScope>
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">L</forename><surname>Mitáš</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRevA.49.4411</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Phys. Rev. A</title>
+		<imprint>
+			<biblScope unit="volume">49</biblScope>
+			<biblScope unit="page">4411</biblScope>
+			<date type="published" when="1994">1994</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sokolova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Üchow</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/s0009-2614(00)00276-1</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Chemical Physics Letters</title>
+		<imprint>
+			<biblScope unit="volume">320</biblScope>
+			<biblScope unit="page">421</biblScope>
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">L</forename><surname>Wagner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Mitáš</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/s0009-2614(03)00128-3</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Chemical Physics Letters</title>
+		<imprint>
+			<biblScope unit="volume">370</biblScope>
+			<biblScope unit="page">412</biblScope>
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">C</forename><surname>Diedrich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Grimme</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.1846654</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">122</biblScope>
+			<biblScope unit="page">21101</biblScope>
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><surname>Caffarel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J.-P</forename><surname>Daudey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J.-L</forename><surname>Heully</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ramírez-Solís</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.2011393</idno>
+		<ptr target="https://doi.org/10.1063/1.2011393" />
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">123</biblScope>
+			<biblScope unit="page">94102</biblScope>
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">E</forename><surname>Buendía</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Gálvez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sarsa</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cplett.2006.07.027</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Chemical Physics Letters</title>
+		<imprint>
+			<biblScope unit="volume">428</biblScope>
+			<biblScope unit="page">241</biblScope>
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">K</forename><surname>Wagner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Mitáš</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.2428294</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">126</biblScope>
+			<biblScope unit="page">34105</biblScope>
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bande</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Üchow</surname></persName>
+		</author>
+		<idno type="DOI">10.1039/b803571g</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Physical Chemistry Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page">3371</biblScope>
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><surname>Casula</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Marchi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Azadi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sorella</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cplett.2009.07.005</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Chemical Physics Letters</title>
+		<imprint>
+			<biblScope unit="volume">477</biblScope>
+			<biblScope unit="page">255</biblScope>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">T</forename><surname>Bouabc ¸a</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Braïda</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Caffarel</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.3457364</idno>
+		<ptr target="https://doi.org/10.1063/1.3457364" />
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">133</biblScope>
+			<biblScope unit="page">44111</biblScope>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">R</forename><surname>Petz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Üchow</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/cphc.201000942</idno>
+	</analytic>
+	<monogr>
+		<title level="j">ChemPhysChem</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page">2031</biblScope>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">E</forename><surname>Buendía</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Gálvez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Maldonado</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sarsa</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cplett.2012.12.055</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Chemical Physics Letters</title>
+		<imprint>
+			<biblScope unit="volume">559</biblScope>
+			<biblScope unit="page">12</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><surname>Caffarel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Giner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Scemama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ramírez-Solís</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/ct5004252</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Chemical Theory and Computation</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page">5286</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><surname>Scemama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Applencourt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Giner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Caffarel</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.4903985</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">141</biblScope>
+			<biblScope unit="page">244110</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Trail</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Needs</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.4907589</idno>
+		<ptr target="https://doi.org/10.1063/1.4907589" />
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">142</biblScope>
+			<biblScope unit="page">64110</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">K</forename><surname>Doblhoff-Dier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Meyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">E</forename><surname>Hoggan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G.-J</forename><surname>Kroes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">K</forename><surname>Wagner</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/acs.jctc.6b00160</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Chemical Theory and Computation</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page">2583</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">T</forename><surname>Krogel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Santana</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">A</forename><surname>Reboredo</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRevB.93.075143</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Phys. Rev. B</title>
+		<imprint>
+			<biblScope unit="volume">93</biblScope>
+			<biblScope unit="page">75143</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">K</forename><surname>Haghighi Mood</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Üchow</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/acs.jpca.7b05798</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Physical Chemistry A</title>
+		<imprint>
+			<biblScope unit="volume">121</biblScope>
+			<biblScope unit="page">6165</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">E</forename><surname>Giner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Scemama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Caffarel</surname></persName>
+		</author>
+		<idno type="DOI">10.1139/cjc-2013-0017</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Canadian Journal of Chemistry</title>
+		<imprint>
+			<biblScope unit="volume">91</biblScope>
+			<biblScope unit="page">879</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">E</forename><surname>Giner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Scemama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Caffarel</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.4905528</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">142</biblScope>
+			<biblScope unit="page">44115</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><surname>Scemama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Applencourt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Giner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Caffarel</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/jcc.24382</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Computational Chemistry</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="page">1866</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><surname>Caffarel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Applencourt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Giner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Scemama</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.4947093</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">144</biblScope>
+			<biblScope unit="page">151103</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Using cipsi nodes in diffusion monte carlo</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Caffarel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Applencourt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Giner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Scemama</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/bk-2016-1234.ch002</idno>
+		<ptr target="http://pubs.acs.org/doi/pdf/10.1021/bk-2016-1234.ch002" />
+	</analytic>
+	<monogr>
+		<title level="m">Recent Progress in Quantum Monte Carlo</title>
+				<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="15" to="46" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><surname>Caffarel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Applencourt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Giner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Scemama</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/bk-2016-1234.ch002</idno>
+		<idno type="arXiv">arXiv:1607.06742</idno>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Umrigar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Filippi</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/physrevlett.94.150201</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review Letters</title>
+		<imprint>
+			<biblScope unit="volume">94</biblScope>
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">J</forename><surname>Toulouse</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Umrigar</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.2437215</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">126</biblScope>
+			<biblScope unit="page">84102</biblScope>
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Umrigar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Toulouse</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Filippi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sorella</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">G</forename><surname>Hennig</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/physrevlett.98.110201</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review Letters</title>
+		<imprint>
+			<biblScope unit="volume">98</biblScope>
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">J</forename><surname>Toulouse</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Umrigar</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.2908237</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">128</biblScope>
+			<biblScope unit="page">174101</biblScope>
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">F</forename><surname>Bender</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">R</forename><surname>Davidson</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/physrev.183.23</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review</title>
+		<imprint>
+			<biblScope unit="volume">183</biblScope>
+			<biblScope unit="page">23</biblScope>
+			<date type="published" when="1969">1969</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Whitten</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hackmeyer</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.1671985</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="page">5584</biblScope>
+			<date type="published" when="1969">1969</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">B</forename><surname>Huron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Malrieu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Rancurel</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.1679199</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">58</biblScope>
+			<biblScope unit="page">5745</biblScope>
+			<date type="published" when="1973">1973</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">S</forename><surname>Evangelisti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J.-P</forename><surname>Daudey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J.-P</forename><surname>Malrieu</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/0301-0104(83)85011-3</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">75</biblScope>
+			<biblScope unit="page">91</biblScope>
+			<date type="published" when="1983">1983</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">R</forename><surname>Cimiraglia</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.449362</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">83</biblScope>
+			<biblScope unit="page">1746</biblScope>
+			<date type="published" when="1985">1985</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">R</forename><surname>Cimiraglia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Persico</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of computational chemistry</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">39</biblScope>
+			<date type="published" when="1987">1987</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">F</forename><surname>Illas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Rubio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Ricart</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.455405</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">89</biblScope>
+			<biblScope unit="page">6376</biblScope>
+			<date type="published" when="1988">1988</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<author>
+			<persName><forename type="first">A</forename><surname>Povill</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Rubio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Illas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Theoretical Chemistry Accounts: Theory, Computation, and Modeling</title>
+				<imprint>
+			<date type="published" when="1992">1992</date>
+			<biblScope unit="volume">82</biblScope>
+			<biblScope unit="page">229</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">L</forename><surname>Abrams</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">D</forename><surname>Sherrill</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cplett.2005.06.107</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Chemical Physics Letters</title>
+		<imprint>
+			<biblScope unit="volume">412</biblScope>
+			<biblScope unit="page">121</biblScope>
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">F</forename><surname>Bunge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Carb Ó-Dorca</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.2207621</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">125</biblScope>
+			<biblScope unit="page">14108</biblScope>
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">L</forename><surname>Bytautas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Ruedenberg</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.chemphys.2008.11.021</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">356</biblScope>
+			<biblScope unit="page">64</biblScope>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b62">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">H</forename><surname>Booth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J W</forename><surname>Thom</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Alavi</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.3193710</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">131</biblScope>
+			<biblScope unit="page">54106</biblScope>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b63">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Knowles</surname></persName>
+		</author>
+		<idno type="DOI">10.1080/00268976.2014.1003621</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Molecular Physics</title>
+		<imprint>
+			<biblScope unit="volume">113</biblScope>
+			<biblScope unit="page">1655</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b64">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Garniron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Scemama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P.-F</forename><surname>Loos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Caffarel</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.4992127</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">147</biblScope>
+			<biblScope unit="page">34101</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b65">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">A</forename><surname>Evangelista</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.4869192</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">140</biblScope>
+			<biblScope unit="page">124114</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b66">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">W</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">R</forename><surname>Hoffmann</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/acs.jctc.5b01099</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Chemical Theory and Computation</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page">1169</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b67">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">B</forename><surname>Schriber</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">A</forename><surname>Evangelista</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.4948308</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">144</biblScope>
+			<biblScope unit="page">161106</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b68">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">M</forename><surname>Tubman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">Y</forename><surname>Takeshita</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Head-Gordon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">B</forename><surname>Whaley</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.4955109</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">145</biblScope>
+			<biblScope unit="page">44112</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b69">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">A</forename><surname>Holmes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">M</forename><surname>Tubman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Umrigar</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/acs.jctc.6b00407</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Chemical Theory and Computation</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page">3674</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b70">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">C</forename><surname>Per</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Cleland</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.4981527</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">146</biblScope>
+			<biblScope unit="page">164101</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b71">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Ohtsuka</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J.-Y</forename><surname>Hasegawa</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.4993214</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">147</biblScope>
+			<biblScope unit="page">34102</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b72">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sharma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">A</forename><surname>Holmes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Jeanmairet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Alavi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Umrigar</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/acs.jctc.6b01028</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Chemical Theory and Computation</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="page">1595</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b73">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">A</forename><surname>Holmes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Umrigar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sharma</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.4998614</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">147</biblScope>
+			<biblScope unit="page">164111</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b74">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">M</forename><surname>Zimmerman</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.4977727</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">146</biblScope>
+			<biblScope unit="page">104102</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b75">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><surname>Scemama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Applencourt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Garniron</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Giner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>David</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Caffarel</surname></persName>
+		</author>
+		<idno type="DOI">10.5281/zenodo.200970</idno>
+		<ptr target="https://github.com/LCPQ/quantum_package" />
+		<imprint/>
+	</monogr>
+	<note>Quantum package v1.0,&quot; (2016</note>
+</biblStruct>
+
+<biblStruct xml:id="b76">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><surname>Scemama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Giner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Applencourt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Caffarel</surname></persName>
+		</author>
+		<ptr target="https://github.com/scemama/qmcchem" />
+	</analytic>
+	<monogr>
+		<title level="j">Qmc=chem</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b77">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><surname>Scemama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Caffarel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Oseret</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Jalby</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/jcc.23216</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Computational Chemistry</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page">938</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b78">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><surname>Burkatzki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Filippi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Dolg</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.2741534</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">126</biblScope>
+			<biblScope unit="page">234105</biblScope>
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b79">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><surname>Burkatzki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Filippi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Dolg</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.2987872</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">129</biblScope>
+			<biblScope unit="page">164115</biblScope>
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b80">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">L</forename><surname>Hammond</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Reynolds</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">A</forename><surname>Lester</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.453345</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">87</biblScope>
+			<biblScope unit="page">1130</biblScope>
+			<date type="published" when="1987">1987</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b81">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">W</forename><surname>Schmidt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">K</forename><surname>Baldridge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Boatz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">T</forename><surname>Elbert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">S</forename><surname>Gordon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Jensen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Koseki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Matsunaga</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">A</forename><surname>Nguyen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Su</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/jcc.540141112</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Computational Chemistry</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page">1347</biblScope>
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b82">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">R</forename><surname>Assaraf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Caffarel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Khelif</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/physreve.61.4566</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review E</title>
+		<imprint>
+			<biblScope unit="volume">61</biblScope>
+			<biblScope unit="page">4566</biblScope>
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b83">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">M</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">J</forename><surname>Conduit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Nemec</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Ópez Ríos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">D</forename><surname>Drummond</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/physreve.83.066706</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review E</title>
+		<imprint>
+			<biblScope unit="volume">83</biblScope>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b84">
+	<monogr>
+		<title level="m" type="main">The error bars have been obtained by fitting a large set of energy curves. Each of these curves is obtained from independent realizations of the statistical noise</title>
+		<imprint/>
+	</monogr>
+	<note>Note that due to the absence of correlations in the statistical noise, the error bars obtained in this way are certainly overestimated</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

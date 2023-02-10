@@ -1,0 +1,1074 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Robust in-silico identification of cancer cell lines based on next generation sequencing</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2017-03-10">March 10, 2017</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Raik</forename><surname>Otto</surname></persName>
+							<email>raik.otto@hu-berlin.de</email>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Knowledge Management in Bioinformatics</orgName>
+								<orgName type="department" key="dep2">Institute for Computer Science</orgName>
+								<orgName type="institution">Humboldt-Universität zu Berlin</orgName>
+								<address>
+									<settlement>Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Christine</forename><surname>Sers</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">Institute of Pathology</orgName>
+								<orgName type="institution">Charité Universitätsmedizin Berlin</orgName>
+								<address>
+									<settlement>Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff2">
+								<orgName type="institution" key="instit1">DKTK</orgName>
+								<orgName type="institution" key="instit2">German Consortium for Translational Cancer Research</orgName>
+								<address>
+									<addrLine>Partner Site</addrLine>
+									<settlement>Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Ulf</forename><surname>Leser</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Knowledge Management in Bioinformatics</orgName>
+								<orgName type="department" key="dep2">Institute for Computer Science</orgName>
+								<orgName type="institution">Humboldt-Universität zu Berlin</orgName>
+								<address>
+									<settlement>Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Robust in-silico identification of cancer cell lines based on next generation sequencing</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2017-03-10">March 10, 2017</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">1EBBAB4F40565640B6426C63159490F8</idno>
+					<note type="submission">Received: January 10, 2017 Accepted: March 01, 2017</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:44+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>cancer cell lines</term>
+					<term>next-generation sequencing</term>
+					<term>cell line-identification</term>
+					<term>DNA-sequencing</term>
+					<term>data-heterogeneity and</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Cancer cell lines (CCL) are important tools for cancer researchers world-wide.</s><s>However, handling of cancer cell lines is error-prone, and critical errors such as misidentification and cross-contamination occur more often than acceptable.</s><s>Based on the fact that CCL today very often are sequenced (partly or entirely) anyway as part of the studies performed, we developed Uniquorn, a computational method that reliably identifies CCL samples based on variant profiles derived from whole exome or whole genome sequencing.</s><s>Notably, Uniquorn does neither require a particular sequencing technology nor downstream analysis pipeline but works robustly across different NGS platforms and analysis steps.</s><s>We evaluated Uniquorn by comparing more than 1900 CCL profiles from three large CCL libraries, embracing 1585 duplicates, against each other.</s><s>In this setting, our method achieves a sensitivity of 97% and specificity of 99%.</s><s>Errors are strongly associated to low quality mutation profiles.</s><s>The R-package Uniquorn is freely available as Bioconductor-package.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>INTRODUCTION</head><p><s>Cancer Cell Lines (CCLs) are an essential tool for cancer research world-wide <ref type="bibr" target="#b0">[1]</ref>.</s><s>CCLs help to uncover cancer etiology and to study the mode-of-action of anticancer drugs.</s><s>They are indispensable for functional investigation of proteins and pathways with much reduced ethical and legal issues compared to patientderived tumor samples <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b1">2]</ref>.</s><s>However, CCLs are susceptible to misidentification and cross-contamination <ref type="bibr" target="#b0">[1]</ref><ref type="bibr" target="#b1">[2]</ref><ref type="bibr" target="#b2">[3]</ref><ref type="bibr" target="#b3">[4]</ref><ref type="bibr" target="#b4">[5]</ref><ref type="bibr" target="#b5">[6]</ref><ref type="bibr" target="#b6">[7]</ref><ref type="bibr" target="#b7">[8]</ref>; estimates regarding the extend of such problems in published scientific results range from 18% to 36% <ref type="bibr" target="#b8">[9,</ref><ref type="bibr" target="#b9">10]</ref>.</s><s>A prominent example is MDA-MB-435, which was originally derived from the M14 melanoma CCL, yet later misclassified as a mammary-tissue CCL <ref type="bibr" target="#b10">[11]</ref>.</s><s>This error had wide-ranging, negative consequences because a number of research results were attributed to the wrong tissue-type.</s><s>Since no universally accepted nomenclature system for CCLs exists <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b7">8]</ref>, researchers keep on inventing names of little discriminative power.</s><s>For example, the CCL TT is a distinctively different CCL than T.T, but the similarity of both names makes mixing them up very easy.</s><s>Meanwhile, high-impact journals require explicit verification of CCL integrity with respect to identity and absence of crosscontamination prior to publishing related research-results <ref type="bibr" target="#b0">[1]</ref>.</s><s>Overall, CCL sample-identification has become an integral part of CCL-based research.</s></p><p><s>The usual way of establishing the identity of a CCL sample under study (from now on called query sample q) is to compare it to CCLs whose identity is known (from now on called R, a library of reference samples) by experimentally comparing certain cell line specific features <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b2">3,</ref><ref type="bibr" target="#b4">5,</ref><ref type="bibr" target="#b5">6,</ref><ref type="bibr" target="#b7">8]</ref>.</s><s>Established identification methods differ in the characteristic genomic entity that is compared between q and the samples in R. While Short Tandem-Repeat analysis (STR) compares counts of tandemrepeats <ref type="bibr" target="#b5">[6]</ref>, the Single-Nucleotide-Polymorphism Panel Identification Assay (SPIA) compares the zygosities of distinct diploid single-nucleotide polymorphisms (SNPs) <ref type="bibr" target="#b3">[4]</ref>.</s><s>Both methods require additional and costly experiments which do not contribute to the scientific goal of the original study.</s><s>Furthermore, in all available methods the genotyping-technology -including the subsequently used software -applied to analyze the query q and to</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Research Paper</head><p><s>analyze the references R must be identical for achieving the expected accuracy.</s><s>This implies access to the physical samples, which is difficult in large projects with numerous partners where often only information on samples or data generated from these is exchanged, but not the samples themselves.</s></p><p><s>At the same time, modern CCL-based research is increasingly based on high-throughput next generation sequencing (NGS <ref type="bibr" target="#b2">[3,</ref><ref type="bibr" target="#b11">[12]</ref><ref type="bibr" target="#b12">[13]</ref><ref type="bibr" target="#b13">[14]</ref>).</s><s>All major CCL sequencing project such as CCLE <ref type="bibr" target="#b1">[2]</ref>, CellMiner project <ref type="bibr" target="#b14">[15]</ref>, or COSMIC CLP <ref type="bibr" target="#b15">[16]</ref>, made extensive NGS-based data for characterizing their CCLs publicly available.</s><s>It is a natural idea to use these profiles for identifying the origin of a given query sample within such a reference library (or within multiple libraries).</s><s>However, typical NGS procedures do not extract the kind of genetic information necessary for STR or SPIA-based identification, as both methods require homogeneous and locus-specific genotype data, but these loci are often omitted from sequencing or filtered afterwards because they are assumed to be unrelated to the cancer itself.</s><s>Furthermore, major chromosomal deletions, e.g. the common phenomenon of losing the Y-chromosome <ref type="bibr" target="#b16">[17]</ref>, can render usage of predefined genotypes impossible.</s></p><p><s>Thus, the information required for identification is not readily available.</s><s>Even if it was, the effectiveness of STR and SPIA on lab-and project-specific NGS data sets were unclear.</s><s>Both methods were evaluated only with homogeneous NGS profiles, i.e., references and query samples were sequenced using the same technologies, algorithms, and filtering methods; on top, these procedures require that the ploidy of the reference samples R matches the ploidy of the query sample q.</s><s>Such a scenario of homogeneous, easily comparable NGS data sets is quite different from that typically found today, where different labs use different technologies, leading to heterogeneous NGS profiles.</s><s>For instance, Hudson et al. compared the small missense variant calls accompanying identical CCLs (as defined by the creators of the reference libraries) between CCLE and COSMIC CLP and found them coinciding at only 43% <ref type="bibr" target="#b17">[18]</ref>.</s><s>A prominent case depicturing the extend of data-heterogeneity is the ISHIKAWA-HERAKLION-02ER CCL which has been DNA-genotyped by the Broad institute, finding 213 missense mutations, and the Sanger institute, which reported 52 pair-wise different missense mutations <ref type="bibr" target="#b17">[18]</ref>.</s><s>Causes for the data heterogeneity between large-scale sequencing projects are complex and include technical and design aspects.</s><s>For example, sequencing of sub-clonal and aneuploid cancer-cell cultures may cause heterogeneous sequencing results <ref type="bibr" target="#b18">[19]</ref>.</s><s>Furthermore, studies differ in their aims and priorities, leading to different choices of algorithmic parameters and workflow designs which in turn can cause differing genotyping results even for the same CCLs <ref type="bibr" target="#b19">[20]</ref>.</s></p><p><s>Here, we present Uniquorn, a novel in silico approach for the robust and fast identification of CCLs within reference libraries based on their variant profiles.</s><s>Uniquorn uses only NGS data and is based on the assumption that already today, most experiments on CCLs involve extensive sequencing.</s><s>The algorithm is designed to compare variant profiles derived from a wide range of sequencing technology, quality, depth, and scope to make it useful for large and distributed research projects.</s><s>Uniquorn was developed to addresses cases where neither STR nor SPIA can be applied, as both obligatorily require reliable SNP-calls and STR-profiles at specific loci for identification.</s><s>Technically, Uniquorn is based on the computation of confidence-scores for the pairwise identity of the query sample to any sample from a reference library R, taking into account the prevalence of each variant in the library and a statistical assessment of the observed number of common variants.</s></p><p><s>We evaluated our algorithm on three high-profile CCL data sets with altogether 1988 reference samples, namely COSMIC CLP (1024), CCLE (904) and NCI-60 CellMiner (60).</s><s>NGS profiles between these libraries are highly heterogeneous, because different laboratories created the data using different technologies and software and even covering partly different genomic regions <ref type="bibr" target="#b17">[18]</ref>.</s><s>SNP-based identification using the available data is impractical, as in two out of these three sets all SNPs were filtered to facilitate identification of driver mutations.</s><s>Furthermore, neither of these data sets contains information on STRs.</s><s>In such a rather difficult setting, Uniquorn achieves a sensitivity of 97% at a specificity of 99%.</s><s>We also show that several pairs of cell lines which our method identifies as identical although they have different names indeed should be considered identical considering their extremely similar mutational profiles, and identify several candidates for cross-contamination of cell lines.</s><s>Finally, we confirm a very low probability of random false positive hits by comparing all reference libraries' CCLs with 1024 genomes of the 1000 genomes projects <ref type="bibr" target="#b20">[21]</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>RESULTS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Weighting of small genomic variants</head><p><s>The Uniquorn method identifies a query CCL by comparing its variant profile to that of all CCLs in a given set of reference libraries, see Figure <ref type="figure" target="#fig_0">1</ref>.</s><s>To this end, each variant in a reference library is weighted according to its inverse frequency.</s><s>Only rare variants are used further.</s><s>To assess the impact of different thresholds for this weight, we studied the distribution of variant counts in each of the three libraries (Figure <ref type="figure" target="#fig_1">2A</ref>).</s><s>As can be seen in Figure <ref type="figure" target="#fig_1">2B</ref>, more than 50% of variants are unique within their library (weight 2 or higher), which means that even a very stringent threshold of 1.0 would filter out less than half of all variants.</s><s>In Figure <ref type="figure" target="#fig_1">2C</ref>, we show the distribution of the number of variants per CCL using different weight thresholds.</s><s>When using only unique variants, CCLs from CCLs from a reference library are compared to a given query sample q based on their set of small variants (variant profile).</s><s>Variants are weighted according to their prevalence within the library (e.g.</s><s>CCLE) and frequent variants are excluded afterwards.</s><s>Subsequently, Uniquorn computes a confidence score quantifying the likelihood for each reference sample r being identical to q. Significantly different amounts of variants in q and r affect the statistical test that assesses whether q and r are similar.</s><s>Therefore, a regularization step calculates the minimal amount of matching variants required to predict that q and r are related.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Cross-Validation benchmark</head><p><s>We benchmarked the accuracy of Uniquorn using three large CCL libraries, namely COSMIC CLP, CCLE and CellMiner, which together embrace 1988 CCLs.</s><s>We manually identified duplicates in this set and tested how reliably Uniquorn would detect them.</s><s>To this end, each of the 1988 CCL samples was once utilized as query-sample and all three libraries as references.</s><s>Since Uniquorn compares a single querysample to all reference-samples, 1988 * 1988 ≈4E6 comparisons occurred during the cross-validation benchmark.</s><s>Uniquorn predicted for each of the queryreference-pairs whether they were derived from the same cell line or not.</s><s>Relative to the ~4E6 comparisons the amount of 3573 possible true positive identifications (1585 duplicates and 1988 self-identifications) is small which is why the positive-predictive value (PPV) is a particularly important evaluation measure.</s><s>Results are shown in Table <ref type="table" target="#tab_0">1</ref>.</s><s>The benchmark results show a very high specificity (at least 99%) across a range of weight thresholds, which can be explained by the extremely large number of true negatives.</s><s>The more important metric is sensitivity, which is also very high for thresholds 0.5 and 0.25, correctly identifying 3474 and 3461 of the 3573 identical or related CCLs, respectively.</s><s>Limiting the comparison to unique variants (weight threshold 1.0) yields the best PPV and lowest false positive rate (FPR), but lower weights of 0.5 and 0.25 result in higher sensitivity.</s><s>Quantitative regularization slightly reduces identification efficiency, but supresses many false positive predictions.</s><s>Figure <ref type="figure" target="#fig_2">3</ref> shows more detailed performance characteristics.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Out-group benchmark</head><p><s>The previous evaluation measured the performance of Uniquorn when searching a CCL of a reference library within the set of reference libraries.</s><s>We also tested how the method performs when it has to deal with profiles that are not derived from CCLs.</s><s>Specifically, we used 1024 profiles from the 1000 genomes data set <ref type="bibr" target="#b20">[21]</ref> as query samples and tested whether Uniquorn would assign them to a reference CCL -any such assignment certainly would be an error.</s><s>Note that these comparisons work on very heterogeneous sequencing technologies, namely WGS-sequenced profiles (1000 genomes) with much smaller hybrid/exome-sequenced profiles (reference libraries).</s><s>This implies large differences in terms of common polymorphisms (contained in 1000 genomes profiles, filtered in the references) and in the sheer number of variations (on average, a 1000 genomes profile consists of ~5E7 variations per sample compared to ~5E2 variations in the reference profiles).</s><s>Using a weight threshold of 1.0 and regularization to cater for this difference, Uniquorn did not produce a single false positive prediction.</s><s>These comparisons highlight the importance of our regularization step; omitting this filter, the comparison would produce 167 FP predictions for the ~2E6 comparisons.</s></p><p><s>Based on this and the previous experiments, Uniquorn's default confidence-score threshold is set to 10 [~ -log2(0.001)].</s><s>By default, the regularization filter automatically measures the strength of the background-noise and adjusts the required amount of matching mutations accordingly.</s><s>However, users can set both thresholds manually to adapt to different reference libraries or to change the balance between false prediction rates and sensitivity (see Figure <ref type="figure" target="#fig_3">4</ref> for ROC analysis).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Comparison to established methods</head><p><s>Uniquorn compares favourably to other methods for the identification of CCLs in terms of the amount of data and experimental work necessary (see Table <ref type="table">2</ref>).</s></p><p><s>In first place, it is similar to established methods e.g.</s><s>SPIA and Tandem-Repeat-Counting in that it is comparison-based.</s><s>Uniquorn, however, is different to the aforementioned methods due to its focus on in silico identification of CCLs based on variant profiles obtained from different high-throughput sequencing technologies.</s><s>Unlike SNP-based methods, Uniquorn does not depend on common, well characterized and publicly available genomic entities, but instead relies predominantly on rare somatic mutations, as SNP-based comparisons have severe drawbacks when applied in cancer research.</s><s>First, SNPs with a minor allele frequency of &gt; = 5% are frequently filtered from data sets (to focus on drivermutations, e.g. by CCLE) and thus cannot be assumed to be generally available for CCL identification.</s><s>Second, the loci of the most characteristic SNPs often are not genotyped during exome sequencing, and even less often so in panel sequencing.</s><s>Moreover, cancer is frequently associated with large structural variants, often removing important loci, and with polyploid chromosomes whose variant calls cannot be directly compared to diploid references.</s><s>Uniquorn was designed to robustly deal with such problems.</s></p><p><s>We also compared identification results of Uniquorn and the SNP-based method by Demichelis et al. <ref type="bibr" target="#b3">[4]</ref> quantitatively.</s><s>130 of the 155 CCLs used by Demichelis and colleagues are present in the Uniquorn benchmark set.</s><s>These 130 CCLs have 265 different representations in our data set because many are present in different CCL reference libraries.</s><s>Uniquorn identified 100% of these 265 CCLs at an inclusion weight of 0.5 (see Supplementary Material File 3).</s><s>Thus, Uniquorn showed an equal performance compared to the established SNP-based identification methods.</s><s>www.impactjournals.com/oncotarget</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DISCUSSION</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Analysis of Mis-classifications</head><p><s>Analysis of the 22 false positive (FP) predictions from Table <ref type="table" target="#tab_0">1</ref> (weight 1.0) revealed that all FP-predictions were caused by a set of only 13 CCLs.</s><s>These CCLs have in common that their profiles are very small; they have a mean size of 366 (sd = 4E3) variants, while the profile sizes of CCLs that were never predicted as FP have a mean size of 3768 (sd = 8E2) variants (p = 0.006).</s><s>20 of these 22 FPs occurred with a query sample identifying a reference from a library which does not contain the query, which means that they would not occur if a lab can safely exclude a reference library from considerations.</s><s>The most problematic CCL regarding FP is HCC-2998, which is contained in CellMiner and COSMIC CLP.</s><s>Accordingly, it was used twice as query, and produced five FP in total (3 FPs when used as query and 2 FPs when used as reference).</s><s>When used as query, HCC-2998 correctly identified itself in CellMiner and COSMIC CLP with high confidence.</s><s>However, it was also predicted to be similar to three CCLs from CCLE (JHUEM-7, SNU-81, HEC-251).</s><s>These false predictions all had very low confidence scores, sharply above the threshold, and can be explained by to the stronger influence of randomly matching variants within small profiles.</s></p><p><s>A higher threshold enforces utilization of more specific variants but reduces the amount of considered variants.</s><s>Depending on the threshold (0.0, 0.25, 0.5 1.0), between 3027 and 3474 of the 3573 true relationships between CCLs are successfully recovered.</s><s>Numbers in brackets show results when the to-be-expected amount of matching variants is set manually to 10 variants; numbers without brackets show statistically estimated background-noise strength (regularized, see methods).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Table 2: Properties of Uniquorn compared to established methods for identification of CCLs Identification</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Method for NGS CCLs</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Physical sample required</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Additional experiments required</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Locus coverage required</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Zygositypattern required</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dependent on reference genome STR</head><formula xml:id="formula_1">(19) X X - - - SPIA (6) X X X X - NGS SNP (4) - - X X X NGS All Variants (Uniquorn) - - - - X</formula><p><s>SPIA and STR require additional verification experiments on the physical CCL sample.</s><s>Identification of CCLs by matching their SNP-zygosities directly from the NGS-data requires that the loci of the characteristic SNPs were sequenced and not filtered.</s><s>For SPIA and NGS-SNP, zygosity calls have to be comparable (technology, ploidy, algorithms, etc.).</s><s>Uniquorn only requires using the same reference genome for variation calling.</s><s>Note that CCL samples created with a specific reference genome versions can be converted into another version, e.g. by a lift-over software, thereby decreasing the severity of this limitation.</s></p><p><s>Three factors have been found to be associated with false negative (FN) predictions: About 100 of the 546 FN-predictions for weight 1.0 occurred between queryreference pairs that were defined as identical by the goldstandard due to either cross-contamination (e.g.</s><s>ACCS and T24 <ref type="bibr" target="#b6">[7]</ref>) or an origin within the same human being but not the same cancer-tissue (e.g.</s><s>AU-565 and SKBR-3 <ref type="bibr" target="#b21">[22]</ref>).</s><s>Secondly, FN predictions are enriched in CCLs with small profiles.</s><s>CCLs that failed at least once to identify a related query have on average 345 (sd = 2E2) variants, while CCLs that always identified their counterparts successfully have on average 528 (sd = 1E3) variants (p = 1E-8).</s><s>Thirdly, CCLs that are highly similar to another CCL within the same library generally perform poorly because in those cases the amount of rare variants is insufficient.</s><s>For instance, HEL and its closely related sub-clone HEL 92.1.7 <ref type="bibr" target="#b22">[23]</ref> both failed to identify themselves because they are so similar that none of their variants is unique within the library.</s><s>This effect can be diminished by appropriate adjustment of the weighting scheme, as can be seen by a FN-reduction of 82% from weight 1.0 to weight 0.5.</s><s>However, these cases are rare within our evaluation data:</s></p><p><s>As shown in Figure <ref type="figure" target="#fig_1">2</ref>, unique variants are present in 1986 out of 1988 CCLs (99.9%).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CCL-identification based on generic 'omics-sequencing data</head><p><s>Every NGS technology that allows calling of small genomic variants could, in principle, be utilized to identify CCLs based on the Uniquorn method.</s><s>We believe that bulk-RNA-seq should be utilizable without conceptual changes, although we did not yet test our algorithm with such data.</s><s>Panel-seq will at least require the re-adjustment and optimization of thresholds to compensate for the relatively low number of variants.</s><s>Furthermore, since fewer matching entities may already indicate that two CCLs are similar, the statistical tests for matches occurring just be chance might have to be strengthened.</s><s>Usage of single cell technologies would require adjustments to compensate for higher impact of random events (noise).</s><s>Less similar NGS technologies, such as methylation, Chipseq or Atac-seq, probably would require more profound changes to our method.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>MATERIALS AND METHODS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Reference libraries</head><p><s>Uniquorn compares NGS data of a given query sample q with that of samples r from a given CLL library R. Currently, three large libraries are integrated into the package: (1) COSMIC CLP, obtained January 13th 2016 from http://cancer.sanger.ac.uk/cell_lines (2) CCLE, obtained January 13 th 2016 from http://www.broadinstitute.org/ccle</s><s>and (3) CellMiner, obtained January 13th 2016 from http:// discover.nci.nih.gov/cellminer.</s><s>All data sets are based on the same reference genome HG19/ GrCH37.</s><s>Variant profiles and CL-names were directly parsed from the files provided.</s><s>Note that the Uniquorn package also features an API for adding novel, possibly in-house-created, reference libraries.</s></p><p><s>Table <ref type="table" target="#tab_1">3</ref> shows most important characteristics of the three libraries.</s><s>COSMIC CLP is the largest data set with 1024 whole-exome genotyped CLs from 30 tissues.</s><s>CCLE contains 904 hybrid-capture genotyped CLs from more than 36 tissues.</s><s>The CellMiner project comprises wholeexome genotype data of the NCI-60 panel from 9 tissues.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Confidence scoring</head><p><s>Uniquorn represents each sample (query or reference) by its variant profile, which is defined as the sequence of substitutions or small insertions and deletions compared to the reference genome.</s><s>Each variant is encoded by its start position and its length.</s><s>The scoring of query and reference samples is library-specific, i.e., the score obtained from the comparison of query q with a sample r from reference library R assesses the likelihood that q is identical to r independently of all other libraries.</s><s>This reflects the fact that in a typical setting the set of potential contaminators, i.e. all samples from which q could have been derived in principle, is known.</s></p><p><s>When comparing query q to a reference sample r, Uniquorn estimates the likelihood that their profiles stem from the same cell line.</s><s>Developing a complete model for assessing this likelihood would require exact knowledge about the ways how the profiles of q and r were obtained, i.e., the error rates and distributions of the sequencing technologies applied and of the entire variant calling procedures.</s><s>Since such detailed data Thresholds 0.5 and 0.25 reached the maximal sensitivity (see also Table <ref type="table" target="#tab_0">1</ref>).</s><s>The embedded plot shows the same ROC plot with an adjusted FPR-axis range to visualize the ROC curve of inclusion weight 0.0.</s><s>The vertical black line shows the Uniquorn default threshold (confidence score of 10).</s><s>The threshold was chosen as optimal cutoff between sensitivity and specificity.</s></p><p><s>is not available for most techniques, we developed a simple yet highly effective heuristic for quantifying the likelihood of identity using only variant profiles (see Figure <ref type="figure" target="#fig_0">1</ref>).</s><s>The algorithm first weights all variants found in R according to their frequency.</s><s>In a second step, it discards variants whose weight is below a given threshold.</s><s>Next, Uniquorn computes the overlap in remaining variants in q and each r and derives a multiple testing corrected p-value for the likelihood that these sets stem from the same cell line.</s><s>This likelihood is based on the assumption that the profiles of q and r have the same sequencing scope (panel, whole exome, whole genome), although the sequencing technology used might have been different.</s><s>For the case that different sequencing scopes were applied for q and r, which will result in a strong difference between the numbers of variants found, we compute a second threshold taking into account the spread of randomly matching variants between q and all r.</s><s>Each of these steps is explained in detail in the following paragraphs.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>(1) Variant weighting</head><p><s>As preparatory step, each variant v found in any sample of the given reference library R is weighted according to its frequency f v using:</s></p><formula xml:id="formula_2">) 1 ( 2 ) ( − − = v f v w</formula><p><s>Variant weights are library-dependent, i.e., the same variants will receive different weights in different libraries to reflect the inherent divergence of sequencing technologies and algorithms.</s><s>Uniquorn identifies samples by their characteristic variants, i.e., variants with a high weight.</s><s>The default threshold is 0.5, i.e. the further scoring considers only variants occurring maximally two times in one respective reference library R. Other thresholds can be chosen as well, depending on the desired trade-off between sensitivity and false positive rate (see Table <ref type="table" target="#tab_0">1</ref> and Discussion).</s></p><p><s>(2) Confidence score calculation After filtering non-characteristic variants, q is compared to all reference samples from R to obtain a pairwise confidence score.</s><s>To this end, we model CCL profiles as a set of variants drawn at random from the set of all variants in R and assess the probability of the overlap of variants in q and in each r using an overrepresentation test.</s><s>Let T be the number of variants in R, N be the number of variants in r, n the subset of these also found in q, and k = N-n the number of variants in r not found in q.</s><s>Then, the probability of a given variant in r to also occur in q is p r = N/T.</s><s>Accordingly, the likelihood to miss exactly k variants from r in q is ( )</s></p><formula xml:id="formula_3">N ! (1 ) k ! ! k k N k k N k r r r r r N D q p p p k N k − −   = = −   −  </formula><p><s>Following <ref type="bibr" target="#b23">[24]</ref>, we next compute a p-value ˆr p by summing up the probabilities to miss up to k variants.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ˆN</head><formula xml:id="formula_4">k r r N n k p D − = = ∑</formula><p><s>ˆr p is the probability to commit a statistical error of type one when rejecting the null-hypothesis H 0 , which here states that the k variants missing in q with respect to r are missing because r and q are different CCLs.</s></p><p><s>The p-values are corrected for multiple testing with the Benjamini-Hochberger method <ref type="bibr" target="#b24">[25]</ref>.</s><s>We use the negative logarithm of the corrected value as the confidence c r that q and r represent the same cell line.</s><s>We put a threshold on this score which is determined empirically by balancing sensitivity and specificity in our test data (see the ROCcurve in Figure <ref type="figure" target="#fig_3">4</ref>).</s></p><p><s>(</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>3) Quantitative regularization</head><p><s>The confidence score derived above is based on the model that q's and r's variant profiles were both created by randomly drawing n variants from R. This implies that both profiles are of roughly the same size, a valid assumption when both profiles were obtained using the same sequencing scope.</s><s>However, if the number of variants in q is much different from the average number of variants in samples from R, this assumption is most likely wrong.</s><s>This occurs, for instance, if samples in R were panel-sequenced while q was whole-genome sequenced, or if both were whole-genome sequenced, yet all known SNPs were filtered from the profiles in R. In such cases, The absolute and the average number of variants differ by orders of magnitude since different technologies and algorithms were utilized for sequencing and variant calling.</s><s>Moreover, the number of genes covered varies strongly.</s><s>SNPs -required for SNP-based identification -have been mostly or completely excluded in two of the three sets.</s><s>For the COSMIC CLP, two different methods were used to call small variants and indels.</s></p><p><s>our confidence will be either overly optimistic (large variant overlap due to a much larger profile of q) or overly pessimistic (low variant profile due to a much smaller profile of q).</s><s>For correcting for such cases, we model the estimated number of additional variants between q and any r through a spuriousness variable sp, sp ε [0,..,1]. is estimated by the integral of the beta function with parameters s max and s mean , where s max is the maximal number of shared variants between q and any sample from r, and s mean is the mean of the number of these matches.</s><s>The beta function has been found to suitably estimate the expected number of additional variants in that it is governed (1) by the relative number of matches and (2) by the absolute size of its input-parameters and (3) by its boundedness to [0,..,1].</s></p><p><s>Thereafter, a threshold M min on the acceptable amount of observed unmatched variants is calculated as * ( <ref type="formula">1</ref>)</s></p><formula xml:id="formula_5">mean max min S S SP M SP + = −</formula><p><s>If the confidence score threshold and the M min threshold are met, the variant profile of a reference CCL r is predicted to stem from the same cell line as the profile of q.</s><s>Note that this implies that multiple cell lines from the same reference library might be predicted to be identical to q.</s><s>We find this strategy to have advantages over the option to simply return the best matching reference sample, as we thus (1) do not have to assume a reference library to be duplicate-free, and (b) may also report that none of the reference cell lines to be identical.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Evaluation</head><p><s>We benchmarked Uniquorn using all 1988 CCLs from the three data sets described above (see Table <ref type="table" target="#tab_0">1</ref>) as query sample against each of the three reference libraries; thus, we performed 1988*1988 ~ 4E6 comparisons in total.</s><s>A true positive identification was counted when Uniquorn predicted that a query was identical to a reference CCLs in accordance with a gold standard (see below); analogously for true negatives.</s><s>A false positive was counted when Uniquorn predicted query and reference CCL to be identical but not the gold standard.</s><s>False negatives were cases were query and reference CCLs were assessed as not being identical by our algorithm but identified as such in the gold standard.</s></p><p><s>Note that the maximal number of true positives (TP) per query in this evaluation scheme depends on whether this CCL was present in only one or in more than one data sets (many such cases exist; see Figure <ref type="figure" target="#fig_4">5</ref>).</s><s>If a CCL exists only in a single reference library, only one TP can occur.</s><s>If it is part of two libraries or has related identified CCLs within the same library, four TPs are possible, since each will be used as query and should identify both itself and the related sample; for CCL in all three libraries, maximally nine TPs can be found.</s><s>Using our gold standard, a maximum of 3573 TPs is possible.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Gold standard set creation</head><p><s>The gold standard defines which pairs of CLs are considered identical within our evaluation.</s><s>To create a gold standard we first defined all CCLs with the same regularized name as identical.</s><s>CCL names were regularized by removing any non-alpha-decimal and capitalization of all remaining characters.</s><s>In a second step, we manually confirmed or rejected the identity of all CCLs whose names only differed by a small prefix or suffix, such as MDA-MB-435 and MDA-MB-435s.</s><s>In a third step, we screened the literature for cases were CLs with same regularized name were reported as being different, e.g.</s><s>TT and T.T, and adapted the gold standard accordingly for these cases.</s><s>A list showing the CCLs that were defined as similar as a result of the literature screening can be found in Supplementary Material File 2. Note that pairs of identical CCL may be part of the same or of different reference libraries (See Figure <ref type="figure" target="#fig_4">5</ref>).</s></p><p><s>After the evaluation, we furthermore checked all FP predictions to see if these are indeed FPs or errors in the gold standard (see Discussion); one such example is the pair SNB19 and U-251, which have completely different names but denote the biologically identical CCL <ref type="bibr" target="#b3">[4]</ref>.</s><s>The entire gold standard is available in Supplementary Material File 1.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Implementation and availability of data sets</head><p><s>The method was implemented in the freely available R-Bioconductor package Uniquorn.</s><s>The benchmark libraries CCLE and COSMIC CLP can be freely obtained and used as Uniquorn reference libraries.</s><s>The CellMiner Project library is included by default.</s><s>Custom libraries can be created e.g. for identification of proprietary CCL samples.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CONCLUSIONS</head><p><s>Uniquorn is a novel in-silico method for helping to avoid confusion of cancer cell lines during lab processing.</s><s>Specifically, it compares the mutation profile of a given query CCL to those of CCLs in reference libraries to identify all cell lines from these libraries that are genetically suspiciously similar to the query.</s><s>Compared to existing methods for CCL identification, Uniquorn works across a range of sequencing techniques and can also be applied after SNP filtering; furthermore, assuming the CCL today are anyway sequenced in most projects, it does not require any additional experimentation.</s><s>The software is freely available and can easily be adapted to specific reference libraries or specific requirements regarding specificity and sensitivity of the results.</s><s>Uniquorn has been benchmarked by cross-identifying 1988 CCL samples from three different providers, using different sequencing technologies.</s><s>A sensitivity of up to 97% and specificity of 99% has been achieved.</s><s>In future work, we plan to adapt Uniquorn to also robustly identify profiles obtained from gene panel sequencing and RNAsequencing.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 :</head><label>1</label><figDesc><div><p><s>Figure 1: Uniquorn workflow.</s><s>CCLs from a reference library are compared to a given query sample q based on their set of small</s></p></div></figDesc><graphic coords="3,85.80,50.22,442.80,125.28" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 :</head><label>2</label><figDesc><div><p><s>Figure 2: Distribution of CCL variant frequencies and weights across libraries.</s><s>(A) Number of "rare" variants in CCLs according to Uniquorn's weighting scheme.</s><s>'All' shows the log-amount of variants per CCL without any filtering (weight 0.0) and 'Unique shows the amount of variants that remain after all variants were filtered that were present in more than a single CCL (weight 1.0).</s><s>Differences between software, technologies and filters (non-exhaustive) i.e. heterogeneous data-processing leads to different amounts of filtered, nonunique mutations as shown by the significantly different reduction of variants between the CellMiner (medium), COSMIC CLP (low) and CCLE panel (strong), see Table 3 for the sources of heterogeneity.</s><s>It is shown, that all panels possess unique, i.e. 'rare' variants on which the Uniquorn identification method is based.</s><s>(B) Distribution of weights per library.</s><s>At least 50% of variants are high-weight (rare) variants.</s><s>CCLE shows significantly less unique variants than COSMIC CLP and CellMiner, which explains the strong difference between raw and filtered variants in Figure A. (C) Number of variants per reference sample for different weight thresholds in the different reference libraries.</s><s>CCLs from COSMIC CLP show a high amount of unique variants on average, especially when compared to those from CCLE.</s></p></div></figDesc><graphic coords="3,71.72,254.90,466.36,355.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 :</head><label>3</label><figDesc><div><p><s>Figure 3: Results of the cross-identification benchmark depending on regularization and variant inclusion weight.(A)</s><s>Number of false positives.</s><s>(B) Number of false negatives.</s><s>(C) Number of false positives.</s><s>(D) Number of true negatives.</s><s>(E) Sensitivity.</s><s>(F) F1-Score (harmonic mean of specificity and sensitivity).</s><s>(G) Specificity.</s><s>(H) Positive Predictive Value.</s><s>Best specificity and sensitivity values are achieved using a weight threshold of 0.5.</s><s>A threshold of 1.0 achieves the least false positives, most true negatives, and the highest positive predictive value.</s></p></div></figDesc><graphic coords="6,58.46,326.90,494.47,336.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 :</head><label>4</label><figDesc><div><p><s>Figure 4: Receiver-Operator-Curves (ROC) of the cross-identification benchmark for different weight thresholds.</s></p></div></figDesc><graphic coords="7,60.20,320.90,492.00,356.16" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 :</head><label>5</label><figDesc><div><p><s>Figure 5: Source of true positive CCL identifications based on gold standard.</s><s>Total amount, percentage, and source of all 3573 TPs for each of the 1988 CCL samples are shown.</s><s>For instance, 1238 TPs are identified because copies of the same or highly similar CCLs are contained in COSMIC CLP and CCLE.</s><s>Positive identification within a single circle are due to relatedness of CCLs within the same library and self-identifications. 43% of all possible true positive cross-identifications are due to CCL copies in different reference libraries.</s><s>Percentages do not sum up to 100% due to rounding errors.</s></p></div></figDesc><graphic coords="9,187.86,425.90,237.27,237.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 : Results of cross validation for different weight thresholds (columns 2 to 5)</head><label>1</label><figDesc></figDesc><table><row><cell>Weight Threshold</cell><cell>1.0</cell><cell>0.5</cell><cell>0.25</cell><cell>0.0</cell></row><row><cell>Maximally possible TPs</cell><cell></cell><cell>3573</cell><cell></cell><cell></cell></row><row><cell>True positives</cell><cell>3027 (3372)</cell><cell>3474 (3521)</cell><cell>3461 (3528)</cell><cell>3111 (3485)</cell></row><row><cell>False negatives</cell><cell>546 (201)</cell><cell>99 (52)</cell><cell>112 (45)</cell><cell>462 (88)</cell></row><row><cell>False positives</cell><cell>22 (18)</cell><cell>37 (94)</cell><cell>59 (155)</cell><cell>4631 (7689)</cell></row><row><cell>Sensitivity %</cell><cell>85 (94)</cell><cell>97 (99)</cell><cell>97 (99)</cell><cell>87 (98)</cell></row><row><cell>Specificity %</cell><cell></cell><cell>99</cell><cell></cell><cell></cell></row><row><cell>F1 %</cell><cell>91 (97)</cell><cell>98 (98)</cell><cell>98 (97)</cell><cell>55 (47)</cell></row><row><cell>Positive predictive value %</cell><cell>99 (99)</cell><cell>99 (97)</cell><cell>98 (96)</cell><cell>40</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 3 : Characteristics of the three CL reference library used in this work</head><label>3</label><figDesc></figDesc><table><row><cell>Reference</cell><cell>Total number</cell><cell>Cancer</cell><cell>Ø Variants</cell><cell>Number of</cell><cell>Variant calling</cell><cell>SNP MAF</cell></row><row><cell>Library</cell><cell>of variants</cell><cell>Cell Lines</cell><cell>per CL</cell><cell>genes covered</cell><cell>software</cell><cell>filtering</cell></row><row><cell>COSMIC CLP</cell><cell>760E5</cell><cell>1024</cell><cell>7,4E5</cell><cell>20965</cell><cell>Caveman(13) Pindel (14)</cell><cell>&gt; 0.0 (all)*</cell></row><row><cell>CCLE</cell><cell>140E5</cell><cell>904</cell><cell>1,5E5</cell><cell>1651</cell><cell>MuTect (15)</cell><cell>&gt; = 0.05</cell></row><row><cell>CellMiner</cell><cell>0,68E5</cell><cell>60</cell><cell>0,01E5</cell><cell>&gt; 20 k</cell><cell>GATK (16)</cell><cell>None</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">www.impactjournals.com/oncotarget</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ACKNOWLEDGMENTS</head><p><s>Special gratitude is expressed towards Dr. Bertram Weiss, Bayer Pharmaceuticals PLC, Target discovery department, for his inspiration and support during the development of this Cancer Cell Line identification method.</s><s>Further gratitude is expressed for the support by the research groups Michael Hummel and Inge Tinhofer-Keilholz, Charité Berlin.</s></p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Authors' contributions</head><p><s>All authors contributed to the manuscript.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CONFLICTS OF INTEREST</head><p><s>No conflicts of interest exist.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>FUNDING</head></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Match criteria for human cell line authentication: where do we draw the line?</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Capes-Davis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">A</forename><surname>Reid</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">C</forename><surname>Kline</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">R</forename><surname>Storts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Strauss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">G</forename><surname>Dirks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">G</forename><surname>Drexler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Macleod</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Sykes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kohara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Nakamura</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Elmore</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">W</forename><surname>Nims</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int J Cancer</title>
+		<imprint>
+			<biblScope unit="volume">132</biblScope>
+			<biblScope unit="page" from="2510" to="2519" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Cancer Cell Line Encyclopedia C, Genomics of Drug Sensitivity in Cancer C. Pharmacogenomic agreement between two cancer cell line data sets</title>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">528</biblScope>
+			<biblScope unit="page" from="84" to="87" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">High-throughput SNP-based authentication of human cell lines</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Castro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">G</forename><surname>Dirks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Fahnrich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Hotz-Wagenblatt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Pawlita</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Schmitt</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Int J Cancer</title>
+		<imprint>
+			<biblScope unit="volume">132</biblScope>
+			<biblScope unit="page" from="308" to="314" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">SNP panel identification assay (SPIA): a genetic-based assay for the identification of cell lines</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Demichelis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Greulich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Macoska</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Beroukhim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">R</forename><surname>Sellers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Garraway</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Rubin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="page" from="2446" to="2456" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Evaluating information content of SNPs for sample-tagging in re-sequencing projects</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jin</forename><forename type="middle">W</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Hilger</forename><surname>Ropers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Wienker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">F</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Sci Rep</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page">10247</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Short tandem repeat profiling provides an international reference standard for human cell lines</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Masters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Thomson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Daly-Burns</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">A</forename><surname>Reid</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">G</forename><surname>Dirks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Packer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">H</forename><surname>Toji</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Ohno</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Tanabe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">F</forename><surname>Arlett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">R</forename><surname>Kelland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Harrison</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Virmani</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proc Natl Acad Sci</title>
+		<imprint>
+			<biblScope unit="volume">98</biblScope>
+			<biblScope unit="page" from="8012" to="8017" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Genetic profiling reveals cross-contamination and misidentification of 6 adenoid cystic carcinoma cell lines: ACC2, ACC3, ACCM, ACCNS, ACCS, CAC2</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Phuchareon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Ohta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Woo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">W</forename><surname>Eisele</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Tetsu</surname></persName>
+		</author>
+		<ptr target="e6040.www.impactjournals.com/oncotarget" />
+	</analytic>
+	<monogr>
+		<title level="j">PLoS One</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">A resource for cell line authentication, annotation and quality control</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">K</forename><surname>Selvaraj</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">M</forename><surname>Liang-Chu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Aghajani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Busse</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Peale</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Klijn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Bourgon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Kaminker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">M</forename><surname>Neve</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">520</biblScope>
+			<biblScope unit="page" from="307" to="311" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Human cancer cell lines: fact and fantasy</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Masters</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Rev Mol Cell Biol</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="233" to="236" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Widespread intraspecies crosscontamination of human tumor cell lines arising at source</title>
+		<author>
+			<persName><forename type="first">Raf</forename><surname>Macleod</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">G</forename><surname>Dirks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Matsuo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kaufmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Milch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">G</forename><surname>Drexler</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Cancer</title>
+		<imprint>
+			<biblScope unit="volume">83</biblScope>
+			<biblScope unit="page" from="555" to="563" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Further evidence to support the melanocytic origin of MDA-MB-435</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Ellison</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Molecular Pathology</title>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="page" from="294" to="299" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">The Cancer Cell Line Encyclopedia enables predictive modelling of anticancer drug sensitivity</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Barretina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Caponigro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Stransky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Venkatesan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">A</forename><surname>Margolin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Wilson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lehar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">V</forename><surname>Kryukov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Sonkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Reddy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Murray</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">483</biblScope>
+			<biblScope unit="page" from="603" to="607" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Systematic identification of genomic markers of drug sensitivity in cancer cells</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Garnett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">J</forename><surname>Edelman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Heidorn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">D</forename><surname>Greenman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Dastur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">W</forename><surname>Lau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Greninger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">R</forename><surname>Thompson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Soares</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Iorio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Surdez</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">483</biblScope>
+			<biblScope unit="page" from="570" to="575" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">F</forename><surname>Iorio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">A</forename><surname>Knijnenburg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Vis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">R</forename><surname>Bignell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">P</forename><surname>Menden</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Schubert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Aben</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Goncalves</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Barthorpe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Lightfoot</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Cokelaer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Greninger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Van Dyk</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Landscape of Pharmacogenomic Interactions in Cancer. Cell</title>
+		<imprint>
+			<biblScope unit="volume">166</biblScope>
+			<biblScope unit="page" from="740" to="754" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">NCI-60 whole exome sequencing and pharmacological CellMiner analyses</title>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">C</forename><surname>Reinhold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Varma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Sousa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Sunshine</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><forename type="middle">D</forename><surname>Abaan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">R</forename><surname>Davis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">W</forename><surname>Reinhold</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">W</forename><surname>Kohn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Morris</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">S</forename><surname>Meltzer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Doroshow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Pommier</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PLoS One</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page">e101670</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">COSMIC: exploring the world&apos;s knowledge of somatic mutations in human cancer</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Forbes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Beare</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Gunasekaran</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Leung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Bindal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Boutselakis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bamford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Cole</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ward</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">Y</forename><surname>Kok</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Jia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>De</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<biblScope unit="page" from="D805" to="811" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Loss of Y Chromosome in Peripheral Blood of Colorectal and Prostate Cancer Patients</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Noveski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Madjunkova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Sukarova</forename><surname>Stefanovska</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Matevska</forename><surname>Geshkovska</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Kuzmanovska</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Dimovski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Plaseska-Karanfilska</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PLoS One</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page">e0146264</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Discrepancies in cancer genomic sequencing highlight opportunities for driver mutation discovery</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Hudson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Yates</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">W</forename><surname>Trotter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Fawdar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Chapman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Lorigan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Biankin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">J</forename><surname>Miller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Brognard</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cancer Res</title>
+		<imprint>
+			<biblScope unit="volume">74</biblScope>
+			<biblScope unit="page" from="6390" to="6396" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Genome structural variation discovery and genotyping</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Alkan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">P</forename><surname>Coe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">E</forename><surname>Eichler</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Rev Genet</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="363" to="376" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">An NGS Workflow Blueprint for DNA Sequencing Data and Its Application in Individualized Molecular Oncology</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Batcha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Gruning</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><forename type="middle">R</forename><surname>Mansmann</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cancer Inform</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page" from="87" to="107" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">An integrated map of genetic variation from 1,092 human genomes</title>
+		<author>
+			<persName><forename type="first">Genomes</forename><surname>Project</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Abecasis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">R</forename><surname>Auton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Brooks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">D</forename><surname>Depristo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Durbin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">M</forename><surname>Handsaker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">E</forename><surname>Kang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">M</forename><surname>Marth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">T</forename><surname>Mcvean</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">A</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">491</biblScope>
+			<biblScope unit="page" from="56" to="65" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Overcoming trastuzumab resistance in HER2-overexpressing breast cancer cells by using a novel celecoxib-derived phosphoinositide-dependent kinase-1 inhibitor</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">H</forename><surname>Tseng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">C</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">C</forename><surname>Weng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Weng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">S</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">W</forename><surname>Brueggemeier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">L</forename><surname>Shapiro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">Y</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">E</forename><surname>Dunn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Pollak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">S</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Mol Pharmacol</title>
+		<imprint>
+			<biblScope unit="volume">70</biblScope>
+			<biblScope unit="page" from="1534" to="1541" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">HEL cells: a new human erythroleukemia cell line with spontaneous and induced globin expression</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Martin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Papayannopoulou</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">216</biblScope>
+			<biblScope unit="page" from="1233" to="1235" />
+			<date type="published" when="1982">1982</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Large-scale gene function analysis with the PANTHER classification system</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Mi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Muruganujan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">T</forename><surname>Casagrande</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">D</forename><surname>Thomas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Protoc</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="1551" to="1566" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Controlling the False Discovery Rate -a Practical and Powerful Approach to Multiple Testing</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Benjamini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Hochberg</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Royal Statistical Society Series B-Methodological</title>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="page" from="289" to="300" />
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

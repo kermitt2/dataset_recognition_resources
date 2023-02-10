@@ -1,0 +1,651 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">The MiAge Calculator: a DNA methylation-based mitotic age calculator of human tissue types</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Ahrim</forename><surname>Youn</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Biostatistics</orgName>
+								<orgName type="department" key="dep2">Mailman School of Public Health</orgName>
+								<orgName type="institution">Columbia University</orgName>
+								<address>
+									<settlement>New York</settlement>
+									<region>New York</region>
+									<country key="US">U.S.A</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="institution">The Jackson Laboratory for Genomic Medicine</orgName>
+								<address>
+									<settlement>Farmington, Connecticut</settlement>
+									<country key="US">U.S.A</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Shuang</forename><surname>Wang</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department" key="dep1">Department of Biostatistics</orgName>
+								<orgName type="department" key="dep2">Mailman School of Public Health</orgName>
+								<orgName type="institution">Columbia University</orgName>
+								<address>
+									<settlement>New York</settlement>
+									<region>New York</region>
+									<country key="US">U.S.A</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff2">
+								<orgName type="department" key="dep1">Department of Biostatistics</orgName>
+								<orgName type="department" key="dep2">Mailman School of Public Health</orgName>
+								<orgName type="institution">Columbia University</orgName>
+								<address>
+									<settlement>New York</settlement>
+									<region>New York, U</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">The MiAge Calculator: a DNA methylation-based mitotic age calculator of human tissue types</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">97644B4D4FBBA98B6E4D6A67DAFDB5B7</idno>
+					<idno type="DOI">10.1080/15592294.2017.1389361</idno>
+					<note type="submission">Received 23 June 2017 Revised 20 September 2017 Accepted 4 October 2017</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:41+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>DNA methylation</term>
+					<term>cell divisions</term>
+					<term>mitotic age</term>
+					<term>statistical method</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Cell division is important in human aging and cancer.</s><s>The estimation of the number of cell divisions (mitotic age) of a given tissue type in individuals is of great interest as it allows not only the study of biological aging (using a new molecular aging target) but also the stratification of prospective cancer risk.</s><s>Here, we introduce the MiAge Calculator, a mitotic age calculator based on a novel statistical framework, the MiAge model.</s><s>MiAge is designed to quantitatively estimate mitotic age (total number of lifetime cell divisions) of a tissue using the stochastic replication errors accumulated in the epigenetic inheritance process during cell divisions.</s><s>With the MiAge model, the MiAge Calculator was built using the training data of DNA methylation measures of 4,020 tumor and adjacent normal tissue samples from eight TCGA cancer types and was tested using the testing data of DNA methylation measures of 2,221 tumor and adjacent normal tissue samples of five other TCGA cancer types.</s><s>We showed that within each of the thirteen cancer types studied, the estimated mitotic age is universally accelerated in tumor tissues compared to adjacent normal tissues.</s><s>Across the thirteen cancer types, we showed that worse cancer survivals are associated with more accelerated mitotic age in tumor tissues.</s><s>Importantly, we demonstrated the utility of mitotic age by showing that the integration of mitotic age and clinical information leads to improved survival prediction in six out of the thirteen cancer types studied.</s><s>The MiAge Calculator is available at http://www.columbia.edu/»sw2206/softwares.htm.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p><s>The lifetime risks of many cancers are suggested to be correlated with the lifetime number of cell divisions of normal stem cells within those tissues <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b1">2]</ref>.</s><s>Thus, the estimation of the number of cell divisions, that is, the construction of molecular mitotic clocks of a given tissue type in individuals allows stratification according to prospective cancer risk.</s><s>Progress was made very recently with the construction of the DNA methylation-based mitotic-like clock epiTOC <ref type="bibr" target="#b2">[3]</ref>.</s><s>This mitotic-like clock focuses on Polycomb group promoter CpGs and selected those CpGs for which DNA methylation levels increase with chronological age and are unmethylated in fetal tissues.</s><s>By correlating the tick rate prediction from the model to the rate of stem cell divisions in normal tissues and an mRNA expressionbased mitotic index in cancer tissues, this model is demonstrated to approximate a mitotic-like clock.</s></p><p><s>Here, we approached the same problem differently and introduced MiAge, a novel statistical model that quantitatively estimates mitotic age of a tissue using DNA methylation data.</s><s>MiAge uses a molecular clock hypothesis <ref type="bibr" target="#b3">[4]</ref>.</s><s>As a cell divides during normal human development and aging, in theory, the greater the number of divisions, the greater the number of somatic replication errors.</s><s>Based on this molecular clock hypothesis, the majority of epigenetic changes in a genome as a cell divides are neutral ("passenger"), with minimal selective value.</s><s>Those passenger changes are "odometer-like" clicks of a molecular clock <ref type="bibr" target="#b4">[5,</ref><ref type="bibr" target="#b5">6]</ref>.</s><s>The proposed MiAge statistical model utilizes the stochastic replication errors accumulated during cell divisions.</s><s>Per cell division, two events could occur at a CpG site when epigenetic patterns are inherited: an existing methyl group may be lost (failure of maintenance) or a new methyl group may be added (de novo methylation) <ref type="bibr" target="#b6">[7]</ref>.</s><s>Observed methylation levels at CpG sites thus may change stochastically over many cell divisions according to the probabilities of failure of maintenance and de novo methylation.</s><s>Under the MiAge model, there are four types of CpG sites as a cell divides: (i) sites with methylation levels monotonically increasing over cell divisions if they have low initial methylation levels at the first cell generation, low probability of failure of maintenance and high probability of de novo methylation, which we name increasingmethylated CpGs and are informative in inferring mitotic age; (ii) sites with methylation levels monotonically decreasing over cell divisions if they have high initial methylation levels at the first cell generation, high probability of failure of maintenance, and low probability of de novo methylation, which we name decreasing-methylated CpGs and are informative in inferring mitotic age; (iii) sites with stationary methylation levels over cell divisions that are not informative in inferring mitotic age; and (iv) sites with unstable methylation levels, which are dynamic but not informative in inferring mitotic age.</s><s>The MiAge model assumes site-specific parameters at a CpG site: the methylation level at the first cell generation, the probability of failure of maintenance, and the probability of de novo methylation are the same for all tissue samples of the same type.</s><s>By comparing observed to expected methylation levels at presentday genome under the MiAge model, we are able to estimate the total number of cell divisions a tissue sample has gone through, as well as the site-specific parameters of selected CpGs that are most informative in inferring mitotic activities using a selection procedure imbedded in the MiAge model.</s><s>We applied the MiAge model to training data of DNA methylation measures of 4,020 tumor and adjacent normal samples of 8 cancer types and built the MiAge Calculator that consists of a panel of 286 increasing-methylated CpGs that are mitotic-activity-informative together with their estimated site-specific parameters, which can be applied to methylation data of new samples of other tissue types to estimate their mitotic age.</s><s>We tested this non-tissue-specific property of the MiAge Calculator using testing data of DNA methylation measures of 2,221 tumor and adjacent normal samples of 5 cancer types different from the 8 cancer types in the training data.</s><s>We further validated the MiAge Calculator by showing high correlations between estimated mitotic age and three surrogate measures of the unknown true mitotic age.</s></p><p><s>Although we focused on cancer applications, the MiAge Calculator is readily applicable to aging studies using DNA methylation measures to estimate mitotic age as a new molecular target of aging marker.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p><s>Estimation of mitotic age using a novel statistical framework based on DNA methylation transmission MiAge statistical model.</s><s>The MiAge model quantitatively estimates total number of cell divisions, i.e., mitotic age, of a tissue sample using DNA methylation data.</s><s>To model changes in methylation patterns accumulated through cell divisions across CpGs, MiAge uses a previously developed model for methylation transmission process per cell division (Figure <ref type="figure" target="#fig_0">1</ref>(a)) <ref type="bibr" target="#b6">[7]</ref>, from which we derived all possible probabilistic methylation transition events at a CpG (Figure <ref type="figure" target="#fig_0">1(b)</ref>), where P n is the methylation status (1 if methylated and 0 otherwise) of a pre-replication parent strand in the n th cell generation; Q n is the methylation status of a post-methylation parent strand; D n is the methylation status of a post-methylation daughter strand; m is the probability of maintaining methylation during a cell division; and d p and d d are the probabilities of de novo methylation event on the parent and daughter strand.</s><s>Thus X n = (Q n +D n )/2 is the mean methylation status of the double strands at a CpG site on one sister chromosome in the n th cell generation in one cell.</s><s>The key feature of MiAge that makes the estimation of mitotic age possible is that the mean methylation status of the double strands of one sister chromosome X n at a CpG in the n th cell generation of one cell only depends on X n-1 , that of the previous (n-1) th cell generation.</s><s>That is, the probability distribution of Pr(X n jX n-1 ) can be readily derived based on the methylation transmission process as a function of the probabilities of de novo methylation d p , d d , the probability of failure of maintenance, 1-m [see Supplementary Materials for detailed derivation of Pr(X n jX n-1 )].</s><s>We can safely assume that the two sister chromosomes have the same transition process during cell divisions, thus having the same X n at the CpG.</s></p><p><s>By recursively applying the methylation transmission probability Pr(X n jX n-1 ), we can derive E(X n ), the mean methylation level at a CpG in the n th cell generation of a tissue sample assuming all cells of this tissue sample have gone through the same number of cell divisions n [see Supplementary materials for detailed derivation of E(X n )].</s><s>If we introduce the index i for CpG sites and index j for tissue samples, we can model the mean methylation level at CpG i in the n j th cell generation of tissue sample j, EðX n j ;i Þ, using Equation (1).</s></p><formula xml:id="formula_0">EðX n j ;i Þ ¼ a i 1 À b i þ b n j À1 i EðX 1;i Þ À a i 1 À b i ; when b i 6 ¼ 1: (1)</formula><p><s>Here we assume parameters a i ; b i , EðX 1;i Þ at CpG site i are site-specific and are the same across samples.</s><s>Here a i ¼ ðd</s></p><formula xml:id="formula_1">p i þ d d i Þ=2</formula><p><s>describes the average rate of de novo methylation at CpG i, and b</s></p><formula xml:id="formula_2">i ¼ ð1 þ m i À d p i À d d i Þ=2</formula><p><s>describes the fidelity of methylation maintenance at CpG i, and E(X 1,i ) is the methylation level at CpG i in the 1 st cell generation.</s><s>When b i ¼ 1; we have</s></p><formula xml:id="formula_3">d p i ¼ d d i ¼ 0 and m i ¼ 1.</formula><p><s>That is, the methylation status is perfectly transmitted with no random errors as cell divides, i.e., EðX n j ;i Þ ¼ EðX 1;i Þ.</s><s>We assume that every CpG is methylated independently of other CpGs in the genome.</s></p><p><s>With methylation measures at many CpG sites from many samples, we can estimate number of cell divisions n j of sample j and parameters a i , b i , and EðX 1;i Þ of CpG i by minimizing the following objective function in Equation (2), which compares the observed methylation level at CpG i of sample j, b i,j to expected methylation level under the MiAge model, EðX n j ;i Þ, across all samples and CpG sites.</s></p><formula xml:id="formula_4">f ¼ X i X j EðX n j ;i Þ À b i;j 2 :<label>(2)</label></formula><p><s>Here, f is the sum of squares of the difference between observed and expected methylation levels, summed over all samples at CpG i, and then summed over all CpGs.</s><s>Details of the optimization procedure are in the Materials and methods section.</s></p><p><s>MiAge is coupled with a procedure to select informative CpGs.</s><s>As we pointed out, under the MiAge model, there are four types of CpG sites as cell divides depending on the value of the sitespecific parameters a i ; b i , EðX 1;i Þ: (i) sites with increasing-methylated levels, which are informative in inferring mitotic age; (ii) sites with decreasing-methylated levels, which are also informative in inferring mitotic age; and (iii) sites with stationarymethylation levels, which are not informative in inferring mitotic age; and (iv) sites with unstable methylation levels, which are dynamic but are not informative in inferring mitotic age.</s></p><p><s>We need to separate informative CpGs from uninformative CpGs.</s><s>The second step of MiAge is thus an iterative procedure to simultaneously select informative CpGs while estimating mitotic age n j during the optimization procedure of Equation (2).</s><s>To do this, we proposed an informativeness score s i for CpG i, and a cutoff c 0 for s i to determine which sites are informative, prior to the optimization procedure of the objective function in Equation <ref type="bibr" target="#b1">(2)</ref>.</s><s>The detailed description of the informativeness score s i and the procedure to define the cutoff c 0 are provided in the Materials and methods section.</s></p><p><s>Unidentifiability problem of MiAge.</s><s>One important caveat when minimizing the objective function f in Equation ( <ref type="formula" target="#formula_4">2</ref>) is that there is no unique solution minimizing f.</s><s>As explained in more detail in the Materials and methods section, the sets</s></p><formula xml:id="formula_5">n j È É and cÁn j À c þ 1 È É</formula><p><s>for a constant c give the same value of f with different sets of site-specific parameters a i , b i , and EðX 1;i Þ.</s><s>That is, if the true mitotic age is n j È É , the best estimate will be cÁn j À c þ 1 È É for some constant c.</s><s>Thus, the estimated mitotic age is proportional to the true mitotic age and should be interpreted as a relative number rather than an actual number.</s><s>Similarly, the estimated site-specific parameters a i , b i , and EðX 1;i Þ are also proportional to the true values.</s><s>However, this unknown constant is the same for all samples, thus the estimated relative mitotic ages are comparable across samples.</s></p><p><s>Simulation Studies of MiAge.</s><s>We conducted a set of simulation studies to investigate the feasibility and performance of MiAge and the robustness of MiAge to misspecifications of Subsequently, methyl groups are added to cytosines.</s><s>In this process, failure of maintenance and/or de novo methylation events can occur with certain probabilities.</s><s>(b) All methylation transition events that happen within a cell division.</s><s>At a CpG site, P n is the methylation status (1 if methylated and 0 otherwise) of a pre-replication parent strand in the n th cell generation; Q n is the methylation status of a post-methylation parent strand; D n is the methylation status of a post-methylation daughter strand; m is the probability of maintaining methylation during a cell division; and d p and d d are the probabilities of de novo methylation event on the parent and daughter strand.</s><s>Thus X n = (Q n +D n )/2 is the mean methylation status of the double strands at a CpG site on one sister chromosome in the n th cell generation in one cell.</s></p><p><s>several key model assumptions.</s><s>To mimic real DNA methylation data, the site-specific parameters a i , b i , and EðX 1;i Þ for each CpG i were set as the estimates from applying MiAge to TCGA BRCA Illumina HumanMethylation450 (450K) array data of 745 tumor samples and 96 adjacent normal samples.</s><s>Specifically, using those site-specific parameter estimates, we calculated EðX n j ;i Þ using the Equation (1) for about 450K CpGs of 101 tissue samples setting the true mitotic age n j for sample j, j = 1,…,101 to range from 100 to 1,100 increasing by 10.</s><s>We considered three error settings: no error when observed methylation levels b i,j equal to the expected methylation levels, b i,j = E(X nj,i ); small errors b i,j = E(X nj,i ) §e i,j , e i,j »N(0,0.01);</s><s>and large errors b i,j = E(X nj,i ) §e i,j , e i,j »N(0,0.05).</s><s>The histograms of the three sets of simulated methylation values and the real methylation values of the 841 TCGA breast tumor and adjacent normal samples suggested that real methylation data is in between the small and large error scenarios (Supplementary Figure <ref type="figure" target="#fig_0">S1</ref>).</s><s>The mitotic age estimates of MiAge model from the three error settings are all very much proportional to the true mitotic age even with large errors added (Figure <ref type="figure" target="#fig_1">2</ref>), which indicates that MiAge is feasible with the unidentifiability problem.</s><s>The estimated and true values of the site-specific parameters a i ; b i , EðX 1;i Þ of the selected informative CpGs for the three error settings are also proportional (Supplementary Figure <ref type="figure" target="#fig_2">S3</ref>).</s><s>In the following simulation settings, we simulated methylation values with large errors added.</s></p><p><s>We next investigated the robustness of MiAge when the assumption that the site-specific parameters a i ; b i , EðX 1;i Þ at CpG i are the same across samples is not met.</s><s>To do so, we simulated methylation data allowing each sample j to have different site-specific parameters.</s><s>With methylation data simulated this way (see Materials and methods for details of the simulation steps), we estimated mitotic ages using MiAge that assumes the same site-specific parameters across samples.</s><s>The estimated and true mitotic age in this simulation scenario are very much proportional (Supplementary Figure <ref type="figure" target="#fig_3">S4</ref>), indicating that MiAge is robust to this key assumption.</s></p><p><s>Another key assumption of MiAge is that all cells of tissue sample j have gone through the same number of cell divisions n j .</s><s>To investigate the model robustness to this assumption, we simulated methylation values b i,j for CpG i sample j as a mixture of methylation values from two or more different types of cells whose true mitotic ages are different (see Materials and methods for detailed simulation steps).</s><s>The results suggest that when a tissue sample is a mixture of two or more different cell types with very different true mitotic ages, if the proportion of one cell type is high, the mitotic age estimated using MiAge that assumes cellular homogeneity is very much proportional to the true mitotic age of the dominating cell type (Supplementary Figure <ref type="figure" target="#fig_4">S5</ref>).</s></p><p><s>We next examined if we can combine DNA methylation datasets from multiple tissue types and compare the estimated mitotic ages across tissue types.</s><s>We simulated methylation values of two tissue types allowing a bigger between-tissue difference than a within-tissue difference across samples in sitespecific parameters (see Materials and Methods for detailed simulation steps).</s><s>The results, again, suggest that the estimated mitotic age is very much proportional to the true mitotic age (Supplementary Figure <ref type="figure" target="#fig_5">S6</ref>).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Building the MiAge Calculator</head><p><s>Training and testing data from TCGA for the MiAge Calculator.</s><s>We obtained 450K DNA methylation data of cancer types with enough number of adjacent normal samples from TCGA in order to compare estimated mitotic ages of tumor samples to that of adjacent normal samples from same patients.</s><s>Our simulation study suggested a minimum sample size of 30 for accurate mitotic age estimations (Supplementary Figure <ref type="figure" target="#fig_6">S7</ref>).</s><s>TCGA cancer types that meet this criterion include breast invasive carcinoma (BRCA, 745 tumor and 96 normal samples), colon adenocarcinoma (COAD, 301 tumor and 38 normal samples), head and neck squamous cell carcinoma (HNSC, 530 tumor and 50 normal samples), kidney renal papillary cell carcinoma (KIRP, 276 tumor and 45 normal samples), kidney renal clear cell carcinoma (KIRC, 325 tumor and 160 normal samples), liver hepatocellular carcinoma (LIHC, 292 tumor and 50 normal samples), lung adenocarcinoma (LUAD, 466 tumor and 32 normal samples), lung squamous cell carcinoma (LUSC, 359 tumor and 42 normal samples), prostate adenocarcinoma (PRAD, 503 tumor and 50 normal samples), thyroid carcinoma (THCA, 515 tumor and 56 normal samples), and uterine corpus endometrial carcinoma (UCEC, 439 tumor and 34 normal samples).</s></p><p><s>Of these 11 cancer types, we used 8 cancer types (BRCA, COAD, HNSC, KIRP, LIHC, PRAD, THCA, UCEC) to build the MiAge Calculator, and used the rest 3 cancer types (LUAD, LUSC, KIRC) to test the non-tissue-specific property of the MiAge Calculator.</s><s>In order to have more cancer types in the testing data, we added two more TCGA cancer types that have the largest number of samples with DNA methylation data and some adjacent normal samples: bladder urothelial carcinoma (BLCA, 419 tumor and 21 normal samples), and stomach adenocarcinoma (STAD, 395 tumor and 2 normal samples).</s><s>For most of the TCGA cancer patients, one primary tumor sample was taken.</s><s>For a few patients, one from primary tumor and one from metastasized tumor were taken.</s><s>Rarely, multiple primary tumor samples were taken from one patient.</s><s>For validation steps correlating mitotic age with unknown true mitotic age, we will use all samples.</s><s>For correlating mitotic age with clinical variables and for survival prediction, we will use primary tumor only and for those with multiple primary tumor samples, we will use averaged mitotic age from multiple primary tumor samples for the patient.</s></p><p><s>Building the MiAge Calculator with training data of 8 TCGA cancer types.</s><s>With the MiAge model, we built the MiAge Calculator, a non-tissue-specific mitotic age calculator, using the training data of 8 TCGA cancer types.</s><s>There are two major steps in building the MiAge Calculator: i) to select a panel of "mitotic clock CpGs" that are neither tumor-related nor tissuespecific but are mostly informative in measuring mitotic activities and ii) to estimate site-specific parameters a i ; b i , EðX 1;i Þ of the selected panel of "mitotic clock" CpGs.</s></p><p><s>In identifying a panel of "mitotic clock" CpGs, the idea is that there exist "odometer-like" CpGs that are neither tumorrelated nor tissue-specific but are mostly related to mitotic activities so that the defined panel of informative CpGs are considered as "mitotic clock" CpGs and can be used for other tissue types in other studies.</s><s>For each of the 8 TCGA cancer types in the training data, we applied the MiAge model to DNA methylation data of available tumor and normal samples and identified 8 sets of informative CpGs that are either increasing-or decreasing-methylated (see detailed steps for selecting "mitotic clock" CpGs in Supplementary Materials).</s><s>We then overlapped these 8 sets of informative CpGs and obtained 268 increasingmethylated CpGs and 4,014 decreasing-methylated CpGs.</s><s>Both increasing-and decreasing-methylated are a known frequent characteristic of a variety of cancers but seem to affect different DNA sequences, with hypermethylation playing a transcription silencing role at promoters of many tumor suppressor genes and hypomethylation playing a less understood and more complicated role, including activation of tumor promoting genes and increased karyotypic instability <ref type="bibr" target="#b7">[8]</ref><ref type="bibr" target="#b8">[9]</ref><ref type="bibr" target="#b9">[10]</ref><ref type="bibr" target="#b10">[11]</ref><ref type="bibr" target="#b11">[12]</ref><ref type="bibr" target="#b12">[13]</ref><ref type="bibr" target="#b13">[14]</ref><ref type="bibr" target="#b14">[15]</ref>.</s><s>Recent research has shown that age-associated methylation changes observed within normal samples are more coherently observed within tumor samples at age-hypermethylated sites than age-hypomethylated sites <ref type="bibr" target="#b15">[16]</ref>.</s><s>This is also supported by Yang et al <ref type="bibr" target="#b2">[3]</ref>.</s><s>who also used age-hypermethylated sites in their mitoticlike clock epiTOC and showed that hypomethylation did not correlate well with the mitotic index in cancer tissue.</s><s>Therefore, we chose to use the panel of 268 increasing-methylated CpGs to build the MiAge Calculator.</s><s>We conducted a sensitivity analysis using the combined panel of the 268 increasing-methylated CpGs and the 4,014 decreasing-methylated CpGs as the selected panel of 4,282 "mitotic clock" CpGs and observed a lot weaker correlations between estimated mitotic ages and several surrogate measures of the unknown true mitotic ages (Supplementary Figure <ref type="figure">S9</ref> for results of the sensitivity analysis using 4,282 CpGs).</s><s>This supports our choice of the panel of 268 increasing-methylated CpG sites as the selected informative sites, which is also consistent with previous publications <ref type="bibr" target="#b2">[3,</ref><ref type="bibr" target="#b15">16]</ref>.</s><s>Information on these 268 CpGs is presented in Supplementary Table <ref type="table" target="#tab_1">S2</ref>, where averaged informativeness scores were obtained from the 8 sets of informativeness scores from the eight cancer types in the training data.</s></p><p><s>We then estimated site-specific parameters a i ; b i , EðX 1;i Þ of the selected panel of 268 "mitotic clock CpGs".</s><s>To do so, we further randomly selected the same number of tumor and adjacent normal pairs from each of the 8 cancer types in the training data.</s><s>This is because, the objective function in Equation ( <ref type="formula" target="#formula_4">2</ref>) is the sum of squares of the differences between expected and observed methylation values across all samples and all CpGs.</s><s>If the number of samples of a cancer type is much greater than that of other cancer types, it may dominate the objective function and drive the optimization process in its favor.</s><s>Among the 8 cancer types in the training data, UCEC has the smallest number of adjacent normal samples (n = 34).</s><s>We thus randomly selected 34 tumor and adjacent normal pairs from other 7 cancer types.</s><s>Using this data with 8 cancer types of 34 tumor and adjacent normal pairs each, we obtained the estimates of site-specific parameters a i ; b i , EðX 1;i Þ of the selected panel of 268 "mitotic clock CpGs" through minimizing the objective function in Equation <ref type="bibr" target="#b1">(2)</ref>.</s><s>These parameter estimates of the 268 "mitotic clock CpGs" are then built-in the MiAge Calculator.</s><s>The MiAge Calculator can be applied to estimate mitotic ages of any tissue samples using the DNA methylation data of this panel of 268 CpGs by minimizing the objective function in Equation <ref type="bibr" target="#b1">(2)</ref>.</s></p><p><s>With the panel of 268 increasing-methylated "mitotic clock" CpGs (Supplementary Table <ref type="table" target="#tab_1">S2</ref>) and the built-in site-specific parameter estimates of the 268 "mitotic clock" CpGs, we can estimate mitotic ages, which are proportional to the true mitotic ages by an unknown constant c.</s><s>Since this constant c is the same for all samples, the estimated mitotic ages are comparable across samples, across tissue types, and across studies.</s><s>The MiAge Calculator is computationally efficient with running time increasing linearly with the number of samples.</s><s>With 500 samples, it takes 25 seconds on Intel(R) Xeon(R) CPU E5-2630 0 @ 2.30GHz.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Stability of the MiAge</head><p><s>Calculator with respect to the selection procedure.</s><s>Having different number of tumor types in the training set may change the mitotic informative clock sites selected that are commonly increasing-methylated across these tumor types.</s><s>We therefore investigated how stable the MiAge Calculator is with respect to the number of tumor types used in selecting the mitotic clock sites.</s><s>When we defined the mitotic clock sites as those commonly increasing-methylated in at least 6 tumor types in the training data, 19,593 mitotic clock sites were selected.</s><s>In doing so, we worked on all 28 possible combinations of 6 tumor types out of the 8 tumor types and the 19,593 mitotic clock sites are the overlapping sites out of the 28 sets of mitotic clock CpGs selected from the 28 possible 6 tumor sets.</s><s>When we used 7 tumor types, 4,253 sites were similarly selected, compared to the 268 sites selected when we used all 8 tumor types.</s><s>Although the number of selected mitotic clock sites varies, the mitotic age estimates using the three different sets of mitotic clock sites are highly correlated.</s><s>We calculated mitotic age of tumor and normal samples of all cancer types (n = 6,261) and the correlation between mitotic age estimates using 268 sites and that using 4,253 sites is 0.97.</s><s>The correlation between mitotic age estimates using 268 sites and that using 19,593 sites is 0.89, and the correlation between mitotic age estimates using 4,253 sites and that using 19,593 sites is 0.96.</s><s>These results show that the mitotic age estimated using the MiAge Calculator is very robust with respect to the number of tumor types used in the training data for selecting mitotic clock informative sites.</s></p><p><s>In addition, in building the MiAge Calculator, after the selection of the 268 increasing-methylated mitotic clock CpGs, we randomly selected subsamples in each of the 8 tumor types so that every tumor type is represented by equal number of samples.</s><s>This is because, the objective function Equation ( <ref type="formula" target="#formula_4">2</ref>) that estimates mitotic age is the sum of squares of the differences between expected and observed methylation values across all samples and all CpGs.</s><s>If the number of samples of a cancer type is much greater than that of other cancer types, it may dominate the objective function and drive the optimization process in its favor.</s><s>To investigate the impact of the random subsamples on the site-specific parameter estimates of the 268 sites, a i ; b i , EðX 1;i Þ, we also conducted additional analyses where we repeated the random subsampling procedure 10 times and estimated the site-specific parameters of the 268 clock sites.</s><s>We then estimated mitotic ages of tumor and adjacent normal samples of all cancer types (n = 6,261) using these 10 sets of site-specific parameter estimates.</s><s>We found that the averaged correlation between the 10 sets of parameter estimates using the new subsamples and the parameter estimates built-in the MiAge Calculator using the first set of subsample is 0.934 for a i , 0.923 for b i and 0.996 for EðX 1;i Þ.</s><s>The averaged correlation between the 10 sets of 6,261 mitotic age estimates of tumor and normal samples of all cancer types (n = 6,261) using the 10 sets of site-specific parameter estimates and that using the MiAge Calculator is 0.999.</s><s>These results show that the MiAge Calculator is very robust with respect to the samples used for its training.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Performance of the MiAge Calculator</head><p><s>Validation of the non-tissue-specific property of the MiAge Calculator using a testing data of 5 different cancer types.</s><s>We first validated the non-tissue-specific property of the MiAge Calculator using a testing data of DNA methylation measures of 2,221 samples of 5 independent TCGA cancer types: BLCA, KIRC, LUAD, LUSC, and STAD.</s><s>Within each cancer type in the testing data, we first built a temporary tissue-specific calculator using tumor and adjacent normal tissue samples from the cancer type only and then compared the mitotic ages estimated using the temporary tissue-specific calculator with the mitotic ages estimated using the non-tissue-specific MiAge Calculator.</s><s>Within each of the 5 cancer types in the testing data, the correlations are 0.98 for BLCA, 0.99 for KIRC, 0.96 for LUAD, 0.92 for LUSC, and 0.94 for STAD.</s><s>The high correlations indicate that the MiAge Calculator using a panel of 268 CpGs selected across the 8 cancer types in the training data is indeed non-tissue-specific.</s><s>The MiAge Calculator therefore can be applied to DNA methylation data of the panel of selected 268 CpGs from any tissue types.</s></p><p><s>Validation of MiAge Calculator using surrogate measures of unknown true mitotic ages.</s><s>Having validated the non-tissuespecific property of the MiAge Calculator in several independent cancer types in the testing data, we next validated the MiAge Calculator by correlating mitotic age estimates with several surrogate measures of unknown true mitotic ages.</s><s>We correlated (i) the mitotic age estimates of some cell cultures with their passage numbers; (ii) the mitotic age estimates of TCGA tumor samples with number of somatic mutations accumulated in the same tumor samples across the 13 cancer types in the training and testing data; and (iii) the mitotic age estimates of TCGA adjacent normal samples that are proliferative with patients' chronological ages.</s></p><p><s>Using the MiAge Calculator, we first estimated mitotic ages of 31 human embryonic stem (ES) cells and 35 human induced pluripotent stem (iPS) cells and then compared those with their passage numbers (Figure <ref type="figure" target="#fig_2">3</ref>(a)) <ref type="bibr" target="#b16">[17]</ref>.</s><s>Although ES cells and iPS cells are different from tumor cells, the MiAge Calculator can be applied to their methylation measures to estimate the number of cell divisions of these cells, since the MiAge Calculator is based on mitotic clock informative CpG sites whose methylation alteration patterns are mostly related to mitotic activities.</s><s>The ES cells, although different from tumor and adjacent normal cells, keep dividing when replication errors during cell divisions cumulate.</s><s>The passage numbers of these cell lines correlate very well with their mitotic age estimates with r = 0.76 (P = 6.6e-07) for the ES cells and r = 0.42 (P = 0.01) for the iPS cells.</s><s>It is expected that the correlation for the iPS cells is weaker since iPS cells are artificially derived from a nonpluripotent cell (adult somatic cell) by inducing a set of specific genes.</s><s>Thus, their passage numbers may not reflect true mitotic age accurately.</s></p><p><s>The investigation of the relationship between the mitotic age estimates of tumor samples and the number of somatic mutations accumulated in the same tumor samples suggests a high correlation in 7 cancer types out of the 13 cancer types in the training and testing data (Figure <ref type="figure" target="#fig_2">3(b)</ref>), r = 0.44 (P = 2.4e-15) for BRCA, r = 0.47 (P = 3.4e-10) for PRAD, r = 0.45 (P = 2e-7) for STAD, r = 0.33 (P = 0.00018) for KIRC, r = 0.31 (P = 0.0022) for LIHC, r = 0.27 (P = 1.2e-05) for HNSC, and r = 0.25 (P = 0.043) for UCEC.</s></p><p><s>Alexandrov et al <ref type="bibr" target="#b17">[18]</ref>.</s><s>recently investigated clock-like mutational processes in human somatic cells and found two mutational signatures, signatures 1 and 5, which correlate with patients' chronological ages.</s><s>We correlated our estimated mitotic ages of tumor samples with the number of mutations of these two mutational signatures (Supplementary Figure <ref type="figure" target="#fig_0">S10</ref>).</s><s>Our mitotic ages are significantly correlated with signature 1 in most tissue types, especially for BRCA (r = 0.31, P = 7.6e-16), COAD (r = 0.25, P = 0.00024), HNSC (r = 0.31, P = 4.5e-13), KIRP (r = 0.24, P = 0.0027), PRAD (r = 0.41, P = 2.6e-13) and STAD (r = 0.36, P = 1.9e-10), but less correlated with signature 5.</s></p><p><s>Lastly, for the selected renewable tissue types that are not under hormonal effect <ref type="bibr" target="#b18">[19]</ref>, the estimated mitotic ages of TCGA normal adjacent tissues correlate well with patients' chronological ages (Figure <ref type="figure" target="#fig_2">3</ref>(c)), r = 0.64 (P = 1.3e-05) for COAD, r = 0.37 (P = 1.6e-06) for KIRC, r = 0.48 (P = 7.7e-04) for KIRP, and r = 0.46 (P = 1.8e-04) for LIHC.</s></p><p><s>These high correlations between the mitotic age estimates of the MiAge Calculator and the surrogate measures of the unknown true mitotic ages provide some degree of validation of the MiAge Calculator.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Associating mitotic age with clinical variables</head><p><s>More accelerated mitotic age of tumor samples is associated with worse survivals across the 13 cancer types.</s><s>We next examined mitotic age of tumor and adjacent normal samples across the 13 cancer types.</s><s>We noticed that the mean mitotic age estimates of normal thyroid tissues of THCA patients was the smallest while that of the normal colon tissues of the COAD patients as the largest (Supplementary Table <ref type="table">S3</ref>).</s><s>Out of the 13 cancer types studied, colon, head and neck, liver, lung, and thyroid were also previously studied and the lifetime numbers of normal stem cell divisions of these tissues were calculated <ref type="bibr" target="#b0">[1]</ref>.</s><s>The order of mean mitotic age estimates of adjacent normal tissues of these five tissue types from TCGA was THCA (thyroid) &lt; LUSC (lung) &lt; LUAD (lung) &lt;HNSC (head and neck) &lt; LIHC (liver) &lt; COAD (colon) and agrees perfectly with the order of the number of normal stem cell divisions in the lifetime of those tissues previously calculated <ref type="bibr" target="#b0">[1]</ref>: thyroid &lt; lung &lt; head and neck &lt; liver &lt; colon.</s><s>Moreover, we show that mitotic age is universally accelerated in tumor tissues compared to adjacent normal tissues across the 13 cancer types in the training and testing data (Supplementary Table <ref type="table">S3</ref>).</s></p><p><s>We next showed that worse survivals of many cancer types are associated with more accelerated mitotic age of tumor samples of those cancer types.</s><s>Specifically, the mean mitotic age estimates of the 13 tumor tissue types are negatively correlated (r = ¡0.6,</s><s>P = 0.029) with the percent surviving in 5 years of those cancer types (Figure <ref type="figure" target="#fig_3">4</ref>(a)).</s><s>A weaker correlation between that of the 13 adjacent normal tissue types and percent surviving in 5 years (r = ¡0.49,</s><s>P = 0.091) was observed.</s><s>When we excluded STAD tissues for which only two normal samples were available, the correlation became ¡0.32 (P = 0.31).</s><s>In Tomasetti and Vogelstein's paper <ref type="bibr" target="#b0">[1]</ref>, the authors concluded a high positive correlation between cancer incidence rates and population level number of lifetime stem cell divisions in a hypothetical population.</s><s>Here we concluded a high negative correlation between cancer survival rates and individual level number of cell divisions per lifetime in TCGA cancer patients.</s></p><p><s>Higher mitotic ages are associated with more advanced tumors.</s><s>We examined the association between the estimated mitotic age of a tumor sample with the T/N/M staging variables that describe the extent of the cancer.</s><s>As shown in Figure <ref type="figure" target="#fig_4">5</ref>(a), the mitotic ages of tumor tissues increase significantly as the level of the T staging variable increases in general, except for cancer types like COAD, HNSC, and LIHC (Supplementary Table <ref type="table">S4</ref>, Figure <ref type="figure" target="#fig_4">5</ref>(a)) after adjusting chronological age.</s><s>This could partially be explained by the difference in definitions of the T staging system across different tumor types.</s><s>For example, in stomach, colon, and liver cancers, T stages are determined by the extent of spread rather than the size of tumors while for breast, kidney, thyroid, and lung cancers, T stages are mainly determined by the tumor sizes.</s><s>Specifically, the T stage of colon cancer is determined by the extent of spread through layers forming the colon wall; the T stage of liver cancer is mainly determined by whether the cancer has grown into nearby blood vessels or organs; while for breast cancer, T = 1,2,3 is for tumors of increasing sizes and T = 4 is for tumors of any size growing into the chest wall or skin.</s><s>The mitotic age estimates correlate better with the T stage variable indicating tumor sizes than that indicating tumor spread, as tumor sizes are more directly related with the number of cell divisions.</s><s>We also noticed that the mitotic age estimates of tumor tissues significantly increase as chronological ages increase, as expected for most tissue types, but not for KIRP and LUSC.</s><s>However, for KIRP and LUSC, the mitotic ages of adjacent normal tissues are positively correlated with chronological age.</s><s>This may imply that for these tissue types, tumors of older patients tend to divide slower than those of younger patients.</s><s>UCEC, BLCA, and PRAD were excluded from this analysis since T stage information was not available for UCEC and there were no or too few T = 1 stage tumors for BLCA and PRAD.</s></p><p><s>As shown in Figure <ref type="figure" target="#fig_4">5</ref>(b), the mitotic ages of tumor tissues increase as tumor N stage (number of lymph nodes) increases for KIRP and THCA (Supplementary Table <ref type="table">S4</ref>) after adjusting for chronological age.</s><s>There is no N stage information for UCEC.</s><s>For LIHC, PRAD and THCA, there are no N = 2,3 tumors.</s><s>As shown in Figure <ref type="figure" target="#fig_4">5</ref>(c), we observed that only for KIRC and KIRP, the mitotic ages of the primary tumors that were metastasized are significantly higher than those of the primary tumors that were not metastasized (Supplementary Table <ref type="table">S4</ref>) after adjusting for chronological age.</s><s>This implies that metastasis does not necessarily occur late in tumor progression for many tumors.</s><s>HNSC, LIHC, PRAD, UCEC, and LUSC were excluded from this analysis, as the number of patients that have metastatic tumors is less than five.</s><s>It is important to point out that the not-so-strong associations between mitotic age and number of lymph nodes and metastasis status is not a limitation of the MiAge model, but, in fact, an advantage of mitotic age since this means the mitotic age could provide additional information that current clinical information does not offer.</s><s>It also reflects that biological processes underlying development of lymph nodes and metastasis might be unrelated to cell divisions.</s></p><p><s>Combination of mitotic age with TNM stage information improves prediction of patient survival in six out of thirteen cancer types studied.</s><s>Finally, we investigated the prognostic value of mitotic age as a predictor of patient survival within each of the 13 TCGA cancer types.</s><s>We asked whether the use of mitotic age could lead to improved prediction accuracy of patient survival in integration with existing TNM stage information in individual cancers.</s><s>To assess this clinical utility of the mitotic age-based survival predictor, we performed a twofold cross validation analysis within each of the 13 cancer types (see details in Materials and methods).</s><s>Briefly, for each cancer, in each cross validation, we randomly split patients into a training group of 50% patients and a testing group of the remaining 50% patients.</s><s>Then a Cox regression was used to build the predictive model either using mitotic age only, using TNM stage information only, or using TNM stage information plus mitotic age.</s><s>We then applied the predictive model built from the training group in the testing group to test the model and repeated the cross validation procedure 100 times.</s><s>We used C-index to measure the prediction accuracy of the model, where a C-index of 1 indicates perfect prediction accuracy and a C-index of 0.5 indicates random guess.</s></p><p><s>As shown in Figure <ref type="figure" target="#fig_5">6</ref>, in 6 cancer types out of the 13 cancer types studied, integrating mitotic age with TNM stage information significantly improves the discriminatory power of clinical information alone (clinical versus clinical + mitotic age P = 3e-04 for BRCA with two-sided paired Wilcoxon rank sum test; P = 2e-13 for KIRC; P = 5e-12 for KIRP; P = 2e-14 for LUSC; P = 3e-11 for STAD; and P = 2e-05 for THCA).</s><s>C-index results from multiple prediction models for all 13 cancer types are provided in Supplementary Figure <ref type="figure">S8</ref>.</s><s>This improved prediction accuracy across multiple cancers was not due to over-fitting since the training group and the testing group was completely separated with independent patients in the cross validation procedure.</s><s>This result illustrates the potential value of utilizing mitotic age as a new predictor to improve cancer prognosis.</s><s>Further studies are required in order to evaluate the clinical potential of MiAge, e.g., see if there is an independent prognostic value considering TNM stage, tumor size, and patient age.</s></p><p><s>Comparison of MiAge and epiTOC.</s><s>The MiAge Calculator uses a panel of 268 mitotic clock CpGs that were commonly identified as increasing-methylated sites when the MiAge model was applied to DNA methylation data of each of the 8 TCGA cancer types in the training data.</s><s>These 268 mitotic clock sites together with their estimated site-specific parameters a i ; b i , EðX 1;i Þ make up the MiAge Calculator, which can be applied to estimate mitotic ages of any samples using their DNA methylation data of the 268 CpGs by minimizing the objective function in Equation ( <ref type="formula" target="#formula_4">2</ref>).</s></p><p><s>The epiTOC selected 385 CpG sites that satisfy the following three criteria: (i) CpGs that are unmethylated in fetal tissue encompassing 11 different fetal tissue types; (ii) CpGs in gene promoters marked by the PRC2 polycomb repressive complex [Polycomb group targets (PCGTs)] in human embryonic stem  Although both methods selected increasing-methylated sites, only two CpG sites overlap between our 268 mitotic clock sites and their 385 epiTOC sites (Table <ref type="table" target="#tab_0">1</ref>).</s><s>In spite of this difference, mitotic age from the MiAge Calculator and pcgtAge from epiTOC of both tumor and adjacent normal samples are highly correlated across all tumor types, ranging from 0.7 to 0.97 (Table <ref type="table" target="#tab_1">2</ref>).</s></p><p><s>However, unlike for tumor and adjacent normal samples, mitotic age estimates of the 31 human ES cells and 35 human iPS cells from the MiAge Calculator and pcgtAge from epiTOC are much less correlated (r = 0.29).</s><s>Moreover, the correlation between pcgtAge of the 31 ES cells and 35 iPS cells and their passage numbers is only 0.24 (Figure <ref type="figure" target="#fig_6">7</ref>), much lower than that observed with the mitotic age estimated using the MiAge Calculator, which is 0.72.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p><s>Although it has been long established that cell division is essential for the development of human cancer, no quantitative method exists that can directly estimate total number of cell divisions for cancer risk stratification or prognosis.</s><s>Very recently, independent progress was made where an epigenetic mitotic-like clock was developed focusing on Polycomb-group promoter CpGs from which tick rates were predicted and shown to correlate with the rate of stem cell divisions in normal tissues, as well as an mRNA-based mitotic index in cancer tissue.</s><s>Here, we developed the MiAge Calculator that can estimate mitotic ages of any tissue types using DNA methylation data of a panel of 268 selected "mitotic clock" CpGs.</s><s>The MiAge Calculator is based on the MiAge model, a novel statistical model that models the stochastic replication errors accumulated in epigenetic inheritance process to infer mitotic ages.</s><s>The MiAge model couples with an iterative procedure to select CpGs that are informative for the mitotic activities.</s><s>Using the training data of 4,020 samples from 8 cancer types, we built the MiAge Calculator that contains a panel of 268 selected informative CpGs and the parameter estimates of the rate of de novo methylation, rate of the fidelity of methylation maintenance, and the methylation level in the starting methylation state of these 268 selected CpGs so that the MiAge Calculator can be readily applied by other researchers to any tissue samples that have DNA methylation data of the selected 268 CpGs.</s></p><p><s>Although we acknowledge that due to the unidentifiability problem of MiAge, current estimates of mitotic age are proportional to the true mitotic ages by an unknown constant c, this unknown constant is the same for all samples.</s><s>Thus, the mitotic age estimates of the MiAge Calculator are comparable across samples, across tissue types, and across studies.</s><s>Importantly, the non-tissue-specific property of the MiAge Calculator was validated in five independent cancer types in the testing data and the mitotic age estimates were further validated using several surrogate measures of unknown true mitotic ages.</s><s>With human ES cells and human iPS cells, the mitotic ages of these cells are correlated with their passage numbers (r = 0.76 for the ES cells and r = 0.42 for the iPS cells).</s><s>Also supporting this, mitotic ages of TCGA tumor samples correlate with the number of somatic mutations accumulated in the same tumor samples in 7 out of the 13 cancer types studied in the training and testing data.</s></p><p><s>Assessment of mitotic ages of TCGA normal adjacent tissue types that were also previously studied where the dynamics of stem cell divisions of these tissue types have been described experimentally suggests a perfect agreement in the order of the magnitude of the mitotic age estimates of TCGA normal adjacent tissues of the MiAge Calculator and number of cell divisions of normal stem cells calculated for hypothetical tissue samples with known dynamics of stem cell divisions <ref type="bibr" target="#b0">[1]</ref>.</s><s>The plot shows the correlation between pcgAge of cell cultures and their passage numbers.</s><s>With 31 human embryonic stem (ES) cells, the correlation is r = 0.54 (P = 0.0018).</s><s>With 35 human induced pluripotent stem (iPS) cells, the correlation is r = 0.14 (P = 0.43).</s><s>With ES and iPS cells combined, the correlation is r = 0.24 (P = 0.056).</s><s>Another important finding of ours that shows a negative correlation (r = ¡0.6) between mitotic ages of tumor tissues and the percent surviving in 5 years across the 13 TCGA cancer types agrees with the previous conclusion that the lifetime risks of many cancers are positively correlated with the lifetime number of cell divisions of normal stem cells within those tissues in hypothetical subjects from a different angle <ref type="bibr" target="#b0">[1]</ref>.</s><s>Although the association between mitotic age of TCGA tumor tissues and number of lymph nodes and metastasis status are less conclusive, we consider this an advantage of the mitotic age that measures something current clinical information does not.</s><s>Mitotic age is only observed to be associated with lymph nodes in KIRP and THCA and with metastasis status in KIRC and KIRP; therefore, reflect biological processes underlying development of lymph nodes and metastasis might be unrelated to cell divisions.</s><s>Finally, with cross-validation analyses, we evaluated the prognostic value of mitotic age and compared it to that of clinical information for predicting patient survival.</s><s>We show that the mitotic age can be used as a predictor for patient survival, with improved prediction accuracy integrating mitotic age and clinical information than that of clinical predictors alone in 6 out of the 13 cancer types studied.</s><s>This promising result calls for further studies to fully explore the utility of mitotic age in each individual cancer for different clinical applications.</s></p><p><s>The MiAge Calculator can be readily applied to methylation measures from the MethylationEPIC array.</s><s>Two hundred and forty-one sites out of the 268 selected mitotic clock CpGs are also on the EPIC array.</s><s>Note that if methylation measures from 450K and EPIC array are going to be combined, a normalization step to calibrate 450K data and EPIC data should be conducted, where we could use the R code from Horvath https:// labs.genetics.ucla.edu/horvath/dnamage/NORMALIZATION.</s><s>R. For bisulfite sequencing data, the MiAge Calculator can also be readily applied if sequencing data are processed into methylation percentages.</s><s>Although with the greater coverage of the EPIC array and data the MiAge Calculator may be updated if data were available, our sensitivity analysis using different subsets of the mitotic informative CpGs showed that the mitotic age estimates are highly correlated with almost all correlations greater than 0.9.</s></p><p><s>The MiAge Calculator was built using the 450K data without Type I/II probe normalization but with sites on sex chromosomes and sites overlapping with single nucleotide polymorphisms (SNPs) being removed.</s><s>We also investigated the potential impact of having or not having Type I/II probe normalization on building the MiAge Calculator.</s><s>We found that the estimates of the site-specific parameters of the 268 mitotic clock CpGs using methylation data with and without Type I/II probe normalization are almost perfectly correlated with a correlation of 0.999 for a i , 0.999 for b i , and 0.996 for EðX 1;i Þ.</s><s>The mitotic age estimates of tumor and adjacent normal samples of all tumor types (n = 6,261) using methylation data with and without Type I/II probe normalization are also almost perfectly correlated (r = 0.9995).</s><s>Finally, the mitotic age estimated using the 268 site-specific parameter estimates from Type I/II probe normalized methylation measures are almost perfectly correlated with that estimated using the MiAge Calculator (r = 0.9988).</s><s>These findings suggest that the MiAge Calculator is very robust and can be readily applied to other types of methylation data with different data processing steps.</s></p><p><s>The MiAge Calculator together with the source code is available for downloading at http://www.columbia.edu/»sw2206/</s><s>softwares.htm.</s><s>The MiAge Calculator can be applied to any tissue types of any cancer type.</s><s>The current statistical framework of the MiAge Calculator is applicable to DNA methylation proportion data.</s><s>Other type of DNA methylation data generated from other platforms, such as sequencing platforms, can be used with the MiAge Calculator if processed from counts data to proportion data.</s></p><p><s>Although we focused on cancer applications of the MiAge Calculator, it is readily applicable to aging studies using DNA methylation measures to estimate mitotic age as a new molecular target of aging marker.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Materials and methods</head><p><s>MiAge is coupled with a procedure to select informative CpGs.</s></p><p><s>At each CpG i, we can safely assume the fidelity of methylation maintenance b</s></p><formula xml:id="formula_6">i ¼ 1 2 ð1 þ m i À d p i À d d i</formula><p><s>Þ is between 0 and 1 because the methylation maintenance rate m i is in general close to 1 and the de novo methylation rates a i ¼ ðd <ref type="bibr" target="#b6">[7,</ref><ref type="bibr" target="#b19">20]</ref>.</s><s>For those CpGs with b i ¼ 1, we have EðX n j ;i Þ ¼ EðX 1;i Þ, which means the methylation levels in the n th j cell generation of sample j are the same as that in the 1 st cell generation.</s><s>Thus, CpGs with b i = 1 are not informative in estimating mitotic age.</s><s>For CpGs with unstable methylation levels, e.g., when both probabilities for failure of maintenance (1 À m i ) and the de novo methylation rates a i ¼ ðd</s></p><formula xml:id="formula_7">p i þ d d i Þ=2 are close to 0</formula><formula xml:id="formula_8">p i þ d d i Þ=2 are comparatively high, their fidelity of methylation mainte- nance b i ¼ 1 2 ð1 þ m i À d p i À d d i</formula><p><s>Þ will be small.</s><s>These CpGs have EðX n j ;i Þ % ai 1Àbi for a reasonable range of n j (e.g., if b i &lt; 0:5, b n j À1 i % 0 when n j &gt; 50) according to Equation <ref type="bibr" target="#b0">(1)</ref>.</s><s>Therefore, those CpGs are like CpGs with b i ¼ 1 and are not informative in estimating mitotic age.</s><s>For those uninformative CpGs, we have EðX n j ;i Þ ¼ c i for some site-specific nuisance parameter c i that is unrelated to mitotic age n j .</s><s>For all other informative CpGs, methylation levels either monotonically increase as n j increases (increasing-methylated CpGs) if EðX 1;i Þ À ai 1Àbi &lt; 0 or monotonically decrease otherwise (decreasing-methylated CpGs).</s></p><p><s>The second step of MiAge is thus an iterative procedure to update the separation of informative CpGs modeled with Eð X n j</s></p><formula xml:id="formula_9">;i Þ ¼ ai 1Àbi þ b n j À1 i ðEðX 1;i Þ À ai 1Àbi Þ from uninformative CpGs modeled with EðX n j ;i Þ ¼ c i .</formula><p><s>With each CpG site being labeled as informative or uninformative, the objective function f in Equation <ref type="bibr" target="#b1">(2)</ref> which measures the discrepancy between the observed methylation measures and the expected methylation measures under the MiAge model becomes:</s></p><formula xml:id="formula_10">f ¼ X i X j ðEðX nj;i Þ À b i;j Þ 2 ¼ X i f un i IðCpG i is uninformativeÞ È þ f in i IðCpG i is informativeÞg;<label>(3)</label></formula><p><s>where f un i ¼ P j ðc i À b i;j Þ 2 sums over all tissue samples j = 1,…,J at uninformative CpG i, and</s></p><formula xml:id="formula_11">f in i ¼ P i ð ai 1Àbi þ b n j À1 i ðEðX 1;i Þ À ai 1Àbi Þ À b i;j Þ 2</formula><p><s>sums over all tissue samples j = 1,…,J at informative CpG i, and I() is an indicator function.</s></p><p><s>Informativeness score s i and cutoff c 0 .</s><s>Since we do not know a priori which CpGs are informative, we need to determine this during the model fitting procedure.</s><s>To do so, we developed an informativeness score s i for each CpG i, defined as</s></p><formula xml:id="formula_12">s i ¼ min c i ðf un i Þ À min a i ;b i ;EðX 1;i Þ ðf in i j n j Þ.</formula><p><s>The informativeness score s i for each CpG i is the difference of residual sum of squares between the two models for CpG site i: model for uninformative sites EðX n j ;i Þ ¼ c i and model for informative sites</s></p><formula xml:id="formula_13">EðX n j ;i Þ ¼ ai 1Àbi þ b n j À1 i ðEðX 1;i Þ À ai 1Àbi Þ.</formula><p><s>By comparing which of the two models fit the observed methylation data at CpG site i better, we choose between whether the CpG site i is informative or uninformative.</s><s>Because the model for informative sites has more parameters, the residual sum of squares for CpG i (the sum of squares of the difference between observed and expected methylation levels, summed over all tissue samples at CpG i) under the model for uninformative sites:</s></p><formula xml:id="formula_14">min c i ðf un i Þ ¼ min c i ð P j ðc i À b i;j Þ 2 Þ ¼</formula><p><s>CpG i are the same across samples is not met.</s><s>To do so, we simulated methylation data allowing each sample j to have different site-specific parameters.</s><s>Note the correspondence between site-specific parameters a i ; b i and the original parameters on methylation transmission rates m i ;</s></p><formula xml:id="formula_15">d p i ; d d i at CpG i: d p i þ d d i ¼ 2a i , and m i ¼ 2ða i þ b i Þ À 1, where parameters d p i</formula><p><s>and d d i cannot be separated.</s><s>Specifically, for each sample j, we first simulated site-sample-specific parameters m i;j ; d i;j ¼ ðd p i;j þ d d i;j Þ=2 and EðX 1;i;j Þ, where m i;j were simulated from Unif ðm i Â 0:975; minðm i Â 1:025; 1ÞÞ and m i is the parameter estimated from the TCGA BRCA data.</s><s>Other site-sample-specific parameters d i;j and EðX 1;i;j Þ were similarly simulated.</s><s>With these sitesample-specific parameters, we then calculated the expected methylation level EðX n j ;i;j Þ at CpG i for sample j given n j using Equation ( <ref type="formula">1</ref>) and added large errors e i;j » Nð0; 0:05Þ.</s></p><p><s>We also investigated the robustness of MiAge when the assumption that all cells of tissue sample j have gone through the same number of cell divisions n j is not met, but instead a tissue sample is a mixture of different types of cells with different mitotic ages.</s><s>We simulated methylation values b i,j for CpG i of sample j as a mixture of methylation values from two or more different types of cells whose true mitotic ages are different.</s><s>We first simulated mixture samples consisting of two cell types, with proportion of the dominating cell type = 0.7, 0.8, 0.9 (see Supplementary Materials for detailed simulation steps).</s><s>We then simulated mixture samples consisting of three cell types, with proportion of the dominating cell type = 0.7, 0.8, 0.9 and proportion of each of the other two minor cell types = 0.15, 0.1, 0.05, respectively.</s><s>Similarly, we simulated mixture samples consisting of four cell types with proportion of the dominating cell type = 0.7, 0.8, 0.9 and proportion of each of the other three minor cell types = 0.1, 0.0667, 0.0333, respectively.</s></p><p><s>We further investigated if multiple DNA methylation datasets from multiple tissue types can be combined and the mitotic age estimates across different tissue types can be compared.</s><s>Here, we allowed the site-specific parameters a i ; b i , EðX 1;i Þ at CpG i to be first different across tissue types then different across samples within a tissue type (see Supplementary Materials for detailed simulation steps).</s></p><p><s>Validation of MiAge Calculator as non-tissue-specific using testing data of 5 different TCGA cancer types.</s><s>The MiAge Calculator built with the training data of 8 cancer types is expected to be non-tissue-specific and can be applied to any tissue types.</s><s>We validated this property using the testing data of 5 independent TCGA cancer types.</s><s>To do so, we first built a temporary tissue-specific calculator for each cancer type in the testing data.</s><s>To build the temporary tissue-specific mitotic age calculator for each cancer, we used the same panel of selected 268 "mitotic clock" CpGs but estimated the site-specific parameters using available tumor and adjacent normal samples of each cancer type in the testing data instead of using the MiAge Calculator built-in parameters estimates.</s><s>We then examined the correlation between mitotic ages estimated using the MiAge Calculator and mitotic ages estimated using the temporary tissue-specific calculator for each cancer type in the testing data.</s><s>High correlations indicate that the MiAge Calculator is non-tissue-specific and can be applied to DNA methylation data of the selected panel of 268 "mitotic clock CpGs" of any tissue types.</s></p><p><s>Validation of MiAge Calculator using surrogate measures of unknown true mitotic ages.</s><s>We next validated the MiAge Calculator by correlating estimated mitotic ages with several surrogate measures of the unknown true mitotic age: (i) correlating mitotic ages of cell cultures with their passage number; (ii) within each of the 13 cancer types in the training and testing data combined, correlating mitotic ages of TCGA tumor samples with number of somatic mutations accumulated in the same tumor samples; and (iii) correlating mitotic ages of adjacent normal samples with the patients' chronological age within each of the selected tissue types that are proliferative.</s></p><p><s>We obtained 450K DNA methylation data of 31 human ES cells and 35 human iPS cells <ref type="bibr" target="#b16">[17]</ref>.</s><s>We estimated mitotic ages of these cell cultures using the MiAge Calculator and correlated them with the passage numbers of these cell cultures.</s></p><p><s>Within each of the 13 cancer types, we then investigated the relation between the estimated mitotic age of tumor samples and the number of somatic nucleotide mutations accumulated in the same tumor samples.</s><s>Although somatic mutations are acquired during each cell division with very low probabilities, the number of somatic mutations accumulated can reflect the total number of cell divisions the cell has undergone.</s><s>One potential problem of using this measure is that there are samples with much higher mutation rates than others due to factors like environmental mutagens or mutations in genes that maintain genomic stability.</s><s>Those samples tend to accumulate more somatic mutations and their mitotic ages might be overestimated <ref type="bibr" target="#b20">[21]</ref>.</s><s>To correlate number of somatic mutations in tumor samples and their mitotic age estimates, we thus restricted to tumor samples with number of somatic mutations below the median of all samples within that tumor type.</s><s>To calculate the number of somatic mutations per tumor sample, we also excluded mutations in candidate cancer driver genes identified by the MutSIG algorithm at FDR 0.3 <ref type="bibr" target="#b21">[22]</ref>.</s></p><p><s>Lastly, within each of these renewable tissue types out of the 13 tissue types in the training and testing data combined, we compared the estimated mitotic ages of adjacent normal samples with the chronological ages of the patients.</s><s>While the mitotic age of a tumor tissue is usually larger than that of the adjacent normal tissue from the same patient, the tumor and adjacent normal samples of the same patient have the same chronological age.</s><s>Mitotic ages of normal proliferative tissues that consist of mitotic cells capable of proliferation may correlate better with chronological age while mitotic ages of tissues that do not divide or tissues whose divisions are under hormonal effect may not correlate well with chronological age.</s><s>Therefore, we compared mitotic ages of adjacent normal tissues from the major renewable organs such as colon, liver, and kidney with their chronological ages.</s></p><p><s>High correlations between the mitotic age estimates and the surrogate measures provide some degree of validation of the MiAge Calculator.</s></p><p><s>Correlation of individual-level mitotic age with individuallevel clinical information and survival within each cancer.</s><s>Within each cancer, we evaluated associations between mitotic age of tumor samples with widely used T/N/M staging variables that describe the extent of the cancer.</s><s>For the TCGA T/N/M staging variables, the T variable describes tumor sizes and its spread to nearby tissues; the N variable describes the number of lymph nodes that have cancerous cells; the M variable determines if cancer has metastasized to other organs of the body.</s><s>To examine the relationship between mitotic age of tumor samples with the T/N/M staging variables, we fit the following linear regression adjusting for patients' chronological ages: estimated mitotic age of tumor tissues</s></p><formula xml:id="formula_16">¼ a þ hÁchronological age þ X g k ÁIðT=N=M ¼ kÞ; (<label>4</label></formula><formula xml:id="formula_17">)</formula><p><s>where I is an indicator for the T/N/M staging variable with T = 1/N = 0/M = 0 as the reference group.</s><s>Therefore, g k can be considered as the increase in mitotic ages for the T/N/M staging variables of group k compared to the reference group.</s><s>The estimate of h is the increase in mitotic ages per one year increase in chronological age.</s><s>We also examined mitotic age estimates of tumor samples to that of the matched adjacent normal samples and examined the association between time to death and dichotomized mitotic age of tumor samples categorized at median using Kaplan-Meier curves and the log-rank test.</s></p><p><s>Evaluation of estimated mitotic age as a survival predictor using cross-validation.</s><s>Within each of the 13 cancer types, we evaluated and compared the survival prediction using clinical information alone, using mitotic age alone, and using clinical information plus mitotic age.</s><s>We used two-fold cross validation where in each round of cross validation we randomly split cancer patients into two groups with 50% patients in the training group and the remaining 50% patients in the testing group.</s><s>We used even split to ensure there are enough death events in both groups.</s></p><p><s>With the training group, we built the survival prediction model based on estimated mitotic age, clinical information with one of the TNM staging variables, whichever is the most significant, and clinical information plus estimated mitotic age.</s><s>After the model was built using the training group, we used the testing group to test the prediction accuracy of the predictive model using the Cindex <ref type="bibr" target="#b22">[23]</ref>, where a C-index of 1 indicates perfect prediction and a C-index of 0.5 indicates random guess.</s><s>We repeated the cross validation 100 times and compared C-indexes from different predictive models using a paired (two-sided) Wilcoxon rank sum test.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Disclosure of potential conflicts of interest</head><p><s>No potential conflicts of interest were disclosed.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc><div><p><s>Figure 1.</s><s>The methylation transmission process of the MiAge model.</s><s>(a) During a cell division, each of the two strands of a DNA molecule becomes a parent strand, which is used as a template to synthesize a daughter strand.</s><s>During the intermediate post-replication stage, daughter strands are completely unmethylated, whereas parent strands have the same methylation patterns as before.Subsequently, methyl groups are added to cytosines.</s><s>In this process, failure of maintenance and/or de novo methylation events can occur with certain probabilities.</s><s>(b) All methylation transition events that happen within a cell division.</s><s>At a CpG site, P n is the methylation status (1 if methylated and 0 otherwise) of a pre-replication parent strand in the n th cell generation; Q n is the methylation status of a post-methylation parent strand; D n is the methylation status of a post-methylation daughter strand; m is the probability of maintaining methylation during a cell division; and d p and d d are the probabilities of de novo methylation event on the parent and daughter strand.</s><s>Thus X n = (Q n +D n )/2 is the mean methylation status of the double strands at a CpG site on one sister chromosome in the n th cell generation in one cell.</s></p></div></figDesc><graphic coords="3,47.40,53.80,481.57,449.88" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc><div><p><s>Figure 2. Simulation studies to assess the feasibility and performance of the MiAge model.</s><s>We compared estimated mitotic ages vs. true mitotic ages of all simulated tissue samples in the three error settings.</s><s>The proportional relationship between the estimated vs. the true mitotic ages indicates MiAge is feasible even with the unidentifiability problem.</s></p></div></figDesc><graphic coords="4,114.29,53.80,383.60,178.44" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc><div><p><s>Figure 3. Validation of the MiAge Calculator using three surrogate measures of unknown true mitotic ages.</s><s>(a) Correlating mitotic ages of cell cultures with their passage numbers.</s><s>With 31 human embryonic stem (ES) cells, the correlation is r = 0.76 (P = 1.3e-11).</s><s>With 35 human induced pluripotent stem (iPS) cells, the correlation is r = 0.42 (P = 0.01).</s><s>(b) Correlating mitotic ages of tumor tissues with number of somatic mutations in the same tumor tissues within each of the 13 cancer types.</s><s>Seven cancer types show significant correlations, r = 0.44 (P = 2.4e-15) for BRCA, r = 0.47 (P = 3.4e-10) for PRAD, r = 0.45 (P = 2e-7) for STAD, r = 0.33 (P = 0.00018) for KIRC, r = 0.31 (P = 0.0022) for LIHC, r = 0.27 (P = 1.2e-05) for HNSC, and r = 0.25 (P = 0.043) for UCEC.</s><s>(c) Correlating mitotic ages of adjacent normal tissues of selected proliferative tissue types with patients' chronological ages, where 4 tissue types show significant correlations, r = 0.64 (P = 1.3e-05) for COAD, r = 0.37 (P = 1.6e-06) for KIRC, r = 0.48 (P = 7.7e-04) for KIRP, and r = 0.46 (P = 1.8e-04) for LIHC.</s></p></div></figDesc><graphic coords="7,42.46,53.80,491.31,369.60" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 .</head><label>4</label><figDesc><div><p><s>Figure 4. Mitotic age of tumor tissues and cancer survival.</s><s>(a) Higher averaged estimated mitotic ages of tumor tissues are associated with lower 5-year survival rates across the 13 cancer types in the training and testing data with r = ¡0.6 (P = 0.029) (left panel).</s><s>The correlation is weaker and not significant for mitotic age of normal adjacent tissues (right panel).</s><s>(b) Higher mitotic age is associated with worse survival in some cancers.</s></p></div></figDesc><graphic coords="8,65.99,438.18,480.10,281.16" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 .</head><label>5</label><figDesc><div><p><s>Figure 5. TNM staging variables and mitotic age estimates of tumor tissues.</s><s>The plots show the regression coefficients and corresponding 95% CIs associating TNM staging variables and mitotic age estimates of tumor tissues adjusting for chronological age.</s><s>(a) T variable assumes a number from 1 to 4 and describes tumor sizes and its spread to nearby tissues with higher T numbers indicating larger tumors or wider spread to nearby tissues.</s><s>g k is the increase in mitotic ages for the group with T = k compared to the reference group with T = 1.</s><s>(b) N variable assumes a number from 0 to 3 and describes the number of lymph nodes that have cancerous cells with N = 0 indicating no cancer in any lymph nodes and higher N numbers indicating a greater spread to nearby lymph nodes.</s><s>N = 2 and N = 3 tumors were grouped together due to sparse data for most cancer types.</s><s>g k is the increase in mitotic ages for the group with N = k compared to the reference group with N = 0. (c) M variable determines if cancer has metastasized to other organs of the body with M = 0 indicating no metastasis and M = 1 indicating metastasis.</s><s>g 1 is the increase in mitotic ages for the metastasized group compared to the group with no metastasis.</s></p></div></figDesc><graphic coords="9,48.08,53.80,480.10,448.32" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6 .</head><label>6</label><figDesc><div><p><s>Figure 6.</s><s>Boxplots of C-index of different survival predictors of 6 cancer types from cross-validation procedures.</s><s>The plots show the distribution of C-indexes from 100 rounds of cross-validation.</s><s>P-values are from a paired (two-sided) Wilcoxon rank sum test comparing different survival predictors.</s></p></div></figDesc><graphic coords="10,120.02,53.80,372.10,367.08" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 7 .</head><label>7</label><figDesc><div><p><s>Figure 7. Passage number vs. pcgtAge for ES and iPS cells.</s><s>The plot shows the correlation between pcgAge of cell cultures and their passage numbers.</s><s>With 31 human embryonic stem (ES) cells, the correlation is r = 0.54 (P = 0.0018).</s><s>With 35 human induced pluripotent stem (iPS) cells, the correlation is r = 0.14 (P = 0.43).</s><s>With ES and iPS cells combined, the correlation is r = 0.24 (P = 0.056).</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 .</head><label>1</label><figDesc><div><p><s>CpG sites that are commonly used in the MiAge Calculator and epiTOC.</s></p></div></figDesc><table><row><cell>CpG site ID</cell><cell>Gene Symbol</cell><cell>Chromosome</cell><cell>Genomic Coordinate</cell></row><row><cell>cg21264189</cell><cell>POU4F1</cell><cell>13</cell><cell>79177782</cell></row><row><cell>cg19761848</cell><cell>GBX2</cell><cell>2</cell><cell>237076815</cell></row></table><note><p><s>[3]ls; and (iii) CpGs exhibiting age-associated hypermethylation [false discovery rate (FDR) &lt;0.05][3].</s><s>For any given sample, epiTOC estimates mitotic-like clock, "pcgtAge", as the average DNA methylation level over these 385 CpG sites, which represents the age-cumulative increase in DNA methylation level at these sites due to putative cell-replication errors.</s></p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 .</head><label>2</label><figDesc><div><p><s>Correlations between mitotic age estimates from the MiAge Calculator and pcgtAge for tumor and adjacent normal samples across tumor types.</s></p></div></figDesc><table><row><cell></cell><cell>BRCA</cell><cell>COAD</cell><cell>HNSC</cell><cell>KIRP</cell><cell>LIHC</cell><cell>PRAD</cell><cell>THCA</cell><cell>UCEC</cell><cell>BLCA</cell><cell>KIRC</cell><cell>LUAD</cell><cell>LUSC</cell><cell>STAD</cell></row><row><cell>tumor</cell><cell>0.91</cell><cell>0.94</cell><cell>0.88</cell><cell>0.95</cell><cell>0.71</cell><cell>0.86</cell><cell>0.84</cell><cell>0.9</cell><cell>0.87</cell><cell>0.9</cell><cell>0.86</cell><cell>0.81</cell><cell>0.92</cell></row><row><cell>normal</cell><cell>0.88</cell><cell>0.86</cell><cell>0.89</cell><cell>0.83</cell><cell>0.74</cell><cell>0.97</cell><cell>0.87</cell><cell>0.89</cell><cell>0.97</cell><cell>0.85</cell><cell>0.71</cell><cell>0.83</cell><cell>NA</cell></row></table></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>P</head><p><s>j ðb i;: À b i;j Þ 2 will be larger than that under the model for informative sites: min ai;bi;EðX1;iÞ ðf in i j n j Þ ¼ min ai;bi;EðX1;iÞ ð</s></p><p><s>Note that c i ¼ b i is average of methylation values for CpG site i across all samples.</s></p><p><s>Thus, we need to define a cutoff c 0 (&gt;0, to be discussed next) for s i prior to the optimization process of the objective function in Equation <ref type="bibr" target="#b2">(3)</ref>.</s><s>Once c 0 is determined, it is fixed during the iterative optimization procedure where sites with s i &gt; c 0 are set as informative and sites with s i c 0 are set as uninformative.</s><s>The objective function f then becomes:</s></p><p><s>To determine the cutoff c 0 , we calculated s i for each CpG site i under the "null model" when methylation levels do not change as cell divides.</s><s>Under the "null model", we assigned mitotic age n j to each tissue sample j generated randomly from a Unif(100, 3000) distribution and calculated</s></p><p><s>Note that in calculating s i , we treated randomly generated n j for tissue sample j as known, but estimated site-specific parameters a i ; b i ;</s></p><p><s>Here, s i can be considered as the decrease in the residual sum of squares purely due to over-fitting.</s><s>Therefore, we set max i ð s i Þ over all available CpG sites as the cutoff c 0 .</s><s>We conducted a simulation study to investigate the impact of different cutoffs on the performance of MiAge.</s><s>The simulation results support the choice of c 0 ¼ max i ð s i Þ (Supplementary Materials).</s></p><p><s>Optimization procedure.</s><s>With c 0 determined, we estimate the parameters n j and other site-specific parameters a i ; b i ; EðX 1;i Þ minimizing the objective function in Equation ( <ref type="formula">4</ref>) through the following iterative optimization process.</s><s>and f un i , respectively subject to the following linear inequality constraints 0 a</s></p><p><s>We then update n j to minimize the following objective function given these site-specific parameters</s></p><p><s>with the constraint 10n j 10000 and obtain n ð2Þ j .</s><s>We iteratively repeat the above steps until f ðnÞ converges.</s><s>We used the R function 'optim' to find parameters minimizing a given function.</s></p><p><s>Unidentifiability problem of MiAge.</s><s>One important caveat when minimizing the objective function f in Equation ( <ref type="formula">4</ref>) is that there is no unique solution minimizing f.</s><s>This is because</s></p><p><s>Therefore, the sets n j È É and fn 0 j ¼ cÁðn j À 1Þ þ 1g for a constant c give the same value of f with different sets of sitespecific parameters a i ; b</s></p><p><s>That is, if the true mitotic age of tissue sample j is n j È É , the best estimate will be fn 0 j ¼ cÁðn j À 1Þ þ 1g for some constant c.</s><s>Thus, the estimated mitotic age is proportional to the true mitotic age and should be interpreted as a relative number rather than an actual number.</s><s>Similarly, the estimated site-specific parameters for CpG site i are also proportional to the true values.</s><s>This is because when b i is close to 1 for informative sites, we have b</s></p><p><s>is also linearly related with a i because ai 1Àbi ¼ a 0 i 1Àb 0 i</s></p><p><s>.</s></p><p><s>Simulation studies of MiAge.</s><s>We conducted a set of simulation studies to investigate the robustness of MiAge when the assumption that the site-specific parameters a i ; b i , EðX 1;i Þ at</s></p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Variation in cancer risk among tissues can be explained by the number of stem cell divisions</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Tomasetti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Vogelstein</surname></persName>
+		</author>
+		<idno type="DOI">10.1126/science.1260825</idno>
+		<idno type="PMID">25554788</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">347</biblScope>
+			<biblScope unit="page" from="78" to="81" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Substantial contribution of extrinsic risk factors to cancer development</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Powers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Zhu</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nature16166</idno>
+		<idno type="PMID">26675728</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">529</biblScope>
+			<biblScope unit="page" from="43" to="47" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Correlation of an epigenetic mitotic clock with cancer risk</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Wong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Kuh</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/s13059-016-1064-3</idno>
+		<idno type="PMID">27716309</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Genome Biol</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="page">205</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">The modern molecular clock</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Bromham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Penny</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nrg1020</idno>
+		<idno type="PMID">12610526</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Rev Genet</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="216" to="224" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Inferring human stem cell behaviour from epigenetic drift</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Shibata</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/path.2461</idno>
+		<idno type="PMID">19031430</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J Pathol</title>
+		<imprint>
+			<biblScope unit="volume">217</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="199" to="205" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Counting Divisions in a Human Somatic Cell Tree: How, What and Why</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Shibata</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Tavar</surname></persName>
+		</author>
+		<idno type="DOI">10.4161/cc.5.6.2570</idno>
+		<idno type="PMID">16582617</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Cell Cycle</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="610" to="614" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">A population-epigenetic model to infer site-specific methylation rates from doublestranded DNA methylation patterns</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Genereux</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">E</forename><surname>Miner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">T</forename><surname>Bergstrom</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.0502036102</idno>
+		<idno type="PMID">15827124</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Proc Natl Acad Sci U S A</title>
+		<imprint>
+			<biblScope unit="volume">102</biblScope>
+			<biblScope unit="page" from="5802" to="5807" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">DNA methylation in cancer cells</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ehrlich</surname></persName>
+		</author>
+		<idno type="DOI">10.2217/epi.09.33</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Epigenomics</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="239" to="259" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">DNA hypomethylation and human diseases</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">S</forename><surname>Wilson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">E</forename><surname>Power</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">L</forename><surname>Molloy</surname></persName>
+		</author>
+		<idno type="PMID">17045745</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biochimica et Biophysica Acta</title>
+		<imprint>
+			<biblScope unit="volume">1775</biblScope>
+			<biblScope unit="page" from="138" to="162" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">DNA methylation in cancer: too much, but also too little</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ehrlich</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/sj.onc.1205651</idno>
+		<idno type="PMID">12154403</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Oncogene</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="issue">35</biblScope>
+			<biblScope unit="page" from="5400" to="5413" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">DNA methylation and cancer</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kulis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Esteller</surname></persName>
+		</author>
+		<idno type="PMID">20920744</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Adv Genet</title>
+		<imprint>
+			<biblScope unit="volume">70</biblScope>
+			<biblScope unit="page" from="27" to="56" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Cancer-linked DNA hypomethylation and its relationship to hypermethylation</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ehrlich</surname></persName>
+		</author>
+		<idno type="PMID">16909914</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Curr Top Microbiol Immunol</title>
+		<imprint>
+			<biblScope unit="volume">310</biblScope>
+			<biblScope unit="page" from="251" to="274" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Induction of DNA Hypomethylation by Tumor Hypoxia</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Shahrzad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Bertrand</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Minhas</surname></persName>
+		</author>
+		<idno type="DOI">10.4161/epi.2.2.4613</idno>
+		<idno type="PMID">17965619</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Epigenetics</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="119" to="125" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Global DNA nypomethylation coupled to repressive chromatin domain formation and gene silencing in breast cancer</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">C</forename><surname>Hon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">D</forename><surname>Hawkins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><forename type="middle">L</forename><surname>Caballero</surname></persName>
+		</author>
+		<idno type="DOI">10.1101/gr.125872.111</idno>
+		<idno type="PMID">22156296</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Genome Res</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="page" from="246" to="258" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">DNA methylation and cancer</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">A</forename><surname>Jones</surname></persName>
+		</author>
+		<idno type="PMID">2416425</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Cancer Res</title>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<biblScope unit="page" from="461" to="466" />
+			<date type="published" when="1986">1986</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Epigenetic aging signature are coherently modified in cancer</title>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Wagner</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pgen.1005334</idno>
+		<idno type="PMID">26110659</idno>
+	</analytic>
+	<monogr>
+		<title level="j">PLoS Genet</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">e1005334</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Recurrent variations in DNA methylation in human pluripotent stem cells and their differentiated derivatives</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">L</forename><surname>Nazor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Altun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Lynch</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.stem.2012.02.013</idno>
+		<idno type="PMID">22560082</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Cell stem cell</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page" from="620" to="634" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Clock-like mutational processes in human somatic cells</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">B</forename><surname>Alexandrov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">H</forename><surname>Jones</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">C</forename><surname>Wedge</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/ng.3441</idno>
+		<idno type="PMID">26551669</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Genet</title>
+		<imprint>
+			<biblScope unit="volume">47</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="1402" to="1407" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<title level="m" type="main">The cell: A molecular approach</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">M</forename><surname>Cooper</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">E</forename><surname>Hausman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2013">2013</date>
+			<publisher>Sinauer Associates</publisher>
+			<pubPlace>Sunderland (Massachusetts</pubPlace>
+		</imprint>
+	</monogr>
+	<note>6th edition</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Hairpin-bisulfite PCR: assessing epigenetic methylation patterns on complementary strands of individual DNA molecules</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">D</forename><surname>Laird</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">D</forename><surname>Pleasant</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">D</forename><surname>Clark</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.2536758100</idno>
+		<idno type="PMID">14673087</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Proc Natl Acad Sci USA</title>
+		<imprint>
+			<biblScope unit="volume">101</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="204" to="209" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Using passenger mutations to estimate the timing of driver mutations and identify mutator alterations</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Youn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Simon</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/1471-2105-14-363</idno>
+		<idno type="PMID">24330428</idno>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page">363</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Mutational heterogeneity in cancer and the search for new cancer-associated genes</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">S</forename><surname>Lawrence</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Stojanov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Polak</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nature12213</idno>
+		<idno type="PMID">23770567</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">499</biblScope>
+			<biblScope unit="page" from="214" to="218" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Overall C as a measure of discrimination in survival analysis: model specific population value and confidence interval estimation</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Pencina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Agostino</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">B</forename></persName>
+		</author>
+		<idno type="DOI">10.1002/sim.1802</idno>
+		<idno type="PMID">15211606</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Stat Med</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="page" from="2109" to="2123" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>
