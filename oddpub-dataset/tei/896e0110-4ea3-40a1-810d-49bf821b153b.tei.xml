@@ -1,0 +1,662 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">psRNATarget: a plant small RNA target analysis server (2017 release)</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018-04-30">30 April 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Xinbin</forename><surname>Dai</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="laboratory">Bioinformatics and Computational Biology Lab</orgName>
+								<orgName type="institution">Noble Research Institute</orgName>
+								<address>
+									<addrLine>2510 Sam Noble Parkway</addrLine>
+									<postCode>73401</postCode>
+									<settlement>Ardmore</settlement>
+									<region>OK</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Zhaohong</forename><surname>Zhuang</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="laboratory">Bioinformatics and Computational Biology Lab</orgName>
+								<orgName type="institution">Noble Research Institute</orgName>
+								<address>
+									<addrLine>2510 Sam Noble Parkway</addrLine>
+									<postCode>73401</postCode>
+									<settlement>Ardmore</settlement>
+									<region>OK</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName><forename type="first">Patrick</forename><forename type="middle">Xuechun</forename><surname>Zhao</surname></persName>
+							<email>pzhao@noble.org</email>
+							<affiliation key="aff0">
+								<orgName type="laboratory">Bioinformatics and Computational Biology Lab</orgName>
+								<orgName type="institution">Noble Research Institute</orgName>
+								<address>
+									<addrLine>2510 Sam Noble Parkway</addrLine>
+									<postCode>73401</postCode>
+									<settlement>Ardmore</settlement>
+									<region>OK</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">psRNATarget: a plant small RNA target analysis server (2017 release)</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018-04-30">30 April 2018</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">637DE32C5C533672E2C18DA19118D992</idno>
+					<idno type="DOI">10.1093/nar/gky316</idno>
+					<note type="submission">Received January 30, 2018; Revised April 09, 2018; Editorial Decision April 13, 2018; Accepted April 13, 2018</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:35+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Plant regulatory small RNAs (sRNAs), which include most microRNAs (miRNAs) and a subset of small interfering RNAs (siRNAs), such as the phased siR-NAs (phasiRNAs), play important roles in regulating gene expression.</s><s>Although generated from genetically distinct biogenesis pathways, these regulatory sRNAs share the same mechanisms for posttranslational gene silencing and translational inhibition.</s><s>psRNATarget was developed to identify plant sRNA targets by (i) analyzing complementary matching between the sRNA sequence and target mRNA sequence using a predefined scoring schema and (ii) by evaluating target site accessibility.</s><s>This update enhances its analytical performance by developing a new scoring schema that is capable of discovering miRNA-mRNA interactions at higher 'recall rates' without significantly increasing total prediction output.</s><s>The scoring procedure is customizable for the users to search both canonical and noncanonical targets.</s><s>This update also enables transmitting and analyzing 'big' data empowered by (a) the implementation of multi-threading chunked file uploading, which can be paused and resumed, using HTML5 APIs and (b) the allocation of significantly more computing nodes to its back-end Linux cluster.</s><s>The updated psRNATarget server has clear, compelling and user-friendly interfaces that enhance user experiences and present data clearly and concisely.</s><s>The psRNATarget is freely available at http: //plantgrn.noble.org/psRNATarget/.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>INTRODUCTION</head><p><s>Plant regulatory small RNAs (sRNAs) are produced from double-stranded RNA duplexes or hairpin single-stranded RNA precursors by the endonuclease activities of Dicer-like (DCL) proteins.</s><s>sRNAs produced from double-stranded duplexes are referred to as small interfering RNAs (siR-NAs), while sRNAs produced from the stem-loops of single-stranded precursors are referred to as micro RNAs (miRNAs) <ref type="bibr" target="#b0">(1)</ref>.</s><s>Plant regulatory sRNAs control a range of cellular and developmental functions, including plant cellular defense mechanisms against RNA viruses, transcriptional gene silencing by guiding heterochromatin formation at homologous loci, and sRNA-mediated DNA methylation <ref type="bibr" target="#b0">(1)</ref>.</s><s>Among the many roles of plant sRNAs, post-transcriptional gene silencing and translational inhibition guided by miRNA and phased small interfering RNA (phasiRNA) are the two most widely studied mechanisms, in which miRNA and phasiRNA share the same targeting mechanism <ref type="bibr" target="#b1">(2)</ref>.</s><s>As the majority of plant regulatory sRNAs are miRNAs, we hereafter use the miRNA target prediction to represent the plant regulatory sRNA target analysis.</s></p><p><s>Plant miRNAs, of which the lengths range from 20 to 22 nucleotides, regulate gene expression post-transcriptionally or translationally through binding with the Argonaute (AGO) protein and targeting Messenger RNAs (mRNAs) <ref type="bibr" target="#b2">(3,</ref><ref type="bibr" target="#b3">4)</ref>.</s><s>Most of the plant miRNA targets identified to date have extensive complementarity to their cognate miRNA mature sequences, yet perfect matches between them were not often found <ref type="bibr" target="#b0">(1,</ref><ref type="bibr" target="#b3">4,</ref><ref type="bibr" target="#b4">5)</ref>.</s><s>Dozens of miRNA-target complementary match patterns have been either validated or further reported since the early study of plant miRNAs <ref type="bibr" target="#b5">(6)</ref>.</s><s><ref type="bibr">Schwab et al.</ref> reported that up to four mismatches may be allowed without reducing the efficiency of miRNA-mRNA pairing <ref type="bibr" target="#b6">(7)</ref>.</s><s>The authors also extended the mismatch-sensitive seed region (i.e., the critical miRNA-target pairing region) to include the positions 2-12, excluding the cleavage site at the nucleotides 10 and 11.</s><s>Additionally, it has been reported that G:U mismatches behave similarly to other mismatches <ref type="bibr" target="#b6">(7)</ref>.</s><s>Mallory et al. reported a more complex miRNA-target transcript matching pattern based on statistical analyses of 51 confirmed conserved miRNA targets.</s><s>They observed that non-paired nucleotides were most common at the ends of the duplexes (the positions 1, 2, 20 and 21) as well as at the positions 14 and 15, while non-paired nucleotides were the rarest along the positions 3-10 of the miRNA.</s><s>No mismatches, G:U wobble pairs, or bulges were present in any miRNA targets bound at the positions 3-4, 7-10 and 9-10 (5).</s><s><ref type="bibr" target="#b0">(1)</ref>.</s><s>In their analysis, the critical miRNAtarget pairing region (seed region) spans the nucleotides 2-13, in which only a single mismatch is permitted.</s><s>The above match patterns suggest complementarity analysis to be the most effective way to identify potential miRNA target genes <ref type="bibr" target="#b7">(8)</ref>.</s></p><p><s>Scoring schemas encoding the match patterns have been widely adopted in the complementarity analysis between plant miRNAs and targets <ref type="bibr" target="#b8">(9,</ref><ref type="bibr" target="#b9">10)</ref>.</s><s>Yet, most of these tools utilize a built-in non-customizable scoring schema for target prediction, which poses a challenge to analyze the miRNA-mRNA interactions that have very low complementarity, such as the non-canonical targets described by Brousse et al. <ref type="bibr" target="#b10">(11)</ref>.</s></p><p><s>We developed the psRNATarget web server to enable the identification of target genes of the plant miRNAs <ref type="bibr" target="#b11">(12)</ref>.</s><s>The psRNATarget uses a mismatch-sensitive 'seed' region; specifically, the region spanning the nucleotides 2-7 originally defined in the vertebrate miRNA studies <ref type="bibr" target="#b12">(13)</ref>.</s><s>Importantly, the complementary base pairing in this seed region is weighted so that any mismatch is more heavily penalized.</s><s>psRNATarget also estimates mRNA target accessibility, which is the energy required to open the secondary structure of mRNA around the target region for target site exposure <ref type="bibr" target="#b11">(12)</ref>.</s><s>The original psRNATarget web server has been working perfectly to find most of validated miRNA-mRNA interactions; yet, it fails to report those recently published miRNA targets either with very low complementary matches or high target accessibility values in our benchmark dataset (Supplementary Table <ref type="table" target="#tab_1">S1</ref>).</s><s>In addition, as a web-based analysis tool, the original psRNATarget suffers from an important limitation: the ability to reliably upload large datasets, such as the large amounts of sequencing data produced from the next generation sequencing (NGS) platforms, through web browsers.</s><s>Here, we report the release of a new high-performance psRNATarget web server that is capable of predicting sRNA targets at higher 'recall rate,' and with enhanced capability for 'big' data uploading and analysis.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>METHODS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Implementation and infrastructure</head><p><s>The psRNATarget analysis server consists of a back-end pipeline, which was developed in Java and deployed on a high performance Linux cluster, and front-end web interfaces.</s><s>We also developed an enhanced job queue management system to manage user-submitted analysis requests and to send back session IDs, which can be used to track job progress and retrieve final results.</s><s>Submitted jobs are assigned to one of four individual job queues according to the size of the data, preventing large jobs from jamming the back-end analysis pipeline.</s></p><p><s>The back-end pipeline searches potential target candidates for given miRNAs based on the user customizable complementary matching scoring schema.</s><s>First, the pipeline employs ssearch36, a component of the FASTA package <ref type="bibr" target="#b13">(14)</ref> for sequence alignment between miRNA and candidate targets.</s><s>The ssearch36 features a SSE2 accelerated Smith-Waterman implementation with much better performance for short sequence alignment compared with the NCBI BLAST <ref type="bibr" target="#b14">(15)</ref>.</s><s>This is particularly important for analyzing short mature miRNA sequences.</s><s>Next, the energy required to unfold secondary structure around the target site, defined as target site accessibility, is calculated using the RNAup program in the Vienna Package <ref type="bibr" target="#b15">(16)</ref>, as described in the first release of psRNATarget <ref type="bibr" target="#b11">(12)</ref>.</s><s>This step is optional in the new scoring schema, however.</s></p><p><s>The psRNATarget webserver was developed in Flask, a Python web framework.</s><s>Popular JavaScript and CSS libraries, jQuery and Bootstrap were used to generate user friendly, interactive HTML5 web interfaces.</s><s>The new psR-NATarget release implements a stable, large data upload page, in which up to hundreds of gigabytes of data can be uploaded by multiple uploading threads simultaneously using the HTML5 file API.</s><s>The maximum file size permitted to be uploaded for analysis is only subject to the analytic capability of the back-end pipeline.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Inputs and outputs</head><p><s>The psRNATarget homepage includes three functional tabs that allow users to upload and search their miRNAs against the preloaded target transcript libraries, to upload and search candidate target transcripts against published miRNA sequences downloaded from the miRBase <ref type="bibr" target="#b16">(17)</ref>, or to upload both miRNA and target sequences and search for potential miRNA-mRNA interactions between them (Figure <ref type="figure" target="#fig_0">1</ref>).</s><s>The latest release of psRNATarget has significantly more preloaded target libraries than the previous version did.</s><s>As one example, it includes all transcript libraries from the JGI Phytozome Release 12 <ref type="bibr" target="#b17">(18)</ref>.</s></p><p><s>The new scoring schema, V2 is set as the default scoring schema of the updated psRNATarget sever; however, users can choose the scoring schema defined in the previous version (i.e. the V1 schema) if desired.</s><s>In the new release, the scoring rules are fully customizable.</s><s>This provides additional flexibilities to meet the special requirements of the end-users.</s><s>Users may further adjust individual parameters, such as disabling target accessibility estimation to accelerate the analysis, treating G:U pairs as other mismatches, restricting the maximum number of mismatches in the seed region, or minimizing the gap-extending penalty to allow long bulges on the miRNA or target sequence.</s><s>To assist users in customizing their search parameters, we created popup tips for all customizable options, which can be accessed by leaving the mouse cursor on the label of the individual option for more than one second (Figure <ref type="figure" target="#fig_1">2</ref>).</s></p><p><s>The analysis output page varies depending on the number of predicted miRNA-mRNA interactions in the new release.</s><s>For output comprising of less than 100,000 miRNAtarget in-silico interactions, the updated release of psR-NATarget provides a paginated HTML table to display the analysis result.</s><s>Users can also use the integrated search and sort functions to further filter the predicted miRNA-mRNA interactions (Figure <ref type="figure" target="#fig_2">3</ref>).</s><s>However, to improve the server response time and user experience, only a batch result download link is made available for the output comprising of more than 100,000 miRNA-target in-silico interactions.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>RESULTS: WHAT'S NEW IN THE LATEST RELEASE?</head><p><s>The new psRNATarget introduces significantly improved analytical capabilities, which can be categorized into two main functionalities: an improved complementary matching scoring schema and the ability to upload and handle much larger datasets compared to the previous release.</s><s>The updated psRNATarget server also has clear, compelling and user-friendly interfaces that enhance user experiences and present data clearly and concisely.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>The new scoring schema is capable of discovering miRNA-mRNA interactions at higher recall rates</head><p><s>The first version of psRNATarget searches target candidates using the scoring schema proposed by Zhang <ref type="bibr" target="#b8">(9)</ref>.</s><s>The new release has an improved scoring schema V2 to cover more validated miRNA-mRNA interactions without significantly increasing the final prediction output.</s></p><p><s>The differences between the scoring schema V1 and V2 are summarized as following.</s><s>Firstly, target accessibility analysis is disabled by default to include those validated miRNA-mRNA interactions with target accessibility values beyond the default cutoff defined in the scoring schema W52 Nucleic Acids Research, 2018, Vol.</s><s>46, Web Server issue V1 (Supplementary Table <ref type="table" target="#tab_2">S2</ref>).</s><s>Secondly, in the scoring schema V2, the seed region has been extended to 2-13 bp and only two mismatches (excluding G:U pair) in this region are allowed based on the published plant miRNA target recognition patterns <ref type="bibr" target="#b0">(1)</ref>.</s><s>The more stringent seed region scoring rule will be helpful to control the size of total prediction output when the target accessibility is disabled.</s><s>Thirdly, to accommodate the miRNA-mRNA interactions with long gap, such as the non-canonical target reported recently <ref type="bibr" target="#b10">(11)</ref>, the penalty for opening gap has been increased to 2, but the penalty for extending gap is decreased to 0.5.</s><s>Lastly, the maximum expectation in scoring schema V2 can be set to 10.0 instead of 5.0 in scoring schema V1 in case users desire to search those targets with poor complementary matching with miRNA or long gap in alignment.</s></p><p><s>We created an Arabidopsis benchmark dataset (Supplementary Table <ref type="table" target="#tab_1">S1</ref>), comprising of 147 validated miRNA-mRNA interactions, after systematical analyzing literatures and curating published databases.</s><s>In this benchmark dataset, only the targets with strong evidence from either 5 -RACE experiments or degradome analysis were included as experimentally validated miRNA-mRNA interactions.</s><s>Since only a limited number of experimentally validated miRNA-mRNA interactions are available to date, computing the commonly adopted performance measurements, such as false positive rate, ROC curve, are not applicable.</s><s>This is because the pure positive dataset (the validated target genes) is too small and incomplete to generate a reliable estimation value and, more critically, the pure negative dataset is absent.</s><s>Therefore, 'recall rate,' defined as ratio of the predicted also validated miRNA-mRNA interactions over all the validated interactions in our benchmark dataset, might be a reasonable measurement for us to demonstrate the performance of psRNATarget.</s><s>Mean-while, the total predictions should also be considered a measurement if the 'recall rates' are close because fewer predictions in the output would indicate higher 'precision.'</s></p><p><s>Using the improved scoring schema V2, we were able to identify 143 of 147 total validated miRNA-mRNA interactions in the Arabidopsis benchmark dataset with the default cutoff (i.e.</s><s>expectation is less than or equal to 5.0) making its 'recall rate' 6% higher than the original scoring schema V1 in the 2011 release with the same cutoff (Table <ref type="table" target="#tab_1">1</ref>).</s><s>The scoring schema V2 not only correctly predicted all miRNA-mRNA interactions, which had been predicted by the schema V1, but also retrieved nine more validated miRNA-mRNA interactions (Supplementary Table <ref type="table" target="#tab_2">S2</ref>).</s><s>Only four miRNA-mRNA interactions failed to be reported by the new scoring schema; two of them, including the recently reported non-canonical target, can actually be detected by changing the cutoff value or increasing the maximum number of targets allowed for each miRNA, while the 2011 release with old V1 scoring schema failed to report these targets even after changing these parameters (Supplementary Table <ref type="table" target="#tab_2">S2</ref>).</s></p><p><s>To further demonstrate the performance of psRNATarget in analyzing miRNA-mRNA interactions in non-Arabidopsis species, we analyzed another benchmark dataset, referred to as rice miRNA-mRNA interaction data, which was collected from the supplemental data (the additional file 8) of the paper published by Srivastava et al. <ref type="bibr" target="#b7">(8)</ref>.</s><s>The new psRNATarget was able to recall much more validated miRNA-mRNA interactions without significantly increasing the total predictions when searching the same rice miRNAs in the rice miRNA-mRNA interaction data against the same rice transcript library, JGI rice Phytozome 12 genome annotation.</s><s>Specifically, the recall rate was estimated at 82.7% by the psRNATarget Nucleic Acids Research, 2018, Vol.</s><s>46, Web Server issue W53 *The comparison was performed between 65 unique miRNAs/ta-siRNAs in the benchmark dataset (Supplementary Table <ref type="table" target="#tab_1">S1</ref>) and the Arabidopsis TAIR10 transcripts.</s><s>Maximum expectation was set to 5.0 and the maximum number of allowed top targets for each miRNA was set to 200 for both scoring schemas.</s><s>2017 release compared with the 62.5% recall rate by the psRNATarget 2011 release (Table <ref type="table" target="#tab_2">2</ref>), validating the new psRNATarget's improved performance in analyzing both Arabidopsis and non-Arabidopsis miRNA-mRNA interactions.</s></p><p><s>Using our Arabidopsis benchmark dataset, prediction performances were also compared between the new psR-NATarget and the standalone pipeline, TargetFinder <ref type="bibr" target="#b18">(19)</ref>.</s><s>Both applications delivered similar 'recall rate' and total predictions when we chose to balance the 'recall rate' and precision through adjusting score cutoff (Supplementary Table <ref type="table">S3</ref>).</s><s>However, if we chose to maximize 'recall rate' to cover more validated interactions, the new psRNATarget will recall slightly more validated interactions and report much less total predictions, which in turn indicate much higher precision (Supplementary Table <ref type="table">S3</ref>).</s><s>We further compared performances between new psRNATarget and the TAPIR (20) using its fast mode since the hybrid mode stringently restricts the size of data that can be analyzed each time due to slow computational speed of the algorithm.</s><s>We noticed that 'recall rate' of TAPIR is significantly lower than the other two applications even after we adjusted the cutoff thresholds to maximize the 'recall rate.'</s><s>However, TAPIR generated much less predictions than the psRNATarget 2017 release and TargetFinder did, indicating higher prediction precision (Supplementary Table <ref type="table">S3</ref>).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>The new release of psRNATarget enables 'big' data uploading and analysis</head><p><s>Emerging next generation sequencing (NGS) technologies often produce 'big' datasets that challenge the downstream bioinformatics analyses, such as miRNA regulatory target analysis.</s><s>However, the standard HTTP protocol was not designed to transmit such large data files over the internet browsers.</s><s>The submissions of the gigabytes level data through web browser often fail due to the interruptions of network connections.</s><s>The new psRNATarget has been optimized for uploading such 'big' datasets.</s><s>We have implemented a stable and resumable multithreading chunked data uploading module via HTTP.</s><s>The new data upload page utilizes an HTML5 File API to split each data file into small chunks and transmit these chunks in parallel to increase the upload robustness and upload speed.</s><s>If a single chunk upload fails, the upload is automatically reattempted until succeed.</s><s>This function was designed to overcome the HTTP protocol restrictions on data uploading including the size limit, low utilization of bandwidth, and the inability to resume upload if interrupted.</s></p><p><s>In addition, we also allocated hundreds more CPU cores to the back-end Linux cluster to significantly enhance the computing capacity of the psRNATarget.</s><s>The Linux cluster now has ∼1200 CPU Cores to accommodate the needs of high performance parallel computing.</s><s>With these improvements, the new psRNATarget can accept and analyze much larger datasets than the 2011 release.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DISCUSSION</head><p><s>Srivastava et al. evaluated the performance of 11 online or stand-alone computational tools, including the psRNATarget server <ref type="bibr" target="#b7">(8)</ref>, and concluded that the Tar-getFinder was most efficient in predicting 'true-positive' targets in Arabidopsis miRNA-mRNA interactions.</s><s>For non-Arabidopsis targets, combining the results of Tar-getFinder <ref type="bibr" target="#b18">(19)</ref> and the psRNATarget 2011 release delivers the highest 'true positive' coverage, whereas the intersection of psRNATarget and TAPIR (20) outputs deliver the best 'precise' predictions.</s><s>As described in the Result section, the new psRNATarget performed better in 'recall rate' or prediction precision compared to the other two outstanding software applications.</s><s>Furthermore, TargetFinder is a stand-alone software application that requires installation and data preparation, and TAPIR is a web-based tool that also requires data preparation due to lack of a library preloading function.</s><s>TAPIR is also restricted by its limited data analysis capacity; users can only submit a smallsized set data for each analysis.</s><s>Overall, our performance comparison continuously demonstrates that the new psR-NATarget is one of the best choices to search, rank and filter plant miRNA target genes.</s></p><p><s>Among the developed plant miRNA target analysis tools, only a few provide online analysis services <ref type="bibr" target="#b7">(8)</ref>.</s><s>Furthermore, the updated psRNATarget is the only one capable of up-W54 Nucleic Acids Research, 2018, Vol.</s><s>46, Web Server issue loading and analyzing 'big' data, enabled by two key technologies.</s><s>First, the newly developed multi-threading chunked file uploading module using the HTML5 file chunking API, integrated with customized JavaScript code, facilitates the upload of 'big' datasets without extra security risks, such as those associated with Flash/Java plugins.</s><s>Theoretically, the size of uploading file in the new psRNATarget is only restricted by the amount of disk space on the host server.</s><s>Enabling multi-threading chunked file uploading is critical for web-based data analysis services dealing with 'big' data, which can be readily generated by NGS technologies nowadays.</s><s>Second, the updated psRNATarget server is empowered by high performance computing capacity of the back-end Linux cluster, which significantly accelerates its analytic procedure, mainly the time-consuming Smith-Waterman search.</s><s>Hundreds more computing nodes have been added into our cluster, and more will be added when additional CPU resource becomes available, leading to a significant increase (about three times) in analysis capacity and capability compared to our original psRNATarget web server published in 2011.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc><div><p><s>Figure 1.</s><s>A screenshot showing the three functional tabs of the psRNATarget, allowing users to (i) upload and search miRNAs against the pre-loaded target transcript libraries, (ii) upload and search target candidates against published miRNA sequences downloaded from miRBase or (iii) upload both miRNA and target sequences and search for potential miRNA-target pairs.</s></p></div></figDesc><graphic coords="3,85.63,308.18,453.60,233.64" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc><div><p><s>Figure 2.A screenshot of the psRNATarget web interface for choosing complementary matching scoring schema and customizing both required and optional parameters.</s><s>A context help prompt will appear when the user leaves the mouse cursor on the text labels of any input field for more than one second.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc><div><p><s>Figure 3.</s><s>A screenshot of the psRNATarget output page.</s><s>Users can use the integrated search and sort functions to further filter the predicted miRNA-mRNA interactions.</s></p></div></figDesc><graphic coords="4,58.26,69.37,481.86,239.94" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head></head><label></label><figDesc><div><p><s>Axtell et al. sum-W50 Nucleic Acids Research, 2018, Vol.</s><s>46, Web Server issue marized the match/mismatch patterns between miRNAs and target transcripts, which were experimentally validated prior to 2013</s></p></div></figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 1 .</head><label>1</label><figDesc><div><p><s>The performance comparison between release 2017 and release 2011 using default scoring schema and 147 validated miRNA-mRNA interactions in our Arabidopsis benchmark dataset</s></p></div></figDesc><table><row><cell></cell><cell>Recalled interactions</cell><cell>Recall rate (%)</cell><cell>Total predictions in the output</cell></row><row><cell>2011 Release, Schema V1</cell><cell>134</cell><cell>91.1</cell><cell>9,204</cell></row><row><cell>2017 Release, Schema V2</cell><cell>143</cell><cell>97.3</cell><cell>9,654</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 2 .</head><label>2</label><figDesc><div><p><s>The performance comparison between release 2011 and release 2017 using default scoring schema and 52 validated miRNA-mRNA interactions in rice benchmark dataset The comparison was performed between 26 unique miRNAs in the rice benchmark dataset (Srivastava et al, 2014, Additional file 8) (8) and the rice JGI Phytozome 12 transcripts.</s><s>Maximum expectation was set to 5.0 and the maximum number of allowed top targets for each miRNA was set to 200 for both scoring schemas.</s></p></div></figDesc><table><row><cell></cell><cell>Recalled interactions</cell><cell>Recall rate (%)</cell><cell>Total predictions in the output</cell></row><row><cell>2011 Release, Schema V1</cell><cell>33</cell><cell>63.5</cell><cell>3,286</cell></row><row><cell>2017 Release, Schema V2</cell><cell>43</cell><cell>82.7</cell><cell>4,162</cell></row></table><note><p><s>*</s></p></note></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SUPPLEMENTARY DATA</head><p><s>Supplementary Data are available at NAR Online.</s></p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Classification and comparison of small RNAs from plants</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Axtell</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Annu. Rev. Plant Biol</title>
+		<imprint>
+			<biblScope unit="volume">64</biblScope>
+			<biblScope unit="page" from="137" to="159" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Phased, secondary, small interfering RNAs in posttranscriptional regulatory networks</title>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Fei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Xia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">C</forename><surname>Meyers</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Plant Cell</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="page" from="2400" to="2415" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Unique functionality of 22 nt miRNAs in triggering RDR6-Dependent siRNA biogenesis from target transcripts in Arabidopsis</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">T</forename><surname>Cuperus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Carbonell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Fahlgren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Garcia-Ruiz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">T</forename><surname>Burke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Takeda</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Sullivan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">D</forename><surname>Gilbert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">A</forename><surname>Montgomery</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Carrington</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat. Struct. Mol. Biol</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="page" from="997" to="1003" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">A diverse and evolutionarily fluid set of microRNAs in Arabidopsis thaliana</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Rajagopalan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Vaucheret</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Trejo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Bartel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Genes Dev</title>
+		<imprint>
+			<biblScope unit="volume">20</biblScope>
+			<biblScope unit="page" from="3407" to="3425" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">MicroRNA control of PHABULOSA in leaf development: importance of pairing to the microRNA 5 region</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">C</forename><surname>Mallory</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">J</forename><surname>Reinhart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">W</forename><surname>Jones-Rhoades</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">D</forename><surname>Zamore</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">K</forename><surname>Barton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Bartel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">EMBO J</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="page" from="3356" to="3364" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">MicroRNAs: Genomics, biogenesis, mechanism, and function</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Bartel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cell</title>
+		<imprint>
+			<biblScope unit="volume">116</biblScope>
+			<biblScope unit="page" from="281" to="297" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Specific effects of microRNAs on the plant transcriptome</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Schwab</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">F</forename><surname>Palatnik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Riester</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Schommer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Schmid</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Weigel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Dev. Cell</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="517" to="527" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">A comparison of performance of plant miRNA target prediction tools and the characterization of features for genome-wide target prediction</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">K</forename><surname>Srivastava</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">R</forename><surname>Moturu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Pandey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">T</forename><surname>Baldwin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">P</forename><surname>Pandey</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Genomics</title>
+		<imprint>
+			<biblScope unit="page">348</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">miRU: an automated plant miRNA target prediction server</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="W701" to="W704" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">MicroRNAs: target recognition and regulatory functions</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Bartel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cell</title>
+		<imprint>
+			<biblScope unit="volume">136</biblScope>
+			<biblScope unit="page" from="215" to="233" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">A non-canonical plant microRNA target site</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Brousse</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Beauclair</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Deremetz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Axtell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Bouche</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="page" from="5270" to="5279" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">psRNATarget: a plant small RNA target analysis server</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">X</forename><surname>Zhao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="page" from="W155" to="W159" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Conserved seed pairing, often flanked by adenosines, indicates that thousands of human genes are MicroRNA targets</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">P</forename><surname>Lewis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">B</forename><surname>Burge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Bartel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cell</title>
+		<imprint>
+			<biblScope unit="volume">120</biblScope>
+			<biblScope unit="page" from="15" to="20" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Comparison of DNA sequences with protein sequences</title>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">R</forename><surname>Pearson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Wood</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Miller</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Genomics</title>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<biblScope unit="page" from="24" to="36" />
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Computational analysis of miRNA targets in plants: current status and challenges</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhuang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">X</forename><surname>Zhao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Brief Bioinform</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="115" to="121" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Thermodynamics of RNA-RNA binding</title>
+		<author>
+			<persName><forename type="first">U</forename><surname>Muckstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Tafer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Hackermuller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">H</forename><surname>Bernhart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">F</forename><surname>Stadler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">L</forename><surname>Hofacker</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="page" from="1177" to="1182" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">miRBase: integrating microRNA annotation and deep-sequencing data</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kozomara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Griffiths-Jones</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="page" from="D152" to="D157" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Phytozome: a comparative platform for green plant genomics</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Goodstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Shu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Howson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Neupane</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">D</forename><surname>Hayes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Fazo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Mitros</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Dirks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Hellsten</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Putnam</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="page" from="D1178" to="D1186" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">High-throughput sequencing of Arabidopsis microRNAs: evidence for frequent birth and death of MIRNA genes</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Fahlgren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">D</forename><surname>Howell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">D</forename><surname>Kasschau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">J</forename><surname>Chapman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Sullivan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Cumbie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Givan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">F</forename><surname>Law</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">R</forename><surname>Grant</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Dangl</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PLoS One</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page">e219</biblScope>
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">TAPIR, a web server for the prediction of plant microRNA targets, including target mimics</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Bonnet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Billiau</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Van De Peer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="page" from="1566" to="1568" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

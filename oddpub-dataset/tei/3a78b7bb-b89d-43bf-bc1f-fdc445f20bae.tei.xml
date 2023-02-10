@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Technical Note: A Novel Leaf Sequencing Optimization Algorithm which considers previous Underdose and Overdose Events for MLC Tracking Radiotherapy</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2015-10-15">15 October 2015</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Eric</forename><surname>Wisotzky</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Ricky</forename><surname>O'brien</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Paul</forename><forename type="middle">J</forename><surname>Keall</surname></persName>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="department">Sydney Medical School</orgName>
+								<orgName type="laboratory">Radiation Physics Laboratory</orgName>
+								<orgName type="institution">University of Sydney</orgName>
+								<address>
+									<postCode>2006</postCode>
+									<region>NSW</region>
+									<country key="AU">Australia</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff1">
+								<orgName type="department">Sydney Medical School</orgName>
+								<orgName type="laboratory">Radiation Physics Laboratory</orgName>
+								<orgName type="institution">University of Sydney</orgName>
+								<address>
+									<postCode>2006</postCode>
+									<region>NSW</region>
+									<country key="AU">Australia</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Technical Note: A Novel Leaf Sequencing Optimization Algorithm which considers previous Underdose and Overdose Events for MLC Tracking Radiotherapy</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2015-10-15">15 October 2015</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">E23EAB3844FC0FE24C9F0D3297B63B0C</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:51+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Purpose: Multi-leaf collimator (MLC) tracking radiotherapy is complex as the beam pattern needs to be modified due to the planned intensity modulation as well as the real-time target motion.</s><s>The target motion cannot be planned, therefore the modified beam pattern differs from the original plan and the MLC sequence needs to be recomputed online.</s><s>Current MLC tracking algorithms use a greedy heuristic in that they optimize for a given time, but ignore past errors.</s><s>To overcome this problem, we have developed and improved an algorithm that minimizes large underdose and overdose regions.</s><s>Additionally, previous underdose and overdose events are taken into account to avoid regions with high quantity of dose events.</s></p><p><s>Methods: We improved the existing MLC motion control algorithm by introducing a cumulative underdose/overdose map.</s><s>This map represents the actual projection of the planned tumor shape and logs occurring dose events at each specific regions.</s><s>These events have an impact on the dose cost calculation and reduce recurrence of dose events at each region.</s><s>We studied the improvement of the new temporal optimization algorithm in terms of the L1-norm minimization of the sum of overdose and underdose compared to not accounting for previous dose events.</s><s>For evaluation, we simulated the delivery of 5 conformal and 14 IMRT-plans with 7 3D patient measured tumor motion traces.</s></p><p><s>Results: Simulations with conformal shapes showed an improvement of L1-norm up to 8.5% after 100 MLC modification steps.</s><s>Experiments showed comparable improvements with the same type of treatment plans.</s><s>Conclusion: A novel leaf sequencing optimization algorithm which considers previous dose events for MLC tracking radiotherapy has been developed and investigated.</s><s>Reductions in underdose/overdose are observed for conformal and IMRT delivery.</s><s>65 mor position.</s><s>In this setup, undeliverable shapes occur, e.g.</s><s>undeliverable shapes occur when the shape partially overlaps a leaf pair.</s><s>In this case the leaves can be fully closed, which underdoses the edge of the tumor, or fully open which overdoses healthy tissue.</s><s>These undeliverable 70 shapes result in overdose and underdose events, which we will refer to as dose events, caused by the aperture errors introduced above.</s><s>Further events appear, since the target is continuously moving while the framework cal-</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p><s>Radiation therapy aims to control the cell growth of tumor targets by delivering radiation dose to the target.</s><s>To spare healthy tissue during treatment, high precision of the beam delivery and the beam shape is required, but anatomical motion during treatment causes misalignment between anatomy and beam shape.</s><s>To reduce this intrafractional misalignment, tumor tracking has been introduced to synchronize the beam shape with the tumor motion <ref type="bibr" target="#b2">[1]</ref><ref type="bibr">[2]</ref><ref type="bibr" target="#b4">[3]</ref><ref type="bibr" target="#b5">[4]</ref><ref type="bibr" target="#b6">[5]</ref><ref type="bibr" target="#b7">[6]</ref> .</s><s>This synchronization is done by modifying the position of the beam during treatment.</s></p><p><s>Intrafractional target motion in MLC tracking radiotherapy requires the MLC to deliver online modified beam shapes.</s><s>These shapes are different from the previous planned tumor shapes.</s><s>After the target has moved during treatment and the new position is detected in real time, the MLC adapts the planned shape and delivers a modified beam shape.</s><s>Managing complex motion pattern as well as complex beam shapes demand a systematic approach for MLC adaptation.</s><s>Additionally, this shape adaption results in three different types of MLC aperture errors 7 .</s><s>The first error, which due to the tar-get position can only be estimated, is called localization error.</s><s>Second, the leaf fitting errors are caused by the finite leaf width and finally, the leaf adjustment errors 55 are due to the finite leaf speed.</s><s>Full-fledged re-planning in real-time would be the most ideal solution to overcome these problems.</s><s>However, this is impractical due to heavy computation and on as-yet unresolved quality assurance issue <ref type="bibr" target="#b9">8,</ref><ref type="bibr">9</ref> .</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>60</head><p><s>In this work, we expand the first order approximation to ideal online re-planning introduced by Ruan and Keall <ref type="bibr" target="#b12">10</ref> .</s><s>In this first order optimization approach, the MLC leaf configuration is adapted by calculating the optimal leaf pair position according to the current tu-culates the new MLC setup and the leaves are adapting to the new positions.</s><s>To minimize the MLC aperture errors and the resulting dose events, we use previous underdose and overdose information in our improved leaf sequencing optimization algorithm to calculate the optimal new shape.</s><s>This technical note introduces a novel optimization framework expansion.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. MATERIAL AND METHODS</head><p><s>We formulated the optimization problem in a constrained optimization algorithm with a dose map as input.</s><s>In this dose map, all previous overdose and underdose events are recorded with their specific position.</s><s>The optimization algorithm calculates the leaf sequence parameters that minimize the integrated overdose and underdose cost over all regions from the beginning of treatment till the actual time step, i.e. the optimization process is minimizing the L1-norm of the cumulative dose error.</s><s>The optimal solution is derived by shifting the overdose/underdose map according to the detected intrafractional target displacement and including the previous occurred dose error in the optimization process.</s><s>The separability of the cost across various leaf tracks allows us to improve the efficiency of the optimization algorithm and to consider each leaf track independently.</s><s>We integrated the algorithm into an existing in-house developed framework 11 .</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II.A. Mathematical Optimization Formulation</head><p><s>This section discusses the leaf sequencing optimization problem in the presence of motion.</s><s>We assume a given tumor shape f (x, y) and an estimated anatomical motion pattern T (t), collapsed onto the beam's eye view (BEV).</s></p><p><s>The ideal motion-compensated shape g is given by combining f (x, y) with the collapsed BEV motion, resulting in the function g = f • T .</s><s>The (x,y)-plane is located in the BEV, see figure <ref type="figure">1</ref>.</s></p><p><s>The function g(x, y, t), where (x, y) denotes the element location at a certain time point t, can be seen as a binary function over the region-of-interest (ROI): Ω → {0, 1}, so that g(x, y, t) = { 1 (x, y, t) ∈ transformed shape opening 0 else</s></p><p><s>Without loss of generality, we align the x-coordinate with the leaf track direction.</s><s>Let ∆ be the leaf resolution and located along y-direction.</s><s>The complete aperture consists of N leaf pairs, starting at y = 0.</s><s>With these specifications, the optimization problem can be described as: finding the optimal position for every leaf pair, which fits the transformed tumor shape at a specific time point τ best and takes previous overdose and underdose events into account.</s></p><p><s>The leaf pair positions are parametrized as L i for the left leaf position and R i for the right leaf position, where the index i = 1, 2, ..., N describes the leaf pair.</s><s>The optimization objective is quantitatively defined as the discrepancy between the deliverable shape parametrized by {L i , R i } N i=1 and the requested transformed tumor shape g(x, y, t).</s><s>Motivated by the therapeutic intent, this discrepancy is characterized as the sum of underdose and overdose costs, ∑ λ u (x, y) and ∑ λ o (x, y), respectively.</s><s>For the tumor shape, the underdose cost λ tumor u (x, y) is essential and initialized with 1, while the overdose λ tumor o (x, y) is 0 and for the radio-sensitive healthy tissue the overdose cost λ tissue o (x, y) becomes important and is initialized with 1 while the underdose λ tissue u (x, y) is set to 0. Underdose and overdose cost can be combined to a λ-map.</s><s>These maps λ o and λ u contain the overdose and underdose events of every treatment step.</s><s>Therefore the optimization problem aims to find the L i /R i position for every leaf pair i, which minimizes the overall sum of overdose cost Φ i,o and underdose cost Φ i,u considering actual and previous overdose and underdose events min</s></p><formula xml:id="formula_0">∑ i ∑ t (Φ i,o (t) + Φ i,u (t)).</formula><p><s>To take previous overdose and underdose events into account, the cost maps λ o and λ u are time dependent and 120 'collect' all occurring overdose and underdose events by increasing the weighting at this point (x, y) by 1. Assuming the leaves are of widths ∆, then the underdose cost and overdose cost for leaf track i are given at a certain point of time τ by</s></p><formula xml:id="formula_1">125 Φ i,u (τ ) = ∫ i∆ (i−1)∆ ∫ xmax 0 (∫ τ 0 λ u (x, y, t)dt ) g(x, y, τ ) [I(L i − x) + I(x − R i )] dxdy and Φ i,o (τ ) = ∫ i∆ (i−1)∆ ∫ xmax 0 (∫ τ 0 λ o (x, y, t)dt ) (1 − g(x, y, τ )) [I(x − L i )I(R i − x)] dxdy,</formula><p><s>Fig. <ref type="figure">2</ref> This is an example of an initialized underdose/overdose map.</s><s>The planned tumor shape is white, while the shape that is not meant to be treated is black.</s></p><p><s>while I is the indicator function and the following optimization needs to be solved</s></p><formula xml:id="formula_2">min Φ i (τ ) = min (Φ i,u (τ ) + Φ i,o (τ )).</formula><p><s>For simplicity, we ignore in this mathematical description the leaf velocity.</s><s>This condition can be included by introducing additional constraints on the optimization process.</s></p><p><s>Due to the fact that only λ and g are dependent on y and both are independent of L i and R i , we can reduce the cost functions to one dimension</s></p><formula xml:id="formula_3">Φ i,u (τ ) = ∫ xmax 0 c i,u (x, τ ) [I(L i − x) + I(x − R i )] dx and Φ i,o (τ ) = ∫ xmax 0 c i,o (x, τ ) [I(x − L i )I(R i − x)] dx,</formula><p><s>where the function c(x, τ ) includes</s></p><formula xml:id="formula_4">c i,u (x, τ ) = ∫ i∆ (i−1)∆ (∫ τ 0 λ u (x, y, t)dt ) g(x, y, τ )dy</formula><p><s>as well as</s></p><formula xml:id="formula_5">c i,o (x, τ ) = ∫ i∆ (i−1)∆ (∫ τ 0 λ o (x, y, t)dt ) (1 − g(x, y, τ )) dy.</formula><p><s>The function c(x, τ ) includes the information of the λmap and can be understood as a weighting factor for a specific position x, while Φ(τ ) provides the optimal L iand R i -leaf position.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II.B. Solving the Optimization Problem</head><p><s>We implemented this optimization process in our existing treatment framework and without any restriction we can combine both λ-maps to an underdose/overdose map where the overdose areas of the radio-sensitive tissue are initialized with +1, while the underdose areas of the tumor shape are initialized with −1, see figure <ref type="figure">2</ref>. Occurring underdose or overdose events increase the value in the map by −1 or +1 respectively at the occurring position (x, y).</s><s>To ensure that the global minimum of the problem is found, we expand the optimization formula with its variance.</s><s>Therefore, the optimization formula is split into three cases and formulated as:</s></p><formula xml:id="formula_6">min Φ ′ i (τ ) = min ( Φ i,1 (τ ) 2 + Φ i,2 (τ ) 2 + Φ i,3 (τ ) 2 ) , with Φ i,1 (τ ) = ∫ Li 0 c i,u (x, τ )dx, Φ i,2 (τ ) = ∫ Ri Li c i,o (x, τ )dx and Φ i,3 (τ ) = ∫ xmax Ri c i,u (x, τ )dx,</formula><p><s>where Φ i,1 (τ ) and Φ i,3 (τ ) describe the underdose cost associated with the region covered by the left and right leaf respectively and Φ i,2 (τ ) describes the overdose cost between the two leaves.</s><s>The left and right leaf position are only related by the constraint that L i ≤ R i .</s><s>Therefore, the first order condition for optimality is</s></p><formula xml:id="formula_7">∂ ∂(L i ) Φ ′ i | Li=x = 0, ∂ ∂(R i ) Φ ′ i | Ri=x = 0,</formula><p><s>and the second order condition becomes</s></p><formula xml:id="formula_8">∂ 2 ∂(L i ) 2 Φ ′ i | Li=x &gt; 0, ∂ 2 ∂(R i ) 2 Φ ′ i | Ri=x &gt; 0.</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II.C. Experiments 150</head><p><s>To reduce the complexity of the problem, we started to implement our algorithm for 2D step and shoot intensitymodulated radiotherapy (IMRT), where we only needed a 2D-λ-map.</s><s>We simulated the delivery of five conformal and fourteen IMRT-plans with seven 3D patient mea-155 sured tumor motion traces.</s><s>We simulated 100 MLC modification steps and evaluated the efficiency of our leaf sequencing optimization algorithm by calculating the mean absolute dose error (L1-norm), as well as the increase of the mean absolute error (MAE) at every step for the 160 resulting 2D-λ-map.</s><s>We used patient planned shapes for our simulations, therefore the shapes were simple in their complexity, which means that the planned treatment shape is aligned to the MLC and in absence of tumor motion the shape can be perfectly reproduced by the 165 MLC.</s><s>To increase the complexity of the shapes during simulation, we also rotated the shapes by 90 • to obtain extreme shapes that cannot be perfectly reproduced by the MLC.</s><s>This 90 • rotation is not likely to occur clinically, but if we find an improvement for this extreme case we make sure that in the whole interval from 0 • to 90 • rotations improvement can be reached.</s><s>To confirm our simulated results, we performed IMRT experiments at a  Varian Clinac machine.</s><s>For these experiments, we used one 3D patient planned tumor shape and two 3D patient measured tumor motion traces; one trace is shown in figure <ref type="figure" target="#fig_1">3</ref>. The delivered dose information were measured by our framework, we logged the actual and needed leave positions, delivered dose and the λ-map.</s><s>Using this information we were able to evaluate the improvement of our optimization algorithm without the need for a phantom.</s><s>The time interval of motion tracking is 40 ms, therefore our optimized leaf positions need to be calculated in this time period.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. RESULTS</head><p><s>Simulations of conformal shapes showed an improvement of L1-norm up to 8.5% after 100 MLC modification steps.</s><s>The improvement in terms of L1-norm for a single step increased by up to 18.2%.</s><s>For every simulated case, an improvement of MAE can be achieved.</s><s>As it can be seen in table I, the improvement of MAE varies between simulation setups.</s><s>For shapes that are aligned to the MLC, the improvement of our algorithm is about 1.45 ± 0.1%, because our algorithm improvements apply only for the case when the shape is exactly shifted by half of the leaf width.</s><s>For more complex shapes the improvement gets much larger, as for every single optimization step previous dose events affect the optimization result.</s></p><p><s>Experiments on a Varian Clinac machine confirmed our  simulated results, see table <ref type="table" target="#tab_0">II</ref>.</s><s>Numeral experiments with IMRT showed an improvement of up to 1.4% after the first 100 steps for prostate and up to 7.0% for lung treat-205 ments.</s><s>For a single step, the average MAE improvement was 3.28 ± 0.4% of all prostate treatment experiments.</s><s>This improvement corresponds with our simulations and our expected improvement for simple shapes.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>210</head><p><s>The runtime of our algorithm was on average 23.74 ms, but some cases were over 120 ms.</s><s>The larger runtime can be reduced by running the optimization for separate leaves in parallel.</s><s>The overall latency of tumor tracking systems is of the order of 200-300 ms and 23.74 ms is 215 comparable to existing systems 2-7 .</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>IV. CONCLUSION</head><p><s>A novel leaf sequencing optimization algorithm which considers previous dose events for MLC tracking radiotherapy has been developed and investigated.</s><s>Reductions in underdose and overdose are observed for conformal and IMRT delivery.</s><s>Our algorithm shows only a modest improvement when rotation is ignored, with a more significant improvement when rotation is included.</s><s>Further improvements are expected as we transition to tracking 225 general shapes, such as the fluence map produced during treatment planning.</s><s>In this work we have assumed that the treatment plan and fluence map remain invariant to patient motion.</s><s>Online treatment re-planning that takes into account leaf velocities, previous underdose/overdose and the predicted tumor motion is the next logical step in tumor tracking software.</s><s>Online re-planning remains a challenge because of computation time and potential issues with QA and RT acceptance.</s><s>The next step to improve our algorithm will be to extend and test it for 235 volumetric intensity modulated arc therapy.</s><s>Here a 3Dλ-map is needed, where for every treatment angle the corresponding 2D-λ-map is calculated using forward and backward projection.</s><s>A 3D leaf sequencing optimization algorithm which considers previous underdose and over-240 dose events could allow to use the planning target volume (PTV) or the clinical target volume (CTV) with internal margin as input for function f (x, y).</s><s>This would potentially further reduce the dose errors while increasing the treatment accuracy, and is the first step to online treat-245 ment planning.</s><s>In the future, we plan to improve our MLC motion control algorithm in terms of L1-norm dose error minimization by using more realistic and conformal shapes in the optimization process.</s><s>We also plan to increase the robustness of the algorithm by optimizing the 250 algorithm latency.</s><s>Additionally, it is possible to include a L2-norm minimization into the algorithm to reduce overdose and underdose peaks in the patient.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head></head><label></label><figDesc><div><p><s>Fig. 1 This shows the basic setup.</s><s>The MLC is located between treatment beam and target R(xp, yp, z iso , t).</s></p></div></figDesc><graphic coords="2,328.37,115.31,196.47,169.32" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 3</head><label>3</label><figDesc><div><p><s>Fig. 3 This is a patients measured motion trace we used for our experiments at the Varian Clinac machine.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 4</head><label>4</label><figDesc><div><p><s>Fig.4This overdose/underdose map shows results after 100 steps for the IMRT experiments.</s><s>In the large gray areas no dose events have occured, while in the lighter areas overdose and in the darker areas underdose events happened.</s></p></div></figDesc><graphic coords="4,377.76,273.56,68.17,67.25" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc><div><p></p></div></figDesc><graphic coords="7,-0.71,-0.68,434.02,374.02" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table I</head><label>I</label><figDesc><div><p><s>10is table shows simulation results for two different kind of shapes with five different displacement amplitudes.All simulations are performed with the greedy heuristic algorithm by10and with our new temporally optimized algorithm.</s><s>The mean absolute error (MAE) is calculated after 100 optimizations and the MAE increase displays the average L1-norm increase per step.</s></p></div></figDesc><table><row><cell></cell><cell cols="3">Amp Rot MAE</cell><cell>MAE</cell><cell cols="2">MAE step MAE step</cell></row><row><cell cols="6">No [mm] [deg] greedy temporal increase</cell><cell>increase</cell></row><row><cell></cell><cell></cell><cell></cell><cell cols="4">heuristic optimized greedy optimized</cell></row><row><cell>1</cell><cell>35</cell><cell>0</cell><cell>1.79</cell><cell>1.77</cell><cell>0.0067</cell><cell>0.0065</cell></row><row><cell>2</cell><cell>30</cell><cell>0</cell><cell>1.70</cell><cell>1.68</cell><cell>0.0069</cell><cell>0.0066</cell></row><row><cell>3</cell><cell>25</cell><cell>0</cell><cell>1.71</cell><cell>1.68</cell><cell>0.0065</cell><cell>0.0063</cell></row><row><cell>4</cell><cell>15</cell><cell>0</cell><cell>1.71</cell><cell>1.69</cell><cell>0.0064</cell><cell>0.0062</cell></row><row><cell>5</cell><cell>15</cell><cell>90</cell><cell>1.84</cell><cell>1.77</cell><cell>0.0079</cell><cell>0.0072</cell></row><row><cell>6</cell><cell>00</cell><cell>90</cell><cell>1.97</cell><cell>1.80</cell><cell>0.0092</cell><cell>0.0075</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table</head><label></label><figDesc><div><p><s>II This table shows experiment results of IMRT treatment with a maximum displacement of 16.9 mm.</s><s>All experiments are performed with the greedy heuristic algorithm by 10 and with our new temporally optimized algorithm.</s><s>No. 1 used a prostate treatment plan, while the others used a lung tumor plan.</s></p></div></figDesc><table><row><cell cols="2">Amp MAE</cell><cell>MAE</cell><cell cols="2">MAE step MAE step</cell></row><row><cell cols="4">No avg greedy temporal increase</cell><cell>increase</cell></row><row><cell cols="5">[mm] heuristic optimized greedy optimized</cell></row><row><cell>1 2.53</cell><cell>0.287</cell><cell>0.283</cell><cell>0.0031</cell><cell>0.0028</cell></row><row><cell>2 2.53</cell><cell>0.342</cell><cell>0.318</cell><cell>0.0040</cell><cell>0.0032</cell></row><row><cell>3 2.53</cell><cell>0.247</cell><cell>0.214</cell><cell>0.0025</cell><cell>0.0021</cell></row></table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ACKNOWLEDGMENTS</head><p><s>The authors would like to acknowledge the support 255 of a National Health and Medical Research Council (NHMRC) Australia Fellowship.</s></p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">@charite.de or eric.wisotzky@ipk.fraunhofer.de b) Navigation, Robotics and Medical Technology</title>
+	</analytic>
+	<monogr>
+		<title level="j">Charité Berlin, Augustenburger Platz</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page">260</biblScope>
+			<date>13353</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Institute for Production Systems and Design Technology (IPK), Pascalstr. 8-9</title>
+		<imprint>
+			<date>10587</date>
+			<pubPlace>Berlin, Germany</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Keall</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">R</forename><surname>Kini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">S</forename><surname>Vedam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Mohan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Physics in Medicine and Biology</title>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<biblScope unit="page">1</biblScope>
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sawant</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Venkat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Srivastava</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Carlson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Povzner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Cattell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Keall</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Medical Physics</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page">2050</biblScope>
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">B</forename><surname>Tacke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Nill</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Krauss</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Oelfke</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Medical Physics</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="page">753</biblScope>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">P M</forename><surname>Crijns</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">W</forename><surname>Raaymakers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">J W</forename><surname>Lagendijk</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Physics in medicine and biology</title>
+		<imprint>
+			<biblScope unit="volume">57</biblScope>
+			<biblScope unit="page">7863</biblScope>
+			<date type="published" when="2012">270. 2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">F</forename><surname>Fast</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Nill</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Bedford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Oelfke</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Medical Physics</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="page">1</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">E</forename><surname>Wisotzky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">F</forename><surname>Fast</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Oelfke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Nill</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Zeitschrift für Medizinische Physik</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="page">123</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">R</forename><surname>Poulsen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Fledelius</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Cho</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Keall</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Radiation Oncology Biology Physics</title>
+		<imprint>
+			<biblScope unit="volume">83</biblScope>
+			<biblScope unit="page">e265</biblScope>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">C</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Jeraj</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">R</forename><surname>Mackie</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Medical Physics</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="page">191</biblScope>
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">R</forename><surname>Mohan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Kang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">K</forename></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">D</forename><surname>Ang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Kuban</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Dong</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Radiation Oncology*Biology*Physics</title>
+		<imprint>
+			<biblScope unit="volume">61</biblScope>
+			<biblScope unit="page">1258</biblScope>
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">D</forename><surname>Ruan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Keall</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Power Engineering and Automation Conference</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">100</biblScope>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Keall</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Colvill</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">T</forename><surname>O'brien</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Ng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">R</forename><surname>Poulsen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Eade</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kneebone</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">T</forename><surname>Booth</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Medical Physics</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="page">20702</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,1277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Spinal cord gray matter segmentation using deep dilated convolutions</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Christian</forename><forename type="middle">S</forename><surname>Perone</surname></persName>
+							<affiliation key="aff2">
+								<orgName type="department">Institute of Biomedical Engineering</orgName>
+								<orgName type="laboratory">NeuroPoly Lab</orgName>
+								<orgName type="institution">Polytechnique Montreal</orgName>
+								<address>
+									<postCode>H3T 1J4</postCode>
+									<settlement>Montreal</settlement>
+									<region>QC</region>
+									<country key="CA">Canada</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Evan</forename><surname>Calabrese</surname></persName>
+							<affiliation key="aff3">
+								<orgName type="department">Department of Radiology</orgName>
+								<orgName type="institution">Duke University Medical Center</orgName>
+								<address>
+									<addrLine>Center for In Vivo Microscopy</addrLine>
+									<postCode>27710</postCode>
+									<settlement>Durham</settlement>
+									<region>NC</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff4">
+								<orgName type="department">Department of Radiology &amp; Biomedical Imaging</orgName>
+								<orgName type="institution">University of California San Francisco</orgName>
+								<address>
+									<postCode>94143</postCode>
+									<settlement>San Francisco</settlement>
+									<region>CA</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Julien</forename><surname>Cohen-Adad</surname></persName>
+							<affiliation key="aff2">
+								<orgName type="department">Institute of Biomedical Engineering</orgName>
+								<orgName type="laboratory">NeuroPoly Lab</orgName>
+								<orgName type="institution">Polytechnique Montreal</orgName>
+								<address>
+									<postCode>H3T 1J4</postCode>
+									<settlement>Montreal</settlement>
+									<region>QC</region>
+									<country key="CA">Canada</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff5">
+								<orgName type="department">Functional Neuroimaging Unit</orgName>
+								<orgName type="institution" key="instit1">CRIUGM</orgName>
+								<orgName type="institution" key="instit2">Université de Montréal</orgName>
+								<address>
+									<postCode>H3C 3J7</postCode>
+									<settlement>Montreal</settlement>
+									<region>QC</region>
+									<country key="CA">Canada</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="institution">University College London</orgName>
+								<address>
+									<addrLine>Polytechnique Montreal</addrLine>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff1">
+								<orgName type="institution">University of Zurich and Vanderbilt University)</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Spinal cord gray matter segmentation using deep dilated convolutions</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">5C0A2D972D04B9EEAD14081276706B3E</idno>
+					<idno type="DOI">10.1038/s41598-018-24304-3</idno>
+					<note type="submission">Received: 12 October 2017 Accepted: 28 March 2018</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:29+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Gray matter (GM) tissue changes have been associated with a wide range of neurological disorders and were recently found relevant as a biomarker for disability in amyotrophic lateral sclerosis.</s><s>The ability to automatically segment the GM is, therefore, an important task for modern studies of the spinal cord.</s><s>In this work, we devise a modern, simple and end-to-end fully-automated human spinal cord gray matter segmentation method using Deep Learning, that works both on in vivo and ex vivo MRI acquisitions.</s><s>We evaluate our method against six independently developed methods on a GM segmentation challenge.</s><s>We report state-of-the-art results in 8 out of 10 evaluation metrics as well as major network parameter reduction when compared to the traditional medical imaging architectures such as U-Nets.</s></p><p><s>Gray matter (GM) and white matter (WM) tissue changes in the spinal cord (SC) have been linked to a large spectrum of neurological disorders 1 .</s><s>For example, using magnetic resonance imaging (MRI), the involvement of the spinal cord gray matter (SCGM) area in multiple sclerosis (MS) was found to be the strongest correlate of disability in multivariate models including brain GM and WM volumes, FLAIR lesion load, T1-lesion load, SCWM area, number of spinal cord T2 lesions, age, sex and disease duration 2 .</s><s>Another study showed SCGM atrophy to be a biomarker for predicting disability in amyotrophic lateral sclerosis <ref type="bibr" target="#b2">3</ref> .</s></p><p><s>The ability to automatically assess and characterize these changes is, therefore, an important step 4 in the modern pipeline to study both the in vivo and ex vivo SC.</s><s>The segmentation outcome can also be used for co-registration and spatial normalization to a common space.</s><s>Moreover, the fully-automated segmentation is useful for longitudinal studies, where the delineation of gray matter is time consuming 4 .</s></p><p><s>While recent cervical cord cross-sectional area (CSA) segmentation methods have achieved near-human performance 5 , the accurate segmentation of the GM remains a challenge 6 .</s><s>The main properties that make the GM area difficult to segment are: inconsistent intensities of the surrounding tissues, image artifacts and pathology-induced changes in the image contrast 4 .</s></p><p><s>Additional factors also contribute to the complexity of the GM segmentation task, such as lack of standardized datasets, differences in MRI acquisition protocols, different pixel sizes, different methods to acquire gold standard segmentations and different performance metrics to assess segmentation results 6 .</s><s>Figure <ref type="figure">1</ref> features several examples of axial MRI acquired at different centers, demonstrating image variability due variable image acquisition systems and protocols.</s></p><p><s>Despite these difficulties, there have been major improvements in acquisition and analysis methods in recent years, making it possible to obtain reliable GM segmentations.</s><s>From the acquisition standpoint, the advances in coil sensitivity 7 , multi-echo gradient echo sequences 8 , and phase-sensitive inversion recovery sequences 9 drastically improved the contrast-to-noise-ratio between the white and gray matter in the cord.</s><s>From the analysis standpoint, the scientific community recently organized a collaboration effort called "Spinal Cord Gray Matter Segmentation Challenge" (SCGM Challenge) 6 to characterize the state-of-the-art and compare six independent developed methods 10-15 on a public available standard dataset created through the collaboration of four internationally recognized spinal cord imaging research groups (</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>In the past few years, we have witnessed the fast and unprecedented development of Deep Learning <ref type="bibr" target="#b15">16</ref> methods, that have not only achieved human-level performance but, in many cases, have surpassed it <ref type="bibr" target="#b16">17</ref> , even in health domain applications <ref type="bibr" target="#b17">18</ref> .</s><s>After the results presented in the seminal paper of the AlexNet <ref type="bibr" target="#b18">19</ref> , the Machine Learning community embraced the successful Deep Learning approach for Machine Learning and, consequently, many methods have been developed to since become the state-of-the-art and pervasive in many different fields such as image classification <ref type="bibr" target="#b19">20</ref> , image segmentation <ref type="bibr" target="#b20">21</ref> , speech recognition <ref type="bibr" target="#b21">22</ref> , natural language processing (NLP), among others.</s></p><p><s>Deep Learning is characterized by a major shift from traditional handcraft feature extraction to a hierarchical representation learning approach where multiple levels of automatically discovered representations are learned from raw data <ref type="bibr" target="#b15">16</ref> .</s></p><p><s>In a recent survey <ref type="bibr" target="#b22">23</ref> of over 300 papers that used Deep Learning techniques for medical image analysis, the authors found that these techniques have spread throughout the entire field of medical image analysis, with a rapid increase in the number of publications between the years of 2015 and 2016.</s><s>The survey also found that Convolutional Neural Networks (CNNs) were more prevalent in the medical image analysis, with Recurrent Neural Networks (RNNs) gaining more popularity.</s></p><p><s>Although the enormous success of Deep Learning has attracted a lot of attention from the research community, some challenges in the medical imaging domain remain open, such as data acquisition, which is usually very expensive and requires time-consuming annotation from image specialists to create the gold standards necessary for algorithm training and validation.</s><s>Standardized datasets remain also a major problem due to variability in equipment from different vendors, acquisition protocols/parameters/contrasts, especially in the MRI domain.</s><s>Furthermore, data availability is limited due to concerns around ethics and regulations on patient data privacy <ref type="bibr" target="#b22">23</ref> .</s></p><p><s>In this work, we propose a new simple pipeline featuring an end-to-end learning approach for fully-automated spinal cord gray matter segmentation using a novel Deep Learning architecture based on the Atrous Spatial Pyramid Pooling (ASPP) <ref type="bibr" target="#b20">21,</ref><ref type="bibr" target="#b23">24</ref> , where we achieved state-of-the-art results on many metrics in an in vivo independent dataset evaluation.</s><s>We further demonstrate an excellent generalization on an ex vivo high-resolution acquisition dataset where only a few axial-slices were annotated to accurate segment an MRI volume with more than 4000 axial slices.</s><s>Our proposed method is compared with the commonly used U-Net <ref type="bibr" target="#b24">25</ref> architecture and with six other independently developed methods.</s></p><p><s>This work was implemented as the sct_deepseg_gm tool in the Spinal Cord Toolbox (SCT) <ref type="bibr" target="#b25">26</ref> and is now freely available at SCT Github repository in https://github.com/neuropoly/spinalcordtoolbox.</s><s>SCT is a comprehensive, free and open-source library of analysis tools for MRI of the spinal cord.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Related Work</head><p><s>Many methods for spinal cord segmentation were proposed in the past.</s><s>Regarding the presence or absence of manual intervention, the segmentation methods can be separated into two main categories: semi-automated and fully-automated.</s></p><p><s>In the work <ref type="bibr" target="#b13">14</ref> , they propose a probabilistic method for segmentation called "Semi-supervised VBEM", whereby the observed MRI signals are assumed to be generated by the warping of an averagely shaped reference anatomy <ref type="bibr" target="#b5">6</ref> .</s><s>The observed image intensities are modeled as random variables drawn from a Gaussian mixture distribution, where the parameters are estimated using a variational version of the Expectation-Maximization (EM) <ref type="bibr" target="#b13">14</ref> algorithm.</s><s>The method can be used in a fully unsupervised fashion or by incorporating training data with manual labels, hence the semi-supervised scheme <ref type="bibr" target="#b5">6</ref> .</s><s>The SCT (Spinal Cord Toolbox) segmentation method <ref type="bibr" target="#b12">13</ref> , uses an atlas-based approach and was built based on a previous work <ref type="bibr" target="#b26">27</ref> but with additional improvements such as the use of vertebral level information and linear intensity normalization to accommodate multi-site data <ref type="bibr" target="#b12">13</ref> .</s><s>The SCT approach first builds a dictionary of images using manual WM/GM segmentations after a pre-processing step, then the target image is also pre-processed and normalized, after that, the target image is projected into the PCA (Principal Component Analysis) space of the dictionary images where the most similar dictionary slices are selected using an arbitrary threshold.</s><s>Finally, the segmentation is done using label fusion between the manual segmentations from the dictionary images that were selected <ref type="bibr" target="#b5">6</ref> .</s><s>The SCT method is freely available as open-source software at https://github.com/neuropoly/</s><s>spinalcordtoolbox <ref type="bibr" target="#b25">26</ref> .</s></p><p><s>In the work <ref type="bibr" target="#b9">10</ref> , a method called "Joint collaboration for spinal cord gray matter segmentation" (JCSCS) is proposed, where two existing label fusion segmentation methods were combined.</s><s>The method is based on a multi-atlas segmentation propagation using registration and segmentation in 2D slice-wise space.</s><s>In JCSCS, the "Optimized PatchMatch Label Fusion" (OPAL) <ref type="bibr" target="#b27">28</ref> is used to detect the spinal cord, where the cord localization is achieved by providing an external dataset of spinal cord volumes and their associated manual segmentation 10 , after that, the "Similarity and Truth Estimation for Propagated Segmentations" (STEPS) <ref type="bibr" target="#b28">29</ref> is used to segment the GM in two steps, first the segmentation propagation, and then a consensus segmentation is created by fusing best-deformed templates (based on locally normalized cross-correlation) <ref type="bibr" target="#b9">10</ref> .</s></p><p><s>In the work <ref type="bibr" target="#b11">12</ref> , the Morphological Geodesic Active Contour (MGAC) algorithm uses an external spinal cord segmentation tool ("Jim", from Xinapse Systems) to estimate the spinal cord boundary and a morphological geodesic active contour model to segment the gray matter.</s><s>The method has five steps: first, the original image spinal cord is segmented with the Jim software and then a template is registered to the subject cord, after which the same transformation is applied to the GM template.</s><s>The transformed gray matter template is then used as an initial guess for the active contour algorithm <ref type="bibr" target="#b11">12</ref> .</s></p><p><s>The "Gray matter Segmentation Based on Maximum Entropy" (GSBME) algorithm 6 is a semi-automatic, supervised segmentation method for the GM.</s><s>The GSBME is comprised of three main stages.</s><s>First, the image is pre-processed, in this step the GSBME uses the SCT <ref type="bibr" target="#b25">26</ref> to segment the spinal cord using Propseg 5 with manual initialization, after which the image intensities are normalized and denoised.</s><s>In the second step, the images are thresholded, slice by slice, using a sliding window where the optimal threshold is found by maximizing the sum of the GM and WM intensity entropies.</s><s>In the final stage, an outlier detector discards segmented intensities using morphological features such as perimeter, eccentricity and Hu moments among others <ref type="bibr" target="#b5">6</ref> .</s></p><p><s>In the Deepseg approach <ref type="bibr" target="#b14">15</ref> , which builds upon the work <ref type="bibr" target="#b10">11</ref> , a Deep Learning architecture similar to the U-Net <ref type="bibr" target="#b24">25</ref> , where a CNN has a contracting and expanding path.</s><s>The contracting path aggregates information while the expanding path upsamples the feature maps in order to achieve a dense prediction output.</s><s>To recover spatial information loss, shortcuts are added between contracting/expanding paths of the network.</s><s>In Deepseg, instead of using upsampling layers like U-Net, they use an unpooling and "deconvolution" approach such as in the work <ref type="bibr" target="#b30">30</ref> .</s><s>The network architecture possesses 11 layers and is pre-trained using 3 convolutional restricted Boltzmann Machines <ref type="bibr" target="#b31">31</ref> .</s><s>Deepseg also uses a loss function with a weighted sum of two different terms, the mean square differences of the GM and non-GM voxels, thus balancing sensitivity and specificity <ref type="bibr" target="#b5">6</ref> .</s><s>Two models were trained independently, one for the full spinal cord segmentation and another for the GM segmentation.</s></p><p><s>We compare our method with all the aforementioned methods on the SCGM Challenge 6 dataset.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods and Materials</head><p><s>As in the Related Work section, the majority of the previously developed GM segmentation methods usually rely on registered templates/atlases, arbitrary distance and similarity metrics, and/or complex pipelines that are not optimized in an end-to-end fashion and neither efficient during inference time.</s></p><p><s>In this work, we focus on the development of a simple Deep Learning method that can be trained in an end-to-end fashion and that generalizes well even with a small subset of 2D labeled axial slices belonging to a larger 3D MRI volume.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Note on U-Nets. Many modern Deep Learning CNN classification architectures use alternating layers of</head><p><s>convolutions and subsampling operations to aggregate semantic information and discard spatial information across the network, leading to certain levels of translation and rotation invariance that are important for classification.</s><s>However, in segmentation tasks, a dense full-resolution output is required.</s><s>In medical imaging, the most established architecture for segmentation is the well-known U-Net <ref type="bibr" target="#b24">25</ref> , where two distinct paths (encoder-decoder/ contracting-expanding) are used to aggregate semantic information and recover the spatial information with the help of shortcut connections between the paths.</s></p><p><s>The U-Net architecture, however, causes a major expansion of the parameter space due to the two distinct paths that form the U-shape.</s><s>As noted previously <ref type="bibr" target="#b32">32</ref> , the gradient flow in the high-level layers of the U-Nets (bottom of the U-shape) is problematic.</s><s>Since the final low-level layers have access to the earlier low-level features, the network optimization will find the shortest path to minimize the loss, thus reducing the gradient flow in the bottom of the network.</s></p><p><s>By visualizing feature maps from the U-Net using techniques described in the work <ref type="bibr" target="#b33">33</ref> , we found that the features extracted in the bottom of the network were very noisy, while the features extracted in the low-level layers were the only ones that exhibited meaningful patterns.</s><s>By removing the bottom layers of the network, we found that the network performed the same as, or occasionally better than, the deeper network.</s></p><p><s>Proposed method.</s><s>Our method is based on the state-of-the-art segmentation architecture called "Atrous Spatial Pyramid Pooling" (ASPP) <ref type="bibr" target="#b20">21</ref> that uses "Atrous convolutions", also called "dilated convolutions" <ref type="bibr" target="#b34">34</ref> .</s><s>We performed modifications to improve the segmentation performance on medical imaging by handling imbalanced data with a different loss function, and also by extensively removing decimation operations from the network such as pooling, trading depth (due to memory constraints) to improve the equivariance of the network and also parameter reduction.</s></p><p><s>Dilated convolutions allow us to exponentially grow the receptive field with a linearly increasing number of parameters, providing a significant parameter reduction while increasing the effective receptive field <ref type="bibr" target="#b35">35</ref> and preserving the input resolution throughout the network, in contrast to wide stride convolutions where the resolution is lost.</s><s>Dilated convolutions work by introducing "holes" <ref type="bibr" target="#b23">24</ref> in the kernel as illustrated in Fig. <ref type="figure" target="#fig_1">2</ref>. For 1D signal x[i], the y[i] output of a dilated convolution with the dilation rate r and a filter w[s] with size S is formulated as:</s></p><formula xml:id="formula_0">∑ = + ⋅ . = y i x i r s w s [ ] [ ] [ ]<label>(1) s S 1</label></formula><p><s>The dilation rate r can also be seen as the stride over which the input signal is sampled <ref type="bibr" target="#b23">24</ref> .</s><s>Dilated convolutions, like standard convolutions, also have the advantage of being translationally equivalent, which means that translating the image will result in a translated version of the original input, as seen below:</s></p><formula xml:id="formula_1">= f g x g f x ( ( )) ( ( ))<label>(2)</label></formula><p><s>where ⋅ g( ) is a translation operation and ⋅ f ( ) a convolution operation.</s><s>However, since we don't need to introduce pooling to capture multi-scale features when using dilated convolutions, we can keep the translational equivariance property in the network, which is important for spatially dense prediction tasks, given that a translation of the input features should result also in an equivalent translation of outputs.</s></p><p><s>The overall proposed architecture can be seen in Fig. <ref type="figure" target="#fig_2">3</ref>. Our architecture works with 2D slice-wise axial images and is composed of (a) two initial layers of standard 3 × 3 convolutions, followed by (b) two layers of dilated convolutions with rate r = 2, followed by (c) six parallel branches with two layers each of a 1 × 1 standard convolution, 4 different dilated convolution rates (6/12/18/24) and a global averaging pooling that is repeated at every spatial position of the feature map.</s><s>After that, the feature maps from the six parallel branches are concatenated and forwarded to (d) a block of 2 layers with 1 × 1 convolutions in order to produce the final dense prediction probability map.</s><s>Each layer is followed by Batch Normalization <ref type="bibr" target="#b36">36</ref> and Dropout 37 layers and we did not employ residual connections.</s></p><p><s>Figure <ref type="figure" target="#fig_3">4</ref> illustrates the pipeline of our training/inference process.</s><s>An initial resampling step downsamples/ upsamples the input axial slice images to a common pixel size space, then a simple intensity normalization is applied to the image, followed by the network inference stage.</s></p><p><s>Contrary to the task of natural images segmentation, the task of GM segmentation in medical imaging is usually very unbalanced.</s><s>In our case, only a small portion of the entire axial slice encompasses the GM (the rest being comprised of other structures such as the white matter, cerebrospinal fluid, bones, muscles, etc.).</s><s>Due to this imbalance, we employed a surrogate loss for the DSC (Dice Similarity Coefficient) called the Dice Loss, which is insensitive to imbalancing and was employed by many works in medical imaging <ref type="bibr" target="#b38">38,</ref><ref type="bibr" target="#b39">39</ref> .</s><s>The Dice Loss can be formulated as:</s></p><formula xml:id="formula_2"> ε ε =− ∑ + ∑ + ∑ + = = = p r p r 2 (3) dice n N n n n N n n N n 1 1 1</formula><p><s>where p and r are the predictions and gold standard, respectively.</s><s>The ε term is used to ensure loss stability by avoiding numerical issues.</s><s>We experimentally found that the Dice Loss yielded better results when compared to the weighted cross-entropy (WCE) used by the original U-Net <ref type="bibr" target="#b24">25</ref> , which is more difficult to optimize due to the added weighting hyper-parameter.</s><s>Medical image datasets are usually smaller than natural image datasets by many orders of magnitude, therefore regularization and data augmentation is an important step.</s><s>In this work, the following data augmentation strategies were applied: rotation, shifting, scaling, flipping, noise, and elastic deformation <ref type="bibr" target="#b40">40</ref> .</s></p><p><s>The main differences when we compare our proposed architecture with that of the work <ref type="bibr" target="#b20">21</ref> , are the following: Initial pooling/decimation: Our network does not use initial pooling layers as we found them detrimental to the segmentation of medical images;</s></p><p><s>Padding: We extensively employ padding across the entire network to keep feature map sizes fixed, trading depth to reduce memory usage of the network;</s></p><p><s>Dilation Rates: Since we do not use initial pooling, we retain the parallel dilated convolution branch with the rate r = 24.</s><s>As we found improvements by doing so, due to the large feature map size that doesn't cause filter degeneration as seen in <ref type="bibr" target="#b20">21</ref> ;</s></p><p><s>Loss: Contrary to natural images, our task of GM segmentation is highly unbalanced, therefore instead of using the traditional cross-entropy, we use the Dice Loss;</s></p><p><s>Data Augmentation: In this work we apply rotation, shifting, added channel noise, and elastic deformations <ref type="bibr" target="#b40">40</ref> , in addition to the scaling and flipping used previously <ref type="bibr" target="#b20">21</ref> .</s><s>Table <ref type="table" target="#tab_0">1</ref> compares the setup parameters of our approach as well as the participant methods of the SCGM Segmentation Challenge 6 .</s></p><p><s>U-Net architecture.</s><s>For the U-Net 25 architecture model that was used for comparison, we employed a 14-layers network using standard 3 × 3 2D convolution filters with ReLU non-linearity activations <ref type="bibr" target="#b16">17</ref> .</s><s>For a fair comparison, we used the same training protocol and loss function.</s><s>For the data augmentation strategy, we employed a more aggressive augmentation due to overfitting issues with the U-Net (see the Discussion section).</s><s>We also performed an extensive architecture exploration and used the best performing U-Net model architecture.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Datasets.</head><p><s>In this subsection, we present the datasets used for evaluation in this work.</s></p><p><s>Spinal Cord Gray Matter Challenge.</s><s>The Spinal Cord Gray Matter Challenge 6 (SCGM Challenge) dataset consists of 80 healthy subjects (20 subjects from each center).</s><s>The demographics range from a mean age of 28.3 up to 44.3 years old.</s><s>Three different MRI systems were used (Philips Achieva, Siemens Trio, Siemens Skyra) with different acquisition parameters based on a multi-echo gradient echo sequence.</s><s>The voxel size range from 0.25 × 0.25 × 2.5 mm up to 0.5 × 0.5 × 5.0 mm.</s><s>The dataset is split between training (40) and test (40) with the test set hidden.</s><s>For each labeled slice in the dataset, 4 gold standard segmentation masks were produced by 4 independent expert raters (one per site).</s><s>Examples of the datasets from each center are shown in Fig. <ref type="figure" target="#fig_0">1</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Method</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Resampling and Cropping</head><p><s>All volumes were resampled to a voxel size of 0.25 × 0.25 mm, the highest resolution found between acquisitions.</s></p><p><s>All the axial slices were center-cropped to a 200 × 200 pixels size.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Normalization</head><p><s>We performed only mean centering and standard deviation normalization of the volume intensities.</s></p><p><s>Train/validation split For the train/validation split, we used 8 subjects (2 from each site) for validation and the rest for training.</s><s>The test set was defined by the challenge.</s><s>We haven't employed any external data or used the vertebral information from the provided dataset.</s><s>Only the provided GM masks were used for training/validation.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Batch size</head><p><s>We used a small batch size of only 11 samples.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Optimization</head><p><s>We used Adam <ref type="bibr" target="#b48">48</ref> optimizer with a small learning rate η = .</s><s>0 001.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Batch Normalization</head><p><s>We used a momentum φ = .</s><s>0 1 for BatchNorm due to the small batch size.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dropout</head><p><s>We used a dropout rate of 0.4.</s></p><p><s>Learning Rate Scheduling Similar to the work <ref type="bibr" target="#b20">21</ref> , we used the "poly" learning rate policy where the learning rate is defined by η η = − ⁎ ( )</s></p><formula xml:id="formula_3">1 t n N p 0</formula><p><s>where η t 0 is the initial learning rate, N is the number of epochs, n the current epoch and p the power with p = 0.9.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Iterations</head><p><s>We trained the model for 1000 epochs (w/ 32 batches at each epoch).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data augmentation</head><p><s>We applied the following data augmentations: rotation, shift, scaling, channel shift, flipping and elastic deformation <ref type="bibr" target="#b40">40</ref> .</s><s>The data augmentation parameters were chosen using random search.</s><s>More details about the parameters of the data augmentation are presented in Table <ref type="table" target="#tab_2">3</ref>.</s><s>During the development of this work, we found some misclassified voxels in the training set.</s><s>These issues were reported, however, for the sake of a fair comparison, all the evaluations done in this work used the original pristine training dataset.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Ex vivo high-resolution spinal cord.</head><p><s>To evaluate our method on an ex vivo dataset, we used an MRI acquisition that was performed on an entire human spinal cord <ref type="bibr" target="#b41">41</ref> , from the pyramidal decussation to the cauda equina using a 7 T horizontal-bore small animal MRI system.</s><s>MR images of the entire spinal cord were acquired in seven separate overlapping segments.</s><s>The segment field of view was 8 × 2 × 2 cm with 1 cm of overlap on each end.</s><s>Between each acquisition, the specimen was advanced precisely 7 cm through the magnet bore using a custom-machined gantry insert.</s><s>T2*-weighted anatomic images were acquired using a 3D gradient echo sequence with an acquisition matrix of 1600 × 400 × 400, resulting in 50 micron isotropic resolution.</s><s>Scan parameters included: TR = 50 ms, TE = 9 ms, flip angle = 60°, bandwidth = 100 kHz and number of averages = 1.</s><s>Per-segment acquisition time was 2 hours 22 minutes, resulting in a total acquisition time of approximately 16 hours.</s><s>Individual image segments were composed into a single volume using automated image registration and weighted averaging of overlapping segments.</s></p><p><s>the acquisition was obtained from a deceased adult male with no known history of neurologic disease, the review of images revealed a clinically occult SC lesion close to the 6th thoracic nerve root level, imaging features suggestive of a chronic compressive myelopathy or possible sequela of a previous viral infection such as herpes zoster.</s></p><p><s>The volume is comprised of a total 4676 axial slices with 100 isotropic resolution.</s><s>The annotations (gold standard) for axial slices of this dataset were made by a researcher with the help of an expert radiologist.</s><s>The annotation procedure was as follows: first, the contour of the GM was delineated using a gradient method from MIPAV 42 software.</s><s>After that, a pixel-wise fine-tuning was performed using the fslview tool from FSL <ref type="bibr" target="#b43">43</ref> .</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Training Protocol. Spinal Cord Gray Matter Challenge.</head><p><s>The training protocol for the SCGM Challenge <ref type="bibr" target="#b5">6</ref> dataset experiments are described in Table <ref type="table" target="#tab_1">2</ref> and the data augmentation parameters are described in Table <ref type="table" target="#tab_2">3</ref>.</s></p><p><s>Contrary to the smooth decision boundaries characteristic of models trained using cross-entropy, the Dice Loss has the property of creating sharp decision boundaries and models with high recall rate.</s><s>We found experimentally that thresholding the dense predictions with a threshold τ = 0.999 provided a good compromise between precision/recall, however, no optimization was employed to choose the threshold τ value for the output predictions.</s></p><p><s>Since the test dataset is hidden from the challenge participants, to evaluate our model we sent our produced test predictions to the challenge website for automated evaluation.</s><s>Results are presented in Table <ref type="table" target="#tab_4">4</ref> under the column "Proposed Method", alongside with the six other previously developed methods and 10 different metrics.</s></p><p><s>The training time on a single NVIDIA P100 GPU took approximately 19 hours using single-precision floating-point and TensorFlow 1.3.0 with cuDNN 6, while inference time took less than 1 second per subject.</s></p><p><s>Inter-rater variability as label smoothing regularization.</s><s>The training dataset provided by the SCGM Challenge is comprised of 4 different masks that were manually and independently created by raters for each axial slice.</s><s>As in the study <ref type="bibr" target="#b10">11</ref> , we used all the different masks as our gold standard.</s><s>We also found that this approach shares the same principle of using label smoothing as seen in work <ref type="bibr" target="#b44">44</ref> .  </s><s>against each of the four manual segmentation masks of the test set, reported here in the format: mean (std).</s><s>For of fair comparison, the metrics are the same as used in the study <ref type="bibr" target="#b5">6</ref> and the results from other methods are replicated here, where we have: Dice similarity coefficient (DSC), mean surface distance (MSD), Hausdorff surface distance (HSD), skeletonized Hausdorff distance (SHD), skeletonized median distance (SMD), true positive rate (TPR), true negative rate (TNR), positive predictive value (PPV), Jaccard index (JI) and conformity coefficient (CC).</s><s>In bold font, we represent the best-obtained results on each metric.</s><s>We also note that MSD, HSD, SHD and SMD metrics are in millimeters and that lower values mean better results.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>JCSCS</head><p><s>Label smoothing is a mechanism that has the effect of reducing the confidence of the model by preventing the network from assigning a full probability to a single class, which is commonly evidence of overfitting.</s><s>In the study <ref type="bibr" target="#b45">45</ref> , a link was found between label smoothing and the confidence penalty through the direction of the Kullback-Leibler divergence.</s><s>Since the different gold standard masks for the same axial slices diverges usually only in the border of the GM, it is easy to see that this has a label smoothing effect on the contour of the GM, thereby encouraging the model to be less confident in the contour prediction of the GM, a kind of "empirical contour smoothing".</s></p><p><s>This interpretation suggests that one could also incorporate this contour smoothing by artificially adding label smoothing on the contours of the target anatomy, where raters usually disagree on the manual segmentation, leading to a potentially better model generalization on many different medical segmentation tasks where the contours are usually the region of raters disagreement.</s></p><p><s>We leave the exploration of this contour smoothing to future work.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Ex vivo high-resolution spinal cord.</head><p><s>The training protocol for the ex vivo high-resolution spinal cord dataset experiments are described in Table <ref type="table" target="#tab_5">5</ref> and the data augmentation parameters are described in the Table <ref type="table" target="#tab_6">6</ref>.</s><s>Like in the SCGM Segmentation task, we used a threshold τ = 0.999 to binarize the prediction mask.</s></p><p><s>The training time on a single NVIDIA P100 GPU took approximately 2 hours using single-precision floating-point and TensorFlow 1.3.0 with cuDNN 6.</s><s>While inference time took approximately 25 seconds to segment 4676 axial slices.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data availability.</head><p><s>The SCGM Challenge dataset analyzed during the current study is available on the SCGM Challenge repository at http://rebrand.ly/scgmchallenge.</s><s>The ex vivo dataset analyzed during the current study is not publicly available, but is available from the corresponding author on reasonable request.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p><s>In this section, we discuss the experimental evaluation of the method in the presented datasets.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Spinal Cord Gray Matter Challenge.</head><p><s>In this subsection, we show the evaluation on SCGM Challenge 6 dataset.</s></p><p><s>Qualitative Evaluation.</s><s>In Fig. <ref type="figure" target="#fig_4">5</ref>, we show the segmentation output of our model in four different subjects, from acquisitions performed at the four different centers, on the test set of the SCGM Segmentation Challenge.</s><s>The majority voting segmentation was taken from the study <ref type="bibr" target="#b5">6</ref> .</s><s>As we can see in Fig. <ref type="figure" target="#fig_4">5</ref>, our approach was able to capture many properties of the GM anatomy, providing good segmentations even in presence of blur, as seen in the samples from Site 1 and Site 3.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Cropping</head><p><s>All the slices were center-cropped to a 200 × 200 pixels size.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Normalization</head><p><s>We performed only mean centering and standard deviation normalization of the volume intensities.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Train/validation split</head><p><s>For the training set we selected only 15 evenly spaced axial slices out of 4676 total slices from the volume.</s><s>For the validation set, we selected 7 (evenly spaced) axial slices and our test set was comprised of 8 axial slices (also evenly distributed across the entire volume).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Batch size</head><p><s>We used a small batch size of only 11 samples.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Optimization</head><p><s>We used Adam <ref type="bibr" target="#b48">48</ref> optimizer with a small learning rate η = .</s><s>0 001.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Batch Normalization</head><p><s>We used a momentum φ = .</s><s>0 1 for BatchNorm due to the small batch size.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dropout</head><p><s>We used a dropout rate of 0.4.</s></p><p><s>Learning Rate Scheduling Similar to the work <ref type="bibr" target="#b20">21</ref> , we used the "poly" learning rate policy where the learning rate is defined by η η = − ⁎ ( )</s></p><formula xml:id="formula_4">1 t n N p 0</formula><p><s>where η t 0 is the initial learning rate, N is the number of epochs, n the current epoch and p the power with = .</s><s>p 0 9.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Iterations</head><p><s>We trained the model for 600 epochs (w/ 32 batches at each epoch).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data augmentation</head><p><s>For this dataset, we used the following aforementioned augmentations: rotation, shift, scaling, channel shift, flipping and elastic deformation <ref type="bibr" target="#b40">40</ref> .</s><s>We didn't employed random search to avoid overfitting due to the dataset size.</s><s>More details about the parameters of the data augmentation are presented in Table <ref type="table" target="#tab_6">6</ref>.</s><s>When compared with the segmentation results from Deepseg <ref type="bibr" target="#b14">15</ref> , that uses a U-Net like structure with pre-training and 3D-wise training, we can see that our method succeeds at segmenting the gray commissure of the GM structure, which was observed to pose a problem for Deepseg, as indicated in Fig. <ref type="figure" target="#fig_3">4</ref> of the work <ref type="bibr" target="#b5">6</ref> .</s></p><p><s>Quantitative Evaluation.</s><s>As we can see in Table <ref type="table" target="#tab_4">4</ref> and Fig. <ref type="figure">6</ref>, our approach achieved state-of-the-art results in 8 out of 10 different metrics and surpassed 4 out of 6 previous methods on all metrics.</s><s>A description of the metrics used in this work is given in Table <ref type="table" target="#tab_7">7</ref>.</s></p><p><s>We can also see that the Dice Loss is not only an excellent surrogate for the Dice Similarity Coefficient (DSC) but also a surrogate for distance metrics, as we note that our model not only achieved state-of-the-art results on overlap metrics (i.e.</s><s>DSC) but also on distance and statistical metrics.</s><s>From top to bottom row: input image, majority voting segmentation gold standard, and the result of our segmentation method.</s><s>Adapted from the work <ref type="bibr" target="#b5">6</ref> .</s><s>Figure <ref type="figure">6</ref>.</s><s>Test set evaluation results from the SCGM segmentation challenge <ref type="bibr" target="#b5">6</ref> for each evaluated metric, with the Dice similarity coefficient (DSC), mean surface distance (MSD), Hausdorff surface distance (HSD), skeletonized Hausdorff distance (SHD), skeletonized median distance (SMD), true positive rate (TPR), true negative rate (TNR), positive predictive value (PPV), Jaccard index (JI) and conformity coefficient (CC).</s><s>Our method is shown as "Proposed".</s><s>Best viewed in color.</s></p><p><s>The True Negative Rate (TNR) and Positive Predictive Value (PPV) or precision, were metrics for which the proposed method did not achieve the best results.</s><s>However, we note that the TNR was very close to the results of other methods.</s><s>We also hypothesize that the suboptimal results of the precision (PPV) are an effect of the sharp decision boundary produced by our model due to the Dice Loss.</s><s>We are confident that the prediction threshold optimization can yield better results, however, this cost optimization would require further investigations.</s></p><p><s>When compared to the Deepseg 15 method, the only method using Deep Learning in the challenge, where an U-Net based architecture was employed, our proposed approach performed better in 8 out of 10 metrics, even though our method did not employ 3D convolutions, pre-training, or threshold optimization as was done in Deepseg <ref type="bibr" target="#b14">15</ref> .</s></p><p><s>Ex vivo high-resolution spinal cord.</s><s>In this subsection, we show the evaluation on the ex vivo high-resolution spinal cord dataset.</s></p><p><s>Qualitative Evaluation.</s><s>In Fig. <ref type="figure" target="#fig_5">7</ref>, we show a qualitative evaluation of the segmentations produced by our method and those of U-Net model, contrasting the segmentations against the original and gold standard images.</s></p><p><s>As can be seen in the test sample depicted in the first column of Fig. <ref type="figure" target="#fig_5">7</ref>, the predictions of the U-Net "leaked" the gray matter segmentation into the cerebrospinal fluid (CSF) close to the dorsal horn (see green rectangle on first column), while our proposed segmentation was much more contained in the gray matter region only.</s></p><p><s>Also, in the third column of the Fig. <ref type="figure" target="#fig_5">7</ref>, the U-Net significantly oversegmented a large portion of the GM region, extending the segmentation up to the white matter close to the right lateral horn of the GM anatomy (see the green rectangle), while our proposed method performed well.</s></p><p><s>We also provide in Fig. <ref type="figure" target="#fig_6">8</ref> a 3D rendered representation of the segmented gray matter using our method.</s></p><p><s>Quantitative Evaluation.</s><s>As seen in Table <ref type="table" target="#tab_9">8</ref>, which shows the quantitative results of our approach, our method achieved better results on 6 out of 8 metrics.</s><s>One of the main advantages that we can see from these results is that our method uses 6 × fewer parameters than the U-Net architecture, leading to less chance of overfitting and potentially better generalization.</s><s>During the training of the two architectures (U-Net and our method), we noticed that even with a high dropout rate of 0.4, the U-Net was still overfitting, forcing us to use a more aggressive data augmentation strategy to achieve better results, especially for the shifting parameters of the data augmentation; we hypothesize that this is an effect of the decimation on the contracting path of the U-Net, that disturbs the translational equivariance property of the network, leading to a poor performance on segmentation tasks.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p><s>In this work, we devised a simple, efficient and end-to-end method that achieves state-of-the-art results in many metrics when compared to six independently developed methods, as detailed in Table <ref type="table" target="#tab_4">4</ref>.</s><s>To the best of our knowledge, our approach is the first to achieve better results in 8 out of the 10 metrics used in the SCGM Segmentation Challenge <ref type="bibr" target="#b5">6</ref> .</s></p><p><s>One of the main differences with other methods from the challenge is that our method employs an end-to-end learning approach, whereby the entire prediction pipeline is optimized using backpropagation and gradient descent.</s><s>This is in contrast to the other methods, which generally employ separate registrations, external atlases/ templates data and label fusion stages.</s><s>As we can also see in Table <ref type="table" target="#tab_9">8</ref>, when we compare our method to the most commonly used method (U-Net) for medical image segmentation, our method provides not only better results for many metrics, but also a major parameter reduction (more than 6 times).</s></p><p><s>In the lens of Minimum Description Length (MDL) theory <ref type="bibr" target="#b46">46</ref> , which describes models as languages for describing properties of the data and sees inductive inference as finding regularity in the data <ref type="bibr" target="#b47">47</ref> , when two competing explanations for the data explains the data well, MDL will prefer the one that provides a shorter description of the data.</s><s>Our approach using dilated filters provides more than 6× parameter reduction compared to U-Nets, but is also able to outperform other methods in many metrics, an evidence that the model is parameter-efficient and that it can capture a more compact description of the data regularities when compared with more complex models such as U-Nets.</s></p><p><s>The proposed approach has been tested on data acquired using Phase-Sensitive Inversion Recovery (PSIR) sequence, and as expected, the method did not work given that the model was not trained on PSIR samples and     that these data exhibit very different contrast than the T2* images the model was trained on.</s><s>This can be solved by aggregating the PSIR data into the existing datasets before training the model or even by training a specific model for PSIR data.</s><s>Other techniques in the field of Domain Adaptation, which is currently a very active research area, could also be useful to generalize the existing model without even requiring annotated PSIR data, depending on the technique.</s><s>These investigations will be the focus of follow-up studies.</s></p><p><s>Our approach is limited to 2D slices, however, the model does not restrict the use of 3D dilated convolutions and we believe that incorporating 3D context information into the model would almost certainly improve the segmentation results, however, at the expense of increased memory consumption.</s></p><p><s>Although we believe that this method can be extended to the GM segmentation in the presence of many different neurological conditions such as multiple sclerosis, this will need to be further confirmed in follow-up studies in which patients would be included in the training/validation dataset.</s></p><p><s>We also believe that our method can be expanded to take advantage of semi-supervised learning approaches due to the strong smoothness assumption that holds for axial slices in most volumes, especially in ex vivo high-resolution spinal cord MRI.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc><div><p><s>Figure 1.</s><s>In vivo axial-slice samples from four centers (UCL, Montreal, Zurich, Vanderbilt) that collaborated to the SCGM Segmentation Challenge 6 .</s><s>Top row: original MRI images.</s><s>Bottom row: a crop of the spinal cord (green rectangle).</s></p></div></figDesc><graphic coords="2,155.64,46.51,360.00,197.04" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc><div><p><s>Figure 2. Dilated convolution.</s><s>On the left, we have the dilated convolution with dilation rate r = 1, equivalent to the standard convolution.</s><s>In the middle with have a dilation r = 2 and in the right a dilation rate of r = 3.</s><s>All dilated convolutions have a 3 × 3 kernel size and the same number of parameters.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc><div><p><s>Figure 3. Architecture overview of the proposed method.</s><s>The MRI axial slice is fed to the first block of 3 × 3 convolutions and then to a block of dilated convolutions (rate 2).</s><s>Then, six parallel modules with different rates (6/12/18/24), 1 × 1 convolution, and a global average pooling are used in parallel.</s><s>After the parallel modules, all feature maps are concatenated and then fed into the final block of 1 × 1 convolutions to produce the final dense predictions.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 .</head><label>4</label><figDesc><div><p><s>Figure 4. Architecture pipeline overview.</s><s>During the first stage, input axial slices are resampled to a common pixel size space, then intensity is normalized, followed by the network inference.</s></p></div></figDesc><graphic coords="5,156.95,404.55,82.46,64.10" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 .</head><label>5</label><figDesc><div><p><s>Figure 5. Qualitative evaluation of our proposed approach on the same axial slice for subject 11 of each site.From top to bottom row: input image, majority voting segmentation gold standard, and the result of our segmentation method.</s><s>Adapted from the work<ref type="bibr" target="#b5">6</ref> .</s></p></div></figDesc><graphic coords="9,155.64,46.27,396.00,204.60" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 7 .</head><label>7</label><figDesc><div><p><s>Figure 7. Qualitative evaluation of the U-Net and our proposed method on the ex vivo high-resolution spinal cord dataset.</s><s>Each column represents a random sample of the test set (regions from left to right: sacral, thoracic, cervical).</s><s>Green rectangles frame the oversegmentations of the U-Net model predictions.</s></p></div></figDesc><graphic coords="11,155.64,46.50,324.00,249.60" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 8 .</head><label>8</label><figDesc><div><p><s>Figure 8. Lumbosacral region 3D rendered view of the ex vivo high-resolution spinal cord dataset segmented using the proposed method.</s><s>The gray matter is depicted in orange color while the white matter and other tissues are represented in transparent gray color.</s></p></div></figDesc><graphic coords="11,155.64,367.18,324.00,134.16" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 .</head><label>1</label><figDesc><div><p><s>6arameters of each compared method.Time per slice is an estimated value, since different hardware were employed by the different techniques.Values replicated from the work6.</s></p></div></figDesc><table><row><cell></cell><cell>Init.</cell><cell>Training</cell><cell cols="2">External data Time p/slice</cell></row><row><cell>JCSCS</cell><cell>Auto.</cell><cell>No</cell><cell>Yes</cell><cell>4-5 min</cell></row><row><cell>DEEPSEG</cell><cell>Auto.</cell><cell>Yes (4 h)</cell><cell>No</cell><cell>&lt;1 s</cell></row><row><cell>MGAC</cell><cell>Auto.</cell><cell>No</cell><cell>No</cell><cell>1 s</cell></row><row><cell>GSBME</cell><cell>Manual</cell><cell>Yes (&lt;1 m)</cell><cell>No</cell><cell>5-80 s</cell></row><row><cell>SCT</cell><cell>Auto.</cell><cell>No</cell><cell>Yes</cell><cell>8-10 s</cell></row><row><cell>VBEM</cell><cell>Auto.</cell><cell>No</cell><cell>No</cell><cell>5 s</cell></row><row><cell>Proposed</cell><cell>Auto.</cell><cell>Yes (19 h)</cell><cell>No</cell><cell>&lt;1 s</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 2 .</head><label>2</label><figDesc><div><p><s>Training protocol for the Spinal Cord Gray Matter Challenge dataset.</s></p></div></figDesc><table><row><cell>Augmentation</cell><cell>Parameter</cell><cell>Probability</cell></row><row><cell>Rotation (degrees)</cell><cell>[−4.6, 4.6]</cell><cell>0.5</cell></row><row><cell>Shift (%)</cell><cell>[−0.03, 0.03]</cell><cell>0.5</cell></row><row><cell>Scaling</cell><cell>[0.98, 1.02]</cell><cell>0.5</cell></row><row><cell>Channel Shift</cell><cell>[−0.17, +0.17]</cell><cell>0.5</cell></row><row><cell>Elastic Deformation 40</cell><cell cols="2">α = . 30 0, σ = . 4 0 0.3</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 3 .</head><label>3</label><figDesc><div><p><s>Data augmentation parameters used during the training stage of the Spinal Cord Gray Matter Challenge dataset.</s></p></div></figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 4 .</head><label>4</label><figDesc><div><p><s>Comparison of different segmentation methods that participated in the SCGM Segmentation Challenge</s></p></div></figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 5 .</head><label>5</label><figDesc><div><p><s>Training protocol for the Ex vivo high-resolution spinal cord dataset.</s></p></div></figDesc><table><row><cell>Augmentation</cell><cell>Parameter</cell><cell>Probability</cell></row><row><cell>Rotation (degrees)</cell><cell>[−5.0, 5.0]</cell><cell>0.5</cell></row><row><cell>Shift (%)</cell><cell>[−0.1, 0.1]</cell><cell>0.5</cell></row><row><cell>Scaling</cell><cell>[0.9, 1.1]</cell><cell>0.5</cell></row><row><cell>Channel Shift</cell><cell>[−0.3, +0.3]</cell><cell>0.5</cell></row><row><cell>Flipping</cell><cell>Horizontal</cell><cell>0.5</cell></row><row><cell>Elastic Deformation 40</cell><cell cols="2">α = . 30 0, σ = . 4 0 0.3</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table 6 .</head><label>6</label><figDesc><div><p><s>Data augmentation parameters used during the training stage of the Ex vivo high-resolution spinal cord dataset.</s></p></div></figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7"><head>Table 7 .</head><label>7</label><figDesc><div><p><s>6escription of the validation metrics.Adapted from the work6.</s></p></div></figDesc><table><row><cell>Metric Name</cell><cell cols="3">Abbr. Range Interpretation</cell><cell>Category</cell></row><row><cell>Dice Similarity Coefficient</cell><cell>DSC</cell><cell>0-1</cell><cell>Similarity between masks</cell><cell>Overlap</cell></row><row><cell>Jaccard Index</cell><cell>JI</cell><cell cols="2">0-100 Similarity between masks</cell><cell>Overlap</cell></row><row><cell>Conformity Coefficient</cell><cell>CC</cell><cell cols="2">&lt;100 Ratio between mis-segmented and correctly segmented</cell><cell>Overlap</cell></row><row><cell>Symmetric Mean Absolute Surface Distance</cell><cell cols="2">MSD &gt;0</cell><cell>Mean euclidean distance between mask contours (mean error)</cell><cell>Distance</cell></row><row><cell>Hausdorff Surface Distance</cell><cell>HSD</cell><cell>&gt;0</cell><cell cols="2">Longest euclidean distance between mask contours (absolute error) Distance</cell></row><row><cell>Skeletonized Hausdorff Distance</cell><cell>SHD</cell><cell>&gt;0</cell><cell>Indicator of maximal local error</cell><cell>Distance</cell></row><row><cell>Skeletonized Median Distance</cell><cell cols="2">SMD &gt;0</cell><cell>Indicator of global errors</cell><cell>Distance</cell></row><row><cell>True Positive Rate or Sensitivity</cell><cell>TPR</cell><cell cols="2">0-100 Low values mean that method tends to under-segment</cell><cell>Statistical</cell></row><row><cell>True Negative Rate or Specificity</cell><cell>TNR</cell><cell cols="2">0-100 Quality of segmented background</cell><cell>Statistical</cell></row><row><cell cols="2">Positive Predictive Value or Precision PPV</cell><cell cols="2">0-100 Low values mean that method tends to over-segment</cell><cell>Statistical</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_9"><head>Table 8 .</head><label>8</label><figDesc><div><p><s>Quantitative metric results comparing a U-Net architecture and our proposed approach on the ex vivo high-resolution spinal cord dataset.</s></p></div></figDesc><table /></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">SCIentIFIC REPORTS | (2018) 8:5966 | DOI:10.1038/s41598-018-24304-3</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgements</head></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Author Contributions</head><p><s>C.S.P. conceived the method, conducted the experiments, manual segmentations and wrote the paper.</s><s>J.C.A. provided expert guidance and wrote the paper.</s><s>E.C. provided the volume and information for the high-resolution ex vivo dataset.</s><s>All authors reviewed the paper.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Additional Information</head><p><s>Competing Interests: The authors declare no competing interests.</s></p><p><s>Publisher's note: Springer Nature remains neutral with regard to jurisdictional claims in published maps and institutional affiliations.</s></p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Spinal Disease: Neoplastic, Degenerative, and Infective Spinal Cord Diseases and Spinal Cord Compression</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Amukotuwa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Cook</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/B978-0-323-03354-1.50044-4</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Clinical Gate</title>
+				<imprint>
+			<date type="published" when="2007">2007</date>
+			<biblScope unit="page" from="511" to="538" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Spinal cord gray matter atrophy correlates with multiple sclerosis disability</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Schlaeger</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/ana.24241</idno>
+		<ptr target="https://doi.org/10.1002/ana.24241" />
+	</analytic>
+	<monogr>
+		<title level="j">Annals of Neurology</title>
+		<imprint>
+			<biblScope unit="volume">76</biblScope>
+			<biblScope unit="page" from="568" to="580" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M.-Ê</forename><surname>Paquin</surname></persName>
+		</author>
+		<idno type="DOI">10.3174/ajnr.A5427</idno>
+		<ptr target="https://doi.org/10.3174/ajnr.A5427" />
+	</analytic>
+	<monogr>
+		<title level="j">Spinal Cord Gray Matter Atrophy in Amyotrophic Lateral Sclerosis. American Journal of Neuroradiology</title>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Segmentation of the human spinal cord. Magnetic Resonance Materials in Physics</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>De Leener</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Taso</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Cohen-Adad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Callot</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10334-015-0507-2</idno>
+		<ptr target="https://doi.org/10.1007/s10334-015-0507-2" />
+	</analytic>
+	<monogr>
+		<title level="j">Biology and Medicine</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="page" from="125" to="153" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Robust, accurate and fast automatic segmentation of the spinal cord</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>De Leener</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kadoury</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Cohen-Adad</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuroimage.2014.04.051</idno>
+		<ptr target="https://doi.org/10.1016/j.neuroimage.2014.04.051" />
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage</title>
+		<imprint>
+			<biblScope unit="volume">98</biblScope>
+			<biblScope unit="page" from="528" to="536" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Spinal cord grey matter segmentation challenge</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Prados</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuroimage.2017.03.010</idno>
+		<ptr target="https://doi.org/10.1016/j.neuroimage.2017.03.010" />
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage</title>
+		<imprint>
+			<biblScope unit="volume">152</biblScope>
+			<biblScope unit="page" from="312" to="329" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Array Coils</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Cohen-Adad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">L</forename><surname>Wald</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/B978-0-12-396973-6.00005-8</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Quantitative MRI of the Spinal Cord</title>
+				<imprint>
+			<publisher>Elsevier</publisher>
+			<date type="published" when="2014">2014</date>
+			<biblScope unit="page" from="59" to="67" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Feasibility of grey matter and white matter segmentation of the upper cervical cord in vivo: A pilot study with application to magnetisation transfer measurements</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">C</forename><surname>Yiannakas</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuroimage.2012.07.048</idno>
+		<ptr target="https://doi.org/10.1016/j.neuroimage.2012.07.048" />
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage</title>
+		<imprint>
+			<biblScope unit="volume">63</biblScope>
+			<biblScope unit="page" from="1054" to="1059" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">2D phase-sensitive inversion recovery imaging to measure in vivo spinal cord gray and white matter areas in clinically feasible acquisition times</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Papinutto</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/jmri.24819</idno>
+		<ptr target="https://doi.org/10.1002/jmri.24819" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Magnetic Resonance Imaging</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="page" from="698" to="708" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Fully automated grey and white matter spinal cord segmentation</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Prados</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/srep36151</idno>
+		<ptr target="https://doi.org/10.1038/srep36151" />
+	</analytic>
+	<monogr>
+		<title level="j">Scientific Reports</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Deep 3D Convolutional Encoder Networks With Shortcuts for Multiscale Feature Integration Applied to Multiple Sclerosis Lesion Segmentation</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Brosch</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TMI.2016.2528821</idno>
+		<ptr target="https://doi.org/10.1109/TMI.2016.2528821" />
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transactions on Medical Imaging</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page" from="1229" to="1239" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Gray matter segmentation of the spinal cord with active contours in MR images</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Datta</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuroimage.2016.07.062</idno>
+		<ptr target="https://doi.org/10.1016/j.neuroimage.2016.07.062" />
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage</title>
+		<imprint>
+			<biblScope unit="volume">147</biblScope>
+			<biblScope unit="page" from="788" to="799" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Fully-integrated framework for the segmentation and registration of the spinal cord white and gray matter</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Dupont</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuroimage.2016.09.026</idno>
+		<ptr target="https://doi.org/10.1016/j.neuroimage.2016.09.026" />
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage</title>
+		<imprint>
+			<biblScope unit="volume">150</biblScope>
+			<biblScope unit="page" from="358" to="372" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">A probabilistic framework to learn average shaped tissue templates and its application to spinal cord image segmentation</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Blaiotta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Freund</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Curt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Cardoso</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ashburner</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 24th Annual Meeting of ISMRM</title>
+				<meeting>the 24th Annual Meeting of ISMRM<address><addrLine>Singapore</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page">1449</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Grey Matter Segmentation in Spinal Cord MRIs via 3D Convolutional Encoder Networks with Shortcut Connections</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Porisky</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+			<publisher>Springer International Publishing</publisher>
+			<biblScope unit="page" from="330" to="337" />
+			<pubPlace>Cham</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Deep learning</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Lecun</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nature14539.1312.6184v5</idno>
+		<ptr target="https://doi.org/10.1038/nature14539.1312.6184v5" />
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">521</biblScope>
+			<biblScope unit="page" from="436" to="444" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Delving deep into rectifiers: Surpassing human-level performance on imagenet classification</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Sun</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/ICCV.2015.123.1502.01852</idno>
+		<ptr target="https://doi.org/10.1109/ICCV.2015.123.1502.01852" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE International Conference on Computer Vision 11-18-Dece</title>
+				<meeting>the IEEE International Conference on Computer Vision 11-18-Dece</meeting>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="1026" to="1034" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Cardiologist-Level Arrhythmia Detection with Convolutional Neural Networks</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Rajpurkar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">Y</forename><surname>Hannun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Haghpanahi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Bourn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">Y</forename><surname>&amp;ng</surname></persName>
+		</author>
+		<idno>1707.01836</idno>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">ImageNet Classification with Deep Convolutional Neural Networks</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Krizhevsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">E</forename><surname>&amp;hinton</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.protcy.2014.09.007.1102.0183</idno>
+		<ptr target="https://doi.org/10.1016/j.protcy.2014.09.007.1102.0183" />
+	</analytic>
+	<monogr>
+		<title level="j">Advances In Neural Information Processing Systems</title>
+		<imprint>
+			<biblScope unit="page" from="1" to="9" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Deep Residual Learning for Image Recognition</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Sun</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/CVPR.2016.90.1512.03385</idno>
+		<ptr target="https://doi.org/10.1109/CVPR.2016.90.1512.03385" />
+	</analytic>
+	<monogr>
+		<title level="m">2016 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)</title>
+				<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="770" to="778" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">Rethinking Atrous Convolution for Semantic Image Segmentation</title>
+		<author>
+			<persName><forename type="first">L.-C</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Papandreou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Schroff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Adam</surname></persName>
+		</author>
+		<idno>1706.05587</idno>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Deep-speech 2: End-to-end speech recognition in English and Mandarin</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Amodei</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/1143844.1143891.1512.02595</idno>
+		<ptr target="https://doi.org/10.1145/1143844.1143891.1512.02595" />
+	</analytic>
+	<monogr>
+		<title level="j">Jmlr W&amp;Cp</title>
+		<imprint>
+			<biblScope unit="volume">48</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">A survey on deep learning in medical image analysis</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Litjens</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.media.2017.07.005.1702.05747</idno>
+		<ptr target="https://doi.org/10.1016/j.media.2017.07.005.1702.05747" />
+	</analytic>
+	<monogr>
+		<title level="j">Medical Image Analysis</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="page" from="60" to="88" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<monogr>
+		<title level="m" type="main">Semantic Image Segmentation with Deep Convolutional Nets and Fully Connected CRFs</title>
+		<author>
+			<persName><forename type="first">L.-C</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Papandreou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Kokkinos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Murphy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">L</forename><surname>Yuille</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TPAMI.2017.2699184.1412.7062</idno>
+		<ptr target="https://doi.org/10.1109/TPAMI.2017.2699184.1412.7062" />
+		<imprint>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+	<note>Iclr 1-14</note>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">U-net: Convolutional networks for biomedical image segmentation</title>
+		<author>
+			<persName><forename type="first">O</forename><surname>Ronneberger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Fischer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Brox</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="s">Lecture Notes in Computer Science (including subseries Lecture Notes in Artificial Intelligence and Lecture Notes in Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">9351</biblScope>
+			<biblScope unit="page">4597</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">SCT: Spinal Cord Toolbox, an open-source software for processing spinal cord MRI data</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>De Leener</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuroimage.2016.10.009</idno>
+		<ptr target="https://doi.org/10.1016/j.neuroimage.2016.10.009" />
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage</title>
+		<imprint>
+			<biblScope unit="volume">145</biblScope>
+			<biblScope unit="page" from="24" to="43" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Groupwise multi-atlas segmentation of the spinal cord&apos;s internal structure</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Asman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">W</forename><surname>Bryan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Smith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">S</forename><surname>Reich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">A</forename><surname>Landman</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.media.2014.01.003</idno>
+		<ptr target="https://doi.org/10.1016/j.media.2014.01.003" />
+	</analytic>
+	<monogr>
+		<title level="j">Medical Image Analysis</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="page" from="460" to="471" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">An Optimized PatchMatch for multi-scale and multi-feature label fusion</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Giraud</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuroimage.2015.07.076</idno>
+		<ptr target="https://doi.org/10.1016/j.neuroimage.2015.07.076" />
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage</title>
+		<imprint>
+			<biblScope unit="volume">124</biblScope>
+			<biblScope unit="page" from="770" to="782" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">STEPS: Similarity and Truth Estimation for Propagated Segmentations and its application to hippocampal segmentation and brain parcelation</title>
+		<author>
+			<persName><forename type="first">Jorge</forename><surname>Cardoso</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename></persName>
+		</author>
+		<idno type="DOI">10.1016/j.media.2013.02.006</idno>
+		<ptr target="https://doi.org/10.1016/j.media.2013.02.006" />
+	</analytic>
+	<monogr>
+		<title level="j">Medical Image Analysis</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="page" from="671" to="684" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">Reports</forename><surname>Scientific</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/s41598-018-24304-3</idno>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">5966</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Adaptive deconvolutional networks for mid and high level feature learning</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">D</forename><surname>Zeiler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">W</forename><surname>Taylor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Fergus</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/ICCV.2011.6126474.1505.04366</idno>
+		<ptr target="https://doi.org/10.1109/ICCV.2011.6126474.1505.04366" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE International Conference on Computer Vision</title>
+				<meeting>the IEEE International Conference on Computer Vision</meeting>
+		<imprint>
+			<date type="published" when="2011">2018-2025. 2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Unsupervised learning of hierarchical representations with convolutional deep belief networks</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">H</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Grosse</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Ranganath</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">Y</forename><surname>Ng</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/2001269</idno>
+		<ptr target="https://doi.org/10.1145/2001269" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 26th Annual International Conference on Machine Learning</title>
+				<meeting>the 26th Annual International Conference on Machine Learning</meeting>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="page" from="95" to="103" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Style Transfer for Anime Sketches with Enhanced Residual U-net and Auxiliary ClassifierGAN</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Ji</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Lin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">CoRR</title>
+		<imprint>
+			<biblScope unit="volume">1706</biblScope>
+			<biblScope unit="page">3319</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Understanding Neural Networks Through Deep Visualization</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yosinski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Jeff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Nguyen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Fuchs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Lipson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Deep Learning Workshop, International Conference on Machine Learning (ICML)</title>
+				<imprint>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<title level="m" type="main">Multi-Scale Context Aggregation by Dilated Convolutions</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Koltun</surname></persName>
+		</author>
+		<idno type="DOI">10.16373/j.cnki.ahr.150049.1511.07122</idno>
+		<idno>ICLR 1-9</idno>
+		<ptr target="https://doi.org/10.16373/j.cnki.ahr.150049.1511.07122" />
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Understanding the Effective Receptive Field in Deep Convolutional Neural Networks</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Urtasun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Zemel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems</title>
+				<editor>
+			<persName><forename type="first">D</forename><forename type="middle">D</forename><surname>Lee</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">M</forename><surname>Sugiyama</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">U</forename><forename type="middle">V</forename><surname>Luxburg</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">I</forename><surname>Guyon</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">R</forename><surname>Garnett</surname></persName>
+		</editor>
+		<imprint>
+			<publisher>Curran Associates, Inc</publisher>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="page" from="4898" to="4906" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ioffe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Szegedy</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s13398-014-0173-7.2.1502.03167</idno>
+		<ptr target="https://doi.org/10.1007/s13398-014-0173-7.2.1502.03167(JMLR.org" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 32Nd International Conference on International Conference on Machine Learning</title>
+				<meeting>the 32Nd International Conference on International Conference on Machine Learning</meeting>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="page" from="448" to="456" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">A Simple Way to Prevent Neural Networks from Overfitting</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Srivastava</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Hinton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Krizhevsky</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Sutskever</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Salakhutdinov</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Dropout</surname></persName>
+		</author>
+		<idno type="DOI">10.1214/12-AOS1000.1102.4807</idno>
+		<ptr target="https://doi.org/10.1214/12-AOS1000.1102.4807" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Machine Learning Research</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<date type="published" when="1929">1929-1958. 2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Fully Convolutional Neural Networks for Volumetric Medical Image Segmentation</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Milletari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Navab</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S.-A. V-Net</forename><surname>&amp;ahmadi</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/3DV.2016.79.1606.04797</idno>
+		<ptr target="https://doi.org/10.1109/3DV.2016.79.1606.04797" />
+	</analytic>
+	<monogr>
+		<title level="m">Fourth International Conference on</title>
+				<imprint>
+			<date type="published" when="2016">2016. 2016</date>
+			<biblScope unit="page" from="565" to="571" />
+		</imprint>
+	</monogr>
+	<note>3D Vision (3DV)</note>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<monogr>
+		<title level="m" type="main">Learning Normalized Inputs for Iterative Estimation in Medical Image Segmentation</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Drozdzal</surname></persName>
+		</author>
+		<idno>1702.05174</idno>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Best practices for convolutional neural networks applied to visual document analysis</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Simard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Steinkraus</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Platt</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/ICDAR.2003.1227801</idno>
+		<ptr target="https://doi.org/10.1109/ICDAR.2003.1227801" />
+	</analytic>
+	<monogr>
+		<title level="m">Seventh International Conference on Document Analysis and Recognition</title>
+				<imprint>
+			<date type="published" when="2003">2003. 2003</date>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="958" to="963" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Postmortem diffusion MRI of the entire human spinal cord at microscopic resolution</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Calabrese</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">NeuroImage: Clinical</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="page" from="963" to="971" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Medical Image Processing, Analysis and Visualization in clinical research</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Mcauliffe</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/CBMS.2001.941749</idno>
+		<ptr target="https://doi.org/10.1109/CBMS.2001.941749" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings 14th IEEE Symposium on Computer-Based Medical Systems</title>
+				<meeting>14th IEEE Symposium on Computer-Based Medical Systems</meeting>
+		<imprint>
+			<publisher>IEEE Comput. Soc</publisher>
+			<date type="published" when="2001-02">February. 2001</date>
+			<biblScope unit="page" from="381" to="386" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Advances in functional and structural MR image analysis and implementation as FSL</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Smith</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.neuroimage.2004.07.051</idno>
+		<ptr target="https://doi.org/10.1016/j.neuroimage.2004.07.051" />
+	</analytic>
+	<monogr>
+		<title level="j">In NeuroImage</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="page" from="S208" to="S219" />
+			<date type="published" when="2004">2004</date>
+			<publisher>Academic Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Rethinking the Inception Architecture for Computer Vision</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Szegedy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Vanhoucke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ioffe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Shlens</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>&amp;wojna</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/CVPR.2016.308.1512.00567</idno>
+		<ptr target="https://doi.org/10.1109/CVPR.2016.308.1512.00567" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition</title>
+				<meeting>the IEEE Conference on Computer Vision and Pattern Recognition</meeting>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+			<biblScope unit="page" from="2818" to="2826" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<monogr>
+		<title level="m" type="main">Regularizing Neural Networks by Penalizing Confident Output Distributions</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Pereyra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Tucker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Chorowski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ł</forename><surname>Kaiser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Hinton</surname></persName>
+		</author>
+		<idno>1701.06548</idno>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<monogr>
+		<title level="m" type="main">A universal prior for integers and estimation by minimum description length. The Annals of statistics</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Rissanen</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1983">1983</date>
+			<biblScope unit="page" from="416" to="431" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<monogr>
+		<author>
+			<persName><forename type="first">P</forename><surname>Grünwald</surname></persName>
+		</author>
+		<title level="m">The Minimum Description Length Principle</title>
+				<imprint>
+			<publisher>MIT Press</publisher>
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Adam: a Method for Stochastic Optimization</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Kingma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Ba</surname></persName>
+		</author>
+		<idno type="DOI">10.1145/1830483.1830503.1412.6980v9</idno>
+		<ptr target="https://doi.org/10.1145/1830483.1830503.1412.6980v9" />
+	</analytic>
+	<monogr>
+		<title level="j">International Conference on Learning Representations</title>
+		<imprint>
+			<biblScope unit="volume">2015</biblScope>
+			<biblScope unit="page" from="1" to="15" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

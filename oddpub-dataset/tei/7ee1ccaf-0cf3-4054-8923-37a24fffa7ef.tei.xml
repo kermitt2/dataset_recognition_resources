@@ -1,0 +1,821 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Electronic Structure Calculations and the Ising Hamiltonian</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2017-06-01">1 Jun 2017</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Rongxin</forename><surname>Xia</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Physics</orgName>
+								<orgName type="institution">Purdue University</orgName>
+								<address>
+									<postCode>47907</postCode>
+									<settlement>West Lafayette</settlement>
+									<region>IN</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Teng</forename><surname>Bian</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Physics</orgName>
+								<orgName type="institution">Purdue University</orgName>
+								<address>
+									<postCode>47907</postCode>
+									<settlement>West Lafayette</settlement>
+									<region>IN</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName><forename type="first">Sabre</forename><surname>Kais</surname></persName>
+							<email>kais@purdue.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Physics</orgName>
+								<orgName type="institution">Purdue University</orgName>
+								<address>
+									<postCode>47907</postCode>
+									<settlement>West Lafayette</settlement>
+									<region>IN</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Chemistry and Birck Nanotechnology Center</orgName>
+								<orgName type="institution">Purdue University</orgName>
+								<address>
+									<postCode>47907</postCode>
+									<settlement>West Lafayette</settlement>
+									<region>IN</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff2">
+								<orgName type="institution" key="instit1">Qatar Environment and Energy Research Institute</orgName>
+								<orgName type="institution" key="instit2">HBKU</orgName>
+								<address>
+									<settlement>Doha</settlement>
+									<country key="QA">Qatar</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff3">
+								<orgName type="institution">Santa Fe Institute</orgName>
+								<address>
+									<addrLine>1399 Hyde Park Rd, Santa Fe</addrLine>
+									<postCode>87501</postCode>
+									<region>NM</region>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Electronic Structure Calculations and the Ising Hamiltonian</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2017-06-01">1 Jun 2017</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">729B350D2876753971A8E731A0BD1708</idno>
+					<idno type="arXiv">arXiv:1706.00271v1[quant-ph]</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:48+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>The exact solution of the Schrödinger equation for atoms, molecules and extended systems continues to be a "Holy Grail" problem for the field of atomic and molecular physics since inception.</s><s>Recently, breakthroughs have been made in the development of hardwareefficient quantum optimizers and coherent Ising machines capable of simulating hundreds of interacting spins through an Ising-type Hamiltonian.</s><s>One of the most vital questions associated with these new devices is: "Can these machines be used to perform electronic structure calculations?"</s><s>In this study, we discuss the general standard procedure used by these devices and show that there is an exact mapping between the electronic structure Hamiltonian and the Ising Hamiltonian.</s><s>The simulation results of the transformed Ising Hamiltonian for H2, He2, HeH + , and LiH molecules match the exact numerical calculations.</s><s>This demonstrates that one can map the molecular Hamiltonian to an Ising-type Hamiltonian which could easily be implemented on currently available quantum hardware.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>The determination of solutions to the Schrödinger equation is fundamentally difficult as the dimensionality of the corresponding Hilbert space increases exponentially with the number of particles in the system, requiring a commensurate increase in computational resources.</s><s>Modern quantum chemistry -faced with difficulties associated with solving the Schrödinger equation to chemical accuracy (∼1 kcal/mole) -has largely become an endeavor to find approximate methods.</s><s>A few products of this effort from the past few decades include methods such as: ab initio, Density Functional, Density Matrix, Algebraic, Quantum Monte Carlo and Dimensional Scaling <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b1">2,</ref><ref type="bibr" target="#b2">3,</ref><ref type="bibr" target="#b3">4]</ref>.</s><s>However, all methods hitherto devised face the insurmountable challenge of escalating computational resource requirements as the calculation is extended either to higher accuracy or to larger systems.</s><s>Computational complexity in electronic structure calculations <ref type="bibr" target="#b4">[5,</ref><ref type="bibr" target="#b5">6,</ref><ref type="bibr" target="#b6">7]</ref> suggests that these restrictions are an inherent difficulty associated with simulating quantum systems.</s><s>Electronic structure algorithms developed for quantum computers provide a new promising route to advance the field of electronic structure calculations for large systems <ref type="bibr" target="#b7">[8,</ref><ref type="bibr" target="#b8">9]</ref>.</s><s>Recently, there has been an attempt at using an adiabatic quantum computing model -as is implemented on the D-Wave machine -to perform electronic structure calculations <ref type="bibr" target="#b9">[10]</ref>.</s><s>The fundamental concept behind the adiabatic quantum computing (AQC) method is to define a problem Hamiltonian, H P , engineered to have its ground state encode the solution of a corresponding computational problem.</s><s>The system is initialized in the ground state of a beginning Hamiltonian, H B , which is easily solved classically.</s><s>The system is then allowed to evolve adiabatically as: H(s) = (1 − s)H B + sH P (where s is a time parameter, s ∈ [0, 1]).</s><s>The adiabatic evolution is governed by the Schrödinger equation for the time-dependent Hamiltonian H(s(t)).</s></p><p><s>The largest scale implementation of AQC to date is by D-Wave Systems <ref type="bibr" target="#b10">[11,</ref><ref type="bibr" target="#b11">12]</ref>.</s><s>In the case of the D-Wave device, the physical process undertaken which acts as an adiabatic evolution is more broadly called quantum annealing (QA).</s><s>The quantum processors manufactured by D-Wave are essentially a transverse Ising model with tunable local fields and coupling coefficients.</s><s>The governing Hamiltonian is given as:</s></p><formula xml:id="formula_0">H = i ∆ i σ i x + i h i σ i z + i,j J ij σ i z σ j z ;</formula><p><s>where the parameters ∆ i , h i and J ij are the physically tunable field, self-interaction and site-site interaction.</s><s>The qubits are connected in a specified graph geometry, permitting the embedding of arbitrary graphs.</s><s>Zoller and coworker presented a scalable architecture with full connectivity, which can be implemented with only local interactions <ref type="bibr" target="#b12">[13]</ref>.</s><s>The adiabatic evolution is initialized at H B = −h i σ i</s></p><p><s>x and evolves into the problem Hamiltonian:</s></p><formula xml:id="formula_1">H P = i h i σ i z + i,j J ij σ i z σ j z .</formula><p><s>This equation describes a classical Ising model whose ground state is -in the worst case -NP-complete.</s><s>Therefore any combinatorial optimization NP-hard problem may be encoded into the parameter assignments, {h i , J ij }, of H P and may exploit the adiabatic evolution under H(s) = (1 − s)H B + sH P as a method for reaching the ground state of H P .</s><s>More recently, an optically-based coherent Ising machine was developed; this machine is capable of finding the ground state of an Ising Hamiltonian populated by hundreds of coupled spin-1/2 particles <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b14">15,</ref><ref type="bibr" target="#b15">16]</ref>.</s><s>These challenging NP-hard problems are characterized by the difficulty in devising a polynomial-time algorithm, therefore solutions cannot be easily found using classical numerical algorithms in a reasonable time for large system sizes (N ) <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b14">15,</ref><ref type="bibr" target="#b15">16]</ref>.</s><s>These special purpose machines may help in finding the solutions to some of the hardest problems in computing.</s></p><p><s>The technical scheme for performing electronic structure calculations on such an Ising-type machine can be summarized in the following four steps: First, write down the electronic structure Hamiltonian via the second quantization method in terms of creation and annihilation fermionic operators; Second, use the Jordan Wigner or the Bravyi-Kitaev transformation to move from fermionic operators to spin operators <ref type="bibr" target="#b16">[17]</ref>; Third, reduce the Spin Hamiltonian which is a k-local in general to a 2-local Hamiltonian.</s><s>Finally, map the 2-local Hamiltonian to an Ising-type Hamiltonian.</s></p><p><s>Explicitly, this general procedure begins with a second quantization description of a fermionic system in which N single-particle states can be either empty or occupied by a spineless fermionic particle <ref type="bibr" target="#b17">[18,</ref><ref type="bibr" target="#b3">4]</ref>.</s><s>One may then use the tensor product of individual spin orbitals written as |f 0 ...f n to represent states in fermionic systems, where f j ∈ {0, 1} is the occupation number of orbital j.</s><s>Any interaction within the fermionic system can be expressed in terms of products of the creation and annihilation operators a † j and a j , for j ∈ {0, ..., N }.</s><s>Thus, the molecular electronic Hamiltonian can be written as:</s></p><formula xml:id="formula_2">Ĥ = i,j h ij a † i a j + 1 2 i,j,k,l h ijkl a † i a † j a k a l .<label>(1)</label></formula><p><s>The above coefficients h ij and h ijkl are one and two-electron integrals which can be precomputed through classical methods and are used as inputs for the quantum simulation.</s><s>The next step is to convert to a Pauli matrix representation of the creation and annihilation operators.</s><s>We can then use the Bravyi-Kitaev transformation or the Jordan-Wigner transformation <ref type="bibr" target="#b16">[17,</ref><ref type="bibr" target="#b18">19]</ref> to map between the second quantization operators and Pauli matrices {σ x , σ y , σ z }.</s><s>The molecular Hamiltonian takes the general form:</s></p><formula xml:id="formula_3">H = i,α h i α σ i α + ijαβ h ij αβ σ i α σ j β + ijkαβγ h ijk αβγ σ i α σ j β σ k γ + ... (<label>2</label></formula><formula xml:id="formula_4">)</formula><p><s>Within the above, the indices α = x, y, z are anisotropic directions and the indices i and j are for the spin orbitals.</s><s>Now, after having developed a k-local spin Hamiltonian (many-body interactions), one should use a general procedure <ref type="bibr" target="#b19">[20,</ref><ref type="bibr" target="#b20">21]</ref> to reduce to a 2-local (two-body interactions) spin Hamiltonian; this is a requirement since the proposed experimental systems are typically limited to restricted forms of two-body interactions.</s><s>Therefore, universal adiabatic quantum computation requires a method for approximating a quantum many-body Hamiltonian up to an arbitrary spectral error using at most two-body interactions.</s><s>Hamiltonian gadgets, for example offer a systematic procedure to address this requirement.</s><s>Recently, we have employed analytical techniques resulting in a reduction of the resource scaling as a function of spectral error for the most commonly used device classifications: three-to two-body and k-body gadgets <ref type="bibr" target="#b21">[22]</ref>.</s></p><p><s>Here we present a universal way of mapping an n qubit Hamiltonian, H, which depends on σ x , σ y , σ z to an rn qubits Hamiltonian, H ′ , consisting of only product of σ z .</s><s>In this process we increase the number of qubits from n to rn, where the integer r plays the role of a "variational parameter" to achieve the desired accuracy in the final step of energy calculations.</s></p><p><s>If the eigenstate of H is given by ψ = i a i φ i , then the spin operators (σ i x , σ i y , σ i z ) acting on the i th qubit in |ψ .</s><s>H can be transformed to H ′ in the newly mapped space, to state space |Ψ from |ψ .</s><s>The mapping state |Ψ includes the r copies of the original n qubits.</s><s>The mapping of Hamiltonian from H to H ′ can be written as:</s></p><formula xml:id="formula_5">σ i x → 1 − σ ij z σ i k z 2 S ′ (j)S ′ (k) σ i y → i σ i k z − σ ij z 2 S ′ (j)S ′ (k) σ i z → σ ij z + σ i k z 2 S ′ (j)S ′ (k) I i → 1 + σ ij z σ i k z 2 S ′ (j)S ′ (k) (3)</formula><p><s>σ ij implies mapping the i th qubit in |ψ to the j th qubit of the n-qubit space |Ψ (or the spin operator σ z acting on the [(j − 1)n + i] qubit) and S ′ (j), S ′ (k) represent the sign of the j th , k th of the n qubits in the new state of the rn qubits.</s><s>Appropriately accounting for the correct signs guarantees that the number of n qubits in the new basis may be only positive.</s><s>If we count the total number of n qubits in the basis φ i as b i , we can relate this number to the coefficient a i of basis φ i in original normalized state of n qubits by S(bi)bi  In the Supplementary Materials we show the details of the transformation to 2-local spin Hamiltonian but here we present an example of transforming 3-local to a 2-local Ising Hamiltonian <ref type="bibr" target="#b22">[23]</ref>.</s></p><formula xml:id="formula_6">min(±x 1 x 2 x 3 ) = min(±x 4 x 3 + x 1 x 2 − 2x 1 x 4 − 2x 2 x 4 + 3x 4 ) x 1 , x 2 , x 3 , x 4 ∈ {0, 1}.<label>(4)</label></formula><p><s>Here, we see that by including x 4 , one can show that minimizing 3-local is equivalent to minimizing the sum of 2-local terms.</s></p><p><s>Finally, we succeed in transforming our initial complex electronic structure Hamiltonian from the secondquantization form to an Ising-type Hamiltonian which can be solved using existing quantum computing hardware <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b23">24,</ref><ref type="bibr" target="#b7">8,</ref><ref type="bibr" target="#b24">25]</ref>.</s></p><p><s>To illustrate this proposed method (details are in the Supplementary Materials), we present calculations for the Hydrogen molecule H 2 , the Helium dimer He 2 , HeH + diatomic molecule and the LiH molecule.</s><s>First, we used the Bravyi-Kitaev transformation and the Jordan-Wigner transformation to convert the diatomic molecular Hamiltonian in the minimal basis set (STO-6G) to the spin Hamiltonian of (σ x , σ y , σ z ).</s><s>Then we used our transformed Hamiltonian in rn-qubit space to obtain a diagonal k-local Hamiltonian of σ z terms.</s><s>Finally, we reduced the locality to get a 2-local Ising Hamiltonian of the general form: These results show that our simulations based on a transformed Ising-tpe Hamiltonian matche the exact result for these diatomic molecules.</s><s>This demonstrates that one can generally map the electronic ground state energy of a molecular Hamiltonian to an Ising-type Hamiltonian which could easily be implemented on presently available quantum hardware.</s><s>Moreover, the recent experimental results for simple few electrons diatomic molecules presented by the IBM group have shown that a hardware-efficient optimizer implemented on a 6-qubit superconducting quantum processor is capable of producing the potential energy surfaces of such molecules <ref type="bibr" target="#b23">[24]</ref>.</s><s>The development of efficient quantum hardware and the possibility of mapping the electronic structure problem into an Ising-type Hamiltonian may grant efficient ways to obtain exact solutions to the Schrödinger equation, this being one of the most daunting computational problems present in both chemistry and physics.</s></p><formula xml:id="formula_7">H ′ = i h ′ i σ i z + ij J ′ ij σ i z σ j z . (<label>5</label></formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Supplementary Material</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Mapping between Hamiltonian</head><p><s>Here, we present a procedure to construct a diagonal Hamiltonian with a minimum eigenvalue corresponding to the ground state of a given initial Hermitian Hamiltonian.</s></p><p><s>For a given initial Hermitian Hamiltonian, an eigenstate |ψ can be expanded in a basis set |φ i as |ψ = i a i |φ i .</s><s>This basis set consists of different combinations of spin-up and -down qubits.</s><s>First we will assume that all expansion coefficients, a i , are nonnegative and will map the state to a new state |Ψ according to the following rules:</s></p><p><s>• |Ψ can be written as |Ψ = ⊗ i ⊗ bi j=1 |φ i and r = i b i .</s><s>• If the original state |ψ exists within an n-qubit subspace, the new state |Ψ should be in an rn qubit space, where r is the number of times we must replicate the n qubits to a achieve an arbitrary designated accuracy.</s></p><p><s>• The number of times, b i , we repeat the basis |ψ in an rn qubit state, |Ψ , approximates</s></p><formula xml:id="formula_8">a i by bi m b 2 m . If r is large enough, b i is proportional to a i or we can just view a i ≈ bi m b 2 m</formula><p><s>, where m b 2 m is the normalization factor.</s></p><p><s>Here we introduce notation to be used throughout the remaining text: b i may only be non-negative, yet a i may be positive or negative.</s><s>For a negative a i , we will introduce a function S(b i ) containing the sign information to account for b i being non-negative.</s><s>The mapping is described by the following rules:</s></p><p><s>• S(b i ) is the sign associated with b i coefficient which is negative if a i is negative and is positive if a i is positive.</s></p><p><s>• For the rn qubit state |Ψ , we can use a function S ′ (i) to record the sign associated with each n qubits in the rn qubits space.</s><s>S ′ (i) represent the sign of the i th n qubits in the rn qubits space.</s><s>Thus,</s></p><formula xml:id="formula_9">b i = | |φ b(j) =|φi S ′ (j)| and S(b i ) is the sign of |φ b(j) =|φi S ′ (j). • As before, b i is the integer which approximates a i by biS(bi) m b 2 m . If r is large enough, we can just view a i ≈ biS(bi) m b 2 m .</formula><p><s>• |Ψ can be written as</s></p><formula xml:id="formula_10">|Ψ = ⊗ i ⊗ bi j=1 |φ i and r = r i=1 |S ′ (i)|.</formula><p><s>Theorem 1: With the mapping between |ψ and |Ψ as described in above, we can find a mapping between the Hamiltonian in the space of |ψ to the space of |Ψ .</s></p><formula xml:id="formula_11">Theorem 2: φ b(j) | ⊗ i I i |φ b(k) is equal to Ψ| i 1+σ i j z σ i k z 2</formula><p><s>|Ψ , which means I i in the space of |ψ can be mapped to 1+σ  they are the same it yields 1, otherwise 0. (For</s></p><formula xml:id="formula_12">1−σ i j z σ i k z 2</formula><p><s>we omit the operators for other digits which are the identity I.)</s></p><p><s>Thus we get:</s></p><formula xml:id="formula_13">φ b(j) | ⊗ I i |φ b(k) = Ψ| i 1 + σ ij z σ i k z 2 |Ψ . (<label>6</label></formula><formula xml:id="formula_14">)</formula><p><s>If and only if all digits of |φ b(j) and |φ b(k) are the same, the left and right results are equal to 1 otherwise they are equal to 0.</s></p><formula xml:id="formula_15">Theorem 3: φ b(j) |⊗ i&lt;m I i ⊗σ m x ⊗ i&gt;m I i |φ b(k) is equal to Ψ| i&lt;m 1+σ i j z σ i k z 2 × 1+σ m j z σ m k z 2 × i&gt;m 1−σ i j z σ i k z 2 |Ψ ,</formula><p><s>which means σ i x in the space of |ψ can be mapped as 1−σ</s></p><formula xml:id="formula_16">φ b(j) | ⊗ i&lt;m I i ⊗ σ m x ⊗ i&gt;m I i |φ b(k) = Ψ| i&lt;m 1 + σ ij z σ i k z 2 × 1 + σ mj z σ m k z 2 × i&gt;m 1 − σ ij z σ i k z 2 |Ψ . (<label>7</label></formula><formula xml:id="formula_17">)</formula><p><s>σ i x and 1−σ Theorem 4: Any Hermitian Hamiltonian in the space of |ψ can be written in the form of Pauli and Identity Matrices, which can be mapped to the space of |Ψ as described above.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Notation 3:</head><p><s>We denote the mapping between the j th n-qubit subspace and the k th n-qubit subspace in |Ψ ,</s></p><formula xml:id="formula_18">1−σ i j z σ i k z 2 as X (j,k) i , σ i j z +σ i k z 2 as Z (j,k) i , i σ i k z −σ i j z 2 as Y (j,k) i and 1+σ i j z σ i k z 2 as I (j,k) i .</formula><p><s>Proof: If H can be written as:</s></p><formula xml:id="formula_19">H = ⊗ a σ a x ⊗ b σ b y ⊗ c σ c z ⊗ d I d . (<label>8</label></formula><formula xml:id="formula_20">)</formula><p><s>We can write the mapped H ′ (j,k) as:</s></p><formula xml:id="formula_21">H ′ (j,k) = a X (j,k) a b Y (j,k) b c Z (j,k) c d I (j,k) d . (<label>9</label></formula><formula xml:id="formula_22">)</formula><p><s>It can be verified following the rules above that:</s></p><formula xml:id="formula_23">Ψ|H ′ (j,k) |Ψ = φ b(j) |H|φ b(k) . (<label>10</label></formula><formula xml:id="formula_24">)</formula><p><s>Thus, if we add the sign functions S ′ (j) and S ′ (k), we achieve:</s></p><formula xml:id="formula_25">Ψ| j =k,j,k≤r j,k H (j,k)) S ′ (j)S ′ (k)|Ψ = j =k,j,k≤r j,k φ b(j) |H|φ b(k) S ′ (j)S ′ (k) = j =k,j,k≤2 n j,k b j S(b j )b k S(b k ) φ j |H|φ k = m b 2 m j =k,j,k≤2 n j,k a j a k φ j |H|φ k . (<label>11</label></formula><formula xml:id="formula_26">)</formula><p><s>Also, in the same basis, we have:</s></p><formula xml:id="formula_27">X (j,j) i = 1 − σ ij z σ ij z 2 = 0 Y (j,j) i = i σ ij z − σ ij z 2 = 0 Z (j,j) i = σ ij z + σ ij z 2 = σ ij z I (j,j) i = 1 + σ ij z σ ij z 2 = I (12)</formula><p><s>Thus, as before, we can also get: Combining the two together we can get:</s></p><formula xml:id="formula_28">Ψ| j,k≤r j,k H (j,k) S ′ (j)S ′ (k)|Ψ = m b 2 m j,k≤2 n j,k a j a k φ j |H|φ k (<label>14</label></formula><formula xml:id="formula_29">)</formula><p><s>We construct a matrix, C, in the space of |Ψ , which has elements m b 2 m as:</s></p><formula xml:id="formula_30">• C = ± ( i ( ni k=1i 1±σ k z 2 )S ′ (i)) 2</formula><p><s>• ± over all combination of positive and negative signs of each digit in each i th of the n-qubit in space |Ψ .</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>•</head><p><s>i over all n-qubit collection in |Ψ to check whether each n qubits is in a certain state.</s><s>• ni k=1i over each qubits of i th n qubits in |Ψ .</s></p><formula xml:id="formula_31">• 1±σ k z 2</formula><p><s>is to check whether k th qubits of i th n-qubit subspace is in a certain state.</s></p><formula xml:id="formula_32">H (j,k) S ′ (j)S ′ (k)|Ψ = m b 2 m j,k≤2 n j,k a j a k φ j |H|φ k (15)</formula><p><s>Here, we present an algorithm combing</s></p><formula xml:id="formula_33">′ − λC is m b 2 m (λ ′ − λ) Algorithm 1</formula><p><s>for i from 0 to ⌊ r 2 ⌋ do Set the signs of the first i n qubits to be negative and the others to be positive.</s><s>Set λ to be a large number (at least larger than the ground state value and this will avoid the case m b 2 m = 0 ).</s><s>Construct H ′ and C. while the ground eigenvalue of (H ′ − λC) &lt; 0 do Calculate H ′ − λC and get the state |Ψ ′ and the corresponding eigenvalue</s></p><formula xml:id="formula_34">m b m = 2 (λ ′ − λ).</formula><p><s>Calculate C on |Ψ ′ to get m b 2 m then get λ ′ .</s><s>Set λ to be λ ′ .</s><s>end while λ ′ is the smallest eigenvalue with certain signs.</s><s>end for Compare all λ ′ and the smallest one is the ground state energy of H.</s><s>The minimum eigenvalue: Here we prove that the minimum eigenvalue of H is achievable and the loop will converge when we obtain the minimum eigenvalue.</s><s>According to Monotonic Decreasing, each time the eigenvalue we get will decrease.</s><s>Because we have finite number of eigenvalues, which means we will finally come to the minimum eigenvalue.</s><s>Also, if we set λ to be the minimum eigenvalue of H,</s></p><formula xml:id="formula_35">H ′ − λC = m b 2 m (λ ′ − λ) ≥ 0 because m b 2 m ≥ 0 and λ ′ − λ ≥ 0 Also, if λ ′ is</formula><p><s>just the minimum eigenvalue, we get λ ′ − λ = 0 and the loop stops.</s><s>Thus, we prove that the eigenvalue decreases and finally converges to the minimum eigenvalue of H.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Theorem 6:</head><p><s>To account for the sign, we just need to set i from 0 to ⌊ r 2 ⌋ and set signs of the first i th n-qubit to be negative and the others to be positive in |Ψ .</s></p><p><s>Proof: If we have n qubits in the |Ψ space with negative sign, where |Ψ has total i n qubits with negative sign.</s><s>If this n qubits are not in first i n qubits, we can rearrange it to the first i n qubits by exchanging it with n qubits in first i n qubits which has positive sign.</s><s>Thus all combination can be reduced to the combination stated in Theorem 6.</s></p><p><s>Thus, we have established a transformation from an initial Hermitian Hamiltonian to a diagonal Hamiltonian and presented an algorithm to calculate the minimum eigenvalue of initial Hamiltonian using the diagonal Hamiltonian.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Example:</head><p><s>To illustrate the above procedure, we give details of the transformation for the simple model of two spin-1 2 electrons with an exchange coupling constant J in an effective transverse magnetic field of strength B. This simple model has been used to discuss the entanglement for H 2 molecule <ref type="bibr" target="#b25">[26]</ref>.</s><s>The general Hamiltonian for such a system is given by:</s></p><formula xml:id="formula_36">H = − J 2 (1 + γ)σ 1 x σ 2 x − J 2 (1 − γ)σ 1 y σ 2 y − Bσ 1 z − Bσ 2 z , (<label>16</label></formula><formula xml:id="formula_37">)</formula><p><s>where γ is the degree of anisotropy.</s></p><p><s>In the {|00 , |10 , |01 , |11 } basis, the eigenvectors can be written as (here we just use the eigenvectors to show how we map the Hamiltonian but in actual calculation we do not know the eigenvectors):</s></p><formula xml:id="formula_38">|ξ 1 = 1 √ 2 (|10 + |01 ) |ξ 2 = 1 √ 2 (|10 − |01 ) |ξ 3 = α − 2B 2α |11 + α + 2B 2α |00 |ξ 4 = α + 2B 2α |11 − α − 2B 2α |00 , (<label>17</label></formula><formula xml:id="formula_39">)</formula><p><s>where α = 4B 2 + J 2 γ.</s></p><formula xml:id="formula_40">If we set r = 2, for example, if |ψ = |ξ 1 , |Ψ = |10 ⊗ |01 with S ′ (1) = 1 and S ′ (2) = 1. If |ψ = |ξ 2 , |Ψ = |10 ⊗ |01 with S ′ (1) = −1 and S ′ (2) = 1.</formula><p><s>Abiding the previous mapping, the mapped Hamiltonian H ′ and matrix C can be written as: We can write matrix C as:</s></p><formula xml:id="formula_41">H ′ (1,1) = −Bσ 1 z − Bσ 2 z H ′ (2,2) = −Bσ 3 z − Bσ 4 z H ′ (1,2) = − J 2 (1 + γ) 1 − σ 1 z σ 3 z 2 1 − σ 2 z σ 4 z 2 − J 2 (1 − γ) σ 1 z − σ 3 z 2 σ 4 z − σ 2 z 2 − B σ 1 z + σ 3 z 2 1 + σ 2 z σ 4 z 2 − B σ 2 z + σ 4 z 2 1 + σ 1 z σ 3 z 2 H ′ (2,1) = H ′ (1,2) . (<label>18</label></formula><formula xml:id="formula_42">) C =( 1 + σ 1</formula><formula xml:id="formula_43">C =     4 0 0 0 0 2 0 0 0 0 2 0 0 0 0 4     .</formula><p><s>If −S ′ (1) = S ′ (2) = 1, we have:</s></p><formula xml:id="formula_44">H ′ = j,k≤2 j,k H ′ (j,k) S ′ (j)S ′ (k) = H ′ (1,1) + H ′ (2,2) − H ′ (1,2) − H ′ (2,1)<label>(21)</label></formula><p><s>We can write C in the matrix format:</s></p><formula xml:id="formula_45">C =     0 0 0 0 0 2 0 0 0 0 2 0 0 0 0 0     .</formula><p><s>For −S ′ (1) = S ′ (2) = 1, we here display a procedural representation of our algorithm (we set B = 0.001, J = −0.1 and γ = 0):</s></p><p><s>1. First we choose λ = 100, we get the minimum eigenvalue of H ′ − 100C is −400 with |Ψ = |0000 .</s><s>Thus we get m b 2 m = 4 and λ ′ = 0.</s></p><p><s>2. We set λ = 0, we get the minimum eigenvalue of H ′ + 0C is −0.2 with |Ψ = |0110 .</s><s>Thus we get m b 2 m = 2 and λ ′ = −0.1.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>3.</head><p><s>We set λ = −0.1,</s><s>we get the minimum eigenvalue of H ′ + 0.1C is 0 with |Ψ = |0110 .</s><s>We stop here and get the minimum eigenvalue of H is −0.1</s></p><p><s>Here we present the result of mapping the above Hamiltonian, Eq.( <ref type="formula">12</ref>), with B = 0.001, J = −0.821R 5</s><s>/2 e −2R and γ = 0 <ref type="bibr" target="#b25">[26]</ref>.</s><s><ref type="formula">12</ref>), as a function of the internuclear distance, R, (solid line) with the results of the transformed Hamiltonian H ′ , Eq. ( <ref type="formula" target="#formula_36">16</ref>) <ref type="bibr" target="#b16">(17)</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Reduce Locality of the Transformed Hamiltonian</head><p><s>Here we present the procedure to reduce the locality of H ′ from k-local to a 2-local Ising-type Hamiltonian.</s></p><p><s>For x, y, z ∈ {0, 1} <ref type="bibr" target="#b22">[23]</ref>:</s></p><formula xml:id="formula_46">xy = z iff xy − 2xz − 2yz + 3z = 0<label>(22)</label></formula><p><s>and</s></p><formula xml:id="formula_47">xy = z iff xy − 2xz − 2yz + 3z &gt; 0<label>(23)</label></formula><p><s>So the 3-local x 1 x 2 x 3 can be transformed to 2-local by setting</s></p><formula xml:id="formula_48">x 4 = x 1 x 2 : min(x 1 x 2 x 3 ) = min(x 4 x 3 + x 1 x 2 − 2x 1 x 4 − 2x 2 x 4 + 3x 4 ) x 1 , x 2 , x 3 , x 4 ∈ {0, 1}<label>(24)</label></formula><formula xml:id="formula_49">min(−x 1 x 2 x 3 ) = min(−x 4 x 3 + x 1 x 2 − 2x 1 x 4 − 2x 2 x 4 + 3x 4 ) x 1 , x 2 , x 3 , x 4 ∈ {0, 1}<label>(25)</label></formula><p><s>We can prove that the min(x</s></p><formula xml:id="formula_50">1 x 2 x 3 +f (x) = g 1 (x)) = min(x 4 x 3 +x 1 x 2 −2x 1 x 4 −2x 2 x 4 +3x 4 +f (x) = g 2 (x, x 4 ))</formula><p><s>where f (x) is polynomial of all variables (including x 1 , x 2 , x 3 and other variables, excluding x 4 ).</s></p><p><s>If there exists x ′ makes g 1 (x ′ ) to be minimum, we can always make g 2 (x ′ , x 4 ) = g 1 (x ′ ) by choosing</s></p><formula xml:id="formula_51">x 4 = x 1 x 2 .</formula><p><s>Then if there exists x ′′ makes g 2 (x ′′ , x 4 ) to be minimum, then g 1 (x ′′ ) ≤ g 2 (x ′′ ):</s></p><formula xml:id="formula_52">1. If x 4 = x 1 x 2 , g 1 (x ′′ ) = x 1 x 2 x 3 + f (x ′′ ) = x 4 x 3 + x 1 x 2 − 2x 1 x 4 − 2x 2 x 4 + 3x 4 + f (x ′′ ) = g 2 (x ′′ , x 4 ). 2. If x 4 = x 1 x 2 , g 2 (x ′′ , x 4 ) = x 4 x 3 + x 1 x 2 − 2x 1 x 4 − 2x 2 x 4 + 3x 4 + f (x ′′ ) ≥ x 4 x 3 + 1 + f (x ′′ ) ≥ x 1 x 2 x 3 + f (x ′′ ) = g 1 (x ′′ ) because x 4 x 3 − x 1 x 2 x 3 ≥ −1.</formula><p><s>Thus, we have</s></p><formula xml:id="formula_53">g 1 (x ′ ) = g 2 (x ′ , x 4 ) ≥ g 2 (x ′′ , x 4 ) ≥ g 1 (x ′′ ) ≥ g 1 (x ′ ). Thus we have g 1 (x ′ ) = g 2 (x ′ , x 4 ) = g 2 (x ′′ , x 4 ) = g 1 (x ′′</formula><p><s>), or all x makes g 1 (x) minimum would also makes g 2 (x, x 4 ) minimum and vice versa.</s></p><p><s>Thus, we obtain:</s></p><formula xml:id="formula_54">min(σ 1 z σ 2 z n i=3 σ i z ) = min(8 1 + σ 1 z 2 1 + σ 2 z 2 1 + n i=3 σ i z 2 − 8 1 + σ 1 z + σ 2 z + n i=3 σ i z + σ 1 z σ 2 z + σ 1 z n i=3 σ i z + σ 2 z n i=3 σ i z 8 )</formula><p><s>= min(7</s></p><formula xml:id="formula_55">+ n i=3 σ i z − 3σ 1 z − 3σ 2 z + 6σ n+1 z + 2 n+1 i=3 σ i z − σ 1 z n i=3 σ i z − σ 2 z n i=3 σ i z − 4σ 1 z σ n+1 z − 4σ 2 z σ n+1 z + σ 1 z σ 2 z ) (26) min(−σ 1 z σ 2 z n i=3 σ i z ) = min(−8 1 + σ 1 z 2 1 + σ 2 z 2 1 + n i=3 σ i z 2 + 8 1 + σ 1 z + σ 2 z + n i=3 σ i z + σ 1 z σ 2 z + σ 1 z n i=3 σ i z + σ 2 z n i=3 σ i z 8 ) = min(5 − n i=3 σ i z − σ 1 z − σ 2 z + 2σ n+1 z − 2 n+1 i=3 σ i z + σ 1 z n i=3 σ i z + σ 2 z n i=3 σ i z − 4σ 1 z σ n+1 z − 4σ 2 z σ n+1 z + 3σ 1 z σ 2 z )<label>(27)</label></formula><p><s>By repeating this, we can reduce the k-local in σ z terms to a 2-local Hamiltonian.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Mapping the H 2 Hamiltonian to an Ising-type Hamiltonian</head><p><s>Here, we treat the Hydrogen molecule in a minimal basis STO-6G.</s><s>By considering the spin functions, the four molecular spin orbitals in H 2 are:</s></p><formula xml:id="formula_56">|χ 1 = |Ψ g |α = |Ψ 1s 1 + |Ψ 1s 2 2(1 + S) |α (<label>28</label></formula><formula xml:id="formula_57">)</formula><formula xml:id="formula_58">|χ 2 = |Ψ g |β = |Ψ 1s 1 + |Ψ 1s 2 2(1 + S) |β (<label>29</label></formula><formula xml:id="formula_59">)</formula><formula xml:id="formula_60">|χ 3 = |Ψ u |α = |Ψ 1s 1 − |Ψ 1s 2 2(1 − S) |α (<label>30</label></formula><formula xml:id="formula_61">)</formula><formula xml:id="formula_62">|χ 4 = |Ψ u |β = |Ψ 1s 1 − |Ψ 1s 2 2(1 − S) |β ,<label>(31)</label></formula><p><s>where |Ψ 1s 1 and |Ψ 1s 2 are the spatial-function for the two atoms respectively, |α , |β are spin up and spin down and S = 1 Ψ 1s |Ψ 1s 2 is the overlap integral <ref type="bibr" target="#b26">[27]</ref>.</s><s>The one and two-electron integrals are giving by</s></p><formula xml:id="formula_63">h ij = d rχ * i ( r)(− 1 2 ∇ − Z r )χ j ( r) (<label>32</label></formula><formula xml:id="formula_64">)</formula><formula xml:id="formula_65">h ijkl = d r 1 d r 2 χ * i ( r 1 )χ * j ( r 2 ) 1 r 12 χ k ( r 2 )χ l ( r 1 )<label>(33)</label></formula><p><s>Thus, we can write the second-quantization Hamiltonian of H 2 :</s></p><formula xml:id="formula_66">H H2 = h 00 a † 0 a 0 + h 11 a † 1 a 1 + h 22 a † 2 a 2 + h 33 a † 3 a 3 + h 0110 a † 0 a † 1 a 1 a 0 + h 2332 a † 2 a † 3 a 3 a 2 + h 0330 a † 0 a † 3 a 3 a 0 + h 1221 a † 1 a † 2 a 2 a 1 + (h 0220 − h 0202 )a † 0 a † 2 a 2 a 0 + (h 1331 − h 1313 )a † 1 a † 3 a 3 a 1 + h 0132 (a † 0 a † 1 a 3 a 2 + a † 2 a † 3 a 1 a 0 ) + h 0312 (a † 0 a † 3 a 1 a 2 + a † 2 a † 1 a 3 a 0 )<label>(34)</label></formula><formula xml:id="formula_67">H ′′ = i g 1 σ i1 z + g 2 σ i2 z + g 3 σ i1 z σ i2 z + i =j [g 1 σ i1 z + σ j1 z 4 + g 2 σ i2 z + σ j2 z 4 + g 3 (σ i1 z + σ j1 z )(σ i2 z + σ j2 z ) 4 + g 4 1 + σ i1 z σ j1 z + σ i2 z σ j2 z 4 + g 4 (σ i1 z − σ j,1) z )(σ i2 z − σ j2 z ) 4 + g 4 7 + σ i2 z σ j2 z − 3σ i1 z − 3σ j1 z + 6σ a 1 ij z − 4σ i1 z σ a 1 ij z − 4σ j1 z σ a 1 ij z + σ i1 z σ j1 z 4 + (g 1 − g 4 ) 14 + σ i1 z + σ j1 z − 6(σ i2 z + σ j2 z ) + 6(σ a 2 ij z + σ a 3 ij z ) + 2(σ i1 z σ a 2 ij z + σ j1 z σ a 3 ij z ) 4 + (g 1 − g 4 ) −4(σ i2 z + σ j2 z )(σ a 2 ij z + σ a 3 ij z ) − (σ i1 z + σ j1 z )(σ i2 z + σ j2 z ) + 2σ i2 z σ j2 z 4 + g 2 10 − σ i2 z − σ j2 z − 2(σ i1 z + σ j1 z ) + 2(σ a 4 ij z + σ a 5 ij z ) − 2(σ i2 z σ a 4 ij z + σ j2 z σ a 5 ij z ) 4 + g 2 −4(σ i1 z + σ j1 z )(σ a 4 ij z + σ a 5 ij z ) + (σ i1 z + σ j1 z )(σ i2 z + σ j2 z ) + 6σ i1 z σ j1 z 4 + g 4 7 + σ a 1 ij z − 3σ i2 z − 3σ j2 z + 6σ a 6 ij z + 2σ a 1 ij z σ a 6 ij z 2 + g 4 −σ i2 z σ a 1 ij z − σ j2 z σ a 1 ij z − 4σ i2 z σ a 6 ij z − 4σ j2 z σ a 6 ij z + σ i2 z σ j2 z 2 ]<label>(41)</label></formula><p><s>We can write the corresponding count term C as:</s></p><formula xml:id="formula_68">C = ± ( i (1 ± σ i1 z )(1 ± σ i2 z ) 4 ) 2<label>(42)</label></formula><p><s>By applying the method of reducing locality, 2-local corresponding count term is:</s></p><formula xml:id="formula_69">C ′ = 1 4 { i =j [7 + σ i2 z σ j2 z − 3σ i1 z − 3σ j1 z + 6σ a 7 ij z − 4σ i1 z σ a 7 ij z − 4σ j1 z σ a 7 ij z + σ i1 z σ j1 z + 2(7 + σ a 7 ij z − 3σ i2 z − 3σ j2 z + 6σ a 8 ij z + 2σ a 1 ij z σ a 8 ij z ) + 2(−σ i2 z σ a 7 ij z − σ j2 z σ a 7 ij z − 4σ i2 z σ a 8 ij z − 4σ j2 z σ a 8 ij z + σ i2 z σ j2 z ) + 14 + σ i1 z + σ j1 z − 6(σ i2 z + σ j2 z ) + 6(σ a 9 ij z + σ a 1 ij 0 z ) + 2(σ i1 z σ a 9 ij z + σ j1 z σ a 1 ij 0 z ) − 4(σ i2 z + σ j2 z )(σ a 9 ij z + σ a 1 ij 0 z ) − (σ i1 z + σ j1 z )(σ i2 z + σ j2 z ) + 2σ i2 z σ j2 z + 1 + σ i1 z σ j1 z + σ i2 z σ j2 z ]} + i (1 + σ i1 z ) + (1 + σ i2 z ) 4 (43)</formula><p><s>As stated in §Reduce Locality, a change in the locality would not change the state when calculating the ground state energy.</s><s>Thus we can still use C on certain qubits to calculate i a 2 i , and the algorithm we present above can still be used for the reduced Hamiltonian.</s></p><p><s>In Figure <ref type="figure" target="#fig_3">1</ref>, we show our results from the transformed Ising-type Hamiltonian of 2×2 to 4×2 qubits compared with the exact numerical values.</s><s>By increasing the number of qubits via r = 2, we increased the accuracy and the result matches very well with exact results.</s><s>f 0 = 1.0h 00 + 0.25h 0000 + 0.5h 0220 + 1.0h (</s></p><formula xml:id="formula_70">)<label>50</label></formula><p><s>We can also use the mapping and reducing locality as before to get the final Ising Hamiltonian.</s><s>Again, here we just present the mapping result of some terms for illustration:</s></p><p><s>For σ 1 z σ 2 z , the Hamiltonian between different basis can be mapped as:</s></p><formula xml:id="formula_71">i =j (σ i1 z + σ j1 z )(σ i2 z + σ j2 z ) 4 S ′ (i)S ′ (j). (<label>51</label></formula><formula xml:id="formula_72">)</formula><p><s>For σ 1 z σ 2</s></p><p><s>x , the Hamiltonian between different basis can be mapped as:</s></p><formula xml:id="formula_73">i =j (σ i1 z + σ j1 z )(1 − σ i2 z σ j2 z ) 4 S ′ (i)S ′ (j).<label>(52)</label></formula><p><s>And if the coefficient of mapping term is positive, we can get the 2-local term as:</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Mapping the molecular Hamiltonian of LiH to an Ising Hamiltonian</head><p><s>Similar to H 2 and other molecules, next we treat LiH molecule with 4-electrons in a minimal basis STO-6G and use of Jordanâ-Wigner transformation.</s><s>Using the technique defined above <ref type="bibr" target="#b28">[29]</ref> we can reduce the locality to a Hamiltonian with 558 terms on 8 qubits.</s><s>We just use 16 qubits for the simulations.</s></p><p><s>As in simulating of H 2 and HeH + , if we simulate LiH with more qubits we should get more accurate result.</s><s>Because of computer resources, we run the simulations as shown in Fig ( <ref type="formula" target="#formula_16">7</ref>) with only 16-qubits.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>m b 2 m</head><label>2</label><figDesc><div><p><s>= a i where S(b i ) represents the sign associated with b i .</s><s>Now, H ′ includes only products of σ z and I, which is diagonal.</s><s>Details of the transformation are presented as examples in the Supplementary Materials</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 : 1 √ 2 |000 + 1 √ 2 |010</head><label>11212</label><figDesc><div><p><s>Figure 1: A schematic representation of the mapping of σ 2 x between different basis from a state |ψ = 1 √ 2 |000 +</s></p></div></figDesc><graphic coords="3,95.88,253.16,420.16,143.92" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc><div><p><s>Figure 2: A comparison of numerical results of ground state energy of the Ising Hamiltonian with the exact STO-6G calculations of the ground state of H2, He2, HeH + and LiH molecules as one varies the internuclear distance R.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Notation 1 :</head><label>1</label><figDesc><div><p><s>We designate the i th qubit within the k th n qubit subspace of the rn state space of |Ψ as i k .Notation 2:: We use b(j) to represent the j th n-qubit in the space of |Ψ , is in the basis |φ b(j) .</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>2 in</head><label>2</label><figDesc><div><p><s>the space of |Ψ .</s><s>Proof: Clearly, I i in the space of |ψ is to observe if i th digits of |φ b(j) and |φ b(k) are the same or not.</s><s>If they are the same, it yields 1, otherwise 0. On the other hand, 1+σ i j z σ i k z 2 in the space of |Ψ is to check the i th digits of the j th n-qubits subspace (|φ b(j) ) and the k th n-qubit subspace (|φ b(k) ) are the same or not.</s><s>If</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 3 : 1 √ 2 |00 + 1 √ 2 1 √ 2 |00 − 1 √ 2 1 √ 2 |00 − 1 √ 2</head><label>3121212121212</label><figDesc><div><p><s>Figure 3: Left: If the 2 qubits state is |ψ = 1 √ 2 |00 + 1 √ 2 |11 then, the 4 qubits state is |Ψ = |0011 with S ′ (1) = S ′ (2) = 1, r = 2, b1 = b2 = 1 and S(b1) = S(b2) = 1.</s><s>Middle: If the 2 qubits state is |ψ = 1 √ 2 |00 − 1 √ 2 |11 then, the 4 qubits state is |Ψ = |0011 with S ′ (1) = −S ′ (2) = 1, r = 2, b1 = b2 = 1 and S(b1) = −S(b2) = 1.</s><s>Right: If the 2 qubits state is |ψ = 1 √ 2 |00 − 1 √ 2 |11 then, the 8 qubits state is |Ψ = |00111111 with S ′ (1) = S ′ (2) = S ′ (3) = −S ′ (4) = 1, r = 4, b1 = b2 = 1 and S(b1) = S(b2) = 1.</s><s>(S ′ (3) and S ′ (4) cancel out and thus S(b2) = 1).</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>2 inσ i k z 2 in</head><label>22</label><figDesc><div><p><s>the space of |Ψ .</s><s>Proof: Clearly, σ i x in the space of |ψ is to check if the i th digit of |φ b(j) and |φ b(k) are the same or not.</s><s>If they are the same it yields 0, otherwise 1.</s><s>Similarly, 1−σ i j z the space |Ψ is to verify the i th digits of the j th n-qubit subspace (|φ b(j) ) and the k th n-qubit subspace (|φ b(k) ) are identical.</s><s>If they are the same it gives 0, otherwise 1. (For 1−σ i j z σ i k z 2 we omit operators for other digits which are the identity I.) Thus we get:</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>2 haveAlso, σ i y and i σ i k z −σ i j z 2 haveand σ i j z +σ i k z 2 have</head><label>222</label><figDesc><div><p><s>the same function in different space to check the digits of |φ b(j) and |φ b(j) .</s><s>the same function in different spaces.</s><s>These operators are used to check the i th digits of |φ b(j) and |φ b(j) .</s><s>Also, σ i z the same function in different spaces to check the i th digits of |φ b(j) and |φ b(j) .</s><s>This can be easily verified by the above discussion.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>H</head><label></label><figDesc><div><p><s>(j,j) S ′ (j)S ′ (j)|Ψ = j≤r j φ b(j) |H|φ b(j) S ′ (j)S ′ (j) =</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>1+σ k z 2 is 1</head><label>21</label><figDesc><div><p><s>when the k th qubits is present in the basis |0 , 0 otherwise.</s><s>± is to go over combination by ± .So far, we have established a mapping between |ψ and |Ψ .</s><s>The Hamiltonian H in the space of |ψ and j,k≤r (j,k) H ′ (j,k) in the space of |Ψ .</s><s>Also we have constructed a matrix C to compute m b 2 m corresponding to |Ψ .</s><s>Thus, we have the final results: Ψ|</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Theorem 5 :</head><label>5</label><figDesc><div><p><s>The algorithm above converges to the minimum eigenvalue of H by finite iterations.</s><s>Proof: Monotonic Decreasing If we can find an eigenstate |Ψ of H ′ − λC with eigenvalue m b 2 m (λ ′ − λ) &lt; 0. Because m b 2m ≥ 0 we get λ ′ − λ &lt; 0. This means we can find an eigenstate |ψ of H with an eigenvalue λ ′ and λ ′ − λ &lt; 0. Thus each time λ decrease monotonically.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_11"><head>Figure 4 :</head><label>4</label><figDesc><div><p><s>Figure 4: The mapped Hamiltonian − J 2 (1 + γ)σ 1 x σ 2 x between different basis .</s></p></div></figDesc><graphic coords="12,145.20,70.95,321.52,143.97" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_12"><head>Figure 5 :</head><label>5</label><figDesc><div><p><s>Figure 5: Comparing the ground state energy from exact (atomic units) of the original Hamiltonian H, Eq. (12), as a function of the internuclear distance, R, (solid line) with the results of the transformed Hamiltonian H ′ , Eq. (16)<ref type="bibr" target="#b16">(17)</ref>.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_13"><head>Figure 6 :</head><label>6</label><figDesc><div><p><s>Figure 6: Results of the simulated transformed Ising-type Hamiltonian with 2 × 2 qubits and 4 × 2 qubits compared with the exact numerical results for ground state of H2 molecule.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_14"><head>Figure 8 :</head><label>8</label><figDesc><div><p><s>Figure 8: A comparison of the exact results for the ground state electronic energy of HeH + molecule as a function of internuclear distance R (solid line) with the simulated transformed Hamiltonian (dots) for 8 qubits in the minimal basis set STO-6G.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_16"><head>Figure 9 :</head><label>9</label><figDesc><div><p><s>Figure 9: Results for simulating with 8 × 2 qubits.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head></head><label></label><figDesc><div><p><s>We mark the eigenvalue of |ψ for H as λ ′ .</s><s>According to the relationship above, the eigenvalue of |Ψ for H ′ is m b 2 m λ ′ .</s><s>Thus, if we choose a λ and construct a Hamiltonian H ′ − λC.</s><s>The eigenvalue of |Ψ for H</s></p></div></figDesc><table><row><cell>Hamiltonian H.</cell><cell>j,k≤r (j,k) H ′ (j,k) and C to calculate the ground state of the initial</cell></row><row><cell>Notation 4:</cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head></head><label></label><figDesc><div><p><s>22+ 0.25h 2222 + 2.0/R f 1 = −0.25h</s><s>0000 + 0.5h 0220 − 0.25h 2222 f 2 = 0.25h 0000 + 0.5h 00 − 0.25h 2222 − 0.5h 22 f 3 = −0.25h</s><s>0002 − 0.25h 0020 + 0.5h 0222 f 4 = −0.5h</s><s>00 − 0.25h 0000 + 0.5h 22 + 0.25h 2222 f 5 = −0.25h</s><s>0002 − 0.25h 0020 − 0.5h 0222 f 6 = −1.0h</s><s>0022 f 7 = 0.25h 0002 + 0.25h 0020 − 0.5h 0222 f 8 = 0.25h 0002 + 0.25h 0020 + 0.5h 0222 .</s></p></div></figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table I :</head><label>I</label><figDesc><div><p><s>Comparing the Exact Ground Energy (a.u.) and the Simulated Ground Energy (a.u.) (simulated by 4 × 2 qubits) as a function of the inter-molecule distance R (a.u.)</s></p></div></figDesc><table><row><cell>R</cell><cell>g 0</cell><cell>g 1</cell><cell>g 2</cell><cell>g 3</cell><cell>g 4</cell><cell cols="2">Exact Simulated</cell></row><row><cell>0.6</cell><cell>1.5943</cell><cell cols="5">0.5132 -1.1008 0.6598 0.0809 -0.5617</cell><cell>-0.5703</cell></row><row><cell cols="2">0.65 1.4193</cell><cell cols="5">0.5009 -1.0366 0.6548 0.0813 -0.6785</cell><cell>-0.6877</cell></row><row><cell>0.7</cell><cell>1.2668</cell><cell cols="5">0.4887 -0.9767 0.6496 0.0818 -0.7720</cell><cell>-0.7817</cell></row><row><cell cols="2">0.75 1.1329</cell><cell cols="5">0.4767 -0.9208 0.6444 0.0824 -0.8472</cell><cell>-0.8575</cell></row><row><cell>0.8</cell><cell>1.0144</cell><cell>0.465</cell><cell cols="2">-0.8685 0.639</cell><cell cols="2">0.0829 -0.9078</cell><cell>-0.9188</cell></row><row><cell>0.85</cell><cell>0.909</cell><cell cols="5">0.4535 -0.8197 0.6336 0.0835 -0.9569</cell><cell>-0.9685</cell></row><row><cell>0.9</cell><cell>0.8146</cell><cell>0.4422</cell><cell cols="2">-0.774 0.6282</cell><cell>0.084</cell><cell>-0.9974</cell><cell>-1.0088</cell></row><row><cell cols="2">0.95 0.7297</cell><cell cols="5">0.4313 -0.7312 0.6227 0.0846 -1.0317</cell><cell>-1.0415</cell></row><row><cell>1.0</cell><cell>0.6531</cell><cell>0.4207</cell><cell cols="4">-0.691 0.6172 0.0852 -1.0595</cell><cell>-1.0678</cell></row><row><cell cols="2">1.05 0.5836</cell><cell cols="5">0.4103 -0.6533 0.6117 0.0859 -1.0820</cell><cell>-1.0889</cell></row><row><cell>1.1</cell><cell>0.5204</cell><cell cols="5">0.4003 -0.6178 0.6061 0.0865 -1.0999</cell><cell>-1.1056</cell></row><row><cell cols="2">1.15 0.4626</cell><cell cols="5">0.3906 -0.5843 0.6006 0.0872 -1.1140</cell><cell>-1.1186</cell></row><row><cell>1.2</cell><cell>0.4098</cell><cell cols="5">0.3811 -0.5528 0.5951 0.0879 -1.1249</cell><cell>-1.1285</cell></row></table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgement</head><p><s>We would like to thank Dr. Ross Hoehn for critical reading of the manuscript.</s></p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>If S ′ (1) = S ′ (2) = 1, we have:</s></p><p><s>By using Bravyi-Kitaev transformation <ref type="bibr" target="#b18">[19]</ref>, we have:</s></p><p><s>Thus, the Hamiltonian of H 2 takes the following form:</s></p><p><s>We can utilize the symmetry that qubits 1 and 3 never flip to reduce the Hamiltonian to the following form which just acts on only two qubits:</s></p><p><s>g 0 = 1.0h 00 + 0.5h 0000 − 0.5h 0022 + 1.0h 0220 + 1.0h 22 + 0.5h 2222 + 1.0/R</s></p><p><s>Where {g i } depends on the fixed bond length of the molecule.</s><s>In Table <ref type="table">I</ref>, we present the numerical values of {g i } as a function of the internuclear distance in the minimal basis set STO-6G.</s></p><p><s>By applying the mapping method described above, we can get the Hamiltonian H ′ consisting of only σ z (where i 1 and i 2 means the 1 and 2 qubits of i th 2 qubits):</s></p><p><s>According to the scheme for reducing locality, if we want to reduce H ′ − λC, we can reduce H ′ and C separately.</s><s>By applying the method for reducing locality, we can get a 2-local Ising-type Hamiltonian, H ′′ .</s><s>Here we show the example of all signs are positive, where a k ij , k = 1, 2, 3, ..., 6 are the index of the new qubits we introduce to reduce locality.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Mapping the Hamiltonian for He 2 Molecule to the Ising-type Hamiltonian</head><p><s>As shown above for transforming the Hamiltonian associated with the H 2 molecule, we repeat the procedure for the Helium molecule in a minimal basis STO-6G using Jordanâ-Wigner transformation.</s></p><p><s>The molecular spin Hamiltonian has the form:</s></p><p><s>The set of parameters f i are related to the one and two electron integrals: f 0 = 1.0h 00 + 0.25h 0000 − 0.5h 0022 + 1.0h 0220 + 1.0h 22 + 0.25h 2222 + 4.0/R f 1 = −0.5h</s><s>00 − 0.25h 0000 + 0.25h 0022 − 0.5h 0220 f 2 = −0.25h</s><s>0000 + 0.25h 0022 − 0.5h 0220 − 0.5h 00</s></p><p><s>We can also use the mapping and reduction of locality as before to get the final Ising Hamiltonian.</s><s>Here we just present the mapping result of some terms for illustration.</s></p><p><s>For σ 1 z , the Hamiltonian between different basis can be mapped as:</s></p><p><s>For σ 1 z σ 2 z , the Hamiltonian between different basis can be mapped as:</s></p><p><s>For σ 1 x σ 2 x σ 3 y σ 4 y , the Hamiltonian between different basis can be mapped as:</s></p><p><s>By reducing locality, we can get 2-local Ising-type Hamiltonian.</s><s>However, even just for σ 1 x σ 2 x σ 3 y σ 4 y , the final 2-local Ising Hamiltonian would have about 1000 terms.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Mapping the Hamiltonian HeH + to an Ising Hamiltonian</head><p><s>Similar to H 2 and He 2 molecules, next we treat HeH + molecule in the minimal basis STO-6G using Jordanâ-Wigner transformation.</s><s>Using the technique defined above <ref type="bibr" target="#b27">[28]</ref> we can reduce the locality to:</s></p><p><s>The set of parameters f i are related to the one and two electron integrals:</s></p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Dimensional scaling in chemical physics</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">R</forename><surname>Herschbach</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Avery</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Goscinski</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<publisher>Springer Science &amp; Business Media</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Algebraic theory of molecules</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Iachello</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">D</forename><surname>Levine</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1995">1995</date>
+			<publisher>Oxford University Press on Demand</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Quantum Information and Computation for Chemistry: Advances in Chemical Physics</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kais</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Wiley Online Library</title>
+		<imprint>
+			<biblScope unit="volume">154</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Modern quantum chemistry: introduction to advanced electronic structure theory</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Szabo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">S</forename><surname>Ostlund</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1989">1989</date>
+			<publisher>Courier Corporation</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Computational complexity in electronic structure</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Whitfield</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Love</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Aspuru-Guzik</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Physical Chemistry Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="397" to="411" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Computational complexity of interacting electrons and fundamental limitations of density functional theory</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Schuch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Verstraete</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature Physics</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="732" to="735" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">On the np-completeness of the hartree-fock method for translationally invariant systems</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Whitfield</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zimborás</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">141</biblScope>
+			<biblScope unit="issue">23</biblScope>
+			<biblScope unit="page">234103</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Scalable quantum simulation of molecular energies</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J J</forename><surname>O'malley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Babbush</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Martinis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review X</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page">31007</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Universal quantum simulators</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lloyd</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">273</biblScope>
+			<biblScope unit="issue">5278</biblScope>
+			<biblScope unit="page">1073</biblScope>
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Adiabatic quantum simulation of quantum chemistry</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Babbush</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Love</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Aspuru-Guzik</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Scientific Reports</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page">6603</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Evidence for quantum annealing with more than one hundred qubits</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Boixo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">F</forename><surname>Rønnowand</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Troyer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature Physics</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page" from="218" to="224" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Quantum annealing with manufactured spins</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">W</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">H S</forename><surname>Amin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Bunyk</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">473</biblScope>
+			<biblScope unit="issue">7346</biblScope>
+			<biblScope unit="page" from="194" to="198" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">A quantum annealing architecture with all-to-all connectivity from local interactions</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Lechner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Hauke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Zoller</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science Advances</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page">e1500838</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">A fully-programmable 100-spin coherent ising machine with all-to-all connections</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">L</forename><surname>Mcmahon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Marandi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Aihara</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">354</biblScope>
+			<biblScope unit="issue">6312</biblScope>
+			<biblScope unit="page" from="614" to="617" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">A coherent ising machine for 2000-node optimization problems</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Inagaki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Haribara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Enbutsu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">354</biblScope>
+			<biblScope unit="issue">6312</biblScope>
+			<biblScope unit="page" from="603" to="606" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Large-scale ising spin network based on degenerate optical parametric oscillators</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Inagaki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Inaba</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Takesue</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature Photonics</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="415" to="419" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Fermionic quantum computation</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">B</forename><surname>Bravyi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">Y</forename><surname>Kitaev</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Annals of Physics</title>
+		<imprint>
+			<biblScope unit="volume">298</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="210" to="226" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Methods of molecular quantum mechanics</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Mcweeny</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">T</forename><surname>Sutcliffe</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1969">1969</date>
+			<publisher>Academic press</publisher>
+			<biblScope unit="volume">2</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">The Bravyi-Kitaev transformation for quantum computation of electronic structure</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">T</forename><surname>Seeley</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Richard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Love</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">137</biblScope>
+			<biblScope unit="issue">22</biblScope>
+			<biblScope unit="page">224109</biblScope>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">The complexity of the local hamiltonian problem</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kempe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">Y</forename><surname>Kitaev</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Regev</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">SIAM Journal on Computing</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1070" to="1097" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Perturbative gadgets at arbitrary orders</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">P</forename><surname>Jordan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Farhi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review A</title>
+		<imprint>
+			<biblScope unit="volume">77</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">62329</biblScope>
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Hamiltonian gadgets with reduced resource requirements</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Babbush</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Biamonte</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kais</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review A</title>
+		<imprint>
+			<biblScope unit="volume">91</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">12315</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Experimental determination of ramsey numbers</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Bian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Chudak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">G</forename><surname>Macready</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Clark</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Gaitan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Physical Review Letters</title>
+		<imprint>
+			<biblScope unit="volume">111</biblScope>
+			<biblScope unit="issue">13</biblScope>
+			<biblScope unit="page">130505</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<monogr>
+		<title level="m" type="main">Hardware-efficient quantum optimizer for small molecules and quantum magnets</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kandala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mezzacapo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Temme</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Takita</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Chow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Gambetta</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1704.05018</idno>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Many-body localization in a quantum simulator with programmable random disorder</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Smith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Richerme</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Neyenhuis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">W</forename><surname>Hess</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Hauke</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Heyl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">A</forename><surname>Huse</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Monroe</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature Physics</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="907" to="911" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Entanglement as measure of electron-electron correlation in quantum chemistry calculations</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kais</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chemical physics letters</title>
+		<imprint>
+			<biblScope unit="volume">413</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1" to="5" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title level="m" type="main">Python quantum chemistry (pyquante) program</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">P</forename><surname>Muller</surname></persName>
+		</author>
+		<ptr target="http://pyquante.sourceforge.net/" />
+		<imprint>
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Optimizing qubit resources for quantum chemistry simulations in second quantization on a quantum computer</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Moll</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Fuhrer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Staar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Tavernelli</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Physics A: Mathematical and Theoretical</title>
+		<imprint>
+			<biblScope unit="volume">49</biblScope>
+			<biblScope unit="issue">29</biblScope>
+			<biblScope unit="page">295301</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bravyi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Gambetta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mezzacapo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Temme</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1701.08213</idno>
+		<title level="m">Tapering off qubits to simulate fermionic hamiltonians</title>
+				<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">arXiv preprint</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -1,0 +1,1757 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Computer Simulations Suggest a Key Role of Membranous Nanodomains in Biliary Lipid Secretion</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2015-02-18">February 18, 2015</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Johannes</forename><surname>Eckstein</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Nikolaus</forename><surname>Berndt</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Hermann-Georg</forename><surname>Holzhütter</surname></persName>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="department">Institute of Biochemistry</orgName>
+								<orgName type="institution">Charité-University Medicine Berlin</orgName>
+								<address>
+									<settlement>Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff1">
+								<orgName type="institution" key="instit1">University of California San Diego</orgName>
+								<orgName type="institution" key="instit2">UNITED STATES</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Computer Simulations Suggest a Key Role of Membranous Nanodomains in Biliary Lipid Secretion</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2015-02-18">February 18, 2015</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">062238F6970C26B47D4023FBBE73F1B6</idno>
+					<idno type="DOI">10.1371/journal.pcbi.1004033</idno>
+					<note type="submission">Received: April 8, 2014 Accepted: November 12, 2014</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:17+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>The bile fluid contains various lipids that are secreted at the canalicular membrane of hepatocytes.</s><s>As the secretion mechanism is still a matter of debate and a direct experimental observation of the secretion process is not possible so far, we used a mathematical model to simulate the extraction of the major bile lipids cholesterol, phosphatidylcholine and sphingomyelin from the outer leaflet of the canalicular membrane.</s><s>Lipid diffusion was modeled as random movement on a triangular lattice governed by next-neighbor interaction energies.</s><s>Phase separation in liquid-ordered and liquid-disordered domains was modeled by assigning two alternative ordering states to each lipid species and minimization of next-neighbor ordering energies.</s><s>Parameterization of the model was performed such that experimentally determined diffusion rates and phases in ternary lipid mixtures of model membranes were correctly recapitulated.</s><s>The model describes the spontaneous formation of nanodomains in the external leaflet of the canalicular membrane in a time window between 0.1 ms to 10 ms at varying lipid proportions.</s><s>The extraction of lipid patches from the bile salt soluble nanodomain into the bile reproduced observed biliary phospholipid compositions for a physiological membrane composition.</s><s>Comparing the outcome of model simulations with available experi-mental observations clearly favors the extraction of tiny membrane patches composed of about 100-400 lipids as the likely mechanism of biliary lipid secretion.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p><s>One central function of the liver is the production of the bile which is indispensable for the efficient digestion of dietary lipids, elimination of hydrophobic xenobiotics and removal of cholesterol from the body.</s><s>The bile is formed in the biliary canaliculi, i.e. the extracellular space that faces the canalicular membrane of hepatocytes.</s><s>About 80% of the bile content is bile salts (BS), while the other components are phospholipids (% 15%) and cholesterol (% 5%).</s><s>The secretion rate and composition of the bile are important factors in metabolic regulation, malfunctioning leading to hepatocyte damage, hypercholesterolemia, advanced levels of high-density lipoproteins or formation of atherosclerotic plaques <ref type="bibr" target="#b0">[1]</ref>.</s></p><p><s>Different models have been proposed to account for the canalicular secretion of hepatocyteborn lipids into the bile <ref type="bibr" target="#b1">[2]</ref><ref type="bibr" target="#b2">[3]</ref><ref type="bibr" target="#b3">[4]</ref><ref type="bibr" target="#b4">[5]</ref><ref type="bibr" target="#b5">[6]</ref>.</s><s>One possible mechanism of lipid secretion consists in the BS driven extraction of single lipids into the lumen of the canaliculus followed by assembly of these lipids and BS in mixed-micelles ('single-lipid extraction').</s><s>An alternative model developed on the basis of ultrastructural investigations suggests that lipid vesicles highly enriched in phosphatidylcholine are formed via BS facilitated exo-vesiculation of microdomains present in the exoplasmic hemi-leaflet of the canalicular membrane <ref type="bibr" target="#b6">[7,</ref><ref type="bibr" target="#b7">8]</ref>.</s><s>These BS extractable microdomains appear to coexist with sphingolipid-enriched microdomains which cannot be solubilized by BS and thus represent potential localized target areas for the clustering of proteins involved in bile formation as, for example, ABC transporters, aquaporins and P-type ATPases <ref type="bibr" target="#b8">[9,</ref><ref type="bibr" target="#b9">10]</ref>.</s><s>One may hypothesize a mechanism of lipid secretion where both BS extractable and BS nonextractable microdomains of different lipid composition coexist in the exoplasmic leaflet of the canalicular membrane.</s><s>The first ones represent membrane patches that can be easily intercalated by BS, protruded into the canalicular space and finally be released, the latter ones containing most of the proteins required to enrich the outer leaflet with specific lipids like phosphatidylcholine and conferring stability of the membrane against detergents.</s><s>In both models the solubilization of membrane lipids is mediated by BS that are actively pumped into the canalicular lumen.</s><s>They rely on the coexistence of BS soluble and BS insoluble membrane areas as the canalicular membrane has to meet two opposing conditions: (i) Maintenance of integrity in the presence of high concentrations of BS which are powerful detergents and (ii) at the same time allowing the secretion of membrane lipids.</s></p><p><s>The formation of microdomains goes along with the segregation into liquid ordered and liquid disordered phases.</s><s>The formation of different lipid phases is largely determined by the saturation profile of the fatty acid tails of the phospholipids and of sphingomyelin <ref type="bibr" target="#b10">[11]</ref>.</s><s>The tight interaction between cholesterol and sphingomyelin side chains usually representing long and saturated fatty acids allows for the formation of liquid ordered phases <ref type="bibr" target="#b11">[12,</ref><ref type="bibr" target="#b12">13]</ref>, whereas the high content of unsaturated fatty acids of phospholipids usually leads to a lower interaction between these membrane lipids and thus entails a liquid-disordered fraction of the membrane.</s><s>Phosphatidylcholine species found in the rat liver canalicular membrane and bile have a fairly hydrophilic fatty acid composition with palmitate (16:0) in sn1-position and an unsaturated fatty acid (mostly 18:1, 18:2, 20:4) in the sn2-position <ref type="bibr" target="#b13">[14]</ref>.</s></p><p><s>Most findings on microdomains have been obtained in in vitro experiments with lipid mixtures <ref type="bibr" target="#b14">[15,</ref><ref type="bibr" target="#b15">16]</ref> and giant unilamellar vesicles <ref type="bibr" target="#b16">[17]</ref>.</s><s>Depending on the number, type and relative abundance of lipids used to constitute these artificial membrane-like systems, one may observe tiny unstable nanodomains (% 10 nm) <ref type="bibr" target="#b17">[18]</ref><ref type="bibr" target="#b18">[19]</ref><ref type="bibr" target="#b19">[20]</ref> or much larger (&gt; 200 nm) and stable microdomains with life-times of several seconds containing up to 100,000 lipids.</s><s>The problem is that microdomains of this size and life-time have never been observed in the membranes of living cells.</s><s>Instead, the existence of much smaller (% 10 nm) and very short-lived (&lt; 0.1 ms) microdomains has been inferred from donor-quenching FRET analysis <ref type="bibr" target="#b20">[21,</ref><ref type="bibr" target="#b21">22]</ref>, atomic-force microscopy <ref type="bibr" target="#b22">[23]</ref> or deuterium-based nuclear magnetic resonance <ref type="bibr" target="#b23">[24]</ref>.</s><s>Possible reasons for this remarkable instability of microdomains in membranes of living cells are thermodynamic variations and mechanical perturbations exerted by cell-cell and cell-matrix interactions.</s><s>In order to distinguish these tiny and very unstable microdomains from their counterparts present in model membranes we will refer to them later on as nanodomains <ref type="bibr" target="#b10">[11]</ref>.</s></p><p><s>As the processes of nanodomain formation and lipid transfer from the external leaflet of the canalicular membrane into the lumen of the bile canaliculus cannot be directly monitored by experimental means we have developed a mathematical model to simulate the formation of nanodomains in the canalicular membrane and the extraction of the major bile lipids cholesterol (CH), phosphatidylcholine (PC) and sphingomyelin (SM) from BS soluble nanodomains.</s><s>The model enables dynamic simulations of the transit from an initially random to a highly structured lipid distribution on a time scale of several milliseconds.</s><s>With the model we address the problems of membrane self-organization, biliary phospholipid secretion and composition as well as membrane integrity.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Material and Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Mathematical Model: Structure, Calibration and Validation</head><p><s>We simulated the lipid dynamics by using a Potts model approach <ref type="bibr" target="#b24">[25]</ref>.</s><s>The membrane is represented by a triangular lattice with periodic boundary conditions.</s><s>Each lattice site is occupied by exactly one lipid.</s><s>The model comprises the membrane lipids CH, PC and SM which represent the prevailing membrane lipids in the canalicular membrane of hepatocytes.</s><s>Note that the model variable PC actually represents also other phospholipids of the exoplasmic leaflet (e.g. % 11% phosphatidylethanolamine) as well as different fatty acid tail compositions.</s><s>This is a necessary simplification of the model as experimental information on the impact of glycerophospholipids other than PC on domain formation and lipid diffusion is not available.</s></p><p><s>We introduced next-neighbor interaction energies w for each pair of membrane lipids.</s><s>Furthermore, similar as in <ref type="bibr" target="#b25">[26]</ref> we assumed that each lipid may be either in a low or high ordered internal state.</s><s>In the low-ordered state the bulky conformation of the fatty acid chains allows high flexibility and thus rapid movement while in the high-ordered state the fatty acid chains are arranged in a way that the hydrophobic interactions with adjacent lipids are strong and thus restricting lipid mobility.</s><s>We model the property of lipids to cooperatively synchronize their ordering states by assigning a coupling strength jðX s i ; X s k Þ between the ordering states σ of the lipid species X resident in neighboring lattice sites i and k.</s><s>The ordering states ho and lo are represented by σ = −1 and σ = +1 respectively.</s><s>The coupling jðX s i ; X s k Þ of lipid pairs contributes to the total ordering energy of the membrane with a positive sign if the two neighboring lipids possess identical ordering states and with negative sign if the ordering states are different:</s></p><formula xml:id="formula_0">J ¼ À X N i¼1 X k2nðiÞ jðX s i ; X s k Þs i s k :</formula><p><s>The first sum runs over all lattice sites N and the second over the 6 neighbors of lattice site i.</s></p><p><s>Self-organization of lipid domains comprising lipids that are predominantly present in the lo or ho state is achieved by minimizing this total ordering energy.</s></p><p><s>Our approach to enforce a phase separation of lipids is similar to the well-known Ising model of ferromagnetism in statistical mechanics describing the formation of phases with different atomic spin states (-1, +1) across a 2-dimensional lattice <ref type="bibr" target="#b26">[27]</ref>.</s><s>Furthermore, we introduce next-neighbor interaction energies for each pair of membrane lipids and describe the dynamics of membrane lipids as a process driven by minimization of the total interaction energy of the lattice.</s><s>As the lipids may occur in two different ordering states, we assign different interaction energies, w ho (X i , X k ) and w lo (X i , X k ), to adjacent lipids of species X at lattice site i and k depending on whether these two lipids are both in the ho state or lo state, respectively.</s><s>The total interaction energy of the membrane is</s></p><formula xml:id="formula_1">W ¼ X N i¼1 X k2nðiÞ w s ðX i ; X k Þ:</formula><p><s>In cases where the ordering states σ at sites i and k are different we assign to this lipid pair the mean of the two interaction energies.</s><s>Movement of lipids on the lattice is restricted to their pair-wise interchange of next neighbors.</s><s>The dynamics of membrane lipids and the distribution of their mobility states are governed by the minimization of the total energy E which is a linear combination of the ordering energy J and the interaction energy W:</s></p><formula xml:id="formula_2">E ¼ W þ g Á J ¼ X N i¼1 X k2nðiÞ ðw s ðX i ; X k Þ þ g Á jðX s i ; X s k Þs i s k Þ:</formula><p><s>The scaling factor γ relates the ordering energy J to the interaction energy W.</s></p><p><s>The values of w σ (X i , X k ) and jðX s i ; X s k Þ represent Gibb's free energies which arise from a multitude of electrostatic, Van der Waals and hydrophobic interactions between head groups and fatty acid tails of neighboring membrane lipids <ref type="bibr" target="#b27">[28]</ref>.</s><s>In our thermodynamic-based approach the behavior of the lattice in the equilibrium state is fully determined by the changes of the free energy associated with either switching of neighbored lipids or changing the ordering state of lipids.</s></p><p><s>For the stochastic simulations of lipid movement we applied the Gillespie algorithm <ref type="bibr" target="#b28">[29]</ref>.</s><s>The core of this algorithm consists in assigning to each possible elementary process p ij of lipid switch between i and j, a rate r(i, j) that depends upon the local interaction energies at positions i and j where the process p ij is executed: r(i, j) = exp(β(w i +w j )).</s><s>Here, w i = S k2n(i) w σ (X i , X k ) is the interaction energy of a lipid of species X i at site i with all its neighbors with species X k and β = 1/k B T the inverse temperature.</s><s>The probability P(Δt) that during the time span Δt no elementary process occurs is related to the elementary rates by P(Δt) = exp(-r tot Δt), where r tot = S Pij r(i, j) is the total rate, defined as the sum of the elementary rates.</s><s>This relation is used to randomly generate elementary time steps, Δt = -ln η/r tot , where η are equally distributed random numbers between 0 and 1.</s><s>After having randomly chosen the time step for the next elementary process to occur, the elementary process to be executed has to be specified.</s><s>This is done by randomly choosing an elementary process, i.e. lipid switch, with its corresponding probability.</s><s>So far we neglected the process of changes in the ordering state.</s><s>From the moleculardynamics point of view, a change in the conformation of the fatty acid tail should occur much more frequently compared with a switch of neighbored lipids.</s><s>As a consequence, the elementary process "change the ordering state of a selected lipid" occurs much more frequently than the elementary process "switch adjacent lipids".</s><s>Hence, it is reasonable to assume that a large number of changes in the ordering states of lipids will occur between two subsequent lipid switches so that at any time point the conformational energy J becomes minimal.</s></p><p><s>The rate with which a membrane lipid flips between two alternative ordering states is not known.</s><s>Considering that such a flip requires only a change in the conformation of the fatty acid tails it is reasonable to assume that flips of the ordering state occur with much higher rates than changes in the spatial position of the membrane lipid.</s></p><p><s>We thus refrained from executing explicitly the elementary process "change the ordering state of a selected lipid".</s><s>Instead, we make the steady-state (or equivalently: partial fastequilibrium) assumption that the ordering energy is minimal and thus the ordering states of the lipids are in equilibrium at any time point.</s><s>This also alleviates us from knowing the exact value of the scaling factor γ, as it now does not occur in the algorithm itself.</s></p><p><s>Adopting the basic concept of multi-scale stochastic simulation of systems comprising a fast-equilibrium subsystem <ref type="bibr" target="#b29">[30,</ref><ref type="bibr" target="#b30">31]</ref> we split the simulation into two alternating steps: (1) A dynamic simulation governed by the interaction energy W and carried out over a critical time which is determined by the condition that each lipid has to change its position on the lattice N W times on average.</s><s>During this dynamic simulation, the ordering states of the lattice sites are not changed, i.e. the ordering state is a fixed property of the lattice site and not of the lipid just occupying the site.</s><s>The dynamic simulation step is followed by ( <ref type="formula">2</ref>) the minimization of the total ordering energy J.</s><s>This minimization step is carried out by the Metropolis algorithm <ref type="bibr" target="#b31">[32]</ref> whereby the ordering states of all lattice sites are N J times updated.</s><s>A change of the ordering state occurs with probability</s></p><formula xml:id="formula_3">Pðlo $ hoÞ ¼ 1 expðÀbDJÞ if DJ 0 if DJ &gt; 0 (</formula><p><s>depending on the difference ΔJ between new and old ordering energy.</s><s>The updated ordering states of the lipids are assigned to the harboring lattice sites and the simulation is continued with step (1) as depicted in Fig. <ref type="figure" target="#fig_0">1A</ref>.</s><s>The whole simulation is either stopped at a fixed time point (this termination of the simulation was applied in the simulations of bile formation) or if the statistical properties of the lattice defined through frequency of lipid-lipid contacts, the relative share of lipids in lo states and ho states and the numerical value of the diffusion coefficient do not change over a sufficiently long time interval (this termination of the simulation was applied in the parameterization of the model based on experimental data with ternary lipid mixtures).</s></p><p><s>To ensure independence of the simulation results from the combination of the two linked optimization algorithms (see flowchart in Fig. <ref type="figure" target="#fig_0">1A</ref>) the number of spin updates N J has to be high enough to minimize J. Likewise the number of lipid switches N W should be sufficiently low to ensure that the spin updates occur frequently enough.</s><s>On the other hand it is desirable to keep N J low and N W high to minimize the computational effort.</s><s>To find optimal values satisfying both requirements the control parameters N J and N W were varied and the dependence of the statistical properties of the model membranes was monitored.</s><s>Fig. <ref type="figure" target="#fig_0">1B</ref> shows an example demonstrating how the statistical properties of the simulated model configurations are influenced by the control parameters N J and N W .</s><s>According to these results, we put N J = 100 and N W = 10 in the stochastic simulations.</s><s>The next step was to determine the interaction energies and the spin energies used in the model.</s><s>With the three membrane lipids CH, PC and SM the symmetric matrices w lo and w ho of the interaction energies are 3×3 matrices comprising six independent unknown parameters w σ (CH, CH), w σ (CH, PC), w σ (CH, SM), w σ (PC, PC), w σ (PC, SM), and w σ (SM, SM), with σ = lo, ho state.</s></p><p><s>The matrix j of the ordering energies is a 6×6 matrix comprising 36 elements.</s><s>The entries in the ordering matrix j describe the ordering energy of a given lipid (CH in the first column, PC in the second column, SM in the third column) with a neighboring lipid being in a given ordering state σ.</s><s>The ordering state of the lipid itself is not of importance since in the used metropolis algorithm only energy differences are of importance, i.e. the calculation of ΔJ leads to the same result if one puts</s></p><formula xml:id="formula_4">jðX lo i ; X lo k Þ ¼ jðX lo i ; X ho k Þ and jðX ho i ; X lo k Þ ¼ jðX ho i ; X ho k Þ.</formula><p><s>Therefore the dimension of the matrix is reduced to 3×6.</s><s>The difference in the ordering energies for a given lipid with a neighboring lipid in either phase determines the tendency of the lipid to adopt either ordering state, with the lower value representing the favored and the higher value representing the disfavored ordering state.</s><s>These pairs of values are block by block symmetric in the matrix which further reduced the free parameters from 18 to 6.</s></p><p><s>Thus, in total our model comprises 2Á6+6 = 18 parameters with unknown numerical values.</s><s>We calibrated the interaction between the different lipids in different ordering states such that the diffusion coefficients would match those from experiment for the reported phases.</s></p><p><s>Our model allows to track the stochastic movement of individual lipids along with their ordering state and thus to determine mean squared displacements (MSDs) for the different phases.</s><s>MSDs were calculated by first letting the simulation run until the resulting membrane configuration had reached an equilibrium state.</s><s>At this point, we tagged the position of all N phospholipids i 0 and let the simulation continue for a certain number of steps z.</s><s>Next we calculated the individual displacement after the z steps for each lipid:</s></p><formula xml:id="formula_5">Dxðz; X i ; s i Þ ¼ ji z À i 0 j</formula><p><s>For the calculation of the displacements of the different lipid species X in the different phases only those random walks were taken into account for which the tracked lipid had not passed a phase border, i.e. had not changed its ordering state σ i .</s></p><p><s>Given the displacements Δx and choosing an arbitrary timescale t corresponding to the z steps the simulated diffusion coefficient D sim m;s for the phase σ of the m-th model membrane can be derived from the MSDs with the corresponding ordering state in the respective lipid composition:</s></p><formula xml:id="formula_6">hDxðtÞ 2 i ¼ 4D sim m;s t:</formula><p><s>The MSDs are only determined up to an overall scaling factor α:</s></p><formula xml:id="formula_7">a ¼ X m D exp m;s D sim m;s X m ðD exp m;s Þ 2 :</formula><p><s>Here the index m designates the different lipid compositions of the GUVs, D exp m;s denotes the measured and D sim m;s the simulated diffusion coefficient for lipid composition m.</s><s>The numerical values of the unknown elements of the matrices w lo and w ho were estimated by minimizing the difference ε between model-based lateral lipid diffusion rates and experimental values determined in giant unilamellar vesicles (GUVs) containing CH, PC and SM in 25 different proportions <ref type="bibr" target="#b32">[33]</ref>:</s></p><formula xml:id="formula_8">e ¼ X<label>25</label></formula><formula xml:id="formula_9">m¼1 ðD exp m;s À aD sim m;s Þ 2 !minimum:</formula><p><s>calculated for a lattice having the same lipid composition m as the GUVs.</s><s>Simulated diffusion coefficients that differ from the experimental ones by a global constant factor can be transformed by rescaling of α or alternatively by a rescaling of the time t.</s><s>Therefor α relates the time scale used in the model simulations to the time scale of the in vitro experiments.</s><s>The same value of the scaling factor α was used for fitting the unknown elements of the two matrices w lo and w ho .</s></p><p><s>To solve this minimization problem, the numerical values of the 12 unknown parameters were varied on a discrete hypercube under the additional constraint of reproducing known interactions between the different lipid species.</s><s>The condition for mixing of lipid species X and Y can be formulated as 2w σ (X, Y) − w σ (X, X) − w σ (Y, Y) &lt; 0 while the condition for de-mixing is 2w σ (X, Y) − w σ (X, X) − w σ (Y, Y) &gt; 0 <ref type="bibr" target="#b33">[34]</ref>.</s><s>The only constraints applied were that the lipid species CH and SM would mix in the ho state <ref type="bibr" target="#b34">[35]</ref>.</s><s>We determined the points of this hypercube that fulfilled the condition and where ε attained its minimal value for the ho or the lo state respectively.</s><s>Around these points we again varied the unknown parameters on a finer hypercube and determined ε.</s><s>The procedure was repeated with successively decreasing sizes of hypercubes until no further significant reduction of ε was possible.</s><s>This corresponds to a discretized version of a downhill simplex method.</s><s>The calibration yielded the following numerical For the interpretation of the numerical values of the interaction matrices we apply them to the mixing and de-mixing properties of the previous section and compare the results to known membrane properties.</s><s>In the ho state the interaction matrix features a strong tendency for CH and SM to mix and a strong tendency for PC to de-mix from CH and from SM.</s><s>This is in agreement with works from Silvius <ref type="bibr" target="#b34">[35]</ref>, van Duyl <ref type="bibr" target="#b35">[36]</ref> and Frazier <ref type="bibr" target="#b36">[37]</ref>.</s></p><p><s>In the lo state PC has only a weak tendency to de-mix from CH and from SM, which is in agreement with work from Silvius <ref type="bibr" target="#b34">[35]</ref> and Tsamaloukas <ref type="bibr" target="#b37">[38]</ref>.</s><s>Contrary to the ho state CH and SM have a tendency to de-mix in the lo state.</s><s>For this pairing no reliable data could be found since the two species occur in the ho state rather than in the lo state.</s></p><p><s>The unknown parameters of the ordering matrix j were chosen such that the occurrence of monophasic and biphasic lipid distributions matched those observed in the 25 different variants of GUVs.</s><s>To this end we defined lipid distributions with more than 90% of all lipids resident in the ho state as monophasic liquid-ordered (Lo), with more than 90% of all lipids resident in the lo state as monophasic liquid-disordered (Ld) and with more than 10% of all lipids resident in both ordering states as biphasic.</s><s>For the minimization of J the lattice was initialized with all lipids in lo state.</s><s>A searching of the parameter space yielded parameter values  The values thus obtained are by no means unique but this is not to be expected since the data described by them are only semi-quantative and the relative size of the ordering pairs for a given lipid to adopt either state is more important than the precise values.</s></p><formula xml:id="formula_10">B B B B B B B B B B B B @ 1 C C C C C C C C C C C C A</formula><p><s>With these values the calculated diffusion coefficients and the occurrence of monophasic and biphasic lipid distributions of our model simulations were in agreement with experimental data obtained with GUVs <ref type="bibr" target="#b32">[33]</ref> (see Fig. <ref type="figure" target="#fig_3">2</ref>).</s></p><p><s>The calibration of the model with measured diffusion coefficients allows the definition of an absolute time scale and thus offers the possibility to use the model for real-time dynamic simulations of domain formation.</s><s>We used the parameterized model to compute lipid distributions for the whole possible range of lipid compositions (Fig. <ref type="figure" target="#fig_3">2B</ref>).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Simulation of membrane self-organization and lipid secretion into the bile</head><p><s>We used the calibrated model to simulate the self-organization of nanodomains and the release of lipids from the outer leaflet of the canalicular hepatocyte membrane into the bile canaliculus.</s><s>We presupposed a situation where the amount and composition of lipids in the outer leaflet is on the average kept constant (quasi steady state), i.e. the transport rate of lipids to the canalicular membrane equals the net transport rate from the inner to the outer leaflet and the release rate into the canalicular lumen.</s><s>As the life-time of nanodomain structures, i.e. the simulation time during which an initially random distribution of lipids self-organizes into a domain structure that is representative for the outer leaflet of the canalicular membrane, we chose τ = 0.1, 1 and 10 ms to cover a range around the estimated nanodomain life-time of % 1 ms <ref type="bibr" target="#b38">[39]</ref>.</s></p><p><s>We tested two alternative mechanisms of lipid secretion: extraction of single lipids or extraction of lipid patches.</s><s>An extractable lipid patch is defined as a hexagonal piece of membrane that is fully embedded in a Ld nanodomain.</s><s>With this definition, extraction of single lipids is identical with extraction of patches with size of 1 lipid.</s><s>We defined the extractable membrane fraction (EMF) as the fraction of the membrane that can be covered by extractable patches.</s><s>The flow of lipids into the bile is determined by the detachment rate of patches.</s><s>This rate depends on the concentration and chemical properties of the BS species present in the canalicular lumen and the size and number of patches present in the outer leaflet.</s><s>Hence, at fixed concentration of BS, the lipid secretion rate (LSR) is up to a constant unknown factor proportional to the number of the extractable patches n patch (r) with radius r multiplied by their lipid content n lipids (r) and divided by the time span τ required for the formation of nanodomains:</s></p><formula xml:id="formula_11">LSRðrÞ ¼ n patch ðrÞn lipids ðrÞ=t:</formula><p><s>The lipid composition of the bile is given by the average lipid composition of all extractable patches.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p><s>First, we carried out model simulations with a physiologically normal lipid composition of the canalicular membrane <ref type="bibr" target="#b7">[8]</ref> with CH = 37.8%, PC = 46.5% and SM = 15.7%.</s><s>The simulation was started with a fixed lipid composition but random distribution of lipids across the lattice with their ordering states calculated for the given random lipid distribution.</s></p><p><s>Model simulations persistently resulted in a bi-phasic quasi-stationary lipid distribution comprising Ld nanodomains rich in PC and Lo nanodomains enriched in CH and SM.</s><s>Typical lipid patterns obtained for three different life-times are depicted in Fig. <ref type="figure" target="#fig_4">3</ref>.</s><s>With increasing life-time, the nanodomains tend to merge to form larger domains.</s><s>Accordingly, the maximal size of patches that can be extracted from the Ld nanodomains increases as well.</s><s>The predicted lipid composition of the patches and thus of the bile micelles was % 13.5 CH, % 85.5% PC and % 1% SM in good agreement with reported experimental values of % 15% CH, % 85% PC and &lt; 1% SM <ref type="bibr" target="#b39">[40]</ref>.</s><s>The lipid composition of patches was remarkably invariant against variations of the patch sizes and life-times (see Table <ref type="table" target="#tab_1">1</ref>).</s></p><p><s>As seen in Fig. <ref type="figure" target="#fig_4">3D-F</ref>, the calculated LSRs are non-monotone with respect to the patch size.</s><s>This is due to the fact that the number of lipids that are simultaneously extracted from the leaflet increases with the patch size whereas the number of patches fitting into Ld nanodomains decreases with increasing patch size.</s><s>The largest LSR was attained for patches containing 37, 169 and 631 lipids for the three different simulation times τ = 0.1, 1 and 10 ms.</s><s>This has to be compared with the size of sandwich-like micelles which primarily derive from mixed dispersions of egg PC and the BS deoxycholate <ref type="bibr" target="#b40">[41]</ref> and quasi-elastic light scattering studies of native bile from the dog <ref type="bibr" target="#b41">[42]</ref> consistently comprising about 100-400 lipids.</s><s>Since this is close to the calculated average patch size at τ = 1 ms and as a life-time of 1 ms is also in good agreement with several measurements on nanodomains we choose τ = 1 ms as the average life-time in further simulations.</s></p><p><s>The lipid composition of the canalicular membrane has been shown to strongly influence the relative share of membrane lipids in the bile <ref type="bibr" target="#b42">[43]</ref>.</s><s>Thus, we performed simulations where the relative fraction of either CH or PC was varied (see Fig. <ref type="figure" target="#fig_5">4</ref>).</s></p><p><s>A decrease in the relative fraction of CH at otherwise constant PC:SM ratio increased the share of lipids in the Lo state and the average size of Ld nanodomains.</s><s>As a consequence, the average size of membrane patches that can be solubilized from Ld nanodomains and the LSR increased with decreasing CH content of the external leaflet.</s><s>At a low fraction of CH = 18% the model simulations predict a steep increase of the average patch size to about the 10-fold of the reference state.</s><s>Such an increase of the BS-solubilizable membrane area should result in a BS-induced rupture of the membrane.</s><s>Increasing the CH content of the exoplasmic leaflet promoted the transition from the Ld to the Lo phase and thus reduced the LSR.</s><s>On the other hand, the CH content of the extractable membrane patches became successively larger.</s><s>The net effect of these two opposing tendencies was an increase of the extractable fraction of CH up to   a critical CH content which amounts to about 36% for extraction of patches with sizes of 100-400 lipids and to 56% for the mechanism of single-lipid extraction.</s></p><p><s>In a further series of simulations we studied the impact of varying concentrations of PC on the lipid flow.</s><s>With decreasing PC content at constant CH:SM ratio the simulations revealed a non-linear decline of the average size of extractable patches resulting in reduced LSRs of all lipid species.</s><s>The composition of the patches remained almost constant although there was a slight shift towards a higher share of CH and a lower share of PC.</s></p><p><s>Intriguingly, the lower limit of the membranous PC content below which the flow of PC into the bile practically ceased depended strongly on the size of membrane patches supposed to carry the lipid flow into the bile.</s><s>For example, lipid extraction stopped at a lowered membranous PC content of 32% for patches with a size of 631 lipids, at 10% for 169 lipid patches while the extraction of single lipids did not stop until a PC content of 0%.</s><s>Studies on mice with a homozygous knock-out of the PC transporter mdr2 found a complete abolishment of PC release into the bile <ref type="bibr" target="#b43">[44]</ref>.</s><s>Compared with our model simulation this finding again suggests lipid secretion to precede via extraction of patches rather than of single lipids.</s><s>Increasing the PC content resulted in an increased EMF and strongly increased LSRs.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p><s>In this work we developed a kinetic model of lateral lipid diffusion and phase separation in monolayers composed of the three membrane lipids CH, DOPC and SM assumed to contain saturated fatty acid tails, even though in biological membranes the diversity of phospholipids is higher than in our three component system (e.g.</s><s>phosphatidylserine, phosphoinositol, phosphatidylethanolamine) and the fatty acid tail composition is much more complex (hybrid, multiple unsaturated, different chain length).</s><s>However studies by Marsh and Konyakhina show that the phase distribution between PC with one or two unsaturated fatty acid tails is rather similar <ref type="bibr" target="#b44">[45]</ref><ref type="bibr" target="#b45">[46]</ref><ref type="bibr" target="#b46">[47]</ref> and PC is the dominant phospholipid species <ref type="bibr" target="#b7">[8,</ref><ref type="bibr" target="#b47">48]</ref>.</s><s>Naturally mathematical modelling relies on justified simplification of real biological structures.</s><s>In our model the influence of membrane proteins was neglected and DOPC is used in the model as a substitute for a number of different phospholipids (e.g.</s><s>PE, PS) with the hybrid lipid 1-saturated, 2-unsaturated-phosphatidylcholine being the most abundant phospholipid.</s><s>The differences between phase diagrams for DOPC/SM/CH and POPC/SM/CH are not necessarily higher than between different experiments of same the same system <ref type="bibr" target="#b48">[49,</ref><ref type="bibr" target="#b49">50]</ref>.</s><s>In the end justification comes from the agreement between experiments and theory.</s></p><p><s>Therefore to keep the parameter space small and to allow for the comparison with experiment, the model was calibrated based on data from in vitro experiments with GUVs.</s><s>We then used the model to study the dynamics of domain formation in the exoplasmic leaflet of the canalicular membrane of hepatocytes.</s><s>The central goal of these simulations was to explore how the lipid composition of the leaflet influences the relative size of Ld and Lo nanodomains and thus the biliary phospholipid composition and the likelihood to solubilize membrane segments (patches) from the Ld nanodomains.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Simulation of dynamic domain formation in the outer leaflet of the canalicular membrane</head><p><s>Importantly, at physiologically realistic lipid composition of the outer leaflet, our simulation consistently predicted the formation of two distinct types of nanodomains differing significantly in their lipid composition and phase behavior (Fig. <ref type="figure" target="#fig_4">3</ref>).</s><s>The Ld nanodomain was strongly enriched in PC while the Lo nanodomain was rich in CH and SM.</s><s>These model-based findings are in good agreement with experiments clearly indicating a compartmentalization of lipids within the canalicular membrane <ref type="bibr" target="#b50">[51]</ref>.</s><s>Using either Triton X-100 or Lubrol WX as detergents, Slimane et al. <ref type="bibr" target="#b51">[52]</ref> extracted two different membrane fractions.</s><s>The Triton insoluble fraction was highly enriched in sphingolipids and CH <ref type="bibr" target="#b8">[9]</ref>.</s><s>The proteins mediating the trans-membrane lipid transport and the release of BS into the canalicular lumen (BS export pump, multidrug resistance protein 2, multidrug resistance associated protein 2, Abcg5) were found to be predominantly located in the Triton X-100 soluble fraction <ref type="bibr" target="#b50">[51]</ref>.</s></p><p><s>Experiments with model membranes devoid of proteins have provided evidence for the spontaneous formation of nano-scale lipid domains <ref type="bibr" target="#b18">[19]</ref>.</s><s>Whether spontaneous lipid demixing is also the primary mechanism for domain formation in biological membranes is a matter on ongoing debate (reviewed, for example, in <ref type="bibr" target="#b52">[53]</ref>) as lipid-protein interactions may contribute not only to the stabilization of such domains but may even induce their formation.</s><s>The fact that our lipid-based model of nanodomain formation in the canalicular membrane of hepatocytes indeed recapitulates a number of experimental findings on the size and lipid composition of bile micelles lends support to the view that spontaneous formation of pure Lo and Ld lipid domains without further assistance of membrane proteins is sufficient to enable the extraction of tiny membrane fragments from Ld domains in the presence of solubilizing agents.</s><s>Whereas Ld domains are disrupted by the process of bile micelle formation and thus have to be permanently recreated, it is likely that the Lo lipid domains once formed are stabilized by the insertion of membrane proteins involved in the active transport for the various bile components and asymmetric distribution of lipids between the internal and external leaflet.</s></p><p><s>Intriguingly, Ld nanodomains obtained in our simulations contained PC, SM and CH in relative fractions that perfectly matched their relative abundance in the bile.</s><s>This finding suggests that the three major lipids of the bile are not independently solubilized from the membrane but secreted in a concerted manner just in proportions present in the Ld nanodomains.</s></p><p><s>In our simulations the size of nanodomains increased with increasing life-times in a sublinear fashion.</s><s>Spectroscopic measurements suggest the life-times of nanodomains in biological membranes to be not longer than a few milliseconds.</s><s>For this time window our simulations predict a maximal size of Ld nanodomains of only a few hundred lipids.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Simulation of lipid extraction as exo-vesiculation of membrane patches into mixed micelles</head><p><s>Our lattice model allows calculating the size and geometry of nanodomains which represent important factors determining the rate with which membrane patches can be solubilized and extracted from the external leaflet.</s><s>These simulations suggest that the LSR has a maximum for critical patch sizes of 100-400 lipids.</s><s>Remarkably, the predicted optimal size of lipid patches is in good agreement with the size of micelles that are usually extracted from artificial membranes <ref type="bibr" target="#b27">[28,</ref><ref type="bibr" target="#b47">48]</ref>.</s><s>Of note, even the largest patches that in our simulations were found to be extractable in a time window of a few microseconds were at least one order of magnitude smaller than bile vesicles observed by means of ultra-rapid cryofixation <ref type="bibr" target="#b6">[7]</ref>.</s><s>We suppose that these vesicles may derive from a fusion and rearrangement of smaller nano-micelles as those suggested by our simulations (micelle-to-vesicle transition, <ref type="bibr" target="#b53">[54]</ref>).</s><s>Such a mechanism would also better explain the formation of bilayered vesicles by pinch-off from a monolayer.</s><s>The fact that some of the larger bile vesicles were found in direct contact with the canalicular membrane does not necessarily imply that they have originated from exocytosis, as suggested in <ref type="bibr" target="#b6">[7]</ref>.</s><s>Rather, they may represent vesicles that after their formation from micelles back-fuse with the canalicular membrane to be endocytosed <ref type="bibr" target="#b54">[55,</ref><ref type="bibr" target="#b55">56]</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Simulation of lipid extraction from membranes with altered phospholipid composition</head><p><s>Since altered phospholipid composition of the canalicular membrane can result in impaired bile formation and cellular damage we carried model simulations where the CH and PC content of the canalicular membrane was varied over a wide range (Fig. <ref type="figure" target="#fig_5">4</ref>).</s><s>A reduced PC content of the outer leaflet of the canalicular membrane can result from impaired mdr2 activity.</s><s>mdr2 selectively transports PC to the outer membrane depending on BS concentration.</s><s>Experimental studies on changes of bile flow and bile lipid composition in mice being homozygous for a disruption of the MDR2 gene, the analog of the human MDR3 <ref type="bibr" target="#b56">[57,</ref><ref type="bibr" target="#b57">58]</ref> revealed an only moderate decline of the PC flow into the bile in the heterozygous animals whereas in the homozygous mice the flow of PC and CH was almost completely abolished (lower than 5% of the normal).</s><s>In our simulations a PC content of less than 30% completely prevented the extraction of patches with a size of about 600 lipids.</s><s>In contrast, extraction of single lipids is predicted to continue-albeit with decreasing activity-if the PC content goes to zero.</s><s>Hence, these simulations lend further support to the existence of a patch-extraction mechanism of membrane lipids.</s><s>Unfortunately the residual PC content of the canalicular membrane has not been determined in the mdr2 knockout experiments so that a comparison with the predicted threshold value of about 30% PC content is not possible.</s><s>However, considering that PC is an indispensable phospholipid of the plasma membrane and that besides mdr2 other transporters of PC exist, for example, the relatively unspecific MDR1 encoded P-glycoprotein <ref type="bibr" target="#b58">[59]</ref>, a residual PC content of 30% is not unlikely.</s></p><p><s>Finally we examined the dependence of the biliary phospholipid composition on the CH content of the outer canalicular membrane.</s><s>Experimental data implicate that the heterodimer of the two half-transporters ABCG5 and ABCG8 translocates CH to the outer leaflet of the canalicular membrane <ref type="bibr" target="#b59">[60,</ref><ref type="bibr" target="#b60">61]</ref>.</s><s>Mice with knockout of both transporters (Abcg5+/g8+) displayed strongly reduced biliary CH excretion <ref type="bibr" target="#b61">[62]</ref>.</s><s>This is reproduced by our simulations.</s><s>The fraction of biliary CH shows a strong correlation with the CH content of the membrane.</s><s>On the other hand the solubilizable fraction of the canalicular membrane decreases with increasing CH concentration demonstrating the ordering and stabilizing effect of CH <ref type="bibr" target="#b42">[43]</ref>.</s><s>Sufficient CH is required for stability of the canalicular membrane and protects cells from BS induced damage.</s></p><p><s>Taken together, our model-based calculations provide further evidence for the emergence of short-lived nanodomains in the external leaflet of the canalicular hepatocyte membrane.</s><s>The best overall agreement between model simulations and experimental facts is achieved if we assume that the lipid transfer into the bile is mediated by small patches of 100-400 lipids which are extracted from the Ld nanodomains of the external leaflet by BS and which contain the main lipids CH, PC and SM in proportions as also found in the bile.</s><s>Likely, the primary nanomicelles further maturate to larger lipid vesicles (see Fig. <ref type="figure" target="#fig_6">5</ref>).</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc><div><p><s>Figure 1.</s><s>Algorithm scheme and influence of algorithm parameters.</s><s>(A) Flow chart illustrating the 2-step minimization procedure applied to simulate the lattice dynamics and to calculate the ordering states of the lipids.</s><s>(B) Box-plot depicting the influence of the control parameters N J (counting the number of updates of the ordering state carried out per lipid to minimize the ordering energy J) and N W (counting the number of pairwise lipid switches per lattice site in the minimization of the interaction energy W) on the phase separation of the model membrane.</s><s>The parameter N J adopted different values between 10 and 1000 represented by the different boxes.</s><s>For each value of N J the parameter N W adopted the values 1, 5, 10, 20, 50 and 100.</s><s>For all combinations of N J and N W the percentage of the Ld phase (= extractable membrane fraction) was computed.</s><s>The edges of the boxes indicate the lower and upper quartile, the horizontal bar inside indicates the median and the whiskers indicate the full range of the calculated values at fixed N J and N W varied. doi:10.1371/journal.pcbi.1004033.g001</s></p></div></figDesc><graphic coords="6,36.00,78.01,465.80,229.72" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head></head><label></label><figDesc><div><p><s>values for the lipid-lipid interactions w ho ¼ w ho ðCH; CHÞ w ho ðCH; PCÞ w ho ðCH; SMÞ w ho ðPC; PCÞ w ho ðPC; SMÞ w ho ðSM; ordered state and w lo ¼ w lo ðCH; CHÞ w lo ðCH; PCÞ w lo ðCH; SMÞ w lo ðPC; PCÞ w lo ðPC; SMÞ w lo ðSM;</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head></head><label></label><figDesc><div><p><s>match 21 phases of the 25 model membranes.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 2 .</head><label>2</label><figDesc><div><p><s>Figure 2. Lipid mobility and phase diagram.</s><s>Simulation of lipid diffusion and lipid phases in GUV's with varying lipid composition.</s><s>(A) Simulated (filled markers) and measured (open markers) average diffusion coefficients in monolayers with 25 different mixtures of CH, PC and SM.</s><s>Triangles facing up mark values of a liquid-disordered phase, triangles facing down of a liquid-ordered phase.</s><s>Mixtures with both values show biphasic behavior, mixtures with either of both show respective monophasic behavior.</s><s>The percentage of each lipid in the mixture is indicated at the bottom (CH-PC-SM).</s><s>(B) Ternary phase diagram for mixtures of CH, PC and SM.</s><s>The bold lines mark regions of lipid compositions for which the model predicts monophasic and biphasic behavior.</s><s>In the monophasic Lo or Ld compositions more than 90% of the lipids are resident in the respective ordering state, whereas in the biphasic mixtures more than 10% of the lipids are resident in both ordering states thus favoring the formation of segregated microdomains.</s><s>The triangles mark the measured lipid mixtures shown in (A) and indicate their measured phase state (up-facing triangle: Ld, down-facing triangle: Lo, star: biphasic) which not always matches our model prediction.</s><s>doi:10.1371/journal.pcbi.1004033.g002</s></p></div></figDesc><graphic coords="9,36.00,78.01,467.02,389.99" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 3 .</head><label>3</label><figDesc><div><p><s>Figure 3. Membrane configurations and lipid extraction.</s><s>Representative domain structures (A-C), EMF, LSR, and lipid composition (D-F) of BS-extractable membrane patches for three different life-times (=simulations times) of τ = 0.1, 1 and 10 ms.</s><s>(A-C): At short life-times ((A), τ = 0.1 ms) mazelike structures are formed comprising closed Lo nanodomains (bright colors) enriched in CH (blue) and SM (red) which are imbedded into a sea of interconnected Ld nanodomains (dark colors) enriched in PC (green).</s><s>With increasing life-times (B, C), the nanodomains merge with each other under formation of larger domains.</s><s>(D-F) Shown as a function of the patch size are EMF (dashed curves), LSR (full curves) and bile composition (area in the background).</s><s>While the absolute LSR varies, the lipid composition of BS extractable patches remains remarkably stable at varying patch sizes and fits well with observed lipid composition of the normal bile.</s><s>doi:10.1371/journal.pcbi.1004033.g003</s></p></div></figDesc><graphic coords="11,36.00,78.01,467.49,389.08" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 4 .</head><label>4</label><figDesc><div><p><s>Figure 4. Influence of membrane lipid composition on lipid extraction.</s><s>Simulated lipid extraction at varying CH and PC content of the exoplasmic leaflet of the apical membrane.</s><s>Simulations refer to a life-time of 1 ms.</s><s>Shown are the EMF (black curves) and the LSR (grey curves, logarithmic scale) as a function of CH content (A) or PC content (B) in the membrane for the extraction of single lipids and patches of 19, 169 and 631 lipids.</s><s>The mean lipid composition of the soluble Ld nanodomains is depicted as blue (CH), green (PC) and red (SM) areas.</s><s>(A) The CH content of the outer leaflet was varied from 0-70% at constant PC:SM ratio of 3:1.</s><s>(B) The PC content of the outer leaflet was varied from 0-100% at a CH:SM ratio of 7:3.</s><s>doi:10.1371/journal.pcbi.1004033.g004</s></p></div></figDesc><graphic coords="12,36.00,410.17,491.97,244.12" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 5 .</head><label>5</label><figDesc><div><p><s>Figure 5. Illustration of the molecular mechanisms proposed for biliary lipid secretion.</s><s>Lipids arrive at the apical membrane of the hepatocyte by various modes of transportation (vesicular, lipid-exchange proteins, lateral membrane transport).</s><s>Bile salts (BS) are secreted into the canaliculus by the bilesalt export pump (BSEP).</s><s>Inter-leaflet lipid exchange (indicated by the black double-arrows) by various ABC transporters and P-type ATPases (e.g.</s><s>MDR1, MDR3, MRP1) establish an asymmetric lipid distribution between the inner and outer hemi-leaflet with CH, PC and SM enriched in the exoplasmic leaflet in a mixture which allows the spontaneous formation of Lo and Ld nanodomains.</s><s>BS preferentially solubilize lipids of the Ld nanodomains.</s><s>Mechanisms of lipid extraction currently discussed in the literature envisage (A) extraction of single membrane lipids (mostly PC) by BS micelles under formation of mixed micelles or (B) exo-vesiculation of membrane patches which form mixed micelles.</s><s>Primary micelles may rapidly fuse to larger lipid vesicles (micelle-to-vesicle transition).</s><s>The results of our simulation strongly favor the secretion mechanism B (lipid-patch extraction).</s><s>doi:10.1371/journal.pcbi.1004033.g005</s></p></div></figDesc><graphic coords="15,36.00,227.51,467.26,389.25" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head></head><label></label><figDesc><div><p><s>jðCH lo ; CHÞ jðCH lo ; PCÞ jðCH lo ; SMÞ jðCH ho ; CHÞ jðCH ho ; PCÞ jðCH ho ; SMÞ jðPC lo ; CHÞ jðPC lo ; PCÞ jðPC lo ; SMÞ jðPC ho ; CHÞ jðPC ho ; PCÞ jðPC ho ; SMÞ jðSM lo ; CHÞ jðSM lo ; PCÞ jðSM lo ; SMÞ jðSM ho ; CHÞ jðSM ho ; PCÞ jðSM ho ; SMÞ</s></p></div></figDesc><table><row><cell>0</cell></row><row><cell>j ¼</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 1 .</head><label>1</label><figDesc><div><p><s>Lipid composition of the bile.</s></p></div></figDesc><table><row><cell>Life-time</cell><cell>Patch size</cell><cell>CH</cell><cell>Phospholipids (= PC)</cell><cell>SM</cell></row><row><cell>0.1 ms</cell><cell>r = 0, 1 lipid</cell><cell>13.0 ± 0.0%</cell><cell>85.7 ± 0.1%</cell><cell>1.3 ± 0.1%</cell></row><row><cell></cell><cell>r = 3, 37 lipids</cell><cell>12.8 ± 0.2%</cell><cell>85.9 ± 0.2%</cell><cell>1.3 ± 0.1%</cell></row><row><cell></cell><cell>r = 7, 169 lipids</cell><cell>13.3 ± 0.6%</cell><cell>85.6 ± 0.4%</cell><cell>1.4 ± 0.2%</cell></row><row><cell></cell><cell>r = 9, 271 lipid</cell><cell>13.6 ± 1.4%</cell><cell>85.0 ± 1.4%</cell><cell>1.4 ± 0.1%</cell></row><row><cell>1 ms</cell><cell>r = 0, 1 lipid</cell><cell>13.6 ± 0.2%</cell><cell>85.5 ± 0.2%</cell><cell>0.9 ± 0.0%</cell></row><row><cell></cell><cell>r = 3, 37 lipids</cell><cell>13.4 ± 0.2%</cell><cell>85.7 ± 0.2%</cell><cell>0.9 ± 0.1%</cell></row><row><cell></cell><cell>r = 7, 169 lipids</cell><cell>13.5 ± 0.2%</cell><cell>85.6 ± 0.2%</cell><cell>0.9 ± 0.1%</cell></row><row><cell></cell><cell>r = 14, 631 lipids</cell><cell>13.7 ± 0.6%</cell><cell>85.3 ± 0.5%</cell><cell>0.9 ± 0.3%</cell></row><row><cell></cell><cell>r = 18, 1027 lipids</cell><cell>14.1 ± 0.5%</cell><cell>85.2 ± 0.8%</cell><cell>0.7 ± 0.4%</cell></row><row><cell>10 ms</cell><cell>r = 0, 1 lipid</cell><cell>14.2 ± 0.2%</cell><cell>85.1 ± 0.2%</cell><cell>0.7 ± 0.0%</cell></row><row><cell></cell><cell>r = 3, 37 lipids</cell><cell>14.1 ± 0.2%</cell><cell>85.2 ± 0.2%</cell><cell>0.7 ± 0.1%</cell></row><row><cell></cell><cell>r = 7, 169 lipids</cell><cell>14.1 ± 0.2%</cell><cell>85.2 ± 0.2%</cell><cell>0.7 ± 0.0%</cell></row><row><cell></cell><cell>r = 14, 631 lipids</cell><cell>14.0 ± 0.1%</cell><cell>85.2 ± 0.1%</cell><cell>0.7 ± 0.0%</cell></row><row><cell></cell><cell>r = 23, 1657 lipids</cell><cell>13.9 ± 0.4%</cell><cell>85.4 ± 0.3%</cell><cell>0.7 ± 0.1%</cell></row><row><cell></cell><cell>r = 30, 2791 lipids</cell><cell>13.7 ± 0.6%</cell><cell>85.6 ± 0.6%</cell><cell>0.6 ± 0.1%</cell></row><row><cell></cell><cell>Experiment [40]</cell><cell>15%</cell><cell>85%</cell><cell>&lt; 1%</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">PLOS Computational Biology | DOI:10.1371/journal.pcbi.1004033 February 18, 2015</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgments</head><p><s>We thank Dr. Thomas Schwager and Dr. Sascha Bulik for technical support to this project and Prof. Andreas Hermann for his valuable advice in the design of the model.</s></p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Author Contributions</head><p><s>Conceived and designed the experiments: JE NB HGH.</s><s>Performed the experiments: JE.</s><s>Analyzed the data: JE.</s><s>Contributed reagents/materials/analysis tools: JE.</s><s>Wrote the paper: JE NB HGH.</s></p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Evolving concepts in the pathophysiology of biliary lipid secretion</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Carrella</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Roda</forename><forename type="middle">E</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Ital J Gastroenterol Hepatol</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="page" from="643" to="648" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Lipid flow in bile formation</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Coleman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Rahman</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/0005-2760(92)90036-U</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biochim Biophys Acta</title>
+		<imprint>
+			<biblScope unit="volume">1125</biblScope>
+			<biblScope unit="page" from="113" to="133" />
+			<date type="published" when="1992">1992</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Role of the hepatocyte microtubular system in the excretion of bile salts and biliary lipid: implications for intracellular vesicular transport</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Crawford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">A</forename><surname>Berken</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Gollan</surname></persName>
+		</author>
+		<idno type="PMID">3367084</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J Lipid Res</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="page" from="144" to="156" />
+			<date type="published" when="1988">1988</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Secretion of biliary lipids from the hepatocyte</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">P</forename><surname>Marzolo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Rigotti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Nervi</surname></persName>
+		</author>
+		<idno type="PMID">2210641</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Hepatology</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="134S" to="142S" />
+			<date type="published" when="1990">1990</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Mechanism of biliary lipid secretion in the rat: a role for bile acid-independent bile flow</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">J</forename><surname>Verkade</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Wolters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Gerding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Havinga</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Fidler</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/0270-9139(93)90125-7</idno>
+		<idno type="PMID">8514257</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Hepatology</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="issue">93</biblScope>
+			<biblScope unit="page" from="90125" to="90127" />
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Biliary excretion of lecithin and cholesterol in the dog</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">O</forename><surname>Wheeler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">K</forename><surname>King</surname></persName>
+		</author>
+		<idno type="DOI">10.1172/JCI106930</idno>
+		<idno type="PMID">5024035</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J Clin Invest</title>
+		<imprint>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="page" from="1337" to="1350" />
+			<date type="published" when="1972">1972</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Imaging biliary lipid secretion in the rat: ultrastructural evidence for vesiculation of the hepatocyte canalicular membrane</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Crawford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">M</forename><surname>Mockel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">R</forename><surname>Crawford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Hagen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">C</forename><surname>Hatch</surname></persName>
+		</author>
+		<idno type="PMID">8576641</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J Lipid Res</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="page" from="2147" to="2163" />
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Regulation of biliary cholesterol secretion is independent of hepatocyte canalicular membrane lipid composition: a study in the diosgenin-fed rat model</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">P</forename><surname>Nibbering</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">K</forename><surname>Groen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Ottenhoff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jfhm</forename><surname>Brouwers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">P</forename><surname>Vanberge-Henegouwen</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0168-8278(01)00125-8</idno>
+		<idno type="PMID">11580137</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Hepatology</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page" from="164" to="169" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Isolation and characterization of lipid microdomains from apical and basolateral plasma membranes of rat hepatocytes</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mazzone</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Tietz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Jefferson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Pagano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">F</forename><surname>Larusso</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/hep.21039</idno>
+		<idno type="PMID">16440338</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Hepatology</title>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<biblScope unit="page" from="287" to="296" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Membrane microdomains in hepatocytes: potential target areas for proteins involved in canalicular bile secretion</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Tietz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Jefferson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Pagano</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">F</forename><surname>Larusso</surname></persName>
+		</author>
+		<idno type="DOI">10.1194/jlr.M400412-JLR200</idno>
+		<idno type="PMID">15834130</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J Lipid Res</title>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<biblScope unit="page" from="1426" to="1432" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Comparison of three ternary lipid bilayer mixtures: FRET and ESR reveal nanodomains</title>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">A</forename><surname>Heberle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">L</forename><surname>Goh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">S</forename><surname>Petruzielo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">W</forename><surname>Feigenson</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.bpj.2010.09.064</idno>
+		<idno type="PMID">21081079</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biophys J</title>
+		<imprint>
+			<biblScope unit="volume">99</biblScope>
+			<biblScope unit="page" from="3309" to="3318" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Structure and function of sphingolipid-and cholesterol-rich membrane rafts</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">A</forename><surname>Brown</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>London</surname></persName>
+		</author>
+		<idno type="DOI">10.1074/jbc.R000005200</idno>
+		<idno type="PMID">10770957</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J Biol Chem</title>
+		<imprint>
+			<biblScope unit="volume">275</biblScope>
+			<biblScope unit="page" from="17221" to="17224" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Quantitative analysis of phospholipids in functionally important membrane domains from RBL-2H3 mast cells using tandem high-resolution mass spectrometry</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">K</forename><surname>Fridriksson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">A</forename><surname>Shipkova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">D</forename><surname>Sheets</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Holowka</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Baird</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/bi9828324</idno>
+		<idno type="PMID">10387050</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biochemistry</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="8056" to="8063" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Molecular-Species of Lecithins in Human Gallbladder Bile</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">W</forename><surname>Hay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Cahalane</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Timofeyeva</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">C</forename><surname>Carey</surname></persName>
+		</author>
+		<idno type="PMID">8509714</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Lipid Research</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="759" to="768" />
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Phase separation in binary mixtures of bipolar and monopolar lipid dispersions revealed by 2H NMR spectroscopy, small angle x-ray scattering, and molecular theory</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Brownholland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">S</forename><surname>Longo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">V</forename><surname>Struts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Justice</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Szleifer</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.bpj.2009.06.058</idno>
+		<idno type="PMID">19917223</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biophys J</title>
+		<imprint>
+			<biblScope unit="volume">97</biblScope>
+			<biblScope unit="page" from="2700" to="2709" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Phase separation in a lipid/cholesterol system: comparison of coarsegrained and United-atom simulations</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Hakobyan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Heuer</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/jp312245y</idno>
+		<idno type="PMID">23470157</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J Phys Chem B</title>
+		<imprint>
+			<biblScope unit="volume">117</biblScope>
+			<biblScope unit="page" from="3841" to="3851" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Giant unilamellar vesicles-a perfect tool to visualize phase separation and lipid rafts in model systems</title>
+		<author>
+			<persName><forename type="first">O</forename><surname>Wesolowska</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Michalak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Maniewska</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">B</forename><surname>Hendrich</surname></persName>
+		</author>
+		<idno type="PMID">19287805</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Acta Biochim Pol</title>
+		<imprint>
+			<biblScope unit="volume">56</biblScope>
+			<biblScope unit="page" from="33" to="39" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Lipid oxidation deletes the nanodomain organization of artificial membranes</title>
+		<author>
+			<persName><forename type="first">U</forename><surname>Muscatello</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Alessandrini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Valdre</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Vannini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Valdre</surname></persName>
+		</author>
+		<idno type="DOI">10.1006/bbrc.2000.2445</idno>
+		<idno type="PMID">10753645</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biochemical and Biophysical Research Communications</title>
+		<imprint>
+			<biblScope unit="volume">270</biblScope>
+			<biblScope unit="page" from="448" to="452" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Measurement of Lipid Nanodomain (Raft) Formation and Size in Sphingomyelin/POPC/Cholesterol Vesicles Shows TX-100 and Transmembrane Helices Increase Domain Size by Coalescing Preexisting Nanodomains But Do Not Induce Domain Formation</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Pathak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>London</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.bpj.2011.08.059</idno>
+		<idno type="PMID">22098740</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biophysical Journal</title>
+		<imprint>
+			<biblScope unit="volume">101</biblScope>
+			<biblScope unit="page" from="2417" to="2425" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Control of a Nanoscopic-to-Macroscopic Transition: Modulated Phases in Four-Component DSPC/DOPC/POPC/Chol Giant Unilamellar Vesicles</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">M</forename><surname>Konyakhina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">L</forename><surname>Goh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Amazon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">A</forename><surname>Heberle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wu</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.bpj.2011.06.019</idno>
+		<idno type="PMID">21767476</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biophysical Journal</title>
+		<imprint>
+			<biblScope unit="volume">101</biblScope>
+			<biblScope unit="page" from="L8" to="L10" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">High-resolution FRET microscopy of cholera toxin B-subunit and GPI-anchored proteins in cell plasma membranes</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">K</forename><surname>Kenworthy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Petranova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Edidin</surname></persName>
+		</author>
+		<idno type="DOI">10.1091/mbc.11.5.1645</idno>
+		<idno type="PMID">10793141</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Mol Biol Cell</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page" from="1645" to="1655" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Fluorescence energy transfer reveals microdomain formation at physiological temperatures in lipid mixtures modeling the outer leaflet of the plasma membrane</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Silvius</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0006-3495(03)74542-1</idno>
+		<idno type="PMID">12885650</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biophys J</title>
+		<imprint>
+			<biblScope unit="volume">85</biblScope>
+			<biblScope unit="page" from="1034" to="1045" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">The size of lipid rafts: an atomic force microscopy study of ganglioside GM1 domains in sphingomyelin/DOPC/cholesterol membranes</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Yuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Furlong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Burgos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">J</forename><surname>Johnston</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0006-3495(02)75596-3</idno>
+		<idno type="PMID">11964241</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biophys J</title>
+		<imprint>
+			<biblScope unit="volume">82</biblScope>
+			<biblScope unit="page" from="2526" to="2535" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Liquid domains in vesicles investigated by NMR and fluorescence microscopy</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">L</forename><surname>Veatch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">V</forename><surname>Polozov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Gawrisch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">L</forename><surname>Keller</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0006-3495(04)74342-8</idno>
+		<idno>PMID</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biophys J</title>
+		<imprint>
+			<biblScope unit="volume">86</biblScope>
+			<biblScope unit="page" from="2910" to="2922" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Some Generalized Order-Disorder Transformations</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">B</forename><surname>Potts</surname></persName>
+		</author>
+		<idno type="DOI">10.1017/S0305004100027419</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Mathematical Proceedings of the Cambridge Philosophical Society</title>
+		<imprint>
+			<biblScope unit="volume">48</biblScope>
+			<biblScope unit="page" from="106" to="109" />
+			<date type="published" when="1952">1952</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Diffusion in two-component lipid membranes-a fluorescence correlation spectroscopy and monte carlo simulation study</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Hac</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">M</forename><surname>Seeger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Fidorra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Heimburg</surname></persName>
+		</author>
+		<idno type="DOI">10.1529/biophysj.104.040444</idno>
+		<idno type="PMID">15501937</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biophys J</title>
+		<imprint>
+			<biblScope unit="volume">88</biblScope>
+			<biblScope unit="page" from="317" to="333" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Beitrag zur Theorie des Ferromagnetismus</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Ising</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/BF02980577</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Zeitschrift für Physik</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="page" from="253" to="258" />
+			<date type="published" when="1925">1925</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Thermodynamics of lipid interactions in complex bilayers</title>
+		<author>
+			<persName><forename type="first">Pff</forename><surname>Almeida</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.bbamem.2008.08.007</idno>
+		<idno type="PMID">18775410</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biochimica et biophysica acta</title>
+		<imprint>
+			<biblScope unit="volume">1788</biblScope>
+			<biblScope unit="page" from="72" to="85" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Exact stochastic simulation of coupled chemical reactions</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">T</forename><surname>Gillespie</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/j100540a008</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Physical Chemistry</title>
+		<imprint>
+			<biblScope unit="volume">81</biblScope>
+			<biblScope unit="page" from="2340" to="2361" />
+			<date type="published" when="1977">1977</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">The subtle business of model reduction for stochastic chemical kinetics</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">T</forename><surname>Gillespie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">R</forename><surname>Sanft</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">R</forename><surname>Petzold</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.3072704</idno>
+		<idno type="PMID">19222263</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">130</biblScope>
+			<biblScope unit="page">64103</biblScope>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Overcoming stiffness in stochastic simulation stemming from partial equilibrium: A multiscale Monte Carlo algorithm</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Samant</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">G</forename><surname>Vlachos</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.2046628</idno>
+		<idno type="PMID">16238381</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">123</biblScope>
+			<biblScope unit="page">144114</biblScope>
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Equation of State Calculations by Fast Computing Machines</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Metropolis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">W</forename><surname>Rosenbluth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">N</forename><surname>Rosenbluth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">H</forename><surname>Teller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Teller</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.1699114</idno>
+		<idno>doi: 10.1063/ 1.1699114</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Chemical Physics</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="page" from="1087" to="1092" />
+			<date type="published" when="1953">1953</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Probing Lipid Mobility of Raft-exhibiting Model Membranes by Fluorescence Correlation Spectroscopy</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Kahya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Scherfeld</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Bacia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Poolman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Schwille</surname></persName>
+		</author>
+		<idno type="DOI">10.1074/jbc.M302969200</idno>
+		<idno type="PMID">12736276</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Biological Chemistry</title>
+		<imprint>
+			<biblScope unit="volume">278</biblScope>
+			<biblScope unit="page" from="28109" to="28115" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Thermodynamics of membrane domains</title>
+		<author>
+			<persName><forename type="first">Pff</forename><surname>Almeida</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Pokorny</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Hinderliter</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.bbamem.2005.12.004</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biochimica Et Biophysica Acta-Biomembranes</title>
+		<imprint>
+			<biblScope unit="volume">1720</biblScope>
+			<biblScope unit="page" from="1" to="13" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Role of cholesterol in lipid raft formation: lessons from lipid model systems</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Silvius</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0005-2736(03)00016-6</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biochimica Et Biophysica Acta-Biomembranes</title>
+		<imprint>
+			<biblScope unit="volume">1610</biblScope>
+			<biblScope unit="page" from="174" to="183" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Sphingomyelin is much more effective than saturated phosphatidylcholine in excluding unsaturated phosphatidylcholine from domains formed with cholesterol</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">Y</forename><surname>Van Duyl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Ganchev</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Chupin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>De Kruijff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Killian</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0014-5793(03)00678-1</idno>
+		<idno type="PMID">12860394</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Febs Letters</title>
+		<imprint>
+			<biblScope unit="volume">547</biblScope>
+			<biblScope unit="page" from="101" to="106" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Investigation of domain formation in sphingomyelin/cholesterol/POPC mixtures by fluorescence resonance energy transfer and Monte Carlo simulations</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">L</forename><surname>Frazier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Wright</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Pokorny</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">F</forename><surname>Almeida</surname></persName>
+		</author>
+		<idno type="DOI">10.1529/biophysj.106.100107</idno>
+		<idno type="PMID">17218467</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biophys J</title>
+		<imprint>
+			<biblScope unit="volume">92</biblScope>
+			<biblScope unit="page" from="2422" to="2433" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Nonideal mixing in multicomponent lipid/detergent systems</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Tsamaloukas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Szadkowska</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Heerklotz</surname></persName>
+		</author>
+		<idno type="DOI">10.1088/0953-8984/18/28/S02</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Physics-Condensed Matter</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="page" from="S1125" to="S1138" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Molecular dynamics and interactions for creation of stimulation-induced stabilized rafts from small unstable steady-state rafts</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kusumi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Koyama-Honda</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Suzuki</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/j.1600-0854.2004.0178.x</idno>
+		<idno type="PMID">15030563</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Traffic</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page" from="213" to="230" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Chapter 23 Lipid Transport from the Hepatocyte into the Bile</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Rigotti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">P</forename><surname>Marzolo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Nervi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Current Topics in Membranes</title>
+				<editor>
+			<persName><forename type="first">H</forename><surname>Dick</surname></persName>
+		</editor>
+		<imprint>
+			<publisher>Academic Press</publisher>
+			<date type="published" when="1994">1994</date>
+			<biblScope unit="page" from="579" to="615" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Structural and kinetic studies on the solubilization of lecithin by sodium deoxycholate</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Lichtenberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zilberman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Greenzaid</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Zamir</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/bi00583a013</idno>
+		<idno type="PMID">476065</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biochemistry</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="page" from="3517" to="3525" />
+			<date type="published" when="1979">1979</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Quasi-elastic light scattering studies of native hepatic bile from the dog: comparison with aggregative behavior of model biliary lipid systems</title>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">A</forename><surname>Mazer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Schurtenberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">C</forename><surname>Carey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Preisig</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Weigand</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/bi00304a018</idno>
+		<idno type="PMID">6722132</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biochemistry</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<date type="published" when="1984">1984. 1994-2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Enrichment of canalicular membrane with cholesterol and sphingomyelin prevents bile salt-induced hepatic damage</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Amigo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Mendoza</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Zanlungo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">F</forename><surname>Miquel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Rigotti</surname></persName>
+		</author>
+		<idno type="PMID">10064742</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of lipid research</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="page" from="533" to="542" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Uncoupling of biliary phospholipid and cholesterol secretion in mice with reduced expression of mdr2 P-glycoprotein</title>
+		<author>
+			<persName><forename type="first">Oude</forename><surname>Elferink</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">P</forename><surname>Ottenhoff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Van Wijland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Frijters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Van Nieuwkerk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename></persName>
+		</author>
+		<idno type="PMID">8725158</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of lipid research</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="page" from="1065" to="1075" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Cholesterol-induced fluid membrane domains: A compendium of lipid-raft ternary phase diagrams</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Marsh</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.bbamem.2009.08.004</idno>
+		<idno>doi: 10.1016/ j.bbamem.2009.08.004</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biochimica Et Biophysica Acta-Biomembranes</title>
+		<imprint>
+			<biblScope unit="volume">1788</biblScope>
+			<biblScope unit="page" from="2114" to="2123" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Phase diagram of a 4-component lipid mixture: DSPC/DOPC/POPC/chol</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">M</forename><surname>Konyakhina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Mastroianni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">A</forename><surname>Heberle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">W</forename><surname>Feigenson</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.bbamem.2013.05.020</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biochimica Et Biophysica Acta-Biomembranes</title>
+		<imprint>
+			<biblScope unit="volume">1828</biblScope>
+			<biblScope unit="page" from="2204" to="2214" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Phase behavior and domain size in sphingomyelin-containing lipid bilayers</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">S</forename><surname>Petruzielo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">A</forename><surname>Heberle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Drazba</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Katsaras</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">W</forename><surname>Feigenson</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.bbamem.2013.01.007</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biochimica Et Biophysica Acta-Biomembranes</title>
+		<imprint>
+			<biblScope unit="volume">1828</biblScope>
+			<biblScope unit="page" from="1302" to="1313" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Structural and functional polarity of canalicular and basolateral plasma membrane vesicles isolated in high yield from rat liver</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Meier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">S</forename><surname>Sztul</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Reuben</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Boyer</surname></persName>
+		</author>
+		<idno type="DOI">10.1083/jcb.98.3.991</idno>
+		<idno type="PMID">6699096</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Cell Biology</title>
+		<imprint>
+			<biblScope unit="volume">98</biblScope>
+			<biblScope unit="page" from="991" to="1000" />
+			<date type="published" when="1984">1984</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Temperature and composition dependence of the interaction of delta-lysin with ternary mixtures of sphingomyelin/cholesterol/POPC</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Pokorny</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">E</forename><surname>Yandek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">I</forename><surname>Elegbede</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Hinderliter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pff</forename><surname>Almeida</surname></persName>
+		</author>
+		<idno type="DOI">10.1529/biophysj.106.085027</idno>
+		<idno type="PMID">16798807</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biophysical Journal</title>
+		<imprint>
+			<biblScope unit="volume">91</biblScope>
+			<biblScope unit="page" from="2184" to="2197" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Miscibility phase diagrams of giant vesicles containing sphingomyelin</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">L</forename><surname>Veatch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">L</forename><surname>Keller</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRevLett.94.148101</idno>
+		<idno type="PMID">15904115</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Phys Rev Lett</title>
+		<imprint>
+			<biblScope unit="volume">94</biblScope>
+			<biblScope unit="page">148101</biblScope>
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">ABC-transporters are localized in caveolin-1-positive and reggie-1-negative and reggie-2-negative microdomains of the canalicular membrane in rat hepatocytes</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">G</forename><surname>Ismair</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Häusler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">A</forename><surname>Stuermer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Guyot</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Meier</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/hep.22807</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Hepatology</title>
+		<imprint>
+			<biblScope unit="volume">49</biblScope>
+			<biblScope unit="page" from="1673" to="1682" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">Raft-mediated trafficking of apical resident proteins occurs in both direct and transcytotic pathways in polarized hepatic cells: role of distinct lipid microdomains</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">A</forename><surname>Slimane</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Trugnan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Scd</forename><surname>Van Ijzendoorn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Hoekstra</surname></persName>
+		</author>
+		<idno type="DOI">10.1091/mbc.E02-08-0528</idno>
+		<idno type="PMID">12589058</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Molecular biology of the cell</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page" from="611" to="624" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Lipid Rafts As a Membrane-Organizing Principle</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Lingwood</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Simons</surname></persName>
+		</author>
+		<idno type="DOI">10.1126/science.1174621</idno>
+		<idno type="PMID">20044567</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">327</biblScope>
+			<biblScope unit="page" from="46" to="50" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<analytic>
+		<title level="a" type="main">Kinetics of the micelle-to-vesicle transition: aqueous lecithinbile salt mixtures</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Leng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">U</forename><surname>Egelhaaf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">E</forename><surname>Cates</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0006-3495(03)74593-7</idno>
+		<idno type="PMID">12944278</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biophys J</title>
+		<imprint>
+			<biblScope unit="volume">85</biblScope>
+			<biblScope unit="page" from="1624" to="1646" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">Apical endocytosis in rat hepatocytes In situ involves clathrin, traverses a subapical compartment, and leads to lysosomes</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Rahner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Stieger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Landmann</surname></persName>
+		</author>
+		<idno type="DOI">10.1053/gast.2000.20233</idno>
+		<idno type="PMID">11113091</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Gastroenterology</title>
+		<imprint>
+			<biblScope unit="volume">119</biblScope>
+			<biblScope unit="page" from="1692" to="1707" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Evidence for apical endocytosis in polarized hepatic cells: phosphoinositide 3-kinase inhibitors lead to the lysosomal accumulation of resident apical plasma membrane proteins</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">L</forename><surname>Tuma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Finnegan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">H</forename><surname>Yi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">L</forename><surname>Hubbard</surname></persName>
+		</author>
+		<idno type="DOI">10.1083/jcb.145.5.1089</idno>
+		<idno type="PMID">10352024</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J Cell Biol</title>
+		<imprint>
+			<biblScope unit="volume">145</biblScope>
+			<biblScope unit="page" from="1089" to="1102" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">Hepatic secretion of phospholipid vesicles in the mouse critically depends on mdr2 or MDR3 P-glycoprotein expression. Visualization by electron microscopy</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">R</forename><surname>Crawford</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Smith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">C</forename><surname>Hatch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Oude</forename><surname>Elferink</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">P</forename><surname>Borst</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Clin Invest</title>
+		<imprint>
+			<biblScope unit="volume">100</biblScope>
+			<biblScope unit="page" from="2562" to="2567" />
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Homozygous disruption of the murine mdr2 P-glycoprotein gene leads to a complete absence of phospholipid from bile and to liver disease</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">J</forename><surname>Smit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">H</forename><surname>Schinkel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Oude</forename><surname>Elferink</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">P</forename><surname>Groen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">K</forename><surname>Wagenaar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename></persName>
+		</author>
+		<idno type="DOI">10.1016/0092-8674(93)90380-9</idno>
+		<idno type="PMID">8106172</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Cell</title>
+		<imprint>
+			<biblScope unit="volume">75</biblScope>
+			<biblScope unit="page" from="451" to="462" />
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">MDR1 P-glycoprotein is a lipid translocase of broad specificity, while MDR3 P-glycoprotein specifically translocates phosphatidylcholine</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Van Helvoort</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Smith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Sprong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Fritzsche</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">H</forename><surname>Schinkel</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0092-8674(00)81370-7</idno>
+		<idno type="PMID">8898203</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Cell</title>
+		<imprint>
+			<biblScope unit="volume">87</biblScope>
+			<biblScope unit="page" from="507" to="517" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b59">
+	<analytic>
+		<title level="a" type="main">The mechanism of ABCG5/ ABCG8 in biliary cholesterol secretion in mice</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kosters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Kunne</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Looije</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">B</forename><surname>Patel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Oude</forename><surname>Elferink</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rpj</forename></persName>
+		</author>
+		<idno type="DOI">10.1194/jlr.M500511-JLR200</idno>
+		<idno type="PMID">16741293</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of lipid research</title>
+		<imprint>
+			<biblScope unit="volume">47</biblScope>
+			<biblScope unit="page" from="1959" to="1966" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b60">
+	<analytic>
+		<title level="a" type="main">Biliary cholesterol secretion by the twinned sterol half-transporters ABCG5 and ABCG8</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Wittenburg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">C</forename><surname>Carey</surname></persName>
+		</author>
+		<idno type="DOI">10.1172/JCI16548</idno>
+		<idno type="PMID">12208859</idno>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of clinical investigation</title>
+		<imprint>
+			<biblScope unit="volume">110</biblScope>
+			<biblScope unit="page" from="605" to="609" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b61">
+	<analytic>
+		<title level="a" type="main">Disruption of Abcg5 and Abcg8 in mice reveals their crucial role in biliary cholesterol secretion</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">E</forename><surname>Hammer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Li-Hawkins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Bergmann</forename><surname>Kv</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Lutjohann</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.252582399</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences</title>
+		<imprint>
+			<biblScope unit="volume">99</biblScope>
+			<biblScope unit="page" from="16237" to="16242" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

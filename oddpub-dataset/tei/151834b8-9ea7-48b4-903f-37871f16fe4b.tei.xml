@@ -1,0 +1,1792 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">A Novel Computational Method for the Identification of Potential miRNA-Disease Association Based on Symmetric Non-negative Matrix Factorization and Kronecker Regularized Least Square</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018-08-21">21 August 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Xing</forename><surname>Chen</surname></persName>
+							<email>xingchen@amss.ac.cn</email>
+						</author>
+						<author>
+							<persName><forename type="first">Yan</forename><surname>Zhao</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Jun</forename><surname>Yin</surname></persName>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="institution">Tianjin University</orgName>
+								<address>
+									<country key="CN">China</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff1">
+								<orgName type="institution">Hunan University</orgName>
+								<address>
+									<country key="CN">China</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff2">
+								<orgName type="department">Jialiang Yang</orgName>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff3">
+								<orgName type="department">Icahn School of Medicine at Mount Sinai</orgName>
+								<address>
+									<country key="US">United States</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff4">
+								<orgName type="department">School of Information and Control Engineering</orgName>
+								<orgName type="institution">China University of Mining and Technology</orgName>
+								<address>
+									<settlement>Xuzhou</settlement>
+									<country key="CN">China</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">A Novel Computational Method for the Identification of Potential miRNA-Disease Association Based on Symmetric Non-negative Matrix Factorization and Kronecker Regularized Least Square</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018-08-21">21 August 2018</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">88AF6525EE965C8EF2E438ADF0F8F620</idno>
+					<idno type="DOI">10.3389/fgene.2018.00324</idno>
+					<note type="submission">This article was submitted to Bioinformatics and Computational Biology, a section of the journal Frontiers in Genetics Received: 03 July 2018 Accepted: 30 July 2018</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:20+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>microRNA</term>
+					<term>disease</term>
+					<term>association prediction</term>
+					<term>matrix factorization</term>
+					<term>Kronecker regularized least square Zhao et al. miRNA-Disease Association Prediction</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Increasing evidence has indicated that microRNAs (miRNAs) are associated with numerous human diseases.</s><s>Studying the associations between miRNAs and diseases contributes to the exploration of effective diagnostic and treatment approaches for diseases.</s><s>Unfortunately, the use of biological experiments to reveal the potential associations between miRNAs and diseases is time consuming and costly.</s><s>Therefore, it is very necessary to use simple and efficient calculation models to predict potential disease-related miRNAs.</s><s>Considering the limitations of other previous methods, we proposed a novel computational model of Symmetric Nonnegative Matrix Factorization for MiRNA-Disease Association prediction (SNMFMDA) to reveal the relation of miRNA-disease pairs.</s><s>SNMFMDA could be applied to predict miRNAs associated with new diseases.</s><s>Compared to the direct use of the integrated similarity in previous computational models, the integrated similarity need to be interpolated by symmetric non-negative matrix factorization (SymNMF) before application in SNMFMDA, and the relevant probability of disease-miRNA was obtained mainly through Kronecker regularized least square (KronRLS) method in our model.</s><s>What's more, the AUC of global leave-one-out cross validation (LOOCV) reached 0.9007, and the AUC based on local LOOCV was 0.8426.</s><s>Besides, the mean and the standard deviation of AUCs achieved 0.8830 and 0.0017 respectively in 5-fold cross validation.</s><s>All of the above results demonstrated the superior prediction performance of SNMFMDA.</s><s>We also conducted three different case studies on Esophageal Neoplasms, Breast Neoplasms and Lung Neoplasms, and 49, 49, and 48 of the top 50 of their predicted miRNAs respectively were confirmed by databases or related literatures.</s><s>It could be expected that SNMFMDA would be a model with the ability to predict disease-related miRNAs efficiently and accurately.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>INTRODUCTION</head><p><s>MicroRNAs (miRNAs) are a class of endogenous non-coding RNAs with regulatory functions found in eukaryotes, which are approximately 20-25 nucleotides in length <ref type="bibr" target="#b1">(Ambros, 2001)</ref>.</s><s>There are evidences manifesting that miRNAs are one of the most abundant gene regulatory molecules in multicellular organisms, which might affect the expression of many protein-coding genes and play an important regulatory role in animals and plants <ref type="bibr" target="#b2">(Bartel, 2004)</ref>.With more and more researchers being interested in miRNAs, the researches on miRNAs have been further deepened, and the number of discovered miRNAs is gradually increasing in recent years.</s><s>The latest database records 24,521 microRNA loci in 206 species and 30,424 mature miRNAs after processing <ref type="bibr" target="#b27">(Kozomara and Griffiths-Jones, 2014)</ref>.</s><s>Recently, it has been verified that miRNAs are crucial constituent in cells and may make an important impact in many important biological processes, including proliferation <ref type="bibr" target="#b14">(Cheng et al., 2005)</ref>, development <ref type="bibr" target="#b24">(Karp and Ambros, 2005)</ref>, differentiation <ref type="bibr" target="#b34">(Miska, 2005)</ref>, viral infection <ref type="bibr" target="#b34">(Miska, 2005)</ref> and so on.</s><s>So it is taken for granted that there are associations between miRNAs and the generation as well as development of a number of human diseases (Alvarez-Garcia and <ref type="bibr" target="#b34">Miska, 2005)</ref>.</s><s>For instance, by targeting BCL6 corepressor like BCORL1, the migration and invasion of hepatocellular carcinoma (HCC) cells are restrained by mir-876-5p, which provides a new idea for the treatment of HCC <ref type="bibr" target="#b46">(Xu et al., 2018)</ref>.</s><s>And it has been confirmed that miR-485-5p inhibits the development and improves the chemosensitivity of breast cancer by regulating survivin, which provides a potential method for addressing the chemoresistance of breast cancer <ref type="bibr" target="#b43">(Wang et al., 2018)</ref>.</s><s>Therefore, it is of great significance to research the relations between diseases and miRNAs, which contributes to study the pathogenesis of the disease at the molecular level and makes a big difference in the early diagnosis of human diseases <ref type="bibr" target="#b19">(Jiang et al., 2010)</ref>.</s><s>Using biological experiments to identify potential disease-related miRNAs is time-consuming and costly <ref type="bibr" target="#b20">(Jiang et al., 2013)</ref>, so it is imperative to use low-cost, highefficiency methods to predict miRNAs associated with diseases.</s><s>In recent years, since a large amount of biological data has been collected and organized into different databases, it is feasible and necessary to develop computational model to reveal potential disease-miRNA associations based on these databases <ref type="bibr" target="#b4">(Chen, 2015)</ref>.</s></p><p><s>In the last couple of years, more and more computational models for miRNA-disease associations prediction have been developed <ref type="bibr" target="#b9">(Chen et al., 2017b)</ref>.</s><s>In the view of that miRNAs with similar functions tend to be involved with phenotypically similar diseases and vice versa, numerous computational methods have been proposed recently <ref type="bibr" target="#b1">(Bandyopadhyay et al., 2010)</ref>.</s><s><ref type="bibr" target="#b10">Chen et al. (2016b)</ref> presented the model of Within and Between Score for MiRNA-Disease Association prediction (WBSMDA) to predict potential miRNAs associated with diseases.</s><s>In this method, Within-Score and Between-Score about miRNAs and diseases were calculated by integrating miRNA functional similarity, disease semantic similarity, known miRNA-disease associations and Gaussian interaction profile kernel similarity, and then these two scores were combined to acquire the relation probability of miRNA-disease pair.</s><s>Unfortunately, how to more reasonably integrate Within-scores and Between-score to calculate relevant probabilities remained unresolved.</s><s>What's more, Chen et al. <ref type="bibr" target="#b12">(Chen and Yan, 2014</ref>) also proposed Regularized Least Squares for MiRNA-Disease Association (RLSMDA) to reveal the unknown relations between miRNAs and diseases.</s><s>RLSMDA was a semi-supervised method, so it didn't need negative samples.</s><s>However, the optimal values of parameters in RLSMDA had not yet been obtained, which might affect the prediction performance.</s><s>By implementing random walk on the miRNA-miRNA functional similarity network, <ref type="bibr" target="#b5">Chen et al. (2012)</ref> developed another model named Random Walk with Restart for MiRNA-Disease Association (RWRMDA) to identify miRNAs related with diseases.</s><s>The outstanding prediction performance of RWRMDA had been confirmed by a number of experiments, but there was still a main limitation in this model.</s><s>RWRMDA couldn't be applied to predict the relations between miRNAs and new diseases without any known associated miRNAs.</s><s>Later, <ref type="bibr" target="#b8">Chen et al. (2017a)</ref> introduced a novel model called Ranking-based KNN for miRNA-Disease Association prediction (RKNNMDA) to uncover the potential associations between miRNAs and diseases by applying K-Nearest Neighbors (KNN) algorithm to obtain k-nearest-neighbors both for miRNAs and diseases.</s><s>After resorting the k-nearest-neighbors based on the Support Vector Machine (SVM) ranking model, they got the ranking of association probability of disease-miRNA pairs by implementing weighted voting.</s><s>RKNNMDA was capable of being implemented on new diseases, which overcame the biggest limitation of RWRMDA.</s><s>It was a pity that there were also some limitations in this method.</s><s>RKNNMDA could not be used to score all miRNAs based on the same criteria, especially for miRNAs with more known related diseases.</s><s><ref type="bibr" target="#b35">Mørk et al. (2014)</ref> proposed a reliable calculation model of miRNA-Protein-Disease (miRPD) which didn't directly predict the miRNAs related with diseases but through proteins.</s><s>The relations between miRNAs and diseases were uncovered by integrating the predicted and known miRNA-protein associations with the associations of proteindisease text mined from the literature.</s><s>And the prediction performance of miRPD would be further improved if more involved datasets were taken into account.</s><s><ref type="bibr" target="#b48">Xuan et al. (2015)</ref> developed a novel method of MIRNAs associated with Diseases Prediction (MIDP) to reveal the associations between miRNAs and diseases by implementing random walk on a miRNA functional similarity network where the similarity scores of miRNAs pairs were obtained through their related diseases.</s><s>What's more, Xuan et al. also presented its extension method MIDPE to predict the miRNAs related with new diseases.</s><s>In addition, by constructing a high-dimensional vector space to store the distribution information on miRNAs and diseases, Pasquier et al. <ref type="bibr">(Pasquier and Gardes, 2016)</ref> proposed MiRAI to identify the miRNAs associated with diseases based on the similarity of the high-dimensional vectors composed of the distribution information on miRNAs and diseases.</s><s><ref type="bibr" target="#b47">Xuan et al. (2013)</ref> presented an effective model named Human Diseaserelated MiRNA Prediction (HDMP) where the calculation method of miRNA functional similarity was improved by taking more related information into account.</s><s>miRNAs in the same family or cluster were assigned higher weights since they were more likely to be associated with diseases with phenotype similarity.</s><s>In this method, the sub-scores of the miRNA's k neighbors were equal to the product of the neighbor's weight and the miRNA functional similarity, and then by adding the subscores of k neighbors, the relevance score of a miRNA-disease pair was obtained.</s><s>In addition, <ref type="bibr" target="#b7">Chen et al. (2018a)</ref> proposed Network Distance Analysis for MiRNA-Disease Association prediction (NDAMDA) to detect the miRNAs associated with diseases.</s><s>Compared to other methods, the improvement of NDAMDA lied in that in addition to the direct network distance between two studied diseases (miRNAs), the respective mean distances for each of them and all the rest of diseases (miRNAs) were taken into consideration.</s><s>By implementing the matrix completion algorithm to update the adjacency matrix which recorded the known associations of disease-miRNA pairs in HMDD and then uncovering the unknown relations, <ref type="bibr" target="#b30">Li et al. (2017)</ref> developed a method of Matrix Completion for MiRNA-Disease Association prediction model (MCMDA) without the need of negative samples.</s><s>Compared with other computational models, the biggest advantage of MCMDA was that it only required known miRNA-disease associations, which also led to that MCMDA couldn't be introduced to predict potential associated miRNAs for new diseases or potential associated diseases for new miRNAs.</s><s>Furthermore, the optimal parameters of this method were still unknown.</s><s>In addition, by integrating miRNA functional similarity, disease semantic similarity, Gaussian interaction profile kernel similarity, and miRNA-disease associations confirmed by experiments into a heterogeneous graph, <ref type="bibr" target="#b11">Chen et al. (2016c)</ref> presented a model of Heterogeneous Graph Inference for MiRNA-Disease Association prediction (HGIMDA) to reveal the unknown relations of miRNA-disease pairs by incorporating related data into a heterogeneous graph and summarizing all paths with the length equal to three to calculate the association probability of disease-miRNA pair.</s><s>Unfortunately, limitations also existed in this method that for those miRNAs with more known related diseases, scores made by HGIMDA were generally higher than those miRNAs with less.</s><s>Later, <ref type="bibr" target="#b13">Chen et al. (2018b)</ref> proposed another method called Graph Regression for MiRNA-Disease Association prediction (GRMDA).</s><s>In this method, by using two matrix decomposition methods to extract important correlation properties and filter noise, graph regression was performed synchronously in three potential spaces including the associated space, miRNA similarity space, and disease similarity space to reveal the potential disease-miRNAs associations.</s><s>However, there were still some problems of GRMDA to be settled.</s><s>For example, according to the size of the matrix, how to choose the optimal parameters in SVD and PLS remained unsolved.</s><s>By optimizing the existing method for maximizing the flow of information, which was mainly used to prioritize diseaseassociated protein-coding genes, <ref type="bibr" target="#b50">Yu et al. (2017)</ref> developed a combinatorial prioritization algorithm to predict the miRNAdisease associations.</s><s>This method didn't require negative samples, which solved the problem that negative microRNAdisease associations were difficult to obtain.</s></p><p><s>In this paper, we proposed Symmetric Nonnegative Matrix Factorization for MiRNA-Disease Association prediction (SNMFMDA) to predict potential miRNA-disease associations.</s><s>The process was mainly divided into two steps.</s><s>Firstly, we used symmetric non-negative matrix factorization (SymNMF) to interpolate the integrated similarity matrix.</s><s>Secondly, based on interpolated integrated similarity matrix, we utilized Kronecker regularized least square (KronRLS) method to obtained disease-miRNA association score matrix.</s><s>We implemented global and local Leave-One-Out Cross Validation (LOOCV) and 5-fold cross validation to assess the prediction performance of SNMFMDA.</s><s>As shown in the results, the AUC values of global LOOCV, local LOOCV, and 5-fold cross validation of SNMFMDA reached 0.9007, 0.8426, and 0.8830 ± 0.0017 respectively, which verified the excellent prediction performance of SNMFMDA.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>MATERIALS AND METHODS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Human miRNA-Disease Association</head><p><s>In this paper, we obtained known human disease-miRNA associations from HMDD v2.0, which recorded 5430 experimentally verified associations between 383 diseases and 495 miRNAs.</s><s>To better represent whether there were known associations between diseases and miRNAs, we defined a nd × nm adjacency matrix A, where nd and nm corresponded to the number of diseases and miRNAs respectively.</s><s>If the relation between disease d(i) and miRNA m(j) had been verified, the value of the element A(d (i) , d(j)) of the matrix was 1, otherwise 0.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>miRNA Functional Similarity</head><p><s>On the basis of the assumption that functionally similar miRNAs tend to be associated with similar diseases and vice versa, miRNA functional similarities were calculated in this paper <ref type="bibr" target="#b42">(Wang et al., 2010)</ref>, and we could download them from http://www.cuilab.cn/fles/images/cuilab/misim.zip.</s><s>For the sake of better describing the functional similarity between miRNAs, we defined the miRNA functional similarity matrix FS, where the element FS(m (i) , m(j)) represented the functional similarity score between miRNA m(i) and m(j) (For the specific calculation process of miRNAs functional similarity, please see Supplementary Material).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Disease Semantic Similarity Model 1</head><p><s>To describe the association between diseases, the Directed Acyclic Graphs (DAGs) were built.</s><s>DAG (D) = (D, T (D) , E(D)) was applied to indicate disease D, where T(D) was a set of nodes composed of node D itself and its ancestor nodes and E(D) was a set consisting of edges directly from parent nodes to the child nodes <ref type="bibr" target="#b42">(Wang et al., 2010)</ref>.</s><s>The contribution of disease d to the semantic value of disease D in DAG(D) and the semantic value of disease D were defined as follows:</s></p><formula xml:id="formula_0">D1 D d = 1 ifd = D D1 D d = max △ * D1 D d ′ d ′ ∈ children of d if d = D</formula><p><s>(1)</s></p><formula xml:id="formula_1">DV1 (D) = d∈T(D) D1 D d (2)</formula><p><s>where △ is the semantic contribution factor.</s><s>The contribution of disease D to its own semantic value was 1, and the contribution of other diseases to the semantic value of disease D was negatively related to the distance between the disease and disease D, so the diseases in the same layer might have the same contribution to the semantic value of disease D.</s></p><p><s>Here, based on the model in the paper <ref type="bibr" target="#b47">(Xuan et al., 2013)</ref>, we constructed disease semantic similarity matrix SS1, whose element SS1 d (i) , d j indicated the semantic similarity score between disease d(i) and d j .</s><s>Based on the assumption that the more DAGs the two diseases overlapped, the greater their semantic similarity would be.</s><s>The disease semantic similarity between disease d(i) and d j was calculated as follows:</s></p><formula xml:id="formula_2">SS1 d (i) , d j = t∈T(d(i))∩T(d(j)) (D d(i) (t) + D d(j) (t)) DV1 d (i) + DV1(d(j))<label>(3)</label></formula><p><s>Disease Semantic Similarity Model 2</s></p><p><s>For these diseases that appeared in the same layer of the DAG(A), according to the above definition of the disease semantic similarity model 1, they had the same contribution to the semantic value of the disease A. However, they might appear in different number of disease DAGs.</s><s>For example, for two diseases d (i) and d j that appeared in the same layer of DAG(A), disease d(i) occurred in more disease DAGs, while d(j) appeared in less.</s><s>It was clear that the contributions of the two diseases to the semantic value of disease A were different and the disease d (i) should have a less contribution to the semantic value of the disease A than d(j).</s><s>Therefore, it was unreasonable to simply calculate the contribution to the semantic value of disease according to the definition of the disease semantic similarity model 1.</s><s>Here, according to the model in the paper <ref type="bibr" target="#b47">(Xuan et al., 2013)</ref>, we defined the disease semantic similarity model 2 to supplement model 1.</s><s>In the second model, diseases appeared in the same layer of DAG(A) might not necessarily ensure that they had the same contribution to the semantic value of disease A. The contribution of disease D to the semantic value of disease A was calculated as follows:</s></p><formula xml:id="formula_3">D2 A (D) = − log the number of DAGs including D the number of diseases<label>(4)</label></formula><p><s>The semantic value of disease A was calculated as follows:</s></p><formula xml:id="formula_4">DV2 (A) = t∈T(A) D2 A (t)<label>(5)</label></formula><p><s>Similar to the disease semantic similarity matrix SS1, the element SS2(d (i) , d(j)) of the disease semantic similarity matrix SS2 was calculated as follows:</s></p><formula xml:id="formula_5">SS2 d (i) , d j = t∈T(d(i))∩T(d(j)) (D2 d(i) (t) + D2 d(j) (t)) DV2 d (i) + DV2(d(j))<label>(6</label></formula><p><s>) Here, SS2(d (i) , d(j)) was the disease semantic similarity between disease d(i) and d j .</s><s>Combining the two models of disease semantic similarity, we could calculate the final disease semantic similarity matrix SS as follow:</s></p><formula xml:id="formula_6">SS = SS1 + SS2 2 (7)</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Gaussian Interaction Profile Kernel Similarity</head><p><s>On the basis of the assumption that functionally similar miRNAs were more likely to be associated with similar diseases and vice versa, by taking the topological information of known miRNA-disease association network into account, we defined Gaussian interaction profile kernel similarity for diseases to describe the similarities between diseases based on the model in the paper <ref type="bibr" target="#b41">(van Laarhoven et al., 2011)</ref>.</s><s>Here, we applied binary vector IP(d(i)) to represent the ith row of the adjacency matrix A, which recorded the association information of disease d(i) with all miRNAs.</s><s>The Gaussian interaction profile kernel similarity matrix for diseases was defined as KD.</s><s>The element KD d (i) , d j indicated the Gaussian interaction profile kernel similarity between disease d(i) and d j and could be calculated as follows:</s></p><formula xml:id="formula_7">KD d (i) , d j = exp −γ d IP(d(i))− IP(d(j)) 2 (8)</formula><p><s>Here, the role of parameter γ d is to control the kernel bandwidth and it could be obtained by normalizing another new bandwidth parameter γ ′ d by the average number of associated miRNAs for all the diseases.</s></p><formula xml:id="formula_8">γ d = γ ′ d 1 nd nd u=1 IP d (u) 2 (9)</formula><p><s>Here, we set the value of γ ′ d to 1. Similarly, the Gaussian interaction profile kernel similarity matrix KM was defined as follows:</s></p><formula xml:id="formula_9">KM m (i) , m j = exp −γ m IP(m(i))− IP(m(j)) 2 (10)</formula><p><s>The binary vector IP(m(i)) represents the ith column of the adjacency matrix A. Similar to γ d , parameters γ m was calculated as follows:</s></p><formula xml:id="formula_10">γ m = γ m ′ 1 nm nm u=1 IP (m (u)) 2 (11)</formula><p><s>Here, the value of γ m ′ was set to 1.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Integrated Similarity for miRNAs and Diseases</head><p><s>As we know, many diseases can be described by a DAG.</s><s>Based on the assumption that two diseases with large overlapping parts of their DAGs are considered to have large semantic similarity, we could calculate the semantic similarity between diseases, but we could not get DAG for all diseases, so for those diseases without DAG, we could not calculate the semantic similarity between them and other diseases.</s><s>Therefore, we constructed integrated similarity matrix SD for diseases by integrating disease semantic similarity matrix and Gaussian interaction profile kernel similarity matrix in the following way according to the model in this paper <ref type="bibr" target="#b10">(Chen et al., 2016b)</ref>:</s></p><formula xml:id="formula_11">SD d (i) , d j = SS d (i) , d j + KD(d (i) , d(j)) 2 (12)</formula><p><s>Similar to disease, the integrated similarity matrix SM was calculated as follow:</s></p><formula xml:id="formula_12">SM m (i) , m j = FS m (i) , m j + KM(m (i) , m(j)) 2 (13)</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SNMFMDA</head><p><s>Motivated by the paper <ref type="bibr" target="#b3">(Chen and Li, 2017)</ref>, in this paper, we proposed SNMFMDA to predict potential miRNA-disease associations and the flow chart of the algorithm is shown in Figure <ref type="figure" target="#fig_0">1</ref>.</s><s>First step, we used SymNMF to interpolate the integrated similarity matrix SM and SD.</s><s>Second step, based on interpolated integrated similarity matrix SM, SD, we utilized KronRLS method to obtained score matrix S with the same dimension as the adjacency matrix A, and each element of S was the associated probabilities of the corresponding disease-miRNA pairs.</s><s>The two-step process was as follows:</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SymNMF</head><p><s>As an unsupervised learning method, non-negative matrix factorization (NMF) was extremely versatile and it had gradually become one of the most popular multidimensional data processing tools in signal processing, semantic analysis of documents and image engineering <ref type="bibr" target="#b17">(He et al., 2011)</ref>.</s><s>In our model, we improved the integrated similarity by introducing SymNMF, which was a special kind of nonnegative matrix factorization.</s><s>For the matrix SD, our purpose was to find a matrix P with the same size as the integrated similarity matrix SD, which also satisfied the following requirement:</s></p><formula xml:id="formula_13">SD ≈ PP T (14)</formula><p><s>The specific process was as follows: The first step was initialization and we constructed a random matrix P 0 whose elements were all positive as the initialization of the matrix P. P i indicated the matrix corresponding to P in the beginning of the ith update, and the norm E i in ith update could be computed as follow:</s></p><formula xml:id="formula_14">E i = SD − P i P i T 2 F (<label>15</label></formula><formula xml:id="formula_15">)</formula><p><s>The second step was update.</s><s>Here, we temporarily marked P as P new after each update.</s><s>The specific process was as follows:</s></p><p><s>R i = (SD)P i • /(P i P i T P i ) ( <ref type="formula">16</ref>)</s></p><formula xml:id="formula_16">P new = P i . * 1 − α + α•R i (17) E new = SD − P new (P new ) T 2 F (<label>18</label></formula><formula xml:id="formula_17">)</formula><p><s>where A. * B and A./B were the entrywise product (i.e., Hadamard product) and entrywise division respectively.</s><s>The value of α should be less than 1 but close to 1, here, we set α = 0.999.</s><s>Then compared E new to E i , if EN was smaller, update process ended, otherwise, updated P as follows:</s></p><formula xml:id="formula_18">P new = P i . * R i 1 3 (19) E new = P new (P new ) T 2 F (<label>20</label></formula><formula xml:id="formula_19">)</formula><formula xml:id="formula_20">P new → P i+1<label>(21)</label></formula><formula xml:id="formula_21">E new → E i+1<label>(22)</label></formula><formula xml:id="formula_22">i = i + 1 (23)</formula><p><s>After that, the procedure went back to formula (15) and started the next update.</s><s>Using SymNMF to perform interpolation on the similarity matrix SM was similar to SD.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>KronRLS</head><p><s>First of all, we needed to build a list</s></p><formula xml:id="formula_23">D = [d (1) , d (2) , . . . d(nd)] for diseases. Similarly, list M = [m (1) , m (2) , . . . m(nm)]</formula><p><s>was constructed to denoted nm miRNAs.</s><s>All the columns of adjacency matrix A were stitched together to form a ndimensional column vector Y where n = nd × nm indicated the total number of disease-miRNA pairs.</s><s>And then we built another n-dimensional column vectors X whose element X i represented the disease-miRNA pair corresponding to the ith element in Y.</s></p><p><s>The purpose of the RLS algorithm was to find the mapping function f from vector X to score matrix S by minimizing the following function.</s></p><formula xml:id="formula_24">J f = 1 2n n i=1 (Y i − f (X i )) 2 + λ 2 f 2 K (24)</formula><p><s>where f K is a norm of function f on the Hilbert space related with the kernel K. λ is a regularization parameter that determine the trade-off between prediction error and model complexity, here, we set it to 1.</s><s>The representative theorem ensured that the Equation ( <ref type="formula">23</ref>) had a closed form solution:</s></p><formula xml:id="formula_25">f (X) = n i=1 a i K(X, X i ) = Ka (25)</formula><p><s>Here, a is also an n-dimensional vector and it could be get by solving the following equation:</s></p><formula xml:id="formula_26">(K + λI) a = Y (<label>26</label></formula><formula xml:id="formula_27">)</formula><p><s>where I is the identity matrix and K is named as the pairwise instance kernel to represent the similarity of two data points in the Hilbert space.</s><s>To be specific, for two disease-miRNA pairs (d i , m j ) and (d w , m z ), K d i , m j , d w , m z indicates the similarity between the two disease-miRNA pairs.</s><s>And the kernel could be calculated as follow: where SD ⊗ SM is the Kronecker product of SD and SM, and the relation probabilities of all disease-miRNA pairs could be obtained according to the kernel as follow:</s></p><formula xml:id="formula_28">K d i , m j , d w , m z = SD(i, w)SM(j, z)<label>(27)</label></formula><formula xml:id="formula_29">K = SD ⊗ SM (28)</formula><formula xml:id="formula_30">vec(S) = f (X) = K (K + λI) −1 Y (29)</formula><p><s>Here, vec (•) is a vectorization operator that combine all the columns of a matrix into a column vector.</s></p><p><s>In order to solve the problem more effectively, we introduced spectral decomposition of the matrix to speed up the calculation.</s><s>The decompositions of integrated similarity SD, SM and K were defined as follow:</s></p><formula xml:id="formula_31">SD = d d T d (30) SM = m m T m (31) K = T (32)</formula><p><s>Here, the dimension of the matrix d ( m , ) is the same as SD(SM, K), and each of its columns is the eigenvector of the matrix SD(SM, K).</s><s>Matrix d ( m , ) is a diagonal matrix whose diagonal element d ii ( m ii , ii ) is the eigenvalue of SD(SM, K) corresponding to the ith column [i.e., the ith eigenvector of SD(SM, K)].</s><s>Then, the Kronecker product of SD and SM could be calculated as follows:</s></p><formula xml:id="formula_32">K = SD ⊗ SM = T (33) K(K + λI) −1 = +λI −1 T<label>(34)</label></formula><p><s>where:</s></p><formula xml:id="formula_33">= d ⊗ m (35) = d ⊗ m (36)</formula><p><s>Here, we introduced a property of the Kronecker product:</s></p><formula xml:id="formula_34">(A ⊗ B) vec (Y) = vec BYA T<label>(37)</label></formula><p><s>By integrating the above formulas, the score matrix S could be calculated as follows:</s></p><formula xml:id="formula_35">S = V d Z T V T m (<label>38</label></formula><formula xml:id="formula_36">)</formula><p><s>where:</s></p><formula xml:id="formula_37">vec (Z) = ( d ⊗ m ) ( d ⊗ m + λI) −1 vec(V T m Y T V d ) (39)</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>RESULTS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Performance Evaluation</head><p><s>In this study, based on the 5,430 confirmed associations between 383 diseases and 495 miRNAs recorded in HMDD v2.0, local and global LOOCV were applied to test the prediction performance of SNMFMDA.</s><s>In LOOCV, each of the 5,430 known associations (positive samples) was left out in turn as the test sample and the remaining 5,429 known associations were considered as training samples, while the miRNA-disease pairs without verified association were viewed as candidate samples (unknown samples), and then we applied SNMFMDA to calculated the association probability of candidate samples and test sample.</s><s>In global LOOCV, the score of test sample was ranked with all of the candidate samples, while we sort it with all the unknown samples that contained the studied diseases in local LOOCV.</s><s>When the ranking of test sample was higher than the given threshold, we affirmed that SNMFMDA had correctly predicted the sample.</s><s>We set the true positive rate (TPR, sensitivity) as the vertical axis and the false positive rate (FPR, 1-specificity) as the horizontal axis.</s></p><p><s>When the thresholds took different values, they correspond to different points in the coordinate system.</s><s>The bight composed of all these points was the Receiver operating characteristics (ROC) curve.</s><s>Here, Sensitivity was the ratio of the number of correctly predicted test samples to the total number of positive samples, and specificity was the percentage of candidate samples whose ranking were lower than the given threshold to all of the unknown samples.</s><s>The area under the ROC curve (AUC) was calculated to evaluate the reliability of SNMFMDA.</s><s>The AUC value of 0.5 meant that the computational model was equivalent to random prediction, and AUC=1 indicated that the prediction performance of the calculation model was excellent.</s><s>In other words, when the value of AUC was greater than 0.5 and less than 1, the larger the value, the better the prediction performance.</s></p><p><s>The comparison of the prediction performance between a couple of computational methods based on the AUC value of global and local LOOCV respectively was shown in Figure <ref type="figure" target="#fig_1">2</ref>. As a consequence, the AUC of SNMFMDA was 0.9007, while the AUC values of HGIMDA <ref type="bibr" target="#b11">(Chen et al., 2016c)</ref>, MCMDA <ref type="bibr" target="#b30">(Li et al., 2017)</ref>, MaxFlow <ref type="bibr" target="#b50">(Yu et al., 2017)</ref>, RLSMDA <ref type="bibr" target="#b12">(Chen and Yan, 2014)</ref>, HDMP <ref type="bibr" target="#b47">(Xuan et al., 2013)</ref>, WBSMDA <ref type="bibr" target="#b10">(Chen et al., 2016b)</ref> were respectively 0.8781, 0.8749, 0.8624, 0.8426, 0.8366, 0.8030 in global LOOCV.</s><s>In local LOOCV, SNMFMDA obtained AUC of 0.8426, which were clearly better than HGIMDA (0.8077), MCMDA (0.7718), MaxFlow (0.7774), RLSMDA (0.6953), HDMP (0.7702), WBSMDA (0.8031), MiRAI (0.6299), MIDP (0.8196), and RWRMDA (0.7891).</s><s>Both RWRMDA and MIDP weren't capable to predict potential related miRNAs for all diseases at the same time, so we could only evaluate their prediction performance with local LOOCV instead of global LOOCV.</s><s>Besides, the association probabilities of candidate samples calculated by MiRAI had a high-positive correlation with the number of known associations of corresponding diseases.</s><s>The more known miRNAs associated with a disease, the greater the disease-related candidate samples' association probabilities would be.</s><s>Thus, it wasn't reasonable to compare the association probabilities of candidate samples corresponding to different diseases.</s><s>Therefore, we couldn't apply global LOOCV to evaluate the prediction performance of RWRMDA, MIDP, and MiRAI.</s><s>What's more, as could be seen from Figure <ref type="figure" target="#fig_1">2</ref>, the value of the AUC for local LOOCV of MiRAI was relatively small.</s><s>This was because that the core of MiRAI was collaborative filtering which caused its prediction accuracy to heavily depend on the number of known miRNA-disease associations.</s><s>The database used in our method had 383 diseases but there were few known miRNAs associated with each disease.</s><s>Therefore, the predictive performance of MiRAI based on this database was far worse than that in the original literature where the training database contained more verified associations for each disease.</s></p><p><s>In addition, we also applied 5-fold cross-validation to evaluate the predictive performance of SNMFMDA.</s><s>All known miRNAdisease associations were randomly divided into five equal parts, and each part was in turn treated as the test sample while the other four parts were treated as the training samples.</s><s>Besides, in order to reduce the influence of the division of known associations on prediction accuracy, we performed 100 random divisions.</s><s>It could be seen from the results that the mean and standard deviation of the AUC in 5-fold cross validation respectively reached 0.8830 and 0.0017, which was obviously better than MCMDA (0.8767 ± 0.0011), MaxFlow (0.8579 ± 0.001), RLSMDA (0.8569 ± 0.0020), HDMP (0.8342 ± 0.0010), and WBSMDA (0.8185 ± 0.0009).</s><s>In summary, all cross-validation results further proved the superior prediction performance of SNMFMDA.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Case Studies</head><p><s>In addition to cross-validation, we also used case studies to evaluate the prediction accuracy of our computational model.</s><s>Here, we applied three different case studies on Esophageal Neoplasms (EN), Breast Neoplasms (BN), and Lung Neoplasms (LN) to test the prediction performance from different aspects.</s><s>In the first kind, we could obtain 5,430 known miRNA-disease associations (positive samples) from HMDD v2.0 <ref type="bibr" target="#b31">(Li et al., 2014)</ref> for 383 diseases and 495 miRNAs, and the remaining 184,155 samples were unknown samples.</s><s>In order to predict the potential associations of miRNA-disease pairs from unknown samples, we scored them by SNMFMDA and ranked them.</s><s>Finally, we verified the top 50 potential associated miRNAs for the investigated disease by two other databases dbDEMC <ref type="bibr" target="#b49">(Yang et al., 2010)</ref> and miR2Disease <ref type="bibr" target="#b21">(Jiang et al., 2009)</ref> that recorded a number of verified miRNA-disease associations.</s><s>In order to assess SNMFMDA's prediction power for new diseases without any known associated miRNAs, the second kind of case study was implemented.</s><s>Here, when we studied a disease, we first removed all its known associations based on the HMDD v2.0 that was, all the 1 s in the row corresponding to this disease in the adjacency matrix were turned to 0. After that we used SNMFMDA to score all miRNAs for the investigated disease and then sorted these miRNAs.</s><s>Finally, we verified whether the associations between the disease and the top 50 miRNAs were verified by the three databases dbDEMC, miR2Disease and HMDD v2.0.</s><s>Because there are a number of databases in which known miRNA-diseases associations were recorded, when the prediction accuracy of computation method based on a certain database was good, it couldn't explain that the prediction performance of the method was superior.</s><s>To prove the applicability of our model to different databases, we carried out the third type of case studies.</s><s>The third case study was similar to the first, and the difference between them was that the dataset on which SNMFMDA was based was not the same.</s><s>There were 1895 verified associations between 137 diseases and 271 miRNAs recorded in the database HMDD v1.0 used in the third case study.</s><s>Finally, we applied three databases (HMDD v2.0, miR2Disease and dbDEMC) to verify the top 50 predicted miRNAs for the investigated disease after utilizing our calculation model.</s></p><p><s>As one of the most common tumors in the world, Esophageal Neoplasms (EN) has the top 10 morbidity and mortality in all cancers <ref type="bibr" target="#b16">(He et al., 2012)</ref>.</s><s>According to the latest estimates of related departments in US, in 2018, there would be 12,850 patients dying from EN, accounting for 4% of all patients dying of cancer <ref type="bibr" target="#b39">(Siegel et al., 2018)</ref>.</s><s>Although the treatment method have been improved, the damage of EN to human have not been significantly reduced <ref type="bibr" target="#b16">(He et al., 2012)</ref>.</s><s>The survival rate of patients with EN was less than 25% in the last five years <ref type="bibr" target="#b26">(Kim et al., 2011)</ref>.</s><s>Research showed that if EN could be diagnosed early, its mortality rate was expected to drop to 10% <ref type="bibr" target="#b15">(Daly et al., 2000)</ref>, so finding better and more efficient diagnosis and treatment was imperative <ref type="bibr" target="#b45">(Xie et al., 2013)</ref>.</s><s>More and more researches indicated that there was a close relationship between miRNAs and the development of human diseases (Alvarez-Garcia and <ref type="bibr" target="#b34">Miska, 2005)</ref>.</s><s>A number of associations between miRNAs and EN had been verified.</s><s>For instance, by sponging miR-200a, which was functionally similar to a competitive endogenous RNA, lncRNA MALAT1 adjusted the expression of ZEB1 and ZEB2 to facilitate the invasion and migration of EN cells by mean of inducing epithelial-mesenchymal transition <ref type="bibr" target="#b53">(Zhang et al., 2017)</ref>.</s><s>We used SNMFMDA to perform the first case study on EN, and the results showed that 47 of the top 50 predicted EN-related miRNAs were verified by other two databases dbDEMC and miR2Disease.</s><s>For the remaining three miRNAs that had not been verified by the above two databases, there were studies showing that serum expression levels of mir-218 (15th in the prediction list) in EN patients were significantly lower than those in healthy people, and the levels were related to tumor differentiation, staging, and lymph node metastasis.</s><s>For this reason, mir-218 was highly likely to be the target of the early diagnosis of EN, which provided a new idea for the detection of this cancer <ref type="bibr" target="#b22">(Jiang et al., 2015)</ref>.</s><s>In EN cells, mir-122 (43th in the prediction list) targeted pyruvate kinase M2 (PKM2), and Tanshinone IIA could limit the expression of PKM2 by promoting the expression of mir-122, which in turn restricted the growth of EN cells <ref type="bibr" target="#b51">(Zhang et al., 2016)</ref>.</s><s>As could be seen from the verification results, only one of the top 50 predicted miRNAs had not been validated by the database or literature (see Table <ref type="table" target="#tab_0">1</ref>).</s></p><p><s>In order to facilitate further validation and research, we have provided the complete prediction list of potential miRNAs associated with all the 383 human diseases in HMDD v2.0 (see Supplementary Table <ref type="table" target="#tab_0">1</ref>).</s></p><p><s>Breast Neoplasms (BN) is a type of cancer with high morbidity and mortality among women in the United States <ref type="bibr" target="#b25">(Kelsey and Horn-Ross, 1993)</ref>.</s><s>According to the prediction of relevant departments, 40,920 women would die from BN in the United States in 2018, accounting for 14% of the total cancer deaths <ref type="bibr" target="#b39">(Siegel et al., 2018)</ref>.</s><s>According to the current medical level, the only way to improve the cure rate and reduce the mortality rate of BN lies in the early detection and timely treatment <ref type="bibr" target="#b40">(Tao et al., 2015)</ref>.</s><s>In order to improve the diagnostic efficiency, the researchers have put forward many methods including the prediction of potential relevant miRNAs of BN.</s><s>It has been proved that the expression levels of mir-21 and mir-146a in plasma samples of BN patients were obviously higher than that of healthy volunteers and we could identify whether a patient had BN based on the expression level of mir-21 and mir-146a in plasma <ref type="bibr" target="#b28">(Kumar et al., 2013)</ref>.</s><s>We implemented the second case study on BN and 45 of the top 50 miRNAs potentially associated with BN were verified by databases (HMDD, dbDEMC and miR2Disease).</s><s>Among the remaining 5 miRNAs that were not validated by the databases, the expression of mir-142 (12th in the prediction list) was dysregulated in BN cells and mir-142 could restricted the invasion of BN cells by simultaneously targeting WASL, Integrin Alpha V, and Additional Cytoskeletal Elements <ref type="bibr" target="#b37">(Schwickert et al., 2015)</ref>.</s><s>The expression of mir-378a-3p (20th in the prediction list) was lower in BN tissues, and it acted on the endocrine resistance mechanism of BN by regulating the expression of GOLT1A <ref type="bibr" target="#b18">(Ikeda et al., 2015)</ref>.</s><s>It was also verified that there was excessive expression of mir-302f (48th in the The first 25 miRNAs and the last 25 miRNAs were recorded in the first and third columns, respectively.</s><s>The second and forth columns recorded the database or literatures in PubMed that verified the corresponding miRNAs associated with Esophageal Neoplasms.</s></p><p><s>prediction list) in HER2-postive BN <ref type="bibr" target="#b23">(Kang et al., 2014)</ref>.</s><s>What's more, researches also confirmed that there was overexpression of mir-744 (49th in the prediction list) in BN cell and mir-744 played a part in the drug resistance of BN <ref type="bibr" target="#b6">(Chen et al., 2016a)</ref>.</s></p><p><s>The above results (see Table <ref type="table" target="#tab_1">2</ref>) showed that 49 of the top 50 potential BN-associated miRNAs predicted by SNMFMDA were validated, which indicated that the prediction performance of SNMFMDA was still reliable when it was applied to new diseases.</s><s>Lung Neoplasms (LN) is one of the most deadly cancers <ref type="bibr" target="#b32">(Liu and Wei, 2018)</ref>, and its poor prognosis have also caused great harm to human health <ref type="bibr" target="#b55">(Zhao et al., 2018)</ref>.</s><s>According to the estimation of the American Cancer Society, in 2018, new cases of bronchus and LN would reach 121,680, accounting for 14% of all newly diagnosed cancer patients, and it was estimated that there would be 83550 patients dying from lung cancer, more than a quarter of the total deaths <ref type="bibr" target="#b39">(Siegel et al., 2018)</ref>.</s><s>The early diagnosis and treatment of LN is very difficult, fortunately, more and more studies have shown that miRNAs are closely related to the development, progression, and progression of LN <ref type="bibr" target="#b55">(Zhao et al., 2018)</ref>.</s><s>For example, researches showed that there was significantly higher expression of mir-221 in LN patients than that in healthy people, and biological analysis indicated that the target of mir-221 was most likely related to the formation and development of LN <ref type="bibr" target="#b58">(Zhu et al., 2017)</ref>.</s><s>Besides, mir-221 was very likely to become a non-aggressive biomarker for the diagnosis of LN <ref type="bibr" target="#b58">(Zhu et al., 2017)</ref>.</s><s>As an embryo-expressing lung miRNA, mir-127 had been shown to be closely linked to the poor prognosis of LN <ref type="bibr" target="#b38">(Shi et al., 2017)</ref>.</s><s>Therefore, the prediction of miRNAs associated with LN could enable us to understand the pathogenesis of cancer and might provide novel diagnostic methods and treatment approaches.</s><s>We applied SNMFMDA to perform the third case study on LN to test the prediction power of the model when it is applied to another database HMDD v1.0.</s><s>The prediction result showed that 44 of the top 50 potential LNassociated miRNAs were verified by other databases (dbDEMC, miR2Diseaes, HMDD v2.0).</s><s>For the remaining 6 miRNAs that weren't verified by the three databases, studies showed that the mir-92 (6th in the prediction list) family was less expressed in cisplatin-resistant cells, which indicated that the mir-92 family played a part in the regulation of cisplatin resistance in nonsmall cell lung cancer <ref type="bibr" target="#b56">(Zhao et al., 2015)</ref>.</s><s>Some researches confirmed that the overexpression of mir-194 (20th in the prediction list) produced an effect on the expression of Mpl/ERK pathway proteins and restrained the mitosis and proliferation of non-small cell lung cancer cells by targeting Human nuclear distribution C (hNUDC), which provided a novel strategy for the treatment of LN <ref type="bibr" target="#b57">(Zhou et al., 2016)</ref>.</s><s>Studies confirmed that mir-372-3p (38th in the prediction list) was obviously overexpressed in lung squamous cell carcinoma cells and limited the expression of FGF9 by binding to it, which contributed to the proliferation of lung squamous cell carcinoma cells (LSCC).</s><s>In contrast, the low expression of mir-372-3p or high expression of FGF9 were conducive to inhibit the growth and invasion of LSCC cells <ref type="bibr" target="#b44">(Wang et al., 2017)</ref>.</s><s>The expression level of mir-320 (46th in the prediction list) in non-small cell lung cancer (NSCLC) cells was lower than the level in normal cells, and mir-320 limited cell growth in NSCLC cells through targeting fatty acid synthase <ref type="bibr" target="#b29">(Lei et al., 2016)</ref>.</s><s>Based on the above results (see Table <ref type="table" target="#tab_2">3</ref>), 48 of the top 50 potential LN-associated miRNAs predicted by SNMFMDA were validated, which indicated that the prediction performance of the model based on other datasets was also very reliable.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DISCUSSION</head><p><s>As accumulating studies have demonstrated that miRNAs play an extremely important role in human physiological processes, researches on the association between miRNAs and diseases have attracted more and more attention.</s><s>Since it is time-consuming and costly to use biological experiments to reveal potential miRNA-disease associations, many computational models have been proposed to predict disease-related miRNAs in recent years.</s></p><p><s>In the paper, we developed a novel model of SNMFMDA to reveal the relation of miRNA-disease pairs by integrating the known miRNA-disease associations recorded in HMDD v2.0, miRNA functional similarity, disease semantic similarity, and Gaussian interaction profile kernel similarity for diseases and miRNAs.</s><s>SNMFMDA overcame the limitation of many previous models that they were incapable of predicting miRNAs associated with new diseases.</s><s>As shown in the prediction results, the AUC values of global LOOCV, local LOOCV, and 5-fold cross validation reached 0.9007, 0.8426, and 0.8830 ± 0.0017 respectively.</s><s>As we all know, models with global AUC value above 0.9 were rare, so SNMFMDA is a model with higher credibility.</s><s>In the future, our model would be an effective tool to reveal potential disease-related miRNAs, which is conducive to the diagnosis and treatment of diseases.</s><s>The first 25 miRNAs and the last 25 miRNAs were recorded in the first and third columns, respectively.</s><s>The second and forth columns recorded the database or literatures in PubMed that verified the corresponding miRNAs associated with Lung Neoplasms.</s></p><p><s>The superior prediction performance of the model was mainly due to the following aspects.</s><s>Firstly, the database on which SNMFMDA was based was reliable and the model could be used to predict miRNAs potentially associated with new diseases by introducing the information of disease similarity.</s><s>Secondly, we used SymNMF to interpolate the integrated similarity, while many of the previous methods used the integrated similarity directly.</s><s>Finally, we introduced spectral decomposition to speed up the calculation of the Kronecker product in our model.</s><s>Certainly, there are still some limitations to be resolved in the future.</s><s>For example, SNMFMDA might not score miRNAs using the same criteria, especially for those with more known related diseases.</s><s>Although the prediction accuracy of SNMFMDA is obviously higher than many previous calculation methods, if the biological database on which our model is based can be further improved, SNMFMDA's prediction performance would be better.</s><s>The calculation of disease similarity and miRNA similarity used in our model may not be the most perfect method, and we expect to add more biological data sets in future calculations to improve the accuracy of similarity calculations.</s><s>Besides, SNMFMDA involved calculating the Kronecker product of two matrices.</s><s>The solution of the Kronecker product of two matrices was equivalent to that each element of the previous matrix multiplied by the next matrix, so the sizes of the Kronecker product was much larger than the first two matrices.</s><s>Therefore, calculating the Kronecker product often led to memory problems in computer.</s><s>In addition, our model SNMFMDA did not consider miRNAprotein association and miRNA-cellular pathway association, which significantly affected the prediction performance of the model.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>FIGURE 1 |</head><label>1</label><figDesc><div><p><s>FIGURE 1 | The flowchart of SNMFMDA included three steps: the integration of data; the calculation of the score matrix; the sorting of samples.</s></p></div></figDesc><graphic coords="6,83.64,69.51,428.16,242.16" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>FIGURE 2 |</head><label>2</label><figDesc><div><p><s>FIGURE 2 | Comparison of prediction performance between SNMFMDA and other computation models (HGIMDA, RLSMDA, HDMP, WBSMDA, MCMDA, MaxFlow, MiRAI, MIDP) based on global (A) and local (B) cross validation results.</s><s>As shown in the figure, the AUC value of global and local LOOCV of SNMFMDA reached 0.9007 and 0.8426, which fully proved the superior prediction performance of SNMFMDA.</s></p></div></figDesc><graphic coords="8,56.64,69.79,481.92,206.88" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>TABLE 1 |</head><label>1</label><figDesc><div><p><s>Prediction of the top 50 predicted miRNAs associated with Esophageal Neoplasms.</s></p></div></figDesc><table><row><cell>miRNA</cell><cell>Evidence</cell><cell>miRNA</cell><cell>Evidence</cell></row><row><cell>hsa-mir-18a</cell><cell>dbDEMC</cell><cell>hsa-mir-29a</cell><cell>dbDEMC</cell></row><row><cell>hsa-mir-200b</cell><cell>dbDEMC</cell><cell>hsa-mir-106a</cell><cell>dbDEMC</cell></row><row><cell>hsa-mir-1</cell><cell>dbDEMC</cell><cell>hsa-mir-10b</cell><cell>dbDEMC</cell></row><row><cell>hsa-mir-17</cell><cell>dbDEMC</cell><cell>hsa-mir-191</cell><cell>dbDEMC</cell></row><row><cell>hsa-mir-19b</cell><cell>dbDEMC</cell><cell>hsa-mir-497</cell><cell>dbDEMC</cell></row><row><cell>hsa-mir-125b</cell><cell>dbDEMC</cell><cell>hsa-mir-9</cell><cell>dbDEMC</cell></row><row><cell>hsa-let-7d</cell><cell>dbDEMC</cell><cell>hsa-let-7f</cell><cell>Unconfirmed</cell></row><row><cell>hsa-mir-142</cell><cell>dbDEMC</cell><cell>hsa-mir-132</cell><cell>dbDEMC</cell></row><row><cell>hsa-let-7e</cell><cell>dbDEMC</cell><cell>hsa-mir-424</cell><cell>dbDEMC</cell></row><row><cell>hsa-mir-16</cell><cell>dbDEMC</cell><cell>hsa-mir-146b</cell><cell>dbDEMC</cell></row><row><cell>hsa-mir-199b</cell><cell>dbDEMC</cell><cell>hsa-mir-224</cell><cell>dbDEMC</cell></row><row><cell>hsa-mir-125a</cell><cell>dbDEMC</cell><cell>hsa-mir-151</cell><cell>dbDEMC</cell></row><row><cell>hsa-mir-194</cell><cell>dbDEMC;</cell><cell>hsa-mir-24</cell><cell>dbDEMC</cell></row><row><cell></cell><cell>miR2Disease</cell><cell></cell><cell></cell></row><row><cell>hsa-mir-429</cell><cell>dbDEMC</cell><cell>hsa-mir-182</cell><cell>dbDEMC</cell></row><row><cell>hsa-mir-218</cell><cell>PMID:</cell><cell>hsa-mir-106b</cell><cell>dbDEMC</cell></row><row><cell></cell><cell>25812647</cell><cell></cell><cell></cell></row><row><cell>hsa-mir-221</cell><cell>dbDEMC</cell><cell>hsa-mir-181b</cell><cell>dbDEMC</cell></row><row><cell>hsa-let-7i</cell><cell>dbDEMC</cell><cell>hsa-mir-7</cell><cell>dbDEMC</cell></row><row><cell>hsa-mir-195</cell><cell>dbDEMC</cell><cell>hsa-mir-122</cell><cell>PMID: 27040384</cell></row><row><cell>hsa-mir-30a</cell><cell>dbDEMC</cell><cell>hsa-mir-335</cell><cell>dbDEMC</cell></row><row><cell>hsa-mir-222</cell><cell>dbDEMC</cell><cell>hsa-mir-302c</cell><cell>dbDEMC</cell></row><row><cell>hsa-mir-107</cell><cell>dbDEMC;</cell><cell>hsa-mir-302b</cell><cell>dbDEMC</cell></row><row><cell></cell><cell>miR2Disease</cell><cell></cell><cell></cell></row><row><cell>hsa-mir-30c</cell><cell>dbDEMC</cell><cell>hsa-let-7g</cell><cell>dbDEMC</cell></row><row><cell>hsa-mir-18b</cell><cell>dbDEMC</cell><cell>hsa-mir-181a</cell><cell>dbDEMC</cell></row><row><cell>hsa-mir-133b</cell><cell>dbDEMC</cell><cell>hsa-mir-491</cell><cell>dbDEMC</cell></row><row><cell>hsa-mir-127</cell><cell>dbDEMC</cell><cell>hsa-mir-32</cell><cell>dbDEMC</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>TABLE 2 |</head><label>2</label><figDesc><div><p><s>Prediction of the top 50 predicted miRNAs associated with Breast Neoplasms.</s></p></div></figDesc><table><row><cell>miRNA</cell><cell>Evidence</cell><cell>miRNA</cell><cell>Evidence</cell></row><row><cell>hsa-mir-21</cell><cell>dbDEMC;</cell><cell>hsa-mir-200c</cell><cell>dbDEMC;</cell></row><row><cell></cell><cell>miR2Diseaes;HMDD</cell><cell></cell><cell>miR2Diseaes;HMDD</cell></row><row><cell>hsa-mir-125b</cell><cell cols="2">miR2Disease;HMDD hsa-mir-221</cell><cell>dbDEMC;</cell></row><row><cell></cell><cell></cell><cell></cell><cell>miR2Diseaes;HMDD</cell></row><row><cell>hsa-mir-31</cell><cell>dbDEMC;</cell><cell>hsa-mir-708</cell><cell>HMDD</cell></row><row><cell></cell><cell>miR2Diseaes;HMDD</cell><cell></cell><cell></cell></row><row><cell>hsa-mir-99a</cell><cell>dbDEMC</cell><cell>hsa-mir-218</cell><cell>dbDEMC;HMDD</cell></row><row><cell>hsa-mir-375</cell><cell>dbDEMC;HMDD</cell><cell>hsa-mir-205</cell><cell>dbDEMC;</cell></row><row><cell></cell><cell></cell><cell></cell><cell>miR2Diseaes;HMDD</cell></row><row><cell>hsa-mir-146a</cell><cell>dbDEMC;</cell><cell>hsa-mir-629</cell><cell>dbDEMC;HMDD</cell></row><row><cell></cell><cell>miR2Diseaes;HMDD</cell><cell></cell><cell></cell></row><row><cell>hsa-mir-100</cell><cell>dbDEMC;HMDD</cell><cell>hsa-mir-101</cell><cell>dbDEMC;</cell></row><row><cell></cell><cell></cell><cell></cell><cell>miR2Diseaes;HMDD</cell></row><row><cell>hsa-mir-302b</cell><cell>dbDEMC;HMDD</cell><cell>hsa-mir-193b</cell><cell>dbDEMC;</cell></row><row><cell></cell><cell></cell><cell></cell><cell>miR2Diseaes;HMDD</cell></row><row><cell>hsa-mir-302c</cell><cell>dbDEMC;HMDD</cell><cell>hsa-mir-197</cell><cell>dbDEMC;HMDD</cell></row><row><cell>hsa-let-7a</cell><cell>dbDEMC;</cell><cell>hsa-mir-370</cell><cell>dbDEMC</cell></row><row><cell></cell><cell>miR2Diseaes;HMDD</cell><cell></cell><cell></cell></row><row><cell>hsa-mir-138</cell><cell>dbDEMC</cell><cell>hsa-mir-148a</cell><cell>dbDEMC;</cell></row><row><cell></cell><cell></cell><cell></cell><cell>miR2Diseaes;HMDD</cell></row><row><cell>hsa-mir-142</cell><cell>PMID: 26657485</cell><cell>hsa-mir-27a</cell><cell>dbDEMC;</cell></row><row><cell></cell><cell></cell><cell></cell><cell>miR2Diseaes;HMDD</cell></row><row><cell>hsa-mir-486</cell><cell>dbDEMC;HMDD</cell><cell>hsa-mir-34c</cell><cell>dbDEMC;HMDD</cell></row><row><cell>hsa-mir-7</cell><cell>dbDEMC;</cell><cell>hsa-mir-196a</cell><cell>dbDEMC;</cell></row><row><cell></cell><cell>miR2Diseaes;HMDD</cell><cell></cell><cell>miR2Diseaes;HMDD</cell></row><row><cell>hsa-mir-203</cell><cell>dbDEMC;</cell><cell>hsa-mir-503</cell><cell>dbDEMC</cell></row><row><cell></cell><cell>miR2Diseaes;HMDD</cell><cell></cell><cell></cell></row><row><cell>hsa-mir-302d</cell><cell>dbDEMC;HMDD</cell><cell>hsa-mir-34b</cell><cell>dbDEMC;HMDD</cell></row><row><cell>hsa-mir-27b</cell><cell>dbDEMC;HMDD</cell><cell>hsa-let-7g</cell><cell>dbDEMC;HMDD</cell></row><row><cell>hsa-mir-302a</cell><cell>dbDEMC;HMDD</cell><cell>hsa-mir-151a</cell><cell>HMDD</cell></row><row><cell>hsa-mir-133b</cell><cell>dbDEMC;HMDD</cell><cell>hsa-mir-34a</cell><cell>dbDEMC;HMDD</cell></row><row><cell>hsa-mir-378a</cell><cell>PMID: 26255816</cell><cell>hsa-mir-642a</cell><cell>Unfirmed</cell></row><row><cell>hsa-mir-145</cell><cell>dbDEMC;</cell><cell>hsa-mir-663a</cell><cell>HMDD</cell></row><row><cell></cell><cell>miR2Diseaes;HMDD</cell><cell></cell><cell></cell></row><row><cell>hsa-mir-9</cell><cell>dbDEMC;</cell><cell>hsa-mir-151b</cell><cell>HMDD</cell></row><row><cell></cell><cell>miR2Diseaes;HMDD</cell><cell></cell><cell></cell></row><row><cell>hsa-mir-499a</cell><cell>HMDD</cell><cell>hsa-mir-302f</cell><cell>PMID: 24982406</cell></row><row><cell>hsa-let-7b</cell><cell>dbDEMC;HMDD</cell><cell>hsa-mir-744</cell><cell>PMID: 27746365</cell></row><row><cell>hsa-mir-574</cell><cell>dbDEMC</cell><cell>hsa-mir-451a</cell><cell>HMDD</cell></row><row><cell cols="4">Here, all known associations with Breast Neoplasms had been removed. The first 25</cell></row><row><cell cols="4">miRNAs and the last 25 miRNAs were recorded in the first and third columns, respectively.</cell></row><row><cell cols="4">The second and forth columns recorded the database or literatures in PubMed that verified</cell></row><row><cell cols="4">the corresponding miRNAs associated with Breast Neoplasms.</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>TABLE 3 |</head><label>3</label><figDesc><div><p><s>Prediction of the top 50 predicted miRNAs associated with Lung Neoplasms based on known associations in HMDD v1.0.</s></p></div></figDesc><table><row><cell>miRNA</cell><cell>Evidence</cell><cell>miRNA</cell><cell>Evidence</cell></row><row><cell>hsa-mir-221</cell><cell>dbDEMC;HMDD</cell><cell>hsa-mir-7</cell><cell>miR2Disease;</cell></row><row><cell></cell><cell></cell><cell></cell><cell>HMDD</cell></row><row><cell>hsa-mir-127</cell><cell>dbDEMC;HMDD</cell><cell>hsa-mir-451</cell><cell>dbDEMC;</cell></row><row><cell></cell><cell></cell><cell></cell><cell>miR2Disease</cell></row><row><cell>hsa-mir-200b</cell><cell>dbDEMC;</cell><cell>hsa-mir-99b</cell><cell>Unfirmed</cell></row><row><cell></cell><cell>miR2Diseaes;HMDD</cell><cell></cell><cell></cell></row><row><cell>hsa-mir-16</cell><cell>dbDEMC;</cell><cell>hsa-mir-93</cell><cell>dbDEMC;</cell></row><row><cell></cell><cell>miR2Disease</cell><cell></cell><cell>miR2Diseaes;HMDD</cell></row><row><cell>hsa-mir-222</cell><cell>dbDEMC;HMDD</cell><cell>hsa-mir-18b</cell><cell>HMDD</cell></row><row><cell>hsa-mir-92b</cell><cell>PMID: 26482648</cell><cell>hsa-mir-196b</cell><cell>dbDEMC</cell></row><row><cell>hsa-mir-195</cell><cell>dbDEMC;</cell><cell>hsa-mir-100</cell><cell>dbDEMC;HMDD</cell></row><row><cell></cell><cell>miR2Disease</cell><cell></cell><cell></cell></row><row><cell>hsa-mir-106b</cell><cell>dbDEMC</cell><cell>hsa-mir-200a</cell><cell>dbDEMC;</cell></row><row><cell></cell><cell></cell><cell></cell><cell>miR2Diseaes;HMDD</cell></row><row><cell>hsa-mir-181b</cell><cell>dbDEMC;HMDD</cell><cell>hsa-mir-429</cell><cell>dbDEMC;</cell></row><row><cell></cell><cell></cell><cell></cell><cell>miR2Disease</cell></row><row><cell>hsa-mir-141</cell><cell>dbDEMC;</cell><cell>hsa-mir-98</cell><cell>dbDEMC;</cell></row><row><cell></cell><cell>miR2Disease</cell><cell></cell><cell>miR2Diseaes;HMDD</cell></row><row><cell>hsa-mir-107</cell><cell>dbDEMC;HMDD</cell><cell>hsa-mir-23b</cell><cell>dbDEMC</cell></row><row><cell>hsa-mir-25</cell><cell>dbDEMC;HMDD</cell><cell>hsa-mir-10b</cell><cell>dbDEMC;HMDD</cell></row><row><cell>hsa-mir-15a</cell><cell>dbDEMC</cell><cell>hsa-mir-372</cell><cell>PMID: 28440022</cell></row><row><cell>hsa-mir-20b</cell><cell>dbDEMC</cell><cell>hsa-mir-135a</cell><cell>dbDEMC;HMDD</cell></row><row><cell>hsa-mir-148a</cell><cell>dbDEMC;HMDD</cell><cell>hsa-mir-186</cell><cell>dbDEMC;HMDD</cell></row><row><cell>hsa-mir-15b</cell><cell>dbDEMC</cell><cell>hsa-mir-181a</cell><cell>dbDEMC;HMDD</cell></row><row><cell>hsa-mir-133a</cell><cell>dbDEMC;HMDD</cell><cell>hsa-mir-22</cell><cell>miR2Disease;</cell></row><row><cell></cell><cell></cell><cell></cell><cell>HMDD</cell></row><row><cell>hsa-mir-152</cell><cell>dbDEMC</cell><cell>hsa-mir-31</cell><cell>dbDEMC;</cell></row><row><cell></cell><cell></cell><cell></cell><cell>miR2Diseaes;HMDD</cell></row><row><cell>hsa-mir-148b</cell><cell>dbDEMC</cell><cell>hsa-mir-339</cell><cell>dbDEMC;</cell></row><row><cell></cell><cell></cell><cell></cell><cell>miR2Disease</cell></row><row><cell>hsa-mir-194</cell><cell>PMID: 27035759</cell><cell>hsa-mir-498</cell><cell>dbDEMC</cell></row><row><cell>hsa-mir-200c</cell><cell>dbDEMC;</cell><cell>hsa-mir-320</cell><cell>PMID: 27277534</cell></row><row><cell></cell><cell>miR2Diseaes;HMDD</cell><cell></cell><cell></cell></row><row><cell>hsa-mir-206</cell><cell>HMDD</cell><cell>hsa-mir-181d</cell><cell>dbDEMC</cell></row><row><cell>hsa-mir-135b</cell><cell>dbDEMC;HMDD</cell><cell>hsa-mir-130b</cell><cell>dbDEMC</cell></row><row><cell>hsa-mir-296</cell><cell>dbDEMC</cell><cell>hsa-mir-103</cell><cell>Unfirmed</cell></row><row><cell>hsa-mir-373</cell><cell>dbDEMC</cell><cell>hsa-mir-302c</cell><cell>dbDEMC</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">Frontiers in Genetics | www.frontiersin.org</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">August 2018 | Volume 9 | Article 324</note>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>AUTHOR CONTRIBUTIONS</head><p><s>YZ implemented the experiments, analyzed the result, and wrote the paper.</s><s>XC conceived the project, developed the prediction method, designed the experiments, and revised the paper.</s><s>JY analyzed the result and revised the paper.</s><s>All authors read and approved the final manuscript.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>SUPPLEMENTARY MATERIAL</head><p><s>The Supplementary Material for this article can be found online at: https://www.frontiersin.org/articles/10.3389/fgene.</s><s>2018.00324/full#supplementary-material</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conflict of Interest Statement:</head><p><s>The authors declare that the research was conducted in the absence of any commercial or financial relationships that could be construed as a potential conflict of interest.</s></p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">MicroRNA functions in animal development and human disease</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Alvarez-Garcia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">A</forename><surname>Miska</surname></persName>
+		</author>
+		<idno type="DOI">10.1242/dev.02073</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Development</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="page" from="4653" to="4662" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Development of the human cancer microRNA network</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Ambros</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bandyopadhyay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Mitra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Maulik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">Q</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/1758-907X-1-6</idno>
+		<idno>doi: 10.1186/1758-907X-1-6</idno>
+	</analytic>
+	<monogr>
+		<title level="m">microRNAs: tiny regulators with great potential</title>
+				<imprint>
+			<date type="published" when="2001">2001. 2010</date>
+			<biblScope unit="volume">107</biblScope>
+			<biblScope unit="page">6</biblScope>
+		</imprint>
+	</monogr>
+	<note>Cell</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">MicroRNAs: genomics, biogenesis, mechanism, and function</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Bartel</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0092-8674(04)00045-5</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Cell</title>
+		<imprint>
+			<biblScope unit="volume">116</biblScope>
+			<biblScope unit="page" from="281" to="297" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">A flexible and robust multi-source learning algorithm for drug repositioning</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 8th ACM International Conference on Bioinformatics</title>
+				<meeting>the 8th ACM International Conference on Bioinformatics<address><addrLine>Boston, MA</addrLine></address></meeting>
+		<imprint>
+			<publisher>ACM</publisher>
+			<date type="published" when="2017">2017</date>
+			<biblScope unit="page" from="510" to="515" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Predicting lncRNA-disease associations and constructing lncRNA functional similarity network based on the information of miRNA</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/srep13186</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Sci. Rep</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page">13186</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">RWRMDA: predicting novel human microRNA-disease associations</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">X</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yan</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">Y</forename></persName>
+		</author>
+		<idno type="DOI">10.1039/c2mb25180a</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Mol. Biosyst</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="2792" to="2798" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">The role of miRNAs in drug resistance and prognosis of breast cancer formalin-fixed paraffin-embedded tissues</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">D</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">Y</forename><surname>Shen</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.gene.2016.10.015</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Gene</title>
+		<imprint>
+			<biblScope unit="volume">595</biblScope>
+			<biblScope unit="page" from="221" to="226" />
+			<date type="published" when="2016">2016a</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">NDAMDA: network distance analysis for MiRNA-disease association prediction</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Huang</surname></persName>
+		</author>
+		<idno type="DOI">10.1111/jcmm.13583</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Cell. Mol. Med</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="page" from="2884" to="2895" />
+			<date type="published" when="2018">2018a</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">RKNNMDA: ranking-based KNN for MiRNA-Disease Association prediction</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><forename type="middle">F</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yan</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">Y</forename></persName>
+		</author>
+		<idno type="DOI">10.1080/15476286.2017.1312226</idno>
+	</analytic>
+	<monogr>
+		<title level="j">RNA Biol</title>
+		<imprint>
+			<biblScope unit="page" from="952" to="962" />
+			<date type="published" when="2017">2017a</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">MicroRNAs and complex diseases: from experimental results to computational models</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><forename type="middle">H</forename><surname>You</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/bib/bbx130</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Brief. Bioinformatics</title>
+		<imprint>
+			<date type="published" when="2017">2017b</date>
+		</imprint>
+	</monogr>
+	<note>Epub ahead of print</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">WBSMDA: within and between score for MiRNA-Disease Association prediction</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">C</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><forename type="middle">H</forename><surname>You</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Deng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Liu</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/srep21106</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Sci. Rep</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page">21106</biblScope>
+			<date type="published" when="2016">2016b</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">HGIMDA: heterogeneous graph inference for miRNA-Disease Association prediction</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">C</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><forename type="middle">H</forename><surname>You</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">A</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yan</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">Y</forename></persName>
+		</author>
+		<idno type="DOI">10.18632/oncotarget.11251</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Oncotarget</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="65257" to="65269" />
+			<date type="published" when="2016">2016c</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Semi-supervised learning for potential human microRNA-disease associations inference</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Yan</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">Y</forename></persName>
+		</author>
+		<idno type="DOI">10.1038/srep05501</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Sci. Rep</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page">5501</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">GRMDA: graph regression for MiRNA-Disease Association Prediction</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">N</forename><surname>Guan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">Q</forename><surname>Li</surname></persName>
+		</author>
+		<idno type="DOI">10.3389/fphys.2018.00092</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Front. Physiol</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page">92</biblScope>
+			<date type="published" when="2018">2018b</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Antisense inhibition of human miRNAs and indications for an involvement of miRNA in cell growth and apoptosis</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">W</forename><surname>Byrom</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Shelton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">P</forename><surname>Ford</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/nar/gki200</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="1290" to="1297" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Esophageal cancer: results of an American College of Surgeons Patient Care Evaluation Study</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Daly</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">A</forename><surname>Fry</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Little</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Winchester</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">F</forename><surname>Mckee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">K</forename><surname>Stewart</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S1072-7515(00)00238-6</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Am. Coll. Surg</title>
+		<imprint>
+			<biblScope unit="volume">190</biblScope>
+			<biblScope unit="page" from="562" to="572" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">MicroRNAs in esophageal cancer (review)</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Yin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Xia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Tang</surname></persName>
+		</author>
+		<idno type="DOI">10.3892/mmr.2012.975</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Mol. Med. Rep</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page" from="459" to="465" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Symmetric nonnegative matrix factorization: algorithms and applications to probabilistic clustering</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Zdunek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Cichocki</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TNN.2011.2172457</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Neural Netw</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="page" from="2117" to="2131" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">miR-378a-3p modulates tamoxifen sensitivity in breast cancer MCF-7 cells through targeting GOLT1A</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Ikeda</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Horie-Inoue</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Ueno</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Suzuki</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Sato</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Shigekawa</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/srep13170</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Sci. Rep</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page">13170</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Prioritization of disease microRNAs through a human phenome-microRNAome network</title>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Hao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Juan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Teng</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/1752-0509-4-S1-S2</idno>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Syst. Biol</title>
+		<imprint>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page">S2</biblScope>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+	<note>Suppl. 1</note>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Predicting human microRNA-disease associations based on support vector machine</title>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Jin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Wang</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename></persName>
+		</author>
+		<idno type="DOI">10.1504/IJDMB.2013.056078</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Data Min. Bioinform</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="282" to="293" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">miR2Disease: a manually curated database for microRNA deregulation in human disease</title>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Hao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Juan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Teng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/nar/gkn714</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="page" from="D98" to="D104" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Serum microRNA-218 is a potential biomarker for esophageal cancer</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Zeng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Jiang</surname></persName>
+		</author>
+		<idno type="DOI">10.3233/CBM-150480</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Cancer Biomark</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="page" from="381" to="389" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">MicroRNA signature for HER2-positive breast and gastric cancer</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">S</forename><surname>Kang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">G</forename><surname>Jang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">Y</forename><surname>Kwon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">S</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">E</forename><surname>Green</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Anticancer Res</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="3807" to="3810" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Encountering microRNAs in cell fate signaling</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Karp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ambros</forename></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename></persName>
+		</author>
+		<idno type="DOI">10.1126/science.1121566</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">310</biblScope>
+			<biblScope unit="page" from="1288" to="1289" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+	<note>Developmental biology</note>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Breast cancer: magnitude of the problem and descriptive epidemiology</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Kelsey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">L</forename><surname>Horn-Ross</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/oxfordjournals.epirev.a036118</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Epidemiol. Rev</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="page" from="7" to="16" />
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Esophageal cancer-the five year survivors</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">R</forename><surname>Grobmyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Smith</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Ben-David</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Ang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">B</forename><surname>Vogel</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/jso.21784</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Surg. Oncol</title>
+		<imprint>
+			<biblScope unit="volume">103</biblScope>
+			<biblScope unit="page" from="179" to="183" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">miRBase: annotating high confidence microRNAs using deep sequencing data</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kozomara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Griffiths-Jones</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/nar/gkt1181</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="page" from="D68" to="D73" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Overexpression of circulating miRNA-21 and miRNA-146a in plasma samples of breast cancer patients</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Keerthana</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Pazhanimuthu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Perumal</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Indian J. Bioche. Biophys</title>
+		<imprint>
+			<biblScope unit="volume">50</biblScope>
+			<biblScope unit="page" from="210" to="214" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">MicroRNA-320 was downregulated in non-small cell lung cancer and inhibited cell proliferation, migration and invasion by targeting fatty acid synthase</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Lei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Fan</surname></persName>
+		</author>
+		<idno type="DOI">10.3892/mmr.2016.5370</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Mol. Med. Rep</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="page" from="1255" to="1262" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">MCMDA: matrix completion for MiRNA-disease association prediction</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">Q</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><forename type="middle">H</forename><surname>Rong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">Y</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><forename type="middle">H</forename><surname>You</surname></persName>
+		</author>
+		<idno type="DOI">10.18632/oncotarget.15061</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Oncotarget</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page" from="21187" to="21199" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">HMDD v2.0: a database for experimentally supported human microRNA and disease associations</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Qiu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Tu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Geng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Jiang</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/nar/gkt1023</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="page" from="D1070" to="D1074" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">L</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Wei</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+	<note>Research progress of KRAS mutation in non-small cell lung cancer</note>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title/>
+		<idno type="DOI">10.3779/j.issn.1009-3419.2018.05.11</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Zhongguo Fei Ai Za Zhi</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="page" from="419" to="424" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">How microRNAs control cell division, differentiation and death</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">A</forename><surname>Miska</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.gde.2005.08.005</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Curr. Opin. Genet. Dev</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="page" from="563" to="568" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Protein-driven inference of miRNA-disease associations</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Mørk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Pletscher-Frankild</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Palleja Caro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Gorodkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">J</forename><surname>Jensen</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/bioinformatics/btt677</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">30</biblScope>
+			<biblScope unit="page" from="392" to="397" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<title level="m" type="main">Prediction of miRNA-disease associations with a vector space model</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Pasquier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Gardès</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/srep27036</idno>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+	<note type="report_type">Sci. Rep. 627036.</note>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">microRNA miR-142-3p inhibits breast cancer Cell invasiveness by synchronous targeting of WASL, integrin Alpha, V., and additional Cytoskeletal elements</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Schwickert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Weghake</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Brüggemann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Engbers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">F</forename><surname>Brinkmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Kemper</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0143993</idno>
+	</analytic>
+	<monogr>
+		<title level="j">PLoS ONE</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page">e0143993</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">miR-127 promotes EMT and stem-like traits in lung cancer through a feed-forward regulatory loop</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Zhuang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/onc.2016.332</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Oncogene</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="page" from="1631" to="1643" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Cancer statistics</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">L</forename><surname>Siegel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">D</forename><surname>Miller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Jemal</surname></persName>
+		</author>
+		<idno type="DOI">10.3322/caac.21442</idno>
+	</analytic>
+	<monogr>
+		<title level="j">CA Cancer J. Clin</title>
+		<imprint>
+			<biblScope unit="volume">68</biblScope>
+			<biblScope unit="page" from="7" to="30" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Breast cancer: epidemiology and etiology</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Tao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Zhao</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s12013-014-0459-6</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Cell Biochem. Biophys</title>
+		<imprint>
+			<biblScope unit="volume">72</biblScope>
+			<biblScope unit="page" from="333" to="338" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Gaussian interaction profile kernels for predicting drug-target interaction</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Van Laarhoven</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">B</forename><surname>Nabuurs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Marchiori</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/bioinformatics/btr500</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="page" from="3036" to="3043" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Inferring the human microRNA functional similarity and functional network based on microRNA-associated diseases</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Cui</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/bioinformatics/btq241</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="page" from="1644" to="1650" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">miR-485-5p suppresses breast cancer progression and chemosensitivity by targeting survivin</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">R</forename><surname>Cai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Chi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">R</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">X</forename><surname>Chen</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.bbrc.2018.04.129</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biochem. Biophys. Res. Commun</title>
+		<imprint>
+			<biblScope unit="volume">50</biblScope>
+			<biblScope unit="page" from="48" to="54" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">MiR-372-3p promotes cell growth and metastasis by targeting FGF9 in lung squamous cell carcinoma</title>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Tian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Jiang</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/cam4.1026</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Cancer Med</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page" from="1323" to="1330" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Salivary microRNAs as promising biomarkers for detection of esophageal cancer</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Xie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Yang</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0057502</idno>
+	</analytic>
+	<monogr>
+		<title level="j">PLoS ONE</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">e57502</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">MicroRNA-876-5p inhibits epithelial-mesenchymal transition and metastasis of hepatocellular carcinoma by targeting BCL6 corepressor like 1</title>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Yin</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.biopha.2018.04.037</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Biomed. Pharmacother</title>
+		<imprint>
+			<biblScope unit="volume">103</biblScope>
+			<biblScope unit="page" from="645" to="652" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Prediction of microRNAs associated with human diseases based on weighted k most similar neighbors</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Xuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ding</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/annotation/a076115e-dd8c-4da7-989d-c1174a8cd31e</idno>
+	</analytic>
+	<monogr>
+		<title level="j">PLoS ONE</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">e70204</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">Prediction of potential disease-associated microRNAs based on random walk</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Xuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Han</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Guo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhong</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/bioinformatics/btv039</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="page" from="1805" to="1815" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">dbDEMC: a database of differentially expressed miRNAs in human cancers</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Gao</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/1471-2164-11-S4-S5</idno>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Genomics</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page">S5</biblScope>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+	<note>Suppl. 4</note>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Large-scale prediction of microRNA-disease associations by combinatorial prioritization algorithm</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Yu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Lu</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/srep43792</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Sci. Rep</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page">43792</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">S</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><forename type="middle">J</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">Y</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">H</forename><surname>Huang</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Tanshinone A inhibits human esophageal cancer cell growth through miR-122-mediated PKM2 down-regulation</title>
+		<idno type="DOI">10.1016/j.abb.2016.03.031</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Arch. Biochem. Biophys</title>
+		<imprint>
+			<biblScope unit="volume">598</biblScope>
+			<biblScope unit="page" from="50" to="56" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<monogr>
+		<title level="m" type="main">Mechanism of long non-coding RNA-metastasis associated lung adenocarcinoma transcript 1 induced invasion and metastasis of esophageal cancer</title>
+		<author>
+			<persName><forename type="first">Q</forename><forename type="middle">Q</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">H</forename><surname>Cui</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">Z</forename><surname>Kou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><forename type="middle">J</forename><surname>Cao</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note>cell EC-109</note>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title/>
+		<idno type="DOI">10.3760/cma.j.issn.0253-3766.2017.06.002</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Zhonghua Zhong Liu Za Zhi</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="page" from="405" to="411" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">Prediction of microRNA-disease associations based on distance correlation set</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Kuang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Ping</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Xuan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Pei</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/s12859-018-2146-x</idno>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">19</biblScope>
+			<biblScope unit="page">141</biblScope>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">The regulatory and predictive functions of miR-17 and miR-92 families on cisplatin resistance of non-small cell lung cancer</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Fu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Liao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Dai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Pan</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/s12885-015-1713-z</idno>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Cancer</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="page">731</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">MicroRNA-194 restrains the cell progression of non-small cell lung cancer by targeting human nuclear distribution protein C</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Di</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Shi</surname></persName>
+		</author>
+		<idno type="DOI">10.3892/or.2016.4708</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Oncol. Rep</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page" from="3435" to="3444" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b58">
+	<analytic>
+		<title level="a" type="main">Identification of a serum microRNA expression signature for detection of lung cancer, involving miR-23b, miR-221, miR-148b and miR-423-3p</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wan</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.lungcan.2017.10.002</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Lung Cancer</title>
+		<imprint>
+			<biblScope unit="volume">114</biblScope>
+			<biblScope unit="page" from="6" to="11" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

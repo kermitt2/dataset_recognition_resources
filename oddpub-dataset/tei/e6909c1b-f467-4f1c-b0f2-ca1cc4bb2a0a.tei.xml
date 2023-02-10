@@ -1,0 +1,1082 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Automated Exploration of Free Energy Landscapes Based on Umbrella Integration</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018-03-21">21 March 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Yuki</forename><surname>Mitsuta</surname></persName>
+							<email>mitsutay13@chem.sci.osaka-u.ac.jp</email>
+							<affiliation key="aff0">
+								<orgName type="department">Graduate School of Science</orgName>
+								<orgName type="institution">Osaka University</orgName>
+								<address>
+									<postCode>565-0871</postCode>
+									<settlement>Osaka</settlement>
+									<country key="JP">Japan</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Takashi</forename><surname>Kawakami</surname></persName>
+							<email>kawakami@chem.sci.osaka-u.ac.jp</email>
+							<affiliation key="aff0">
+								<orgName type="department">Graduate School of Science</orgName>
+								<orgName type="institution">Osaka University</orgName>
+								<address>
+									<postCode>565-0871</postCode>
+									<settlement>Osaka</settlement>
+									<country key="JP">Japan</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff0">
+								<orgName type="department">Graduate School of Science</orgName>
+								<orgName type="institution">Osaka University</orgName>
+								<address>
+									<postCode>565-0871</postCode>
+									<settlement>Osaka</settlement>
+									<country key="JP">Japan</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Mitsutaka</forename><surname>Okumura</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Graduate School of Science</orgName>
+								<orgName type="institution">Osaka University</orgName>
+								<address>
+									<postCode>565-0871</postCode>
+									<settlement>Osaka</settlement>
+									<country key="JP">Japan</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff0">
+								<orgName type="department">Graduate School of Science</orgName>
+								<orgName type="institution">Osaka University</orgName>
+								<address>
+									<postCode>565-0871</postCode>
+									<settlement>Osaka</settlement>
+									<country key="JP">Japan</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Shusuke</forename><surname>Yamanaka</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Graduate School of Science</orgName>
+								<orgName type="institution">Osaka University</orgName>
+								<address>
+									<postCode>565-0871</postCode>
+									<settlement>Osaka</settlement>
+									<country key="JP">Japan</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff0">
+								<orgName type="department">Graduate School of Science</orgName>
+								<orgName type="institution">Osaka University</orgName>
+								<address>
+									<postCode>565-0871</postCode>
+									<settlement>Osaka</settlement>
+									<country key="JP">Japan</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Automated Exploration of Free Energy Landscapes Based on Umbrella Integration</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018-03-21">21 March 2018</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">D3F7332CD204F0A1951A95F6284BD610</idno>
+					<idno type="DOI">10.3390/ijms19040937</idno>
+					<note type="submission">Received: 28 February 2018; Accepted: 21 March 2018;</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:15+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>automated search</term>
+					<term>potential of mean force</term>
+					<term>umbrella integration</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>We present a new approach for automated exploration of free energy landscapes on the basis of the umbrella integration (UI) method.</s><s>The method to search points in the landscape relies on the normal distributions and gradients of the potential of mean force (PMF) obtained from UI calculations.</s><s>We applied this approach to the alanine dipeptide in solution and demonstrated that the equilibrium and the transition states were efficiently found in the ascending order of the PMF values.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p><s>Potential of mean force (PMF) is a central concept <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b1">2]</ref> for chemistry in condensed matter systems, which is given by A</s></p><formula xml:id="formula_0">(ξ) = −k B T ln Q(ξ)<label>(1)</label></formula><p><s>at constant temperature T (K), where k B is the Boltzmann constant and Q(ξ) is the effective partition function (or the configuration integral) of the canonical ensemble with fixing the number of particles (N).</s><s>Q(ξ) is defined as,</s></p><formula xml:id="formula_1">Q(ξ) = 1 h 3N N! dr N dp N δ( R(r N ) − ξ) exp[−H(r N , p N )/k B T]<label>(2)</label></formula><p><s>Here, H r N , p N is the Hamiltonian of the target system and R r N is the projection of the coordinate, r N , into the reaction coordinate.</s><s>PMF can be considered as effective free energy in the reaction coordination because we can straightforwardly obtain Helmholtz free energy by integrating Q(ξ) over ξ.</s><s>In fact, the profile of the PMF along the reaction coordination is often called the "free energy landscape" <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b1">2]</ref>.</s><s>In actual calculations, molecular dynamics (MD) calculations are performed to yield the probability distribution for the reaction coordination,</s></p><formula xml:id="formula_2">P(ξ) ∝ dr N dp N δ R r N − ξ exp −H r N , p N /k B T ∝ dr N δ R r N − ξ exp −V r N /k B T<label>(3)</label></formula><p><s>where V(r N ) is the potential term including inter-particle interactions in the Hamiltonian.</s><s>Thus if we obtain the probability distribution, the PMF can be estimated via the relation,</s></p><formula xml:id="formula_3">A(ξ) = −k B T ln P(ξ).<label>(4)</label></formula><p><s>However, as is known, most chemical events such as chemical reactions and isomerization of molecules involve unstable and transient states, like transition states for which the sampling with straightforward MD calculations is difficult because the probability of the state specified by ξ exponentially decays as presented in the integral function at the rightest side of Equation <ref type="bibr" target="#b3">(3)</ref>.</s></p><p><s>The theoretical researchers in this field have proposed various methods to prevent MD trajectories from being trapped in a local minimum and to sample "rare" states.</s><s>One of such methods is the elaborate generalized ensemble approaches, such as the replica exchange method <ref type="bibr" target="#b3">[3]</ref> and the multicanonical ensemble method <ref type="bibr" target="#b4">[4,</ref><ref type="bibr" target="#b5">5]</ref>.</s><s>As this type of method does not require to specify any reaction coordinate, it is useful for thoroughly searching global free energy minima, say, in protein holding problems, although it takes huge computational costs in general.</s><s>Another class of methods, called thermodynamic integration <ref type="bibr" target="#b6">[6,</ref><ref type="bibr" target="#b7">7]</ref> or blue moon sampling <ref type="bibr" target="#b8">[8,</ref><ref type="bibr" target="#b9">9]</ref>, is a more straightforward approach.</s><s>In these types of methods, the free energy difference between ξ 1 and ξ 2 states, is written by,</s></p><formula xml:id="formula_4">A(ξ 1 ) − A(ξ 2 ) = ξ 2 ξ 1 dξ ∂A(ξ) ∂ξ = ξ 2 ξ 1 dξ ∂V r N ∂ξ ξ (5)</formula><p><s>Here, ξ is the ensemble average over the coordinates for the fixing ξ, and so ∂V(r N )</s></p><p><s>∂ξ ξ is a mean force along ξ.</s><s>Equation <ref type="bibr" target="#b5">(5)</ref> implies that the PMF can also be obtained via an integration of the mean forces over ξ, each of which is obtained with the MD calculation for a fixed ξ.</s><s>There is another type of method, called "umbrella sampling (US)", in which ξ is not fixed but restrained by adding a bias potential (or bias potentials) to sample the whole region along the reaction coordinate <ref type="bibr" target="#b10">[10]</ref><ref type="bibr" target="#b11">[11]</ref><ref type="bibr" target="#b12">[12]</ref><ref type="bibr" target="#b13">[13]</ref><ref type="bibr" target="#b14">[14]</ref><ref type="bibr" target="#b15">[15]</ref>.</s><s>The standard strategy, termed "stratification", among many versions of the US methods is to split the whole region of ξ into several windows and to use a bias potential to sample all the windows including rare states along ξ.</s><s>Then, gathering the local probability histograms, the unbiased Boltzmann statistical probability is yielded by a statistical manipulation.</s><s>A popular choice of the bias potential and the statistical manipulation are the harmonic bias and the weighted histogram analysis (WHAM) method <ref type="bibr" target="#b16">[16]</ref>, respectively, of which the combination, abbreviated as "US + WHAM" hereafter, is known as one of the standard stratified US methods, and is, hence, also employed in this study (see the following sections for details).</s><s>The essential point of the stratified US method is how to determine windows and biases.</s><s>A preferable choice is to cover the whole range along the reaction coordinate, ξ, in fewer windows (ideally one window) and to choose a bias, ω(ξ) = −A(ξ) to lead to a uniform sampling along ξ.</s><s>An approach that achieves this goal is the adaptive biasing force (ABF) method <ref type="bibr" target="#b17">[17]</ref><ref type="bibr" target="#b18">[18]</ref><ref type="bibr" target="#b19">[19]</ref>, in which one estimates local biasing forces (not bias potentials) and updates those during the simulation run.</s><s>Then, the PMF can be estimated with a thermodynamic integration given by Equation <ref type="bibr" target="#b5">(5)</ref>.</s><s>In this context, metadynamics is a method similar to the ABF method, which aims at the same goal, i.e., achieving ω(ξ) = −A(ξ) and a uniform sampling.</s><s>The different point is that the metadynamics method flattens the PMF surface with the bias (i.e., ω(ξ) = −A(ξ)) by dropping Gaussian functions along ξ during the simulation process to prevent the system from lingering in a specific local minimum <ref type="bibr" target="#b20">[20,</ref><ref type="bibr" target="#b21">21]</ref>.</s><s>For more details of ABF, metadynamics, and other related methods that use updating biases, see chapter 4 in ref. <ref type="bibr" target="#b1">[2]</ref>.</s><s>What we would like to emphasize here is that the convergence of the ABF and related methods relies on the nearly stochastic diffusion as the potentials are supposed to be nearly flattened during the simulation runs.</s><s>As the dimension of the reaction coordinate increases, the computational time increases rapidly.</s></p><p><s>Of course, the stratified US method with the predetermined bias potential such as the US + WHAM method also suffers from the same difficulty for high-dimensional problems if we intend to obtain the PMF over all the range of the reaction coordinates.</s><s>What we need is an efficient and systematic exploration approach for many-dimensional problems.</s><s>Recently, Kästner and his coworkers proposed the umbrella integration (UI) method, by which the gradients and the Hessians of the unbiased PMF, not the unbiased probability, are estimated <ref type="bibr" target="#b6">[6,</ref><ref type="bibr" target="#b22">[22]</ref><ref type="bibr" target="#b23">[23]</ref><ref type="bibr" target="#b24">[24]</ref><ref type="bibr" target="#b25">[25]</ref>.</s><s>This enables us to find minimum free-energy paths <ref type="bibr" target="#b25">[25]</ref> without describing the whole landscape of the PMF.</s><s>On the other hand, Wojtas-Niziurski et al. proposed an automated search method based on the US + WHAM method, by which they describe not only the minimum free-energy paths, but also the local PMF landscape using ongoing sampling data <ref type="bibr" target="#b14">[14]</ref>.</s><s>They exploit the local PMF starting from the US + WHAM calculation for several localized windows and extend the region to describe the PMF according to the free energy landscape obtained at the previous step.</s><s>In fact, they showed that the essential characteristics of the PMF landscape can be described more efficiently than the usual US + WHAM method for both the conformational space of Met-enkephalin and ion permeation in the KcsA potassium channel.</s><s>This approach is a powerful and useful method for automated search of the free energy surface.</s><s>In this work, we employ a new automated approach, in which we exploit the gradients obtained with the umbrella integration method, instead of the local PMF obtained from the previous runs.</s><s>The advantage of our method is that it is based on the gradients yielded by the UI method, which are expected to guide us to explore the landscape efficiently as in the case of the method to find minimum free-energy paths that was proposed by Kästner <ref type="bibr" target="#b25">[25]</ref>.</s><s>In this study, we formulate and implement our automated exploration approach based on the UI method.</s><s>We applied the method to the free-energy landscape of the alanine dipeptide system and showed that, in fact, we can start from one point in the reaction coordinate and extend the explored region efficiently.</s><s>We examined the efficiency of our method by comparing among the on-going free energy landscapes and those obtained with the usual US + WHAM scheme.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">Theoretical Method</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.">Umbrella Integration Method</head><p><s>First, we will briefly describe the umbrella integration (UI) method.</s><s>The UI method uses bias potentials to sample relatively unstable regions in the free energy landscapes.</s><s>Here, we employed a harmonic bias,</s></p><formula xml:id="formula_5">ω i (ξ) = 1 2 (ξ − ξ re f i ) t K i (ξ − ξ re f i )<label>(6)</label></formula><p><s>for the MD calculation at each (i-th) window.</s><s>Here, ξ is the reaction coordinate and ξ re f i is the center of the bias potential.</s><s>K i is the force constant matrix having off-diagonal (non-zero) elements in general.</s><s>However, we assume that K i is a diagonal matrix throughout this study (see Equation (A11)).</s><s>By the MD run for each window, we obtain the biased distribution, P b i (ξ).</s><s>Hereafter, we use the superscripts, "b" and "u", for the properties which are, respectively, obtained from a simulation with the biased potential given by Equation ( <ref type="formula" target="#formula_5">6</ref>) and processed with some manipulation to unbias the property.</s><s>Using P b i (ξ), we can calculate unbiased free energy,</s></p><formula xml:id="formula_6">A u i (ξ) = − 1 β ln P b i (ξ) − ω i (ξ) + F i ,<label>(7)</label></formula><p><s>where F i is a window-dependent term.</s><s>The weighted histogram analysis method (WHAM), which is a standard approach to obtain the unbiased free-energy from the calculated biased distributions, calculates {F i } iteratively by minimizing the statistical error of unbiased distribution <ref type="bibr" target="#b16">[16]</ref>.</s></p><p><s>In the umbrella integration (UI) scheme <ref type="bibr" target="#b22">[22]</ref><ref type="bibr" target="#b23">[23]</ref><ref type="bibr" target="#b24">[24]</ref><ref type="bibr" target="#b25">[25]</ref>, we start from the gradient of the unbiased free energy that is straightforwardly obtained from Equation <ref type="bibr" target="#b7">(7)</ref>,</s></p><formula xml:id="formula_7">∇A u i (ξ) = − 1 β ∇ ln P b i (ξ) − ∇ω i (ξ),<label>(8)</label></formula><p><s>An important point of the UI scheme is that the probability distribution for each window is approximated as a normal distribution,</s></p><formula xml:id="formula_8">P b i (ξ) ∼ = 1 (2π) n/2 |C i | 1/2 exp − 1 2 ξ − ξ b i t C −1 i ξ − ξ b i ,<label>(9)</label></formula><p><s>which is equivalent to the second order approximation of the cumulant expansion.</s><s>Here, C i and ξ b i are the covariance matrix and the mean value (the average point) of ξ, respectively, which are obtained from a simulation for the i-th window.</s><s>Substituting Equations ( <ref type="formula" target="#formula_5">6</ref>) and (9) into Equation ( <ref type="formula" target="#formula_7">8</ref>), we have <ref type="bibr" target="#b10">(10)</ref> Note that this is the gradient of the free-energy obtained for the i-th window.</s><s>In order to combine these gradients, we have to take a weighted average over windows as,</s></p><formula xml:id="formula_9">g u i (ξ) ≡ ∇A u i (ξ) = C −1 i 1 β (ξ − ξ b i ) − K i ξ − ξ ref</formula><formula xml:id="formula_10">∇A u (ξ) ≡ g u (ξ) = ∑ i p i (ξ)g u i (ξ)<label>(11)</label></formula><p><s>Here, p i (ξ) is the normalized weight,</s></p><formula xml:id="formula_11">p i (ξ) = N i P b i (ξ) ∑ j N j P b j (ξ)<label>(12)</label></formula><p><s>where N i (N j ) is the number of sampling points for the i-th (j-th) window.</s><s>The unbiased free-energy landscape, i.e., A u (ξ) can be obtained by numerical integration of the gradients [13].</s><s>However, we should note that in our approach, the UI method is used only for searching the points in the landscape and the WHAM method is used for estimating A u (ξ).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.">A New Automated Exploration Approach</head><p><s>In this section, we will describe a new automated exploration approach based on the umbrella integration scheme.</s><s>The computational process starts from a specific window in the reaction coordinate space, where we perform an umbrella integration (UI) calculation described in the above section.</s><s>If we have already many points that were already sampled and exist in the border of the sampled region, we choose the one which has the lowest PMF value.</s><s>We then create new points around the sampled point and choose one among them for a new window.</s><s>Throughout the procedure, two types of points appear, i.e., the point for which we already sampled and the point that is spawned from the sampled point.</s><s>We call the former the "parent point" and the latter the "child point", respectively.</s><s>Once the child point is determined, we perform an UI calculation for the window.</s><s>We prepare a list for the sampled windows, in which we store information of the distributions calculated for the windows.</s><s>The list also includes information of whether or not each window exists on the border of the sampled region so that it is able to be a "parent point".</s><s>The procedure can be summarized as follows:</s></p><p><s>(0) Start from an umbrella integration (UI) calculation for a specific point in the reaction coordinate space.</s><s>(1) Choose a "parent point", which has the lowest PMF value among the points that were already sampled and exist in the border region in the reaction coordinate space.</s><s>(2) Create new points around the parent point chosen in step (1).</s></p><p><s>(3) Prune the points created in step <ref type="bibr" target="#b1">(2)</ref> and if all points are rejected, the parent point is judged to not be in the border region.</s><s>Then go back to step (1).</s><s>(4) Choose the "child point" from among the points remaining in step (3).</s><s><ref type="bibr" target="#b5">(5)</ref> We perform an UI calculation of the new window for the child point chosen in step (4) and added information of the distribution for the window to the list of the windows.</s><s>Then, go back to step <ref type="bibr" target="#b0">(1)</ref>.</s></p><p><s>The condition to terminate the computational process depends on the purpose of the computation.</s><s>If we intend to cover the whole region of the reaction coordinate space, which is the case similar to the usual US + WHAM procedure, the computation is complete when we explore almost all regions of the space so that we cannot create points any further in step <ref type="bibr" target="#b1">(2)</ref>.</s><s>In contrast, if we would like to explore the region where the free energy is lower than a threshold (to avoid to search the region that is unrealistic from the viewpoint of kinetics), we set a threshold of the free energy in advance, and we stop the computation process when we cannot find any point that has a free energy lower than the threshold in step <ref type="bibr" target="#b0">(1)</ref>.</s></p><p><s>Especially in the latter case, the efficiency of the search strongly depends on where the first window is set at step (0).</s><s>To avoid searching meaningless regions where there are no important equilibrium points and transition states, it is preferable to start from one of the lowest minima in the PMF landscape.</s><s>There are several choices of the initial configuration.</s><s>A simple choice is the optimized geometry of the target molecule(s) obtained either at molecular mechanics or at ab initio quantum mechanics level in vacuum.</s><s>For almost all cases, this is an appropriate choice, because such optimized geometries are good starting points to one of the minima in the PMF landscape.</s><s>If the thermal fluctuation is expected to considerably affect the stable geometries of the target molecule(s), we should perform a MD calculation of the molecule(s) with environmental molecules at the finite temperature and select the representative structure of the target molecule(s) from the trajectory.</s><s>Of course, if there is a reliable equilibrium geometry reported in a previous study, we can start the geometry.</s></p><p><s>Next, we will describe the details of steps ( <ref type="formula" target="#formula_0">1</ref>)-( <ref type="formula">5</ref>).</s><s>For simplicity, we assume that the reactive coordinate space is two-dimensional in the following discussion.</s><s>However, the algorithm can be straightforwardly extended to the multidimensional cases in general.</s></p><p><s>Figure <ref type="figure" target="#fig_0">1</ref> shows a schematic illustration of step <ref type="bibr" target="#b0">(1)</ref>.</s><s>Now, we consider the case where there are many sampled points, which are shown as the black circles and the black squares.</s><s>If there is only one sampled point just after step (0), step (1) is skipped.</s><s>The black circles shown in Figure <ref type="figure" target="#fig_7">1a</ref> are the positions of the averages (the centers) of the distribution calculated for the corresponding window that lie in the border region, while the black squares are also the sampled points but do not lie in the border region.</s><s>How to judge whether the point lies in the border or not will be described in details in step <ref type="bibr" target="#b3">(3)</ref>.</s><s>For every point, we have the temporal PMF values estimated with using WHAM.</s><s>We then choose the point that has the lowest PMF value among these black circles, which is encircled by a solid circle, as shown in Figure <ref type="figure" target="#fig_7">1b</ref>.</s><s>This will become the parent point for step <ref type="bibr" target="#b1">(2)</ref>.</s><s>Next, we will describe the details of steps ( <ref type="formula" target="#formula_0">1</ref>)-( <ref type="formula">5</ref>).</s><s>For simplicity, we assume that the reactive coordinate space is two-dimensional in the following discussion.</s><s>However, the algorithm can be straightforwardly extended to the multidimensional cases in general.</s></p><formula xml:id="formula_12">Int</formula><p><s>Figure <ref type="figure" target="#fig_0">1</ref> shows a schematic illustration of step <ref type="bibr" target="#b0">(1)</ref>.</s><s>Now, we consider the case where there are many sampled points, which are shown as the black circles and the black squares.</s><s>If there is only one sampled point just after step (0), step (1) is skipped.</s><s>The black circles shown in Figure <ref type="figure" target="#fig_7">1a</ref> are the positions of the averages (the centers) of the distribution calculated for the corresponding window that lie in the border region, while the black squares are also the sampled points but do not lie in the border region.</s><s>How to judge whether the point lies in the border or not will be described in details in step <ref type="bibr" target="#b3">(3)</ref>.</s><s>For every point, we have the temporal PMF values estimated with using WHAM.</s><s>We then choose the point that has the lowest PMF value among these black circles, which is encircled by a solid circle, as shown in Figure <ref type="figure" target="#fig_7">1b</ref>.</s><s>This will become the parent point for step <ref type="bibr" target="#b1">(2)</ref>.</s><s>The black circle point having the lowest PMF value is chosen as the parent point, around which new points will be created in step <ref type="bibr" target="#b1">(2)</ref>.</s><s>Now, we proceed to step <ref type="bibr" target="#b1">(2)</ref>.</s><s>At the present stage, we assume that a UI calculation has been already done for the parent point we choose in step <ref type="bibr" target="#b0">(1)</ref>.</s><s>Using the resultant biased distribution, which can be rewritten by diagonalizing the matrix, C −1 , as</s></p><formula xml:id="formula_13">( ) ≅ 1 (2 ) / (∏ ( ) ) / exp − 1 2 ( − 〈 〉 ) ( − 〈 〉 )<label>(13)</label></formula><p><s>we form an ellipsoid, of which the center is placed on the average point of the distribution ( ), i.e., 〈 〉 , in order to set next windows.</s><s>To explore the free-energy landscape efficiently, it would be better to rely on the metric based on the obtained distributions, not on the actual reaction coordinate, because the former reflects the feature of the landscape but the later does not.</s><s>In the area around the center of the anisotropic normal distribution in the many dimensional space, the Mahalanobis metric <ref type="bibr" target="#b26">[26]</ref> becomes an excellent measure to define the distance.</s><s>Thus, we determined the directions of axes and the radiuses of the ellipsoid on the basis of the Mahalanobis metric of the multidimensional normal distribution, which are given by Now, we proceed to step <ref type="bibr" target="#b1">(2)</ref>.</s><s>At the present stage, we assume that a UI calculation has been already done for the parent point we choose in step <ref type="bibr" target="#b0">(1)</ref>.</s><s>Using the resultant biased distribution, which can be rewritten by diagonalizing the matrix, C −1 , as</s></p><formula xml:id="formula_14">P b i (x) ∼ = 1 (2π) n/2 (∏ j (σ i j ) 2 ) 1/2 exp   − 1 2 ∑ j (x j − ξ j b i ) t (x j − ξ j b i ) σ 2 j  <label>(13)</label></formula><p><s>we form an ellipsoid, of which the center is placed on the average point of the distribution P b i (ξ), i.e., ξ b i , in order to set next windows.</s><s>To explore the free-energy landscape efficiently, it would be better to rely on the metric based on the obtained distributions, not on the actual reaction coordinate, because the former reflects the feature of the landscape but the later does not.</s><s>In the area around the center of the anisotropic normal distribution in the many dimensional space, the Mahalanobis metric <ref type="bibr" target="#b26">[26]</ref> becomes an excellent measure to define the distance.</s><s>Thus, we determined the directions of axes e j and the radiuses of the ellipsoid on the basis of the Mahalanobis metric of the multidimensional normal distribution, which are given by</s></p><formula xml:id="formula_15">e j = x j x j p<label>(14)</label></formula><p><s>and</s></p><formula xml:id="formula_16">R j = 3σ 2 j ,<label>(15)</label></formula><p><s>respectively.</s><s>Here, the notation, x j p indicates the Mahalanobis distance of the vector x j based on the distribution of the parent window.</s><s>In Figure <ref type="figure" target="#fig_3">2</ref>, we show a schematic illustration of the ellipsoid that surrounds the parent point (the black circle enclosed by a solid circle).</s><s>It is noteworthy that we multiply the variance, σ 2 j , by 3 to determine the radius, considerably reducing the number of windows in the following calculations.</s><s>This does not deteriorate computational accuracy because, in the case of the umbrella integration, the dependency of the computational accuracy on the overlap between the distributions of the windows is not significant, in contrast to WHAM.</s><s>In addition, Kästner and Thiel analyzed the error of the UI scheme and concluded that it is preferable to take the distance between the windows to be less than 3/ βK ∼ 3σ 2 j for one-dimensional cases (K is the force constant of the harmonic oscillator) <ref type="bibr" target="#b20">[20]</ref>.</s><s>This is the reason why we introduce the guideline given by Equation <ref type="bibr" target="#b15">(15)</ref>.</s><s>In fact, this choice of the radiuses practically leads to reasonable results as presented in the following calculations.</s><s>We then create equiangular points (the white circles) on the ellipsoid as shown in Figure <ref type="figure" target="#fig_3">2</ref>, which are the candidate points for the next windows; if the number of the points is N, θ is set to be 360 • /N.</s><s>For many dimensional cases, this procedure should be slightly changed.</s><s>The details will be described in the Discussion and Future directions.</s><s>respectively.</s><s>Here, the notation, indicates the Mahalanobis distance of the vector based on the distribution of the parent window.</s><s>In Figure <ref type="figure" target="#fig_3">2</ref>, we show a schematic illustration of the ellipsoid that surrounds the parent point (the black circle enclosed by a solid circle).</s><s>It is noteworthy that we multiply the variance, , by 3 to determine the radius, considerably reducing the number of windows in the following calculations.</s><s>This does not deteriorate computational accuracy because, in the case of the umbrella integration, the dependency of the computational accuracy on the overlap between the distributions of the windows is not significant, in contrast to WHAM.</s><s>In addition, Kästner and Thiel analyzed the error of the UI scheme and concluded that it is preferable to take the distance between the windows to be less than 3 ⁄ ~3 for one-dimensional cases (K is the force constant of the harmonic oscillator) <ref type="bibr" target="#b20">[20]</ref>.</s><s>This is the reason why we introduce the guideline given by Equation <ref type="bibr" target="#b15">(15)</ref>.</s><s>In fact, this choice of the radiuses practically leads to reasonable results as presented in the following calculations.</s><s>We then create equiangular points (the white circles) on the ellipsoid as shown in Figure <ref type="figure" target="#fig_3">2</ref>, which are the candidate points for the next windows; if the number of the points is N, is set to be 360°/N.</s><s>For many dimensional cases, this procedure should be slightly changed.</s><s>The details will be described in the Discussion and Future directions.</s><s>As the exploration procedure proceeds, the region that is covered by the sampled region spreads out over the reaction coordinate space.</s><s>Thus, in step (3), we have to prune the new (candidate) points created in step (2) if those are close enough to any of the sampled widows where we already performed simulations with the biased potentials.</s><s>Let us consider the situation shown in Figure <ref type="figure" target="#fig_8">3a,b</ref>.</s><s>The problem is whether a new candidate point, , should be pruned or not.</s><s>To this end, we estimate the distributions at the candidate point, , for all neighboring windows that were already sampled, i.e., { ( )} and call the k-th window, of which ( ) becomes maximum among all neighboring windows, the "nearest neighboring (N.N.) window".</s><s>Suppose that we would like to judge whether the point encircled by the dotted square should be pruned or not, and that the windows, of which the centers are encircled by the dotted circles shown in Figure <ref type="figure" target="#fig_8">3a</ref>,b, is the N. N. window.</s><s>Then, consider the region where the Mahalanobis distance between the center of the nearest neighboring (k-th) window and the candidate point, which is defined on the basis of the distribution of the N.N.</s><s>window, ( ), is less than 2.5.</s><s>Such regions are shown as gray ellipsoids in Figure <ref type="figure" target="#fig_8">3a,b</ref>.</s><s>If a candidate point is within the region, it is supposed to be close enough to the sampled window  As the exploration procedure proceeds, the region that is covered by the sampled region spreads out over the reaction coordinate space.</s><s>Thus, in step (3), we have to prune the new (candidate) points created in step (2) if those are close enough to any of the sampled widows where we already performed simulations with the biased potentials.</s><s>Let us consider the situation shown in Figure <ref type="figure" target="#fig_8">3a,b</ref>.</s><s>The problem is whether a new candidate point, ξ, should be pruned or not.</s><s>To this end, we estimate the distributions at the candidate point, ξ, for all neighboring windows that were already sampled, i.e., P b i (ξ)</s></p><p><s>all neighboring i and call the k-th window, of which P b k (ξ) becomes maximum among all neighboring windows, the "nearest neighboring (N.N.) window".</s><s>Suppose that we would like to judge whether the point encircled by the dotted square should be pruned or not, and that the windows, of which the centers are encircled by the dotted circles shown in Figure <ref type="figure" target="#fig_8">3a</ref>,b, is the N. N. window.</s><s>Then, consider the region where the Mahalanobis distance between the center of the nearest neighboring (k-th) window and the candidate point, which is defined on the basis of the distribution of the N.N.</s><s>window, P b k (ξ), is less than 2.5.</s><s>Such regions are shown as gray ellipsoids in Figure <ref type="figure" target="#fig_8">3a</ref>,b.</s><s>If a candidate point is within the region, it is supposed to be close enough to the sampled window (the k-th window of which the center is shown as the black circle enclosed by a dotted circle) and so is rejected as shown in Figure <ref type="figure" target="#fig_8">3a</ref>.</s><s>Otherwise, the points remain as candidate points for the child point (white circles encircled by dotted squares in Figure <ref type="figure" target="#fig_8">3b</ref>).</s><s>In this manner, we check all the candidate points.</s><s>If all candidate points were rejected, the parent point is judged not to be in the border region as shown in Figure <ref type="figure" target="#fig_8">3c</ref>, and go back to step (1).</s><s>If there remain any candidate points, we proceed to step (4).</s><s>The pruning process in step (3): the white circles encircled by dotted squares remain as candidate points for the child point that will be determined in step ( <ref type="formula" target="#formula_3">4</ref>).</s><s>(c) The case that all the child points are rejected: we will go back to step (1) for this case.</s></p><p><s>In step (4), we choose the child point from among the remaining candidate points.</s><s>To explore lower free energy regions in the reaction coordinate space efficiently, we calculate → ( ) = ∇ → ( ) at the parent point using Equation <ref type="bibr" target="#b10">(10)</ref>, where ∇ → is the gradient along the direction from the parent point to each candidate point, ci.</s><s>Among all candidate points, the point to which the direction has the steepest descent is chosen as the child point, since the point is expected to have the lowest PMF value.</s><s>For instance, if there are three candidate points, c1, c2, and c3, and the gradients are in the following order, → ( ) &lt; → ( ) &lt; → ( ), then, c2 becomes the child point as shown in Figure <ref type="figure" target="#fig_9">4</ref>.</s><s>The pruning process in step (3): the white circles encircled by dotted squares remain as candidate points for the child point that will be determined in step ( <ref type="formula" target="#formula_3">4</ref>).</s><s>(c) The case that all the child points are rejected: we will go back to step (1) for this case.</s></p><p><s>In step (4), we choose the child point from among the remaining candidate points.</s><s>To explore lower free energy regions in the reaction coordinate space efficiently, we calculate g u p→c i (ξ) = ∇ p→c i A u (ξ) at the parent point using Equation <ref type="bibr" target="#b10">(10)</ref>, where ∇ p→c i is the gradient along the direction from the parent point to each candidate point, c i .</s><s>Among all candidate points, the point to which the direction has the steepest descent is chosen as the child point, since the point is expected to have the lowest PMF value.</s><s>For instance, if there are three candidate points, c 1 , c 2 , and c 3 , and the gradients are in the following order, g u p→c 2 (ξ) &lt; g u p→c 1 (ξ) &lt; g u p→c 3 (ξ), then, c 2 becomes the child point as shown in Figure <ref type="figure" target="#fig_9">4</ref>.</s><s>In step (5), we perform a UI calculation of the new window for the child point that we chose in step <ref type="bibr" target="#b4">(4)</ref>.</s><s>At this stage, there still remains one problem.</s><s>Even if we employ the child point as the center of the bias potential of Equation ( <ref type="formula" target="#formula_5">6</ref>), ξ re f c , the center of the distribution of the UI calculation would drastically deviate from ξ re f c with varying the force constant matrix, K, of the biased potential given by Equation <ref type="bibr" target="#b6">(6)</ref>.</s><s>How to adjust K in order to make our algorithm work strongly depends on to what extent we accept the deviation between ξ re f c and the center of the distribution of the UI calculation for the child window.</s><s>Because the treatment involves a subtle but complicated procedure, the details will be presented in Appendix.</s><s>Anyway, after the simulation run was performed using the parameter determined by the method described in the Appendix, the center of the distribution of the run, not the original child point, will be a candidate for a parent point for the next step.</s><s>Thus, information of the window, together with the biased distribution obtained from the run, is stored in a list concerning the sampled windows.</s><s>Then go back to step <ref type="bibr" target="#b0">(1)</ref>.</s></p><p><s>rejected.</s><s>For details, see text.</s><s>(b) The pruning process in step (3): the white circles encircled by dotted squares remain as candidate points for the child point that will be determined in step <ref type="bibr" target="#b4">(4)</ref>.</s><s>(c) The case that all the child points are rejected: we will go back to step (1) for this case.</s></p><p><s>In step (4), we choose the child point from among the remaining candidate points.</s><s>To explore lower free energy regions in the reaction coordinate space efficiently, we calculate → ( ) = ∇ → ( ) at the parent point using Equation <ref type="bibr" target="#b10">(10)</ref>, where ∇ → is the gradient along the direction from the parent point to each candidate point, ci.</s><s>Among all candidate points, the point to which the direction has the steepest descent is chosen as the child point, since the point is expected to have the lowest PMF value.</s><s>For instance, if there are three candidate points, c1, c2, and c3, and the gradients are in the following order, → ( ) &lt; → ( ) &lt; → ( ), then, c2 becomes the child point as shown in Figure <ref type="figure" target="#fig_9">4</ref>.</s><s>In step <ref type="bibr" target="#b5">(5)</ref>, we perform a UI calculation of the new window for the child point that we chose in step <ref type="bibr" target="#b4">(4)</ref>.</s><s>At this stage, there still remains one problem.</s><s>Even if we employ the child point as the center of the bias potential of Equation ( <ref type="formula" target="#formula_5">6</ref>), , the center of the distribution of the UI calculation would drastically deviate from with varying the force constant matrix, K, of the biased potential given</s></p><formula xml:id="formula_17">g c 1 (x) g c 2 (x) g c 3 (x) c 2 c 1 c 3 g c 2 (x) g c 1 (x) &lt; g c 3 (x) &lt;</formula><p><s>The child point It should be noted that the UI method is used only for spawning points to be sampled efficiently, and the WHAM method is used to estimate the free-energy landscape from the calculated windows at each number of iterations.</s><s>This is because the UI method is prone to statistical error in estimating the free-energy landscape in higher dimensions, while the WHAM can be straightforwardly applied to multidimensional cases, as pointed out by Kästner <ref type="bibr" target="#b13">[13]</ref>.</s></p><p><s>The computational results will be presented in the next section.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Computational Results</head><p><s>Our method is applied to a simple and standard example, an alanine dipeptide in solution.</s><s>We examined the free-energy landscape for the two backbone torsion angles, ϕ and ψ, shown in Figure <ref type="figure" target="#fig_11">5</ref>.</s><s>The alanine dipeptide was solvated in a cubic water box, which contains 354 water molecules, using the periodic boundary condition and the electrostatic interactions were treated using the particle-mesh Ewald method <ref type="bibr" target="#b27">[27]</ref> with the cutoff of 10 Å.</s><s>The CHARMM27 force field <ref type="bibr" target="#b28">[28]</ref> and the TIP4P force field <ref type="bibr" target="#b29">[29]</ref> were used for the alanine dipeptide and the water molecules, respectively.</s><s>All the simulation runs were performed with the time step of 2 fs under the constant NPT condition, for which T was kept constant at 298 K using the V-rescale thermostat <ref type="bibr" target="#b30">[30]</ref> and P at 1 bar using the Berendsen barostat <ref type="bibr" target="#b31">[31]</ref>.</s><s>The LINK method is used to constrain the bonds <ref type="bibr" target="#b32">[32]</ref>.</s><s>For each window, the system was equilibrated for 50 ps and then simulated for 1 ns to obtain the distribution.</s><s>All the MD runs were performed using GROMACS 5.1.4</s><s><ref type="bibr" target="#b33">[33]</ref> and PLUMED 2.3.1 <ref type="bibr" target="#b34">[34]</ref>.</s><s>For the WHAM calculations, we used the code developed by Grossfield <ref type="bibr" target="#b35">[35]</ref>.</s></p><p><s>For an initial umbrella integration (UI) run, the center of the bias potential is set at the point (ψ, ϕ) = (−1.5,</s><s>−1.0) (unit: radian).</s><s>The geometry of this point was taken from a previous study of the conformational search of the alanine dipeptide in explicit water using an umbrella sampling calculation <ref type="bibr" target="#b36">[36]</ref>.</s><s>This point is in the basin of the α R conformation that was confirmed to be most stable among four types of conformations <ref type="bibr" target="#b36">[36]</ref>.</s><s>We set that the force constant of the bias potential for the MD runs is 100 kJ/mol/rad 2 for both of ψ and ϕ directions.</s><s>Starting from the distribution obtained from this first run, we applied the automated exploration scheme described above to explore the free energy landscape.</s><s>The results for the selected number of iterations are shown in Figure <ref type="figure" target="#fig_13">6</ref> (more comprehensive data are shown in Figure <ref type="figure" target="#fig_7">S1</ref>).</s><s>In these figures, the average points (parent points) determined by our approach were plotted as red points and the contours in the landscape are colored as indicated by the right bar (unit: kcal/mol).</s><s>At the first iteration, the parent point of the first UI run was the most stable point of the α R conformation shown Figure <ref type="figure" target="#fig_14">6a</ref>, but, as the number of iterations (N) increased, the most stable point of the α R conformation shifted to (ψ, ϕ) = (−1.4,</s><s>1.1).</s><s>It is noteworthy that not only the minimum point, but also the local free energy landscape for the α R conformation was correctly determined until N = 10, as shown in Figure <ref type="figure" target="#fig_14">6b</ref>.</s><s>Then, the exploration procedure reached at the C 7 eq conformation ((ψ, ϕ)~(−1.5, 2.9)) at N = 23 (Figure S1 <ref type="bibr" target="#b23">(23)</ref>) and the PMF difference between the α R and C 7 eq conformations is estimated to be less than 1 kcal/mol, which is quite similar to the final result, 0.0 kcal/mol (N = 132).</s><s>As shown in Figure <ref type="figure" target="#fig_14">6c</ref> (see also Figure <ref type="figure" target="#fig_7">S1</ref> (23)-( <ref type="formula">30</ref>)), the local basin of the C 7 eq conformation has been almost characterized until N = 30.</s><s>The landscapes of the C 7 ex conformation and the α L conformation were characterized at N~90 and N~120, respectively, as shown in Figure <ref type="figure" target="#fig_14">6e</ref>,f.</s><s>This is because our automated exploration procedure finds preferentially the points with lower PMF values.</s><s>The representative structures for all the conformations are shown in Figure <ref type="figure" target="#fig_5">S2</ref>.</s></p><p><s>It should be noted that the UI method is used only for spawning points to be sampled efficiently, and the WHAM method is used to estimate the free-energy landscape from the calculated windows at each number of iterations.</s><s>This is because the UI method is prone to statistical error in estimating the free-energy landscape in higher dimensions, while the WHAM can be straightforwardly applied to multidimensional cases, as pointed out by Kästner <ref type="bibr" target="#b13">[13]</ref>.</s></p><p><s>The computational results will be presented in the next section.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Computational Results</head><p><s>Our method is applied to a simple and standard example, an alanine dipeptide in solution.</s><s>We examined the free-energy landscape for the two backbone torsion angles, φ and ψ, shown in Figure <ref type="figure" target="#fig_11">5</ref>.</s><s>The alanine dipeptide was solvated in a cubic water box, which contains 354 water molecules, using the periodic boundary condition and the electrostatic interactions were treated using the particle-mesh Ewald method <ref type="bibr" target="#b27">[27]</ref> with the cutoff of 10 Å .</s><s>The CHARMM27 force field <ref type="bibr" target="#b28">[28]</ref> and the TIP4P force field <ref type="bibr" target="#b29">[29]</ref> were used for the alanine dipeptide and the water molecules, respectively.</s><s>All the simulation runs were performed with the time step of 2 fs under the constant NPT condition, for which T was kept constant at 298 K using the V-rescale thermostat <ref type="bibr" target="#b30">[30]</ref> and P at 1 bar using the Berendsen barostat <ref type="bibr" target="#b31">[31]</ref>.</s><s>The LINK method is used to constrain the bonds <ref type="bibr" target="#b32">[32]</ref>.</s><s>For each window, the system was equilibrated for 50 ps and then simulated for 1 ns to obtain the distribution.</s><s>All the MD runs were performed using GROMACS 5.1.4</s><s><ref type="bibr" target="#b33">[33]</ref> and PLUMED 2.3.1 <ref type="bibr" target="#b34">[34]</ref>.</s><s>For the WHAM calculations, we used the code developed by Grossfield <ref type="bibr" target="#b35">[35]</ref>.</s><s>For an initial umbrella integration (UI) run, the center of the bias potential is set at the point (ψ, φ) = (−1.5,</s><s>−1.0) (unit: radian).</s><s>The geometry of this point was taken from a previous study of the conformational search of the alanine dipeptide in explicit water using an umbrella sampling calculation <ref type="bibr" target="#b36">[36]</ref>.</s><s>This point is in the basin of the αR conformation that was confirmed to be most stable among four types of conformations <ref type="bibr" target="#b36">[36]</ref>.</s><s>We set that the force constant of the bias potential for the MD runs is 100 kJ/mol/rad 2 for both of ψ and φ directions.</s><s>Starting from the distribution obtained from this first run, we applied the automated exploration scheme described above to explore the free energy landscape.</s><s>The results for the selected number of iterations are shown in Figure <ref type="figure" target="#fig_13">6</ref> (more comprehensive data are shown in Figure <ref type="figure" target="#fig_7">S1</ref>).</s><s>In these figures, the average points (parent points) determined by our approach were plotted as red points and the contours in the landscape are colored as indicated by the right bar (unit: kcal/mol).</s><s>At the first iteration, the parent point of the first UI run was the most stable point of the αR conformation shown Figure <ref type="figure" target="#fig_14">6a</ref>, but, as the number of iterations ψ φ  <ref type="formula">23</ref>)-( <ref type="formula">30</ref>)), the local basin of the C7 eq conformation has been almost characterized until N = 30.</s><s>The landscapes of the C7 ex conformation and the αL conformation were characterized at N~90 and N~120, respectively, as shown in Figure <ref type="figure" target="#fig_14">6e</ref>,f.</s><s>This is because our automated exploration procedure finds preferentially the points with lower PMF values.</s><s>The representative structures for all the conformations are shown in Figure <ref type="figure" target="#fig_5">S2</ref>.</s></p><p><s>The PMF landscape that was obtained from our scheme and that obtained with the usual umbrella sampling with WHAM (US + WHAM) method are shown in Figure <ref type="figure" target="#fig_16">7a</ref>,b, respectively.</s><s>For the later calculations, we performed the umbrella sampling calculations for the 156 windows at regular intervals with fixing the force constant to 100 kJ/mol/rad 2 for both of ψ and φ directions.</s><s>The red points shown in Figure <ref type="figure" target="#fig_16">7b</ref> are the average points obtained with the biased runs.</s><s>We can see from this figure that the free energy landscapes are similar to each other.</s><s>In fact, the characteristics of all equilibrium states (EQ) and transition states (TS) shown in Table <ref type="table" target="#tab_2">1</ref> almost completely coincide with each other.</s><s>The whole computational (wall) times are approximately 58,500 and 70,200 s with intel Core i7 3960X (6 core) processor, respectively, for our method and US + WHAM method (details will be presented in Table <ref type="table" target="#tab_2">S1</ref>).</s><s>The PMF landscape that was obtained from our scheme and that obtained with the usual umbrella sampling with WHAM (US + WHAM) method are shown in Figure <ref type="figure" target="#fig_16">7a</ref>,b, respectively.</s><s>For the later calculations, we performed the umbrella sampling calculations for the 156 windows at regular intervals with fixing the force constant to 100 kJ/mol/rad 2 for both of ψ and ϕ directions.</s><s>The red points shown in Figure <ref type="figure" target="#fig_16">7b</ref> are the average points obtained with the biased runs.</s><s>We can see from this figure that the free energy landscapes are similar to each other.</s><s>In fact, the characteristics of all equilibrium states (EQ) and transition states (TS) shown in Table <ref type="table" target="#tab_2">1</ref> almost completely coincide with each other.</s><s>The whole computational (wall) times are approximately 58,500 and 70,200 s with intel Core i7 3960X (6 core) processor, respectively, for our method and US + WHAM method (details will be presented in Table <ref type="table" target="#tab_2">S1</ref>).</s><s>Here, we would like to emphasize that once the local landscapes in the conformational space have been calculated, the characteristics of these landscapes are similar to those obtained after the completion of our procedure (N = 132 in this case: see Figure <ref type="figure" target="#fig_16">7a</ref>) even if the calculation is truncated.</s><s>As shown in Figure <ref type="figure" target="#fig_8">S3</ref>, the convergences were attained within 0.2 kcal/mol.</s><s>This is because we utilize the automated sampling scheme to prefer the lower TSs and EQs based on the gradients of local freeenergy landscapes.</s><s>The considerable accuracy of the local landscapes in the truncated calculation results implies that our approach can be utilized to find equilibrium and transition state structures along minimum free-energy paths sequentially without calculating the whole free-energy landscape; because of that, our approach could be most effective in the applications to chemical reaction when the geometry of reactant is known.</s><s>In particular, this effectiveness will be more remarkable as the dimension of the reaction space increases.</s></p><p><s>Table <ref type="table" target="#tab_2">1</ref>.</s><s>The characteristics of all equilibrium conformations (EQ) and transition states (TS) calculated with our scheme (N = 132).</s><s>The values obtained from usual US + WHAM calculations are also listed in parentheses.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>φ (rad) ψ (rad)</head><p><s>A (kcal/mol) EQ1 (αR) −1.4 (−1.4) −1.1 (−1.0) 0.0 (0.0) EQ2 (C7 eq ) −1.5 (−1.5) 2.9 (2.9) 0.0 (0.0) EQ3 (C7 ex )</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Discussion and Future Directions</head><p><s>In this study, we formulated and implemented a new automated exploration scheme of free  Here, we would like to emphasize that once the local landscapes in the conformational space have been calculated, the characteristics of these landscapes are similar to those obtained after the completion of our procedure (N = 132 in this case: see Figure <ref type="figure" target="#fig_16">7a</ref>) even if the calculation is truncated.</s><s>As shown in Figure <ref type="figure" target="#fig_8">S3</ref>, the convergences were attained within 0.2 kcal/mol.</s><s>This is because we utilize the automated sampling scheme to prefer the lower TSs and EQs based on the gradients of local free-energy landscapes.</s><s>The considerable accuracy of the local landscapes in the truncated calculation results implies that our approach can be utilized to find equilibrium and transition state structures along minimum free-energy paths sequentially without calculating the whole free-energy landscape; because of that, our approach could be most effective in the applications to chemical reaction when the geometry of reactant is known.</s><s>In particular, this effectiveness will be more remarkable as the dimension of the reaction space increases.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Discussion and Future Directions</head><p><s>In this study, we formulated and implemented a new automated exploration scheme of free energy landscapes based on the umbrella integration.</s><s>With this scheme, we can explore equilibrium conformations (EQ) and transition states (TS) in the ascending order of mean force (PMF) values.</s><s>We applied our scheme to the free energy landscape for the two backbone torsion angles of the alanine dipeptide.</s><s>It was demonstrated that the EQs and TSs were practically found in the ascending order of the PMF value and that, even if the iteration procedure was truncated, the PMF landscapes around the EQs and TSs are similar to the completed landscape obtained by our scheme and that obtained by the usual umbrella sampling with WHAM procedure.</s></p><p><s>Although we only present a fundamental algorithm and a simple application of our method in this study, we intend to apply our method to high-dimensional problems in the future.</s><s>One might argue that there might be problems in our algorithm for high-dimensional cases.</s><s>The first point is how to determine candidate points, shown in Figure <ref type="figure" target="#fig_3">2</ref> for the 2D case, for the many-dimensional in general.</s><s>For this issue, the polar coordinate interpolation technique for a spherical hypersurface proposed by Maeda and Ohno <ref type="bibr" target="#b37">[37]</ref> can be used.</s><s>In this method, they first choose acceptable f -dimensional vectors consisting of integers {K i }, i.e., {(K 1 , K 2 , ..., K f )}, that satisfy ∑ f i=1 |K i | ≤ n + M where n is the number of non-zero elements in the vector and M is an integral parameter (M &gt; 0).</s><s>Then, they map the vectors to the hypersphere to determine the angles of the points.</s><s>See ref. <ref type="bibr" target="#b37">[37]</ref> for details.</s><s>The application of the method to our ellipse hypersurface can be straightforwardly implemented by replacing the metric by the Mahalanobic metric.</s><s>The second point is the computational costs for the high dimensional problems.</s><s>For this point, we would like to emphasize that our method is based on the umbrella integration method, which is critically different from the self-learning umbrella sampling method <ref type="bibr" target="#b14">[14]</ref>.</s><s>Thus, our method is more suitable for finding the low-lying free-energy paths in the reactive coordinate space, not the whole region in the reactive space, by exploiting the gradients (and Hessians) on the PMF surface.</s><s>The slight changes of our algorithm adapted to the high-dimensional (four and six dimensional) cases, and the computational results, together with comparison with those obtained by the other methods <ref type="bibr" target="#b13">[13,</ref><ref type="bibr" target="#b14">14]</ref>, will be presented in the near future.</s></p><p><s>Finally, we would also emphasize that our approach can be applied not only to all-atoms MD simulations, but also to multiscale simulations <ref type="bibr" target="#b38">[38]</ref> such as quantum mechanics/molecular mechanics (QM/MM) MD and all-atoms MD/coarse-grained MD calculations.</s><s>This would be important when the target reaction coordinate involves the remarkable changes of phases of electronic structures and/or the forming or dissociating of a chemical bond, which often occur in most interesting reaction coordinates in nano-materials and bio-chemical reactions.</s></p><p><s>Supplementary Materials: Supplementary materials can be found at http://www.mdpi.com/1422-0067/19/4/937/s1.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc><div><p><s>Figure 1.</s><s>(a) Classification of sampled points in the reaction coordinate space.</s><s>The black circles are the sampled points that exist in the border region.</s><s>(b) The black circle point having the lowest PMF value is chosen as the parent point, around which new points will be created in step (2).</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 .</head><label>1</label><figDesc><div><p><s>Figure 1.</s><s>(a) Classification of sampled points in the reaction coordinate space.</s><s>The black circles are the sampled points that exist in the border region.</s><s>(b) The black circle point having the lowest PMF value is chosen as the parent point, around which new points will be created in step (2).</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head></head><label></label><figDesc><div><p><s>Int. J. Mol.</s><s>Sci.</s><s>2018, 19, x FOR PEER REVIEW 6 of 14</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 2 .</head><label>2</label><figDesc><div><p><s>Figure 2. The ellipsoid that surrounds the parent point (the black circle enclosed by a solid circle).</s><s>The equiangular points on the ellipsoid are the candidate points for the next windows.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head></head><label></label><figDesc><div><p><s>q</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 2 .</head><label>2</label><figDesc><div><p><s>Figure 2. The ellipsoid that surrounds the parent point (the black circle enclosed by a solid circle).</s><s>The equiangular points on the ellipsoid are the candidate points for the next windows.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 3 .</head><label>3</label><figDesc><div><p><s>Figure 3. (a) If a candidate point is close enough to the sampled window, the candidate point will be rejected.</s><s>For details, see text.</s><s>(b) The pruning process in step (3): the white circles encircled by dotted squares remain as candidate points for the child point that will be determined in step<ref type="bibr" target="#b4">(4)</ref>.</s><s>(c) The case that all the child points are rejected: we will go back to step (1) for this case.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Rejected g c 1</head><label>1</label><figDesc><div><p><s>(x) g c 2 (x) g c 3 (x)</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 3 .</head><label>3</label><figDesc><div><p><s>Figure 3. (a) If a candidate point is close enough to the sampled window, the candidate point will be rejected.</s><s>For details, see text.</s><s>(b) The pruning process in step (3): the white circles encircled by dotted squares remain as candidate points for the child point that will be determined in step<ref type="bibr" target="#b4">(4)</ref>.</s><s>(c) The case that all the child points are rejected: we will go back to step (1) for this case.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure 4 .</head><label>4</label><figDesc><div><p><s>Figure 4.</s><s>The determination step (step (4)) of the child point.</s><s>First, we estimate the gradients along the directions from the parent point to candidate points as shown in the left side of the figure.</s><s>Then, we choose the candidate point to which the direction is steepest descent as the child point as in the right side of this figure.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Figure 4 .</head><label>4</label><figDesc><div><p><s>Figure 4.</s><s>The determination step (step (4)) of the child point.</s><s>First, we estimate the gradients along the directions from the parent point to candidate points as shown in the left side of the figure.</s><s>Then, we choose the candidate point to which the direction is steepest descent as the child point as in the right side of this figure.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_11"><head>Figure 5 .</head><label>5</label><figDesc><div><p><s>Figure 5.</s><s>The structure of the alanine dipeptide we examined.</s><s>The torsion angles, φ and ψ, that are used for the reaction coordinate are also shown.</s></p></div></figDesc><graphic coords="9,215.97,286.06,159.84,100.08" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_12"><head>Figure 5 .</head><label>5</label><figDesc><div><p><s>Figure 5.</s><s>The structure of the alanine dipeptide we examined.</s><s>The torsion angles, ϕ and ψ, that are used for the reaction coordinate are also shown.</s></p></div></figDesc><graphic coords="9,372.78,447.53,129.12,113.52" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_13"><head>Figure 6 .</head><label>6</label><figDesc><div><p><s>Figure 6.</s><s>The free-energy landscapes of the (φ, ψ) space for the alanine dipeptide system with using our exploration scheme.</s><s>N is the number of iterations to obtain each figure.</s><s>(a) N = 1, (b) N = 10, (c) N = 30, (d) N = 60, (e) N = 90, (f) N = 130.</s></p></div></figDesc><graphic coords="9,93.18,574.97,128.88,112.80" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_14"><head>Figure 6 .</head><label>6</label><figDesc><div><p><s>Figure 6.</s><s>The free-energy landscapes of the (ϕ, ψ) space for the alanine dipeptide system with using our exploration scheme.</s><s>N is the number of iterations to obtain each figure.</s><s>(a) N = 1, (b) N = 10, (c) N = 30, (d) N = 60, (e) N = 90, (f) N = 130.</s></p></div></figDesc><graphic coords="9,232.86,574.97,129.12,112.80" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_15"><head>Figure 7 .</head><label>7</label><figDesc><div><p><s>Figure 7.</s><s>The free-energy landscapes of the (φ, ψ) space for the alanine dipeptide system with using (a) our exploration scheme and (b) the usual US + WHAM method.</s></p></div></figDesc><graphic coords="10,301.70,233.18,202.32,177.60" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_16"><head>Figure 7 .</head><label>7</label><figDesc><div><p><s>Figure 7.</s><s>The free-energy landscapes of the (ϕ, ψ) space for the alanine dipeptide system with using (a) our exploration scheme and (b) the usual US + WHAM method.</s></p></div></figDesc><graphic coords="10,91.46,235.10,198.72,174.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head></head><label></label><figDesc><div><p><s>. J. Mol.Sci.2018,19,x</s><s>FOR PEER REVIEW 5 of 14 geometries are good starting points to one of the minima in the PMF landscape.</s><s>If the thermal fluctuation is expected to considerably affect the stable geometries of the target molecule(s), we should perform a MD calculation of the molecule(s) with environmental molecules at the finite temperature and select the representative structure of the target molecule(s) from the trajectory.</s><s>Of course, if there is a reliable equilibrium geometry reported in a previous study, we can start the geometry.</s></p></div></figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 1 .</head><label>1</label><figDesc><div><p><s>The</s></p></div></figDesc><table><row><cell></cell><cell>ϕ (rad)</cell><cell>ψ (rad)</cell><cell>A (kcal/mol)</cell></row><row><cell>EQ1 (α R ) eq ) EQ2 (C 7 EQ3 (C 7 ex )</cell><cell>−1.4 (−1.4) −1.5 (−1.5) 1.1 (1.1)</cell><cell>−1.1 (−1.0) 2.9 (2.9) −2.1 (−2.1)</cell><cell>0.0 (0.0) 0.0 (0.0) 4.0 (4.0)</cell></row><row><cell>EQ4 (α L )</cell><cell>1.1 (1.1)</cell><cell>0.9 (0.8)</cell><cell>7.0 (7.0)</cell></row><row><cell>TS1</cell><cell>−1.7 (−1.7)</cell><cell>0.6 (0.6)</cell><cell>3.4 (3.4)</cell></row><row><cell>TS2</cell><cell>0.2 (0.2)</cell><cell>−1.6 (−1.6)</cell><cell>6.0 (6.0)</cell></row><row><cell>TS3</cell><cell>0.2 (0.3)</cell><cell>1.5 (1.4)</cell><cell>8.3 (8.3)</cell></row><row><cell>TS4</cell><cell>1.3 (1.3)</cell><cell>−0.1 (−0.1)</cell><cell>8.0 (8.0)</cell></row></table><note><p><s>characteristics of all equilibrium conformations (EQ) and transition states (TS) calculated with our scheme (N = 132).</s><s>The values obtained from usual US + WHAM calculations are also listed in parentheses.</s></p></note></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Acknowledgments: This work is supported by Grants-in-Aid for Scientific Research (Grant Number JP15K05390) and is partly supported by a grant from Japan Science and Technology Agency (JST) with a Core Research for Evolutional Science and Technology (CREST).</s></p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abbreviations</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Appendix</head><p><s>After we determined the child point in the reactive coordinate space, we will next run a simulation with a bias potential for the child window that lies in the neighborhood of the child point.</s><s>However, it is obvious that the deviation between the average point of the simulation for the child window and the child point strongly depends on the force constant matrix of the biased potential given by Equation <ref type="bibr" target="#b6">(6)</ref>.</s><s>In this appendix, we describe how to adjust the bias parameter matrix K c for the child window and the deviation between the child point and the average point for the child window.</s></p><p><s>First, the gradient of the biased free energy for the child window would be expressed by</s></p><p><s>where ξ re f c and K c are the center and the force constant matrix of the biased harmonic potential for the child window, respectively.</s><s>On the basis of the fact that the child point is adjacent to the parent point, we assume that the unbiased gradient at the child window is similar to that at the parent window, so that the former coincides with the latter by the translation operation</s></p><p><s>Here ξ c and ξ p are the child and parent points, respectively.</s><s>Substituting Equation (A2) into Equation (A1), we have</s></p><p><s>Assuming that the gradient of the biased force is considerably dominated by the harmonic oscillator biased potential, we can expect that the following relation approximately holds:</s></p><p><s>Here ξ c is the average point calculated for the child window.</s><s>Then we have,</s></p><p><s>Using Equation <ref type="bibr" target="#b8">(8)</ref> in the text for the first term at the left side, we obtain</s></p><p><s>After some manipulation, the difference between ξ c and ξ c is given by If we intend to attain ∆ c ∼ = 0 with varying K c and ξ re f c , the trivial solution is easily obtained as,</s></p><p><s>and</s></p><p><s>However, Equation (A8) implies that the distribution obtained from a simulation with using such an infinite bias potential becomes the delta function, δ(ξ − ξ re f c ), implying that the coordinate is fixed for the biased calculation.</s><s>This type of the bias potentials is actually used in the Blue Moon sampling method <ref type="bibr" target="#b16">[16,</ref><ref type="bibr" target="#b17">17]</ref>, but is not appropriate for the umbrella integration method.</s><s>In contrast, if the force constant reduces to zero ( K c ∼ 0), the simulation run will be of the plain molecular dynamics without any bias potential.</s><s>What we would like to obtain is the reasonable solution for K c and ξ re f c − ξ c which make an automated exploration efficiently work.</s></p><p><s>To this end, we performed an iteration procedure as follows.</s><s>First, assuming that (A9) holds, we have</s></p><p><s>where the subscript for ∆ c is the index of the iteration procedure.</s><s>Then we set a threshold, t, for the Mahalanobis distance of ∆ c .</s><s>To define the Mahalanobis distance, we employ the normal distribution function obtained for the parent window.</s><s>Thus we denote the Mahalanobis distance of ∆ c by |∆ c | p .</s></p><p><s>Then we find a force constant matrix of the diagonal form,</s></p><p><s>which satisfies</s></p><p><s>with minimizing ∑ j k 2 j under the condition 30.0 ≤ ∑ j k 2 j simultaneously.</s><s>In the actual calculations shown in this study, t is set to be 0.01.</s><s>In addition, because we do not prefer either the extremely strong bias or nearly zero bias, we minimize ∑ j k 2 j with imposing the condition 30.0 ≤ ∑ j k 2 j .</s><s>The value of the threshold, t = 0.01, and the lower limit, 30.0, of ∑ j k 2 j were determined by some test calculations.</s><s>Once</s></p><p><s>We estimate Equation (A7) to update ∆ c to ∆ c | i=1 , as well as ξ c ≡ ∆ c + ξ c .</s><s>Using Equation (A7), we find K c that satisfies .</s><s>If this value is less than a threshold, which is set to be 1.5 for the actual calculations shown in the text.</s></p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Statistical Physics of Biomolecules: An Introduction</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Zuckerman</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2010">2010</date>
+			<publisher>CRC Press</publisher>
+			<pubPlace>Boca Raton, FL, USA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Theory and Applications in Chemistry and Biology</title>
+	</analytic>
+	<monogr>
+		<title level="m">Free Energy Calculations</title>
+				<editor>
+			<persName><forename type="first">C</forename><surname>Chipot</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">A</forename><surname>Pohorille</surname></persName>
+		</editor>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title/>
+		<author>
+			<persName><surname>Springer</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2007">2007</date>
+			<pubPlace>Berlin/Heidelberg, Germany</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Replica-exchange molecular dynamics method for protein folding</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Sugita</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Okamoto</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0009-2614(99)01123-9</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Phys. Lett</title>
+		<imprint>
+			<biblScope unit="volume">314</biblScope>
+			<biblScope unit="page" from="141" to="151" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Multicanonical Ensemble Generated by Molecular Dynamics Simulation for Enhanced Conformational Sampling of Peptides</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Nakajima</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Nakamura</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kidera</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/jp962142e</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Phys. Chem. B</title>
+		<imprint>
+			<biblScope unit="volume">101</biblScope>
+			<biblScope unit="page" from="817" to="824" />
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Molecular dynamics, Langevin and hybrid Monte Carlo simulations in a multicanonical ensemble</title>
+		<author>
+			<persName><forename type="first">U</forename><forename type="middle">H E</forename><surname>Hansmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Okamoto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Eisenmenger</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/0009-2614(96)00761-0</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Phys. Lett</title>
+		<imprint>
+			<biblScope unit="volume">259</biblScope>
+			<biblScope unit="page" from="321" to="330" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Statistical Mechanics of Fluid Mixtures</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">G</forename><surname>Kirkwood</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.1749657</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Chem. Phys</title>
+		<imprint>
+			<biblScope unit="volume">1935</biblScope>
+			<biblScope unit="page" from="300" to="313" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">QM/MM Free-Energy Perturbation Compared to Thermodynamic Integration and Umbrella Sampling: Application to an Enzymatic Reaction</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Käster</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">M</forename><surname>Senn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Thiel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Otte</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Thiel</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/ct050252w</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Chem. Theory Comput</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="452" to="461" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+	<note>PubMed</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Constrained reaction coordinate dynamics for the simulation of rare events</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">A</forename><surname>Carter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Ciccotti</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">T</forename><surname>Hynes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Kapral</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0009-2614(89)87314-2</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Phys. Lett</title>
+		<imprint>
+			<biblScope unit="volume">156</biblScope>
+			<biblScope unit="page" from="472" to="477" />
+			<date type="published" when="1989">1989</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Free energy from constrained molecular dynamics</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Sprik</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Ciccotti</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.477419</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Chem. Phys</title>
+		<imprint>
+			<biblScope unit="volume">109</biblScope>
+			<biblScope unit="page" from="7737" to="7744" />
+			<date type="published" when="1998">1998</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Monte Carlo free energy estimates using non-Boltzmann sampling: Application to the sub-critical Lennard-Jones fluid</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">M</forename><surname>Torrie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Valleau</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/0009-2614(74)80109-0</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Phys. Lett</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="page" from="578" to="581" />
+			<date type="published" when="1974">1974</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Nonphysical sampling distributions in Monte Carlo free-energy estimation-Umbrella sampling</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">M</forename><surname>Torrie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Valleau</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/0021-9991(77)90121-8</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Comput. Phys</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="page" from="187" to="199" />
+			<date type="published" when="1977">1977</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">An adaptive umbrella sampling procedure in conformational analysis using molecular dynamics and its application to glycol</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">W W</forename><surname>Hooft</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">P</forename><surname>Van Eijck</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kroon</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.463947</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Chem. Phys</title>
+		<imprint>
+			<biblScope unit="volume">97</biblScope>
+			<biblScope unit="page" from="6690" to="6694" />
+			<date type="published" when="1992">1992</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title/>
+		<author>
+			<persName><surname>Kästner</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/wcms.66</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Umbrella Sampling. WIRES Comput. Mol. Sci</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="932" to="942" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Self-Learning Adaptive Umbrella Sampling Method for the Determination of Free Energy Landscapes in Multiple Dimensions</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Wojtas-Niziurski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Roux</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bernèche</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/ct300978b</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Chem. Theory Comput</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page" from="1885" to="1895" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+	<note>PubMed</note>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Virtual-system-coupled adaptive umbrella sampling to compute free-energy landscape for flexible molecular docking</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Higo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Dasgupta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Mashimo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Kasahara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Fukunishi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Nakamura</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/jcc.23948</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Comput. Chem</title>
+		<imprint>
+			<biblScope unit="volume">36</biblScope>
+			<biblScope unit="page" from="1489" to="1502" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+	<note>PubMed</note>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">The Weighted Histogram Analysis Method for Free-Energy Calculations on Biomolecules. I. The Method</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Bouzida</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">H</forename><surname>Swendsen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">A</forename><surname>Kollmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Rosenberg</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/jcc.540130812</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Comput. Chem</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="page" from="1011" to="1021" />
+			<date type="published" when="1992">1992</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Calculating free energies using average force</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Darve</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Pohorille</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.1410978</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Chem. Phys</title>
+		<imprint>
+			<biblScope unit="volume">115</biblScope>
+			<biblScope unit="page" from="9169" to="9183" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Adaptive biasing force method for scalar and vector free energy calculations</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Darve</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Rodriguez-Gomez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Pohorille</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.2829861</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Chem. Phys</title>
+		<imprint>
+			<biblScope unit="volume">128</biblScope>
+			<date type="published" when="2008">2008. 144120</date>
+		</imprint>
+	</monogr>
+	<note>PubMed</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Exploring Multidimensional Free Energy Landscapes Using Time-Dependent Biases on Collective Variables</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Henin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Fiorin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Chipot</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">L</forename><surname>Klein</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/ct9004432</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Chem. Theory Comput</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page" from="35" to="47" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+	<note>PubMed</note>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Escaping free-energy minima</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Laio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Parrinello</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.202427399</idno>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. Natl. Acad. Sci</title>
+				<meeting>Natl. Acad. Sci<address><addrLine>USA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2002">2002</date>
+			<biblScope unit="volume">99</biblScope>
+			<biblScope unit="page" from="12562" to="12566" />
+		</imprint>
+	</monogr>
+	<note>PubMed</note>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><surname>Barducci</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Bonomi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Parrinello</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/wcms.31</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Metadynamics. WIRES Comput. Mol. Sci</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="826" to="843" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Bridging the gap between thermodynamic integration and umbrella sampling provides a novel analysis method: &quot;Umbrella integration</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kästner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Thiel</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.2052648</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Chem. Phys</title>
+		<imprint>
+			<biblScope unit="volume">123</biblScope>
+			<date type="published" when="2005">2005. 144104</date>
+		</imprint>
+	</monogr>
+	<note>PubMed</note>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Analysis of the statistical error in umbrella sampling simulations by umbrella integration</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kästner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Thiel</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.2206775</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Chem. Phys</title>
+		<imprint>
+			<biblScope unit="volume">124</biblScope>
+			<date type="published" when="2006">2006. 234106</date>
+		</imprint>
+	</monogr>
+	<note>PubMed</note>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Umbrella integration in two or more reaction coordinates</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kästner</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.3175798</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Chem. Phys</title>
+		<imprint>
+			<biblScope unit="volume">131</biblScope>
+			<biblScope unit="page">34109</biblScope>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+	<note>PubMed</note>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">An algorithm to find minimum free-energuy paths using umbrella integration</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">U</forename><surname>Bohner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kästner</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.4736317</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Chem. Phys</title>
+		<imprint>
+			<biblScope unit="volume">137</biblScope>
+			<biblScope unit="page">34105</biblScope>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+	<note>PubMed</note>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hastie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Tibshirani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Friedman</surname></persName>
+		</author>
+		<title level="m">The Elements of Statistical Learning</title>
+				<meeting><address><addrLine>New York, NY, USA</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+	<note>2nd ed</note>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">New tricks for modelers from the crystallography toolkit: The particle mesh Ewald algorithm and its use in nucleic acid simulations</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Darden</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Perera</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Pedersen</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/S0969-2126(99)80033-1</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Structure</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+	<note>R55-R60. [CrossRef</note>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">All-atom empirical force field for nucleic acids: I. Parameter optimization based on small molecule and condensed phase macromolecular target data</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Foloppe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">D</forename><surname>Mackerell</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Jr</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/(SICI)1096-987X(20000130)21:2&lt;86::AID-JCC2&gt;3.0.CO;2-G</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Comput. Chem</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="page" from="86" to="104" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Comparison of Simple Potential Functions for Simulating Liquid Water</title>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">L</forename><surname>Jorgensen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Chandrasekhar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Madura</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">W</forename><surname>Impey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">L</forename><surname>Klein</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.445869</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Chem. Phys</title>
+		<imprint>
+			<biblScope unit="volume">79</biblScope>
+			<biblScope unit="page" from="926" to="935" />
+			<date type="published" when="1983">1983</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Canonical sampling through velocity rescaling</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Bussi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Donadio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Parrinello</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.2408420</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Chem. Phys</title>
+		<imprint>
+			<biblScope unit="volume">126</biblScope>
+			<biblScope unit="page">14101</biblScope>
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+	<note>PubMed</note>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<monogr>
+		<title level="m" type="main">Computer Simulation of Liquids</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">P</forename><surname>Allen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">J</forename><surname>Tildesley</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1987">1987</date>
+			<publisher>Oxford University Press</publisher>
+			<pubPlace>Oxford, UK</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Particle mesh Ewald: An N•log(N) method for Ewald sums in large systems</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Darden</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>York</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Pedersen</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.464397</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Chem. Phys</title>
+		<imprint>
+			<biblScope unit="volume">98</biblScope>
+			<biblScope unit="page" from="10089" to="10092" />
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">GROMACS 4: Algorithms for Highly Efficient, Load-Balanced, and Scalable Molecular Simulation</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Hess</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Kutzner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Van Der Spoel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Lindahl</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/ct700301q</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Chem. Theory Comput</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page" from="435" to="447" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+	<note>PubMed</note>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">PLUMED: A portable plugin for free-energy calculations with molecular dynamics</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Bonomi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Branduardi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Bussi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Camilloni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Provasi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Raiteri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Donadio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Marinelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Pietrucci</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>Broglia</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cpc.2009.05.011</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Comput. Phys. Commun</title>
+		<imprint>
+			<biblScope unit="volume">180</biblScope>
+			<biblScope unit="page" from="1961" to="1972" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<monogr>
+		<title level="m" type="main">The Weighted Histogram Analysis Method, Version 2.0.6</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Grossfield</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Wham</surname></persName>
+		</author>
+		<ptr target="http://membrane.urmc.rochester.edu/content/wham" />
+		<imprint>
+			<date type="published" when="2018-03">March 2018</date>
+			<biblScope unit="page">20</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">The alanine dipeptide free energy surface in solution</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">E</forename><surname>Smith</surname></persName>
+		</author>
+		<idno type="DOI">10.1063/1.479860</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Chem. Phys</title>
+		<imprint>
+			<biblScope unit="volume">111</biblScope>
+			<biblScope unit="page" from="5568" to="5579" />
+			<date type="published" when="1999">1999</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">A New Method for Constructing Multidimensional Potential Energy Surfaces by a Polar Coordinate Interpolation Technique</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Maeda</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Ohno</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cplett.2003.08.129</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Phys. Lett</title>
+		<imprint>
+			<biblScope unit="volume">381</biblScope>
+			<biblScope unit="page" from="177" to="186" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Multiscale modeling in nanomaterials science</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">E</forename><surname>Karakasidis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">A</forename><surname>Charitidis</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.msec.2006.06.029</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Mater. Sci. Eng. C</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="page" from="1082" to="1089" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

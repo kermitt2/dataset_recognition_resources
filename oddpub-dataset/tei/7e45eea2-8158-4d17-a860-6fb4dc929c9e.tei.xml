@@ -1,0 +1,1247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Reaction Chemistry &amp; Engineering PAPER</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018-06-01">01 June 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Riccardo</forename><surname>Uglietti</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Dipartimento di Energia</orgName>
+								<orgName type="laboratory">Laboratory of Catalysis and Catalytic Processes</orgName>
+								<orgName type="institution">Politecnico di Milano</orgName>
+								<address>
+									<addrLine>via La Masa 34</addrLine>
+									<postCode>20156</postCode>
+									<settlement>Milano</settlement>
+									<country key="IT">Italy</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Mauro</forename><surname>Bracconi</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Dipartimento di Energia</orgName>
+								<orgName type="laboratory">Laboratory of Catalysis and Catalytic Processes</orgName>
+								<orgName type="institution">Politecnico di Milano</orgName>
+								<address>
+									<addrLine>via La Masa 34</addrLine>
+									<postCode>20156</postCode>
+									<settlement>Milano</settlement>
+									<country key="IT">Italy</country>
+								</address>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName><forename type="first">Matteo</forename><surname>Maestri</surname></persName>
+							<email>matteo.maestri@polimi.it</email>
+							<affiliation key="aff0">
+								<orgName type="department">Dipartimento di Energia</orgName>
+								<orgName type="laboratory">Laboratory of Catalysis and Catalytic Processes</orgName>
+								<orgName type="institution">Politecnico di Milano</orgName>
+								<address>
+									<addrLine>via La Masa 34</addrLine>
+									<postCode>20156</postCode>
+									<settlement>Milano</settlement>
+									<country key="IT">Italy</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Reaction Chemistry &amp; Engineering PAPER</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018-06-01">01 June 2018</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">6D9F5EF5EFF05E84A46C28C57BB3E2F6</idno>
+					<idno type="DOI">10.1039/c8re00050f</idno>
+					<note type="submission">Received 30th March 2018, Accepted 1st May 2018</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:47+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>In this work, we propose numerical methodologies to combine detailed microkinetic modeling and Eulerian-Lagrangian methods for the multiscale simulation of fluidized bed reactors.</s><s>In particular, we couple the hydrodynamics description by computational fluid dynamics and the discrete element method (CFD-DEM) with the detailed surface chemistry by means of microkinetic modeling.</s><s>The governing equations for the gas phase are solved through a segregated approach.</s><s>The mass and energy balances for each catalytic particle, instead, are integrated adopting both the coupled and the operator-splitting approaches.</s><s>To reduce the computational burden associated with the microkinetic description of the surface chemistry, in situ adaptive tabulation (ISAT) is employed together with operator-splitting.</s><s>The catalytic partial oxidation of methane and steam reforming on Rh are presented as a showcase to assess the capability of the methods.</s><s>An accurate description of the gas and site species is achieved along with up to 4 times speed-up of the simulation, thanks to the combined effect of operator-splitting and ISAT.</s><s>The proposed approach represents an important step for the first-principles based multiscale analysis of fluidized reactive systems.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p><s>Catalytic heterogeneous systems are of utmost importance to deal with the growing demand for efficient and sustainable processes for energy and the environment.</s><s>Heterogeneous catalysts not only improve the conversion of reactants but also shift the selectivity and the yield towards the desired products, by means of the enhancement of the rate of specific steps in the overall reaction network.</s><s>The behavior of the catalyst is the result of a broad range of phenomena at very different time and length scales. <ref type="bibr" target="#b0">1</ref> In fact, the observed functionality of the catalyst is affected not only by the interactions between the reacting molecules and the active sites, but also by the local compositions, surface coverages, temperature and pressure at the reactor scale.</s><s>In this perspective, the fundamental multiscale modeling of catalytic systems has been acknowledged as a promising tool to enable a detailed under-standing of the interactions between the catalyst and the reactor environment. <ref type="bibr" target="#b1">2</ref></s><s>The fundamental equations, which characterize each scale, have to be solved, adopting a firstprinciples approach, to gain fundamental insights into the catalytic mechanism under working conditions.</s><s>In particular, microkinetic models make possible the accurate description of each elementary step at the microscale, <ref type="bibr" target="#b2">3</ref> whereas computational fluid dynamics (CFD) is able to predict flow fields and transport phenomena <ref type="bibr" target="#b3">4</ref> in complex geometries.</s></p><p><s>The application of the envisioned approach to fixed bed reactors has already resulted in a successful description of these systems, as pointed out by the comprehensive review by Jurtz et al. <ref type="bibr" target="#b4">5</ref> In this context, Maestri and co-workers proposed a numerical framework able to couple the microkinetic modeling of the heterogeneous chemistry with the detailed description of the fluid dynamics in fixed bed reactors. <ref type="bibr" target="#b5">6,</ref><ref type="bibr" target="#b6">7</ref></s><s><ref type="bibr" target="#b9">[10]</ref> In this work, we extend the methodology <ref type="bibr" target="#b5">6,</ref><ref type="bibr" target="#b6">7</ref> to the modeling of heterogeneous systems composed of moving catalytic particles and, in particular, to fluidized bed reactors.</s><s>The possibility of coupling the CFD description of gas-solid flow in fluidized systems with microkinetic modeling of the heterogeneous chemistry makes possible the fundamental understanding of complex reactor conditions, thus overcoming the simplified phenomenological models based on empirical correlations used for fluidized systems.</s></p><p><s>Both Euler-Euler (EE) and Euler-Lagrange (EL) approaches are adopted in the literature for the description of fluidized bed systems.</s><s>On the one hand, Euler-Euler <ref type="bibr" target="#b10">11,</ref><ref type="bibr" target="#b11">12</ref> models treat the gas and solid phases as interpenetrating fluids.</s><s>Despite their affordable computational cost, the individual behavior of the particles is not resolved.</s><s>On the other hand, Euler-Lagrange <ref type="bibr" target="#b12">[13]</ref><ref type="bibr" target="#b13">[14]</ref><ref type="bibr" target="#b14">[15]</ref><ref type="bibr" target="#b15">[16]</ref> models consider the gas phase as a continuum and the solid particles as a discrete granular medium.</s><s>Therefore, the governing equations of mass, momentum and energy are solved for the gas, whereas the solid particles are individually tracked by means of Newton's equations of motion where each particle-particle and particle-wall collisional event is detected and quantified for the accurate description of the gassolid flow.</s><s>As such, EL models provide a more detailed description of the fluidized bed. <ref type="bibr" target="#b16">17</ref></s><s>Among the EL approaches, CFD-DEM <ref type="bibr" target="#b13">14,</ref><ref type="bibr" target="#b14">15</ref> (discrete element method) has been applied for nonreactive fluidized beds, e.g.</s><s>bubble dynamics and minimum fluidization velocity, <ref type="bibr" target="#b17">18,</ref><ref type="bibr" target="#b18">19</ref> particle mixing and segregation rates <ref type="bibr" target="#b19">20</ref> and minimum bubbling velocity. <ref type="bibr" target="#b20">21</ref></s><s>Moreover, the heat transfer mechanisms related to gas and particles have been successfully studied by means of this Euler-Lagrange framework for both bubbling <ref type="bibr" target="#b21">22</ref> and spouted <ref type="bibr" target="#b22">23</ref> beds.</s><s>5]<ref type="bibr" target="#b25">[26]</ref><ref type="bibr" target="#b26">[27]</ref><ref type="bibr" target="#b27">[28]</ref><ref type="bibr" target="#b28">[29]</ref> Moreover, the reactivity is described by means of rate equations using a pseudo-homogeneous chemistry approach, <ref type="bibr" target="#b29">30</ref> which does not account for complex surface reaction networks and gas-solid mass transfer.</s><s>Thus, no species mass and site balances have been implemented for the catalytic particles comprising the fluidized bed.</s></p><p><s>Here, we propose a methodology to couple the CFD-DEM model with a detailed description of the heterogeneous catalytic reactions by means of a microkinetic description of the surface reactivity.</s><s>In doing so, the position and dynamics of each particle are accurately tracked by DEM, whereas the composition, temperature and pressure of the gas phase are computed by CFD and employed to describe the gas-solid mass transfer and the heterogeneous chemistry on the particles.</s><s>The mass and energy balances have been introduced in the DEM solution algorithm for each catalytic particle.</s><s>The chemistry introduces a relevant overhead with respect to the computational cost of non-reactive CFD-DEM simulations, which can be considerably mitigated by applying the operator-splitting <ref type="bibr" target="#b30">31,</ref><ref type="bibr" target="#b31">32</ref> and in situ adaptive tabulation <ref type="bibr" target="#b32">33,</ref><ref type="bibr" target="#b33">34</ref> (ISAT) methodologies.</s></p><p><s>The capabilities of the proposed methodology have been assessed by investigating fluidized beds composed of around 10 4 catalytic particles by means of both microkinetic models and rate equations.</s><s>Moreover, the combined application of operator-splitting and ISAT techniques has been tested.</s><s>A 4-fold overall speed-up of the simulation has been achieved, allowing for an effective reduction of the computational cost.</s><s>The detailed insight into the interplay between chemistry and fluid dynamics allows for an unprecedented understanding of the fluidized systems with a direct impact also on nonconventional applications such as chemical vapor deposition and nanoparticle dynamics.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Governing equations</head><p><s>The proposed reactive CFD-DEM methodology has been developed to describe gas-solid fluidized bed reactors, within the OpenFOAM <ref type="bibr" target="#b34">35</ref> framework.</s><s>In this view, the catalytic particles and the gas phase in the reactor are solved sequentially during a simulation time step.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Solid phase</head><p><s>The chemical behavior of the solid phase is characterized with the solution of the dynamic evolution of the temperature, compositions and coverages for each pellet in the reactor.</s><s>Moreover, the position of each individual particle in the domain is tracked by means of DEM.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Mass and energy balances at the catalytic particles</head><p><s>The ODE system composed of the energy, species mass and site species balances on the catalytic pellet is solved.</s><s>The particle energy balance is reported in eqn ( <ref type="formula">1</ref>):</s></p><p><s>(1</s></p><formula xml:id="formula_0">)</formula><p><s>where T is the temperature, ρ is the density, c p is the specific heat capacity, h is the heat transfer coefficient, V and A are the volume and the external surface area, and r n and ΔH R,n are the rate and heat of the nth heterogeneous reaction.</s><s>Subscripts p and g refer to the pth particle and the gas phase in the reactor.</s></p><p><s>The internal resistance of the particle to the heat transfer has been considered negligible due to the typical diameters of fluidized bed particles, i.e. on the order of 10 −4 m.</s><s>Thus, a Biot number significantly lower than one and a uniform temperature distribution have been assumed in the catalytic pellet.</s><s>The Ranz-Marshall correlation <ref type="bibr" target="#b35">36</ref> has been selected to properly quantify the heat transfer coefficient between the catalyst and the gas phase at the particle position (the equations of the interphase heat transfer model are reported in the ESI †section 1).</s><s>Nevertheless, it is worth noting that the proposed methodology is independent of the specific gassolid heat transfer model.</s><s>Therefore, the specific correlation for the computation of the transport coefficient can be selected depending on the case under investigation.</s><s>The particle-particle and particle-wall thermal conductions have been neglected since they contribute to the overall heat transfer at most 1.5% in the case of reactive bubbling fluidized beds as reported by Zhou et al. <ref type="bibr" target="#b24">25</ref> The mass balance for a generic species j in the catalytic particle is described in eqn (2): (2)   where ω j , K c, j , MW j and ν j,n are the mass fraction, the mass transfer coefficient, the molecular weight and the stoichiometric coefficient in the nth reaction of the jth species, ε p is Reaction Chemistry &amp; Engineering Paper the porosity of the catalyst, ρ g,p is the average density of the mixture in the catalyst and ρ is the mean density between the mixture in the catalyst and the gas.</s><s>The gas mixture in the catalyst has been assumed to be an ideal mixture of perfect gases.</s><s>In analogy with the heat trasfer, 37 the gas-solid mass exchange has been modeled with the Ranz-Marshall correlation. <ref type="bibr" target="#b35">36</ref></s><s>Internal mass transfer limitations have been neglected due to the fine size of the investigated particles, i.e. on the order of 10 −4 m.</s></p><p><s>The site balance for a generic species j adsorbed on the catalytic particle surface is reported in eqn (3):</s></p><p><s>(3) where θ j,p and R het j,p are the coverage and the production rate due to heterogeneous reactions of the jth adsorbed species and σ cat is the concentration of active sites on the catalytic surface.</s><s>Reaction rates are expressed on the basis of the mean surface molar concentration in the pth particle.</s></p><p><s>The heterogeneous reactions and the transport properties are evaluated by means of the OpenSMOKE++ library <ref type="bibr" target="#b37">38</ref> as described for the catalyticFOAM framework for fixed bed reactors. <ref type="bibr" target="#b5">6</ref></s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DEM particle tracking</head><p><s>The position and velocity of each solid particle are updated solving Newton's equations of motion (eqn (4)).</s><s>The particle angular velocity is computed by considering only the torques generated by collision forces (eqn (5)).</s></p><p><s>(4) (5)   where m, I, v and w are the mass, the moment of inertia, the velocity and angular velocity of the pth particle, F coll,p is the sum of the collisional forces acting on the pth particle, n is the unit normal to the F coll,p direction and R p is the particle radius.</s><s>Drag (F d ) and buoyancy (F b ) forces have been selected to account for the gas-solid momentum transfer.</s></p><p><s>The drag force contribution is computed proportionally to the gas-particle relative velocity and to the particle volume by means of a drag coefficient β, which has been computed by means of a combination of the empirical Ergun <ref type="bibr" target="#b38">39</ref> and Wen-Yu 40 correlations according to the Gidaspow 11 model.</s><s>The buoyancy force is characterized by means of the pressure gradient.</s><s>The soft sphere approach proposed by Cundall and Strack 41 has been selected to properly quantify the collisional events in the dense gas-solid flow in the reactor.</s><s>In particular, the collision partners of each catalytic pellet are searched both in the computational cell hosting the particle and in the neighboring ones, and the forces generated by each detected collision are quantified according to the spring-slider-dashpot model proposed by Tsuji et al. <ref type="bibr" target="#b41">42</ref> Finally, the total force acting on the pth particle, i.e.</s><s>F coll,p , is obtained by summing up the forces quantified for each detected collisional event during the solution time step of the particle, which must be selected to be lower than the minimum characteristic time of the collisional events <ref type="bibr" target="#b42">43</ref> to obtain a stable solution of the solid phase.</s><s>Therefore, multiple time steps for the solution of the solid phase are required per simulation time step.</s><s>In fact, the characteristic time of the collisional events in the catalytic bed (on the order of 10 −5 -10 −6 s) is usually significantly lower than the simulation time step required to guarantee a Courant number lower than 1, necessary for the stability of gas phase solution.</s><s>Further details on the equations involved in the drag, buoyancy and collisional models are reported in the ESI † (section 1).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Gas phase</head><p><s>The volume averaged continuity, Navier-Stokes, energy and species mass balances are discretized and solved according to the finite volume method.</s><s>The continuity and momentum balances are reported in eqn ( <ref type="formula">6</ref>) and ( <ref type="formula">7</ref>):</s></p><p><s>(6) (7)   where U g is the gas velocity, P is the pressure, g is the gravity vector, S U refers to the gas-solid momentum transfer and ε g refers to the void fraction, defined as the ratio between the volume occupied by the gas and the total volume in a computational cell.</s><s>The gas phase inside the reactor has been considered an ideal mixture of perfect gases.</s><s>The gas stresses have been modeled by means of the Newtonian stress tensor and no turbulence models have been accounted for in this work.</s><s>The void fraction ε g has been computed by means of the particle centered method <ref type="bibr" target="#b42">43</ref> (PCM).</s></p><p><s>The gas energy balance is described by eqn ( <ref type="formula" target="#formula_1">8</ref>).</s></p><p><s>(</s></p><formula xml:id="formula_1">)<label>8</label></formula><p><s>where λ is the thermal conductivity of the gas phase and S h refers to the gas-solid heat transfer.</s><s>The energy dissipation due to the viscosity of the fluid is neglected and the pressure term is ignored. <ref type="bibr" target="#b36">37</ref></s><s>Moreover, the conductive flux in the gas phase has been quantified by means of Fourier's law.</s><s>No radiative flux has been included.</s><s>The mass balance for a generic species j in the gas phase is expressed in eqn (9), where the diffusive fluxes have been modeled by means of Fick's law.</s></p><p><s>This journal is © The Royal Society of Chemistry 2018 (9)   where Γ j , R hom j and S ω,j refer to the mixture diffusivity, the production rate due to the homogeneous reactions in the gas phase and the gas-solid species mass transfer of the jth species.</s><s>The coupling with the solid phase is achieved through the source terms of momentum (S U ), heat (S h ) and species mass (S ω,j ) which represent the rates of gas-solid momentum, heat and species j mass transfer per unit of reactor volume.</s><s>The equations and the procedure for the estimation of these terms are reported in the ESI † (section 1).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Numerical methods</head><p><s>In this section, we describe the numerical strategies we have implemented and adapted for the coupling between CFD-DEM and microkinetic modeling.</s><s>Both coupled and operatorsplitting approaches are considered and discussed to solve the ODE system composed of eqn ( <ref type="formula">1</ref>)-( <ref type="formula">3</ref>).</s><s>A summary of the two methodologies is reported in Fig. <ref type="figure" target="#fig_1">1</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Coupled approach</head><p><s>In the coupled approach, all the phenomena and their interactions are solved simultaneously and, consequently, it represents the most rigorous method to solve the particle balances.</s><s>Each equation in the ODE system contains the contribution of both the gas-solid transport and the heterogeneous catalytic reactions (Fig. <ref type="figure" target="#fig_1">1</ref>).</s><s>Therefore, the accurate description of the evolution of the system requires accounting for these two phenomena and their interplay during each simulation time step simultaneously.</s><s>However, the resulting system of equations can be large and non-linear leading to prohibitive computational costs. <ref type="bibr" target="#b5">6</ref></s><s>erator-splitting approach</s></p><p><s>The operator-splitting method accounts for transport and reaction in separate fractional steps.</s><s>These sub-steps are separately solved over a particle time step, allowing for the choice of the optimal numerical strategy for each of them.</s><s>Differently from the coupled approach, the integration of the particle stiff ODE system is performed in 3 sub-steps, according to the Strang algorithm. <ref type="bibr" target="#b30">31</ref></s><s>In particular, the sequence transportreaction-transport (TRT) has been selected.</s><s>In the first substep, the particle ODE system is integrated over Δt/2 (Fig. <ref type="figure" target="#fig_1">1</ref>) accounting for only the gas-solid transport phenomena.</s><s>Thus, the particle behaves like an inert pellet, the surface coverages are kept constant and the gas-solid heat and mass transfer can be analytically solved.</s><s>In the second fractional step, the solution of the heterogeneous chemistry is performed.</s><s>Thus, the heat and mass fluxes between the gas and the particle are neglected and the catalytic pellet behaves like a batch reactor.</s><s>The resulting stiff ODE system without the transport term is integrated over Δt imposing the temperature, composition and surface composition of the particle resulting from the previous transport step as initial conditions (Fig. <ref type="figure" target="#fig_1">1</ref>).</s><s>In the third sub-step, the reactivity of the particle is neglected.</s><s>The gas-solid heat and mass transfer can be analytically solved over Δt/2 by imposing the temperature and composition resulting from the previous reaction step as initial conditions (Fig. <ref type="figure" target="#fig_1">1</ref>).</s><s>The results of the final transport step are stored as the temperature, composition and surface composition of the particle at the final solution time t n + Δt.</s><s>A detailed description of the numerical implementation is reported in the ESI † (section 2).</s></p><p><s>Notwithstanding the computational gain related to the analytical solution of the transport steps, the reaction step still requires the management of the ODE system containing the description of heterogeneous chemistry (Fig. <ref type="figure" target="#fig_1">1</ref>).</s><s>However, the splitting technique enables by construction the application of ISAT.</s><s>In fact, differently from the coupled algorithm, the ODE system is characterized by the sole reaction source terms resulting in a straightforward implementation of ISAT, which can provide a fast and accurate solution of the reaction step by means of a storage and retrieval technique. <ref type="bibr" target="#b33">34</ref></s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Computational domains</head><p><s>Pseudo-2D parallelepipedal reactors have been selected for the simulations reported in this work.</s><s>The starting point of the test cases is a packed bed configuration obtained by randomly injecting the solid particles from the top of the reactor.</s><s>In particular, each pellet is generated at a random Fig. <ref type="figure" target="#fig_1">1</ref> Schematic representation of the application of either a coupled approach or operator-splitting and ISAT to the integration of the stiff ODE system containing the energy, species and site species balances on a generic particle p.</s></p><p><s>position at the top of the reactor.</s><s>Then, the gravitational settling of the particle occurs, and the simulation is stopped when all the particles in the packed bed configuration have zero or negligible velocity (i.e.</s><s>&lt;10 −4 m s −1 ).</s><s>In this work, the particle injection rate has been set to 50 000 particles per s, whereas the duration of the injection has been set to achieve the desired number of particles.</s><s>The average void fraction of all the packed beds generated in this work has been validated with the data provided by Goldschmidt et al. <ref type="bibr" target="#b43">44</ref> and Hou et al. <ref type="bibr" target="#b44">45</ref> for the non-reactive and reactive tests, respectively.</s><s>Fig. <ref type="figure" target="#fig_0">2</ref> shows both the adopted computational grid and the initial packed bed configuration.</s><s>The minimum dimension for the cubic cells comprising the computational grid has been selected to be twice the particle diameter (corresponding to 5400 and 6000 cells for non-reactive and reactive tests) to avoid numerical instabilities related to non-realistic gas volumetric fractions close to zero inside the computational cells. <ref type="bibr" target="#b45">46</ref></s><s>The geometrical and mechanical properties of both the reactor and the particles together with the collisional properties of the fluidized bed will be specified for each test case.</s><s>The boundary and initial conditions for both the fluid dynamics and reactive tests performed to investigate the capabilities of the framework are herein reported.</s><s>An atmospheric pressure has been fixed at the top of the reactor, while a zero-gradient condition has been assumed for the lateral walls and the bottom.</s><s>At the bottom of the reactor, a superficial velocity higher than the minimum fluidization has been imposed.</s><s>A no-slip condition has been set for the lateral walls, whereas the free-slip of the gas has been imposed at the frontal ones due to the pseudo-2D nature of the adopted reactor geometry.</s><s>In the reactive test cases, the temperature and composition of the gas phase have been imposed at the bottom of the reactor equal to the operating conditions of the inlet feed stream, which are reported in Table <ref type="table">1</ref> for both the two reproduced processes, i.e. methane CPO and steam reforming.</s><s>A Neumann condition has been imposed on the remaining boundaries.</s></p><p><s>As an initial condition, both the gas internal velocity field and the particle velocity in the packed bed have been set to zero.</s><s>Moreover, the particles have not been allowed to leave the domain from the inlet and lateral walls during the runs.</s><s>An inert atmosphere of nitrogen has been set for both the gas and the catalyst at the start of reactive cases.</s><s>The simulations have been carried out under isothermal conditions at the temperature reported in Table <ref type="table">1</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results and discussion</head><p><s>The reliability of the proposed CFD-DEM multiscale framework has been tested by assessing the accuracy of fluid dynamics predictions and its capabilities in managing complex heterogeneous reaction networks.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Assessment of the non-reactive fluid dynamic behaviour</head><p><s>The accuracy of the fluid dynamics predictions has been verified by the analysis of pressure drop and bed expansion dynamics of the lab-scale fluidized bed reported by Goldschmidt et al. <ref type="bibr" target="#b43">44</ref> No chemical reactions are considered in the domain since inert particles in air are employed by Goldschmidt et al. <ref type="bibr" target="#b43">44</ref> Table <ref type="table" target="#tab_0">2</ref> reports the geometrical and mechanical properties of both the reactor and the 24 750 particles of 2.5 mm diameter comprising the fluidized bed along with the normal restitution coefficient e and the friction factor μ c for the particleparticle and particle-wall collisions. <ref type="bibr" target="#b41">42</ref></s><s>Fig.</s><s><ref type="figure" target="#fig_2">3a</ref> shows the pressure drop as a function of the normalized velocity, i.e. the ratio between the inlet fluid velocity and the minimum fluidization one U g,mf (1.25 m s −1 according to the experimental results of Goldschmidt et al. <ref type="bibr" target="#b43">44</ref> ).</s></p><p><s>Pressure drops have been evaluated for each gas velocity, at each simulation time step, as the difference in the weighted area averages of the pressure values between the inlet and outlet of the domain.</s><s>Different temporal evolutions of the pressure drops have been obtained for fixed and fluidized bed cases, as reported in Fig. <ref type="figure" target="#fig_2">3</ref> for the inlet fluid velocities equal to 0.4 and 1.25 U g,mf .</s><s>In the first regime, a steady  pressure drop value is achieved (Fig. <ref type="figure" target="#fig_2">3b</ref>).</s><s>In the second regime, a pseudo-steady state oscillating behavior arises after the initial fluidization dynamics of the packed bed (Fig. <ref type="figure" target="#fig_2">3c</ref>).</s><s>This is due to the bubbling behavior of the catalytic bed in which the continuous generation and eruption of gas bubbles causes a periodic expansion and fall of the bed.</s><s>Therefore, the resistance to the gas flow and, thus, the pressure drops experienced in the reactor are periodically changing, due to the fluid-like state of the granular catalytic phase.</s><s>As a result, the steady pressure drop value has been reported for the fixed bed regime tests, while in the fluidized regime ones, time averaging has been performed over the last 10 residence times, once the pseudo-steady operations have been achieved.</s></p><p><s>The pressure drops predicted by the proposed framework have been compared with the Ergun correlation 39 in the fixed bed regime.</s><s>A good agreement has been observed with deviations of at most 3%.</s><s>Moreover, the framework correctly predicts the minimum fluidization velocity by the accurate description of the transition between the fixed and fluidized bed regimes.</s><s>In the fluidized bed regime, the simulation results have been compared with the theoretical ratio between the weight of the bed and the cross section of the reactor leading to a deviation of at most 5%.</s><s>A further validation has been carried out by reproducing the temporal evolution of the bed height to investigate the bed expansion dynamics.</s><s>A good agreement of the proposed framework with both the numerical (deviations of up to 3%) and experimental (deviations of up to 12%) results <ref type="bibr" target="#b43">44</ref> has been achieved in terms of the average height of the particles comprising the fluidized bed.</s><s>A plot of the average particle height as a function of simulation time is reported in the ESI †section 3.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Assessment of the reactive fluid dynamic behaviour</head><p><s>The capabilities of the proposed framework in the presence of complex catalytic reaction networks are discussed by selecting the catalytic partial oxidation (CPO) and the steam reforming (SR) of methane on Rh as numerical case studies.</s><s>Therefore, they are included in this work only to test the framework and not to study the reactions themselves.</s><s>No homogeneous reactions have been investigated.</s></p><p><s>Table <ref type="table">3</ref> specifies the geometrical, mechanical and collisional properties <ref type="bibr" target="#b44">45</ref> of both the reactor and the 10 4 spherical particles of 100 micron diameter comprising the fluidized bed.</s></p><p><s>The reactive simulations have been carried out first by means of the coupled approach.</s><s>The total simulation time  has been selected to achieve the pseudo-steady state of the test, i.e. after the mass fraction of each of the species involved varied by less than 0.001% between two adjacent sampling time intervals of 10 −4 s.</s><s>Then, these results have been used as a benchmark case to assess the accuracy and the reduction of the computational cost offered by the operatorsplitting and its combination with ISAT for rate equationbased kinetics and detailed microkinetic modeling.</s></p><p><s>The mean global error &lt;ε&gt; has been assumed as the indicator for the selection of the simulation time step and ISAT tolerance: (10)   where NS is the number of species and site species present in the catalytic particles, NT is the total number of simulation time steps, NP is the total number of particles in the system, and Y coupled p,i and Y p,i represent the composition of the particle in the case of rate equation-based kinetics and both the composition and coverage of the particle in the case of the microkinetic model, derived with and without the coupled approach, respectively.</s><s>A time step of 5 × 10 −6 s has been selected (additional information about the selection criteria are available in the ESI †section 4).</s><s>The effect of several ISAT tolerances of different orders of magnitude has been quantified for the selected time step in the case of both CPO rate equation and microkinetic model-based approaches, as reported in Table <ref type="table">4</ref>. Tolerances of 10 −7 and 5 × 10 −4 have been selected for the two kinetics as the optimum between the accuracy and the computational efficiency of the ISAT algorithm.</s><s>A comparable accuracy has been achieved in both cases by selecting a tolerance able to keep the error (eqn (10)) at around 5 × 10 −4 .</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Rate equation-based approach</head><p><s>The kinetic model proposed by Donazzi et al., <ref type="bibr" target="#b46">47</ref> composed of methane oxidation, methane steam reforming, direct and reverse water gas shift and CO and H 2 combustion, has been selected for both CPO and SR on rhodium.</s><s>Fig. <ref type="figure">4</ref> shows the temporal evolution of the maps of the O 2 , H 2 O and H 2 mass fractions, highlighting the typical CPO behavior.</s><s>At the beginning of the simulation, the methane and oxygen are progressively transported through the catalytic bed, initially full of nitrogen (Fig. <ref type="figure">4a</ref>).</s><s>The total oxidation of methane is the dominant reaction path at the bottom of the reactor due to the abundance of oxygen, promoting the production of CO 2 and water (Fig. <ref type="figure">4a</ref>).</s><s>As soon as the oxygen is completely consumed and the oxygen-free stream of reactants is transported to the remaining part of the reactor, the steam reforming reaction starts to produce syngas, as is evident from the content of CO and H 2 shown in Fig. <ref type="figure">4b</ref>.</s><s>Finally, a pseudo-steady state is achieved together with a syngas Table <ref type="table">3</ref> Geometrical and mechanical properties of the reactor and solid particles and collisional properties for particle-particle and particle-wall impacts, selected for reactive cases product with an H 2 /CO molar ratio at the exit of the catalytic bed of 2.68 (Fig. <ref type="figure">4c</ref>).</s></p><p><s>The accuracy of operator-splitting and ISAT has been investigated by comparing the average composition in the catalytic bed (eqn ( <ref type="formula">11</ref>)) obtained with both the coupled and the operator-splitting (ISAT) approaches.</s><s>(11)   One to one particle comparison has not been performed due to the stochastic movement of the particles in the fluidized bed.</s><s>Consequently, the trajectory of a specific catalytic pellet could not be the same in all the simulations performed, but the average quantities of the bed are poorly influenced by the stochastic nature of the particle movement.</s></p><p><s>Fig. <ref type="figure">5</ref> shows the comparison of the temporal trends of the average composition in the bed (eqn ( <ref type="formula">11</ref>)) derived with operator-splitting and with ISAT against the results obtained with the coupled approach.</s><s>Both operator-splitting and ISAT reproduce well the trend of the methane and oxygen during the entire simulation time.</s><s>Moreover, the operator-splitting correctly predicts the amount of total and partial oxidation products.</s><s>ISAT slightly overestimates the amount of total oxidation products at the pseudo-steady state.</s><s>Nevertheless, in the worst case an error relative to the whole species mass fraction vector of 0.04% and 0.27% is found for operator-splitting and ISAT, thus attesting to the accuracy of the proposed strategies.</s></p><p><s>The analysis of the reduction of the computational cost of the coupled approach by means of sole operator-splitting and its combination with ISAT has been carried out considering two speed-up factors, i.e. chemical (SP T/C ) and overall (SP overall ), reported in eqn ( <ref type="formula">12</ref>) and ( <ref type="formula">13</ref>), respectively: (12) (13)   where the subscript i refers to the ith simulation time step.</s><s>τ DI,i and τ M are the computational costs for the solution of the particle chemistry by means of the coupled approach and either operator-splitting or its combination with ISAT, respectively.</s><s>The cost τ M is the sum of the contributions related to the analytical solution of the gas-solid transport (τ T ) and the numerical solution of the catalytic chemistry, i.e. the reaction step of operator-splitting, by means of either the ODE solver (τ OS c ) or ISAT algorithm (τ OS+ISAT c</s></p><p><s>).</s><s>Finally, τ DEM is the cost related to the computation of the particle trajectories by means of DEM.</s></p><p><s>The chemical speed-up factor is a measure of the computational gain related to the description of the gas-solid transport and the chemistry in the solid particles.</s><s>The overall speed-up factor, on the other hand, is a measure of the computational gain of the whole particle solution, which is affected by the additional cost associated with the DEM solution, which is independent of the specific numerical strategy.</s></p><p><s>Fig. <ref type="figure" target="#fig_5">6</ref> reports the speed-up factors obtained by means of the sole operator-splitting algorithm as a function of simulation time.</s><s>Two opposite efficiencies can be observed on the basis of the dominant reaction mechanism.</s><s>Speed-up factors of 1.75 and 1.5 are observed for SP T/C and SP overall at the beginning of the simulation when the deep methane oxidation is the prevalent reaction path.</s><s>In this case, the weights of the contribution of gas-solid transport and heterogeneous chemistry to the solution of the particle ODE are almost equivalent.</s><s>Thus, the negligible cost of the analytical solution of the transport has a beneficial effect boosting the performances of the system.</s><s>Conversely, a drop in the computational efficiency is observed once the production of syngas starts, i.e. after 0.15 s, as reported in Fig. <ref type="figure" target="#fig_5">6</ref>.</s></p><p><s>The trend of the speed-up factors as a function of the dominant reaction mechanism in the reactor can be Fig. <ref type="figure">5</ref> Comparison of the average mass fraction composition for the isothermal CPO process, derived with: coupled approach and operatorsplitting (a) and coupled approach and operator-splitting + ISAT (b).</s></p><p><s>explained considering the characteristic times of the involved chemical phenomena.</s><s>In fact, a slow-down of the simulation caused by the operator-splitting approach has been found whenever the characteristic time of consumption or production of at least one of the species is significantly shorter than the adopted simulation time step.</s><s>With regard to the methane CPO on rhodium, the CO and H 2 combustion rates are two and three orders of magnitude faster than the methane oxidation, <ref type="bibr" target="#b46">47</ref> whose characteristic time is of the same order of magnitude as the simulation time step.</s><s>Therefore, a speedup of the simulation is expected whenever the rates of syngas combustion are negligible.</s><s>In particular, after 0.15 s (i.e.</s><s>once the production of syngas starts), the distribution of the chemical speed-up factor has been observed in the fluidized bed and is reported as follows.</s><s>At the bottom and the top of the bed, the splitting technique has been able speed-up the solution of the chemistry of the particle up to 2-3 times, due to the poor content of syngas and oxygen, respectively.</s><s>Whereas, in the middle of the bed, a relevant slow-down of the solution of the particles (up to a 0.07 chemical speed-up factor) has been observed due to non-negligible amounts of both syngas and oxygen, promoting the syngas combustion reactions (a detailed explanation of the distribution of the computational efficiency of operator-splitting is provided in the ESI †section 4).</s></p><p><s>Consequently, a slow-down of the simulation of up to a chemical speed-up factor of about 0.6 has been observed (Fig. <ref type="figure" target="#fig_5">6</ref>).</s></p><p><s>To improve the performances of the simulations, the ISAT algorithm has been applied to the reaction sub-step of the operator-splitting algorithm.</s><s>In principle, ISAT is expected to reduce the computational burden by avoiding the direct integration of the majority of the particles.</s><s>) and overall (SP OS+ISAT overall ) speed-up factors as a function of simulation time.</s><s>As expected, higher chemical and overall speed-up factors of 10 and 4 are achieved as compared to 1.75 and 1.5 obtained with the application of the sole operator-splitting for the methane oxidation    View Article Online dominant path.</s><s>Moreover, the slow-down of the simulation is no longer experienced, once the production of syngas starts, since a minimum speed-up of the simulation of around 2 is found, as reported in Fig. <ref type="figure" target="#fig_4">7</ref>.</s><s>In fact, the numerical stiffness related to the syngas combustion introduced by the operatorsplitting technique is recovered by retrieving the results of most of the particles from the ISAT table, thus avoiding their direct integration (further analyses of this trend, based on the distribution of the chemical speed-up factor and retrievals, growths and additions in the catalytic bed, are available in the ESI †section 4).</s><s>This is further confirmed by the analysis of the steam reforming simulations (Table <ref type="table">1</ref>).</s><s>Fig. <ref type="figure" target="#fig_7">8</ref> reports the SP OS T/C and SP OS+ISAT T/C speed-up factors as a function of time.</s><s>As expected, the operator-splitting always provides a chemical speed-up of about 2 (the dotted line in Fig. <ref type="figure" target="#fig_7">8</ref>).</s><s>In fact, transport and catalytic reaction phenomena can be efficiently split without any additional stiffness introduced by the combustion reactions of syngas because of the absence of oxygen.</s><s>Moreover, ISAT additionally boosts the performances enabling an SP OS+ISAT T/C speedup of 12, corresponding to an overall speed-up factor of 4.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Microkinetic model-based approach</head><p><s>We now extend the assessment and testing of the framework to detailed microkinetic modeling of the surface reactivity.</s><s>The UBI-QEP microkinetic model proposed by Maestri et al. <ref type="bibr" target="#b47">48,</ref><ref type="bibr" target="#b48">49</ref> consisting of 16 species and 13 site species involved in 82 surface reactions has been selected for the CPO of methane on rhodium.</s><s>The same operating conditions adopted for the CPO rate equation kinetics have been imposed (Table <ref type="table">1</ref>).</s><s>Fig. <ref type="figure" target="#fig_8">9</ref> shows the temporal evolution of the maps of the O, H and CO site species fractions derived with the coupled approach.</s><s>The two different zones of total oxidation and steam reforming of methane are observed.</s><s>At the beginning of the simulation, the methane and oxygen are progressively transported through the catalytic bed and start reacting.</s><s>The dynamics of the most abundant reacting intermediates (MARI) are reported in Fig. <ref type="figure" target="#fig_8">9</ref>.</s><s>The total oxidation of methane occurs in the initial part of the reactor, where atomic oxygen covers almost 90% of the surface, as shown in Fig. <ref type="figure" target="#fig_8">9a</ref>.</s><s>Then, once oxygen is consumed, syngas production is predicted, and CO and H become the MARI of the system.</s><s>The average species (&lt;ω&gt;, eqn (11)) and site species (&lt;θ&gt;, eqn ( <ref type="formula">14</ref>)) composition in the catalytic bed has been estimated to rate the different methodologies.</s><s>Both the conversion of reactants and the distribution of products are correctly described by ISAT, since small deviations (&lt;0.1%) are present between the temporal profiles of species evaluated by means of the coupled and ISAT approaches.</s><s>Moreover, the coverages of both the adsorbed CO and H and the oxygen are in good agreement (deviations lower than 3.7%) with the results of the coupled approach.</s><s>Small stochastic discrepancies can still be observed locally as it is evident in the profile of adsorbed oxygen and water.</s><s>Despite this, a maximum error relative to entire species and site species vectors of 0.1% and 3.7%, respectively, is experienced, thus revealing the accuracy of the proposed strategies.</s></p><p><s>The chemical and overall speed-up factors have been computed for both operator-splitting and its combination with ISAT as a function of simulation time.</s><s>Differently from the rate equation-based simulations, a significant slow-down related to the operator-splitting has been observed for both the methane oxidation and reforming.</s><s>In fact, the microkinetic modeling describes all the elementary steps comprising the catalytic mechanism, accounting for the adsorption and desorption of the species on the catalyst surface and the surface reactions, which have a minimum characteristic time several orders of magnitude lower than the adopted time step.</s></p><p><s>Therefore, the ISAT algorithm has been applied and the analysis of the speed-up factors has been performed and reported in Fig. <ref type="figure" target="#fig_11">11</ref>.</s><s>As expected, a speed-up of the simulation is achieved thanks to the storage and retrieval methodology.</s><s>In fact, the ODE system integration can be avoided for most of the particles, thus eliminating the stiffness introduced by the operator-splitting approach due to the modeling of the dynamics of the catalyst surface.</s><s>At the beginning of the simulation, a speed-up of about 2 is experienced, since the number of retrievals is limited by the strong dynamics of the site species and by the on-the-fly building procedure of the storage table.</s><s>Then, a speed-up of about 4 is achieved at the pseudo-steady state, when the ISAT table has been properly built-up, allowing for an effective reduction of the computational cost.</s><s>The distribution of the chemical speed-up factor in the catalytic bed has been studied at 1 s, i.e. at the pseudo-steady state.</s><s>To derive the map of the speed up, we carried out a simulation of 100 time-steps with and without operator-splitting and ISAT, starting from the results of the coupled approach obtained for the selected time.</s><s>Then, the computational costs evaluated for each particle at the last time step have been used to derive the maps of the speed-up factor.</s><s>As a result of such an approach, the positions of the particles in the fluidized bed do not change relevantly during the simulation time, i.e. 5 × 10 −4 s, thus excluding the stochastic contribution of the particles' movement in the bed and allowing for the one to one particle comparison.</s><s>A relevant speed-up of up to 2500 is achieved for most of the particles, as shown in Fig. <ref type="figure" target="#fig_12">12a</ref>.</s><s>In particular, an increment of two orders of magnitude of the maximum speed-up provided by ISAT is experienced with respect to the rate equation kinetics due to the higher computational cost required for the integration of the catalytic chemistry when a microkinetic model is adopted.</s><s>The speed-up is related to the fast retrieval procedure which characterizes 99% of the particles, as shown in Fig. <ref type="figure" target="#fig_12">12b</ref>.</s><s>The direct integrations are concentrated across the transition between the total and the partial oxidation regimes, where the local conditions experienced by the particles could not be sufficiently close to the stored records.</s><s>Therefore, an effective speed-up of the simulation is still provided, even if a few particles still require the integration of the reaction step of the operator-splitting algorithm for growth and addition operations, thus experiencing a relevant slow-down with respect to the coupled approach (up to 0.05 of chemical speed-up factor) due to the stiffness related to the characteristic time of elementary steps, introduced by the splitting technique.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusions</head><p><s>In this work, a CFD-DEM framework has been coupled with a detailed description of the heterogeneous chemistry, enabling the accurate simulation of fluidized bed reactors.</s><s>The numerical tool is able to accurately predict the pressure drops and the minimum fluidization velocity.</s><s>A good agreement on the bubble formation and expanded bed height with respect to experimental data has been observed.</s><s>Moreover, the numerical framework is capable of reproducing different fluid dynamic regimes, e.g.</s><s>expanded and bubbling beds, according to the different particle properties and gas flow rates.</s><s>The description of the heterogeneous chemistry has been introduced by the rigorous solution of the ODE system related to the species and temperature governing equations along with the site balances.</s><s>An accurate description of the evolution of the species, temperature and coverages is obtained with detailed maps of the distribution of the species along the reactor.</s><s>The huge computational cost (up to 80% of the total simulation time) introduced by the detailed chemistry description has been tackled by the application of the operator-splitting approach.</s><s>A speed-up of around 2 is observed whenever the characteristic time of the reactions involved is comparable with the numerical time step.</s><s>A slowdown is observed when the stiffness of the ODE system related to the chemistry solution is higher than that of the original coupled system.</s><s>In this context, we have taken advantage of the ISAT algorithm to reduce the computational burden.</s><s>In particular, a computational gain of up to 12 has been observed.</s><s>Therefore, the obtained results of speed-up have shown the possibility to extend the proposed methodology to a higher number of particles, paving the way for the simulation of relevant cases.</s><s>As a whole, this methodology couples the accurate description of the complex fluid dynamics in fluidized systems with the detailed description of the heterogeneous chemistry, reducing the computational cost of the simulations.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conflicts of interest</head><p><s>There are no conflicts to declare.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 2</head><label>2</label><figDesc><div><p><s>Fig. 2 Computational grid (on the left) and initial packed bed geometry (on the right) of the test cases.</s><s>H reactor , W and L are the reactor height, width and depth, respectively, whereas H bed is the height of the initial packed bed configuration.</s></p></div></figDesc><graphic coords="5,56.01,526.28,220.26,148.76" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Table 1</head><label>1</label><figDesc><div><p><s>Operating conditions for the isothermal simulation of catalytic partial oxidation and steam reforming of methaneOperating conditionsFeed stream superficial velocity [cm s−1</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 3</head><label>3</label><figDesc><div><p><s>Fig. 3 Pressure drop as a function of the normalized inlet gas velocity (a) for this work (solid circles), Ergun correlation (solid line) and the ratio between the weight of the bed and the cross section of the reactor (W/A) (dash-dotted line).</s><s>Temporal trends of pressure drop are shown for 0.4 (b) and 1.25 (c) U g /U mf for fixed and fluidized bed regimes.</s><s>With regard to the fluidized regime, the horizontal dashed line shows the temporal average of the pressure drop.</s></p></div></figDesc><graphic coords="6,139.35,450.71,316.77,224.39" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>3 Table 4 × 10 − 4 Fig. 4</head><label>3444</label><figDesc><div><p><s>Fig.4Snapshot of the bubbling fluidized bed at the beginning of the simulation at t = 0.1 s (a), during the syngas production at t = 0.3 s (b) and the pseudo-steady state at t = 1.2 s (c), simulated with the operating conditions listed in Table1for the methane CPO.</s><s>The catalytic bed is represented reporting each catalytic particle as a sphere.</s><s>The catalytic pellets are mapped as a function of their O 2 , H 2 O and H 2 mass fraction.</s><s>Particle-free regions represent the bubbles of gas.</s></p></div></figDesc><graphic coords="7,311.36,432.85,235.88,212.20" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig. 7</head><label>7</label><figDesc><div><p><s>reports the chemical (SP OS+ISAT T/C</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig. 6</head><label>6</label><figDesc><div><p><s>Fig. 6 Computational gain of the operator-splitting technique as a function of time for the isothermal methane CPO process.</s></p></div></figDesc><graphic coords="9,76.71,45.02,178.76,146.61" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Fig. 7</head><label>7</label><figDesc><div><p><s>Fig. 7 Computational gain of the operator-splitting + ISAT techniques as a function of time for the isothermal methane CPO process.</s></p></div></figDesc><graphic coords="9,74.61,546.29,183.07,148.76" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Fig. 8</head><label>8</label><figDesc><div><p><s>Fig. 8 Chemical speed-up factors obtained with the operator-splitting and the operator-splitting + ISAT techniques as a function of time for the isothermal methane steam reforming process.</s></p></div></figDesc><graphic coords="9,337.89,45.02,182.84,151.54" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Fig. 9</head><label>9</label><figDesc><div><p><s>Fig.9Snapshot of the bubbling fluidized bed at the beginning of the simulation at t = 0.1 s (a), during the syngas production at t = 0.3 s (b) and the pseudo-steady state at t = 1 s (c), simulated with the operating conditions listed in Table1for the methane CPO.</s><s>The catalytic bed is represented reporting each catalytic particle as a sphere.</s><s>The catalytic pellets are mapped as a function of their O, H and CO site fraction.</s><s>Particle-free regions represent the bubbles of gas.</s></p></div></figDesc><graphic coords="9,311.36,436.93,235.88,208.12" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Fig. 10</head><label>10</label><figDesc><div><p><s>Fig. 10 shows the comparison between the coupled approach and the combination of operator-splitting and ISAT, for the selected time step and ISAT tolerance, i.e. 5 × 10 −6 s and 5 × 10 −4 .Both the conversion of reactants and the distribution of products are correctly described by ISAT, since small deviations (&lt;0.1%) are present between the temporal profiles of species evaluated by means of the coupled and ISAT approaches.</s><s>Moreover, the coverages of both the adsorbed CO and H and the oxygen are in good agreement (deviations lower than 3.7%) with the results of the coupled approach.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Fig. 10</head><label>10</label><figDesc><div><p><s>Fig. 10 Comparison of the average compositions for the isothermal CPO process, derived with the coupled approach and operator-splitting + ISAT: species mass fraction (a) and relevant species site fractions (b).</s></p></div></figDesc><graphic coords="10,89.18,45.02,417.07,145.76" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_11"><head>Fig. 11</head><label>11</label><figDesc><div><p><s>Fig. 11 Chemical and overall speed-up factors obtained with the operator-splitting + ISAT techniques as a function of time for the microkinetic modeling of the isothermal methane CPO process.</s></p></div></figDesc><graphic coords="10,343.28,539.43,172.03,145.64" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_12"><head>Fig. 12</head><label>12</label><figDesc><div><p><s>Fig. 12 Map of the chemical speed-up obtained with ISAT (a)logarithmic scaleand map of the retrieval (blue particles), growth (green particles) and addition (red particles) ISAT operations (b).</s></p></div></figDesc><graphic coords="11,101.20,45.02,393.07,153.81" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc><div><p></p></div></figDesc><graphic coords="4,328.14,45.02,202.25,250.30" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc><div><p></p></div></figDesc><graphic coords="8,101.37,554.34,392.55,140.71" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 2</head><label>2</label><figDesc><div><p><s>Geometrical and mechanical properties of the reactor and solid particles and collisional properties for particle-particle and particle-wall impacts, selected for the fluid dynamics validation tests</s></p></div></figDesc><table><row><cell>Reactor</cell><cell></cell><cell></cell><cell></cell></row><row><cell>H reactor [cm]</cell><cell>45</cell><cell>H bed [cm]</cell><cell>15</cell></row><row><cell>W [cm]</cell><cell>15</cell><cell>L [cm]</cell><cell>1.5</cell></row><row><cell>E WALL [Pa]</cell><cell>10 8</cell><cell>ν WALL [-]</cell><cell>0.23</cell></row><row><cell>Glass bead particles</cell><cell></cell><cell></cell><cell></cell></row><row><cell>Diameter [cm]</cell><cell>0.25</cell><cell>Density [kg m −3 ]</cell><cell>2526</cell></row><row><cell>E PARTICLE [Pa]</cell><cell>10 8</cell><cell>ν PARTICLE [-]</cell><cell>0.35</cell></row><row><cell>Collisional properties</cell><cell></cell><cell></cell><cell></cell></row><row><cell>e PARTICLE-PARTICLE [-]</cell><cell>0.97</cell><cell>e PARTICLE-WALL [-]</cell><cell>0.97</cell></row><row><cell>μ PARTICLE-PARTICLE [-]</cell><cell>0.1</cell><cell>μ PARTICLE-WALL [-]</cell><cell>0.09</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">This journal is © The Royal Society of Chemistry 2018</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgements</head><p><s>The project leading to this work has received funding from the European Research Council (ERC) under the European Union's Horizon 2020 research and innovation programme (Project SHAPE -grant agreement No. 677423).</s><s>Computational time at CINECA, Bologna (Italy) is gratefully acknowledged.</s></p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><surname>Maestri</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Commun</title>
+		<imprint>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="page" from="10244" to="10254" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">P</forename><surname>Dudukovic</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">325</biblScope>
+			<biblScope unit="page" from="698" to="701" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><surname>Salciccioli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Stamatakis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Caratzoulas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">G</forename><surname>Vlachos</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Eng. Sci</title>
+		<imprint>
+			<biblScope unit="volume">66</biblScope>
+			<biblScope unit="page" from="4319" to="4355" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">M</forename><surname>Janardhanan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Deutschmann</surname></persName>
+		</author>
+		<title level="m">Modeling and Simulation of Heterogeneous Catalytic Reactions</title>
+				<imprint>
+			<date type="published" when="2011">2011</date>
+			<biblScope unit="page" from="251" to="282" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">N</forename><surname>Jurtz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kraume</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">D</forename><surname>Wehinger</surname></persName>
+		</author>
+		<idno type="DOI">10.1515/revce-2017-0059</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Rev. Chem. Eng</title>
+		<imprint>
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><surname>Maestri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Cuoci</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Eng. Sci</title>
+		<imprint>
+			<biblScope unit="volume">96</biblScope>
+			<biblScope unit="page" from="106" to="117" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">T</forename><surname>Maffei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Gentile</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Rebughini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Bracconi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Manelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lipp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Cuoci</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Maestri</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Eng. J</title>
+		<imprint>
+			<biblScope unit="volume">283</biblScope>
+			<biblScope unit="page" from="1392" to="1404" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">S</forename><surname>Rebughini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Bracconi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Dixon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Maestri</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">React. Chem. Eng</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="25" to="33" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">S</forename><surname>Rebughini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Cuoci</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Maestri</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Eng. J</title>
+		<imprint>
+			<biblScope unit="volume">289</biblScope>
+			<biblScope unit="page" from="471" to="478" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">T</forename><surname>Maffei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Rebughini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Gentile</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lipp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Cuoci</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Maestri</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Ing. Tech</title>
+		<imprint>
+			<biblScope unit="volume">86</biblScope>
+			<biblScope unit="page" from="1099" to="1106" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Multiphase flow and fluidization : continuum and kinetic theory descriptions</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Gidaspow</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1994">1994</date>
+			<publisher>Academic Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Hinrichsen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Comput. Chem. Eng</title>
+		<imprint>
+			<biblScope unit="volume">69</biblScope>
+			<biblScope unit="page" from="75" to="88" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">G</forename><surname>Deen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Van Sint Annaland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Van Der Hoef</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A M</forename><surname>Kuipers</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Eng. Sci</title>
+		<imprint>
+			<biblScope unit="volume">62</biblScope>
+			<biblScope unit="page" from="28" to="44" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tsuji</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Kawaguchi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Tanaka</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Powder Technol</title>
+		<imprint>
+			<biblScope unit="volume">77</biblScope>
+			<biblScope unit="page" from="79" to="87" />
+			<date type="published" when="1993">1993</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">H</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">B</forename><surname>Yu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Eng. Sci</title>
+		<imprint>
+			<biblScope unit="volume">52</biblScope>
+			<biblScope unit="page" from="2785" to="2809" />
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">P B</forename><surname>Hoomans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A M</forename><surname>Kuipers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">J</forename><surname>Briels</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">P M</forename><surname>Van Swaaij</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Eng. Sci</title>
+		<imprint>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="page" from="99" to="118" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Van Der Hoef</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Van Sint Annaland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">G</forename><surname>Deen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A M</forename><surname>Kuipers</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Annu. Rev. Fluid Mech</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="page" from="47" to="70" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">S</forename><surname>Yuu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Umekage</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Johno</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Powder Technol</title>
+		<imprint>
+			<biblScope unit="volume">110</biblScope>
+			<biblScope unit="page" from="158" to="168" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">J</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A M</forename><surname>Kuipers</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Powder Technol</title>
+		<imprint>
+			<biblScope unit="volume">127</biblScope>
+			<biblScope unit="page" from="173" to="184" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">A</forename><surname>Bokkers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Van Sint Annaland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A M</forename><surname>Kuipers</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Powder Technol</title>
+		<imprint>
+			<biblScope unit="volume">140</biblScope>
+			<biblScope unit="page" from="176" to="186" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Van Der Hoef</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A M</forename><surname>Kuipers</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Eng. Sci</title>
+		<imprint>
+			<biblScope unit="volume">65</biblScope>
+			<biblScope unit="page" from="3772" to="3785" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">V</forename><surname>Patil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">A J F</forename><surname>Peters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A M</forename><surname>Kuipers</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Eng. J</title>
+		<imprint>
+			<biblScope unit="volume">277</biblScope>
+			<biblScope unit="page" from="388" to="401" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">V</forename><surname>Patil</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">A J F</forename><surname>Peters</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A M</forename><surname>Kuipers</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Powder Technol</title>
+		<imprint>
+			<biblScope unit="volume">284</biblScope>
+			<biblScope unit="page" from="475" to="485" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<monogr>
+		<author>
+			<persName><forename type="first">D</forename><surname>Rong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Horio</surname></persName>
+		</author>
+		<title level="m">2nd Int. Conf. CFD Miner. Process Ind</title>
+				<imprint>
+			<date type="published" when="1999">1999</date>
+			<biblScope unit="page" from="65" to="70" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Flamant</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Gauthier</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Eng. Sci</title>
+		<imprint>
+			<biblScope unit="volume">59</biblScope>
+			<biblScope unit="page" from="4205" to="4215" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Geng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Che</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Eng. Sci</title>
+		<imprint>
+			<biblScope unit="volume">66</biblScope>
+			<biblScope unit="page" from="207" to="219" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><surname>Oevermann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Gerber</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Behrendt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Particuology</forename></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="307" to="316" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">C</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Ding</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Jin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Eng. Sci</title>
+		<imprint>
+			<biblScope unit="volume">65</biblScope>
+			<biblScope unit="page" from="542" to="549" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">Y.-Q</forename><surname>Zhuang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X.-M</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z.-H</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Xiao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Comput. Chem. Eng</title>
+		<imprint>
+			<biblScope unit="volume">60</biblScope>
+			<biblScope unit="page" from="1" to="16" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Snider</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Clark</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>O'rourke</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Eng. Sci</title>
+		<imprint>
+			<biblScope unit="volume">66</biblScope>
+			<biblScope unit="page" from="1285" to="1295" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">G</forename><surname>Strang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Siam</forename><forename type="middle">J</forename><surname>Numer</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Anal</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page" from="506" to="517" />
+			<date type="published" when="1968">1968</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Ren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">B</forename><surname>Pope</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. Comput. Phys</title>
+		<imprint>
+			<biblScope unit="volume">227</biblScope>
+			<biblScope unit="page" from="8165" to="8176" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">B</forename><surname>Pope</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Combust. Theory Modell</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="41" to="63" />
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><surname>Bracconi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Maestri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Cuoci</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">AIChE J</title>
+		<imprint>
+			<biblScope unit="volume">63</biblScope>
+			<biblScope unit="page" from="95" to="104" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">G</forename><surname>Weller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Tabor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Jasak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Fureby</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Comput. Phys</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="620" to="631" />
+			<date type="published" when="1998">1998</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">E</forename><surname>Ranz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">R</forename><surname>Marshall</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Eng. Prog</title>
+		<imprint>
+			<biblScope unit="volume">48</biblScope>
+			<biblScope unit="page" from="141" to="148" />
+			<date type="published" when="1952">1952</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">B</forename><surname>Bird</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">E</forename><surname>Stewart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">N</forename><surname>Lightfoot</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2002">2002</date>
+			<publisher>Transport Phenomena, J. Wiley</publisher>
+			<pubPlace>New York</pubPlace>
+		</imprint>
+	</monogr>
+	<note>2nd edn</note>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><surname>Cuoci</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Frassoldati</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Faravelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Ranzi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Comput. Phys. Commun</title>
+		<imprint>
+			<biblScope unit="volume">192</biblScope>
+			<biblScope unit="page" from="237" to="264" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ergun</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Eng. Prog</title>
+		<imprint>
+			<biblScope unit="volume">48</biblScope>
+			<biblScope unit="page" from="89" to="94" />
+			<date type="published" when="1952">1952</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">Y</forename><surname>Wen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">H</forename><surname>Yu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Chem. Eng. Prog., Symp. Ser</title>
+		<imprint>
+			<biblScope unit="volume">62</biblScope>
+			<biblScope unit="page" from="100" to="111" />
+			<date type="published" when="1966">1966</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">A</forename><surname>Cundall</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><forename type="middle">D L</forename><surname>Strack</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Geotechnique</forename></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1979">1979</date>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="page" from="47" to="65" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tsuji</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Tanaka</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Ishida</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Powder Technol</title>
+		<imprint>
+			<biblScope unit="volume">71</biblScope>
+			<biblScope unit="page" from="239" to="250" />
+			<date type="published" when="1992">1992</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">R</forename><surname>Norouzi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Zarghami</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Sotudeh-Gharebagh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Mostoufi</surname></persName>
+		</author>
+		<title level="m">Coupled CFD-DEM Modeling</title>
+				<meeting><address><addrLine>Ltd, Chichester, UK</addrLine></address></meeting>
+		<imprint>
+			<publisher>John Wiley &amp; Sons</publisher>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J V</forename><surname>Goldschmidt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Beetstra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A M</forename><surname>Kuipers</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Powder Technol</title>
+		<imprint>
+			<biblScope unit="volume">142</biblScope>
+			<biblScope unit="page" from="23" to="47" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">Q.-F</forename><surname>Hou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z.-Y</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A.-B</forename><surname>Yu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Ind. Eng. Chem. Res</title>
+		<imprint>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="page" from="11572" to="11586" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">L</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Powder Technol</title>
+		<imprint>
+			<biblScope unit="volume">305</biblScope>
+			<biblScope unit="page" from="364" to="376" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><surname>Donazzi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Beretta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Groppi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Forzatti</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. Catal</title>
+		<imprint>
+			<biblScope unit="volume">255</biblScope>
+			<biblScope unit="page" from="259" to="268" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><surname>Maestri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">G</forename><surname>Vlachos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Beretta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Groppi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Tronconi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">AIChE J</title>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="page" from="993" to="1008" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><surname>Maestri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Livio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Beretta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Groppi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Ind. Eng. Chem. Res</title>
+		<imprint>
+			<biblScope unit="volume">53</biblScope>
+			<biblScope unit="page" from="10914" to="10928" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

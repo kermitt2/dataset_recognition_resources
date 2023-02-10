@@ -1,0 +1,1132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Protein Structure Model Refinement in CASP12 Using Short and Long Molecular Dynamics Simulations in Implicit Solvent</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2019-03-01">2019 March 01</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Genki</forename><surname>Terashi</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Biological Sciences</orgName>
+								<orgName type="institution">Purdue University</orgName>
+								<address>
+									<postCode>47907</postCode>
+									<settlement>West Lafayette</settlement>
+									<region>IN</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName><forename type="first">Daisuke</forename><surname>Kihara</surname></persName>
+							<email>dkihara@purdue.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Biological Sciences</orgName>
+								<orgName type="institution">Purdue University</orgName>
+								<address>
+									<postCode>47907</postCode>
+									<settlement>West Lafayette</settlement>
+									<region>IN</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Computer Science</orgName>
+								<orgName type="institution">Purdue University</orgName>
+								<address>
+									<postCode>47907</postCode>
+									<settlement>West Lafayette</settlement>
+									<region>IN</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Protein Structure Model Refinement in CASP12 Using Short and Long Molecular Dynamics Simulations in Implicit Solvent</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2019-03-01">2019 March 01</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">EF5520B3FF7AD4382EDB18EA6A5D48A1</idno>
+					<idno type="DOI">10.1002/prot.25373</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:38+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>CASP</term>
+					<term>protein structure refinement</term>
+					<term>Molecular Dynamics</term>
+					<term>template-based modeling</term>
+					<term>computational method</term>
+					<term>structure modeling</term>
+					<term>protein structure prediction</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Protein structure prediction has matured over years, particularly those which uses structure templates for building a model.</s><s>It can build a model with correct overall conformation in cases where appropriate templates are available.</s><s>Models with the correct topology can be practically useful for limited purposes that need residue-level accuracy, but further improvement of the models can allow the models to be used in tasks that need detailed structures, such as molecular replacement in X-ray crystallography or structure-based drug screening.</s><s>Thus, model refinement is an important final step in protein structure prediction to bridge predictions to real-life applications.</s><s>Model refinement is one of the categories in recent rounds of Critical Assessment of techniques in protein Structure Prediction (CASP) and has recently been drawing more attention due to its realized importance.</s><s>Here we report our group's performance in the refinement category in CASP12.</s><s>Our method is based on inexpensive short molecular dynamics (MD) simulations in implicit solvent.</s><s>Our performance in CASP12 was among the top, which was consistent with the previous round, CASP11.</s><s>Our method with short MD runs achieved comparable performance with other methods that used longer simulations.</s><s>Detailed analyses found that improvements typically occurred in entire regions of a structure rather than only in flexible loop regions.</s><s>The remaining challenge in the structure refinement includes large conformational refinement which involves substantial motions of secondary structure elements or domains.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p><s>Methodology of protein structure prediction have been intensively studied over decades from various angles, such as bioinformatics, physics, chemistry, statistics, and robotics.</s><s>Although there are still some areas that need further development, e.g.</s><s>template-free (often also called ab initio or de novo) modeling <ref type="bibr" target="#b0">1,</ref><ref type="bibr" target="#b1">2</ref> , structure prediction has become practical in several situations, which include cases where structures can be modelled using templates (template-based modeling) <ref type="bibr" target="#b2">[3]</ref><ref type="bibr" target="#b3">[4]</ref><ref type="bibr" target="#b4">[5]</ref> .</s><s>The progress of the protein structure modeling field has been objectively monitored in the Critical Assessment of techniques for protein Structure Prediction (CASP) from 1994 <ref type="bibr" target="#b5">6</ref> , a community-wide assessment of prediction methods that is held every two years.</s><s>In CASP, participating prediction groups/methods are evaluated based on structure models they build for protein target sequences, which are presented by the organizers before determination of their tertiary structures.</s><s>From CASP7 in 2006, assessors' evaluation reports show that performance of template-based modeling have not changed much partly reflecting maturity of the methods <ref type="bibr" target="#b3">4,</ref><ref type="bibr" target="#b6">[7]</ref><ref type="bibr" target="#b7">[8]</ref><ref type="bibr" target="#b8">[9]</ref><ref type="bibr" target="#b9">[10]</ref> .</s><s>Now, biologists routinely use structure prediction to interpret or design experiments <ref type="bibr" target="#b10">11,</ref><ref type="bibr" target="#b11">12</ref> .</s></p><p><s>In the case of template-based modeling, obtaining a structure model of the correct fold, i.e. a structure that has a root-mean square deviation (RMSD) of 3-6 Å, can be expected if the template structures found in a structure library has a reasonably high confidence score <ref type="bibr" target="#b4">5,</ref><ref type="bibr" target="#b12">13</ref> .</s><s>Improving the structure model further through model refinement, an additional procedure to gain a couple of more angstroms in RMSD to the native structure, is critical for bringing a computational model with the correct fold to a level that it is practically useful in various applications.</s><s>For example, a model at a 5 Å RMSD would be only used for indicating residue positions in the protein such as interpreting and designing residue mutagenesis experiments.</s><s>However, if the model was refined to within 1.5 Å RMSD, it can be used for molecular replacement in experimental structure determination, virtual drug screening, and investigating enzymatic reactions <ref type="bibr" target="#b13">14</ref> .</s><s>Thus, model refinement has been one of the foci of recent method developments in the CASP community <ref type="bibr" target="#b3">4,</ref><ref type="bibr" target="#b14">15</ref> .</s></p><p><s>However, model refinement is still not easy.</s><s>It is well known that running naïve molecular dynamics (MD) simulations on a structure model do not improve model consistently.</s><s>Rather, it deteriorates the model for almost half of the cases <ref type="bibr" target="#b15">16</ref> .</s><s>In CASP, until CASP9 held in 2010, there were no methods that could refine models consistently with statistical significance <ref type="bibr" target="#b16">17</ref> .</s><s>This situation changed in CASP10, when the FEIG and Seok groups showed improvements on the starting models in majority of their cases <ref type="bibr" target="#b17">18</ref> .</s><s>Particularly, the FEIG group significantly outperformed all the other groups in their Global Distance Test-High Accuracy (GDT-HA) score <ref type="bibr" target="#b18">19</ref> improvement.</s><s>The FEIG's approach was based on MD: from the MD trajectories starting of a model to be refined, structures were chosen that did not deviate much from the initial structure to avoid degraded structures and further filtered by using additional scoring function <ref type="bibr" target="#b19">20</ref> .</s><s>In CASP11, many top performing groups, including FEIG <ref type="bibr" target="#b14">15,</ref><ref type="bibr" target="#b20">21</ref> , used MD-based approaches with some variations, e.g. using support vector machine (a machine learning method) to select models after MD <ref type="bibr" target="#b21">22</ref> , remodeling using multiple templates before MD-based refinement <ref type="bibr" target="#b22">23</ref> , taking consensus with homologous structures <ref type="bibr" target="#b23">24</ref> , or using multiple rounds of relaxation <ref type="bibr" target="#b24">25</ref> .</s></p><p><s>Here, we report our group's method and performance in the model refinement category in CASP12.</s><s>Our approach is based on MD trajectories, following the FEIG group's success, with several critical differences: We used an implicit solvent model rather than explicit water molecules in simulation, and moreover, the length of the trajectories is significantly shorter than those used in the FEIG approach.</s><s>In spite of the computationally inexpensive strategy, our approach was ranked high among participants in CASP11 <ref type="bibr" target="#b14">15</ref> as well as in CASP12.</s><s>Differences of our approach in CASP11 and CAS12 are that we optimized parameters of the method carefully for CASP12 and also changed the implicit solvent model used in the MD simulations.</s><s>In CASP12, our approach refined 29 out of 42 targets successfully in terms of the GDT-HA score and 24 in terms of the CASP12 assessors' score that is a linear combination of five scores (http://predictioncenter.org/casp12/zscores_final_refine.cgi?</s><s>formula=assessors).</s><s>We showed that the refinement occurred not only at loop regions but also overall in structures cores, and the approach mainly expanded structures (showing that the improvement of structure evaluation scores are not merely due to compression of structures).</s><s>Drawbacks of the approach are also discussed.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Materials and METHODS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Overview of the refinement protocol</head><p><s>Our refinement protocol used in CASP12 is shown in Figure <ref type="figure" target="#fig_0">1</ref>. Figure <ref type="figure" target="#fig_0">1A</ref> shows the overall flowchart.</s><s>We performed short and long MD simulations after the energy minimization was applied to a structure model to refine.</s><s>The short MD consists of sixty 1.2 nanosecond (ns) MD simulations with restraints of increasing strength (0.1, 0.2, 0.4 kcal/mol/Å 2 ) applied to Cα atom positions, which was increased every 400 pico seconds (ps).</s><s>The long MD consists of twenty 20 ns MD simulations with weak restraints (0.05 kcal/mol/Å 2 ) <ref type="bibr" target="#b20">21</ref> on Cα atoms positions.</s><s>After the MD simulations, a subset of structures in the trajectories were selected by considering the deviation from the starting model and the statistical potential score (Fig. <ref type="figure" target="#fig_0">1B</ref>).</s><s>The selected models were averaged on the Cartesian coordinates of atoms, which were then minimized and relaxed with a10 ps MD simulation.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Setting of MD simulation</head><p><s>MD runs were performed by CHARMM MD program version 38b2 with CHARM22/ CMAP force field.</s><s>We used a 2 femto seconds (fs) time step for all of simulations.</s><s>The nonbond interactions were listed using a 14 Å cutoff.</s><s>Electrostatic interactions were calculated with a shifting function applied to the potential energy at 12 Å.</s><s>Van der Waals interactions were calculated with a switching function applied to the potential energy between 10 and 12 Å.</s><s>The solvent effect was computed by the FACTS implicit solvent model <ref type="bibr" target="#b25">26</ref> with its default parameters.</s><s>In CASP11, we used SCPISM <ref type="bibr" target="#b26">27</ref> for implicit solvent but changed it to FACTS following a comparison study of implicit solvents by Hua et al. <ref type="bibr" target="#b27">28</ref> Before running MD simulations, hydrogen atoms were added to the starting model by the CHARMM HBUIld command.</s><s>To fix the length of bonds involving hydrogen atoms, the CHARMM SHAKE command was used.</s><s>Energy minimization was performed in total of 12,100 steps of the Adopted Basis Newton-Raphson (ABNR) method.</s><s>In the first 100 steps of the minimization, the position of all non-hydrogen atoms was fixed, and then we applied harmonic constants that were subsequently decreased from 20.0, 10.0, 5.0, 2.0, 1.0 to 0.5 kcal/mol/Å 2 for every 2000 steps (4 ps).</s><s>The minimized protein model was subjected to the next heating and equilibration step.</s><s>The temperature of the system was gradually increased from 50K to 298K in 200,000 steps (400 ps) with harmonic restraints of 0.05 kcal/mol/Å 2 on Cα atom positions.</s><s>Then, the equilibrated structure was used as the starting model for production MD runs.</s><s>All trajectories were calculated with the leapfrog verlet algorithm at 298 K. Model structures are saved every 500 steps (1ps) in each trajectory.</s><s>In the short and the long MDs, a total of 72,000 (1200*60) and 400,000 (20,000*20) models were extracted from trajectories, respectively.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Model filtering</head><p><s>Following the FEIG method <ref type="bibr" target="#b19">20,</ref><ref type="bibr" target="#b20">21</ref> , extracted models from MD trajectories were crossevaluated by a statistical knowledge-based potential (we used DFIRE <ref type="bibr" target="#b28">29</ref> ).</s><s>We have also calculated the GDT-HA between the starting model and the extracted models after MD (denoted as iGDT_HA).</s><s>These two parameters for the filtering are illustrated in Figure <ref type="figure" target="#fig_0">1B</ref>.</s><s>The DFIRE score and iGDT_HA of each selected model were normalized by computing Zscore, using a distribution of structures from each MD trajectory as follows:</s></p><p><s>(Eq. 1)</s></p><formula xml:id="formula_0">(Eq. 2)</formula><p><s>where and are average values, and σ iGDT_HA and σ DFIRE are standard deviations of iGDT_HA and DFIRE.</s><s>For DFIRE, structures with negative Z-scores are those which are more geometrically favorable than the average (Z-score = 0).</s><s>For iGDT-HA, structures with a positive value are those which are more similar to the initial structure than the average.</s></p><p><s>To select models, we applied a filter (Fig. <ref type="figure" target="#fig_0">1B</ref>) that extracts a pie-shaped area between angle θ ± γ degree and the radial distance r from the center of distribution of Z_iGDT_HA m and Z_DFIRE m .</s><s>The criteria for selecting model m were (Eq.</s><s>3) and (Eq.</s><s>4) which corresponding to the lower-right region in red in Figure <ref type="figure" target="#fig_0">1B</ref>.</s><s>Thus, the intention is that, among models from MD trajectories, we would like to select those which have relatively low (better) statistical potential and less deviation from the initial model.</s></p><p><s>For the extracted models from the Short MD trajectories, we used r=2.0, θ =310 and γ =35 in the filtering step.</s><s>For the Long MD, we used r=1.5, θ =325 and γ =30.</s><s>These parameters were chosen based on a benchmark study performed on the CASP11 dataset (discussed in Results).</s><s>After the filtering, 1,000~4,500 and 1,000~25,000 models were selected from the short MD and the long MD trajectories.</s><s>Selected models were averaged, which were subject to the structure relaxation and energy minimization (Model 1 and Model 2 in Fig. <ref type="figure" target="#fig_0">1A</ref>).</s><s>This protocol is different from the FEIG method <ref type="bibr" target="#b20">21</ref> used in CASP11 in the following ways: First, the MD runs in our protocol were much shorter.</s><s>We used 1.2 ns * 60 trajectories (the short MD runs) and 20 ns * 20 trajectories (the long MD runs), thus in total of 472 ns MD runs, while the FEIG method used 1200 ns long runs (40 ns * 30).</s><s>Second, we used an implicit solvent model while the FEIG method used explicit solvent.</s><s>These two differences make our protocol more computationally inexpensive and affordable.</s><s>There are also other technical differences, described in the following.</s><s>Third, as mentioned above, we applied Cα restraints in the MD runs that increased over time from 0.1 to 0.4 kcal/mol/Å 2 where FEIG used a constant value of 0.05 kcal/mol/Å 2 .</s><s>Fourth, the interval of structure snap shots taken was 1 ps in our protocol, while FEIG used 40 ps.</s><s>Fifth, for the filtering (Fig. <ref type="figure" target="#fig_0">1B</ref>), we used iGDT-HA and DFIRE, while the FEIG method used iRMSD and RW+ <ref type="bibr" target="#b29">30</ref> .</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Structure relaxation and energy minimization</head><p><s>Averaged models underwent energy minimization with 500 steps of the steepest descent algorithm and 4500 steps of ABNR.</s><s>The minimized models were relaxed with a 40 ps MD simulation.</s><s>In the minimization and relaxation, we used strong harmonic restraints of 100 kcal/mol/Å 2 on C-α atom positions.</s><s>The model 3-5 were selected from all extracted models with the lowest DFIRE, the lowest GOAP <ref type="bibr" target="#b30">31</ref> score and the highest iGDT-HA (Fig. <ref type="figure" target="#fig_0">1A</ref>).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Computational costs</head><p><s>For a 200-residues target protein, the single 0.4 ns equilibration and 1.2 ns MD simulation took about 13.2 and 40 CPU hours, respectively.</s><s>The total computational cost of the short MD simulations (60 trajectories) was about 3,200 CPU hours per target (2.7 hours on 1,200 cores of Intel Xeon-E5 CPU).</s><s>A single 20 ns MD simulation took about 640 CPU hours.</s><s>Consequently, the total computational costs of the long MD (20*20 ns MDs) was about 12,800 CPU hours for a refinement target (64 hours on 200 cores of Intel Xeon-E5 CPU).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results and Discussions</head><p><s>First we describe benchmark results on the CASP11 refinement dataset, then show the results of our group in CASP12.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Parameter optimization for model selection using the CASP11 dataset</head><p><s>As a preparation for participating in CASP12, we optimized parameters, r, θ, and γ that were used in the filtering protocol (Fig. <ref type="figure" target="#fig_0">1B</ref>) on the 36 refinement targets from CASP11.</s><s>The dataset included the target TR217 to TR857 excluding TR795, whose native structure was not available at the time of the work.</s><s>The starting models and the native structure of these targets were downloaded from the CASP11 website (http://predictioncenter.org/casp11/).</s><s>The size of the target proteins ranged from 62 to 288 residues (average: 155).</s><s>The Cα RMSD of the starting models to their native structures ranged from 1.45 to 12.45Å (average: 3.69Å), GDT-TS ranged from 46.17 to 90.24 (average: 71.96), and GDT-HA were from 29.10 to 73.51 (average: 53.03).</s></p><p><s>The parameter optimization was performed separately for the short and the long MD runs.</s><s>For the short MD runs we generated forty 1.2 ns-long trajectories while for the long MD runs we computed up to three 20 ns-long trajectories for the starting models of the targets.</s><s>Long MD runs were finished only for 31 out of 36 targets before the first refinement target was released in CASP12.</s></p><p><s>We first tested in total of 3888 (= 3*72*18) combinations of the three parameters (r, θ, γ) for selecting models (Fig. <ref type="figure" target="#fig_0">1B</ref>), which come from 3 values, 1.0, 1.5, and 2.0 for r, 72 values from 0 to 355 with an interval of 5 for θ, and 18 values from 5 to 90 with an interval of 5 for γ.</s><s>We examined the average change of GDT-HA of the selected models with each parameter set from that of the initial model (dGDT-HA).</s><s>The results are visualized with a color scale in Fig. <ref type="figure" target="#fig_1">2</ref>. Higher in the color scale, purple to blue, are better than dark red that is at the bottom of the scale.</s><s>Several important trends were observed: (1) Interestingly, as shown in Figure <ref type="figure" target="#fig_1">2</ref>, none of the parameter combination gave on average better GDT-HA (i.e.</s><s>positive dGDT-HA) than the starting model.</s><s>However, as we show later, averaging structures selected by a good parameter set improved GDT-HA from the starting model.</s><s>(2) Also, it was evident that the short MD runs (left panels) gave better results than the long MD runs (right panels).</s><s>( <ref type="formula">3</ref>) The parameter space that gave better results locate at the right bottom corner of the panel, where θ is around 300 to 350 and γ is around 0 to 30 degrees.</s><s>This region corresponds to the red regions in Fig. <ref type="figure" target="#fig_0">1B</ref>.</s><s>(4) For this region, using a larger radius r gave better results.</s><s>( <ref type="formula">5</ref>) The parameter space that did not perform well are at the middle bottom of the panel, where θ is around 150 and γ is around 0 to 50 degrees.</s><s>This is the opposite region from the good performing region shown in red in Fig. <ref type="figure" target="#fig_0">1B</ref>.</s></p><p><s>We selected 76 and 40 parameter combinations with largest dGDT-HA for the short and long MD runs.</s><s>Then, for each parameter combination, we generated an averaged structure model from the selected models by the combination.</s><s>The generated models were evaluated by dGDT-HA.</s><s>A combination of r=2.0, θ =310, and γ =35 was found to be optimal for the short MD trajectories and a r=1.5, θ =325, and γ =30 combination was best for the long MD runs.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Refinement results on the CASP11 targets</head><p><s>Table <ref type="table" target="#tab_0">I</ref> summarizes the performance of our protocol using the optimized refinement protocol with short and long MDs (Fig. <ref type="figure" target="#fig_0">1</ref>) on the CASP11 refinement targets.</s><s>For comparison, results of the top 10 groups in CASP11 including our group (Kiharalab) are shown.</s><s>Results are on the first model (Model 1) of the groups.</s><s>In the table, the average value of three scores, GDT-TS, GDT-HA, and Cα-RMSD (RMS_CA) are shown, which were major evaluation scores used by the CASP assessors.</s><s>GDT-TS (Global Distance Test-Total Score) and GDT-HA (Global Distance Test-High Accuracy) are the average of the percentage of Cα atoms within four distance cutoffs from the corresponding Cα atoms in the native structure after structure superimposition.</s><s>GDT-TS uses 1.0, 2.0, 4.0, and 8.0 Å while GDT-HA uses 0.5, 1.0, 2.0 and 4.0 Å for the distance cutoffs.</s><s>Both scores ranges from 0 to 100 where 100 is the best score for a model.</s><s>RMS_CA is RMSD of Cα atoms of a model to the native, which was calculated with the LGA program <ref type="bibr" target="#b31">32</ref> .</s></p><p><s>Seven groups, FEIG, Seok, Seok-refine, Schroderlab, PRINCETON_TIGRESS, Kiharalab, and Lee showed improvement over the starting model in terms of all three scores, GDT-TS, GDT-HA, and RMS_CA (Table <ref type="table" target="#tab_0">I</ref>).</s><s>In CASP11, our group (Kiharalab) used twenty10 ns MD runs with the Screened Coulomb Potential implicit solvent model (SCPISM).</s><s>The current protocol using the short and long MD runs are shown at the bottom of the table.</s><s>The Short MD runs performed very well, ranking the third in terms of GDT-HA (54.27) and GDT-TS (73.26) and the fourth for RMS_CA (3.62).</s><s>The long MD runs performed worse than the short runs.</s><s>On average, it failed to improve the starting models and ranked lower than the top 10 groups when GDT-TS and GDT-HA were considered, and was ranked ninth for RMS_CA.</s></p><p><s>In Figure <ref type="figure" target="#fig_2">3</ref>, we examined refinement results with the short MD protocol in comparison with other refinement protocols.</s><s>Figure <ref type="figure" target="#fig_2">3A</ref> shows that short MD improved from the starting models in majority of the cases, 26 (72.2%) and 21 (58.3%)</s><s>out of 36 targets in terms of GDT-TS and GDT-HA, respectively.</s><s>It is also observed in Figure <ref type="figure" target="#fig_2">3A</ref> that improvement by the short MD did not depend on the initial quality of the starting models.</s><s>Next, we compared with the results with the long MD runs (Fig. <ref type="figure" target="#fig_2">3B</ref>).</s><s>Consistent with the data shown in Table <ref type="table" target="#tab_0">I</ref> and Figure <ref type="figure" target="#fig_1">2</ref>, the short MD performed substantially better than the long MD.</s><s>In terms of GDT-TS and GDT-HA, the models of the short MD were better for 26 and 27 targets (83.9% and 87.1%) than the long MD models among the 31 targets for which we had data with the long MD runs.</s><s>In the next two panels, we compared the short MD refinement with the models submitted in CASP11 by Kiharalab (Fig. <ref type="figure" target="#fig_2">3C</ref>) and FEIG (Fig. <ref type="figure" target="#fig_2">3D</ref>).</s><s>Compared with CASP11 Kiharalab models, the short MD's results were comparable.</s><s>For about half of targets (17/36 targets), the short MD models had better GDT-TS and GDT-HA than the Kiharalab models.</s><s>On the other hands, for only 7 (19.4%)</s><s>targets the short MD models had better GDT-TS and GDT-HA than the FEIG models (Fig. <ref type="figure" target="#fig_2">3D</ref>).</s><s>However, it is worth noting that the computational cost for the short MD protocol is much smaller than FEIG.</s><s>The former used in total of 48 ns (40*1.2</s><s>ns) MD runs with implicit solvent while the latter used 1.2 μs MD runs with the TIP3P explicit solvent model <ref type="bibr" target="#b20">21</ref> .</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results in CASP12</head><p><s>Now we discuss our group's performance in CASP12.</s><s>In CASP12, we applied our refinement protocol to all 42 refinement targets from TR520 to TR948.</s><s>The starting models were obtained from CASP website (http://predictioncenter.org/casp12/).</s><s>The residue length of the targets were 54-414 residues (average: 193).</s><s>The initial quality of the starting models ranged from 1.15 to 13.86 Å Cα RMSD (average: 5.5 Å), 37.03 to 92.07 in terms of GDT-TS (average: 66.93), and GDT-HA ranged from 24.33 to 78.36 (average: 49.76).</s></p><p><s>First we see our performance in CASP12 relative to other groups.</s><s>Table II summarize the average performance of top10 groups in CASP12.</s><s>Refined model quality was evaluated by GDT-TS, GDT-HA, RMS_CA, MolProbity <ref type="bibr" target="#b32">33</ref> , SphereGrinder (SphGr) <ref type="bibr" target="#b33">34</ref> , and Quality Control Score (QCS) <ref type="bibr" target="#b34">35</ref> , which were the scores used in assessors' evaluation.</s><s>Kiharalab was ranked eighth according to the asessors' formula (see Table II caption).</s><s>In terms of individual scores, we were ranked fifth in GDT-TS, sixth in GDT-HA, ninth in RMS_CA, fifth in MolProbity, eighth in SphGr, and fifth in QCS.</s><s>These ranking results are slightly worse than in CASP11, where our group was ranked at fourth (the CASP11 evaluation paper <ref type="bibr" target="#b14">15</ref> , Table <ref type="table" target="#tab_2">II</ref>).</s></p><p><s>It is noticed that the differences of individual scores between the top 10 groups are small.</s><s>Interestingly, the difference between Kiharalab and FEIG is very small, and indeed became smaller in CASP12 relative to CASP11.</s><s>For example, the average difference of GDT-HA between Kiharalab and FEIG was 2.23 in CASP11, which became as small as 0.43 this time.</s></p><p><s>To reveal the significance of the differences of the group performance, we applied the paired Student's t-test on the common set of predicted targets in CASP12.</s><s>Table <ref type="table" target="#tab_4">III</ref> shows the results on GDT-TS and GDT-HA.</s><s>According to the test, our group (Kiharalab, Group ID: 102) showed significantly better results (P-value&lt;0.05)</s><s>than LEEab (Group ID: 450), LEE (Group ID: 011), and the starting model for both GDT-TS and GDT-HA.</s><s>On the other hands, only SVMQA (Group ID: 208) performed significantly better than our group, and the other seven groups were indistinguishable in this test with our group.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Analyses of short MD (Model 1) models in CASP12</head><p><s>From this section, we analyze our submitted models in details.</s><s>In Figure <ref type="figure" target="#fig_3">4</ref>, we examined our Model 1 models generated by the short MD protocols.</s><s>First we checked how many cases the Model 1 improved over starting models (Fig. <ref type="figure" target="#fig_3">4A</ref>).</s><s>When evaluated by GDT-TS and GDT-HA, 25 (59.5%) and 29 (69.0%)</s><s>out of 42 targets were improved, respectively.</s><s>These fractions of improved targets are similar to those observed on the CASP11 dataset (Fig. <ref type="figure" target="#fig_2">3A</ref>).</s><s>Consistent with what was observed in the CASP11 dataset (Fig. <ref type="figure" target="#fig_2">3A</ref>), improvements were observed to starting models of various initial quality.</s></p><p><s>When compared with models from the long MD runs, which were submitted as Model 2 models, the short MD models were better for 30 (71.4%) and 33 (78.6%) out of 42 targets.</s><s>This result is qualitatively consistent with the observation on the CASP11 dataset, but the fractions of the wins by the short MD models are lower than before (Fig. <ref type="figure" target="#fig_2">3B</ref>).</s><s>To understand the better performance of the short MD over the long MD, we performed short-MD-based refinement using the constraints of 0.05 kcal/mol/Å 2 , the relatively weak constraint we used in the long-MD refinement.</s><s>This comparison was performed on 36 CASP12 refinement targets that had their native structures available.</s><s>TR944 had its native structure in PDB but was excluded from the analysis because its trajectory files used in CASP12 were corrupted and could not be used at the time of the post-analysis.</s><s>With the increasing constraint strength of 0.1, 0.2 to 0.4 kcal/mol/Å 2 , which was used in CASP12, the average GDT-TS and GDT-HA obtained for the 36 targets were 67.32 and 50.11, respectively.</s><s>These values were decreased to 66.29, and 48.60 for GDT-TS and GDT-HA, respectively, when the constant 0.05 kcal/mol/Å 2 was used.</s><s>Thus, we would have obtained better results with long-MDbased refinement if a stronger constraint had been used.</s></p><p><s>Long MD performed substantially worse than short MD for high-quality targets whose initial GDT-HA were over 70 (Fig. <ref type="figure" target="#fig_4">5</ref>).</s><s>This is probably because moving target structures far away from initial structures by the long MD was more harmful for targets that were already in high quality.</s></p><p><s>We also examined if the oligomeric state of targets affected to the refinement results.</s><s>In Table <ref type="table" target="#tab_5">IV</ref>, we show the average GDT-HA of monomer and oligomer targets in CASP12.</s><s>Both short MD and long MD performed worse on the oligomer targets and the difference between the short MD-and the long MD-based refinement was smaller for the oligomer targets.</s><s>Thus, it is not the case that the long MD worked particularly worse on the oligomer targets.</s><s>The reason of the worse performance on the oligomer targets would probably because we applied the refinement protocol to a single target protein even for an oligomer target without considering physical interaction to other proteins.</s><s>This would mean, conversely, a structure would be better refined when its interacting proteins, either other subunits in a complex if there are any, or crystal contacts in the protein crystal is considered in refinement.</s></p><p><s>Next, we compared with the Model 1 models from FEIG, which used a similar MD-based refinement protocol (Fig. <ref type="figure" target="#fig_3">4C</ref>).</s><s>The FEIG models were better than Kiharalab in 27 (64.3%)</s><s>and 25 (59.5%)</s><s>out of 42 targets in terms of GDT-TS and GDT-HA, respectively.</s><s>This difference between the two groups is much smaller than on the CASP11 dataset (Fig. <ref type="figure" target="#fig_2">3D</ref>), which is consistent with the results shown as overall average scores in Table <ref type="table" target="#tab_2">II</ref> and the results in Table <ref type="table" target="#tab_4">III</ref> that shows the two groups were statistically indistinguishable.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Examples of refined models</head><p><s>Examples of models with successful and failed refinement are shown in Figure <ref type="figure" target="#fig_5">6</ref>.</s><s>Improved and deteriorated regions in a model are colored in blue and red, the darker more substantial.</s><s>Green regions are those which did not move more than 0.1 Å.</s><s>The first example in the top row is TR948.</s><s>For this target, the overall improvement of GDT-HA (dGDT-HA) was large, 4.70, and this model was ranked sixth among all the first models submitted by the 36 groups.</s><s>As shown in the color code, improvement occurred at almost all the helical regions in the structure and degradation occurred at ends of some helices.</s><s>The next one, TR912, is another successful example, where dGDT-HA of 4.58 was achieved.</s><s>This model was the best in GDT-HA among all the 31 groups' Model 1 models.</s><s>Similar to the previous example, improvement occurred globally, at almost all β-strands in the structure.</s><s>In TR868, the third example, there was a modest improvement where dGDT-HA at 0.72 was observed.</s><s>This model was ranked seventh among 34 groups who submitted models for this target.</s><s>In this refined model, improved and degraded regions co-exist, mixed in the structure, which is typically observed in models with a small improvement of less than 1.0 dGDT-HA.</s><s>The last one, TR891, is a case that our refinement failed.</s><s>The model had a dGDT-HA of −3.57</s><s>and ranked 18th among 36 groups.</s><s>As shown, the refinement protocol moved all the β-sheets away from the native structure.</s><s>We observed failure for other three targets of β-barrel structures, too (TR879, dGDT-HA of −5.0; TR891, −3.57; TR928, −2.79).</s><s>Overall, these examples illustrate that improvement and deterioration occurred globally in a model including the structure core rather than merely moving flexible loop regions.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Relaxing or compressing?</head><p><s>Observing that the structural change occurs globally to a model by our refinement protocol, we questioned whether the observed improvement was due to simply compression of the structure since it is widely known that compression of Cα coordinates of a model decreases the radius of gyration, which contributes to apparent improvement of some quality assessment scores, such as GDT-TS, GDT-HA, and RMSD.</s><s>To answer this question, we evaluated a compactness of refined models and the starting models by comparing the radius of gyration (R g ) of the structures.</s><s>It is defined as:</s></p><formula xml:id="formula_1">(Eq. 5)</formula><p><s>where N is a total number of Cα atoms in the model, v i is the coordinate of i-th Cα atom, v̄ is the average coordinate of all Cα atoms of the model.</s><s>In this calculation, we ignored largely incorrect regions in the starting model where the distance between the corresponding Cα atom positions to the native structure was larger than 4.0 Å, because these regions are highly unlikely to influence refined model's GDT-TS and more so for GDT-HA.</s><s>To assess the compression or relaxation of refined models, we computed the difference of R g between the starting model and the refine model (dR g ), dR g = R g (refined model) -R g (starting model).</s><s>A positive dR g indicates that the refined model was relaxed (expanded) while a negative value shows the model was compressed from the starting model.</s></p><p><s>In Figure <ref type="figure" target="#fig_6">7A</ref>, the improvement of models (dGDT-HA) was presented in a color code relative to dR g and GDT-HA of starting models.</s><s>First, by examining dR g , models for 32 out of 37 targets (five targets were excluded from this analysis because their native structures were not available for computing GDT-HA of their starting models) have positive values, indicating that the refinement actually expanded (or relaxed), not compressed the structures.</s><s>This figure also shows that the degree of the relaxation did not depend on the quality of the starting models and larger improvement (points in blue) occurred for starting models with a middle range GDT-HA and dR g , namely about 50 and 0.2, respectively.</s><s>Figure <ref type="figure" target="#fig_6">7B</ref> compares dGDT-HA with dR g and the deviation of refined models from their starting structures (iGDT-HA).</s></p><p><s>There is an obvious correlation between iGDT-HA and dR g , which simply shows that the model drifted away from the initial structure as it expanded (larger dR g ).</s><s>An interesting observation is that two unsuccessful refined models (TR879, dGDT-HA: −5.0; TR928, dGDT-HA: −2.8), which are shown in red and orange, are found at high dR g (0.47 and 0.55, respectively) and low iGDT-HA (59.7 and 73.8, respectively), distinct from the other models, in Figure <ref type="figure" target="#fig_6">7B</ref>.</s><s>This result suggests that models of unsuccessful refinement may be better identified by the combination of iGDT-HA and dR g rather than only using iGDT-HA.</s><s>This idea works particularly well for distinguishing TR879 (the red data point) from the other models that have a similar iGDT-HA value.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>What went right and what went wrong</head><p><s>Following the tradition of the CASP predictors' reports, we discuss things that worked well and those which need improvement.</s></p><p><s>One thing which clearly worked well was the ranking of the submitted models.</s><s>Table <ref type="table" target="#tab_6">V</ref> summarizes the average of evaluation scores of Model 1 to 5 and Figure <ref type="figure" target="#fig_7">8</ref> presents dGDT-HA of individual models relative to the quality (GDT-HA) of the starting models.</s><s>In the figure, Model 1 models are shown in red and the best model (i.e. the model with the largest dGDT-HA) for each target are connected with lines.</s><s>From Table <ref type="table" target="#tab_6">V</ref>, Model 1 models were on average the best among the five submitted models for all the evaluation scores except for that of the RMS_CA, where Model 1 was ranked second, following Model 2. Figure <ref type="figure" target="#fig_7">8</ref> visualizes the same conclusion; 28 out of 42, of the Model 1 models were the best for the targets, and if not they were close to the best.</s></p><p><s>Second, as discussed with Figure <ref type="figure" target="#fig_3">4A</ref>, our refinement protocol with short MD runs improved models for most of the cases.</s><s>Additionally, the structure sampling from short MD runs with an increasing Cα constraints, which increased from 0.1, 0.2 to 0.4 kcal/mol/Å 2 for every 400 ps, worked well.</s><s>As shown in Table <ref type="table" target="#tab_7">VI</ref>, sampling structures from different portions of MD runs we tried all worked worse than the method we used.</s><s>Thus, overall, we can conclude that we were successful in exploiting inexpensive short MD runs with an implicit solvent model very effectively.</s><s>This point becomes evident when our group's results were compared with a contrasting approach that used significantly more expensive MD runs but had similar performance (Table <ref type="table" target="#tab_2">II</ref>).</s></p><p><s>On the other hand, by design our protocol could not make large refinement to models due to the use of short MD simulations.</s><s>To make substantial corrections to a model conformation, such as rearrangement of secondary structures or domain moves, a completely different algorithm design, probably with a different protein model, such as a coarse-grained model <ref type="bibr" target="#b1">2,</ref><ref type="bibr" target="#b35">36,</ref><ref type="bibr" target="#b36">37</ref> , is obviously needed.</s><s>Indeed, this is the challenge left for the whole CASP refinement community.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion</head><p><s>We discussed our group's performance in the CASP12 refinement category.</s><s>Our protocol makes use of inexpensive short MD simulations with implicit solvent and successfully showed consistent improvements to starting models regardless of the quality of the starting models.</s><s>By examining submitted models, we found that achieved improvements are due to relaxation of structures rather than compression, which also suggested that the degree of relaxation (dR g ) could be another metric to eliminate unsuccessful refined models.</s><s>However, the protocol does not make large conformational refinement by design due to the use of short MD trajectories, which is still the goal of further development.</s><s>The model refinement protocol of the Kiharalab group in CASP12.</s><s>A, the flow chart of our refinement protocol.</s><s>Before performing MD simulations, the energy of the staring model was minimized, then subjected to the next heating and equilibration step.</s><s>The equilibrated structure was used as the starting model for the two types of production MD runs (short MD and long MD simulations).</s><s>In the filtering step, subset of models extracted from the MD trajectories were selected by the filtering criteria.</s><s>The coordinates of selected models were averaged and then relaxed.</s><s>B, Definition of the parameters used in the filtering step.</s><s>The xaxis is the Z-score of GDT-HA of a model from the initial structure and the y-axis is the Zscore of the DFIRE scoring function.</s><s>The distribution shown is from extracted models from short MD trajectories of TR520.</s><s>Red points represent selected models by the filtering with r=2.0, θ =310 and γ =35.</s><s>Results of model selection from MD trajectories with different parameter settings, r, θ, and γ.</s><s>For the explanation of the parameters, see Fig. <ref type="figure" target="#fig_0">1B</ref>.</s><s>The distribution of the average dGDT-HA of selected models from the short MD (left) and the long MD (right) trajectories are shown in a color scale from dark red to purple for negatively large dGDT-HA, −3 to over −0.5.</s><s>dGDT-HA is the difference of the GDT-HA to the native structure of the initial model to that of the average of the selected models using a corresponding parameter set.</s><s>A white region means that no models exist for the corresponding parameter combinations.</s><s>Examples of successful and failed refinement by our group.</s><s>The left column shows the native structures (magenta) and the starting models (cyan).</s><s>The right column shows our Model 1 models that were refined with the short MD runs.</s><s>The refined models are colored according to the degree of improvement of Cα atom positions from the starting models.</s><s>Improved regions in a model are colored from light blue to dark blue for small to large improvements.</s><s>On the other hand, deteriorated regions are colored from light to dark red for slight to large deteriorations.</s><s>Green represents regions that did not change more than 0.1Å.</s><s>Deviation of the Cα positions of a model from the starting structure was judged after superimposing the starting structure and the model to the native structure using the LGA program with a 4.0 Å threshold.</s><s>In the short MD runs of 1.2 ns in total, as described in Methods, we applied an increasing Cα constraints from 0.1, 0.2, to 0.4 to three 400 ps-long subsections sequentially.</s><s>In this small experiment, structures are sampled from different subsections of the MD runs, which underwent the structure averaging and relaxing procedure to yield a final model.</s><s>GDT-TS and GDT-HA are average of models for 36 targets, which had the native structure available from PDB. TR944 has its native structure in PDB but was excluded from this data, because the trajectory files used in CASP12 were corrupted and could not be used.</s></p><p><s>a The unit is kcal/mol/Å 2 .</s><s>If more than one value is shown, each was applied subsequently to each subsection in MD trajectories.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc><div><p><s>Figure 1.</s></p></div></figDesc><graphic coords="14,179.04,62.00,313.92,145.92" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 2 .</head><label>2</label><figDesc><div><p><s>Figure 2.</s></p></div></figDesc><graphic coords="15,167.16,62.00,337.68,270.53" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 3 .</head><label>3</label><figDesc><div><p><s>Figure 3.</s><s>Comparison of the refined models by the short MD protocol on the CASP11 refinement targets.</s><s>Models were evaluated by GDT-TS in the left column and by GDT-HA in the right column.</s><s>A, refined models by the short MD in comparison with starting models.</s><s>B, the short MD results compared with the long MD results.</s><s>C, The refined models with the short MD runs compared with models submitted by Kiharalab (Group number 333) in CASP11.</s><s>D, the short MD results compared with models by FEIG (Group number 288) in CASP11.</s></p></div></figDesc><graphic coords="16,221.94,62.00,228.12,473.76" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 4 .</head><label>4</label><figDesc><div><p><s>Figure 4.Comparison of short MD models submitted as Model 1 with other models in CASP12.</s><s>GDT-TS (on the left column) and GDT-HA (right) are used for evaluation.</s><s>A, comparison with the starting models.</s><s>B, compared with refined models with the long MD runs that were submitted as Model 2. C, comparison with Model 1 models from the FEIG group.</s></p></div></figDesc><graphic coords="17,220.44,62.00,231.12,354.00" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 5 .</head><label>5</label><figDesc><div><p><s>Figure 5.GDT-HA difference between short MD and long MD models relative to the initial quality of the targets.</s><s>The x-axis shows GDT-HA of the starting models.</s><s>The y-axis shows the difference of GDT-HA of Model 1 (short MD) and Model 2 (long MD).</s><s>The positive value indicates that GDT-HA of Model 1 was higher than Model 2.</s></p></div></figDesc><graphic coords="18,191.76,62.00,288.48,283.68" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 6 .</head><label>6</label><figDesc><div><p><s>Figure 6.</s></p></div></figDesc><graphic coords="19,185.16,62.00,301.68,384.89" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 7 .</head><label>7</label><figDesc><div><p><s>Figure 7. Refinement results relative to the change of radius of gyration of models.</s><s>Improvement of models (dGDT-HA) is shown in color code relative to the change of the radius of gyration (dRg) by the short MD refinement protocol.</s><s>dGDT-HA of over −4.0 to over 4.0 is shown in a color scale from red to blue.</s><s>Each data point represents a Model 1 refined model for the 37 targets that have their native structure available for the analysis.</s><s>A, The x-axis shows the quality, GDT-HA of starting models.</s><s>B, The x-axis is the structural deviation of refined models form the starting model (iGDT-HA).</s></p></div></figDesc><graphic coords="20,187.68,62.00,296.64,137.28" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 8 .</head><label>8</label><figDesc><div><p><s>Figure 8. Improvement of GDT-HA (dGDT-HA) relative to the quality of starting models (GDT-HA(Starting Model)).</s><s>Red points represent Model 1 models and open circles represent Model 2 to Model 5.</s><s>The best dGDT-HA models among the five models for each target are connected with a line.</s></p></div></figDesc><graphic coords="21,187.44,62.00,297.12,289.44" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table I</head><label>I</label><figDesc><div><p><s>Average performance of our protocol in comparison with top10 groups in CASP11.</s></p></div></figDesc><table><row><cell>Group</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>a Group ID GDT-TS GDT-HA RMS_CA</head><label></label><figDesc></figDesc><table><row><cell>FEIG</cell><cell>288</cell><cell>74.63</cell><cell>56.45</cell><cell>3.58</cell></row><row><cell>Seok</cell><cell>296</cell><cell>72.45</cell><cell>53.71</cell><cell>3.62</cell></row><row><cell>Seok-refine</cell><cell>423</cell><cell>72.61</cell><cell>53.56</cell><cell>3.59</cell></row><row><cell>Schroderlab</cell><cell>396</cell><cell>73.27</cell><cell>55.07</cell><cell>3.67</cell></row><row><cell>PRINCETON_TIGRESS</cell><cell>106</cell><cell>72.75</cell><cell>53.98</cell><cell>3.65</cell></row><row><cell>Kiharalab</cell><cell>333</cell><cell>72.88</cell><cell>54.22</cell><cell>3.57</cell></row><row><cell>LEE</cell><cell>169</cell><cell>72.14</cell><cell>53.31</cell><cell>3.65</cell></row><row><cell>BAKER</cell><cell>64</cell><cell>71.20</cell><cell>52.25</cell><cell>3.86</cell></row><row><cell>nns</cell><cell>038</cell><cell>71.57</cell><cell>52.51</cell><cell>3.66</cell></row><row><cell>Seok-server</cell><cell>011</cell><cell>72.66</cell><cell>53.93</cell><cell>3.64</cell></row><row><cell>Average of all 53 Groups</cell><cell>n/a</cell><cell>69.13</cell><cell>50.08</cell><cell>3.99</cell></row><row><cell>Starting model</cell><cell>n/a</cell><cell>71.96</cell><cell>53.03</cell><cell>3.69</cell></row><row><cell>Short MD</cell><cell>n/a</cell><cell>73.26</cell><cell>54.27</cell><cell>3.62</cell></row><row><cell>Long MD *</cell><cell>n/a</cell><cell>70.48</cell><cell>50.82</cell><cell>3.84</cell></row></table><note><p><s>The names of top 10 groups were obtained ranked according to the CASP11 web site, assessors' formula (http://predictioncenter.org/casp11/ zscores_final_refine.cgi?formula=assessors). * The results are for 31 out of the 36 targets for which the long MD runs finished before the CASP12 has started to release refinement targets.</s></p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table II</head><label>II</label><figDesc><div><p><s>Average performance of the top10 groups in the CASP12 refinement targets.</s></p></div></figDesc><table><row><cell>Assessors'</cell></row><row><cell>Group ID</cell></row><row><cell>Group a</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>formula b GDT-TS GDT-HA RMS_CA MolProbity c</head><label></label><figDesc><div><p><s>MolProbity considers the number of steric clashes and the percentages of outliers in rotamer and backbone conformations.</s><s>A low MolProbity score indicates that a model is more physically favorable.</s></p></div></figDesc><table><row><cell>SphGr d QCS e</cell><cell>GOAL 220 21.79 67.08 50.13 5.14 2.06 69.05 80.23</cell><cell>Seok 023 18.39 67.79 50.93 5.43 1.11 68.37 81.22</cell><cell>BAKER 247 17.73 67.11 50.48 5.36 0.87 69.28 81.02</cell><cell>Seok-server 250 16.91 67.40 50.34 5.42 1.11 68.05 78.57</cell><cell>SVMQA 208 15.01 67.72 51.01 5.48 1.71 67.30 80.70</cell><cell>FEIG 204 13.66 67.58 50.89 5.51 0.94 66.67 79.81</cell><cell>LEEab 450 13.58 64.94 47.42 5.37 1.83 68.13 78.53</cell><cell>Kiharalab 102 12.38 67.33 50.46 5.52 1.45 66.80 80.44</cell><cell>GOAL_COMPLEX 430 11.87 67.33 50.78 5.52 1.80 66.67 80.45</cell><cell>LEE 011 11.75 65.76 48.42 5.32 1.80 67.66 80.21</cell><cell>Average of All 39 Groups n/a −11.57 62.85 45.85 6.14 2.08 62.87 76.14</cell><cell>Starting model n/a n/a 66.93 49.76 5.50 1.77 66.99 79.74</cell><cell>a The names of Top 10 groups were obtained from CASP12 result page (http://predictioncenter.org/casp12/zscores_final_refine.cgi?formula=assessors) ranked by the assessors' formula.</cell><cell>MolProbity QCS -0.02Z sphGr + 0.15Z RMS_CA + 0.20Z GDT-HA -0.46Z Combined Z-score of GDT-HA, RMS_CA, SphGr, QCS and MolProbity score defined as; 0.17Z b</cell><cell>c</cell></row></table><note><p><s>d SphereGrinder evaluates local structural similarity between a model and the native structure.</s><s>e Quality Control Score.</s><s>QCS evaluates the correctness of secondary structure element predictions in a model.</s></p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table III</head><label>III</label><figDesc><div><p><s>Head-to-head comparison of the top 10 groups in CASP12.The performances of the top 10 groups were compared using paired Student's t-tests.</s><s>Statistically significant wins (P-value &lt; 0.05) of the group listed in the first column from the left against each group listed in the first raw are shown in bold.</s></p></div></figDesc><table><row><cell>(A) Paired t-test on GDT-TS</cell><cell>ID 220 023 247 250 208 204 450 102 430 011 Starting model</cell><cell>220 -0.84 0.52 0.68 0.82 0.75 0.02 0.65 0.65 0.02 0.40</cell><cell>023 0.16 -0.18 0.03 0.38 0.31 0.00 0.05 0.04 0.00 0.00</cell><cell>247 0.48 0.82 -0.67 0.82 0.74 0.01 0.64 0.63 0.03 0.39</cell><cell>250 0.32 0.97 0.33 -0.87 0.65 0.01 0.40 0.40 0.00 0.04</cell><cell>208 0.18 0.63 0.18 0.13 -0.34 0.00 0.01 0.00 0.00 0.00</cell><cell>204 0.25 0.69 0.26 0.35 0.66 -0.01 0.22 0.21 0.00 0.05</cell><cell>450 0.99 1.00 0.99 0.99 1.00 1.00 -0.99 0.99 0.90 0.98</cell><cell>102 0.35 0.95 0.36 0.60 0.99 0.78 0.01 -0.48 0.00 0.03</cell><cell>430 0.35 0.96 0.37 0.60 1.00 0.79 0.01 0.52 -0.00 0.01</cell><cell>011 0.98 1.00 0.98 1.00 1.00 1.00 0.10 1.00 1.00 -0.98</cell><cell>Starting model 0.60 1.00 0.61 0.96 1.00 0.95 0.02 0.97 0.99 0.02 -</cell><cell>(B) Paired t-test on GDT-HA</cell><cell>ID 220 023 247 250 208 204 450 102 430 011 Starting model</cell><cell>220 -0.86 0.66 0.61 0.87 0.81 0.01 0.69 0.82 0.01 0.30</cell><cell>023 0.14 -0.29 0.01 0.61 0.47 0.00 0.09 0.31 0.00 0.00</cell><cell>247 0.34 0.71 -0.43 0.76 0.69 0.00 0.49 0.67 0.01 0.18</cell><cell>250 0.39 0.99 0.58 -0.98 0.81 0.00 0.66 0.92 0.00 0.04</cell><cell>208 0.13 0.39 0.24 0.02 -0.40 0.00 0.02 0.13 0.00 0.00</cell><cell>204 0.19 0.53 0.31 0.19 0.60 -0.00 0.17 0.41 0.00 0.03</cell><cell>450 1.00 1.00 1.00 1.00 1.00 1.00 -1.00 1.00 0.94 0.99</cell><cell>102 0.31 0.91 0.51 0.34 0.99 0.83 0.00 -0.92 0.00 0.02</cell><cell>430 0.18 0.69 0.34 0.08 0.87 0.59 0.00 0.08 -0.00 0.00</cell><cell>011 0.99 1.00 0.99 1.00 1.00 1.00 0.06 1.00 1.00 -0.97</cell><cell>Starting model 0.71 1.00 0.82 0.97 1.00 0.97 0.01 0.98 1.00 0.03 -</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table IV</head><label>IV</label><figDesc><div><p><s>Average GDT-HA of monomer and oligomer targets in CASP12.Among the 48 refinement targets, the following targets are oligomers: TR520, 594, 694, 862, 866, 870, 875, 877, 881, 887, 893, 896, 909, 912, 913, 917, 945, 947 (all IDs with TR as prefix).</s></p></div></figDesc><table><row><cell></cell><cell cols="4"># of Targets Short MD Long MD Difference</cell></row><row><cell>Monomers</cell><cell>24</cell><cell>52.69</cell><cell>49.82</cell><cell>2.88</cell></row><row><cell>Oligomers</cell><cell>18</cell><cell>47.49</cell><cell>46.32</cell><cell>1.17</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table V</head><label>V</label><figDesc><div><p><s>Average performance of Kiharalab model 1-5 in CASP12.The best result among Model 1-5 and the starting model for each score is shown in bold.</s><s>a averaged and relaxed model generated from the subset of short MD trajectories.</s></p></div></figDesc><table><row><cell>GDT-TS GDT-HA RMS_CA MolProbity SphGr QCS</cell><cell>Model 1 a 67.33 50.46 5.52 1.45 66.80 80.44</cell><cell>Model 2 b 65.84 48.32 5.51 1.80 66.11 79.76</cell><cell>Model 3 c 65.29 47.19 5.59 2.01 65.85 78.79</cell><cell>Model 4 d 64.37 46.22 5.63 1.94 65.40 76.73</cell><cell>Model 5 e 66.16 48.38 5.56 2.10 65.59 79.84</cell><cell>Starting Model 66.93 49.76 5.50 1.77 66.99 79.74</cell><cell>b averaged and relaxed model generated from the subset of long MD trajectories.</cell><cell>c the lowest DFIRE model</cell><cell>d the lowest GOAP model</cell><cell>e the highest iGDT-HA model</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7"><head>Table VI</head><label>VI</label><figDesc><div><p><s>Results of using different structure sampling form short MD runs.</s></p></div></figDesc><table><row><cell></cell><cell cols="3">Cα restraints a GDT-TS GDT-HA</cell></row><row><cell>Section 1 (400 ps)</cell><cell>0.1</cell><cell>66.73</cell><cell>49.21</cell></row><row><cell>Section 1, 2 (800 ps)</cell><cell>0.1, 0.2</cell><cell>67.06</cell><cell>49.70</cell></row><row><cell cols="2">Section 1, 2, 3 (1.2 ns) 0.1, 0.2, 0.4</cell><cell>67.32</cell><cell>50.11</cell></row><row><cell>Section 2 (400 ps)</cell><cell>0.2</cell><cell>67.11</cell><cell>49.78</cell></row><row><cell>Section 3 (400 ps)</cell><cell>0.4</cell><cell>67.27</cell><cell>50.08</cell></row><row><cell>Starting model</cell><cell>n/a</cell><cell>67.06</cell><cell>49.80</cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">Proteins. Author manuscript; available in PMC 2019 March 01.</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgments</head><p><s>We thank Kevin Shim for proofreading the manuscript.</s><s>This work was partly supported by National Institutes of Health (R01GM123055) and National Science Foundation (IIS1319551, DBI1262189, IOS1127027, DMS1614777).</s></p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Evaluation of free modeling targets in CASP11 and ROLL</title>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">N</forename><surname>Kinch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Monastyrskyy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kryshtafovych</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">V</forename><surname>Grishin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proteins</title>
+		<imprint>
+			<biblScope unit="volume">84</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="51" to="66" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+	<note>Suppl. PubMed: 26677002</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">TOUCHSTONE: an ab initio protein structure prediction method that uses threading-based tertiary restraints</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Kihara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Lu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kolinski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Skolnick</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proceedings of the National Academy of Sciences of the United States of America</title>
+		<imprint>
+			<biblScope unit="volume">98</biblScope>
+			<biblScope unit="issue">18</biblScope>
+			<biblScope unit="page" from="10125" to="10130" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+	<note>PubMed: 11504922</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Assessment of template-based modeling of protein structure in CASP11</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Modi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Adhikari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">L</forename><surname>Dunbrack</surname><genName>Jr</genName></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proteins</title>
+		<imprint>
+			<biblScope unit="volume">84</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="200" to="220" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+	<note>Suppl. PubMed: 27081927</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Critical assessment of methods of protein structure prediction: Progress and new directions in round XI</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Moult</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Fidelis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kryshtafovych</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Schwede</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Tramontano</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proteins</title>
+		<imprint>
+			<biblScope unit="volume">84</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="4" to="14" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+	<note>Suppl. PubMed: 27171127</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">A guide to template based structure prediction</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Qu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Swanson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Day</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Tsai</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Current Protein &amp; Peptide Science</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="270" to="285" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+	<note>PubMed: 19519455</note>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">A large-scale experiment to assess protein structure prediction methods</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Moult</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">T</forename><surname>Pedersen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Judson</forename><forename type="middle">R</forename><surname>Fidelis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proteins</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="ii" to="v" />
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+	<note>PubMed: 8710822</note>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Progress from CASP6 to CASP7</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kryshtafovych</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Fidelis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Moult</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proteins</title>
+		<imprint>
+			<biblScope unit="volume">69</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="194" to="207" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+	<note>Suppl. PubMed: 17918728</note>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">CASP8 results in context of previous experiments</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kryshtafovych</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Fidelis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Moult</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proteins</title>
+		<imprint>
+			<biblScope unit="volume">77</biblScope>
+			<biblScope unit="issue">9</biblScope>
+			<biblScope unit="page" from="217" to="228" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+	<note>Suppl. PubMed: 19722266</note>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">CASP9 results compared to those of previous CASP experiments</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kryshtafovych</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Fidelis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Moult</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proteins</title>
+		<imprint>
+			<biblScope unit="volume">79</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="196" to="207" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+	<note>Suppl. PubMed: 21997643</note>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">CASP10 results compared to those of previous CASP experiments</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kryshtafovych</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Fidelis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Moult</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proteins</title>
+		<imprint>
+			<biblScope unit="volume">82</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="164" to="174" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+	<note>Suppl</note>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">Protein Structure Prediction</title>
+		<editor>Kihara, D.</editor>
+		<imprint>
+			<date type="published" when="2014">2014</date>
+			<publisher>Humana Press</publisher>
+			<pubPlace>New York</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Structure-function analysis of the DNA translocating portal of the bacteriophage T4 packaging machine</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Padilla-Sanchez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">R</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Kihara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">G</forename><surname>Rossmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">B</forename><surname>Rao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Molecular Biology</title>
+		<imprint>
+			<biblScope unit="volume">426</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="1019" to="1038" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+	<note>PubMed: 24126213</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Comparative protein structure modeling of genes and genomes</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Marti-Renom</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">C</forename><surname>Stuart</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Fiser</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Sanchez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Melo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sali</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Annu Rev Biophys Biomol Struct</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="page">10940251</biblScope>
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Protein structure prediction and structural genomics</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Baker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sali</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">294</biblScope>
+			<biblScope unit="issue">5540</biblScope>
+			<biblScope unit="page" from="93" to="96" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+	<note>PubMed: 11588250</note>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Assessment of refinement of template-based models in CASP11</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Modi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">L</forename><surname>Dunbrack</surname><genName>Jr</genName></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proteins</title>
+		<imprint>
+			<biblScope unit="volume">84</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="260" to="281" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+	<note>Suppl. PubMed: 27081793</note>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Refinement of homology-based protein structures by molecular dynamics simulation techniques</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Fan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Mark</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Protein Science</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="211" to="220" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+	<note>PubMed: 14691236</note>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Assessment of protein structure refinement in CASP9</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Maccallum</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Perez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Schnieders</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Hua</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">P</forename><surname>Jacobson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">A</forename><surname>Dill</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proteins</title>
+		<imprint>
+			<biblScope unit="volume">79</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="74" to="90" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+	<note>Suppl. PubMed: 22069034</note>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Evaluation of predictions in the CASP10 model refinement category</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Nugent</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Cozzetto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">T</forename><surname>Jones</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proteins</title>
+		<imprint>
+			<biblScope unit="volume">82</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="98" to="111" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+	<note>Suppl. PubMed: 23900810</note>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Assessment of CASP7 predictions for template-based modeling targets</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kopp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Bordoli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename><surname>Battey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Kiefer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Schwede</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proteins</title>
+		<imprint>
+			<biblScope unit="volume">69</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="38" to="56" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+	<note>Suppl. PubMed: 17894352</note>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Physics-based protein structure refinement through multiple molecular dynamics trajectories and structure averaging</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Mirjalili</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Noyes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Feig</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proteins</title>
+		<imprint>
+			<biblScope unit="volume">82</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="196" to="207" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+	<note>Suppl. PubMed: 23737254</note>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Protein structure refinement via molecular-dynamics simulations: What works and what does not?</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Feig</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Mirjalili</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proteins</title>
+		<imprint>
+			<biblScope unit="volume">84</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="282" to="292" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+	<note>Suppl. PubMed: 26234208</note>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Princeton_TIGRESS 2. 0: High refinement consistency and net gains through support vector machines and molecular dynamics in double-blind predictions during the CASP11 experiment</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">A</forename><surname>Khoury</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Smadbeck</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">A</forename><surname>Kieslich</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Koskosidis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><forename type="middle">A</forename><surname>Guzman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Tamamis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">A</forename><surname>Floudas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proteins</title>
+		<imprint>
+			<biblScope unit="volume">85</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1078" to="1098" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+	<note>PubMed: 28241391</note>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Template-free modeling by LEE and LEER in CASP11</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Joung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">Y</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">Y</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Joo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proteins</title>
+		<imprint>
+			<biblScope unit="volume">84</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="118" to="130" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+	<note>Suppl</note>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Protein structure refinement with adaptively restrained homologous replicas</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Della Corte</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Wildberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">F</forename><surname>Schroder</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proteins</title>
+		<imprint>
+			<biblScope unit="volume">84</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="302" to="313" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+	<note>Suppl. PubMed: 26441154</note>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Effective protein model structure refinement by loop modeling and overall relaxation</title>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">R</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Heo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Seok</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proteins</title>
+		<imprint>
+			<biblScope unit="volume">84</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="293" to="301" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+	<note>Suppl. PubMed: 26172288</note>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">FACTS: Fast analytical continuum treatment of solvation</title>
+		<author>
+			<persName><forename type="first">U</forename><surname>Haberthur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Caflisch</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Computational Chemistry</title>
+		<imprint>
+			<biblScope unit="volume">29</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="701" to="715" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+	<note>PubMed: 17918282</note>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">A general treatment of solvent effects based on screened coulomb potentials</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Hassan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Guarnieri</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">L</forename><surname>Mehler</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Physical Chemistry B</title>
+		<imprint>
+			<biblScope unit="volume">104</biblScope>
+			<biblScope unit="page" from="6478" to="6489" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Evaluating the dynamics and electrostatic interactions of folded proteins in implicit solvents</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Hua</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Roy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">B</forename><surname>Post</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Protein Science</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="204" to="218" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+	<note>PubMed: 26189497</note>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Distance-scaled, finite ideal-gas reference state improves structure-derived potentials of mean force for structure selection and stability prediction</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhou</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Protein Science</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="2714" to="2726" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+	<note>PubMed: 12381853</note>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">A novel side-chain orientation dependent potential derived from random-walk reference state for protein fold selection and structure prediction</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PloS One</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page">e15386</biblScope>
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+	<note>PubMed: 21060880</note>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">GOAP: a generalized orientation-dependent, all-atom statistical potential for protein structure prediction</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Skolnick</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biophysical Journal</title>
+		<imprint>
+			<biblScope unit="volume">101</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="2043" to="2052" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+	<note>PubMed: 22004759</note>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">LGA: A method for finding 3D similarities in protein structures</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Zemla</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="issue">13</biblScope>
+			<biblScope unit="page">3370</biblScope>
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+	<note>PubMed: 12824330</note>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">MolProbity: all-atom structure validation for macromolecular crystallography</title>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">B</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">J</forename><surname>Headd</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">A</forename><surname>Keedy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">M</forename><surname>Immormino</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">J</forename><surname>Kapral</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">W</forename><surname>Murray</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">S</forename><surname>Richardson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">C</forename><surname>Richardson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Acta crystallographica Section D, Biological Crystallography</title>
+		<imprint>
+			<biblScope unit="volume">66</biblScope>
+			<biblScope unit="page" from="12" to="21" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+	<note>Pt 1. PubMed: 20057044</note>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">CASP prediction center infrastructure and evaluation measures in CASP10 and CASP ROLL</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kryshtafovych</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Monastyrskyy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Fidelis</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proteins</title>
+		<imprint>
+			<biblScope unit="volume">82</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="7" to="13" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+	<note>Suppl. PubMed: 24038551</note>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">An automatic method for CASP9 free modeling structure prediction assessment</title>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Cong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">N</forename><surname>Kinch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Pei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Shi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">N</forename><surname>Grishin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">V</forename><surname>Grishin</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">24</biblScope>
+			<biblScope unit="page" from="3371" to="3378" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+	<note>PubMed: 21994223</note>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Protein modeling and structure prediction with a reduced representation</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kolinski</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Acta Biochimica Pol</title>
+		<imprint>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="349" to="371" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">Physics-Based Potentials for the Coupling between Backbone-and Side-Chain-Local Conformational States in the United Residue (UNRES) Force Field for Protein Simulations</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">K</forename><surname>Sieradzan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Krupa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">A</forename><surname>Scheraga</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Liwo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Czaplewski</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Chemical Theory and Computation</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="817" to="831" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+	<note>PubMed: 25691834</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

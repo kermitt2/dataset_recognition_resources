@@ -1,0 +1,787 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Investigation of model stacking for drug sensitivity prediction</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2017-08-20">20 August 2017</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Kevin</forename><surname>Matlock</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Electrical and Computer Engineering</orgName>
+								<orgName type="institution">Texas Tech University</orgName>
+								<address>
+									<addrLine>1012 Boston Ave</addrLine>
+									<postCode>79409</postCode>
+									<settlement>Lubbock</settlement>
+									<region>TX</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Carlos</forename><surname>De Niz</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Electrical and Computer Engineering</orgName>
+								<orgName type="institution">Texas Tech University</orgName>
+								<address>
+									<addrLine>1012 Boston Ave</addrLine>
+									<postCode>79409</postCode>
+									<settlement>Lubbock</settlement>
+									<region>TX</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Raziur</forename><surname>Rahman</surname></persName>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Electrical and Computer Engineering</orgName>
+								<orgName type="institution">Texas Tech University</orgName>
+								<address>
+									<addrLine>1012 Boston Ave</addrLine>
+									<postCode>79409</postCode>
+									<settlement>Lubbock</settlement>
+									<region>TX</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Souparno</forename><surname>Ghosh</surname></persName>
+						</author>
+						<author role="corresp">
+							<persName><forename type="first">Ranadip</forename><surname>Pal</surname></persName>
+							<email>ranadip.pal@ttu.edu</email>
+							<affiliation key="aff1">
+								<orgName type="department">Department of Electrical and Computer Engineering</orgName>
+								<orgName type="institution">Texas Tech University</orgName>
+								<address>
+									<addrLine>1012 Boston Ave</addrLine>
+									<postCode>79409</postCode>
+									<settlement>Lubbock</settlement>
+									<region>TX</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<address>
+									<settlement>Boston</settlement>
+									<region>MA</region>
+									<country key="US">USA</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Investigation of model stacking for drug sensitivity prediction</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2017-08-20">20 August 2017</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">2DBFFC28676FD4812F985D7E9F7546C0</idno>
+					<idno type="DOI">10.1186/s12859-018-2060-2</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:29+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Drug sensitivity prediction</term>
+					<term>Stacking</term>
+					<term>Bias</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Background: A significant problem in precision medicine is the prediction of drug sensitivity for individual cancer cell lines.</s><s>Predictive models such as Random Forests have shown promising performance while predicting from individual genomic features such as gene expressions.</s><s>However, accessibility of various other forms of data types including information on multiple tested drugs necessitates the examination of designing predictive models incorporating the various data types.</s><s>Results: We explore the predictive performance of model stacking and the effect of stacking on the predictive bias and squared error.</s><s>In addition we discuss the analytical underpinnings supporting the advantages of stacking in reducing squared error and inherent bias of random forests in prediction of outliers.</s><s>The framework is tested on a setup including gene expression, drug target, physical properties and drug response information for a set of drugs and cell lines.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion:</head><p><s>The performance of individual and stacked models are compared.</s><s>We note that stacking models built on two heterogeneous datasets provide superior performance to stacking different models built on the same dataset.</s><s>It is also noted that stacking provides a noticeable reduction in the bias of our predictors when the dominant eigenvalue of the principle axis of variation in the residuals is significantly higher than the remaining eigenvalues.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Background</head><p><s>In precision medicine, drug sensitivity prediction is a significant problem.</s><s>The primary goal of improving prediction accuracy for precision medicine opens up problems that are broadly relevant to other machine learning tasks.</s><s>In this article, we examine the stacking of predictive models and their influence on prediction accuracy and modeling bias.</s><s>The principal individual model considered in this article is Random Forests (RF) since previously reported studies <ref type="bibr" target="#b0">[1]</ref><ref type="bibr" target="#b1">[2]</ref><ref type="bibr" target="#b2">[3]</ref><ref type="bibr" target="#b3">[4]</ref> have shown RF to outperform multiple other approaches in drug sensitivity prediction applications.</s><s>However, RF models can suffer from inherent bias where they under predict sensitivities above the mean and over predict sensitivities below the mean.</s><s>There have been some recent studies to address this bias <ref type="bibr" target="#b4">[5,</ref><ref type="bibr" target="#b5">6]</ref> but none have explored the effect of stacking on bias.</s><s>In this article, we illustrate that stacking of model predictions automatically lower the inherent bias in RF based models without having to resort to explicit bias reduction approaches.</s><s>Furthermore, we explored the theoretical underpinnings of the stacking operation on mean squared error and how stacking will produce results that are no worse than the worst individual model.</s></p><p><s>To demonstrate the role of stacking in accuracy and bias reduction, we created a drug sensitivity prediction setup with multiple data sources.</s><s>The main motivation behind stacking is that each model will provide complementary information.</s><s>For that reason we have included a variety of different datasets to built our individual models.</s><s>We consider multiple cell lines and multiple tested drugs as well as the genomic information in the form of gene expressions for each cell line.</s><s>Each drug is characterized by its physical properties and its potential targets.</s><s>The drug responses are normalized Area Under the curve (AUC) values obtained from cell viability curves.</s><s>This setup allows us to explore incorporating complementary information in our prediction models.</s><s>For instance, gene expression provides information on each cell line whereas drug targets provide information on each drug that is complementary to genomic information.</s><s>Thus, the effect of both cell line and drug information can be included in prediction.</s><s>Note that, we can train some models only on cell lines with fixed drug whereas other models can be trained on drugs with fixed cell line and they can be combined to produce an integrated prediction model.</s><s>This study provides a theoretically sound, but easy to implement, methodology to jointly analyze multiple pharmacogenomics databases <ref type="bibr" target="#b6">[7,</ref><ref type="bibr" target="#b7">8]</ref> that include information on multiple cell lines and multiple drugs.</s><s>Thus, for a new cancer patient, a biopsy can be used to generate a genomic profile of the patient and a drug screen can be run to get an estimate of the cell viability for the drugs in the screen and then we can utilize these information along with prior database information to predict sensitivities for drugs that have not been tested in the drug screen.</s><s>Improvement in performance will motivate us to explore personalized medicine from the perspective of training using both genomic and drug specific features.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Drug sensitivity prediction</head><p><s>To investigate stacking performance, we selected individual modeling techniques that have previously shown to perform well for drug sensitivity predictions scenarios.</s><s>These methods include Random Forest regression approach and Neural Network based prediction along with KNN based sensitivity estimation using drug target profiles.</s><s>We provide a brief overview of these three approaches below.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Random forest</head><p><s>Random Forest regression refers to an ensemble of regression trees <ref type="bibr" target="#b8">[9]</ref> where a set of T un-pruned regression trees are generated based on bootstrap sampling from the original training data.</s><s>For selecting the feature for splitting at each node, a random set of m features from the total M features are used.</s><s>The inclusion of the concepts of bagging (Bootstrap sampling for each tree) and random subspace sampling (node split selected from random subset of features) increase the independence of the generated trees.</s><s>Thus the averaging of the prediction over multiple trees has lower variance compared to individual regression trees.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Process of splitting a node</head><formula xml:id="formula_0">Let X i, j and Y (i)(i = 1, • • • , n; j = 1, • • • , M) denote the</formula><p><s>training predictor features and output response samples respectively.</s><s>At any node η P , we aim to select a feature j s from a random set of m features and a threshold z to partition the node into two child nodes η L (left node with samples satisfying x tr I ∈ η P , j s ≤ z) and η R (right node with samples satisfying X i ∈ η P , j s &gt; z).</s><s>We consider the node cost as sum of square differences:</s></p><formula xml:id="formula_1">D (η P ) = i∈η P (Y (i) − μ (η P )) 2<label>(1)</label></formula><p><s>where μ(η P ) is the expected value of Y (i) in node η P .</s><s>Thus, the reduction in cost for partition γ at node η P is</s></p><formula xml:id="formula_2">C (γ , η P ) = D (η P ) − D (η L ) − D (η R ) (2)</formula><p><s>The partition γ * that maximizes C(γ , η P ) for all possible partitions is selected for node η P .</s><s>Note that for a continuous feature with n samples, a total of n partitions needs to be checked.</s><s>Thus, the computational complexity of each node split is O(mn).</s><s>During the tree generation process, a node with less than n size training samples is not partitioned any further.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Forest prediction</head><p><s>Using the randomized feature selection process, we fit the tree based on the bootstrap sample {(X 1 , Y 1 ) , ..., (X n , Y n )} generated from the training data.</s></p><p><s>Let us consider the prediction based on a test sample x for the tree .</s><s>Let η(x, ) be the partition containing x, the tree response takes the form <ref type="bibr" target="#b8">[9]</ref><ref type="bibr" target="#b9">[10]</ref><ref type="bibr" target="#b10">[11]</ref>:</s></p><formula xml:id="formula_3">Y(x, ) = n i=1 w i (x, )y(i) (3)</formula><p><s>where the weights w i (x, ) are given by</s></p><formula xml:id="formula_4">w i (x, ) = 1 {x tr (i)∈η(x, )} # {r : x tr (i) ∈ η (x tr (r), )} (4)</formula><p><s>Let the T trees of the Random forest be denoted by</s></p><formula xml:id="formula_5">w i (x) = 1 T T j=1 w i x, j .<label>( 5 )</label></formula><p><s>The Random Forest prediction for the test sample x is then given by</s></p><formula xml:id="formula_6">Y(x) = n i=1 w i (x)y(i) (6)</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Neural networks</head><p><s>Deep Learning (DL) is a revived Neural Networks (NN) based approach that is increasingly becoming popular due to its high predictive power for scenarios with large number of samples.</s><s>There exists a vast number of software options available to process a Deep Learning problem and we utilized the tool H2O <ref type="bibr" target="#b11">[12]</ref>, in its R-Package form.</s><s>H2O is Java based, open source, multi-interface and multi-language machine learning and analytics platform that allows machine learning modeling using several algorithms including Deep Learning Neural Networks <ref type="bibr" target="#b12">[13]</ref>.</s><s>H2O deep learning module is based on a multi-layer feed-forward artificial neural network, trained with stochastic gradient descent (loss function minimization) using back-propagation <ref type="bibr" target="#b13">[14]</ref>.</s><s>An illustration of the neural network model is given in Fig. <ref type="figure">1</ref>.</s></p><p><s>For this study the model parameters were selected after using grid search on a validation set.</s><s>In general terms and for all the models, the early stopping deviance criteria was set to 0.001, with a 2 regularization of 0.0001.</s><s>The activation function chosen was a Tanh and 4 hidden layers with the same number of neurons for each layer.</s><s>The number of neurons in each layer was set to be equal to the number of input features.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Sensitivity estimation using drug targets</head><p><s>Drug targets have been shown to be an effective source of data for estimating drug sensitivities <ref type="bibr" target="#b14">[15]</ref>.</s><s>However target data tends to be very sparse which limits the number of available methods.</s><s>The k-Nearest Neighbor (KNN) algorithm is a simple yet powerful method of nonlinear classification that is popular in machine learning for sparse data.</s><s>Given a set of training vectors with their corresponding sensitivities S, we can estimate the sensitivity given a drug's target profile by looking at the sensitivities corresponding to the k-closest training target profiles.</s></p><p><s>For our case, we have chosen taxicab distance to pick the closest training samples, defined as:</s></p><formula xml:id="formula_7">d(φ, ψ) = nTargets i=1 |φ i − ψ i |</formula><p><s>The average of the k closest training vectors is our prediction.</s><s>In our model we have chosen to look at k = 5 closest samples.</s></p><p><s>We have developed two separate models for predicting drug sensitivity with KNN and target data.</s><s>In the first method, which we denote as KNN Direct, we simply directly estimate AUC using all available target data for a single cell line.</s><s>For the second method, called KNN Residual, we instead predict the residuals (actual values minus the mean) of each drug for a given cell line.</s><s>We then add our residual prediction back onto the mean AUC of each drug for our final prediction.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Integrated prediction</head><p><s>Up to this point, we have considered each model independently, i.e. one model for one set of data.</s><s>However biological processes are complex and restricting our data to a single type rarely shows us the whole picture.</s><s>To overcome this limitation, we have also utilized a systems genomics approach in our predictions.</s></p><p><s>From a machine learning point of view, we can format this as ensemble prediction problem.</s><s>We first select N m models, then let ỹ = y 1 , y 2 , ..., y N m be the output of each of our individual models.</s><s>The final prediction, y f is formed using these individual predictions i.e.</s></p><formula xml:id="formula_8">y f = C(ỹ)</formula><p><s>Fig. <ref type="figure">1</ref> Deep Network layers and neuron details.</s><s>Image generated from <ref type="bibr" target="#b13">[14]</ref></s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Linear stacking</head><p><s>As the name implies, linear stacking is simply a linear combination of prediction algorithms i.e.</s></p><formula xml:id="formula_9">y f = ỹ w + b</formula><p><s>where w is our set of linear weights for each model.</s><s>We can easily solve for the weights utilizing matrix inverse to find the least squares solution.</s></p><p><s>Due to its high accuracy and low computational cost we have focused mainly on the Random Forest for our analysis of stacking.</s><s>By comparison, the Neural Network has comparable accuracy but has significantly longer training train which did not make it practical for our purposes.</s><s>It should be noted, however; that in principle linear stacking functions independent of the individual models and in most practical scenarios the model that has the highest accuracy for each given dataset should be chosen.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Analysis of stacking</head><p><s>In this section we illustrate some attractive benefits of stacking operation besides being a simple tool to combine outputs from different models.</s><s>Our main focus is on demonstrating how stacking reduces bias in Random Forest (RF) prediction.</s><s>We conceptualize the distribution of ensemble predictions arising from each tree in the RF and frame a Bayesian Hierarchical model.</s><s>It is shown that, under the assumption of Gaussianity, the Bayes rule, under mean square loss, turns out to be a linear combination of individual model outputs.</s></p><p><s>Denote the RF training dataset as D F = (Y , x).</s><s>We can view RF prediction as a weighted average of the individual tree prediction, i.e.,</s></p><formula xml:id="formula_10">Ȳ (x) = 1 T T j=1 n i=1 w i x, j y(i)<label>(7)</label></formula><p><s>Define the random variable Z j x, j = n i=1 w i x, j y(i), j = 1, 2..., T as the prediction obtained from the jth tree generated by the − process.</s><s>Let us assume that the − process induces a valid distribution on the finite collection</s></p><formula xml:id="formula_11">Z(x, ) = [Z 1 (x, 1 ), Z 2 (x, 2 ), ..., Z T (x, T )]<label>(8)</label></formula><p><s>Now, observe that each tree attempts to predict the target μ(x) = E(Y |x) and the RF predictor, Ȳ (obtained in 7), emerges as the sample average, Z of Z(x).</s><s>However, finite sample tree predictions are biased <ref type="bibr" target="#b5">[6]</ref> resulting in</s></p><formula xml:id="formula_12">E(Z j (x)) = α j (n) + β j (n)μ(x) and Var(Z j (x)) = σ 2 j j = 1, 2, .</formula><p><s>., T, where the additive bias α j (n) is a sequence of constants that goes to 0 as n → ∞ and the multiplicative bias β j (n) is a sequence of constants that approaches 1 as n → ∞ under some smoothness condition on true μ(x) <ref type="bibr" target="#b15">[16]</ref>.</s><s>Note that, in this construction σ 2 j can be interpreted as the variance of individual tree estimates and, therefore, is of the order k n /n where k n is approximately the number of terminal nodes and n is the number of samples on which the tree is built <ref type="bibr" target="#b16">[17]</ref>.</s></p><p><s>For illustration purpose, we assume α j = 0, β j = β &gt; 0 and σ 2 j = σ 2 , j = 1, 2, ..., T. In this formulation 0 &lt; β &lt; 1 is the event of underprediction by RF estimate, as is typical for small values of responses, and β &gt; 1 is the event of overprediction by RF estimate, as is typical for large values of responses <ref type="bibr" target="#b4">[5]</ref>.</s><s>For notational simplicity, we suppress the arguments n, and x in relevant statistics henceforth.</s><s>Under the assumption of Gaussianity and conditional independence, the joint distribution of Z|μ, β, σ 2 is T j=1 Normal βμ, σ 2 .</s><s>If there are no other models, we can assume a prior π μ, σ 2 ∝ 1 (note that μ and β are not identifiable in this case) and the posterior mean of μ|σ 2 , D F turns out to be the familiar RF estimate.</s><s>Suppose, we have another model, M, potentially operating on a different set of inputs, x m , but predicting the same response variable Y.</s><s>We denote the training data for this model M as D M .</s><s>The output of this model is μ m which is an estimator of E(Y |x m ).</s><s>If we wish to pool both RF and model M together to generate predictions of Y, we can develop a hierarchical structure with μ m as a prior mean for μ, so that the posterior of μ is conditional on both D F and D M .</s><s>For simplicity, let us assume conjugacy and impose a Normal μ m , τ 2 prior on μ.</s><s>If M is another ensemble model, τ 2 can be computed in the same vein as σ 2 .</s><s>If M is deterministic, then a procedure to compute τ 2 in a general setting is described in <ref type="bibr" target="#b17">[18,</ref><ref type="bibr" target="#b18">19]</ref>.</s></p><p><s>Therefore the hierarchical specification takes the form</s></p><formula xml:id="formula_13">Z|μ, σ 2 , β μ|μ m , τ 2 σ 2 , τ 2 , β<label>(9)</label></formula><p><s>and the conditional posterior distribution of μ, μ|σ 2 , τ 2 , β, D F , D M , turns out to be Normal λ, ν 2 , where,</s></p><formula xml:id="formula_14">ν 2 = 1 τ 2 + Tβ 2 σ 2 −1 , (<label>10</label></formula><formula xml:id="formula_15">) λ = Tβτ 2 σ 2 + Tβ 2 τ 2 Z + σ 2 σ 2 + Tβ 2 τ 2 μ m . (<label>11</label></formula><formula xml:id="formula_16">)</formula><p><s>Note that, the Bayes estimate under square error loss is the posterior mean λ which happens to have similar form as the foregoing linear stacking estimator.</s></p><p><s>How is this representation of stacking estimator insightful?</s><s>Observe that if σ 2 is small, in particular if σ 2 τ 2 and β &gt; 1 then λ ≈ 1 β Z.</s><s>Thus, when the ensembles in RF overpredicts, the stacking estimator downweighs the RF estimator (with negligible contribution from μ m ) thereby reducing the bias.</s><s>On the other hand, if σ 2 τ 2 and 0 2  1.</s><s>In this situation RF ensemble underpredicts but stacking operation counteracts in the following way: (a) When Cβ ≤ 1, the stacking estimate underweighs RF estimate but adds a non-trivial fraction of μ m .</s><s>In an extreme situation, when β(∈ R + ) is in the neighborhood of 0, the stacking estimator does not put any weight on the RF estimate and solely uses μ m as the prediction, thereby reducing the RF bias.</s><s>(b) When Cβ 1 the stacking estimator upweighs the RF estimate with minimal contribution from μ m .</s><s>Clearly, in all the three foregoing situation, stacking helps reducing the bias of RF estimates.</s></p><formula xml:id="formula_17">&lt; β &lt; 1 then λ ≈ Cβ 1+Cβ 2 Z + 1 1+Cβ 2 μ m , where C = Tτ 2 /σ</formula><p><s>What happens when σ 2 and τ 2 are comparable or σ 2 τ 2 ?</s><s>Our argument from previous paragraph suggests that the debiasing characteristic of stacking operation will critically hinge on T. However, arbitrarily large T is not useful because after a certain number of trees, individual tree outputs will be correlated hence violating the fundamental premise of conditional independence in our setup.</s><s>Consequently, the effect of stacking operation on debiasing RF output is ambiguous.</s></p><p><s>Observe that in practise, we do not need to estimate the relevant parameters in the coefficient of Z and μ m in <ref type="bibr" target="#b10">(11)</ref>.</s><s>We can simply replace μ by observed responses (that are not used to obtain Z and μ m ) and regress that on predictions obtained from RF and model M. The regression coefficients can be treated as the estimates of the coefficients in <ref type="bibr" target="#b10">(11)</ref> while the intercept can be interpreted as an estimate of average additive bias.</s><s>Thus, we argue that standard linear stacking operation should also behave according to the formulation above and will be an effective debiasing device subject to the variance condition.</s></p><p><s>The fact that we need σ 2 τ 2 to force the stacking estimator operate as a debiasing devise indicates that we ought to design the stacking operation in such a way that the above condition is satisfied.</s><s>Consider a generic situation where D M consists of n 1 independent samples and the feature matrix x m is of dimension n 1 × p 1 .</s><s>D F consists on n 2 samples and the corresponding feature matrix x is of dimension n 2 ×(p 1 +p 2 ), with col(x m ) ⊂ col(x), i.e., D F includes all the features observed in D M and also p 2 additional feautes.</s><s>We must predict the response utilizing the entire set of p 1 +p 2 features.</s><s>One can easily combine these two training sets by training an RF on D M , obtain μ m and τ 2 and then use this prior information on the RF trained on D F .</s><s>In other words, one can simply stack RFs trained on D M and D F .</s><s>We call this operation vertical stacking.</s><s>Since both are RF estimators σ 2 is of order k .</s><s>/n 2 and τ 2 is of order k .</s><s>/n 1 .</s><s>Since k . is typically user specifed and can be made to remain constant in both RFs, the variances of the stacking components are essentially determined by the sample sizes of the respective training set.</s><s>Clearly, if n 2 &lt; n 1 the above condition relating the variances of the stacking components cannot be enforced.</s><s>One can argue that the variance condition can be maintained by switching the generic label σ 2 and τ 2 , but in this situation D F contains more information as compared to D M and hence we would like to put more weight on the RF trained on D F .</s><s>In other words, the stacking operation should more effectively debias the RF estimates obtained from D F than the other way around.</s></p><p><s>To enforce the variance condition, regardless of the sample sizes of D M and D F , we introduce the notion of horizontal stacking.</s><s>In this form of stacking we first partition the feature matrix associated with D F into two parts</s></p><formula xml:id="formula_18">x n 2 ×(p 1 +p 2 ) = x n 2 ×p 1 p 1 , x n 2 ×p 2 p 2</formula><p><s>. We then train an RF on n 1 + n 2 samples with feature matrix (x m , x p 1 ) .</s><s>If σ 2 is the variance associated with this stacking component, then σ 2 is of the order k .</s><s>/(n 1 + n 2 ).</s><s>The other model is also an RF but trained on n 2 samples and feature matrix x p 2 .</s><s>If τ 2 is the variance associated with this stacking component, then τ 2 is of the order k .</s><s>/n 2 .</s><s>Keeping the number of terminal node constant, we can easily see σ 2 &lt; τ 2 and hence we expect horizontal stacking to be more efficient in debiasing than vertical stacking.</s><s>Furthermore, as n 1 , n 2 → ∞ and β → 1, it is easy to see, from <ref type="bibr" target="#b9">(10)</ref>, that the variance of horizontal stacking estimator is smaller than its vertical counterpart.</s><s>Figure <ref type="figure" target="#fig_0">2</ref> provides a graphical representation of these two forms of stacking.</s><s>Group H1 contains n 1 + n 2 samples with p 1 features while H2 contains only n 2 samples with feature set p 2 .</s><s>Our horizontal stacking predictor Hc is then the linear ensemble of H1 and H2.</s><s>Meanwhile, V 1 contains only p 1 features with n1 samples and V 2 has all p 1 + p 2 features but with n 2 samples.</s><s>The linear ensemble of V 1 and V 2 is then our verticle stacking predictor Vc.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p><s>In this section, we first demonstrate the performance of vertical stacking and horizontal stacking of two RF components on a synthetic dataset and a real dataset.</s><s>For both datasets we observe that horizontal stacking is not only more effective in reducing bias but also consistently outperforms its vertical counterpart in terms of MSE.</s><s>Next, we demonstrate how linear stacking of different models</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Synthetic data</head><p><s>We generate a 2000 × 100 matrix of covariates drawn from a Normal (0, 1) distribution.</s><s>Then a random set of 100 weights are created, half are randomly selected to be "weak" predictors and are drawn from a Uniform (0, 0.5) distribution while the other half are "strong" predictors drawn from Uniform (1.5, 3).</s><s>These weights are linearly combined with our covariates to create a set of 2000 responses.</s><s>We then obtain the variance of the foregoing responses and add gaussian noise with a variance set at 3% the sample variance of the non-noisy data and add an intercept of 1.4.</s><s>Finally, the noisy responses are normalized into the range of [−1, 1].</s></p><p><s>Data is sectioned off into three groups.</s><s>The first group is a set of 100 samples that constitutes our initial training set.</s><s>The second group contains 50 samples and serves as a validation set for building the stacking ensemble predictors.</s><s>The third group is 500 used for testing.</s><s>The remaining samples are reserved for later addition into group one.</s><s>The entire process is then repeated to generate 100 independent sets of data which are treated as replicates.</s></p><p><s>To illustrate the operation of vertical and horizontal stacking we divide our synthetic training data into the groups illustrated in Fig. <ref type="figure" target="#fig_0">2</ref> and build our individual and stacked models.</s><s>Each individual model is a Random Forest with 50 trees and each tree utilizes one-third the input features.</s><s>When splitting our features we make certain each horizontal group has at least 25 weak and 25 strong features.</s><s>We then start adding samples, 20 at a time, to each group, remake our models and then re-estimate our MSE.</s></p><p><s>Bias analysis: A plot of the residuals obtained from the RF estimates against the observed values often shows a linear trend <ref type="bibr" target="#b4">[5]</ref> as against a random scatter about 0. Therefore, to assess the bias of the candidate model we can simply regress the residuals on the observed values.</s><s>The angle (θ, see Fig. <ref type="figure">3</ref>) the fitted line makes with the horizontal axis can be used as a measure of bias for that model.</s><s>Larger values of θ indicates more bias and in the case of unbiasedness, θ = 0. Figure <ref type="figure" target="#fig_1">4</ref> shows that the bias associated with horizontal stacking is substantially lower than that incurred in vertical stacking in accordance with the theoretical analysis of the previous section.</s></p><p><s>MSE analysis: Besides reduction in bias, we also argued in the previous section that the variance of horizontal stacking estimator should also be smaller than that of the vertical stacking estimator.</s><s>Therefore, we would expect to see that the MSE associated with the predictions of the test samples would be consistently smaller for the former as compared to the latter.</s><s>Figure <ref type="figure" target="#fig_2">5</ref> shows the performance of these two types on stacking in terms of prediction MSE Fig. <ref type="figure">3</ref> Example of the residuals from a biased estimator that shows the bias angle θ derived from best fit line for increasingly larger (training) sample sizes.</s><s>Both H2 and V 1 perform comparably across all the sample sizes under consideration.</s><s>This is expected as both models have the same number of samples and features.</s><s>V 2, having all the features but fewer samples, overfits the data initially leading to higher prediction MSE as compared to H1, but as the sample size increases, V 2 outperforms H1 to become the top single performer.</s><s>However, regardless of the performances of individual components, the prediction MSE of horizontal stacking is consistently lower than that of the vertical stacking across all sample sizes under investigation.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Analysis of CCLE data</head><p><s>In order to test our theory on real dataset, we obtain gene expression and normalized Area Under the Curve (AUC) values for the cell lines tested on the drug 17-AAG from the Cancer Cell Line Encyclopedia (CCLE) <ref type="bibr" target="#b6">[7]</ref>.</s><s>From the available 19, 000 gene expressions we use RELIEFF <ref type="bibr" target="#b19">[20]</ref> to screen top 250 features.</s><s>Similar to the synthetic case, we  segregate 50 training samples into our vertical and horizontal groups, build individual predictive model RF with 50 trees, build the stacking model using a set of 150 samples, and obtain the prediction MSEs of candidate models on a set of 50 testing samples.</s><s>We then add 2 training samples and reestimate the MSEs.</s><s>We repeat this process until the training set has a total of 150 samples.</s><s>The entire process is replicated 100 times with randomly selected training, testing, and validation samples in every iteration.</s><s>The results are shown in Figs. <ref type="figure" target="#fig_3">6 and 7</ref>. Similar to the synthetic results we see horizontal stacking consistently outperforming vertical stacking both in terms of reducing bias and prediction MSE.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Analysis of GDSC data</head><p><s>We have access to four non-overlapping sources of data.</s><s>(a) Drug sensitivity values for 265 compounds in the form of normalized AUC on 982 cancer cell lines supplied by GDSC <ref type="bibr" target="#b7">[8]</ref> constitute the response variable.</s><s>(b) Normalized gene expression for 982 cancer cell lines, also given by GDSC <ref type="bibr" target="#b7">[8]</ref>, forms one set of predictors.</s><s>Once again, we use RELIEFF to screen the top 500 gene expression features from 18, 000 available features.</s><s>Since, the application of feature selection is drug dependent, the set of 500 selected features can be different for each drug.</s><s>(c) Second set of predictors consists of the physical descriptors for 178 drug compounds calculated using the PaDEL software with the structure data files downloaded from PubChem <ref type="bibr" target="#b20">[21]</ref>.</s><s>The PaDEL defaults provide 1444 properties but we have removed features that had no variability across drugs resulting in 1181 chemical descriptors for each drug.</s><s>Each chemical feature is a numerical value that can be continuous or discrete.</s><s>(d) Finally, the last type of predictors contain information about the target proteins of 139 drugs under consideration.</s><s>We generate the drug target predictor set by mining information from   <ref type="figure">7</ref> Mean square error (MSE) of AUC prediction on 17-AAG using top 250 gene expression features and 150 samples for validation.</s><s>H1, H2, V1, and V2 are individual RF models built using the template in Fig. <ref type="figure" target="#fig_0">2</ref>. Hc and Vc are horizontal and vertical stacking models, respectively, built with their corresponding individual models.</s><s>MSE shown is the average over 100 iterations with new training/testing samples at each iteration PubChem's bioassay database <ref type="bibr" target="#b21">[22]</ref>.</s><s>For each drug, we look for either the reported K d (dissociation constant) or EC 50 (drug concentration required to reach 50% of maximal inhibition of the target) values for 419 kinases.</s><s>In the case of multiple reported values, we first remove any major outliers using the following equation.</s><s>Let t i be a set of all reported K d or EC 50 values for target i.</s><s>We then calculate the order of magnitude, m for each value and remove any values that deviates strongly from the most common order of magnitude as shown below.</s><s>m = floor log 10 t i <ref type="bibr" target="#b11">(12)</ref> Remove value if abs</s></p><formula xml:id="formula_19">( m − mode ( m)) &gt; 3<label>(13)</label></formula><p><s>We have noticed this to be particularly effective when values are misreported as nanomolars instead of the Fig. <ref type="figure">8</ref> Pictorial Description of the data types used in our analysis standard micromolar.</s><s>For the final value, we pick the median of all remaining values.</s><s>These target values are then binarized using a threshold of one-half of the maximum dosage of the respective compound (taken from GDSC as well).</s><s>A target is considered inhibited (value of 1) if the target value is less than one-half the max dose otherwise the value is set to 0.</s></p><p><s>A graphical representation of various data sources and their relationships are shown in Fig. <ref type="figure">8</ref>.</s><s>The intersection of all data sets gives approximately 80000 samples.</s><s>For model training and validation, the data was randomly split up into three sets.</s><s>The first set contains approximately 60% of all samples and is used for training the individual predictors.</s><s>The second set contains only 20% of the data and is used to estimate the stacking model parameters.</s><s>Finally, the remaining 20% of the data is used for testing both individual and the ensemble prediction algorithms.</s><s>A list of individual predictive models along with a short description for each of them is provided in Table <ref type="table" target="#tab_2">1</ref>.</s></p><p><s>The "mean" model, where we simply utilize the mean AUC of each drug as our prediction, is included to establish a baseline.</s><s>We measure the performance of individual candidate model using the Pearson correlation between all observed and predicted AUC values in our testing set as well as the mean squared error normalized with the mean square error of the mean predictor (NMSE).</s><s>The results are shown in Table <ref type="table" target="#tab_3">2</ref>.</s><s>In terms of individual performances, the genomic features outperformed the drug based features.</s><s>Using genomic features, the RF produced a correlation of 0.7276 and NMSE of 0.7910 outperforming the remaining candidate models.</s><s>We also note that modeling the centered AUC with drug target data works significantly better than modeling the raw AUCs.</s><s>Consequently, we remove KNN Direct and NN Phy Direct from any further consideration.</s><s>Next, we combine pairs of five surviving individual candidate models utilizing the linear stacking approach to obtain the second order linear ensemble.</s><s>The performance of 10 second order linear ensembles, in terms of correlation and NMSE, are shown in Table <ref type="table" target="#tab_4">3</ref>. Observe that the linear ensemble of top two single models (RF GE and NN GE) does not deliver the best predictive performance in this setup.</s><s>Instead, the top 3 performers (RF GE -KNN Residual, RF GE -RF Phys Residual, NN GE -KNN Residual) comprise of individual models that are trained on uncorrelated feature sets.</s><s>In fact, linear combination of RF and NN, both trained on gene expression data performs worse than RF GE alone.</s><s>A potential reason for this phenomenon is multicollinearity among the members in the linear ensemble.</s><s>In either case it is plain to see that when stacking models it is best to include as much complementary information as possible.</s></p><p><s>Finally, all five individual predictive models are combined using linear stacking to obtain a single linear ensemble predictive model.</s><s>The performance of this ensemble is reported in Table <ref type="table" target="#tab_5">4</ref> along with the performance of the best single predictive model (RF GE) and the best second order linear ensemble (RF GE-KNN Residual).</s><s>Observe that the final linear ensemble substantially outperforms the other two candidates both in terms of correlation and NMSE.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p><s>Bias analysis: Multiple methods have been proposed to correct the bias in Random Forests <ref type="bibr" target="#b4">[5,</ref><ref type="bibr" target="#b5">6]</ref>.</s><s>Our foregoing theoretical discussion and simulation study suggest that appropriately designed linear stacking of individual predictive models is also an effective debiasing devise that can also improve prediction mean square errors.</s><s>Here we explore how linear stacking compares with extant methodologies for bias correction in RF.</s><s>In particular we use the BC1 bias correction algorithm proposed in <ref type="bibr" target="#b5">[6]</ref> where we fit a second RF with residuals as the response and the validation data as the covariates and then obtain the final prediction of AUC in the test set by adding the predicted residuals (obtained from the second RF) to the predicted values of the AUC generated by the principle RF fitted on the training data.</s><s>Note that BC1 outperforms the remaining 4 algorithms discussed in <ref type="bibr" target="#b5">[6]</ref>.</s><s>In the second method, RRot, we estimate the residuals using the same method as in BC1 , however instead of adding the residuals back into our prediction we first rotate the residuals until the best fit regression line between residual and predicted values of the response is horizontal <ref type="bibr" target="#b4">[5]</ref>.</s><s>The results of these methods is shown in Table <ref type="table" target="#tab_6">5</ref>. Bootstrap confidence intervals are created using 1000 bootstrap samples.</s><s>We see that the linear stacking ensemble has the best performance among all other approaches in terms of high correlation, low MSE and low bias.</s><s>Averaging over all drugs, the linear stacking ensemble yields the lowest average θ, θ , of 34.25°as compared to that of the standard RF trained on gene expression data.</s><s>The bias corrected version of RF infact increases θ hence we do not investigate BC1 and RRot any further.</s></p><p><s>To visually assess the effect of variance condition (τ 2 /σ 2 1) on the efficacy of linear stacking in reducing bias we offer the residual plots of two drugs Belinostat (Fig. <ref type="figure">9</ref>) and AZ628 (Fig. <ref type="figure">10</ref>).</s><s>The former figure demonstrates that linear stacking efficiently reduces the bias while the latter shows a scenario where linear stacking is unable to correct the bias.</s><s>To explain this phenomenon we generate the scatter plot of the residuals for our 2 best performing individual methods, the RF GE and KNN Residual, for these two drugs.</s><s>The left panel of Fig. <ref type="figure">11</ref> shows this plot for AZ628 and the right panel corresponds to Belinostat.</s><s>From these plots we see that the residuals for RF and KNN for Belinostat have a dominant principle axis of variation, with the normalized eigen values being 0.95 and 0.05.</s><s>This satisfies the variance condition and hence we expect stacking operation to reduce bias substantially.</s><s>However, for AZD628, the normalized eigen values are 0.76 and 0.23.</s><s>Given that the ratio of these eigen values is close to 1, linear stacking is not guaranteed to reduce bias.</s><s>Clearly, the variance condition offers an insight as to whether linear stacking will be beneficial or not.</s><s>For higher (&gt; 2) order linear stacking, we recommend to perform an eigen analysis on the residuals after all the individual models are fitted.</s><s>If the dominant eigen value explains &gt; 90% of the variation, linear stacking will efficiently correct for bias.</s><s>A more detailed investigation of the eigen threshold is beyond the scope of this study but is certainly a subject of future explorations.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusions</head><p><s>Drug interactions of cancer cell lines are complex biological processes that can not be fully characterized using only genomic and drug properties.</s><s>Accurate drug sensitivity predictions for personalized medicine will require the use of a variety of feature sets from multiple data sources.</s><s>In this article we have shown that by incorporating drug target data from Pubchem and the physical properties generated using PaDEL we are able to improve the prediction accuracy of a Random Forest model trained on gene expression data.</s><s>In particular, we have shown that such ensemble learners are effective in automatically removing the bias inherent in the Random Forest models.</s><s>We have also derived a necessary condition for the linear ensemble to be an effective debiasing devising and described a degined approach to stacking operation.</s><s>In the future other sources of data can be included to improve prediction accuracy.</s><s>For example recent models built on protein-protein interaction networks <ref type="bibr" target="#b22">[23]</ref> could provide information that is not captured by our current stacked model.</s><s>However, we note that the entire theoretically premise is built upon the assumption of linear bias.</s><s>We propose to investigate a more general stacking approach to handle non-linear biases.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 2</head><label>2</label><figDesc><div><p><s>Fig. 2 Stack Diagram</s></p></div></figDesc><graphic coords="5,314.98,584.76,214.60,126.16" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 4</head><label>4</label><figDesc><div><p><s>Fig. 4 Residuals and best fit line for vertical stacking (left) and horizontal stacking (right) on synthetic data with 1200 training samples and 50 testing samples</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 5</head><label>5</label><figDesc><div><p><s>Fig.<ref type="bibr" target="#b4">5</ref> Mean Square Error (MSE) on Synthetic Data with increasingly large training sample sizes.</s><s>H1, H2, V1, and V2 are individual RF models built using the template in Fig.2.</s><s>Hc and Vc are horizontal and vertical stacking models, respectively, built with their corresponding individual models.</s><s>MSE shown is the average over 100 replicates</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig. 6</head><label>6</label><figDesc><div><p><s>Fig. 6 Residuals and best fit line for vertical stacking (left) and horizontal stacking (right) on 17-AAG data utilizing top 250 features 150 training samples and 50 testing samples</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig.</head><label></label><figDesc><div><p><s>Fig.<ref type="bibr" target="#b6">7</ref> Mean square error (MSE) of AUC prediction on 17-AAG using top 250 gene expression features and 150 samples for validation.</s><s>H1, H2, V1, and V2 are individual RF models built using the template in Fig.2.</s><s>Hc and Vc are horizontal and vertical stacking models, respectively, built with their corresponding individual models.</s><s>MSE shown is the average over 100 iterations with new training/testing samples at each iteration</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig. 10 Fig. 11 2D</head><label>1011</label><figDesc><div><p><s>Fig. 10 Residuals and bias angle from AZ628 AUC predictions.</s><s>From left to right.</s><s>Regular Random Forest (RF), BC1 RF, RRot RF, and Linear ensemble from all data sources</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc><div><p></p></div></figDesc><graphic coords="3,156.46,531.54,283.48,181.84" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 1</head><label>1</label><figDesc><div><p><s>Explanation of all individual techniques used to predict drug AUC.</s><s>Methods utilizing Residuals predict the sample-mean centered sensitivities (actual AUC-mean AUC) instead of the AUC directly</s></p></div></figDesc><table><row><cell>Method</cell><cell>Description</cell></row><row><cell>Mean</cell><cell>Prediction using the mean AUC of each drug</cell></row><row><cell>KNN Direct</cell><cell>K Nearest Neighbor (KNN) Approach using the actual</cell></row><row><cell></cell><cell>AUC with drug target data</cell></row><row><cell>KNN Residual</cell><cell>KNN using the residuals with drug target data</cell></row><row><cell>NN GE</cell><cell>Neural Network on Gene Expressions</cell></row><row><cell>NN Phy Direct</cell><cell>Neural Network on Chemical Descriptors of drugs</cell></row><row><cell>RF Phy Residual</cell><cell>Random Forest on Chemical Descriptors of drugs</cell></row><row><cell></cell><cell>using the residuals</cell></row><row><cell>RF GE</cell><cell>Random Forest on Gene expression</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 2</head><label>2</label><figDesc><div><p><s>Performance of Single Predictors in terms of correlation coefficient between predicted and actual AUCs (correlation) and normalized mean square error (NMSE) for predicting AUC.</s><s>Models used for building higher order linear ensembles are shown in bold</s></p></div></figDesc><table><row><cell>Method</cell><cell>Correlation</cell><cell>NMSE</cell></row><row><cell>Mean</cell><cell>0.6345</cell><cell>1</cell></row><row><cell>KNN Residual</cell><cell>0.6786</cell><cell>0.931</cell></row><row><cell>KNN Direct</cell><cell>0.3623</cell><cell>1.555</cell></row><row><cell>NN GE</cell><cell>0.7033</cell><cell>0.8613</cell></row><row><cell>NN Phy Direct</cell><cell>0.3485</cell><cell>1.947</cell></row><row><cell>RF Phy Residual</cell><cell>0.6819</cell><cell>0.8960</cell></row><row><cell>RF GE</cell><cell>0.7276</cell><cell>0.7910</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 3</head><label>3</label><figDesc><div><p><s>Correlation coefficients and NMSEs, in parenthesis, of second order linear ensemble with two component models for AUC prediction.</s><s>Top 3 predictors are shown in bold</s></p></div></figDesc><table><row><cell></cell><cell>KNN residual</cell><cell>NN GE</cell><cell>RF phy residual</cell><cell>RF GE</cell></row><row><cell>Mean</cell><cell>0.7181(0.8092)</cell><cell>0.7120(0.8266)</cell><cell>0.7090(0.8324)</cell><cell>0.7264(0.7919)</cell></row><row><cell>KNN Residual</cell><cell></cell><cell>0.7492(0.7341)</cell><cell>0.7197(0.8092)</cell><cell>0.7550(0.7225)</cell></row><row><cell>NN GE</cell><cell></cell><cell></cell><cell>0.7455(0.7457)</cell><cell>0.7258(0.7919)</cell></row><row><cell>RF Phys Residual</cell><cell></cell><cell></cell><cell></cell><cell>0.7504(0.7341)</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 4</head><label>4</label><figDesc><div><p><s>Correlation coefficient between predicted and actual AUCs (correlation), and normalized mean square error (NMSE) for predicting AUC of our best single predictor, the RF GE, and linear stacking of five individual predictive models that appear in bold in Table2</s></p></div></figDesc><table><row><cell></cell><cell>Correlation</cell><cell>NMSE</cell></row><row><cell>RF GE</cell><cell>0.7276</cell><cell>0.791</cell></row><row><cell>RF GE + KNN Residual</cell><cell>0.7550</cell><cell>0.7225</cell></row><row><cell>Linear Stacking Ensemble</cell><cell>0.7746</cell><cell>0.6705</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table 5</head><label>5</label><figDesc><div><p><s>[5]parison of Bias Correction techniques for improving bias angle and overall error.From top to bottom we have our best individual predictor RF GE (bolded).RF GE ensembled with our KNN utilizing the drug targets.RF GE ensembled with NN GE alone.RF GE ensembled with RF Phys Residual.Linear ensemble of all methods that are bolded in Table2.For each method we shows correlation coefficient between predicted and actual AUCs (correlation), normalized mean squared error(NMSE), mean θ across all drugs (θ μ ), and 95% bootstrap confidence interval lower and upper bounds, (θ L and θ H respectively) BC1 and RRot denote our RF GE corrected using techniques found in[5]Residuals and bias angle from Belinostat AUC predictions.</s><s>From left to right.</s><s>Regular Random Forest (RF).</s><s>BC1 RF.</s><s>RRot RF.</s><s>Linear ensemble from all data sources</s></p></div></figDesc><table><row><cell></cell><cell cols="2">Correlation NMSE θ μ</cell><cell>θ L</cell><cell>θ H</cell></row><row><cell>RF GE</cell><cell>0.7276</cell><cell cols="2">0.7910 38.27°37.34°39.04°R</cell></row><row><cell>F GE + KNN Residual</cell><cell>0.7550</cell><cell cols="2">0.7225 35.23°34.07°36.30°R</cell></row><row><cell>F GE + NNGE</cell><cell>0.7258</cell><cell cols="2">0.7919 38.22°37.39°39.03°R</cell></row><row><cell cols="2">F GE + RF Phys Residual 0.7504</cell><cell cols="2">0.7341 35.26°34.23°36.12°L</cell></row><row><cell cols="2">inear StackingEnsemble 0.7746</cell><cell cols="2">0.6705 34.25°33.15°35.26°B</cell></row><row><cell>C1</cell><cell>0.7184</cell><cell cols="2">0.8092 40.61°40.00°41.11°R</cell></row><row><cell>Rot</cell><cell>0.7084</cell><cell cols="2">0.8382 40.60°40.02°41.12°</cell></row></table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgements</head><p><s>Not applicable.</s></p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Abbreviations</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Availability of data and materials</head><p><s>For the analysis of stacking, synthetic data can be downloaded using the following link, https://tinyurl.com/y82gb7x3</s><s>while gene expression and area under the curve values are from the Cancer Cell Line Encyclopedia https:// portals.broadinstitute.org/ccle.</s><s>Drug Target data and structure files are taken from PubChem https:// pubchem.ncbi.nlm.nih.gov/.</s><s>Chemical descriptors are generated using PaDEL-Descriptor software http://www.yapcwsoft.com/dd/padeldescriptor/</s><s>using the structure files.</s><s>Gene Expression and Area Under the Curve values for cell lines is available in the Genomics of Drug Sensitivity in Cancer repository, http://www.cancerrxgene.org/.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>About this supplement</head><p><s>This article has been published as part of BMC Bioinformatics Volume 19 Supplement 3, 2018: Selected original research articles from the Fourth International Workshop on Computational Network Biology: Modeling, Analysis, and Control (CNB-MAC 2017): bioinformatics.</s><s>The full contents of the supplement are available online at https://bmcbioinformatics.biomedcentral.</s><s>com/articles/supplements/volume-19-supplement-3.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Authors' contributions</head><p><s>Performed Predictions for Individual Models: KM RR CD Conceived and Designed the stacking algorithm: KM SG RP.</s><s>Analyzed the Results: KM SG RP.</s><s>Wrote the article: KM RR CD SG RP.</s><s>All authors read and approved the final manuscript.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Ethics approval and consent to participate</head><p><s>Not applicable.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Consent for publication</head><p><s>Not applicable.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Competing interests</head><p><s>The authors declare that they have no competing interests.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Author details</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Publisher's Note</head><p><s>Springer Nature remains neutral with regard to jurisdictional claims in published maps and institutional affiliations.</s></p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">An ensemble based top performing approach for nci-dream drug sensitivity prediction challenge</title>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Wan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Pal</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PLOS ONE</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">101183</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">A copula based approach for design of multivariate random forests for drug sensitivity prediction</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Haider</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Rahman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ghosh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Pal</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PloS ONE</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page">144490</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">A community effort to assess and improve drug sensitivity prediction algorithms</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Costello</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nbt.2877</idno>
+		<ptr target="https://doi.org/10.1038/nbt.2877" />
+	</analytic>
+	<monogr>
+		<title level="j">Nat Biotechnol</title>
+		<imprint>
+			<biblScope unit="page" from="1202" to="1212" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Predicting in vitro drug sensitivity using Random Forests</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Riddick</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ahn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Walling</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Borges-Rivera</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">A</forename><surname>Fine</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="220" to="224" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Bias ccorrection for random forest in regression using residual rotation</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Song</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Korean Stat Soc</title>
+		<imprint>
+			<biblScope unit="volume">44</biblScope>
+			<biblScope unit="page" from="321" to="326" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Bias-corrected random forests in regression</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Lu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Appl Stat</title>
+		<imprint>
+			<biblScope unit="volume">39</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="151" to="160" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">The Cancer Cell Line Encyclopedia enables predictive modelling of anticancer drug sensitivity</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Barretina</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">483</biblScope>
+			<biblScope unit="issue">7391</biblScope>
+			<biblScope unit="page" from="603" to="607" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Genomics of drug sensitivity in cancer (gdsc): a resource for therapeutic biomarker discovery in cancer cells</title>
+		<author>
+			<persName><forename type="first">Wea</forename><surname>Yang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="issue">D1</biblScope>
+			<biblScope unit="page" from="955" to="961" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Random forests</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Breiman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Mach Learn</title>
+		<imprint>
+			<biblScope unit="volume">45</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="5" to="32" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Quantile regression forests</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Meinshausen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Mach Learn Res</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="983" to="999" />
+			<date type="published" when="2006-06">2006. Jun</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Design of probabilistic random forests with applications to anticancer drug sensitivity prediction</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Rahman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Haider</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ghosh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Pal</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Cancer Inform</title>
+		<imprint>
+			<biblScope unit="volume">14</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page">57</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+	<note>Suppl</note>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">H2o: R Interface for H2O</title>
+		<author>
+			<persName><forename type="first">H2o</forename><surname>The</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Team</surname></persName>
+		</author>
+		<ptr target="https://github.com/h2oai/h2o-3.Accessed15" />
+		<imprint>
+			<date type="published" when="2017-02">2017. Feb 2017</date>
+		</imprint>
+	</monogr>
+	<note>R package version 3.10.3.4.</note>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<title level="m" type="main">Deep Learning with Deep Water</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Phan</surname></persName>
+		</author>
+		<ptr target="http://h2o.ai/resources.Accessed15" />
+		<imprint>
+			<date type="published" when="2017-02">2017. Feb 2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<author>
+			<persName><forename type="first">D</forename><surname>Cook</surname></persName>
+		</author>
+		<title level="m">Practical Machine Learning with H2O: Powerful, Scalable Techniques for Deep Learning and AI</title>
+				<meeting><address><addrLine>Sebastopol: O&apos;Reilly Media</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Functionally-defined therapeutic targets in diffuse intrinsic pontine glioma</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">S</forename><surname>Grasso</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Truffaux</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">E</forename><surname>Berlow</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Debily</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">J</forename><surname>Quist</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">E</forename><surname>Davis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">C</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Woo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ponnuswami</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Johung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kogiso</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Du</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hutt-Cabezas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">E</forename><surname>Warren</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">L</forename><surname>Dret</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">S</forename><surname>Meltzer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Mao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Quezado</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">G</forename><surname>Van Vuurden</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Abraham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Fouladi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">N</forename><surname>Svalina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Hawkins</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Nazarian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">M</forename><surname>Alonso</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Raabe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Hulleman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">T</forename><surname>Spellman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Keller</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Pal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Grill</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Monje</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nm.3855</idno>
+		<ptr target="https://doi.org/10.1038/nm.3855.http://www.nature.com/nm/journal/vaop/ncurrent/full/nm.3855.html" />
+	</analytic>
+	<monogr>
+		<title level="j">Nat Med</title>
+		<imprint>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Analysis of a random forests model</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Biau</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Mach Learn Res</title>
+		<imprint>
+			<biblScope unit="volume">13</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="1063" to="1095" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">A Probabilistic Theory of Pattern Recognition</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Devroye</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Gyorfi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Lugosi</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1996">1996</date>
+			<publisher>Springer</publisher>
+			<pubPlace>Berlin</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Attaching uncertainty to deterministic spatial interpolations</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ghosh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Gelfand</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Mølhave</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.stamet.2011.06.001</idno>
+		<ptr target="https://doi.org/10.1016/j.stamet.2011.06.001" />
+	</analytic>
+	<monogr>
+		<title level="j">Special Issue on Astrostatistics + Special Issue on Spatial Statistics</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">1-2</biblScope>
+			<biblScope unit="page" from="251" to="264" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+	<note>Stat Methodol</note>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Quantifying uncertainty for temperature maps derived from computer models</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Paci</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Gelfand</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Cocchi</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.spasta.2015.03.005</idno>
+		<ptr target="https://doi.org/10.1016/j.spasta.2015.03.005" />
+	</analytic>
+	<monogr>
+		<title level="j">Spatial Stat</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page" from="96" to="108" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Estimating attributes: Analysis and extensions of relief</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Kononenko</surname></persName>
+		</author>
+		<idno>ECML-94</idno>
+		<ptr target="http://dl.acm.org/citation.cfm?id=188408.188427" />
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the European Conference on Machine Learning on Machine Learning</title>
+				<meeting>the European Conference on Machine Learning on Machine Learning<address><addrLine>Secaucus</addrLine></address></meeting>
+		<imprint>
+			<publisher>Springer</publisher>
+			<date type="published" when="1994">1994</date>
+			<biblScope unit="page" from="171" to="182" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Padel-descriptor: an open source software to calculate molecular descriptors and fingerprints</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">W</forename><surname>Yap</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J Comput Chem</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="1466" to="1474" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Pubchem bioassay: 2014 update</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Suzek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">A</forename><surname>Shoemaker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Gindulyte</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">H</forename><surname>Bryant</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="issue">Database</biblScope>
+			<biblScope unit="page" from="1075" to="1082" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Drug response prediction as a link prediction problem</title>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Stanfield</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Coskun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Koyutürk</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/srep40321</idno>
+		<ptr target="https://doi.org/10.1038/srep40321" />
+	</analytic>
+	<monogr>
+		<title level="j">Sci Rep</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

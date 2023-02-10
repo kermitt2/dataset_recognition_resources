@@ -1,0 +1,837 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">MGFM: a novel tool for detection of tissue and cell specific marker genes from microarray gene expression data</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Khadija</forename><surname>El</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Berlin Brandenburg Center for Regenerative Therapies (BCRT)</orgName>
+								<orgName type="institution">Charité -Universitätsmedizin Berlin</orgName>
+								<address>
+									<postCode>13353</postCode>
+									<settlement>Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Harald</forename><surname>Stachelscheid</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Berlin Brandenburg Center for Regenerative Therapies (BCRT)</orgName>
+								<orgName type="institution">Charité -Universitätsmedizin Berlin</orgName>
+								<address>
+									<postCode>13353</postCode>
+									<settlement>Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Fritz</forename><surname>Lekschas</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Berlin Brandenburg Center for Regenerative Therapies (BCRT)</orgName>
+								<orgName type="institution">Charité -Universitätsmedizin Berlin</orgName>
+								<address>
+									<postCode>13353</postCode>
+									<settlement>Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName><forename type="first">Andreas</forename><surname>Kurtz</surname></persName>
+							<email>andreas.kurtz@charite.de</email>
+							<affiliation key="aff0">
+								<orgName type="department">Berlin Brandenburg Center for Regenerative Therapies (BCRT)</orgName>
+								<orgName type="institution">Charité -Universitätsmedizin Berlin</orgName>
+								<address>
+									<postCode>13353</postCode>
+									<settlement>Berlin</settlement>
+									<country key="DE">Germany</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="department">College of Veterinary Medicine and Research Institute for Veterinary Science</orgName>
+								<orgName type="institution">Seoul National University</orgName>
+								<address>
+									<postCode>151-742</postCode>
+									<settlement>Seoul</settlement>
+									<country key="KR">Republic of Korea</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Miguel</forename><forename type="middle">A</forename><surname>Andrade-Navarro</surname></persName>
+						</author>
+						<title level="a" type="main">MGFM: a novel tool for detection of tissue and cell specific marker genes from microarray gene expression data</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">29B0DFD37E2CC7398248F4BCB609B7C2</idno>
+					<idno type="DOI">10.1186/s12864-015-1785-9</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:32+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>Microarrays</term>
+					<term>Marker genes</term>
+					<term>Samples</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Background: Identification of marker genes associated with a specific tissue/cell type is a fundamental challenge in genetic and cell research.</s><s>Marker genes are of great importance for determining cell identity, and for understanding tissue specific gene function and the molecular mechanisms underlying complex diseases.</s><s>Results: We have developed a new bioinformatics tool called MGFM (Marker Gene Finder in Microarray data) to predict marker genes from microarray gene expression data.</s><s>Marker genes are identified through the grouping of samples of the same type with similar marker gene expression levels.</s><s>We verified our approach using two microarray data sets from the NCBI's Gene Expression Omnibus public repository encompassing samples for similar sets of five human tissues (brain, heart, kidney, liver, and lung).</s><s>Comparison with another tool for tissue-specific gene identification and validation with literature-derived established tissue markers established functionality, accuracy and simplicity of our tool.</s><s>Furthermore, top ranked marker genes were experimentally validated by reverse transcriptase-polymerase chain reaction (RT-PCR).</s><s>The sets of predicted marker genes associated with the five selected tissues comprised well-known genes of particular importance in these tissues.</s><s>The tool is freely available from the Bioconductor web site, and it is also provided as an online application integrated into the CellFinder platform (http://cellfinder.org/analysis/marker).</s><s>Conclusions: MGFM is a useful tool to predict tissue/cell type marker genes using microarray gene expression data.</s><s>The implementation of the tool as an R-package as well as an application within CellFinder facilitates its use.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Background</head><p><s>Large amounts of microarray experimental data are available in public repositories.</s><s>Although a variety of programs have been developed to make use of these data, the number of tools that identify marker genes is limited.</s><s>Genes may be split into two categories based on the number of tissues in which they are expressed <ref type="bibr" target="#b1">[1]</ref>.</s><s>Genes that are expressed in many tissues are often designated as housekeeping while those that are expressed in few tissues are termed tissue-specific or marker genes.</s><s>Marker with small sets of normal tissue samples obtained from microarray experiments.</s><s>Here we introduce a new computational tool to predict marker genes from microarray gene expression data.</s><s>The tool is available as a standalone version (R-package called MGFM) in Bioconductor <ref type="bibr" target="#b5">[5]</ref> and it is also integrated into the CellFinder platform (http://cellfinder.org/analysis/marker) to be used as an online tool.</s><s>CellFinder <ref type="bibr" target="#b6">[6]</ref> is a comprehensive one-stop resource for diverse data characterizing mammalian cells in different tissues and in different development stages.</s><s>It is built from carefully selected data sets stemming from other curated databases and the biomedical literature.</s></p><p><s>We verified MGFM using two microarray data sets from the GEO public repository each encompassing samples for similar sets of five human tissues (brain, heart, kidney, liver, and lung).</s><s>The accuracy of MGFM was verified with known literature-curated marker genes.</s><s>Using one of the data sets MGFM identified 72 % of the known marker genes.</s><s>Moreover, top ranked marker genes were further validated by RT-PCR.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p><s>Marker genes are identified when sample grouping of the same type exist with similar expression of the marker gene (see Fig. <ref type="figure">1</ref> for an illustrative example and Methods for details).</s><s>After sorting the expression values of probe sets in decreasing order, a probe set is considered a potential marker of a sample type if the highest expression values represent all replicates of this sample type.</s><s>We consider the position in the sorted expression vector that segregates different sample types a cut-point.</s><s>Each cut-point segregates elements of sample types into two distinct sample groups.</s><s>For each probe set, the expression levels of the two sample groups are summarized as the mean of expression values.</s><s>The marker genes can then be ranked according to a score ranging from 0 to 1, which is the ratio of the second and first value in the vector of mean expression values of a probe set.</s><s>Values near 0 would indicate high specificity and large values closer to 1 would indicate low specificity.</s></p><p><s>We applied MGFM to two microarray data sets from GEO.</s><s>The first data set (#1) consists of triplicate samples from five human tissues (heart atrium, kidney cortex, liver, lung, and midbrain).</s><s>The microarray data set is publicly available from GEO with the series number GSE3526 <ref type="bibr" target="#b7">[7]</ref>.</s><s>The second data set (#2) is derived from five human tissues (brain, heart, kidney, liver, and lung) from two GEO Series GSE1133 <ref type="bibr" target="#b8">[8]</ref> and GSE2361 <ref type="bibr" target="#b9">[9]</ref> (see Table <ref type="table" target="#tab_9">7</ref>).</s><s>Moreover, we compared the results with another tool for tissue-specific gene identification <ref type="bibr" target="#b10">[10]</ref> and validated the identified markers using literature-curated markers (Additional file 1) and experimentally by RT-PCR.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Marker selection</head><p><s>For data set #1, 12482 probe sets out of 54675 (comprising about 23 % of all probe sets on the microarray) were identified as potential markers associated with the five analyzed tissues.</s><s>In data set #2 we identified 3836 probe sets from 22283 as potential markers, or approximately 17 % of the probes on the microarray.</s><s>In order to refine the number of predicted markers, they were ranked according to their score (see Methods for details, Identification of marker genes).</s><s>To investigate how the number of selected markers changes depending on the score, we used</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Sort of expression values in decreasing order</head><p><s>Possible marker of liver, score = 6.95/10.66</s><s>= 0.65 Fig. <ref type="figure">1</ref> An example showing how marker genes are identified by our method.</s><s>The expression values correspond to the probe set "202357_s_at", which represents the gene CFB (complement factor B)</s></p><p><s>different cutoffs (Fig. <ref type="figure">2</ref>).</s><s>The number of potential markers selected increases with less specific (higher) cutoffs.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Performance analysis</head><p><s>To evaluate the precision of the developed tool, we searched the literature to collect genes used extensively as markers for cell types within a tissue.</s><s>A total of 142 literature-derived genes were found for the five human tissues (brain, heart, kidney, liver, and lung) and will here be called real markers (Additional file 1).</s><s>In addition to these markers, the cytochrome P450 genes (51 genes) were used as markers for liver, since these genes are highly expressed in the liver <ref type="bibr" target="#b11">[11]</ref>.</s><s>For validation of our potential marker sets, only real marker genes that were also found on the microarray of each data set were considered for the validation.</s><s>This corresponds to 187 marker genes for data set #1 and 174 for data set #2.</s><s>To validate the performance of MGFM, the recall and precision were examined using the collected markers.</s><s>Two strategies were used: i) The predicted markers for each of the examined tissues were combined and compared with the complete set of known markers of all examined tissues.</s></p><p><s>ii) The set of predicted markers for each tissue was compared with the known markers of this tissue.</s><s>Recall and precision were analyzed, where recall is the fraction of identified marker genes in the total number of real markers and precision is the fraction of marker genes identified in the total number of predicted marker genes.</s><s>Figures <ref type="figure">3a)  and 3b</ref>) show the precision/recall curves for marker genes predicted by MGFM using data set #1 and data set #2, respectively.</s><s>The grey curves show the precision/recall for random selection.</s><s>As illustrated, MGFM performed better than random selection in both data sets.</s><s>Using lower score cutoffs results in higher precision and lower recall, whereas higher score cutoffs results in lower precision and higher recall.</s><s>Tables <ref type="table" target="#tab_2">1 and 2</ref> show the percentage of probes on the microarray predicted as marker probe sets and the percentage of correctly identified marker genes using different score cutoffs for data sets #1 and #2, respectively (see Methods for details on how probe sets were mapped to genes).</s><s>Decreasing the score from 1 to 0.9 reduced the percentage of probe sets predicted as markers from 22.8 % (of 54675 probes on the microarray) to 16 % (minus 6.8 %), while losing only 3.8 % of the known literature-collected markers (see Table <ref type="table">1</ref>).</s><s>Using data set #2, MGFM predicted 17 % of the probes on the microarray (22283 probe sets) as potential markers for the examined tissues, which contain approximately 52 % of the real markers.</s><s>In comparison to the results achieved by applying MGFM to data set #1, the reduction was higher, while the precision was lower.</s><s>Figures <ref type="figure" target="#fig_1">4a) and 4b</ref>) show the precision/recall curves for the predicted marker genes of the examined tissues in data sets #1 and #2, respectively.</s><s>In both data sets the performance of MGFM differs depending on the tissues.</s><s>The best performance is achieved for heart or heart atrium, whereas the lowest precision was obtained for brain or midbrain.</s><s>Table <ref type="table" target="#tab_3">3</ref> shows the number of correctly identified and known marker genes on the microarrays of data sets #1 and #2 for each of the examined tissues.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Comparison to t-test</head><p><s>A possible method to identify marker gene candidates is to identify genes that are differentially expressed between two experimental groups using a statistical test such as a t-test.</s><s>Genes associated with each sample type could be used as markers.</s><s>In order to further verify the performance of our method, we applied t-test to both data sets #1 and #2.</s><s>Each tissue was compared against the other tissues.</s><s>The predicted markers for each of the examined tissues were combined and compared with the complete set of known markers of all examined tissues.</s><s>At a score cutoff of 0.9 MGFM outperformed the t-test (p value range: from 0.01 to 0.09) in terms of precision (see Additional file 2: Figures <ref type="figure">S1 and S2</ref>).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Overlap of sets of predicted marker genes</head><p><s>Next we compared the results obtained using data sets #1 and #2.</s><s>The aim was to confirm that the selection of marker genes by MGFM was consistent with the tissues analyzed even if the data compared was obtained from different platforms: Affymetrix Human Genome U133A Array (GPL96) and Affymetrix Human Genome U133 Plus 2.0 Array (GPL570), for data sets #1 and #2, respectively.</s><s>Figure <ref type="figure" target="#fig_2">5</ref> shows Venn diagrams that illustrate comparisons of the predicted marker gene lists for the examined tissues using both data sets #1 and #2.</s><s>Obviously, the overlap of marker genes for the same tissue is significantly higher than the overlap of markers for different tissues.</s><s>These results suggest a possible strategy to reduce the false positives by applying MGFM to more than one data set including the tissue of interest, and to consider the intersection of sets of markers associated with the tissue of interest.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Enrichment of Gene Ontology terms</head><p><s>To assess whether the subsets of marker genes show significant over-representation of biological characteristics related to their corresponding tissues, Gene Ontology (GO) <ref type="bibr" target="#b12">[12]</ref> enrichment analysis was performed.</s><s>Tables <ref type="table" target="#tab_5">4  and 5</ref> show the enriched molecular function and the Table <ref type="table">1</ref> The percentage of probes on the microarray predicted as marker probe sets and the percentage of correctly identified marker genes using different score cutoffs for data set #1  enriched biological process of markers associated with the examined tissues using data set #1 at a score cutoff of 0.9.</s></p><p><s>For each tissue five significantly enriched GO terms that do not overlap more than 80 % are displayed.</s><s>In the case of molecular functions, we remark tropomyosin binding and actin binding for heart (because of the heart muscle), antiporter activity for the kidney, receptor binding for the lung, and GTP binding for the midbrain (signal transduction).</s><s>With respect to the biological process, we remark xenobiotic metabolic process for the liver, transmembrane transport for the kidney (salt and water transport), and neurotransmitter transport or regulation of transmission of nerve impulse for the midbrain.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>PCR analysis</head><p><s>To verify the tissue-specific expression of top-ranked marker genes, we examined these genes by RT-PCR.</s><s>Top ranked marker genes predicted using both data sets #1 and #2 were investigated.</s><s>A total of 11 marker genes were selected for liver and 12 genes for each of the tissues: brain, heart, kidney, and lung.</s><s>The resulting gel electrophoresis images are shown in Additional file 3: Figures S1, S2, S3, S4, S5, S6, S7, S8, S9, S10 and S11.</s></p><p><s>In addition, the PCR results are summarized in Table <ref type="table" target="#tab_6">6</ref> using + or -for present or absent, respectively.</s><s>As shown in Table <ref type="table" target="#tab_6">6</ref>, all genes, predicted as markers of a tissue, were indeed detected in that tissue except GAP43 in the brain, and the four genes SLC12A1, SLC3A1, FXYD2, and CA12 predicted as markers of kidney.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Detection of novel marker genes</head><p><s>All identified marker genes are shown in Additional file 4 and descriptions of their functions provided if available.</s><s>There are 11 liver specific genes predicted and 12 genes for each of the other four tissues.</s><s>The set of marker genes predicted by MGFM contained genes that have been recently reported as novel marker genes, such as SYNPO2L in the heart, KIF5C in the brain and AMDHD1 in the liver.</s><s>SYNPO2L encodes a cytoskeletal protein.</s></p><p><s>Beqqali et al. <ref type="bibr" target="#b13">[13]</ref> recently reported the corresponding protein as a novel protein that interacts and colocalizes with α-actinin at the Z-disc of the sarcomere.</s><s>In a recent</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p><s>In this work, we presented a new tool for detection of marker genes from microarray gene expression data.</s><s>The tool is provided as a standalone version (a Bioconductor package called MGFM) as well as a web application within the CellFinder platform.</s></p><p><s>Using two different data sets, at a score cutoff of 0.9, MGFM validated 68.4 % of literature-curated markers while reducing the total number of probe sets predicted as markers from 54675 to 8789 (approximately 16 % of the probes on the microarray) and validated 46 % of literature-curated real marker genes while reducing the total number of predicted marker probe sets from 22283 to 2664 (approximately 11.9 % of the probes), respectively.</s></p><p><s>Song et al. <ref type="bibr" target="#b10">[10]</ref> developed a method to identify tissuespecific genes by analyzing microarray data.</s><s>They used the GEO data set GDS596 (see Table <ref type="table" target="#tab_9">7</ref>, data set #3) to identify marker genes for the tissues: fat, heart, kidney, liver, and lung.</s><s>Song et al. reported that they confirmed 10 kidney, 11 liver, 11 lung, and 11 heart marker genes by applying their approach.</s><s>To assess if we would find these genes using MGFM, we applied it to the same data set using the samples representing the tissues: heart, kidney, liver, and lung.</s><s>All of these genes were found as potential markers by MGFM except the genes AMDHD1  Column labels are as follows: GO ID is the GO identifier; GO is the description of the GO term; p-value is the hypergeometric p-value for over-representation of each GO term; Expected/Gene Count are the expected and actual gene counts; and Size is the number of genes within each GO term (amidohydrolase domain containing 1) for liver and PRUNE2 (prune homolog 2) for heart.</s><s>Song et al. reported these two genes as new markers.</s><s>We investigated if these genes were found by MGFM using data sets #1 and #2.</s></p><p><s>The gene AMDHD1 was predicted by MGFM as potential marker for liver using data set #1.</s><s>The gene PRUNE2 was predicted by MGFM as marker for brain or midbrain using both data sets #1 and #2.</s><s>Song et al. described their method but did not provide a tool for use.</s><s>Here, we provide a tool implemented in the R programming language that can be easily used by calling the appropriate functions.</s><s>Finally, we were able to verify the marker genes experimentally by comparative PCR in all five tissues.</s><s>While not all marker genes were unambiguous markers, and some were not detected, the vast majority (92 %) was experimentally confirmed (Table <ref type="table" target="#tab_6">6</ref>).</s></p><p><s>A description of the different marker genes identified by MGFM is provided in Additional file 4.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Uses of MGFM in CellFinder</head><p><s>To date, MGFM can be used within CellFinder for the data sets applied in the current study and will be extended by storing preprocessed expression data derived from different tissues and cell types to enable the identification of Column labels are as follows: GO ID is the GO identifier; GO is the description of the GO term; p-value is the hypergeometric p-value for over-representation of each GO term; Expected/Gene Count are the expected and actual gene counts; and Size is the number of genes within each GO term marker genes associated with a set of tissue samples or cell types in an easy, fast and accurate way.</s><s>More specifically, MGFM has the following features to i) allow users to conveniently modify the set of samples of interest by adding or removing samples, ii) calculate the potential marker genes at the gene level (using JetSet <ref type="bibr" target="#b15">[15]</ref> to associate genes to probe sets), iii) display and rank the list of marker genes associated with each sample type according to the specificity, and iv) download the list of all found markers for further use.</s><s>Moreover, probe sets are linked to CellFinder's gene view which allows for an immediate evaluation of potential marker genes utilizing expression values from the RNA Seq Atlas <ref type="bibr" target="#b16">[16]</ref>.</s><s>Also, gene ontology annotations <ref type="bibr" target="#b12">[12]</ref> are included for better understanding of functional properties of genes.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conclusion</head><p><s>We presented a new method for marker gene detection using microarray gene expression data.</s><s>We verified this method using two data sets from GEO describing gene expression in comparable sets of five human tissues.</s><s>The sets of predicted marker genes associated with the examined tissues comprised several well-known genes of particular importance in these tissues.</s><s>Furthermore, we confirmed the tissue specific expression of predicted novel markers by RT-PCR.</s></p><formula xml:id="formula_0">AKR1D1 + + - - - CYP2E1 + - - - - FGG + - + - - APOC3 + - - - - APOA2 + + - - - SERPINC1 + - - - - CYP2C8 + - - - - AHSG + - - - - GC + - - - - AMBP + - - - - CPS1 + - - - -</formula><formula xml:id="formula_1">- + + + + GFAP - - - + - GRIA2 - - - + - TMEFF1 - - - + - KIF5C - - - + - FUT9 - - - + + STMN2 - - - + - SYT1 - - - + - NEFM - - - + - SNAP25 - + + + - GABBR2 - - - + -</formula><formula xml:id="formula_2">SLC12A1 - - - - - CA12 - - - - - SLC3A1 - - - - - PDZK1IP1 - - - - + UMOD - - - - + FXYD2 - - - - - AOC1 - - - - + CDH16 - - - - + CD24 - + - - + SLC22A8 - - - - + HSD11B2 - + - - + CLDN8 - - - - +</formula><p><s>In summary, the main advantages of the application presented herein are i) a short running time of some seconds per analysis.</s><s>This is achieved by sorting the gene expression values instead of using gene differential expression.</s><s>ii) MGFM offers the user the possibility to modify the set of samples by easily removing or adding new samples.</s><s>iii) MGFM is available as a standalone version (R-package) as well as a web application integrated into the CellFinder platform.</s><s>We are currently working on a database to store preprocessed expression data derived from different tissues and cell types, in order to enable the identification of marker genes associated with a set of samples of interest in a convenient and fast way.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Materials and methods</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data sources</head><p><s>The microarray expression data are derived from GEO.</s><s>The first data set (#1) consists of 15 samples and is derived from five human tissues (heart atrium, kidney cortex, liver, lung, and midbrain).</s><s>The microarray data set is publicly available from GEO with the series number GSE3526 <ref type="bibr" target="#b7">[7]</ref>.</s><s>The second data set (#2) is derived from five human tissues (brain, heart, kidney, liver, and lung) from two GEO Series GSE1133 <ref type="bibr" target="#b8">[8]</ref> and GSE2361 <ref type="bibr" target="#b9">[9]</ref>.</s><s>The third data set (#3) (used by Song et al. <ref type="bibr" target="#b10">[10]</ref>) is derived from four human tissues (heart, kidney, liver, and lung) from the GEO DataSet GDS596.</s><s>Each tissue is represented by two to three samples.</s><s>Table <ref type="table" target="#tab_9">7</ref> shows the samples that represent the tissues in the three data sets.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Data normalization</head><p><s>The Robust Multiarray Averaging <ref type="bibr" target="#b17">[17]</ref> (RMA) procedure was used for background correction, normalization, and summarization of the AffyBatch probe-level data for data sets #1 and #2.</s><s>In addition, data set #2 was normalized using the ComBat method from the R-package sva (Version: 3.6.0)</s><s><ref type="bibr" target="#b18">[18]</ref> in order to remove batch effects.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Identification of marker genes</head><p><s>Marker genes are identified following the steps below:</s></p><p><s>Sort of expression values for each probe set: In this step the expression values are sorted in decreasing order.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Marker selection:</head><p><s>To analyze the sorted distribution of expression values of a probe set to define if it is a potential candidate marker we define cut-points as those that segregate samples of different types.</s><s>A sorted distribution can have multiple cut-points; a cut-point can segregate one sample type from the others, or it can segregate multiple sample types from multiple sample types.</s><s>In the example given in Fig. <ref type="figure">1</ref>, the distribution has two cut-points (cut-point 1 and cut-point 2), the first cut-point segregates liver samples from the rest, and the second cut-point segregates brain samples from the rest.</s><s>Each cut-point is defined by the ratio of the expression averages of the groups of samples adjacent to it.</s><s>That is, given a distribution with n cut-points and n+1 segregated groups, cut-point i receives a score that is the ratio of the average expression of samples in the group i+1 (following the cut-point) divided by that of group i (preceding the cut-point).</s><s>This value is &lt; 1 because the values are sorted in decreasing order.</s><s>The closer the values, the closer the score to 1 and therefore the smaller is the gap between expression values at the cut-point.</s><s>We use this score to indicate the specificity of the cut-point and by extension of the probe set as marker between particular groups of tissues.</s><s>For simplicity, in this work we take only probe sets as markers if they have a cut-point that segregates one tissue at high expression from the rest (as in Fig. <ref type="figure">1</ref> for liver).</s><s>We disregard negative markers (segregating samples from one tissue at low expression) or multiple tissue markers (segregating samples from more than one tissue from other multiple tissues).</s><s>However, our method can calculate them (for example, as in Fig. <ref type="figure">1</ref>, CFB can be defined as a positive marker for liver and as a negative marker for brain).</s></p><p><s>Mapping of probe sets to genes: Affymetrix probe sets were mapped to Entrez GeneIDs using the 23 October 2013 release of NetAffx annotations <ref type="bibr" target="#b19">[19]</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Calculation of precision/recall curves</head><p><s>To validate the performance of MGFM, the recall and precision were examined using the literature-curated known markers.</s><s>Two strategies were used: i) The predicted markers for each of the examined tissues were combined and compared with the complete set of known markers of all examined tissues.</s><s>ii) The set of predicted markers for each tissue was compared with the known markers of this tissue.</s><s>A marker gene is considered as identified if the corresponding selected probe set maps unambiguously to this gene.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>2 Fig. 2 Fig. 3</head><label>223</label><figDesc><div><p><s>Fig. 2 Number of marker probe sets found for each cutoff for data sets #1 and #2</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 4</head><label>4</label><figDesc><div><p><s>Fig.<ref type="bibr" target="#b4">4</ref> Precision/Recall curves for genes selected by MGFM as potential markers for each of the examined tissues using a data set #1 and b data set #2</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 5</head><label>5</label><figDesc><div><p><s>Fig. 5 Venn diagrams showing comparisons of the predicted marker gene lists for the examined tissues.</s><s>Labels in the Venn diagrams indicate tissue and data set (1 or 2, within brackets)</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Identification of cut-points and calculation of mean expression values</head><label></label><figDesc></figDesc><table><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell cols="3">Mean value = 10.66</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell>12</cell><cell>11.25</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>12</cell><cell>11.25</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell cols="3">10.57 10.17</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell cols="3">10.57 10.17</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell>10</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>10</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell cols="4">Mean value = 6.95</cell><cell></cell></row><row><cell>Expression value</cell><cell>2 4 6 8</cell><cell></cell><cell></cell><cell></cell><cell>8.02</cell><cell cols="11">7.21 6.98 6.96 6.95 6.77 6.59 6.54 6.53 6.46 6.38 6.23</cell><cell>Expression value</cell><cell>2 4 6 8</cell><cell></cell><cell></cell><cell>1 t n i o t u c -p</cell><cell>8.02</cell><cell cols="8">7.21 6.98 6.96 6.95 6.77 6.59 6.54 6.53</cell><cell>6.46 6.38 6.23 Mean value = 6.36 c u t -p 2 t o i n</cell></row><row><cell></cell><cell>0</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>0</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell>liver</cell><cell>liver</cell><cell>liver</cell><cell>kidney</cell><cell>lung</cell><cell>kidney</cell><cell>kidney</cell><cell>heart</cell><cell>lung</cell><cell>lung</cell><cell>heart</cell><cell>heart</cell><cell>brain</cell><cell>brain</cell><cell>brain</cell><cell></cell><cell></cell><cell>liver</cell><cell>liver</cell><cell>liver</cell><cell>kidney</cell><cell>lung</cell><cell>kidney</cell><cell>kidney</cell><cell>heart</cell><cell>lung</cell><cell>lung</cell><cell>heart</cell><cell>heart</cell><cell>brain</cell><cell>brain</cell><cell>brain</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell cols="2">Samples</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell cols="2">Samples</cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>Table 2</head><label>2</label><figDesc><div><p><s>The percentage of probes on the microarray predicted as marker probe sets and the percentage of correctly identified marker genes using different score cutoffs for data set #2</s></p></div></figDesc><table><row><cell>Score cutoff</cell><cell>1</cell><cell>0.9</cell><cell>0.8</cell><cell>0.7</cell><cell>0.6</cell><cell>0.5</cell><cell>0.4</cell></row><row><cell>Selected marker probe sets (in %)</cell><cell>17.2</cell><cell>11.9</cell><cell>4.9</cell><cell>1.8</cell><cell>0.7</cell><cell>0.2</cell><cell>0.02</cell></row><row><cell>Identified marker genes (in %)</cell><cell>51.7</cell><cell>46</cell><cell>29.3</cell><cell>20.7</cell><cell>13.8</cell><cell>5.2</cell><cell>0</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>Table 3</head><label>3</label><figDesc><div><p><s>The number of correctly identified and known marker genes on the microarrays of data sets #1 and #2 for each of the examined tissues</s></p></div></figDesc><table><row><cell></cell><cell>Tissue</cell><cell>Correctly identified/known</cell></row><row><cell></cell><cell></cell><cell>marker genes on the microarray</cell></row><row><cell>Data</cell><cell>midbrain</cell><cell>16/33</cell></row><row><cell>set</cell><cell>heart atrium</cell><cell>24/32</cell></row><row><cell>#1</cell><cell>kidney cortex</cell><cell>25/33</cell></row><row><cell></cell><cell>liver</cell><cell>39/65</cell></row><row><cell></cell><cell>lung</cell><cell>9/24</cell></row><row><cell>Data</cell><cell>liver</cell><cell>26/60</cell></row><row><cell>set</cell><cell>lung</cell><cell>7/24</cell></row><row><cell>#2</cell><cell>brain</cell><cell>9/28</cell></row><row><cell></cell><cell>kidney</cell><cell>17/31</cell></row><row><cell></cell><cell>heart</cell><cell>19/31</cell></row></table><note><p><s>[10]y, Willemsen et al.[14]suggested that mutations in KIF4A and KIF5C cause intellectual disability by tipping the balance between excitatory and inhibitory synaptic excitability.These results indicate a role of KIF5C in brain function.Song et al.[10]reported AMDHD1 as new marker for liver.</s><s>Hence, our comparatively easily implementable method was able to discover novel marker genes.</s></p></note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 4</head><label>4</label><figDesc><div><p><s>Gene Ontology enrichment (Molecular Function) of predicted marker genes for the examined tissues</s></p></div></figDesc><table><row><cell>GO ID</cell><cell>GO</cell><cell>p-value</cell><cell>Expected count</cell><cell>Gene count</cell><cell>Size</cell></row><row><cell>Midbrain</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>GO:0008017</cell><cell>microtubule binding</cell><cell>1.02 × 10 −11</cell><cell>14.02</cell><cell>43</cell><cell>148</cell></row><row><cell>GO:0030695</cell><cell>GTPase regulator activity</cell><cell>2.51 × 10 −07</cell><cell>39.97</cell><cell>73</cell><cell>422</cell></row><row><cell>GO:0005525</cell><cell>GTP binding</cell><cell>4.18 × 10 −06</cell><cell>31.73</cell><cell>58</cell><cell>335</cell></row><row><cell>GO:0030276</cell><cell>clathrin binding</cell><cell>4.27 × 10 −06</cell><cell>1.89</cell><cell>10</cell><cell>20</cell></row><row><cell>GO:0017075</cell><cell>syntaxin-1 binding</cell><cell>5.28 × 10 −06</cell><cell>1.23</cell><cell>8</cell><cell>13</cell></row><row><cell>Heart atrium</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>GO:0008307</cell><cell>structural constituent of muscle</cell><cell>3.12 × 10 −24</cell><cell>1.73</cell><cell>25</cell><cell>44</cell></row><row><cell>GO:0003779</cell><cell>actin binding</cell><cell>2.81 × 10 −21</cell><cell>13.63</cell><cell>58</cell><cell>346</cell></row><row><cell>GO:0005523</cell><cell>tropomyosin binding</cell><cell>1.34 × 10 −08</cell><cell>0.55</cell><cell>8</cell><cell>14</cell></row><row><cell>GO:0051371</cell><cell>muscle alpha-actinin binding</cell><cell>2.46 × 10 −08</cell><cell>0.28</cell><cell>6</cell><cell>7</cell></row><row><cell>GO:0031432</cell><cell>titin binding</cell><cell>4.07 × 10 −08</cell><cell>0.43</cell><cell>7</cell><cell>11</cell></row><row><cell>Kidney cortex</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>GO:0008509</cell><cell>anion transmembrane transporter activity</cell><cell>4.9 × 10 −16</cell><cell>8.77</cell><cell>40</cell><cell>226</cell></row><row><cell>GO:0015294</cell><cell>solute:cation symporter activity</cell><cell>8.98 × 10 −11</cell><cell>3.03</cell><cell>19</cell><cell>78</cell></row><row><cell>GO:0015081</cell><cell>sodium ion transmembrane transporter activity</cell><cell>4.5 × 10 −09</cell><cell>4.58</cell><cell>21</cell><cell>118</cell></row><row><cell>GO:0015297</cell><cell>antiporter activity</cell><cell>1.92 × 10 −08</cell><cell>2.17</cell><cell>14</cell><cell>56</cell></row><row><cell>GO:0019534</cell><cell>toxin transporter activity</cell><cell>1.39 × 10 −04</cell><cell>0.31</cell><cell>4</cell><cell>8</cell></row><row><cell>Liver</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>GO:0004497</cell><cell>monooxygenase activity</cell><cell>2.23 × 10 −20</cell><cell>4.95</cell><cell>34</cell><cell>87</cell></row><row><cell>GO:0009055</cell><cell>electron carrier activity</cell><cell>4 × 10 −20</cell><cell>8.20</cell><cell>43</cell><cell>144</cell></row><row><cell>GO:0048037</cell><cell>cofactor binding</cell><cell>1.17 × 10 −16</cell><cell>14.11</cell><cell>52</cell><cell>248</cell></row><row><cell>GO:0020037</cell><cell>heme binding</cell><cell>2.06 × 10 −15</cell><cell>6.83</cell><cell>34</cell><cell>120</cell></row><row><cell>GO:0005506</cell><cell>iron ion binding</cell><cell>1.53 × 10 −14</cell><cell>8.54</cell><cell>37</cell><cell>150</cell></row><row><cell>Lung</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>GO:0005102</cell><cell>receptor binding</cell><cell>3.30 × 10 −10</cell><cell>71.09</cell><cell>124</cell><cell>1129</cell></row><row><cell>GO:0004896</cell><cell>cytokine receptor activity</cell><cell>5.12 × 10 −09</cell><cell>5.23</cell><cell>22</cell><cell>83</cell></row><row><cell>GO:0003823</cell><cell>antigen binding</cell><cell>1.78 × 10 −08</cell><cell>3.02</cell><cell>16</cell><cell>48</cell></row><row><cell>GO:0019899</cell><cell>enzyme binding</cell><cell>6.89 × 10 −07</cell><cell>69.58</cell><cell>110</cell><cell>1105</cell></row><row><cell>GO:0032395</cell><cell>MHC class II receptor activity</cell><cell>1.54 × 10 −06</cell><cell>0.5</cell><cell>6</cell><cell>8</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>Table 5</head><label>5</label><figDesc><div><p><s>Gene Ontology enrichment (Biological Process) of predicted marker genes for the examined tissues</s></p></div></figDesc><table><row><cell>GO ID</cell><cell>GO</cell><cell>p-value</cell><cell>Expected count</cell><cell>Gene count</cell><cell>Size</cell></row><row><cell>Midbrain</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>GO:0007409</cell><cell>axonogenesis</cell><cell>4.49 × 10 −22</cell><cell>46.71</cell><cell>118</cell><cell>489</cell></row><row><cell>GO:0010975</cell><cell>regulation of neuron projection development</cell><cell>5.58 × 10 −20</cell><cell>21.4</cell><cell>70</cell><cell>224</cell></row><row><cell>GO:0006836</cell><cell>neurotransmitter transport</cell><cell>3.93 × 10 −18</cell><cell>12.42</cell><cell>49</cell><cell>130</cell></row><row><cell>GO:0051969</cell><cell>regulation of transmission of nerve impulse</cell><cell>9.65 × 10 −16</cell><cell>19.11</cell><cell>59</cell><cell>200</cell></row><row><cell>GO:0016358</cell><cell>dendrite development</cell><cell>6.24 × 10 −13</cell><cell>12.51</cell><cell>42</cell><cell>131</cell></row><row><cell>Heart atrium</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>GO:0006941</cell><cell>striated muscle contraction</cell><cell>3.12 × 10 −27</cell><cell>3.82</cell><cell>37</cell><cell>97</cell></row><row><cell>GO:0060047</cell><cell>heart contraction</cell><cell>3.34 × 10 −27</cell><cell>5.76</cell><cell>44</cell><cell>146</cell></row><row><cell>GO:0048738</cell><cell>cardiac muscle tissue development</cell><cell>9.63 × 10 −25</cell><cell>5.56</cell><cell>41</cell><cell>141</cell></row><row><cell>GO:0090257</cell><cell>regulation of muscle system process</cell><cell>4.29 × 10 −24</cell><cell>5.76</cell><cell>41</cell><cell>146</cell></row><row><cell>GO:0030239</cell><cell>myofibril assembly</cell><cell>1.6 × 10 −26</cell><cell>1.66</cell><cell>26</cell><cell>42</cell></row><row><cell>Kidney cortex</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>GO:0055085</cell><cell>transmembrane transport</cell><cell>2.03 × 10 −18</cell><cell>29.19</cell><cell>83</cell><cell>757</cell></row><row><cell>GO:0007588</cell><cell>excretion</cell><cell>1.83 × 10 −10</cell><cell>2.47</cell><cell>17</cell><cell>64</cell></row><row><cell>GO:0072006</cell><cell>nephron development</cell><cell>6.35 × 10 −09</cell><cell>3.43</cell><cell>18</cell><cell>89</cell></row><row><cell>GO:0006814</cell><cell>sodium ion transport</cell><cell>8.87 × 10 −08</cell><cell>4.47</cell><cell>19</cell><cell>116</cell></row><row><cell>GO:0072348</cell><cell>sulfur compound transport</cell><cell>1.74 × 10 −05</cell><cell>0.89</cell><cell>7</cell><cell>23</cell></row><row><cell>Liver</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>GO:0008202</cell><cell>steroid metabolic process</cell><cell>8.68 × 10 −46</cell><cell>15.33</cell><cell>90</cell><cell>267</cell></row><row><cell>GO:0032787</cell><cell>monocarboxylic acid metabolic process</cell><cell>3.34 × 10 −35</cell><cell>24.57</cell><cell>100</cell><cell>428</cell></row><row><cell>GO:0006805</cell><cell>xenobiotic metabolic process</cell><cell>4.1 × 10 −30</cell><cell>8.04</cell><cell>53</cell><cell>140</cell></row><row><cell>GO:0044282</cell><cell>small molecule catabolic process</cell><cell>2 × 10 −28</cell><cell>14.7</cell><cell>69</cell><cell>256</cell></row><row><cell>GO:1901605</cell><cell>alpha-amino acid metabolic process</cell><cell>7.38 × 10 −25</cell><cell>11.54</cell><cell>57</cell><cell>201</cell></row><row><cell>Lung</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>GO:0002684</cell><cell>positive regulation of immune system process</cell><cell>2.53 × 10 −37</cell><cell>40.21</cell><cell>134</cell><cell>606</cell></row><row><cell>GO:0006954</cell><cell>inflammatory response</cell><cell>2.23 × 10 −25</cell><cell>32.64</cell><cell>101</cell><cell>492</cell></row><row><cell>GO:0001816</cell><cell>cytokine production</cell><cell>4.95 × 10 −25</cell><cell>31.32</cell><cell>98</cell><cell>472</cell></row><row><cell>GO:0046649</cell><cell>lymphocyte activation</cell><cell>1.2 × 10 −24</cell><cell>31.12</cell><cell>97</cell><cell>469</cell></row><row><cell>GO:0009607</cell><cell>response to biotic stimulus</cell><cell>2.18 × 10 −24</cell><cell>39.28</cell><cell>111</cell><cell>592</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_6"><head>Table 6</head><label>6</label><figDesc><div><p><s>PCR results</s></p></div></figDesc><table><row><cell cols="3">Predicted marker genes for liver</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>Gene</cell><cell>Liver</cell><cell>Lung</cell><cell>Heart</cell><cell>Brain</cell><cell>Kidney</cell><cell>Gene</cell><cell>Liver</cell><cell>Lung</cell><cell>Heart</cell><cell>Brain</cell><cell>Kidney</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_9"><head>Table 7</head><label>7</label><figDesc><div><p><s>The corresponding samples to the tissues in the 3 data sets</s></p></div></figDesc><table><row><cell></cell><cell>Tissue</cell><cell>Samples</cell></row><row><cell>Data</cell><cell>midbrain</cell><cell>GSM80699, GSM80700, GSM80701</cell></row><row><cell>set</cell><cell>heart atrium</cell><cell>GSM80654, GSM80655, GSM80656</cell></row><row><cell>#1</cell><cell>kidney cortex</cell><cell>GSM80686, GSM80687, GSM80688</cell></row><row><cell></cell><cell>liver</cell><cell>GSM80728, GSM80729, GSM80730</cell></row><row><cell></cell><cell>lung</cell><cell>GSM80707, GSM80710, GSM80712</cell></row><row><cell>Data</cell><cell>liver</cell><cell>GSM44702, GSM18953, GSM18954</cell></row><row><cell>set</cell><cell>lung</cell><cell>GSM44704, GSM18949, GSM18950</cell></row><row><cell>#2</cell><cell>brain</cell><cell>GSM44690, GSM18921, GSM18922</cell></row><row><cell></cell><cell>kidney</cell><cell>GSM44675, GSM18955, GSM18956</cell></row><row><cell></cell><cell>heart</cell><cell>GSM44671, GSM18951, GSM18952</cell></row><row><cell>Data</cell><cell>liver</cell><cell>GSM18953, GSM18954</cell></row><row><cell>set</cell><cell>lung</cell><cell>GSM18949, GSM18950</cell></row><row><cell>#3</cell><cell>heart</cell><cell>GSM18951, GSM18952</cell></row><row><cell></cell><cell>kidney</cell><cell>GSM18955, GSM18956</cell></row></table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgements</head><p><s>We thank Junko Yamane for assistance with the primer design.</s><s>We also thank Nancy Mah and Peter Robinson for helpful suggestions and discussions.</s><s>We thank Christof Stamm, Petra Reinke and Katrin Zeilinger for provision of tissue samples and RNA, respectively.</s><s>This work was supported by grants from the</s></p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Gene Ontology enrichment analysis</head><p><s>Gene ontology enrichment analysis was assessed with the hypergeometric statistic as implemented in the R-package GOstats <ref type="bibr" target="#b20">[20]</ref> (Version: 2.32.0), with all genes on the microarray as background.</s><s>The cutoff for p-values was 0.01.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Venn diagrams</head><p><s>The Venn diagrams were generated using the R-package VennDiagram (Version: 1.6.0)</s><s><ref type="bibr" target="#b21">[21]</ref>.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>t-test</head><p><s>The p-values were adjusted for multiple testing using the Benjamini-Hochberg procedure.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Ethics statement</head><p><s>Human kidney tissue was provided from leftover diagnostic biopsies from the Department of Nephrology at Charite Universitätsmedizin Berlin.</s><s>RNA from heart and lung tissues was provided by the German Heart Center Berlin, and RNA from liver from the Department of Experimenal Surgery at Charite Universitätsmedizin Berlin.</s><s>All tissue donors were consented and ethics approval obtained from the responsible ethics Committee at Charite (Nr.</s><s>EA1/110/10) and the German Heart Center (Nr.</s><s>EA4/028/12).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>cDNA synthesis and PCR analysis</head><p><s>Human total RNA was isolated from liver, lung, heart and kidney with TRIzol reagent (Invitrogen) according to the manufacturer's protocol.</s><s>Human RNA from brain was purchased from Clontech Laboratories (Mountain View, CA, USA).</s><s>RNA was reverse transcribed into cDNA with random primers using SuperScript III First-Strand Synthesis System (Invitrogen) according to the manufacturer's protocol.</s><s>Five μg of total RNA was used for cDNA synthesis.</s></p><p><s>The PCR reaction consisted of 1 μl of cDNA, 0.5 μl of 10 mM deoxynucleoside triphosphate mix (dNTP), 5 μl of 5X Crimson Taq (Mg-free) Reaction Buffer, 1.5 μl of 25 mM MgCl 2 , 0.5 μl of each 10 μM forward and reverse primers, 0.125 μl of Crimson Taq DNA polymerase, and nuclease-free water up to 25 μl.</s><s>The cycling conditions were performed as following: 95 °C for 2 min, followed by 30 cycles of 95 °C for 30 s, temperature specific annealing for 30 s, and 72 °C for 45 s with a final elongation at 72 °C for 7 min.</s><s>A 1 % agarose gel was used to check PCR amplification.</s><s>All primers used are listed in Additional file 5.</s><s>The housekeeping gene beta-actin was used as positive control.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Tool requirements</head><p><s>MGFM expects replicates for each sample type.</s><s>Using replicates has the advantage of increased precision of gene expression measurements and allows smaller changes to be detected.</s><s>It is not necessary to use the same number of replicates for all sample types.</s><s>Normalization is necessary before any analysis to ensure that differences in intensities are indeed due to differential expression, and not to some experimental factors that add systematic biases to the measurements.</s><s>Hence, for reliable results normalization of data is mandatory.</s><s>When combining data from different studies, other procedures should be applied to adjust for batch effects.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Implementation of the online tool</head><p><s>The online version of MGFM integrated into CellFinder is implemented in JavaScript for the frontend and PHP together with Rserve <ref type="bibr" target="#b22">[22]</ref> for the backend.</s><s>JavaScript is utilized to allow for asynchronous user interactions and requests are sent to a PHP webservice, which handles in and outputs and controls Rserve to call MGFM.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Software availability</head><p><s>The R-package MGFM is freely available from the Bioconductor web site (http://www.bioconductor.org/packages/</s><s>release/bioc/html/MGFM.html).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Additional files</head><p><s>Additional file 1: Literature-curated marker genes.</s><s>This file includes marker genes collected from the literature.</s><s>(104KB PDF)</s></p><p><s>Additional file 2: Plots of Precision/Recall comparing our method to t-test.</s><s>This file includes Plots of Precision/Recall comparing MGFM to t-test.</s><s>(462KB PDF)</s></p><p><s>Additional file 3: Gel electrophoresis images.</s><s>This file includes the gel electrophoresis images (Figures <ref type="figure">S1-S11</ref>).</s><s>(981KB PDF)</s></p><p><s>Additional file 4: Description of the predicted marker genes.</s><s>(126KB PDF)</s></p><p><s>Additional file 5: Primer sequences.</s><s>This file includes the list of all primer sequences used by PCR.</s><s>(55.7KB</s><s>PDF)</s></p><p><s>Abbreviations GEO: Gene expression omnibus; RT-PCR: Reverse transcriptase-polymerase chain reaction; MGFM: Marker gene finder in microarray data; GO: Gene ontology.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Competing interests</head><p><s>The authors declare that they have no competing interests.</s></p><p><s>Authors' contributions KE, AK and MA-N developed the concept and KE and MA-N devised the method.</s><s>KE implemented the tool, carried on the experiments and wrote the manuscript.</s><s>AK defined and supervised experimental validation performed by KE.</s><s>AK, MA-N and HS critically revised the manuscript and contributed in the refinement of the work.</s><s>FL integrated the tool into CellFinder and contributed to its refinement.</s><s>All authors read and approved the final manuscript.</s></p><p><s>Author details 1 Charité -Universitätsmedizin Berlin, Berlin Brandenburg Center for Regenerative Therapies (BCRT), 13353 Berlin, Germany. 2 Berlin Institute of Health, 10117 Berlin, Germany. 3 Seoul National University, College of Veterinary Medicine and Research Institute for Veterinary Science, 151-742 Seoul, Republic of Korea. 4</s><s>Faculty of Biology, Johannes Gutenberg University of Mainz, Mainz, Germany. 5</s><s>Institute of Molecular Biology, Mainz, Germany.</s></p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Deutsche Forschungsgemeinschaft (KU 851/3-1) and the European Commission</title>
+		<imprint/>
+	</monogr>
+	<note>IMI 115582</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">An atlas of human gene expression from massively parallel signature sequencing (MPSS)</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">V</forename><surname>Jongeneel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Delorenzi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Iseli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Zhou</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">D</forename><surname>Haudenschild</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Khrebtukova</surname></persName>
+		</author>
+		<idno type="DOI">10.1101/gr.4041005</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Genome Res</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="1007" to="1014" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Mining tissue specificity, gene connectivity and disease association to reveal a set of genes that modify the action of disease causing genes</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Reverter</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ingham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">P</forename><surname>Dalrymple</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/1756-0381-1-8</idno>
+	</analytic>
+	<monogr>
+		<title level="j">BioData Min</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">NCBI GEO: mining tens of millions of expression profiles-database and tools update</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Barrett</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">B</forename><surname>Troup</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">E</forename><surname>Wilhite</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Ledoux</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Rudnev</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Evangelista</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/nar/gkl887</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">35</biblScope>
+			<biblScope unit="page" from="760" to="765" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">ArrayExpress-a public repository for microarray gene expression data at the EBI</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Brazma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Parkinson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Sarkans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Shojatalab</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Vilo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Abeygunawardena</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="68" to="71" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Bioconductor: open software development for computational biology and bioinformatics</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">C</forename><surname>Gentleman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">J</forename><surname>Carey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Bates</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Bolstad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Dettling</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Dudoit</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/gb-2004-5-10-r80</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Genome Biol</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page">80</biblScope>
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">CellFinder: a cell data repository</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Stachelscheid</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Seltmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Lekschas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">F</forename><surname>Fontaine</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Mah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Neves</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/nar/gkt1264</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">42</biblScope>
+			<biblScope unit="issue">Database</biblScope>
+			<biblScope unit="page" from="950" to="958" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Gene expression analyses reveal molecular relationships among 20 regions of the human CNS</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Roth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Hevezi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Willhite</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lechner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Foster</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10048-006-0032-6</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Neurogenetics</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="67" to="80" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">A gene atlas of the mouse and human protein-encoding transcriptomes</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">I</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Wiltshire</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Batalov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Lapp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">A</forename><surname>Ching</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Block</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proc Nat Acad Sci USA</title>
+		<imprint>
+			<biblScope unit="volume">101</biblScope>
+			<biblScope unit="page" from="6062" to="6067" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Interpreting expression profiles of cancers by genome-wide survey of breadth of expression in normal tissues</title>
+		<author>
+			<persName><forename type="first">X</forename><surname>Ge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Yamamoto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Tsutsumi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Midorikawa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ihara</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">M</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.ygeno.2005.04.008</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Genomics</title>
+		<imprint>
+			<biblScope unit="volume">86</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="127" to="141" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Identification of novel tissuespecific genes by analysis of microarray databases: a human and mouse model</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ahn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Suh</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">E</forename><surname>Davis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Lee</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0064483</idno>
+	</analytic>
+	<monogr>
+		<title level="j">PloS one</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page">64483</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Identification of Human Cytochrome P450 and Flavin-Containing Monooxygenase Enzymes Involved in the Metabolism of Lorcaserin, a Novel Selective Human 5-Hydroxytryptamine 2C Agonist ABSTRACT</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">A</forename><surname>Usmani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">G</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Ajm</forename><surname>Sadeque</surname></persName>
+		</author>
+		<idno type="DOI">10.1124/dmd.111.043414</idno>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="page" from="761" to="771" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Gene ontology: tool for the unification of biology. The Gene Ontology Consortium</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ashburner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">A</forename><surname>Ball</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Blake</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Botstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Butler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Cherry</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nat Genet</title>
+		<imprint>
+			<biblScope unit="volume">25</biblScope>
+			<biblScope unit="page" from="25" to="29" />
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">CHAP is a newly identified Z-disc protein essential for heart and skeletal muscle function</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Beqqali</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Monshouwer-Kloots</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Monteiro</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Welling</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Bakkers</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Ehler</surname></persName>
+		</author>
+		<idno type="DOI">10.1242/jcs.063859</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J Cell Sci</title>
+		<imprint>
+			<biblScope unit="volume">123</biblScope>
+			<biblScope unit="page" from="1141" to="1150" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+	<note>Pt 7</note>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Involvement of the kinesin family members KIF4A and KIF5C in intellectual disability and synaptic function</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">H</forename><surname>Willemsen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Ba</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">M</forename><surname>Wissink-Lindhout</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Apm</forename><surname>De Brouwer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">A</forename><surname>Haas</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Bienek</surname></persName>
+		</author>
+		<idno type="DOI">10.1136/jmedgenet-2013-102182</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J Med Genet</title>
+		<imprint>
+			<biblScope unit="volume">51</biblScope>
+			<biblScope unit="issue">7</biblScope>
+			<biblScope unit="page" from="487" to="494" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Jetset: selecting the optimal microarray probe set to represent a gene</title>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">J</forename><surname>Birkbak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Gyorffy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Szallasi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">C</forename><surname>Eklund</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/1471-2105-12-474</idno>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">474</biblScope>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">RNA-Seq Atlas-a reference database for gene expression profiling in normal tissue by next-generation sequencing</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Krupp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">U</forename><surname>Marquardt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">U</forename><surname>Sahin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">R</forename><surname>Galle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Castle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Teufel</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/bioinformatics/bts084</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">8</biblScope>
+			<biblScope unit="page" from="1184" to="1185" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Robust estimators for expression analysis</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Hubbell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">M</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Mei</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/bioinformatics/18.12.1585</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="1585" to="1592" />
+			<date type="published" when="2002">2002</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<monogr>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">T</forename><surname>Leek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">E</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">S</forename><surname>Parker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Jaffe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">D</forename><surname>Storey</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Sva</surname></persName>
+		</author>
+		<ptr target="http://hdl.handle.net/1773/9586" />
+		<title level="m">Surrogate Variable Analysis</title>
+				<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Affymetrix probesets and annotations</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">E</forename><surname>Loraine</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Shigeta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Cline</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Valmeekam</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">31</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="82" to="86" />
+			<date type="published" when="2003">2003</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Using gostats to test gene lists for go term association</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Falcon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Gentleman</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="257" to="258" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">VennDiagram: a package for the generation of highly-customizable Venn and Euler diagrams in R</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">C</forename><surname>Boutros</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/1471-2105-12-35</idno>
+	</analytic>
+	<monogr>
+		<title level="j">BMC Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="page">35</biblScope>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Rserve a fast way to provide R functionality to applications</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Urbanek</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the 3rd International Workshop on Distributed Statistical Computing</title>
+				<editor>
+			<persName><forename type="first">K</forename><surname>Hornik</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">F</forename><surname>Leisch</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">A</forename><surname>Zeileis</surname></persName>
+		</editor>
+		<meeting>the 3rd International Workshop on Distributed Statistical Computing<address><addrLine>Vienna</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2003">2003. 2003. 2007</date>
+			<biblScope unit="page" from="1" to="11" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

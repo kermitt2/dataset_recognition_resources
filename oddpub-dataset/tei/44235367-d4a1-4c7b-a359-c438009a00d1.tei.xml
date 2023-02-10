@@ -1,0 +1,893 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Ship Segmentation in SAR Images by Improved Nonlocal Active Contour Model †</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018-12-01">1 December 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Xiaoqiang</forename><surname>Zhang</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">College of Electronic Science</orgName>
+								<orgName type="institution">National University of Defense Technology</orgName>
+								<address>
+									<postCode>410073</postCode>
+									<settlement>Changsha</settlement>
+									<country key="CN">China</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Boli</forename><surname>Xiong</surname></persName>
+							<email>bolixiong@gmail.com</email>
+							<affiliation key="aff0">
+								<orgName type="department">College of Electronic Science</orgName>
+								<orgName type="institution">National University of Defense Technology</orgName>
+								<address>
+									<postCode>410073</postCode>
+									<settlement>Changsha</settlement>
+									<country key="CN">China</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Ganggang</forename><surname>Dong</surname></persName>
+							<email>dongganggang@nudt.edu.cn</email>
+							<idno type="ORCID">0000-0002-1527-2426</idno>
+							<affiliation key="aff1">
+								<orgName type="laboratory">National Laboratory of Radar Signal Processing</orgName>
+								<orgName type="institution">Xidian University</orgName>
+								<address>
+									<postCode>710000</postCode>
+									<settlement>Xi&apos;an</settlement>
+									<country key="CN">China</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<persName><forename type="first">Gangyao</forename><surname>Kuang</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">College of Electronic Science</orgName>
+								<orgName type="institution">National University of Defense Technology</orgName>
+								<address>
+									<postCode>410073</postCode>
+									<settlement>Changsha</settlement>
+									<country key="CN">China</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Ship Segmentation in SAR Images by Improved Nonlocal Active Contour Model †</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018-12-01">1 December 2018</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">F4DDB67790907328A47BA476D242157A</idno>
+					<idno type="DOI">10.3390/s18124220</idno>
+					<note type="submission">Received: 18 September 2018; Accepted: 27 November 2018;</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:12+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>synthetic aperture radar (SAR)</term>
+					<term>image segmentation</term>
+					<term>active contour model (ACM)</term>
+					<term>nonlocal energy</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Synthetic aperture radar (SAR) has been widely used in ocean surveillance.</s><s>As an important part of shipping management and military applications, ship monitoring is a study hotspot in SAR image interpretation; hence, many researches focus on ship targets.</s><s>Among these studies, ship segmentation is a basic work, but still remains challenging due to the speckle noise and the complicated backscattering phenomenology in SAR images.</s><s>To solve the problems, this paper proposes a new method for ship segmentation by nonlocal processing.</s><s>Firstly, the proposed nonlocal energy describes the nonlocal comparison of patches and optimizes regions with spatially-varying features.</s><s>Secondly, we rewrite the energy functional by introducing a ratio distance defined with respect to the probability density functions of regions to overcome the influence of the multiplicative noise.</s><s>Finally, the integral histogram is introduced into the pairwise interactions to fasten the speed of convergence.</s><s>Several rounds of comparative experiments are implemented on real SAR data with different resolutions and bands.</s><s>The results demonstrate that the proposed method is robust to the speckle noise and intensity variations and could achieve refined segmentation for ship targets.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Introduction</head><p><s>Due to the capability of working under all weather and all time conditions, synthetic aperture radar (SAR) is an important tool in ocean surveillance.</s><s>Because of the great significance of ship monitoring in shipping management and military applications, many research works focusing on ship targets have been carried out, such as ship detection, discrimination, and recognition <ref type="bibr" target="#b0">[1,</ref><ref type="bibr" target="#b1">2]</ref>.</s><s>Among these studies, ship segmentation is a fundamental and meaningful work: The accurate segmentation can facilitate subsequent interpretations.</s><s>On the one hand, segmenting the ship from the background is necessary for extracting target features that are often used in discrimination and classification; on the other hand, the refined segmentation is the pre-processing of the training set in some deep learning-based recognition algorithms, because eliminating the interference of background clutters contributes to classification <ref type="bibr" target="#b2">[3]</ref>.</s></p><p><s>Though widely studied, object segmentation in SAR images still remains challenging largely due to the two facts.</s><s>Firstly, the multiplicative speckle noise caused by SAR systems is a common problem.</s><s>The speckle noise may sharply reduce the image quality and greatly influence image interpretations.</s><s>Many efforts have been devoted to overcoming the speckle effect.</s><s>Efficient stochastic models of speckle noise, focusing on the multiplicative nature, have been proposed <ref type="bibr" target="#b3">[4]</ref>.</s><s>Suitable distributions that fit SAR images (e.g., K, Gamma, and G 0 distributions) are employed to improve the segmentation performance <ref type="bibr" target="#b4">[5,</ref><ref type="bibr" target="#b5">6]</ref>.</s><s>Secondly, the variations of backscattering coefficients also brings much trouble to image segmentation.</s><s>By contrast, the research in this area is still limited.</s><s>As is known, the grayscale of a pixel in the SAR image represents the proportion of microwave backscattered from the corresponding region.</s><s>The intensity values on both sides of the contour are supposed to be homogeneous respectively in many segmentation algorithms.</s><s>However, this proposition may have some differences in ship segmentation.</s><s>This is because some specific structures on ships may lead to obvious intensity variations, especially in high resolution SAR images.</s><s>With the development of the imaging technology, more details can be displayed in images.</s><s>Therefore, ships appear to have various texture characteristics, instead of bright objects, as shown in Figure <ref type="figure" target="#fig_0">1</ref>.</s><s>Since some dark regions embedded in the ship are similar to the background clutters, it is difficult to extract the ship completely and precisely by the traditional algorithms.</s><s>The active contour model (ACM) is a popular tool for image segmentation, due to the ability to locate the object outline accurately.</s><s>It is a framework for guiding contours toward the boundary of the object by minimizing the energy functional.</s><s>In some early works, ACMs were mainly based on edge information, such as the snake and the geodesic active contour (GAC) models <ref type="bibr" target="#b6">[7,</ref><ref type="bibr" target="#b7">8]</ref>.</s><s>They utilize edge detectors and guide the contour towards sharp gradients of pixel intensity.</s><s>However, this kind of ACM is sensitive to noise.</s><s>To handle the problem, region-based ACMs have been presented, like Chan-Vese (CV), region-scalable fitting (RSF), and local and global intensity fitting (LGIF) models <ref type="bibr" target="#b8">[9]</ref><ref type="bibr" target="#b9">[10]</ref><ref type="bibr" target="#b10">[11]</ref>.</s><s>They have better noise robustness, since regional information is introduced into the contour evolution.</s><s>To improve the performance, Wang et al. modified the local region fitting function of the RSF model incorporating a Gaussian distribution and proposed the local Gaussian distribution fitting (LGDF) model <ref type="bibr" target="#b11">[12]</ref>.</s><s>Based on this work, Thieu et al. incorporated the local and global information into a fuzzy energy function and proposed the local and global fuzzy Gaussian distribution (LGFGD) model <ref type="bibr" target="#b12">[13]</ref>, which achieved success in medical image segmentation.</s><s>Besides, Some hybrid ACMs were proposed, which absorbed the advantages of those two kinds <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b14">15]</ref>.</s><s>They have been demonstrated to have good performance in many applications.</s><s>Variational ACMs have also been widely applied in SAR image segmentation.</s><s>Most of them are based on the level set due to the high efficiency of contour evolution and the ability to handle the topological change <ref type="bibr" target="#b15">[16]</ref>.</s></p><p><s>As an important feature of SAR images, the statistical property is often used to improve the robustness of ACMs.</s><s>For example, Shuai et al. designed a new energy functional to search for a stationary global minimum, in which the homogeneous regions were modeled by a Gamma distribution <ref type="bibr" target="#b16">[17]</ref>.</s><s>Feng et al. developed a variational multiphase segmentation framework for SAR images, and the G 0 statistical model was introduced into the regional term of the energy functional to improve the performance <ref type="bibr" target="#b17">[18]</ref>.</s><s>Ayed et al. proposed a level set segmentation method, which measured the conformity of region data to a Weibull distribution representation <ref type="bibr" target="#b18">[19]</ref>.</s><s>Tu et al. combined the modified CV (MCV) model and RSF model by replacing the Euclidean distance by a new ratio distance defined with respect to the probability density functions of regions in SAR images.</s><s>They integrated the energy functional with Chan's global minimization active contour framework <ref type="bibr" target="#b19">[20]</ref> and proposed global minimization of the modified LGIF (GMLGIF) model <ref type="bibr" target="#b20">[21]</ref>.</s><s>It can be seen that most of these methods are based on the hypothesis that the intensities of targets and the background are homogeneous or follow the same distribution.</s><s>As we discussed previously, however, this may not be true for ship segmentation in SAR images.</s><s>That is why the segmentation performance is limited.</s></p><p><s>In this study, we propose a variational nonlocal ACM for ship segmentation in SAR images.</s><s>Different from the preceding works, the level set is implemented by the nonlocal comparison of patches.</s><s>The energy functional consists of two terms: the nonlocal energy term, defined by pairwise interaction, measuring the dissimilarity of patches inside and outside the segmented region, and the regularization term for smooth boundaries.</s><s>Only the local homogeneity of image features is utilized in the procedure of the nonlocal patch comparison; hence, this method can capture the regions with spatially-varying features.</s><s>Inspired by Tu's idea, we introduce the ratio distance into the pairwise interaction and rewrite the nonlocal energy in order to make the method applicable for SAR images.</s><s>The experiments based on real SAR images show that the proposed method can precisely extract ship targets from the background.</s></p><p><s>Contributions: This paper proposes an improved segmentation strategy for ship targets in order to overcome the problems of speckle noise and intensity variations.</s><s>The main contribution of our study can be summarized as follows.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>•</head><p><s>We introduce the ratio distance, similar to that proposed in <ref type="bibr" target="#b20">[21]</ref>, into the framework of the nonlocal ACM and apply the improved nonlocal ACM to SAR images.</s><s>Probability density functions are utilized in nonlocal energy computation, and a prior distribution is not demanded; hence, the proposed model is an unsupervised segmentation method.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>•</head><p><s>To deal with the large computational cost caused by nonlocal comparisons between patches, we use the integral histogram of a grey image in the patch dissimilarity calculation and accelerate the convergence.</s><s>In this way, the probability density function of a local patch can be conveniently calculated, with no need to traverse each pixel.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>•</head><p><s>The influence of parameters τ and σ on segmentation is analyzed.</s><s>The robust ranges are recommended by means of experiments.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">The Proposed Method</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.1.">Nonlocal Active Contour Model</head><p><s>Nonlocal image processing, firstly presented by Buades et al., is a scheme dealing with imaging problems using nonlocal comparisons of patches <ref type="bibr" target="#b21">[22]</ref>.</s><s>It has been used in denoising, inverse problems, and classification <ref type="bibr" target="#b22">[23,</ref><ref type="bibr" target="#b23">24]</ref>.</s><s>Jung et al. proposed the nonlocal energy to drive the contour and optimize the homogeneity of the segmented region.</s><s>It is named nonlocal ACM <ref type="bibr" target="#b24">[25]</ref>.</s><s>Let f : I → R denote the SAR image f with the image grid I and x, y ∈ I denote two pixels in the image.</s><s>A patch around the pixel x can be defined as p x (k) = f (x + k) with the size (2τ+1) × (2τ+1), where τ is the half patch size.</s><s>The nonlocal ACM calculates the segmentation by minimizing the following energy functional,</s></p><formula xml:id="formula_0">E (Ω) = E NL (Ω) + λE R (Ω)<label>(1)</label></formula><p><s>where E R (Ω) is a smoothing term regularizing the contour of the region.</s><s>It is usually defined as the length of the boundary.</s><s>λ is a weight controlling the contour regularity.</s><s>More importantly, E NL (Ω) is the nonlocal energy describing the dissimilarity inside and outside region Ω.</s><s>Let Ω c denote the complementary region of Ω, then E NL (Ω) is defined as:</s></p><formula xml:id="formula_1">E NL (Ω) = ĒNL (Ω) + ĒNL (Ω c ) , ĒNL (Ω) = Ω×Ω G σ (x, y)d(p x , p y )dxdy<label>(2)</label></formula><p><s>where the Gaussian kernel G σ (x, y) of scale σ is used as a decaying function of x − y , defined as</s></p><formula xml:id="formula_2">G σ (x, y) = e − x−y 2</formula><p><s>2σ 2 .</s><s>d(p x , p y ) plays an important role in this model, evaluating the dissimilarity between patches p x and p y .</s><s>That is, similar patches would lead to a small value of d(p x , p y ); otherwise, d(p x , p y ) should be large.</s><s>Then, how to measure this kind of patch dissimilarity or distance is the key problem that will be discussed in the next section.</s></p><p><s>According to the formulas above, it can be seen that the patches in pairwise interaction are not necessarily adjacent, and that is why it is called a nonlocal method.</s><s>By this means, the nonlocal ACM achieves a good tuning of the scale at which these patches are compared.</s><s>This is much different from other ACMs.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.2.">Patch Comparison in SAR Images</head><p><s>As described above, the patch comparison metric d(p x , p y ) has a great influence on the nonlocal energy.</s><s>To consider the pixel values, the orientation of textures, and the local statistical features jointly, Jung et al. introduced several metrics into comparisons of patches, including L 2 and Wasserstein distances <ref type="bibr" target="#b24">[25]</ref>.</s><s>Although they have proved to be effective in optical images, they may not be suitable for measuring the distance between SAR image patches due to the speckle noise.</s><s>To demonstrate this proposition, we present a simple example in Figure <ref type="figure" target="#fig_2">2</ref>. A scene of a 256 × 256-pixel simulated SAR image is segmented by the nonlocal ACM using L 2 distance and sliced Wasserstein distance, respectively.</s><s>Speckle noise with a Kdistribution is added to the simulated image in Figure <ref type="figure" target="#fig_2">2a</ref>.</s><s>The experimental results, in (b) and (c), show that these metrics are not applicable to SAR images.</s><s>Some related works have been carried out to find an appropriate metric in SAR images.</s><s>The multiplicative nature of the speckle noise has been investigated by Feng et al., and they proved that the ratio distance is useful to measure the relativity of speckled SAR image patches <ref type="bibr" target="#b17">[18]</ref>.</s><s>According to the research of Deledalle, probability characteristics have satisfactory performance in SAR image processing <ref type="bibr" target="#b25">[26]</ref>.</s><s>Their viewpoints have been further supported by the work of Tu et al.</s><s>They incorporated the ratio distance into the distribution metric and modified the classic CV model by replacing the Euclidean distance <ref type="bibr" target="#b20">[21]</ref>.</s><s>The energy functional of MCV is defined as:</s></p><formula xml:id="formula_3">E MCV (Ω) = λ 1 ĒMCV (Ω) + λ 1 ĒMCV (Ω c ) ĒMCV (Ω)= Ω ε log 2 P(x,Ω) P img − ε log P(x,Ω) P img 2 1/2 dx (<label>3</label></formula><formula xml:id="formula_4">)</formula><p><s>where P and P img represent the probability density functions of the region and the whole image, respectively, and ε(•) denotes the mathematical expectation.</s><s>The robustness to speckle noise of this model has been demonstrated by the experiments based on the MSTARdata <ref type="bibr" target="#b20">[21]</ref>.</s></p><p><s>Inspired by all these preceding works, we introduce the distribution metric of the ratio distance into patch comparisons, d(x, y) = ε log 2 P x P y − ε log</s></p><formula xml:id="formula_5">P x P y 2 1/2 (4)</formula><p><s>Then, the nonlocal energy can be rewritten as:</s></p><formula xml:id="formula_6">E NL (Ω) = Ω×Ω G σ (x, y) ε log 2 P x P y − ε log P x P y 2 1/2 dxdy + Ω C ×Ω C G σ (x, y) ε log 2 P x P y − ε log P x P y 2 1/2 dxdy (<label>5</label></formula><formula xml:id="formula_7">)</formula><p><s>where P x and P y represent the probability density functions of the patches p x and p y .</s><s>The distance can be considered as the standard deviation between the log-likelihood of P x and P y .</s><s>This kind of nonlocal energy is easy to implement, since there is no need for an appropriate statistical model.</s><s>When the energy functional is minimized, the contour will be driven close to the object boundaries so that the homogeneity of the segmented regions can be optimized.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.3.">Acceleration by the Integral Histogram</head><p><s>The nonlocal ACM is computationally intensive due to the multiple operations of patch comparisons.</s><s>Moreover, as shown in ( <ref type="formula" target="#formula_6">5</ref>), the metric used in pairwise interaction requires calculating the probability density functions of each patch.</s><s>It further increases the computational cost.</s><s>This disadvantage leads to the low speed of contour evolution in nonlocal ACM.</s><s>Since the probability density function of a patch can be calculated by the histogram of this region, the integral histogram is introduced into the nonlocal processing to overcome this drawback.</s><s>It is a useful tool to accelerate the feature computing <ref type="bibr" target="#b26">[27]</ref>.</s><s>In Figure <ref type="figure" target="#fig_3">3a</ref>, the integral histogram of a grey image f can be defined as follows:</s></p><formula xml:id="formula_8">I H (x, y) = I H (x − 1, y) + I H (x, y − 1) − I H (x − 1, y − 1) + O ( f (x, y)) (6)</formula><p><s>where the integral histogram value I H (x, y) denotes the histogram of the top-left region of position (x, y) and O ( f (x, y)) represents the histogram operation for the intensity f (x, y).</s><s>The integral histogram is helpful for the fast region computation.</s><s>As shown in Figure <ref type="figure" target="#fig_3">3b</ref>, the histogram of a rectangle A can be quickly obtained by the integral histogram values of the four vertexes.</s></p><formula xml:id="formula_9">H (A) =IH (x 2 , y 2 ) − I H (x 1 , y 2 ) − I H (x 2 , y 1 ) + I H (x 1 , y 1 )<label>(7)</label></formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.4.">Numerical Implementation</head><p><s>For numerical implementation, the contour of the target can be evolved by a level set function ϕ.</s><s>Then, the nonlocal energy can be rewritten as:</s></p><formula xml:id="formula_10">E NL (ϕ) = I×I [1 − |H(ϕ(x)) − H(ϕ(y))|] G σ (x, y)d(p x , p y )dxdy<label>(8)</label></formula><p><s>where H(•) is the Heaviside function.</s><s>The regularization term can be defined as:</s></p><formula xml:id="formula_11">E R (ϕ) = I |∇H(ϕ(x))| dx<label>(9)</label></formula><p><s>According to the gradient descent algorithm in <ref type="bibr" target="#b24">[25]</ref>, we minimize the energy and implement the segmentation.</s><s>The evolution of the level set can be described with with an artificial time t ≥ 0 as follows,</s></p><formula xml:id="formula_12">∂ϕ ∂t = −(∇E(ϕ)) = −(∇E NL (ϕ)) + λ(∇E R (ϕ))<label>(10)</label></formula><p><s>Then, we discretize the gradient flow by the gradient descent as follows:</s></p><formula xml:id="formula_13">ϕ (i+1) = ϕ (i) − ξ ∇E NL (ϕ (i) ) + λ∇E R (ϕ (i) )<label>(11)</label></formula><p><s>where ξ &gt; 0 is the time step size.</s><s>The evolution stops when E (i+1) − E (i+1) &lt; ω, where ω &gt; 0 is a user-defined threshold.</s></p><p><s>The main steps of the proposed method are summarized as follows: Input: A SAR image f , threshold ω, parameters τ, σ and λ, initialization ϕ 0 .</s><s>Output: The segmentation result f s .</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>1.</head><p><s>Initialization: i ← 0, ϕ (0) ← ϕ 0 .</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>2.</head><p><s>Repeat until E (i+1) − E (i+1) &lt; ω:</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>3.</head><p><s>Computing the integral histogram of the image f .</s><s>4.</s></p><p><s>Computing the probability density functions of the image and each patch by the integral histogram.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>5.</head><p><s>Computing the patch dissimilarities by the distribution metric of the ratio distance.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>6.</head><p><s>Computing the energy gradient, according to Equations ( <ref type="formula" target="#formula_10">8</ref>)-(10).</s><s>7.</s></p><p><s>Update ϕ (i+1) with ϕ (i) , according to (11).</s><s>8.</s></p><p><s>i ← i + 1 9.</s></p><p><s>End 10.</s></p><p><s>f s ← H(ϕ)</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.5.">Computational Complexity</head><p><s>Suppose the SAR image size is W × H.</s><s>In the beginning, computing the integral histogram of the SAR image is independent of other iterative operations, and its computational complexity is in the order of W • H.</s><s>Then, since the probability density functions of patches can be conveniently calculated by the integral histogram using <ref type="bibr" target="#b6">(7)</ref>, the computational complexity of patch comparisons is also in the order of W • H. Therefore, the computational complexity of the proposed method is O(W • H).</s></p><p><s>We expand the size of an image from 103 × 103 to 206 × 206 and implement the proposed method on the original and enlarged images, respectively.</s><s>The segmentation results are shown in Figure <ref type="figure" target="#fig_4">4</ref>.</s><s>The running times of (a) and (b) are 16.79 s and 73.52 s.</s><s>Notice that the enlarged image is four-times the size of the original one, and the ratio of the running time of (b) to that of (a) is approximately four.</s><s>Therefore, the derivation of the complexity is reliable.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">Experimental Results and Analysis</head><p><s>In this section, We first compare the proposed method with other previous works based on real SAR images and demonstrate the acceleration of convergence by the integral histogram.</s><s>Then, several ship chips are used to analyze the segmentation accuracy in detail.</s><s>Finally, we discuss the parameters of the proposed method.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1.">Segmentation of SAR Images</head><p><s>Three SAR images of ocean scenes were used in this experiment.</s><s>The first one was a subimage (Subimage 1) from an X-band Cosmo-Skymed image with 3-m resolution, and the other two (Subimage 2 and Subimage 3) were from two C-band RADARSAT-2 images with 5-m resolution.</s><s>Their sizes were 310 × 310, 400 × 400, and 660 × 660.</s><s>We carried out the proposed method with the parameters τ= 3, σ= 15, λ=15 and drew a comparison with the CV, RSF, LGIF, LGFGD, and GMLGIF models based on the three images.</s><s>The original images and the experimental results are shown in Figure <ref type="figure" target="#fig_5">5</ref>.</s><s>It can be seen that the CV model failed to detect the ships in the three images.</s><s>It was sensitive to the speckle noise and the intensity variations in the background, so the contour evolution was very influenced.</s><s>The segmentation was not finished after 1000 iterations.</s><s>As for the other methods, all of them detected the ships and achieved satisfactory results in Subimage 1, because the ships and the background were respectively homogeneous.</s><s>In Subimages 2 and 3, however, the serious noise and local intensity variations of the background severely interfered with the segmentations of RSF and LGIF.</s><s>LGFGD did not show good performance either.</s><s>This may be because the Gaussian distribution was not able to characterize the statistical behavior of the sea clutter in SAR images <ref type="bibr" target="#b4">[5,</ref><ref type="bibr" target="#b27">28]</ref>.</s><s>GMLGIF and the proposed method, with due consideration of the speckle noise, were more suitable for SAR images and overcame those interferences.</s><s>However, the segmentation by GMLGIF was not precise, and it only extracted the bright region of the ship.</s><s>By contrast, the segmentation accuracy of the proposed method was higher.</s></p><p><s>We compare the running time of the convergence by RSF, LGIF, LGFGD, and GMLGIF models and the proposed method in Table <ref type="table" target="#tab_0">1</ref>.</s><s>The experiments were carried out with MATLAB code running on the same hardware platform of an AMD Athlon (tm) Dual-Core 3.1-GHz CPU and 8.0 GB memory.</s><s>It can be seen that the original patch comparison was time consuming, but the nonlocal ACM became much faster with the help of the integral histogram.</s><s>RSF <ref type="bibr" target="#b9">[10]</ref> LGIF <ref type="bibr" target="#b10">[11]</ref> LGFGD <ref type="bibr" target="#b12">[13]</ref> GMLGIF <ref type="bibr" target="#b20">[21]</ref></s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2.">Segmentation of Target Chips</head><p><s>Since both the GMLGIF model and the proposed method utilize the modified ratio distance, it is necessary to make a further comparison of these two methods in order to demonstrate the advantage of the nonlocal ACM. Figure <ref type="figure" target="#fig_8">6a</ref> shows the 12 chips of the ship target used in this experiment.</s><s>Chips 1-9, with sizes of 243 × 243-295 × 295, were from TerraSAR X-band images with 1-m resolution.</s><s>Chips 10-12, with sizes of 75 × 75-103 × 103, were from RADARSAT-2 C-band images with 5-m resolution.</s><s>As references, the manual segmentations are shown in Figure <ref type="figure" target="#fig_8">6b</ref>.</s><s>The results of the GMLGIF model are shown in Figure <ref type="figure" target="#fig_8">6c</ref>.</s><s>The proposed method was carried out in Figure <ref type="figure" target="#fig_8">6d</ref>, with τ = 3, σ = 15, λ = 15.</s><s>In low resolution SAR images, a ship target may appear to be a group of bright pixels, like Chips 10-12.</s><s>Both methods achieved satisfactory results when dealing with Chips 10 and 12.</s><s>In Chip 11, the contours of the GMLGIF model fell into local minima due to the strong speckle noise.</s><s>High resolution SAR images showed more structure information of targets; hence, ships appeared to have some texture characteristics, like Chips 1-9.</s><s>The intensity variations were usually caused by the complicated structure of the deck erection.</s><s>Under the circumstances, the GMLGIF model failed to deal with the intensity variations on ships.</s><s>Some dark regions could be be adjusted by regularization.</s><s>As a result, some ships extracted by GMLGIF were incomplete, while some were segmented into isolated regions.</s><s>By contrast, the ship contours obtained by the proposed method were closer to the references.</s></p><p><s>The segmentation performance was quantitatively evaluated by the mean absolute distance (MAD) <ref type="bibr" target="#b28">[29]</ref> and the Dice metric (DM) <ref type="bibr" target="#b29">[30]</ref>.</s><s>If there are n points on the snake contour S = {s 1 , s 2 , . . . ,</s><s>s n }, and k points on the manually-segmented contour M = {m 1 , m 2 , . . . ,</s><s>m k }, MAD can be defined as:</s></p><formula xml:id="formula_14">MAD(S, M) = 1 2 1 n n ∑ i=1 d(s i , M) + 1 k k ∑ j=1 d(m j , S)<label>(12)</label></formula><p><s>where d(s i , M)=min j s i , m j is the distance from s i to the closest point of M. DM is a measure of contour overlap, which is given by:</s></p><formula xml:id="formula_15">DM = 2A sm A s + A m , DM ∈ [0, 1]<label>(13)</label></formula><p><s>where A s , A m , A sm are the segmented contour area, the manually-segmented area, and their intersection area, respectively.</s><s>A higher DM indicates a better match between two contours.</s><s>In Figure <ref type="figure" target="#fig_9">7</ref>, the quantitative evaluation demonstrates that the contours extracted by the proposed method were more precise.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3.">Discussion of Parameters</head><p><s>The proposed method contains some parameters, such as τ, σ, and λ, which were empirically set in the given experiments.</s><s>λ is the weight adjusting the regularity of the region boundary, often used in many other ACMs.</s><s>In this section, we analyze the influence of the other two parameters, related to the patch comparison of the nonlocal processing.</s></p><p><s>Considering that τ is the half patch size and σ is the scale of the Gaussian kernel, we suppose that these two parameters are independent from each other.</s><s>Therefore, the control variate method was adopted in parameter analysis.</s><s>In other words, we changed one parameter and fixed the other one at a time.</s><s>The experiments were implemented on the first three chips in Figure <ref type="figure" target="#fig_5">5</ref>. Firstly, we set τ = 3 and the range of σ from 10-30.</s><s>The corresponding MADs and DMs of the segmentation results with various values of σ are shown in the top row of Figure <ref type="figure" target="#fig_10">8</ref>.</s><s>It can be seen that σ, in the range from 12-20, was appropriate for these images.</s><s>When σ was beyond this range, the segmentation performance degraded.</s><s>σ is the scale of the Gaussian kernel, and it controls the weight of patch comparison according to the Euclidean distance between patches.</s><s>Too small of a σ would greatly weaken the influence of the interaction between nonadjacent patches.</s><s>As a result, the model cannot reach the global optimal segmentation.</s><s>However, if σ becomes too large, the interaction between patches of different categories would lead to segmentation error.</s><s>Generally speaking, an image made of an almost constant pattern demands a large σ.</s><s>By contrast, fast feature variations requires a small one.</s></p><p><s>Secondly, we fixed σ = 15 and range of τ from 1-10 to test the influence of τ on segmentation.</s><s>The quantitative evaluations are shown in the bottom row of Figure <ref type="figure" target="#fig_10">8</ref>.</s><s>The half patch size τ directly influences the local statistical description of a pixel.</s><s>If a patch is too small, it is hard to estimate its local statistics.</s><s>Otherwise, too big of a patch is no longer locally homogeneous, and it reduces the segmentation accuracy.</s><s>When τ was set from 2-5, the segmentation kept relatively robust.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">Conclusions</head><p><s>Aiming at the problems of the multiplicative noise and variations of backscattering coefficients, we proposed an improved nonlocal ACM for ship segmentation in SAR images.</s><s>A new nonlocal energy, incorporating the distribution metric of a ratio distance, was defined to optimize regions with spatially-varying features.</s><s>The integral histogram was utilized in pairwise interactions to reduce the computational cost.</s><s>The advantages of the proposed method were verified by several rounds of experiments on the real SAR images from different sensors.</s><s>The results demonstrated that the proposed method was able to segment ship targets from speckled SAR images with intensity variations.</s><s>Compared with some existing algorithms, the proposed method achieved obvious improvement in refined segmentation.</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Figure 1 .</head><label>1</label><figDesc><div><p><s>Figure 1.</s><s>The intensity variations of ships in SAR images.</s><s>(a) Oil tanker; (b) carrier.</s></p></div></figDesc><graphic coords="2,97.77,306.90,82.68,82.68" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 .</head><label>2</label><figDesc><div><p><s>Figure 2. Segmentation by Jung's algorithms.</s><s>(a) Simulated SAR image; (b) segmentation using L 2 distance; (c) segmentation using sliced Wasserstein distance.</s></p></div></figDesc><graphic coords="4,102.56,383.93,127.57,127.57" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 .</head><label>3</label><figDesc><div><p><s>Figure 3. (a) Definition of the integral histogram of a grey image; (b) fast region computing.</s></p></div></figDesc><graphic coords="5,154.66,586.93,141.74,146.26" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 4 .</head><label>4</label><figDesc><div><p><s>Figure 4. Segmentations of images (a,b) with sizes of 103 × 103 and 206 × 206.</s></p></div></figDesc><graphic coords="7,273.03,92.87,113.39,113.88" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 5 .</head><label>5</label><figDesc><div><p><s>Figure 5. Cont.</s></p></div></figDesc><graphic coords="8,226.77,551.76,141.73,141.44" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 5 .</head><label>5</label><figDesc><div><p><s>Figure 5. Segmentation of SAR images.</s><s>The top row shows the real SAR images for the segmentation experiment.</s><s>From left to right: Subimage 1 is from an X-band Cosmo-Skymed image with 3-m resolution; Subimage 2 and Subimage 3 are from two C-band RADARSAT-2 images with 5-m resolution.</s><s>The second row shows the initial contours.</s><s>The third to the seventh rows show the segmentation results of Chan-Vese (CV), region-scalable fitting (RSF), local and global intensity fitting (LGIF), local and global fuzzy Gaussian distribution (LGFGD), and global minimization LGIF (GMLGIF), respectively.</s><s>The bottom row shows the the segmentation results of the proposed method.</s></p></div></figDesc><graphic coords="9,83.79,535.28,136.06,135.64" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 6 .</head><label>6</label><figDesc><div><p><s>Figure 6.</s><s>Cont.</s></p></div></figDesc><graphic coords="12,99.21,409.69,396.86,298.63" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure 6 .</head><label>6</label><figDesc><div><p><s>Figure 6.</s><s>Segmentation of target chips.</s><s>(a) Original chips; (b) manual segmentation for reference; (c) segmentation by the GMLGIF model; (d) segmentation by the proposed method.</s></p></div></figDesc><graphic coords="13,99.21,410.12,396.85,297.22" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure 7 .</head><label>7</label><figDesc><div><p><s>Figure 7. Quantitative evaluation.</s><s>The mean absolute distances (MADs) of segmentation are on the left, and the Dice metrics (DMs) of segmentation are on the right.</s></p></div></figDesc><graphic coords="14,301.37,92.87,212.60,119.43" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Figure 8 .</head><label>8</label><figDesc><div><p><s>Figure 8. Parameter analysis.</s><s>Top row: MADs and DMs vary with σ by fixing τ = 3. Bottom row: MADs and DMs vary with τ by fixing σ = 15.</s></p></div></figDesc><graphic coords="15,101.15,212.78,192.76,110.20" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Table 1 .</head><label>1</label><figDesc><div><p><s>Comparison of the running time.</s><s>RSF, region-scalable fitting.</s></p></div></figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Nonlocal ACM with Integral Histogram Nonlocal ACM without Integral Histogram</head><label></label><figDesc></figDesc><table><row><cell>Subimage 1</cell><cell>104.39 s</cell><cell>110.14 s</cell><cell>85.71 s</cell><cell>87.56 s</cell><cell>82.38 s</cell><cell>331.71 s</cell></row><row><cell>Subimage 2</cell><cell>126.79 s</cell><cell>130.16 s</cell><cell>101.03 s</cell><cell>96.76 s</cell><cell>103.60 s</cell><cell>398.23 s</cell></row><row><cell>Subimage 3</cell><cell>233.77 s</cell><cell>241.75 s</cell><cell>248.91 s</cell><cell>278.76 s</cell><cell>260.60 s</cell><cell>1167.23 s</cell></row></table></figure>
+		</body>
+		<back>
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Author Contributions: X.Z. and G.K. conceived of and devised the idea; X.Z. and B.X. designed and performed the experiments; X.Z. and G.D. analyzed the experimental results; all authors contributed to writing and editing the manuscript.</s></p><p><s>Funding: This work is supported by the Natural Science Foundation of China (NSFC) under Grant No. 61701508.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Conflicts of Interest:</head><p><s>The authors declare no conflict of interest.</s></p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Detection and Discrimination of Ship Targets in Complex Background from Spaceborne ALOS-2 SAR Images</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Ao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Wang</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/JSTARS.2017.2787573</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE J-STARS</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page" from="536" to="550" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Classification in Single-Pol SAR Images Based on Fuzzy Logic</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Margarit</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Tabascoship</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TGRS.2011.2112371</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Geosci. Remote Sens</title>
+		<imprint>
+			<biblScope unit="volume">49</biblScope>
+			<biblScope unit="page" from="3129" to="3138" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Neighborhood Geometric Center Scaling Embedding for SAR ATR</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Pei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Liu</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TAES.2013.110769</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Aerosp. Electron. Syst</title>
+		<imprint>
+			<biblScope unit="volume">50</biblScope>
+			<biblScope unit="page" from="180" to="192" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Statistical modeling of SAR images: A survey</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Gao</surname></persName>
+		</author>
+		<idno type="DOI">10.3390/s100100775</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Sensors</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page" from="775" to="795" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+	<note>PubMed</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Scheme of parameter estimation for generalized gamma distribution and its application to ship detection in SAR image</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Gao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Ouyang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Luo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Liang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Zhou</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TGRS.2016.2634862</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Geosci. Remote Sens</title>
+		<imprint>
+			<biblScope unit="volume">55</biblScope>
+			<biblScope unit="page" from="1812" to="1832" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Ship detection for high-resolution SAR images Based on feature analysis</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Jiang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Wu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Zhang</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/LGRS.2013.2248118</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Geosci. Remote Sens. Lett</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page" from="119" to="123" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Snake: Active contour models</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kass</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Witkin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Terzopoulos</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/BF00133570</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Comput. Vis</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="321" to="332" />
+			<date type="published" when="1987">1987</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Geodesic active contours</title>
+		<author>
+			<persName><forename type="first">V</forename><surname>Caselles</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Kimmel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Sapiro</surname></persName>
+		</author>
+		<idno type="DOI">10.1023/A:1007979827043</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Int. J. Comput. Vis</title>
+		<imprint>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="page" from="61" to="79" />
+			<date type="published" when="1997">1997</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Active contours without edges</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">F</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">A</forename><surname>Vese</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/83.902291</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Image Process</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page" from="266" to="277" />
+			<date type="published" when="2001">2001</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Minimization of region-scalable fitting energy for image segmentation</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Kao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Gore</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Image Process</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="page" from="1940" to="1949" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Active contours driven by local and global intensity fitting energy with application to brain MR image segmentation</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Xia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Kao</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.compmedimag.2009.04.010</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Comput. Med. Imaging Gr</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="520" to="531" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+	<note>PubMed</note>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<monogr>
+		<title level="m" type="main">Active contours driven by local Gaussian distribution fitting energy. Signal Process</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>He</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mishra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Li</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.sigpro.2009.03.014</idno>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="volume">89</biblScope>
+			<biblScope unit="page" from="2435" to="2447" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Efficient segmentation with the convex local-global fuzzy Gaussian distribution active contour for medical applications</title>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Thieu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Luong</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Rocchisani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">M</forename><surname>Sirakov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Viennet</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10472-014-9413-y</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Ann. Math. Artif. Intell</title>
+		<imprint>
+			<biblScope unit="volume">75</biblScope>
+			<biblScope unit="page" from="249" to="266" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Hybrid geodesic region-based curve evolutions for image segmentation</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Lankton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Nain</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Yezzi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Tannenbaum</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. SPIE</title>
+				<meeting>SPIE</meeting>
+		<imprint>
+			<date type="published" when="2007">2007</date>
+			<biblScope unit="volume">6510</biblScope>
+			<biblScope unit="page" from="2" to="10" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Active contours with selective local or global segmentation: A new formulation and level set method</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Song</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Zhou</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.imavis.2009.10.009</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Image Vis. Comput</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="page" from="668" to="676" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Shape Modeling with Front Propagation: A Level Set Approach</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Malladi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Sethian</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">C</forename><surname>Vemuri</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/34.368173</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Pattern Anal. Mach. Intell</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="page" from="158" to="175" />
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">SAR image segmentation based on level set with stationary global minimum</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Shuai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Sun</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Xu</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/LGRS.2008.2001768</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Geosci. Remote Sens. Lett</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page" from="644" to="648" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Multiphase SAR image segmentation with G 0 -statistical-model-based active contours</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Cao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Pi</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TGRS.2012.2227754</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Geosci. Remote Sens</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="4190" to="4199" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Unsupervised variational image segmentation/classification using a Weibull observation model</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Ayed</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Hennane</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Mitiche</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TIP.2006.881961</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Image Process</title>
+		<imprint>
+			<biblScope unit="volume">15</biblScope>
+			<biblScope unit="page" from="3431" to="3439" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Algorithms for finding global minimizes of image segmentation and denoising models</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">F</forename><surname>Chan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Esedoglu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Nikolova</surname></persName>
+		</author>
+		<idno type="DOI">10.1137/040615286</idno>
+	</analytic>
+	<monogr>
+		<title level="j">SIAM J. Appl. Math</title>
+		<imprint>
+			<biblScope unit="volume">966</biblScope>
+			<biblScope unit="page" from="1632" to="1648" />
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Convex active contour model for target detection in synthetic aperture radar images</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Tu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Su</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Li</surname></persName>
+		</author>
+		<idno type="DOI">10.1117/1.JRS.9.095084</idno>
+	</analytic>
+	<monogr>
+		<title level="j">J. Appl. Remote Sens</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="page" from="1" to="24" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">A review of image denoising algorithms, with a new one</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Buades</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Coll</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Morel</surname></persName>
+		</author>
+		<idno type="DOI">10.1137/040616024</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Siam J. Multiscale Model. Simul</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page" from="490" to="530" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Deblurring and denoising of images by nonlocal functionals</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kindermann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Osher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">W</forename><surname>Jones</surname></persName>
+		</author>
+		<idno type="DOI">10.1137/050622249</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Siam J. Multiscale Model. Simul</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page" from="1091" to="1115" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Non-local regularization of inverse problems</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Peyre</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bougleux</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Cohen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Inverse Probl. Imaging</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page" from="511" to="530" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Non-local active contours</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Jung</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Peyre</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">D</forename><surname>Cohen</surname></persName>
+		</author>
+		<idno type="DOI">10.1137/11085863X</idno>
+	</analytic>
+	<monogr>
+		<title level="j">SIAM J. Imaging Sci</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page" from="1022" to="1054" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<analytic>
+		<title level="a" type="main">Iterative weighted maximum likelihood denoising with probabilistic patch-based weights</title>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">A</forename><surname>Deledalle</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Denis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Tupin</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/TIP.2009.2029593</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Image Process</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="page" from="2661" to="2672" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+	<note>PubMed</note>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Integral histogram: A fast way to extract histograms in Cartesian spaces</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Porikli</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Proc. IEEE Comput. Soc. Conf. Comput. Vis. Pattern Recognit</title>
+		<imprint>
+			<biblScope unit="volume">1</biblScope>
+			<biblScope unit="page" from="829" to="836" />
+			<date type="published" when="2005">2005</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Statistical Analysis of a High-Resolution Sea-Clutter Database</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Grandhomme</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Geosci. Remote Sens</title>
+		<imprint>
+			<biblScope unit="volume">48</biblScope>
+			<biblScope unit="page" from="2024" to="2037" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Segmentation and tracking in echocardiographic sequences: Active contours guided by optical flow estimates</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Mikic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Krucinski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Thomas</surname></persName>
+		</author>
+		<idno type="DOI">10.1109/42.700739</idno>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Trans. Med. Imaging</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="page" from="274" to="284" />
+			<date type="published" when="1998">1998</date>
+		</imprint>
+	</monogr>
+	<note>PubMed</note>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title level="a" type="main">Max-flow segmentation of the left ventricle by recovering subject-specific distributions via a bound of the Bhattacharyya measure</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Ayed</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Punithakumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Ross</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Li</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.media.2011.05.009</idno>
+	</analytic>
+	<monogr>
+		<title level="j">Med. Image Anal</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="page" from="87" to="100" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+	<note>PubMed</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

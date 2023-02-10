@@ -1,0 +1,930 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">CapsidMesh: atomic-detail structured mesh representation of icosahedral viral capsids and the study of their mechanical properties</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">José</forename><forename type="middle">Luis</forename><surname>Alonzo-Velázquez</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Salvador</forename><surname>Botello-Rionda</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Rafael</forename><surname>Herrera-Guzmán</surname></persName>
+						</author>
+						<author role="corresp">
+							<persName><forename type="first">Mauricio</forename><surname>Carrillo-Tripp</surname></persName>
+							<email>mauricio.carrillo@cinvestav.mx</email>
+						</author>
+						<author>
+							<affiliation key="aff0">
+								<orgName type="department">Centro de Investigación en Matemáticas</orgName>
+								<orgName type="institution" key="instit1">†Ciencias de la Computación</orgName>
+								<orgName type="institution" key="instit2">Jalisco S/N, Col. Valenciana</orgName>
+								<address>
+									<postCode>C.P. 36023</postCode>
+									<settlement>Guanajuato, Guanajuato</settlement>
+									<region>A.C</region>
+									<country key="MX">México</country>
+								</address>
+							</affiliation>
+						</author>
+						<author>
+							<affiliation key="aff1">
+								<orgName type="department">‡Laboratorio de la Diversidad Biomolecular</orgName>
+								<orgName type="institution">Centro de Investigación y de Estudios Avanzados Unidad Monterrey</orgName>
+								<address>
+									<addrLine>Vía del Conocimiento 201, Parque PIIT</addrLine>
+									<postCode>C.P. 66600</postCode>
+									<settlement>Apodaca, Nuevo León</settlement>
+									<country key="MX">México</country>
+								</address>
+							</affiliation>
+						</author>
+						<title level="a" type="main">CapsidMesh: atomic-detail structured mesh representation of icosahedral viral capsids and the study of their mechanical properties</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="MD5">2CED11AA1AAE17A2F43B335F1813FA40</idno>
+					<idno type="DOI">10.1101/221663</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:27+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Viruses are the most abundant pathogens affecting all forms of life.</s><s>A major component of a virus is a protein shell, known as the viral capsid, that encapsulates the genomic material.</s><s>The fundamental functions of the capsid are to protect and transport the viral genome, and recognize the host cell.</s><s>Descriptions of this macromolecular complex have been proposed at different scales of approximation.</s><s>Here, we introduce a methodology to generate a structured volumetric mesh of icosahedral viral capsids (CapsidMesh) based on the atomic positions of their constituents.</s><s>Material properties of the capsid proteins can be set on every mesh element individually.</s><s>Hence, we have control over all levels of protein structure (atoms, amino acids, subunits, oligomers, 1 .</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>INTRODUCTION</head><p><s>Viruses are macro-molecular complexes made of nucleo-protein components.</s><s>In the case of icosahedral viruses, at least 60 copies of a specific protein type (virus capsid protein, or VCP) self-assemble into a symmetric closed structure in the form of a hollow shell (capsid) encapsulating the viral genome (DNA or RNA). <ref type="bibr" target="#b0">1</ref> Icosahedral capsids display interesting structural features, having a particular geometrical arrangement with a diverse range of VCP folds and particle size.</s><s>The way proteins are arranged in the capsid is commonly described in terms of the so-called T-number. <ref type="bibr" target="#b1">2</ref></s><s>In recent years, X-ray crystallography and nuclear magnetic resonance (NMR) experiments have produced a considerable amount of structural information with atomic detail. <ref type="bibr" target="#b2">3</ref></s><s>e study of the physical properties that characterize the viral capsid have advanced our knowledge in the fields of structural biology, biotechnology and medicine.</s><s>In particular, virus nanoindentation produced by Atomic Force Microscopy (AFM) has been used as the standard way to analyze the particle's mechanical response. <ref type="bibr" target="#b3">4</ref></s><s>AFM experiments have provided insights into the capsid's molecular structure. <ref type="bibr" target="#b4">5</ref></s><s>7]<ref type="bibr" target="#b7">[8]</ref><ref type="bibr" target="#b8">[9]</ref> In particular, the nanoindentation experiments performed on the Cowpea Chlorotic Mottle Virus <ref type="bibr" target="#b9">10</ref> have been computationally studied in some depth using coarse-grain models, <ref type="bibr" target="#b10">11</ref> elastic network approximations, <ref type="bibr" target="#b11">12</ref> and topology-based self-organized polymer models. <ref type="bibr" target="#b12">13</ref></s><s>eoretical methods usually provide a higher space resolution than current experimental techniques, yet they tend to have an elevated computational cost.</s><s>However, the theoretical framework of the Finite Element Method (FEM) is a promising and less expensive alternative approach.</s><s>An important consideration is that FEM requires a mesh with particular regularity characteristics.</s><s>5]<ref type="bibr" target="#b15">[16]</ref> In general, those meshes are highly optimized for molecular visualization, but are not robust enough for scientific numerical simulation analyses.</s><s>In the case of viral capsids, some procedures first generate internal and external smooth surface meshes, <ref type="bibr" target="#b16">17</ref> and then generate a non-structured volumetric model by filling the space found between them.</s></p><p><s>Other methods do not use meshes but a set of kernel shape functions in an attempt to connect the atomic and continuum descriptions of mechanical properties. <ref type="bibr" target="#b17">18</ref></s><s> this work, we present a methodology to build accurate structured volumetric meshes of icosahedral viral capsids based on atomic structural data, taking advantage of the inherent particle symmetries.</s><s>Our approach has several benefits.</s><s>1) It can be systematically used to study the full icosahedral capsid diversity observed in nature <ref type="bibr" target="#b2">3</ref> under the same framework.</s></p><p><s>Furthermore, since it is geometrically conceived, it can be easily modified to analyze helical capsids as well.</s><s>2) Our meshes capture the spatial and geometrical arrangement of proteins in the capsid in great detail, i. e., the space between atoms is not artificially filled up, maintaining a "porous medium".</s><s>3) It is possible to identify and extract the mesh elements associated to any set of atoms, residues or individual proteins, before and after numerical simulations.</s><s>4) Specific material parameter values can be set at each mesh element, independent of the structural level of the protein complex, allowing to test any scenario of material interfaces at different structural levels.</s><s>Finally, to test our methodology, we carried out FEM simulations of the nanoindentation of several viruses, previously characterized with AFM, estimating the elastic modulus and mechanical stresses of the corresponding capsids with atomic detail.</s><s>We show that our description is able to reproduce anisotropic properties of the particles.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>METHODOLOGY</head><p><s>To reduce the computational cost of the mesh generation procedure, we take advantage of the icosahedral symmetry of the virus particle by first meshing a subset of capsid proteins (GMesh).</s><s>We then rotate images of this subset to generate the mesh of the entire capsid (CapsidMesh).</s><s>The initial subset of capsid proteins for any icosahedral capsid is the socalled Icosahedral Asymmetric Unit (IAU). <ref type="bibr" target="#b18">19</ref></s><s>The atomic structural information is specified in a file with the standardized coordinates of the IAU in PDB format. <ref type="bibr" target="#b19">20</ref></s><s>A readily formatted data file can be downloaded from the Infopage/Biodata section of the virus of interest at the VIPERdb Science Gateway 3 (Fig. <ref type="figure" target="#fig_1">S1</ref>).</s><s>All the DNA or RNA structural information found in the data is discarded.</s><s>Firstly, we consider the capsid to be enclosed by the surface of two concentric spheres connected through a radial tessellation projection.</s><s>Then, we build several concentric intermediate spheres to generate hexahedral volumetric elements, discarding those that do not intersect any atom in the IAU.</s><s>Images of the surviving hexahedrons are rotated and merged to produce the final structured volumetric mesh of the full capsid.</s></p><p><s>The tessellation resolution can be adjusted to produce high definition meshes.</s><s>We provide a detailed description of the steps involved in our methodology.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Fundamental geometric unit (FGU)</head><p><s>Given an icosahedron and a sphere centered at the origin, one can project the edges of the icosahedron radially onto the surface of the sphere, producing an icosahedral tessellation with geodesic triangles (Fig. <ref type="figure" target="#fig_1">1a</ref>).</s><s>Any of the triangular faces of the icosahedron can be used to build the entire icosahedron by applying twenty rotations.</s><s>The same is true for the icosahedral tessellation of the sphere.</s><s>Furthermore, we can carry out the same process on 4 .</s><s>CC-BY-NC-ND 4.0 International license a certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity.</s><s>It is made available under a thickened up sphere and obtain an icosahedral tessellation of the shell with radial triangular prisms.</s><s>We define any of the triangular prisms to be the fundamental geometric unit (FGU).</s><s>The use of the FGU concept prevents the formation of intersecting mesh elements when the rotations are made later in the process, which is a typical problem found in other methodologies.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Mesh of the FGU</head><p><s>For simplicity, we first consider a thin FGU.</s><s>We take one geodesic triangle of the tesellated sphere and give it a structured triangular mesh.</s><s>We subdivide each equilateral triangle into three non-square quadrilaterals using the barycenter and the midpoint of the three edges.</s><s>We call this grid the 2D structured-quadrilateral mesh.</s><s>We project the line segments onto the spherical faces of the FGU.</s><s>Each quadrilateral of the aforementioned 2D mesh produces two curved quadrilaterals on the curved faces of the FGU, that together make up the top and bottom faces of curved hexahedrons.</s><s>In order to mesh a thick FGU that contains all the capsid's atoms, we consider it has several layers of equal thickness given by thin FGUs, always using the same structured quadrilateral mesh.</s><s>The result is the 3D structured hexahedral mesh of the FGU (Fig. <ref type="figure" target="#fig_1">1b</ref>).</s><s>In the example, the FGU's mesh contains 16 × 3 × 4 = 192 hexahedrons, or mesh elements.</s><s>An increase in mesh resolution will produce smaller hexahedrons and increase the number of mesh elements.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Geometric icosahedral asymmetric unit (GIAU)</head><p><s>As mentioned before, we use the atomic coordinates of the capsid's IAU as the starting point.</s><s>To consider all the atom interactions, we construct a capsomere composed of all the adjacent asymmetric units of the IAU (Fig. <ref type="figure" target="#fig_2">2a</ref>).</s><s>In the example shown, we use a T=3 viral capsid.</s><s>In this case, the IAU contains three identical capsid proteins occupying distinct interaction environments, identified with different labels and colors (according to the standard convention: A in blue, B in red, and C in green).</s><s>Hence, the final capsomere 5 is composed of 12 equivalent asymmetric units, including the central IAU, with 36 VCPs.</s></p><p><s>We have to do this because we have to account for all the protein-protein contacts inside the IAU, and therefore, the FGU.</s><s>The thickness of the FGU is defined according to the position of the closest and the farthest atoms from the capsid's geometrical center found in the IAU (plus a threshold value).</s><s>Therefore, all the atoms found inside the FGU, regardless of what asymmetric unit they belong to, are part of what we call the Geometric Icosahedral Asymmetric Unit, or GIAU (Fig. <ref type="figure" target="#fig_2">2b</ref>).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Radial voxelization of the GIAU</head><p><s>Next, we find all the elements of the structured hexahedral FGU mesh that intersect at least one atom in the GIAU according to the criteria explained in the next section.</s><s>We discard those mesh elements that do not comply with these criteria (Fig. <ref type="figure" target="#fig_2">2c</ref>).</s><s>The mesh resolution is a parameter that is set in advance.</s><s>When its value is high, a mesh with atomic detail is achieved.</s><s>However, the number of elements increases drastically.</s><s>The final set of mesh elements that are kept will be called GMesh (Fig. <ref type="figure" target="#fig_2">2d</ref>).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Intersection between FGU and GIAU</head><p><s>The volume of an atom of a given type is defined by the characteristic value of its radius.</s></p><p><s>There are several radius definitions. 21</s><s>Hence, we consider the atom type radii as parameters whose values can be set in a configuration file.</s><s>Here, we use the van der Waals radius, defined as half of the internuclear separation of two non-bonded atoms of the same element type on their closest possible approach.</s><s>We chose this definition because we found it gives better numerical stability in the simulations compared to other options (e. g., solvent accessible or excluded surface).</s></p><p><s>The criteria used to decide whether a hexahedral mesh element intersects a capsid's atom are described in the pseudocode of algorithm 1 and Fig. <ref type="figure" target="#fig_2">S2</ref>.</s><s>Several tests are made, where every FGU mesh element e i is compared to every atom p j in the GIAU.</s><s>The variables 6 involved are the atom radius r j , the distance d ij between the center of the atom O j and the barycenter of the mesh element G i , and the longest distance a i between the element's barycenter to a vertex A i .</s></p><p><s>Algorithm 1 Find mesh elements intersecting the volume defined by the van der Waals atom radius Require: For i mesh elements and j atoms: array of FGU elements e i , array of GIAU atoms p j , and array with van deer Waals radii values r j .</s><s>1: for each e i ∈ {FGU} do compute max(a i ), the distance between G i to all vertices of element e i .</s><s>The farthest vertex from G i is labeled</s></p><formula xml:id="formula_0">A i 9: end if 10: if d ij &lt; (r j + a i ) then 11:</formula><p><s>if vertex of element e i is inside of atom p j then 12:</s></p><p><s>RETURN: element e i is kept</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CapsidMesh: mesh of the full capsid</head><p><s>Once the voxelization of the GIAU has been produced, we make images and transform their positions to generate a complete icosahedral particle, according to the set of VIPERdb's standard rotation matrices.</s><s>The process of merging the GMesh images consists of finding all element vertices occupying the same position in space.</s><s>This is a computationally expensive task.</s><s>A way to considerably reduce the number of comparisons is to identify which mesh elements are at the interfaces of the FGU and, therefore, the GMesh (Fig. <ref type="figure" target="#fig_3">3a,b</ref>).</s><s>Consequently, in the end we know which hexahedral elements belong to what atom, residue, protein or GMesh interface (Fig. <ref type="figure" target="#fig_3">3c</ref>).</s><s>At this point, the mesh of the full capsid, or CapsidMesh, is ready to be used in numerical simulations studies (Fig. <ref type="figure" target="#fig_3">3d</ref>).</s><s>The mesh resolution is a free parameter that controls the coarseness of the final model (Fig. <ref type="figure" target="#fig_3">S3</ref>).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Finite element analysis of CapsidMesh nanoindentation</head><p><s>Here we give a brief description of the theory behind the nanoindentation numerical simulations using the Finite Element methodology.</s><s>The relation between strain and stress is deduced from the elasticity property, generally expressed via a constitutive-rigidity matrix</s></p><formula xml:id="formula_1">D = E(1 − ν) (1 + ν)(1 − 2ν)                   1 ν (1−ν) ν (1−ν) 0 0 0 ν (1−ν) 1 ν (1−ν) 0 0 0 ν (1−ν) ν (1−ν) 1 0 0 0 0 0 0 1−2ν (1−ν) 0 0 0 0 0 0 1−2ν (1−ν) 0 0 0 0 0 0 1−2ν (1−ν)                  <label>(1)</label></formula><p><s>given by a symmetric 6 × 6 matrix which contains the elastic parameters of the medium.</s><s>In the anisotropic case, it has two independent parameters.</s><s>For isotopical and homogeneous materials, the two parameters involved in such matrix are the elasticity modulus E (or Young's modulus) and the Poisson coefficient ν.</s><s>Note that, for heterogeneous materials, the number of parameters involved may be as large as twenty one.</s><s>Hooke's law states that</s></p><formula xml:id="formula_2">σ = D (<label>2</label></formula><formula xml:id="formula_3">)</formula><p><s>where σ is the stress and the strain.</s><s>The deformation is modeled by the linear partial differential equation given by Newton's second law: where u is the displacement, F is the force applied per unit of volume, and ρ is the mass density.</s><s>We can describe the material internal displacements through a discretization of space.</s><s>Such discretization is achieved by the CapsidMesh.</s><s>Interpolation of the values of the variables on the nodes of the mesh create a field.</s><s>Such interpolation is achieved via functions</s></p><formula xml:id="formula_4">∇ • σ + F = ρü<label>(3) 8 .</label></formula><formula xml:id="formula_5">N i of the form u(x, y, z) = i N i (x, y, z)u i .<label>(4)</label></formula><p><s>Multiplying Newton's second law by some weight functions W i , which can be the same as the interpolation functions (Galerkin technique <ref type="bibr" target="#b21">22</ref> ), and integrating over the entire domain as well as neglecting the inertia forces, we get the following linear system:</s></p><formula xml:id="formula_6">Ku = f,<label>(5)</label></formula><p><s>generated by the coupling of all the systems given by all the mesh elements, so that K is the standard rigidity matrix of FEM and f is the vector of forces. <ref type="bibr" target="#b21">22</ref></s><s>is equation must be solved numerically and efficiently with techniques such as LU factorization, iterative methods of preconditioned conjugate gradient, etc.</s><s>Once the displacements have been obtained, the stresses can be computed at the points of integration by using Eq. 2. Such stresses can be easily extrapolated to the nodes of the mesh using smoothing techniques. <ref type="bibr" target="#b21">22</ref></s><s>One way to understand the effect of the stress tensor with the help of a scalar is to use the von Mises stress J2 22</s></p><formula xml:id="formula_7">J2 = σ 2 x + σ 2 y + σ 2 z − (σ x σ y + σ x σ z + σ y σ z ) + 3(τ 2 xy + τ 2 xz + τ 2 yz ),<label>(6)</label></formula><p><s>where τ xy , τ xz , τ yz are the components of the shear stress tensor.</s></p><p><s>In this way, one can quantify and visualize the effects of the degree of stress in each point of the domain of the mesh.</s><s>This is an important result since all materials have an equivalent resistance stress with which one can determine how close or how far from failure is each point of the mesh depending on the deformation force imposed on the capsid.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>RESULTS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Mesh generation</head><p><s>We used our methodology to generate a CapsidMesh of icosahedral capsids based on the atomic Cartesian coordinates of the IAU found in VIPERdb (Fig. <ref type="figure" target="#fig_1">S1</ref>).</s><s>4]<ref type="bibr" target="#b24">[25]</ref> In particular, a comparison between the Cowpea Chlorotic Mottle Virus volumetric mesh generated with such methodology and a mesh generated with the CapsidMesh methodology is shown in Figure <ref type="figure" target="#fig_4">4</ref>. Clear differences can be seen in the internal structure regularity and the surface detail of the meshes.</s><s>The mesh generated with our methodology is structured and reproduces the molecular surface with atomic detail, both on the capsid's interior and exterior, as well as the spaces between protein interfaces.</s><s>In addition, all the elements in the mesh can be pinpointed and assigned to any structural feature of the particle (Fig. <ref type="figure" target="#fig_8">S4</ref>).</s><s>To test the robustness of our method, we generated a mesh for a set of representative viral capsids on a wide range of T-numbers: T1, T2, T3, T4, T7d, T7l, T13, T27, and T31 (Fig. <ref type="figure" target="#fig_9">S5</ref>).</s><s>Our methodology was capable to systematically generate a mesh for a large range of capsid sizes available on VIPERdb (approximately from 200 Å to 1000 Å in diameter).</s><s>Even more, it was possible to generate a mesh with the correct shape for capsids with known problematic structural features, such as constitutive holes or large protrusions (e. g. 3kk5 or 3j31, respectively.</s><s>4g93 is an example of a case presenting both features).</s><s>10</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Nanoindentation numerical simulations</head><p><s>The AFM experiment measures the relation between the applied force and the capsid indentation, i. e., a quantification of the particle's deformation response to squeezing.</s><s>The experiment records a characteristic force-indentation profile (experimental FZ curve), which is used to estimate the value of the capsid's mechanical properties by fitting a theoretical model to the collected data.</s><s><ref type="bibr" target="#b27">[28]</ref><ref type="bibr" target="#b28">[29]</ref> It is hard to control the precise contact point where the cantilever touches the capsid in the AFM experiments.</s><s>If the particle were a perfect sphere, this would not be of importance.</s></p><p><s>However, icosahedral capsids have several symmetry axes, which in principle, might have a different mechanical response.</s><s>In numerical simulations, it is straightforward to set a particular capsid orientation in line with the force load applied.</s><s>In this way, nanoindentation simulations can be achieved on a specific symmetry axis.</s></p><p><s>In this work, we combined the CapsidMesh methodology with the FEMT tool 30 to reproduce AFM capsid nanoindentation experimental results to test and characterize the generated meshes.</s><s>The setup of the simulation is depicted in Figure <ref type="figure" target="#fig_5">5</ref>. Once a symmetry axis was selected and the capsid mesh put in the right orientation, indentation on the capsid was produced by applying a controlled force load with a probe in direct contact with the top mesh elements.</s><s>The capsid was supported by a base in direct contact with the bottom mesh elements.</s><s>Both the probe and the base were nondeformable solids.</s><s>Since there are no tangential forces, there is no sliding on the system.</s><s>The indentation produced was quantified by the displacement measured in each mesh element.</s></p><p><s>We performed FEM nanoindentation simulations of viruses that had been previously characterized through AFM and whose atomic coordinates were available, namely, Cowpea Chlorotic Mottle Virus (T=3), <ref type="bibr" target="#b25">26</ref> Human Hepatitis B Virus (T=4), <ref type="bibr" target="#b26">27</ref> Bacteriophage T7 Prohead (T=7), <ref type="bibr" target="#b27">28</ref> and the HK97-like bacteriophage HII (T=7) <ref type="bibr" target="#b28">29</ref> (Fig. <ref type="figure" target="#fig_6">6a</ref>).</s><s>The goal was to find the set of values for the parameters E and ν such as to reproduce the experimental spring constant k for each capsid.</s><s>It was previously shown that the simulation results are rather insensitive to the Poisson coefficient for values ν &lt;0.5. <ref type="bibr" target="#b25">26</ref></s><s>We corroborated that observation with our model and set ν to a constant value of 0.3 to be consistent with previous reports.</s></p><p><s>Using an initial guess for the force load and for the elastic modulus within the known linear regime range, capsid indentations on the 5-fold symmetry axis were recorded as a function of mesh resolution.</s><s>Then, a linear scaling of the form E 1 /E 2 = I 1 /I 2 was applied to each point in order to find the elastic modulus value that gave the expected experimental force/indentation ratio k (Fig. <ref type="figure" target="#fig_6">6b</ref>).</s><s>Also, we conducted indentations on the 3 and 2-fold axes on a mesh with a resolution of 1 Å (atomic detail), recording the force needed to produce the same indentation as in the 5-fold axis.</s><s>Results are summarized in Table <ref type="table">1</ref>.</s></p><p><s>Table <ref type="table">1</ref>: Nanoindentation of wild type empty capsids and mechanical properties of Cowpea Chlorotic Mottle Virus (1cwp), Human Hepatitis B Virus (4g93), Bacteriophage T7 Prohead (3izg), and HK97-like bacteriophage HII (3j4u), using a mesh resolution of 1 Å in all cases.</s><s>Shown: geometrical protein arrangement T , diameter d (two times the outer radius), capsid width w (outer radius minus inner radius), nanoindentation I (16% of d in all cases), force needed to produce I on the 2-fold, 3-fold, and 5-fold axes, Young's modulus E prediction, experimental spring constant k exp , and data source.</s><s>The von Mises stress analysis for the 5-fold indentation is shown in Figure <ref type="figure" target="#fig_6">6c</ref>.</s><s>It is clear where the regions of maximum stress are (around the loading point as expected), irrigating towards the equator line.</s><s>Interestingly enough, we found that regions away from the loading point also present high von Mises stress values between VCPs, i. e., in the protein-protein interfaces.</s><s>Also, it becomes clear how the mesh captures the true shape and atomic distribution of the capsids, e. g. the protrusions and holes of the Human Hepatitis</s></p><formula xml:id="formula_8">PDB T d w I F 2 F 3 F 5 E k exp ID number [ Å] [ Å] [ Å] [nN] [nN] [nN] [MPa] [N/m]</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>12</head><p><s>. CC-BY-NC-ND 4.0 International license a certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity.</s><s>It is made available under</s></p><p><s>The copyright holder for this preprint (which was not this version posted March 2, 2018.</s><s>; https://doi.org/10.1101/221663</s><s>doi: bioRxiv preprint B Virus, or the deviation from a sphere in the case of the larger HK97-like bacteriophage HII capsid.</s><s>Such mesh fidelity to the molecular shape allows the observation of how the structural features affect the stress distribution both outside and inside the protein shell.</s></p><p><s>Those are natural results of our model, evidence of the importance of having a faithful description of the molecular surface.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>DISCUSSION</head><p><s>There are several advantages of the CapsdiMesh methodology over previously reported methods to generate mesh models of icosahedral capsids.</s><s>One is the level of control the user has over each element of the structured mesh.</s><s>The volumetric meshes produced with our methodology are faithful to the spatial distribution of the atoms and the capsid's VCPs geometrical arrangement, i.e. there are no mesh elements in regions corresponding to empty space between proteins.</s><s>This is to be contrasted with the meshes produced by previous methods, e. g., <ref type="bibr" target="#b16">17</ref> where the space between two surface meshes (capsid's interior and exterior) are completely filled up.</s><s>Our meshes have a radial structure built with regular elements and are suitable to be used in numerical analysis methods such as finite element, finite volume and finite differences.</s><s>Moreover, one can assign specific material characteristics to each element in the mesh and, therefore, have control over the different structural levels of the macromolecular structure, e. g., atom, residue, oligomer.</s><s>Our method converts the atomic models to meshes, whereas the simulation and analysis of the meshes are carried out by a third party software.</s><s>In our case, we used FEMT, however, the way we designed the CapsidMesh methodology offers the flexibility to use other simulation and analysis packages.</s></p><p><s>This independence increases the value of our methodology.</s></p><p><s>Given that even if a mesh element has a minor intersection with an atom the entire element is accepted into the mesh, the CapsidMesh is always an over-approximation of the actual volume occupancy.</s><s>Also, the mesh produced does not have a smooth surface, 13 therefore, the resulting mechanical simulations will likely produce stress concentrations at the point were the force load is applied.</s><s>Both effects are greatly diminished by setting a high mesh resolution value.</s><s>However, they should not be a problem when regularity in the mesh is a desirable property and it does not affect simulations of molecular properties that could be very sensitive to area or volume.</s><s>We are working on the implementation of refinement techniques to address such problems when that is not the case.</s><s>Likewise, the CapsidMesh methodology takes advantage of the intrinsic symmetry of icosahedral capsids to reduce the computational cost involved in the generation of a volumetric structured mesh.</s><s>We focused our work on that type of capsid geometry because there is a large amount of structural data available.</s><s>To the best of our knowledge, it is also the only geometry for which there are experimental AFM nanoindentation studies, as opposed to helical capsids.</s><s>However, it is possible to adapt the procedure to other geometries, e. g. cylindrical symmetry, keeping the computational efficiency.</s><s>With this in mind, cellular protein assemblies could also be meshed following our procedure by finding the correct symmetry.</s><s>In the case of molecular complexes without symmetry, the meshing would have to be over a cubic domain and the computational cost should be decreased by other techniques.</s><s>However, the mesh elementatom intersection algorithm can be the same as that in the CapsidMesh approach.</s><s>We are also working on the development of such methodologies.</s></p><p><s>We produced the CapsidMesh of several viruses and performed a simulated nanoindentation on them through FEM.</s><s>By reproducing experimental AFM measurements, we used our models and methodology to estimate the value of the Young's modulus E, an important macroscopic material property.</s><s>It is worth noting that E might not be the best descriptor to use for a microscopic capsid, since it is not an homogeneous medium and it has an anisotropic character.</s><s>Nonetheless, several works have estimated the value of E for the Cowpea Chlorotic Mottle Virus in the past.</s><s>Such estimations seem to highly depend on the approximation used in the continuum model fitted to the experimental data.</s><s>The simplest model for the mechanical response is to think of the capsid as an elastic thin spherical shell 14 undergoing small deformations.</s><s>Using this approximation, E has a value of 140 MPa. <ref type="bibr" target="#b25">26</ref></s><s>A homogeneous, isotropic, elastic, thick-shell non-linear continuum elasticity model roughly captured the linear behavior observed in experimental measurements giving estimates for E of 280-360 MPa. <ref type="bibr" target="#b22">23</ref></s><s>A heterogeneous geometry, non-linear continuum elasticity model was tuned with a value for E of 215 MPa to match the experimental spring constant value. <ref type="bibr" target="#b23">24</ref></s><s>en more, the use of a mesh free method scaled to the experiments produced an effective E of 493 MPa. <ref type="bibr" target="#b17">18</ref></s><s>The last methodology is based on the atomic coordinates of the capsid, hence providing the same advantage as our method in terms of attempting to bridge the atomic and continuum descriptions.</s></p><p><s>Our model, being a continuum approximation, does not take into account long-range atomic interactions explicitly.</s><s>On the other hand, short-range interactions are present by the inter-atomic overlap produced by the van der Waals radii.</s><s>Atoms within a covalent bond distance will have a large overlap, whereas atoms within a van der Waals interaction distance range, e. g.</s><s>VCP-VCP interface atoms, will have a smaller overlap but still be connected by elements of the mesh, even at the highest mesh resolution.</s><s>However, one has to keep in mind that continuum models can only capture geometric details up to a lower limit, as previously shown. <ref type="bibr" target="#b30">31</ref></s><s>In this sense, the mesh resolution is a parameter that controls the coarseness of the model in our methodology.</s><s>For mesh resolutions &gt; 15 Å, all cases studied in this work converge in terms of the elastic response E, indicating an upper limit on the coarseness and lack of detail on the model.</s><s>As we increase the mesh resolution, structural differences between capsids start to gain relevance, up to a point where they can be clearly distinguishable from each other.</s><s>We found this to be at 1 Å of mesh resolution.</s><s>Higher resolutions, even though possible, would not add much to the description of the continuum model.</s><s>We believe such lower limit is a good balance between a fine geometric detail and a coarse-scale of deformations for our model.</s><s>In this context, we present the relationship between the mesh resolution and the Young's modulus value that reproduces the experimentally measured spring constant k for the four cases studied.</s><s>The E values 15 predicted by our model are in the same order of magnitude as those previously reported, when the mesh resolution is on the atomic level.</s><s>Furthermore, within our approximations, the structural detail of a Capsidmesh is sufficient to obtain anisotropy.</s><s>To the best of our knowledge, CapsidMesh is the only model that reproduces the correct relation between symmetry axes in terms of stiffness.</s><s>AFM experiments showed that the icosahedral axes of T7 capsids follow the relationship 2 &gt; 3 &gt; 5. <ref type="bibr" target="#b27">28</ref> Our prediction for the Bacteriophage T7 Prohead is concomitant with that observation.</s><s>This result is one more indication that the use of a mesh with atomic detail is important in the description of macromolecular complexes.</s><s>With this in mind, and even though we only used CapsidMesh-FEMT to study the nanoindentation process, we expect that the estimation of other biophysical properties would also improve.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>CONCLUSIONS</head><p><s>In this work, we present a methodology to systematically generate atomic-detailed regular structured volumetric mesh representations of icosahedral capsids based on atomic data.</s></p><p><s>With the use of a CapsidMesh, it is straightforward to assign a set of mesh elements to any given structural protein level, i. e., from individual atoms to a whole VCP.</s><s>The CapsidMesh can be coupled to a third party simulation and analysis tool to study mechanical properties of the particle.</s><s>In this case, we used FEMT to simulate the nanoindentation process of viral capsids previously characterized through AFM experiments.</s><s>By reproducing the elastic response through the experimental spring constant, the CapsidMesh-FEMT combination is able to estimate the Young's modulus, showing consistent results with previous findings on organic materials.</s><s>In addition, our results show that a mesh with atomic-detail is sufficient to produce an anisotropic response of the icosahedral particles concomitant with experimental results.</s><s>A radial projection of the face mesh produces structured hexahedrons, or mesh elements (one is highlighted in yellow).</s><s>This is the 3D structured hexahedral mesh of the FGU.</s></p><note type="other">16</note></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>3 :</head><label>3</label><figDesc><div><p><s>for each p j ∈ {GIAU} do4: compute distance d ij between G i and the center O j of p j 5: if d ij &lt; r j then 6: RETURN: element e i is kept 7: else 8:</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 :</head><label>1</label><figDesc><div><p><s>Figure 1: Construction of the fundamental geometric unit (FGU) mesh.</s><s>(A) Icosahedral tessellation of a sphere with geodesic triangles.</s><s>One face has been meshed with structured triangles.</s><s>In this example, the vertices of one of the sixteen triangles on this face are depicted by black dots.</s><s>Each triangle is subdivided into three non-square quadrilaterals using the baricenter (red dot) and the midpoint of the three edges (gren dots).</s><s>The result is the 2D structured quadrilateral mesh.</s><s>(B) Concentric spheres give layers of equal thickness.A radial projection of the face mesh produces structured hexahedrons, or mesh elements (one is highlighted in yellow).</s><s>This is the 3D structured hexahedral mesh of the FGU.</s></p></div></figDesc><graphic coords="17,72.00,110.74,468.02,212.36" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc><div><p><s>Figure 2: GMesh: construction and voxelization of the Geometric Icosahedral Asymmetric Unit (GIAU).</s><s>(A) Schematic representation of a full T=3 icosahedral lattice.</s><s>Each trapezoid represents an independent capsid protein occupying distinct environments.</s><s>In this case, the central IAU is composed of three proteins, labeled A (blue), B (red), and C (green).</s><s>All the adjacent asymmetric units are highlighted in orange.</s><s>(B) Capsomere composed of 12 asymmetric units, 36 capsid proteins.</s><s>Equivalent environments are depicted by color: A in blue, B in red, and C in green.</s><s>(C) All the elements in the FGU mesh that intersect an atom in the GIAU are kept, otherwise discarded.</s><s>An FGU mesh of 5 Å resolution is shown.</s><s>(D)The final set of mesh elements compose the GMesh.</s><s>A resolution increase to 1 Å produces an atom-detailed mesh.</s></p></div></figDesc><graphic coords="18,72.00,72.00,468.03,428.25" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 :</head><label>3</label><figDesc><div><p><s>Figure 3: CapsidMesh of a T=3 viral capsid.</s><s>(A) All the FGU mesh elements at the interfaces are identified, shown in purple.</s><s>(B) Only those elements are used in the merging of the images process.</s><s>(C) Inner view of the final volumetric mesh.</s><s>The GMesh interfaces (purple cells) and the capsid's atomic detail are clear.</s><s>(D) The CapsidMesh is the final volumetric structured mesh.</s><s>The hexahedral elements are colored according to the protein environment they belong to (A in blue, B in red, and C in green).</s></p></div></figDesc><graphic coords="19,72.00,72.00,468.01,518.24" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 4 :</head><label>4</label><figDesc><div><p><s>Figure 4: Cowpea Chlorotic Mottle Virus capsid.</s><s>Zoomed in cut view of the 3D mesh created with the (A) method reported by Gibbons and Klug, 24 and (B) CapsidMesh method reported in this work.</s><s>Differences in mesh structure regularity are appreciated.</s><s>GMesh interfaces in purple.</s></p></div></figDesc><graphic coords="20,72.00,72.00,468.01,519.49" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Figure 5 :</head><label>5</label><figDesc><div><p><s>Figure5: Capsid nanoindentation simulation.</s><s>Left: Initial conditions, where the mesh elements in blue are in direct contact to a base, and mesh elements in yellow are in direct contact with a probe.</s><s>Right: A force load is applied on a given capsid's symmetry axis.</s><s>The mesh deformation is quantified by the indentation produced (displacement measured in each mesh element).</s><s>The color scale used represents minimum displacement in blue, and maximum displacement in red.</s></p></div></figDesc><graphic coords="21,72.00,72.00,468.03,326.77" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 6 :</head><label>6</label><figDesc><div><p><s>Figure 6: Characterization of CapsidMesh and mechanical properties.</s><s>(A) The rendered molecular shape of Cowpea Chlorotic Mottle Virus (1cwp, black circle), Human Hepatitis B Virus (4g93, red square), Bacteriophage T7 Prohead (3izg, green diamond), and HK97-like bacteriophage HII (3j4u, blue triangle).</s><s>The corresponding location of a 5-fold, 3-fold, and 2-fold axes are indicated.</s><s>The viewpoint and plane cut used in panel C is shown.</s><s>Capsids are proportionally sized, generated with VMD.</s><s>(B) Dependence of Young's modulus E on the mesh resolution to reproduce the experimental spring constant k. (C) Stress analysis after nanoindentation.</s><s>Transverse cut showing the interior of the capsid.</s><s>von Mises values are shown for a force load of 0.5 nN using the E value corresponding to a 1 Å mesh resolution.</s></p></div></figDesc><graphic coords="22,72.00,72.00,468.01,150.83" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure S2 . 27 Figure</head><label>S227</label><figDesc><div><p><s>Figure S2.</s><s>Intersection between FGU elements and GIAU atoms.</s><s>We perform several tests, where every FGU mesh element e i is compared to every atom p j in the GIAU.</s><s>The values involved in the tests are the atom radius r j , the distance d ij between the atom's center O j and the element's barycenter G i , and the longest distance a i between the element's barycenter to the vertex A i .</s></p></div></figDesc><graphic coords="27,72.00,72.00,468.01,205.66" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head>Figure S4 .</head><label>S4</label><figDesc><div><p><s>Figure S4.</s><s>Assignment of specific properties to each element in the mesh.</s><s>GMesh of the CCMV shown from the outside and from the inside of the capsid.</s><s>On the left, mesh element color indicates distinct protein environments in the capsid: A in blue, B in red, and C in green.</s><s>On the right: residues colored by amino acid type.</s></p></div></figDesc><graphic coords="29,72.00,72.00,468.03,393.15" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_9"><head>Figure S5 .</head><label>S5</label><figDesc><div><p><s>Figure S5.</s><s>CapsidMesh of a representative set of virus capsids with different T-number.</s><s>The color of each mesh element indicates the location of proteins in different environments inside the capsid.</s><s>The PDBID and the T-number value is shown under the corresponding</s></p></div></figDesc><graphic coords="30,72.00,72.00,468.03,529.81" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc><div><p></p></div></figDesc><graphic coords="26,72.00,233.79,468.01,306.73" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0"><head></head><label></label><figDesc><div><p></p></div></figDesc><graphic coords="28,72.00,72.00,468.03,274.89" type="bitmap" /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>7</head><label></label><figDesc><div><p><s>. CC-BY-NC-ND 4.0 International license a certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity.It is made available underThe copyright holder for this preprint (which was not this version postedMarch 2, 2018.</s></p></div></figDesc><table><row><cell>bioRxiv preprint</cell><cell>doi:</cell><cell>; https://doi.org/10.1101/221663</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head></head><label></label><figDesc><div><p><s>CC-BY-NC-ND 4.0 International license a certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity.</s><s>It is made available under</s></p></div></figDesc><table><row><cell>bioRxiv preprint</cell><cell>doi:</cell><cell>; https://doi.org/10.1101/221663</cell><cell>this version posted March 2, 2018.</cell><cell>The copyright holder for this preprint (which was not</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>9</head><label></label><figDesc><div><p><s>. CC-BY-NC-ND 4.0 International license a certified by peer review) is the author/funder, who has granted bioRxiv a license to display the preprint in perpetuity.</s><s>It is made available under</s></p></div></figDesc><table><row><cell>bioRxiv preprint</cell><cell>doi:</cell><cell>; https://doi.org/10.1101/221663</cell><cell>this version posted March 2, 2018.</cell><cell>The copyright holder for this preprint (which was not</cell></row></table></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgement</head><p><s>Simulations were executed in the high performance computing center Insurgente from CIMAT, administered by Jesús Rocha.</s><s>We gratefully acknowledge MSc.</s><s>Jorge Lopez-Ruiz from CIMAT for his technical assistance by conducting some of the simulations presented here, and the support of NVIDIA Corporation by the donation of the Titan X Pascal GPU used in this work.</s><s>R.H.G. would like to thank the International Centre for Theoretical Physics and the Institut des Hautes Études Scientifiques for their hospitality and support.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Supporting Information Available</head></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Supplemental information</head><p><s>CapsidMesh: atomic-detail structured mesh representation of icosahedral viral capsids for the study of their physical properties</s></p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<monogr>
+		<title level="m" type="main">Principles of molecular virology</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Cann</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">L D</forename><surname>Caspar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Klug</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+	<note>Physical principles in the construction of regular viruses</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><surname>Carrillo-Tripp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Shepherd</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">A</forename><surname>Borelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Venkataraman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Lander</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Natarajan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">E</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">L</forename><surname>Brooks</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Reddy</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2009">2009</date>
+			<biblScope unit="volume">37</biblScope>
+			<biblScope unit="page" from="D436" to="D442" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">H</forename><surname>Roos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Bruinsma</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">J L</forename><surname>Wuite</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature Physics</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page" from="733" to="743" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">H</forename><surname>Roos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">J L</forename><surname>Wuite</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Adv. Mater</title>
+		<imprint>
+			<biblScope unit="volume">21</biblScope>
+			<biblScope unit="page" from="1187" to="1192" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">G</forename><surname>Ayton</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">A</forename><surname>Voth</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biophys. J</title>
+		<imprint>
+			<biblScope unit="volume">99</biblScope>
+			<biblScope unit="page" from="2757" to="2765" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Miao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">E</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>Ortoleva</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. Phys. Chem. B</title>
+		<imprint>
+			<biblScope unit="volume">114</biblScope>
+			<biblScope unit="page" from="11181" to="11195" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">H</forename><surname>Ode</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Nakashima</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Kitamura</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Sugiura</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Sato</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Front</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Microbiol</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page" from="1" to="9" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">G</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Perilla</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">L</forename><surname>Yufenyuy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Meng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ning</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Ahn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">M</forename><surname>Gronenborn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Schulten</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Aiken</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Zhang</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nature</title>
+		<imprint>
+			<biblScope unit="volume">497</biblScope>
+			<biblScope unit="page" from="643" to="646" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">B</forename><surname>Bancroft</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Hiebert</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Virology</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1967">1967</date>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="page" from="354" to="356" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><surname>Arkhipov</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biophys. J</title>
+		<imprint>
+			<biblScope unit="volume">97</biblScope>
+			<biblScope unit="page" from="2061" to="2069" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">C</forename><surname>Globisch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Krishnamani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Deserno</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Peter</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PLoS ONE</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="page">e60582</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">O</forename><surname>Kononova</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Snijder</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Brasch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Cornelissen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">I</forename><surname>Dima</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">A</forename><surname>Marx</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">J L</forename><surname>Wuite</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">H</forename><surname>Roos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Barsegov</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biophys. J</title>
+		<imprint>
+			<biblScope unit="volume">105</biblScope>
+			<biblScope unit="page" from="1893" to="1903" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">F</forename><surname>Sanner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Olson</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biopolymers</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="305" to="320" />
+			<date type="published" when="1996">1996</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Lu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">J. Chem. Theory Comput</title>
+		<imprint>
+			<biblScope unit="volume">7</biblScope>
+			<biblScope unit="page" from="203" to="212" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<monogr>
+		<title level="m" type="main">Fast Visualization of Gaussian Density Surfaces for Molecular Dynamics and Particle System Trajectories. EuroVis -Short Papers</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Krone</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Stone</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Ertl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Schulten</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">H</forename><surname>Si</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACM Trans. Math. Softw</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="page" from="1" to="36" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><surname>Aggarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J.-S</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">S</forename><surname>Klug</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Comput. Model. Eng. Sci</title>
+		<imprint>
+			<biblScope unit="volume">98</biblScope>
+			<biblScope unit="page" from="69" to="99" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><surname>Carrillo-Tripp</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">L</forename><surname>Brooks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><forename type="middle">S</forename><surname>Reddy</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">PROTEINS: Structure, Function, and Bioinf</title>
+		<imprint>
+			<biblScope unit="volume">73</biblScope>
+			<biblScope unit="page" from="644" to="655" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">M</forename><surname>Berman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Westbrook</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Feng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Gilliland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">N</forename><surname>Bhat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Weissig</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">N</forename><surname>Shindyalov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">E</forename><surname>Bourne</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Research</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="page">235</biblScope>
+			<date type="published" when="2000">2000</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">Inorganic Chemistry; Pearson</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Housecroft</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Sharpe</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<biblScope unit="page" from="1013" to="1014" />
+		</imprint>
+	</monogr>
+	<note>4th ed.</note>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<title level="m" type="main">Finite elements and approximation</title>
+		<author>
+			<persName><forename type="first">O</forename><forename type="middle">C</forename><surname>Zienkiewicz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Morgan</surname></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">M</forename><surname>Gibbons</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">S</forename><surname>Klug</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Phys. Rev. E</title>
+		<imprint>
+			<biblScope unit="volume">75</biblScope>
+			<biblScope unit="page">31901</biblScope>
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">M</forename><surname>Gibbons</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">S</forename><surname>Klug</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biophys. J</title>
+		<imprint>
+			<biblScope unit="volume">95</biblScope>
+			<biblScope unit="page" from="3640" to="3649" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">W</forename><surname>Roos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Gibbons</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Arkhipov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Uetrecht</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Watts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Wingfield</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Steven</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Heck</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Schulten</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Klug</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Wuite</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Biophys. J</title>
+		<imprint>
+			<biblScope unit="volume">99</biblScope>
+			<biblScope unit="page" from="1175" to="1181" />
+			<date type="published" when="2010">2010</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Michel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">L</forename><surname>Ivanovska</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">M</forename><surname>Gibbons</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">S</forename><surname>Klug</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">M</forename><surname>Knobler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">J L</forename><surname>Wuite</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">F</forename><surname>Schmidt</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Pnas</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2006">2006</date>
+			<biblScope unit="volume">103</biblScope>
+			<biblScope unit="page" from="6184" to="6189" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">C</forename><surname>Uetrecht</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Versluis</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">R</forename><surname>Watts</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">H</forename><surname>Roos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">J L</forename><surname>Wuite</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">T</forename><surname>Wingfield</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">C</forename><surname>Steven</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J R</forename><surname>Heck</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2008">2008</date>
+			<biblScope unit="volume">105</biblScope>
+			<biblScope unit="page" from="9216" to="9220" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M</forename><surname>Hernando-Perez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Pascual</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Aznar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ionel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">R</forename><surname>Caston</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Luque</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">L</forename><surname>Carrascosa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Reguera</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">J</forename><surname>De Pablo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Nanoscale</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page" from="2702" to="2709" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">H</forename><surname>Roos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">I</forename><surname>Gertsman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">R</forename><surname>May</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">L B</forename><surname>Iii</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">E</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">J L</forename><surname>Wuite</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Pnas</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<biblScope unit="volume">109</biblScope>
+			<biblScope unit="page" from="2342" to="2347" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Vargas-Felix</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Botello-Rionda</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Universitaria</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<biblScope unit="volume">22</biblScope>
+			<biblScope unit="page" from="14" to="24" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><surname>Aggarwal</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">R</forename><surname>May</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">L</forename><surname>Brooks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><forename type="middle">S</forename><surname>Klug</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Phys. Rev</title>
+		<imprint>
+			<biblScope unit="volume">93</biblScope>
+			<biblScope unit="page">12417</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

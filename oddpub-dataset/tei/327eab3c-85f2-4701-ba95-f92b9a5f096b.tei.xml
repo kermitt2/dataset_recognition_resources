@@ -1,0 +1,1750 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Inferring interaction partners from protein sequences using mutual information</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2018-11-13">November 13, 2018</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author role="corresp">
+							<persName><forename type="first">Anne-Florence</forename><surname>Bitbol</surname></persName>
+							<email>florence.bitbol@sorbonne-universite.fr</email>
+							<idno type="ORCID">0000-0003-1020-494X</idno>
+							<affiliation key="aff0">
+								<orgName type="laboratory">Laboratoire Jean Perrin (UMR 8237</orgName>
+								<orgName type="institution" key="instit1">Sorbonne Universite ´</orgName>
+								<orgName type="institution" key="instit2">CNRS</orgName>
+								<address>
+									<postCode>F-75005</postCode>
+									<settlement>Paris</settlement>
+									<country key="FR">France</country>
+								</address>
+							</affiliation>
+							<affiliation key="aff1">
+								<orgName type="institution" key="instit1">University of Texas at Austin</orgName>
+								<orgName type="institution" key="instit2">UNITED STATES</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">Inferring interaction partners from protein sequences using mutual information</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2018-11-13">November 13, 2018</date>
+						</imprint>
+					</monogr>
+					<idno type="MD5">009F3E15E9E8890C76BB2DE8735C8B93</idno>
+					<idno type="DOI">10.1371/journal.pcbi.1006401</idno>
+					<note type="submission">Received: July 23, 2018 Accepted: October 27, 2018</note>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.7.2-SNAPSHOT" ident="GROBID" when="2022-05-18T11:33+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p><s>Functional protein-protein interactions are crucial in most cellular processes.</s><s>They enable multi-protein complexes to assemble and to remain stable, and they allow signal transduction in various pathways.</s><s>Functional interactions between proteins result in coevolution between the interacting partners, and thus in correlations between their sequences.</s><s>Pairwise maximum-entropy based models have enabled successful inference of pairs of aminoacid residues that are in contact in the three-dimensional structure of multi-protein complexes, starting from the correlations in the sequence data of known interaction partners.</s><s>Recently, algorithms inspired by these methods have been developed to identify which proteins are functional interaction partners among the paralogous proteins of two families, starting from sequence data alone.</s><s>Here, we demonstrate that a slightly higher performance for partner identification can be reached by an approximate maximization of the mutual information between the sequence alignments of the two protein families.</s><s>Our mutual informationbased method also provides signatures of the existence of interactions between protein families.</s><s>These results stand in contrast with structure prediction of proteins and of multiprotein complexes from sequence data, where pairwise maximum-entropy based global statistical models substantially improve performance compared to mutual information.</s><s>Our findings entail that the statistical dependences allowing interaction partner prediction from sequence data are not restricted to the residue pairs that are in direct contact at the interface between the partner proteins.</s></p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Author summary</head><p><s>Functional protein-protein interactions are at the heart of most intra-cellular processes.</s><s>Mapping these interactions is thus crucial to a systems-level understanding of cells, and has broad applications to areas such as drug targeting.</s><s>Systematic experimental identification of protein interaction partners is still challenging.</s><s>However, a large and rapidly growing amount of sequence data is now available.</s><s>Recently, algorithms have been proposed to identify which proteins interact from their sequences alone, thanks to the co-variation of the sequences of interacting proteins.</s><s>These algorithms build upon inference methods that have been used with success to predict the three-dimensional structures of proteins and multi-protein complexes, and their focus is on the amino-acid residues that are in</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Introduction</head><p><s>Most cellular processes are carried out by interacting proteins.</s><s>Functional protein-protein interactions allow multi-protein complexes to assemble, and ensure proper signal transduction in various pathways.</s><s>Hence, mapping functional protein-protein interactions is an important fundamental question.</s><s>High-throughput experiments have recently elucidated a substantial fraction of protein-protein interactions in a few model organisms <ref type="bibr" target="#b0">[1]</ref>, but such experiments remain challenging.</s><s>An attractive alternative is to exploit the increasingly abundant sequence data in order to identify functional protein-protein interaction partners.</s></p><p><s>The sequences of interacting proteins are correlated, both because of evolutionary constraints arising from the need to maintain physico-chemical complementarity among aminoacids in contact, and because of shared evolutionary history.</s><s>The first type of correlations has received substantial interest, both within single proteins and across protein partners, as evolutionary constraints induce correlations between amino acids that are in contact in the folded protein or in the multi-protein complex.</s><s>Hence, the correlations observed in multiple sequence alignments of homologous proteins contain information about protein structure.</s><s>Global statistical models allow direct and indirect correlations to be disentangled <ref type="bibr" target="#b1">[2]</ref><ref type="bibr" target="#b2">[3]</ref><ref type="bibr" target="#b3">[4]</ref>.</s><s>Such models, built using the maximum entropy principle <ref type="bibr" target="#b4">[5]</ref>, and assuming pairwise interactions, known in the field of proteins as Direct Coupling Analysis (DCA), have been used with success to determine three-dimensional protein structures from sequences <ref type="bibr" target="#b5">[6,</ref><ref type="bibr" target="#b6">7]</ref>, to analyze mutational effects <ref type="bibr" target="#b7">[8]</ref><ref type="bibr" target="#b8">[9]</ref><ref type="bibr" target="#b9">[10]</ref><ref type="bibr" target="#b10">[11]</ref> and conformational changes <ref type="bibr" target="#b11">[12,</ref><ref type="bibr" target="#b12">13]</ref>, to find residue contacts between known interaction partners <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b13">[14]</ref><ref type="bibr" target="#b14">[15]</ref><ref type="bibr" target="#b15">[16]</ref><ref type="bibr" target="#b16">[17]</ref><ref type="bibr" target="#b17">[18]</ref><ref type="bibr" target="#b18">[19]</ref><ref type="bibr" target="#b19">[20]</ref>, and most recently to predict interaction partners from sequence data <ref type="bibr" target="#b20">[21,</ref><ref type="bibr" target="#b21">22]</ref>.</s><s>DCA models lay the emphasis on interactions between residues that are in direct contact in the three-dimensional protein structure.</s><s>However, correlations in protein sequences also have important collective modes <ref type="bibr" target="#b22">[23,</ref><ref type="bibr" target="#b23">24]</ref>, which can arise from functional selection <ref type="bibr" target="#b24">[25,</ref><ref type="bibr" target="#b25">26]</ref>, and additional correlations are due to phylogeny <ref type="bibr" target="#b22">[23,</ref><ref type="bibr" target="#b26">27,</ref><ref type="bibr" target="#b27">28]</ref>.</s><s>These contributions are deleterious to the prediction of contacts <ref type="bibr" target="#b27">[28]</ref> but not necessarily to the prediction of interacting partners, since a pair of interacting partners may be subject to common functional selection, and may also have a more strongly shared phylogenetic history than noninteracting proteins.</s></p><p><s>Here, we present an alternative approach to predict interaction partners from sequence data, among the paralogous proteins belonging to two interacting families.</s><s>In contrast to the previous pairwise maximum entropy-based approaches <ref type="bibr" target="#b20">[21,</ref><ref type="bibr" target="#b21">22]</ref>, the present method is based on an approximate maximization of mutual information between the sequences from the two protein families.</s><s>Specifically, we develop a variant of the iterative pairing algorithm (IPA) introduced in <ref type="bibr" target="#b20">[21]</ref>, where we use mutual information (MI) as a score to maximize, instead of the effective interaction energy from a pairwise maximum entropy (DCA) model.</s><s>We demonstrate that this mutual information-based algorithm (MI-IPA) performs slightly better than the one (DCA-IPA) introduced by us and colleagues in <ref type="bibr" target="#b20">[21]</ref>.</s><s>Our findings entail that the statistical dependences allowing interaction partner prediction from sequence data are not restricted to the contacting residue pairs revealed by DCA.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Results</head><p><s>We developed an iterative pairing algorithm (MI-IPA) that pairs paralogous proteins from two interacting protein families A and B by approximately maximizing mutual information between the sequences of the two families.</s><s>Here, we first introduce the information theorybased pairing score we employ, before briefly explaining the steps of the MI-IPA.</s><s>Next, we present the results we obtained with the MI-IPA.</s><s>Throughout, we compare the performance of the MI-IPA to that obtained with the DCA-IPA from <ref type="bibr" target="#b20">[21]</ref>, which infers a pairwise maximum entropy model and approximately maximizes the resulting effective interaction energies.</s><s>First, we consider the case where the MI-IPA starts with a training set of known protein pairs, obtaining good performance even with few training pairs.</s><s>Then, we demonstrate that the MI-IPA can make accurate predictions starting without any training set, as would be needed to predict novel protein-protein interactions.</s><s>Next, we assess to what extent the MI-IPA is successful at maximizing mutual information.</s><s>We further demonstrate the robustness of the MI-IPA by successfully applying it to several pairs of proteins.</s><s>Finally, we show how the MI-IPA reveals signatures of protein-protein interactions between two protein families.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A pairing score based on pointwise mutual information (PMI)</head><p><s>Consider an alignment of M concatenated sequences AB of length L, where A is a protein from family A and B is a protein from family B. At each amino-acid site i 2 {1, ‥, L}, a given sequence can feature any amino acid (represented by α 2 {1, ‥, 20}), or a gap (represented by α = 21).</s><s>To describe the statistics of this concatenated alignment (CA), we employ the singlesite frequencies of occurrence of each state α at each site i, denoted by f i (α), and the two-site frequencies of occurrence of each ordered pair of states (α, β) at each ordered pair of sites (i, j), denoted by f ij (α, β).</s><s>These empirical frequencies are obtained by counting the sequences where given residues occur at given sites and dividing by the number M of sequences in the CA.</s><s>(Note that when computing frequencies from real protein data, it is useful to weight sequences so as to attenuate the impact of biased sampling, and to include pseudocounts, in order to mitigate finite-sample effects, see Methods.)</s><s>The empirical frequencies constitute estimates of the corresponding probabilities p i (α) and p ij (α, β), and tend toward them in the limit where the number M of sequences in the alignment tends to infinity.</s></p><p><s>The pointwise mutual information (PMI) of a pair of residues (α, β) at a pair of sites (i, j) is defined as <ref type="bibr" target="#b28">[29]</ref>:</s></p><formula xml:id="formula_0">PMI ij ða; bÞ ¼ log p ij ða; bÞ p i ðaÞp j ðbÞ " # � M�1 log f ij ða; bÞ f i ðaÞf j ðbÞ " # :<label>ð1Þ</label></formula><p><s>Averaging this quantity over all possible residue pairs yields the mutual information (MI) between sites i and j <ref type="bibr" target="#b29">[30]</ref>: PMI has been used in linguistics to study the co-occurrence of words <ref type="bibr" target="#b30">[31,</ref><ref type="bibr" target="#b31">32]</ref>.</s><s>Note that in some instances <ref type="bibr" target="#b28">[29,</ref><ref type="bibr" target="#b30">31]</ref> PMI is called MI, and MI is then referred to as the average value of MI.</s><s>We define a pairing score S AB for each pair AB of proteins as the sum of the PMIs of the inter-protein pairs of sites of this concatenated sequence (i.e.</s><s>those that involve one site in protein A and one site in protein B):</s></p><formula xml:id="formula_1">MI ij ¼ X a;b</formula><formula xml:id="formula_2">S AB ¼ X L A i¼1 X L j¼L A þ1 PMI ij ða i ; b j Þ ;<label>ð3Þ</label></formula><p><s>where we have denoted the concatenated sequence AB by ða 1 ; . . .</s><s>; a L A ; b L A þ1 ; � � � ; b L Þ, with L A the length of the A sequence.</s><s>This score can be computed for a pair AB that is a member of the CA used to estimate the PMI of each residue pair at each site, but also for any other pair AB comprised of the sequences of members of the protein families A and B.</s></p><p><s>Next, consider a candidate assignment X of M 0 pairs AB, where each protein A is paired with a protein B from the same species, resulting in a CA of M 0 sequences of length L = L A + L B .</s><s>Again, the pairs in this CA can involve the proteins in the CA of M pairs used to estimate the PMIs, with the same assignment or a different one, or any other pair AB comprised of the sequences of members of the protein families A and B. We define the overall pairing score S X of the assignment X by the average of all pairing scores (see Eq 3) of the pairs involved:</s></p><formula xml:id="formula_3">S X ¼ 1 M 0 X AB2X S AB ¼ 1 M 0 X L A i¼1 X L j¼L A þ1 X AB2X PMI ij ða i ; b j Þ ¼ 1 M 0 X L A i¼1 X L j¼L A þ1 X a;b X AB2X a i ¼a;b j ¼b PMI ij ða; bÞ ¼ X L A i¼1 X L j¼L A þ1 X a;b f 0 ij ða; bÞPMI ij ða; bÞ;<label>ð4Þ</label></formula><p><s>where f 0 ij ða; bÞ denotes the joint empirical frequency of amino acid state α at site i and amino acid state β at site j in X.</s><s>It corresponds to the number of concatenated sequences in X featuring both amino acid state α at site i and amino acid state β at site j, divided by M 0 .</s></p><p><s>In the limit of large alignments, the empirical frequencies tend toward probabilities.</s><s>Besides, if the scored CA is the same as the one used to calculate the PMIs, all frequencies will be the same for both of them (i.e.</s><s>f 0 ij ða; bÞ ¼ f ij ða; bÞ).</s><s>For different CA of proteins from the same families A and B, in the case of an assignment consistent with the CA used to estimate the PMIs, the limiting two-body probabilities will be the same in the two CA.</s><s>Hence, in these cases, combining Eqs 2 and 4 yields</s></p><formula xml:id="formula_4">S X M!1 M 0 !1 ��! X L A i¼1 X L j¼L A þ1 MI ij :<label>ð5Þ</label></formula><p><s>For large alignments, maximizing S X thus corresponds to maximizing the sum of the MIs of inter-protein site pairs, which is itself a pairwise approximation of the MI between the sequences of two protein families A and B. A brute-force self-consistent maximization of S X over all possible assignments X of a realistic dataset would result in a combinatorial explosion, since all allowed permutations of pairs would need to be considered, and PMIs would need to be computed for each of them.</s><s>In practice, since biologically meaningful pairings have to be made within a species, this means that we would need to consider all combinations of all permutations within each species, which already yields prohibitively large numbers of assignments to test.</s><s>Hence, we propose an algorithm to perform an approximate maximization of S X .</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>An iterative pairing algorithm (IPA) based on MI</head><p><s>In order to approximately maximize mutual information via the score S X (see Eq 4), we propose an iterative pairing algorithm (referred to as MI-IPA) inspired by that of <ref type="bibr" target="#b20">[21]</ref> (referred to as DCA-IPA), where the effective interaction energy from a global statistical model was approximately maximized.</s></p><p><s>In each iteration, we first estimate PMIs for all inter-protein residue pairs from a concatenated alignment (CA) of paired sequences.</s><s>The initial CA, used at the first iteration, is either built from a training set of known correct protein pairs, or made from random pairs, assuming no prior knowledge of interacting pairs.</s><s>We calculate the pairing scores S AB (see Eq 3) for every possible protein pair AB within each species, by summing the inter-protein PMIs.</s><s>Next, within each species, we assign pairs by maximizing the sum of S AB scores in the species (assuming one-to-one specific interactions), thereby maximizing S X (see Eq 4) over biologically relevant pair assignments, where each protein has a partner within its species.</s><s>We attribute a confidence score to each predicted pair, by using the difference of scores between the optimal assignment of pairs in the species and the best alternative assignment that does not involve this predicted pair.</s><s>The CA is then updated by including the highest-scoring protein pairs, and the next iteration can begin.</s><s>At each iteration, all pairs in the CA are re-selected based on confidence scores (except the initial training pairs, if any), allowing for error correction.</s><s>More details on each step of the MI-IPA are given in Methods.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>The MI-IPA accurately predicts interaction partners from a training set of known partners</head><p><s>As in <ref type="bibr" target="#b20">[21]</ref>, we use histidine kinases (HKs) and response regulators (RRs) from prokaryotic two-component signaling systems as our main benchmark.</s><s>Two-component systems are important pathways that enable bacteria to sense and respond to environment signals.</s><s>Typically, a transmembrane HK senses a signal, autophosphorylates, and transfers its phosphate group to its cognate RR, which in turn induces a cellular response <ref type="bibr" target="#b32">[33]</ref>.</s><s>Importantly, most cognate HK-RR pairs are encoded in the same operon, so actual interaction partners are known, which enables us to assess performance.</s></p><p><s>Unless otherwise specified, our results were obtained on a "standard dataset" comprising 5064 HK-RR pairs for which the correct pairings are known from gene adjacency.</s><s>Each species has on average hm p i = 11.0 pairs, and at least two pairs (see Methods).</s></p><p><s>We start by predicting interaction partners starting from a training set of known pairs.</s><s>As our training set, we pick a random set of N start known HK-RR pairs from the standard dataset.</s><s>The first iteration of the MI-IPA uses this concatenated alignment (CA) to compute PMIs and score possible pairs.</s><s>We blind the pairings of the remaining dataset, and use it as a testing set on which we predict pairings.</s><s>At each subsequent iteration n &gt; 1, the CA used to recompute PMIs contains the initial training pairs plus the (n − 1)N increment highest-scoring predicted pairs from the previous iteration (see <ref type="bibr">Methods)</ref>.</s></p><p><s>As in the case of the DCA-IPA <ref type="bibr" target="#b20">[21]</ref>, iterating, and thereby progressively adding high-scoring pairs to the CA, allows us to increase the fraction of pairs that are correctly predicted.</s><s>This gradual improvement of the TP fraction during the iterations of the MI-IPA is shown in Fig 1A <ref type="figure">for</ref> different training set sizes N start .</s><s>The increase of TP fraction is especially spectacular for small training sets.</s><s>Fig <ref type="figure" target="#fig_0">1B</ref> shows the initial TP fraction, obtained at the first iteration, and the final TP fraction, obtained at the last iteration, versus the size of the training set N start , both for the MI-IPA and for the DCA-IPA <ref type="bibr" target="#b20">[21]</ref>.</s><s>In both cases, comparing the initial and final TP fractions demonstrates the major interest of our iterative approach, through the massive increase in TP fraction, especially for small training sets.</s><s>Moreover, the final TP fraction depends only weakly on N start : the iterative approach removes the need for large training sets.</s><s>Both algorithms yield very good performance, and the MI-IPA even outperforms the DCA-IPA in the trickiest case of small training sets.</s><s>In this limit (N start = 1), the MI-IPA yields 86% true positive (TP) pairs while the DCA-IPA yields 84% TP, while both start from 12% TP at the first iteration.</s><s>These final TP fractions are strikingly higher than the random expectation of 9%, while such small training sets contain very little information about pairings, as illustrated by the associated low initial TP fraction.</s></p><p><s>Since the MI-IPA to the DCA-IPA yield similar performance, we asked whether they tend to predict the same correct pairs when starting from the same training set.</s><s>To assess this, consider a species with m AB pairs, and denote by p (resp.</s><s>q) the number of pairs correctly assigned by the MI-IPA (resp.</s><s>by the DCA-IPA) in this species.</s><s>If the two algorithms made independent predictions, it would correspond to independently and randomly drawing p (resp.</s><s>q) proteins A among m, to be correctly paired.</s><s>In this null model, the number of possible MI-IPA assignments that share k correct pairs with the DCA-IPA is q k À � mÀ q pÀ k � �</s></p><p><s>: k correct pairs are chosen among the q pairs correctly assigned by the DCA-IPA, and the other p − k ones are chosen among the m − q proteins A incorrectly paired by the DCA-IPA.</s><s>Besides, the total number of possible MI-IPA assignments with p correct pairs is ð m p Þ. Hence, the probability P(p, k, m, q) that k correct pairs are predicted by both algorithms is given by the hypergeometric distribution:</s></p><formula xml:id="formula_5">Pðp; k; m; qÞ ¼ ð q k Þð mÀ q pÀ k Þ ð m p Þ :<label>ð6Þ</label></formula><p><s>The expectation of k under this distribution is given by</s></p><formula xml:id="formula_6">hki ¼ p q m :<label>ð7Þ</label></formula><p><s>Hence, in this fully independent null model, the expectation of the total number of correct pairs predicted by both algorithms can be obtained by summing the expectations in Eq 7 over all species in the dataset.</s><s>Moreover, in each species, the observed number k obs of shared correct pairs can be compared to this null model, as well as to the extreme case where all correct pairs that can be shared are shared, yielding min(p, q) shared pairs.</s><s>Hence, we define the relative excess E of shared predictions by</s></p><formula xml:id="formula_7">E ¼ P S i¼1 k obs;i À hk i i P S i¼1 min ðp i ; q i Þ À hk i i ;<label>ð8Þ</label></formula><p><s>where the index i corresponds to a particular species, the sums run over the S species present in the dataset, and the expectations are given by Eq 7. If E &gt; 0, the two algorithms tend to predict the same pairs more frequently than if their predictions were fully independent.</s><s>In addition, the maximal value E can take is 1, including the case where predictions from both algorithms are exactly the same.</s><s>We calculated the average value of E across 50 replicates where both algorithms were started from the same training set, for various N start values, in the same conditions as in Fig 1 <ref type="figure">.</ref></s><s>As expected, we found that E increases with N start , as the algorithms share more information to begin with.</s><s>However, E depends rather weakly on the size N start of the training set, varying smoothly from 53% for N start = 1 to 68% for N start = 2000.</s><s>This indicates a significant tendency of the two algorithms to make the same correct predictions, even in the case of small training sets.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Great accuracy is maintained in the absence of a training set</head><p><s>In <ref type="bibr" target="#b20">[21]</ref>, we showed that the DCA-IPA yields very good identification of interacting pairs without any training set, i.e. without any prior knowledge of interacting pairs.</s><s>Given this previous result, and given the success of the MI-IPA with very small training sets, we ask whether the MI-IPA also makes good predictions in the absence of a training set.</s><s>To test this, we followed the approach introduced in <ref type="bibr" target="#b20">[21]</ref> by randomly pairing each HK with an RR from the same species, and using these 5064 random pairs to train the initial model.</s><s>At each subsequent iteration n &gt; 1, the CA only contained the (n − 1)N increment highest-scoring pairs from the previous iteration (see Methods).</s></p><p><s>Fig <ref type="figure" target="#fig_1">2A</ref> shows the final TP fraction obtained for different values of N increment , both for the MI-IPA and for the DCA-IPA.</s><s>In both cases, the iterative method performs best for small At the first iteration, the CA is made of random withinspecies HK-RR pairs.</s><s>At each subsequent iteration n &gt; 1, the CA includes the (n − 1)N increment top predicted pairs.</s><s>All results are averaged over 50 replicates employing different initial random pairings.</s><s>The MI-IPA was also run on an alignment where each column is randomly scrambled.</s><s>The dashed line represents the average TP fraction obtained for random within-species HK-RR pairings.</s><s>(B) Final TP fraction obtained by the MI-IPA and the DCA-IPA versus the total number M of HK-RR pairs in the dataset, starting from random pairings.</s><s>For each M, except that corresponding to the full dataset, datasets are constructed by picking species randomly from the full dataset, and results are averaged over multiple different such alignments (from 50 up to 500 for small M).</s><s>For the full dataset (largest M), averaging is done on 50 different initial random within-species pairings.</s><s>All results in (B) are obtained in the small-N increment limit.</s><s>https://doi.org/10.1371/journal.pcbi.1006401.g002</s><s>increment steps, which highlights again the interest of the iterative approach.</s><s>Importantly, the MI-IPA performs better than the DCA-IPA for all values of N increment , and requires substantially less small increments than the DCA-IPA to reach the same performance.</s><s>The low-N increment limit of the final TP fraction is 0.87 for the MI-IPA, versus 0.84 for the DCA-IPA.</s><s>These values are consistent with those obtained above with a single training pair, N start = 1 (Fig <ref type="figure" target="#fig_0">1A</ref>).</s><s>We emphasize that the striking TP fraction of 0.87 is attained by the MI-IPA without any prior knowledge of HK-RR interactions.</s><s>Ref. <ref type="bibr" target="#b20">[21]</ref> showed that an important ingredient for the DCA-IPA to bootstrap its way toward high predictive power is that sequence similarity is favored at early iterations, which increases the TP fraction in the CA, because correct pairs have more neighbors in terms of Hamming distance than incorrect pairs.</s><s>In <ref type="bibr" target="#b20">[21]</ref>, this was called the Anna Karenina effect, in reference to the first sentence of Tolstoy's novel.</s><s>The same explanation holds for the success of the MI-IPA starting from no training set.</s><s>In addition, both with MI and with DCA, when starting from random pairings, signal from actual partners should add constructively, while noise should add incoherently.</s><s>To confirm that the predictive power arises from correlations and similarities in the data, we ran the MI-IPA on a version of our standard alignment of HK-RR sequences where amino acids at each site (each column) are randomly scrambled, thus removing correlations (shown in green in Fig <ref type="figure" target="#fig_0">1A</ref>).</s><s>As expected, performance is then the same as for random within-species pairings (dashed line in</s></p><formula xml:id="formula_8">(NPMIs), NPMI ij (α, β) = −PMI ij (α, β)/log(f ij (α, β)) [32] and covariances, C ij (α, β) = f ij (α, β) − f i (α)f j (β) (recall</formula><p><s>that in the mean-field approximation, DCA employs the inverse of this covariance matrix).</s><s>For small N increment values, we find that NPMIs perform similarly as PMIs, while covariances do significantly worse than both PMIs and DCA scores.</s></p><p><s>An important parameter for the performance of the MI-IPA is dataset size.</s><s>Qualitatively, larger datasets imply more close neighbors, which is favorable to the success of bootstrapping, and they also allow one to estimate MI more accurately, so we expect the MI-IPA to perform best for large datasets.</s><s>Indeed, Fig <ref type="figure" target="#fig_1">2B</ref> shows that the performance of the MI-IPA increases with dataset size.</s><s>Moreover, the rise of performance occurs for slightly smaller datasets in the case of the MI-IPA than for the DCA-IPA.</s><s>With DCA, a sufficiently large dataset is necessary to properly infer the pairwise maximum-entropy based global statistical model at the heart of the method <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b5">6,</ref><ref type="bibr" target="#b11">12]</ref>.</s><s>While being data-thirsty too, the MI-IPA bypasses this particular need, and thus, it is better suited for partner prediction in smaller datasets.</s><s>For the complete dataset (23,424 HK-RR pairs, see Methods), both methods reach the same striking final TP fraction of 0.93.</s></p><p><s>The fact that the MI-IPA often performs better than the DCA-IPA for predicting interacting partners stands in contrast with the fact that DCA substantially outperforms MI for residue contact prediction, and suggests that relevant covariation information is contained in pairs of residues that are not in contact.</s><s>In order to test this, we ran the MI-IPA starting from random initial pairings on our standard HK-RR dataset, but suppressing all MI contributions from the contacting pairs of residues (defined with a generous 8Å threshold on the minimum distance between amino acids).</s><s>For N increment = 6, a striking TP fraction of 0.83 was obtained.</s><s>This value is only slightly smaller than the 0.87 TP fraction obtained when all residue pairs are included, thus confirming that substantial MI relevant for partnership prediction is present in non-contacting residue pairs.</s></p><p><s>As above, we investigated the extent to which the MI-IPA and the DCA-IPA tend to make the same correct predictions.</s><s>Note that this time, the two algorithms do not start from shared information since there is no training set.</s><s>For the standard dataset of 5064 HK-RR pairs, with N increment = 6, we found that the average excess shared fraction (see Eq 7) of correct pairs between the two algorithms is E = 53%, i.e. the same as the value obtained in the limit of a very small shared training set, N start = 1 (see above).</s><s>Recall that this positive value means that the two algorithms tend to make the same correct predictions.</s><s>Moreover, the bias is 53% of the maximal value it could take.</s><s>It is interesting to compare this result to the bias toward shared correct predictions across different replicates of the same algorithm.</s><s>We obtained E = 73% for the DCA-IPA, and E = 94% for the MI-IPA, meaning that predictions from the two different algorithms are less similar than those made by the same algorithm.</s></p><p><s>Since the two algorithms do make some different correct predictions, we next asked whether this can exploited, with the intuition that pairs that are predicted both by the MI score and by the DCA score will tend to be correct more often than other pairs.</s><s>First, we considered using both scores within the IPA.</s><s>We tried a combined IPA which calculates both scores at each iteration and computes separately the two corresponding pair assignments.</s><s>Our ranking of pairs puts first the pairs contained in both assignments, and these pairs are ordered by decreasing MI-based confidence scores.</s><s>Next come the other pairs: the assignment predicted using MI is conserved for them, and they are ordered by decreasing MI-based confidence scores.</s><s>This means that the pairs consistently predicted by both methods are going to enter the CA earlier in the iterative process than those that differ.</s><s>A very minor improvement was obtained over the MI-IPA using this method (see S1 Fig, <ref type="figure">panel B</ref>).</s><s>Since DCA typically requires large datasets to be reliable, we also tried combining MI and DCA by using MI at early iterations, when the CA is small, and switching to DCA at later iterations.</s><s>No improvement over the MI-IPA was obtained using this method (see S1 Fig, <ref type="figure">panel B</ref>).</s></p><p><s>Next, we tried combining final results from the DCA-IPA and the MI-IPA.</s><s>In <ref type="bibr" target="#b20">[21]</ref>, we showed that multiple different random initializations of the DCA-IPA can be exploited to increase the TP fraction.</s><s>Specifically, when ranking all possible HK-RR pairs by the fraction of replicates of the MI-IPA in which they are predicted ("replication fraction"), in decreasing order, we found a TP fraction of 0.89 among the M best-ranked pairs, a significant improvement over the 0.84 average of TP fractions obtained in individual replicates.</s><s>(Here, N increment = 6 is used.</s><s>Recall that M = 5064 is the total umber of pairs in the CA of HK-RRs, see Methods, and thus the number of predicted pairs in each individual replicate of the algorithm.)</s><s>Applying the same strategy to the MI-IPA also yields a TP fraction of 0.89, higher than that obtained from individual replicates, 0.87.</s><s>In both cases, 500 replicates of the algorithms, differing only by their initial random within-species pairings, were used to estimate replication fractions.</s><s>Among the M top pairs thus predicted by the two separate methods, 87% were common, and the TP fraction among those common pairs was 0.97.</s><s>We also combined the results from the 500 replicates of the DCA-IPA and the 500 replicates of the MI-IPA, and ranked pairs using their overall replication fraction.</s><s>Then the TP fraction among the M best-ranked pairs is 0.91.</s><s>Hence, combining final predictions from both methods yields a further improvement of performance.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>The MI-IPA reaches near-maximal MI</head><p><s>The MI-IPA approximately maximizes MI between the sequence alignments of two protein families A and B. However, there is not guarantee that it will find the assignment with highest MI.</s><s>In addition, the score we maximize converges toward the sum of MIs of all inter-protein residue pairs (henceforth called "pairwise MI") only in the limit of large alignments and assignments consistent with the CA used to estimate the PMIs (see Eq 5).</s><s>In practice, how well does the MI-IPA approach the goal of maximizing pairwise MI?</s></p><p><s>In order to answer this question, we now compare the pairwise MI of the pairs assigned by the MI-IPA to that of the actual protein pairs, and to the pairwise MI of the random within-species assignment which is used to initialize the MI-IPA in the absence of a training set.</s><s>Fig 3A shows these three quantities as a function of dataset size M, for HK-RR datasets to which the MI-IPA is applied starting from no training set, as in Fig 2B <ref type="figure">.</ref></s><s>We observe a global trend of all computed pairwise MIs to decrease when M is increased.</s><s>This arises from a well-known finite size effect that occurs when estimating entropies from real datasets <ref type="bibr" target="#b33">[34]</ref>, and thus affects entropy-derived quantities such as MIs.</s><s>To illustrate this point, Fig 3A also shows the pairwise MI of HK-RR datasets where each column of the alignment is randomly scrambled, thus destroying actual correlations while retaining finite-size noise, as well as one-body frequencies.</s><s>This null model features a similar decreasing trend as the other curves, thus demonstrating that this trend comes from finite-size effects.</s><s>Note also that the scrambled alignment features pairwise MI values close to those of the initial random assignment, which makes sense because in both cases inter-protein residue pairs are decorrelated by the scrambling.</s><s>The slightly higher MI of the initial random assignment arises from the fact that random partners are chosen within each species in this case, while complete columns are scrambled in the null model.</s><s>Apart from the downward trend, a striking observation from Fig 3A is that the pairwise MIs of the assignments predicted by the MI-IPA are significantly higher than those of the initial random assignments, and close to those of the actual protein pairs.</s><s>Fig 3B highlights these points by considering the excess pairwise MI in the actual protein pairs versus the initial and final assignments in the MI-IPA.</s><s>Interestingly, even for small datasets, where the MI-IPA yields small TP fractions (see Fig <ref type="figure" target="#fig_1">2B</ref>), the pairwise MI of the assignment predicted by the MI-IPA is much closer to that of the actual assignment than to that of the initial random assignment.</s><s>This suggests that the MI-IPA does a good job at maximizing pairwise MI, even though it does not reach the absolute maximum.</s></p><p><s>So far, we have used naive estimates of the pairwise MI, employing empirical frequencies instead of probabilities in MI (see Eq 2), without correcting for the finite-size effect discussed above and visible in Fig 3A <ref type="figure">.</ref></s><s>Various approaches have been proposed in order to correct for the systematic error due to finite-size effects in entropy (and thus MI) estimates.</s><s>One can use the fact that these finite-size effects have a leading-order contribution of the form MI is its naive estimate using empirical frequencies, while K is the number of independent values that can be taken by the pair of random variables considered, and M represents dataset size <ref type="bibr" target="#b33">[34]</ref>.</s><s>Estimates c MI obtained by subsampling the initial dataset can be linearly (or polynomially, to include higher-order corrections) fitted versus 1/M, yielding the actual MI as the intercept.</s><s>However, if M is not larger than K, subleading corrections become too important, and this method becomes inaccurate.</s><s>Here, K can go up to the square of the number of possible states per site, i.e. *400.</s><s>Consistently, we found that polynomial fits become poor when considering datasets with less than *1000 sequences.</s><s>S2A Fig presents results obtained using corrections from these fits, for datasets of at least 1000 sequences.</s><s>A more sophisticated method to reliably estimating the entropies of discrete distributions was introduced in <ref type="bibr" target="#b34">[35]</ref>.</s><s>It employs a Bayesian approach and a flat prior on the entropy, and results in a correction of finite-size bias in entropy estimates.</s><s>This NSB (Nemenman-Shafee-Bialek) correction is successful in undersampled cases <ref type="bibr" target="#b34">[35,</ref><ref type="bibr" target="#b35">36]</ref>.</s><s>In S2B Fig, <ref type="figure">we</ref> show results obtained on our datasets using the NSB correction.</s><s>Employing either of these two corrections of finite-size effects on the MI estimates (see S2 Fig) confirms our previous conclusion.</s><s>For all dataset sizes, the pairwise MI of the assignment predicted by the MI-IPA is significantly closer to that of the actual assignment than to that of the initial random assignment, thus confirming that the MI-IPA yields results with near-maximal pairwise MI.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Performance of the MI-IPA is robust across various protein pairs</head><p><s>To demonstrate the generality of the MI-IPA, we applied it to several pairs of protein families <ref type="bibr" target="#b15">[16]</ref>, beyond HK-RRs.</s><s>First, we considered several protein pairs involved in ABC transporter complexes, which permit the translocation of different substances across cell membranes <ref type="bibr" target="#b36">[37]</ref>.</s><s>We built alignments of homologs of the Escherichia coli interacting protein pairs MALG-MALK, FBPB-FBPC, and GSIC-GSID, all involved in ABC transporter complexes, using the same method as in <ref type="bibr" target="#b20">[21]</ref> (see Methods).</s><s>As in the case of HK-RRs, for each of these pairs of protein families, we worked on subsets of *5000 protein pairs from species containing at least two pairs.</s><s>In addition, we considered smaller families of proteins, yielding *2000 pairs.</s><s>More specifically, we chose two pairs of proteins involved in enzymatic complexes: PAAH-PAAJ is a pair of proteins involved in the fatty acid β-oxidation multienzyme complex <ref type="bibr" target="#b37">[38]</ref>, and XDHC-XDHA is a pair of proteins involved in the xanthine dehydrogenase complex <ref type="bibr" target="#b38">[39]</ref>.</s></p><p><s>Fig <ref type="figure" target="#fig_4">4</ref> shows the performance of the MI-IPA and of the DCA-IPA for these protein pairs, starting from no initial training set, for various values of N increment .</s><s>In all cases, we find that both methods perform very well for small N increment , but that higher performances are reached by the MI-IPA, particularly at larger N increment values.</s><s>This is consistent with the results obtained with HK-RRs (see Fig <ref type="figure" target="#fig_1">2A</ref>).</s><s>Note that here, compared to HK-RRs, larger N increment values suffice to obtain good performance.</s><s>This is due to the fact that the pairing tasks are easier here, since the average number of proteins pairs per species is smaller (see <ref type="bibr">Fig 4,</ref><ref type="bibr"></ref> to be compared to hm p i = 11.0 for HK-RRs).</s></p><p><s>These accurate predictions demonstrate the broad applicability of the MI-IPA.</s><s>Note that HK-RRs interact transiently, while the ABC transporter and enzymatic proteins we considered form permanent complexes, which highlights the generality of the method.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Predicting protein-protein interactions</head><p><s>As with the DCA-IPA <ref type="bibr" target="#b20">[21]</ref>, an important potential application of the MI-IPA is to predict new protein-protein interactions between two protein families.</s><s>A signature of interactions based on exploiting multiple different random initializations of the algorithm was introduced in <ref type="bibr" target="#b20">[21]</ref>, and can be applied to the MI-IPA.</s><s>Briefly, if two given proteins from the families considered are paired by the algorithm for any initial random within-species pairing, it indicates that these two particular proteins may interact.</s><s>Hence, if many pairs are in this case, it constitutes a clue that proteins from these two families generally interact.</s><s>In Fig <ref type="figure" target="#fig_5">5</ref>, the distributions of the fraction of replicates of the MI-IPA in which each particular pair of proteins is predicted ("replication fraction") are shown for two interacting pairs of protein families with similar mean number hm p i of pairs per species: the subset of HK-RRs homologous to BASS-BASR, and the homologs of the interacting ABC transporter proteins MALG-MALK.</s><s>A pair with no known interaction, composed of homologs of BASR-MALK, is also considered.</s><s>For both interacting pairs of protein families (Fig 5A <ref type="figure" target="#fig_5">and 5B</ref>), the distribution of replication fractions is strongly bimodal: it favors values close to 0 (mostly corresponding to wrong pairs), and close to 1 (mostly corresponding to actual cognate pairs).</s><s>No such strong bimodality is observed for the pair with no known interaction (Fig 5C <ref type="figure">)</ref>, and the observed distribution of replication fractions is closer to the null model constructed by randomly scrambling the amino acids at each site (column) of the alignment, thus removing correlations.</s><s>Hence, as for the DCA-IPA <ref type="bibr" target="#b20">[21]</ref>, the distribution of the replication fraction presents a distinctive shape for interacting protein families.</s><s>Note that the bimodality observed for the interacting pairs is even stronger with the MI-IPA than with the DCA-IPA, consistent with the better predictive power of the MI-IPA.</s><s>However, the non-interacting pair was even closer to the null model with the DCA-IPA than it is here.</s></p><p><s>Another possible approach to identifying interacting protein families is to focus on MI scores, with the intuition that MI between interacting protein families should be higher than those between non-interacting families.</s><s>DCA-based approaches <ref type="bibr" target="#b15">[16,</ref><ref type="bibr" target="#b19">20]</ref> to distinguishing interacting protein families from non-interacting ones have employed such strategies, relying on the average value of the DCA interaction scores over the top-ranking inter-protein pairs of residues.</s><s>If this value is higher than a threshold, the protein families are predicted to interact, and the top-ranking pairs of residues become predicted contacts.</s><s>In <ref type="bibr" target="#b21">[22]</ref>, this strategy was combined with a solution of the paralog-pairing problem.</s><s>In <ref type="bibr" target="#b20">[21]</ref>, a variant based on detecting outliers in DCA interaction scores was proposed and combined with the DCA-IPA.</s><s>In S3 Fig, <ref type="figure">we</ref> show the MI of all inter-protein residue pairs, averaged over 500 replicates of the IPA, and then ranked by decreasing MI value, for two interacting pairs of protein families (BASS-BASR and MALG-MALK, see above) and one without known interactions (BASR-MALK).</s><s>These plots do not feature strong outliers in the case of interacting protein families, contrary to the DCA interaction scores studied in <ref type="bibr" target="#b20">[21]</ref>.</s><s>However, MI values are substantially larger for the interacting pairs of protein families than for the non-interacting one.</s><s>This suggests that a score based on MI values, e.g.</s><s>their average across all inter-protein residue pairs, or across the topranked ones, could be employed to distinguish interacting from non-interacting pairs of protein families.</s><s>In order to predict new protein-protein interactions, one would need to set a threshold on this score, for instance by assessing its performance on known interacting and non-interacting protein families, as for the DCA-based approaches <ref type="bibr" target="#b15">[16,</ref><ref type="bibr" target="#b19">20]</ref>.</s></p><p><s>The absence of outliers in MI in S3 Fig for the interacting pairs of protein families likely stems from the fact that interactions between amino acids can cause indirect correlations, which are disentangled by DCA but not by MI.</s><s>Indeed, the outliers in DCA scores found in <ref type="bibr" target="#b20">[21]</ref> mainly correspond to contacting residue pairs.</s><s>DCA performs better than MI at identifying contacting residue pairs <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b5">6,</ref><ref type="bibr" target="#b11">12]</ref>, and the top-ranking MI residue pairs are less likely to be actual contacts than the top-ranking DCA residue pairs (see <ref type="bibr">S4 Fig)</ref>.</s><s>Note that the performance of both DCA and MI at uncovering interacting residue pairs can often be improved by the average product correction (APC) <ref type="bibr" target="#b39">[40]</ref><ref type="bibr" target="#b40">[41]</ref><ref type="bibr" target="#b41">[42]</ref>.</s><s>However, this correction did not substantially improve inter-protein contact prediction in HK-RRs or yield strong outliers in MI, so we did not employ it.</s></p><p><s>Given the success of the MI-IPA at providing global signatures of interactions between two protein families and at globally pairing interacting paralogs, we can also ask whether MI-based methods can accurately predict partners of isolated proteins.</s><s>DCA-based methods have been used to predict interacting partners of "orphan" HKs and RRs involved in prokaryotic twocomponent signaling systems <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b14">15]</ref>.</s><s>These particular proteins are not encoded on the genome close to their cognate partners, contrary to the vast majority of HKs and RRs.</s><s>Crosstalk between non-cognate HKs and RRs, which exists in a few cases <ref type="bibr" target="#b32">[33]</ref>, has also been studied using DCA <ref type="bibr" target="#b9">[10,</ref><ref type="bibr" target="#b13">14]</ref>.</s><s>Given the striking success of the MI-IPA at identifying cognate interaction partners among HK-RRs, we asked whether MI-based scores can predict orphan partnership and crosstalk.</s><s>S1 Table reports the performance of MI and DCA-based scores at predicting known orphan and crosstalk partners using only sequences.</s><s>Specifically, PMI scores (see Eq 1) and DCA-based scores (direct couplings <ref type="bibr" target="#b20">[21]</ref>) were calculated from the full alignment of cognate HK-RR pairs (which excludes orphans, see Methods).</s><s>Next, new alignments including both cognate and orphan proteins, and RRs paired with non-HisKA HKs (see Methods), were considered, focusing on species where orphan and crosstalk partners were reported in the literature, either from in vivo or from in vitro experimental assays.</s><s>For each HK considered, all RRs in the species were ranked using either MI-based scores (see Eq 3) or DCA-based scores (effective interaction energies <ref type="bibr" target="#b20">[21]</ref>) for partnership with this HK.</s><s>With both methods, known partners often ranked among the top potential partners, showing that DCA and MI capture well these interactions.</s><s>Besides, we checked that our DCA-based predictions were similar to previous ones reported in <ref type="bibr" target="#b13">[14]</ref> (see S1 Table <ref type="table">)</ref>.</s><s>Out of the 27 known orphan and/or crosstalk pairs we considered, 7 obtained the same rank among all possible partners with MI as with DCA, 15 a lower rank, and 5 a higher rank (see S1 Table <ref type="table">)</ref>.</s><s>Hence, our MI-based approach performs quite well at predicting orphan and crosstalk partners, but slightly less well than DCA.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Discussion</head><p><s>Here, we introduced a method based on MI to predict interacting partners among the paralogs of two protein families, starting from sequences only.</s><s>Specifically, our iterative pairing algorithm (MI-IPA) finds an assignment of protein pairs that approximately maximizes the MI between the sequences of the two protein families.</s><s>We demonstrated that the MI-IPA allows one to predict interacting protein pairs with high accuracy, starting from sequence data only.</s><s>High performance is obtained even in the absence of an initial training set of known interacting pairs.</s><s>We also showed how the MI-IPA could be employed to discover new protein-protein interactions from sequence data.</s></p><p><s>In <ref type="bibr" target="#b20">[21]</ref>, us and colleagues introduced a similar iterative pairing algorithm (DCA-IPA) that approximately maximized an effective interaction energy between proteins, instead of MI.</s><s>This effective interaction energy was calculated from a global statistical model, more specifically a pairwise maximum entropy model, approximately inferred from the empirical one and two-body frequencies of the sequence data.</s><s>Such models, often called Direct Coupling Analysis (DCA), have been successful at predicting amino-acid pairs that are in contact in folded proteins <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b5">6,</ref><ref type="bibr" target="#b11">12]</ref>, and have permitted prediction of the three-dimensional structure of proteins from sequence data <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b5">6,</ref><ref type="bibr" target="#b6">7,</ref><ref type="bibr" target="#b11">12,</ref><ref type="bibr" target="#b15">16,</ref><ref type="bibr" target="#b42">43]</ref>.</s><s>For structure prediction, these global statistical models outperform the use of MI <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b5">6]</ref>, and have yielded major progress in the field, despite the promising results obtained by MI-based methods implementing corrections for background MI <ref type="bibr" target="#b39">[40]</ref>.</s><s>In the specific case of interacting proteins, DCA allows one to simultaneously infer interaction partners and structural contacts between them <ref type="bibr" target="#b21">[22]</ref>.</s></p><p><s>Here, we demonstrated that the MI-IPA performs at least as well as the DCA-IPA, and often outperforms it.</s><s>The MI-IPA is also faster (see Methods) and requires fewer iterations to reach good performance.</s><s>Our results highlight an interesting difference between the prediction of contacting pairs of residues, where DCA substantially outperforms MI, and the prediction of interacting partners, where MI often outperforms DCA.</s><s>Crucially, we have achieved an accurate identification of interacting partners without the need to build a global statistical model of the sequence data highlighting effective pairwise interactions between contacting residues, which is at the root of DCA.</s><s>An important motivation underlying DCA and other related approaches, such as the Bayesian network method of <ref type="bibr" target="#b2">[3]</ref> and the sparse inverse covariance estimation of <ref type="bibr" target="#b40">[41]</ref>, is to disentangle correlations arising caused by direct interactions from indirect correlations due to a chain of couplings <ref type="bibr" target="#b1">[2]</ref><ref type="bibr" target="#b2">[3]</ref><ref type="bibr" target="#b3">[4]</ref><ref type="bibr" target="#b40">41]</ref>.</s><s>While this distinction between direct and indirect correlations is crucial to infer which residues are in contact in the folded protein, its importance is probably reduced in the determination of interacting partners among paralogous proteins.</s><s>Besides, MI has been extremely successful in determining "specificity residues" crucial in the interactions between HKs and their cognate RRs: these residues are those involved in interprotein residue pairs with highest MIs <ref type="bibr" target="#b43">[44]</ref><ref type="bibr" target="#b44">[45]</ref><ref type="bibr" target="#b45">[46]</ref>.</s><s>Strikingly, mutating only these few specificity residues has allowed to fully switch the specificity of HK-RR pairs <ref type="bibr" target="#b43">[44]</ref>.</s><s>In addition, MI has revealed a cluster of co-evolving dynamic residues that are not in direct contact, but that are important to interaction specificity, through their involvement in the conformational arrangement of the active site residues both in the HK and in the RR, as confirmed by mutagenesis and NMR studies <ref type="bibr" target="#b46">[47]</ref>.</s><s>Hence, our present results reinforce the conclusion of these earlier studies, showing that MI can accurately reveal the specificity of interacting protein pairs.</s><s>Finally, the MI between two sequence sites simply measures how much observing a residue at one site tells us about the other.</s><s>It is entirely agnostic regarding the origin of this statistical dependence, and incorporates contributions from phylogeny <ref type="bibr" target="#b26">[27,</ref><ref type="bibr" target="#b27">28]</ref> as well as from those arising from functional selection.</s><s>In addition, the latter contributions include those arising directly or indirectly from structural contacts, but might also involve aspects of protein function other than structural ones, including collective correlations between residues <ref type="bibr" target="#b22">[23]</ref><ref type="bibr" target="#b23">[24]</ref><ref type="bibr" target="#b24">[25]</ref><ref type="bibr" target="#b25">[26]</ref><ref type="bibr" target="#b47">48]</ref>.</s><s>This stands in contrast with DCA, which lays the emphasis on interactions between residues that are in direct contact in the three-dimensional protein structure.</s><s>The fact that the MI-IPA slightly outperforms the DCA-IPA thus constitutes a hint that sources of covariation other than those that maintain structural contacts help to identify interaction partners among paralogs.</s><s>This might be due to multiple effects.</s><s>In particular, global functional selection could potentially affect both interacting partners together.</s><s>For instance, a functionally important mechanical deformation of the complex formed by these partners could be subject to selection, yielding collective correlations that extend in the sequences of both partners <ref type="bibr" target="#b24">[25,</ref><ref type="bibr" target="#b25">26]</ref>.</s><s>Besides, interacting partners may also share more phylogenetic history than non-interacting proteins, e.g. if the genes encoding the partners tend to be duplicated and/or horizontally transferred together <ref type="bibr" target="#b48">[49]</ref><ref type="bibr" target="#b49">[50]</ref><ref type="bibr" target="#b50">[51]</ref>.</s><s>Then, phylogenetic correlations could aid the prediction of interacting partners among paralogous proteins, despite being deleterious to residue contact identification <ref type="bibr" target="#b27">[28]</ref>.</s><s>Next, it will be interesting to further investigate these various sources of covariation, both functional and phylogenetic.</s><s>This should be useful for the particular problem of prediction of interacting protein pairs, as well as for the more general understanding of the sequence-function relationship in proteins.</s></p><p><s>S AB of each possible AB pair within each species in the dataset is calculated by summing all the inter-protein PMIs involved, as defined in Eq 3.</s></p><p><s>3. AB pair assignments and ranking by confidence score.</s><s>We make one-to-one AB pairs within each species in the dataset by maximizing the sum of the scores of all pairs in this species.</s><s>Considering the matrix of the scores of all possible pairs, this amounts to choosing one element per line and per column, such that the sum of all of them is maximal.</s><s>This assignment problem is solved exactly and efficiently using the Hungarian algorithm (also known as the Munkres algorithm) <ref type="bibr" target="#b51">[52]</ref><ref type="bibr" target="#b52">[53]</ref><ref type="bibr" target="#b53">[54]</ref>.</s><s>Each pair is scored by a confidence score ΔS AB , which is the difference between the sum of the scores of the assigned pairs in the species and that obtained by using the Hungarian algorithm again while this pair is disallowed.</s><s>Once pairs are made and confidence scores are calculated in each species, all the assigned AB pairs from all species are ranked in order of decreasing confidence score.</s></p><p><s>Note that in <ref type="bibr" target="#b20">[21]</ref>, we had used an approximate greedy approach to the assignment problem, where the pair with lowest energy is selected first, and the two proteins involved are removed from further consideration, and the process is repeated until all As and Bs are paired.</s><s>For the DCA-IPA of <ref type="bibr" target="#b20">[21]</ref>, the greedy algorithm performed marginally better than the Hungarian algorithm, while in the present MI-IPA, the Hungarian algorithm yields better performance (see S5 Fig) <ref type="figure">.</ref></s><s>This slight difference may be explained by the fact the PMI scores are most meaningful collectively, as their sum tends to a pairwise approximation of MI (see Eq 5).</s></p><p><s>4. Update of the CA.</s><s>The ranking of the AB pairs is used to pick those pairs that are included in the CA at the next iteration.</s><s>Pairs with a high confidence score are more likely to be correct because there was less ambiguity in the assignment.</s><s>The number of pairs in the CA is increased by N increment at each iteration, and the MI-IPA is run until all the As and Bs in the dataset have been paired and added to the CA.</s><s>In the last iteration, all pairs assigned at the second to last iteration are included in the CA.</s></p><p><s>If starting from a training set of AB pairs, the N start training pairs remain in the CA throughout.</s><s>The As and Bs from all the other pairs in the CA are re-paired and re-scored at each iteration, and only re-enter the CA if their confidence score is sufficiently high.</s><s>In other words, at the first iteration, the CA only contains the N start training pairs.</s><s>Then, for any iteration number n &gt; 1, it contains these exact same N start training pairs, plus the (n − 1) N increment assigned AB pairs that had the highest confidence scores at iteration number n − 1.</s></p><p><s>In the absence of a training set, all As and Bs in the dataset are paired and scored at each iteration, and all the pairs of the CA are fully re-picked at each iteration based on the confidence score.</s><s>For any iteration number n &gt; 1, the CA contains the (n − 1)N increment assigned AB pairs that had the highest confidence scores at iteration number n − 1.</s></p><p><s>Once the new CA is constructed, the next iteration can start.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Run time</head><p><s>The run time of the MI-IPA strongly depends on the number of iterations made, as well as on dataset size (length of sequences, number of sequences in the dataset).</s><s>Because the inversion of the correlation matrix is not necessary, the MI-IPA is substantially faster than the DCA-IPA, and this difference is stronger for longer sequences.</s><s>In practice, for our standard HK-RR dataset, one round of calculation of all PMI scores from sequence data (Eq 1) takes 7s, while for DCA, the calculation of all pairwise couplings takes 9s.</s><s>The longest concatenated sequences considered here were XDHA-XDHC (see <ref type="bibr">Fig 4)</ref>, with total length L = 911 (to be compared to 176 for HK-RRs): in this case, the calculation of all PMI scores takes 135s, while for DCA, the calculation of pairwise couplings takes 289s.</s><s>Times are given for a single processor (Intel Core i7) of a standard laptop computer.</s><s>Regarding the full MI-IPA, run times with all standard datasets used here were under 10 hours.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Comparison to the DCA-IPA</head><p><s>Throughout, the DCA-IPA was used as described in <ref type="bibr" target="#b20">[21]</ref>, with the same parameters (threshold Hamming distance for weighting neighboring sequences θ = 0.3, pseudocount weight Λ = 0.5).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Dataset construction</head><p><s>We use the HK-RR datasets described in <ref type="bibr" target="#b20">[21]</ref>.</s><s>Briefly, the complete dataset was built using the online database P2CS <ref type="bibr" target="#b54">[55,</ref><ref type="bibr" target="#b55">56]</ref>, yielding a total of 23,424 HK-RR pairs (known by genome proximity) from 2102 different species.</s><s>We focused on the protein domains through which HKs and RRs interact, which are the Pfam HisKA domain present in most HKs (64 amino acids) and the Pfam Response_reg domain present in all RRs (112 amino acids).</s></p><p><s>In most of the paper, and as in <ref type="bibr" target="#b20">[21]</ref>, we focused on a smaller "standard dataset" extracted from this complete dataset, both because protein families that possess as many members as the HKs and RRs are atypical, and in view of computational time constraints.</s><s>This standard dataset was constructed by picking species randomly, and comprises 5064 pairs from 459 species.</s><s>In our datasets, we discarded sequences from species that contain only one pair, for which pairing is unambiguous.</s><s>It allows us to assess the impact of training set size (N start ) without including an implicit training set via these pairs, and it also enables us to address prediction in the absence of any known pairs (no training set).</s></p><p><s>While we used HK-RRs as the main benchmark for the MI-IPA, we assessed the generality of its performance by applying it to several other pairs of protein families.</s><s>For these proteins, paired alignments of homologs of known Escherichia coli interacting protein pairs were built using a method adapted from <ref type="bibr" target="#b15">[16]</ref>, as detailed in <ref type="bibr" target="#b20">[21]</ref>.</s><s>Note that we kept full sequences, without restricting them to Pfam domains, for PAAH-PAAJ and XDHC-XDHA.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Statistics of the concatenated alignment (CA)</head><p><s>Let us consider a CA of paired AB sequences.</s><s>At each site i 2 {1, ‥, L}, where L is the length of an AB sequence, a given concatenated sequence can feature any of 21 amino acid states α.</s></p><p><s>The raw empirical frequencies f i (α) and f ij (α, β), obtained by counting the sequences where given residues occur at given sites and dividing by the number M of sequences in the CA, are subject to sampling bias, due to phylogeny and to the choice of species that are sequenced <ref type="bibr" target="#b5">[6,</ref><ref type="bibr" target="#b11">12]</ref>.</s><s>Hence, we use a standard correction that re-weights "neighboring" concatenated sequences with mean Hamming distance per site &lt; θ.</s><s>In practice θ = 0.15 was found to yield the best results, but the dependence of performance on θ is weak (see S6 Fig, <ref type="figure">panel A</ref>).</s><s>The weight associated to a given concatenated sequence a is 1/m a , where m a is the number of neighbors of a within the threshold (including the sequence considered) <ref type="bibr" target="#b5">[6,</ref><ref type="bibr" target="#b11">12,</ref><ref type="bibr" target="#b13">14]</ref>.</s><s>This allows one to define an effective total number of sequences, M eff ¼ P M a¼1 1=m a .</s><s>We also introduce pseudocounts via a parameter Λ <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b5">6,</ref><ref type="bibr" target="#b11">12,</ref><ref type="bibr" target="#b13">14]</ref> to avoid issues due e.g. to amino-acid pairs that never appear.</s><s>Indeed, those can yield mathematical difficulties, such as diverging PMI estimates.</s><s>Note that pseudocounts are widely used in DCA too <ref type="bibr" target="#b11">[12]</ref>.</s><s>The corrected one-body frequencies f i read</s></p><formula xml:id="formula_9">f i ðaÞ ¼ L q þ ð1 À LÞf i ðaÞ ;<label>ð10Þ</label></formula><p><s>where q = 21 is the number of possible states per site.</s><s>Similarly, the corrected two-body frequencies f ij read</s></p><formula xml:id="formula_10">f ij ða; bÞ ¼ L q 2 þ ð1 À LÞf ij ða; bÞ if i 6 ¼ j ;<label>ð11Þ</label></formula><formula xml:id="formula_11">f ii ða; bÞ ¼ L q d ab þ ð1 À LÞf ii ða; bÞ ¼ f i ðaÞd ab ;<label>ð12Þ</label></formula><p><s>where δ αβ = 1 if α = β and 0 otherwise.</s><s>We found that Λ = 0.15 yields the best performance of the MI-IPA, but the dependence of performance on Λ is weak (see S6 Fig, <ref type="figure">panel B</ref>).</s><s>Note that this value is lower than the typical value used in DCA (Λ = 0.5) <ref type="bibr" target="#b5">[6,</ref><ref type="bibr" target="#b11">12]</ref>.</s><s>Note that our demonstration that the average pairing score S X of an assignment tends to the sum of MIs of inter-protein residue pairs (see Eqs 4 and 5) did not include proximity weightings and pseudocounts.</s><s>In practice, at each iteration of our algorithm, assignments are made within each species separately, a scale at which it is convenient to just use the sum of pairing scores S AB (see Eq 3), and find the assignment that maximizes it.</s><s>This means that the convergence to the sum of MIs is approximate when using proximity weightings and pseudocounts to calculate the frequencies in the CA and estimate PMIs.</s></p><p><s>Note also that empirical frequencies without weightings or pseudocounts were employed to study how well the MI-IPA maximizes MI (Fig <ref type="figure" target="#fig_3">3</ref>    <ref type="bibr" target="#b20">[21]</ref>, and then ranked using these scores.</s><s>(A) HK-RR dataset; contacts were determined from the experimental structure with PDB identifier 3DGE <ref type="bibr" target="#b56">[57]</ref>.</s><s>(B) Dataset of homologs of MALG-MALK; contacts were determined from the experimental structure with PDB identifier 3RLF <ref type="bibr" target="#b57">[58]</ref>.</s><s>The alignments of *5000 cognate protein pairs employed in the rest of the paper to test the MI-IPA (see Methods) were used.</s><s>A generous threshold of 8Å on the minimum distance between two amino acids was used to define contacts.</s><s>In both panels, the chance expectation for finding contacts (i.e. the overall fraction of inter-protein residue pairs that are in contact) is shown (dashed lines).</s><s>(EPS) S5 Fig. IPA assignment variants.</s><s>Final TP fraction obtained versus N increment for the standard HK-RR dataset, starting from random within-species HK-RR pairs.</s><s>For both the MI-IPA and the DCA-IPA, two variants of the protein pair assignment strategy are presented.</s><s>Once pairing scores are computed, pairs are assigned within each species either using the Hungarian algorithm, which maximizes the sum of scores in the species, or using a greedy algorithm, that favors individual pairs with top scores (see Methods).</s><s>In all the rest of the paper, the Hungarian algorithm is used for the MI-IPA, and the greedy one is used for the DCA-IPA, as in <ref type="bibr" target="#b20">[21]</ref>.  <ref type="table">.</ref></s><s>Orphan partnership and crosstalk prediction in HK-RRs by MI and DCA.</s><s>MI and DCA scores trained on the full alignment of cognate HK-RR pairs (excluding orphans, see Methods) were used to score all possible HK-RR pairs, including orphans, in species where orphan and crosstalk partners have been reported in the literature.</s><s>For each HK considered, RRs were ranked using the MI and DCA scores.</s><s>The table indicates the species, the HK and RR names, the literature references where partnership was reported, the total number of RRs in the species considered, and the rank among all these RRs of the RR considered, both using MI scores and using DCA scores.</s><s>Finally, we report a comparison of the DCA ranking with the previous one in <ref type="bibr" target="#b13">[14]</ref>: does our ranking give a better (higher) or a worse (lower) rank to the known partner than this previous ranking?</s><s>Special mentions in the table: (pair): the cognate pair was included, in order to compare it with the crosstalk partner; Worse � : 2 ranks lower (including an inversion between PleD and DivK, which had close scores in <ref type="bibr" target="#b13">[14]</ref>); Worse �� : 1 rank lower (including an inversion between PleD and DivK, which had close scores in <ref type="bibr" target="#b13">[14]</ref>).</s><s>(PDF)</s></p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig 1 .</head><label>1</label><figDesc><div><p><s>Fig 1. Performance of the MI-IPA for different training set sizes N start .</s><s>(A) Increase of the TP fraction with the number of iterations during the MI-IPA.</s><s>(B) Initial and final TP fractions (at the first and last iteration) versus N start for the MI-IPA and for the DCA-IPA of [21].</s><s>In both panels, the standard dataset of HK-RRs is used, and the CA includes N increment = 6 additional pairs at each iteration.</s><s>All results are averaged over 50 replicates that differ by the random choice of HK-RR pairs in the training set.</s><s>Dashed lines represent the average TP fraction obtained for random within-species HK-RR pairings.</s><s>https://doi.org/10.1371/journal.pcbi.1006401.g001</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig 2 .</head><label>2</label><figDesc><div><p><s>Fig 2. Performance of the MI-IPA without a training set.</s><s>(A) Final TP fraction obtained by the MI-IPA and the DCA-IPA versus N increment for the standard HK-RR dataset.At the first iteration, the CA is made of random withinspecies HK-RR pairs.</s><s>At each subsequent iteration n &gt; 1, the CA includes the (n − 1)N increment top predicted pairs.</s><s>All results are averaged over 50 replicates employing different initial random pairings.</s><s>The MI-IPA was also run on an alignment where each column is randomly scrambled.</s><s>The dashed line represents the average TP fraction obtained for random within-species HK-RR pairings.</s><s>(B) Final TP fraction obtained by the MI-IPA and the DCA-IPA versus the total number M of HK-RR pairs in the dataset, starting from random pairings.</s><s>For each M, except that corresponding to the full dataset, datasets are constructed by picking species randomly from the full dataset, and results are averaged over multiple different such alignments (from 50 up to 500 for small M).</s><s>For the full dataset (largest M), averaging is done on 50 different initial random within-species pairings.</s><s>All results in (B) are obtained in the small-N increment limit.</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head></head><label></label><figDesc><div><p><s>Fig 1A).</s><s>In S1 Fig, panel A, we investigated the performance of other variants of the IPA in the same conditions as in Fig 2A.</s><s>Instead of PMIs, we explored the possibilities of using normalized PMIs</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Fig 3 .</head><label>3</label><figDesc><div><p><s>Fig 3. Increase of pairwise MI obtained by the MI-IPA.</s><s>(A) Estimates of the pairwise MI (sum of MIs of all interprotein residue pairs) are shown versus the total number M of sequences in the dataset.</s><s>The different curves correspond to the pairwise MI of the actual set of correctly paired HK-RRs, of the initial random within-species assignment used to initialize the MI-IPA, and of the final assignment predicted by the MI-IPA, as well as of an alignment where each column was scrambled.</s><s>Both axes have a logarithmic scale.</s><s>The slope −1, expected from leadingorder finite-size effects, is indicated by the dashed line.</s><s>For each M, HK-RR datasets are constructed by picking species randomly from the full dataset, and results are averaged over 50 different such alignments.</s><s>(B) Excess pairwise MI of the actual set of correctly paired HK-RRs, compared to the initial random within-species pair assignments and to the final assignment predicted by the MI-IPA.</s><s>The MI-IPA successfully reduces this excess pairwise MI, thus approaching the pairwise MI of the actual alignment.</s><s>Same data as in (A).</s><s>https://doi.org/10.1371/journal.pcbi.1006401.g003</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Fig 4 .</head><label>4</label><figDesc><div><p><s>Fig 4. Performance of the MI-IPA for different protein pairs.</s><s>Final TP fraction obtained without a training set by the MI-IPA and the DCA-IPA versus N increment .</s><s>(A,B,C) Pairs involved in ABC transporters; datasets of *5000 pairs extracted from larger full datasets.</s><s>(D,E) Pairs involved in enzymatic complexes; full datasets of *2000 pairs.</s><s>In each case, the mean number hm p i of pairs per species is indicated, and dashed lines represent the average TP fraction obtained for random withinspecies pairings.</s><s>All results are averaged over 50 replicates that differ in their initial random within-species pairings.</s><s>https://doi.org/10.1371/journal.pcbi.1006401.g004</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_5"><head>Fig 5 .</head><label>5</label><figDesc><div><p><s>Fig 5. Signature of protein-protein interactions.</s><s>Distribution of the fraction of MI-IPA replicates where each possible within-species protein pair is predicted as a pair, for three different pairs of protein families.</s><s>The MI-IPA replicates only differ in their initial random pairings.</s><s>(A and B) Interacting protein families: BASS-BASR homologs and MALG-MALK homologs.</s><s>(C) Protein families with no known interaction (BASR-MALK homologs).</s><s>In all panels, the distribution of replication fraction obtained on actual sequence alignments is shown together with the same distribution obtained by running the MI-IPA on alignments where each column is randomly scrambled (null model).</s><s>All alignments include *5000 protein pairs, with average number of pairs per species hm p i � 5, and each distribution is estimated from 500 MI-IPA replicates, using N increment = 50.</s><s>https://doi.org/10.1371/journal.pcbi.1006401.g005</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head></head><label></label><figDesc><div><p><s>and S2 Fig).</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head></head><label></label><figDesc><div><p><s>variants.</s><s>(A) Final TP fraction obtained versus N increment for the standard HK-RR dataset, starting from random within-species HK-RR pairs.</s><s>In addition to the MI-IPA and the DCA-IPA (see Fig2A), two other variants of the IPA are presented, which score inter-protein residue pairs by the normalized PMI (NPMI-IPA) and by the covariance (Cov-IPA), respectively (see Results).</s><s>Apart from this scoring difference, all particulars are the same as in the MI-IPA (see Methods).</s><s>(B) Similar graph as in (A), showing two variants of the IPA that combine MI and DCA: "Switch" uses the MI-IPA for the first half of iterations, before switching to the DCA-IPA; "Both" uses both MI and DCA at each iteration and favors protein pairs that are predicted by both methods (see Results).</s><s>In both panels, all results are averaged over 50 replicates employing different initial random pairings, and the dashed line represents the average TP fraction obtained for random within-species HK-RR pairings.(EPS)</s><s>S2 Fig. Increase of pairwise MI obtained by the MI-IPA: Finite-size effect corrections.</s><s>In both panels, similar results as those in Fig 3B are reported, but two different finite-size effect corrections to the MI estimates are implemented.</s><s>Excess pairwise MI of the actual set of correctly paired HK-RRs, compared to the initial random within-species pair assignments and to the final assignment predicted by the MI-IPA, are plotted versus the total number M of sequences in the dataset.</s><s>(A) Finite-size correction using subsampling of each dataset and fitting versus 1/M (see Results).</s><s>Third-degree polynomial fitting was employed.</s><s>(B) NSB correction [35, 36] (see Results).</s><s>In both panels, naive estimates (see Fig 3B) are also shown for comparison.</s><s>For each M, HK-RR datasets are constructed by picking species randomly from the full dataset, and results are averaged over 50 different such alignments.</s><s>(EPS) S3 Fig. Alternative signature of protein-protein interactions.</s><s>The MI of each inter-protein pair of amino acids was evaluated at the final iteration of the MI-IPA, for three different pairs of protein families, including two interacting ones (BASS-BASR homologs and MALG-MALK homologs) and one with no known interaction (BASR-MALK homologs).</s><s>These MI scores were averaged over 500 MI-IPA replicates with N increment = 50 that differ in their initial random pairings, and then ranked by decreasing value.</s><s>Datasets used are the same as in Fig 5: all alignments include *5000 protein pairs, with average number of pairs per species hm p i � 5. (EPS) S4 Fig. Prediction of inter-protein residue contacts.</s><s>Fraction among the top inter-protein residue pairs ranked by MI or DCA scores that are in contact in the experimentally-determined three-dimensional structure of complexes.</s><s>Inter-protein residue pairs were scored both by MI (see Eq 2) and by the Frobenius norm of the coupling strengths from DCA</s></p></div></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head></head><label></label><figDesc><div><p><s>All results are averaged over 50 replicates employing different initial random pairings, and the dashed line represents the average TP fraction obtained for random within-species HK-RR pairings.</s><s>(EPS) S6 Fig. Impact of the weighting of similar sequences and of the pseudocount.</s><s>(A) Final TP fraction obtained for the standard HK-RR dataset, starting from random within-species HK-RR pairs, with N increment = 6, for various values of the threshold θ of mean Hamming distance per site below which two sequences are considered as neighbors and weighted accordingly (see Methods).</s><s>Pseudocount Λ = 0.15 was used.</s><s>(B) Similar graph, but varying the pseudocount Λ (see Methods), at fixed θ = 0.15.</s><s>In both panels, all results are averaged over 50 replicates employing different initial random pairings.</s><s>(EPS) S1 Data.</s><s>Multiple sequence alignments.</s><s>This file contains the various multiple sequence alignments discussed here.</s><s>(TAR) S1 Table</s></p></div></figDesc></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot">PLOS Computational Biology | https://doi.org/10.1371/journal.pcbi.1006401November 13, 2018  </note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgments</head><p><s>A.-F. B. thanks Ned S. Wingreen for illuminating discussions.</s><s>A.-F. B. acknowledges the Aspen Center for Physics, which is supported by NSF Grant PHY-1607611, and more particularly the participants of the 2017 Aspen Working Group on "Covariance Analysis of Proteins" for stimulating discussions.</s></p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Methods</head><p><s>Here, we first explain the different steps of the MI-IPA and briefly discuss its run time.</s><s>Next, we describe the datasets used and the way the statistics of these alignments are computed.</s><s>Matlab implementations of both the MI-IPA and the DCA-IPA on our standard HK-RR dataset are freely available at https://doi.org/10.5281/zenodo.1421781</s><s>and https://doi.org/10.5281/</s><s>zenodo.1421861</s><s>respectively.</s><s>The various sequence datasets discussed here are available as Supplementary Data (S1 Data).</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Iterative pairing algorithm based on mutual information (MI-IPA)</head><p><s>Ref. <ref type="bibr" target="#b20">[21]</ref> introduced an iterative pairing algorithm (IPA) to predict interaction partners among paralogs from two protein families.</s><s>It essentially performs an approximate maximization of the average effective interaction energy between pairs of proteins comprised of one protein of family A and one of family B, and the effective interaction energy is calculated from a pairwise maximum entropy model (see also <ref type="bibr" target="#b21">[22]</ref>).</s><s>Here, we propose the MI-IPA, a variant of the IPA that approximately maximizes MI via S X (see Eq 4), instead of the effective interaction energy.</s><s>Importantly, the MI-IPA does not require the construction of a global statistical model of the data, contrary to the algorithms from Refs.</s><s><ref type="bibr" target="#b20">[21,</ref><ref type="bibr" target="#b21">22]</ref>.</s><s>Let us now describe each step of an iteration of the MI-IPA, after explaining how the CA is constructed for the very first iteration.</s></p><p><s>For simplicity, we assume that in each species, there is the same number of proteins of family A and of family B. If this is not the case, an injective matching strategy can be used <ref type="bibr" target="#b21">[22]</ref>, so in each species, the relevant number of proteins is the minimum of the number of proteins of family A and of proteins of family B.</s></p><p><s>Initialization of the CA.</s><s>If starting from a training set of known interaction partners AB, the CA for the first iteration of the IPA is built from the pairs AB in this training set.</s><s>In subsequent iterations, the training set pairs are always kept in the CA, and additional pairs with the highest confidence scores (see below) are added to the CA.</s></p><p><s>In the absence of a training set, each protein A of the dataset where we wish to predict pairings is randomly paired with a protein B from its species.</s><s>All these random pairs are included in the CA for the first iteration of the MI-IPA.</s><s>Hence, this initial CA contains a mixture of correct and incorrect pairs, with one correct pair per species on average.</s><s>At the second iteration, the CA is built using only the N increment AB pairs with the highest confidence scores obtained from this first iteration.</s><s>Now that we have explained the initial construction of the CA, let us describe each step of an iteration of the MI-IPA.</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">Calculation of pointwise mutual informations (PMI).</head><p><s>Each iteration begins by the calculation of PMI scores from the CA of paired AB sequences.</s><s>The empirical one-and twosite frequencies, f i (α) and f ij (α, β), of occurrence of amino-acid states α (or β) at each site i (or j) are computed for the CA, using a specific weighting of similar sequences, and a pseudocount correction (see below) <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b5">6,</ref><ref type="bibr" target="#b11">12,</ref><ref type="bibr" target="#b13">14]</ref>.</s><s>The PMI of each residue pair (α, β) at each pair of sites (i, j), defined in Eq 1, is then estimated from these frequencies as</s></p><p><s>2. Calculation of pairing scores for all possible AB pairs.</s><s>Having calculated PMIs on the CA, we next turn to the dataset where we wish to predict pairings.</s><s>The MI-based pairing score</s></p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Author Contributions</head><p><s>Conceptualization: Anne-Florence Bitbol.</s></p><p><s>Investigation: Anne-Florence Bitbol.</s></p><p><s>Methodology: Anne-Florence Bitbol.</s></p><p><s>Software: Anne-Florence Bitbol.</s></p><p><s>Validation: Anne-Florence Bitbol.</s></p><p><s>Writing -original draft: Anne-Florence Bitbol.</s></p><p><s>Writing -review &amp; editing: Anne-Florence Bitbol.</s></p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">The binary protein-protein interaction landscape of Escherichia coli</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">V</forename><surname>Rajagopala</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Sikorski</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Mosca</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Vlasblom</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Arnold</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nbt.2831</idno>
+		<idno type="PMID">24561554</idno>
+		<ptr target="https://doi.org/10.1038/nbt.2831" />
+	</analytic>
+	<monogr>
+		<title level="j">Nat Biotechnol</title>
+		<imprint>
+			<biblScope unit="volume">32</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="285" to="290" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Correlated mutations in models of protein sequences: phylogenetic and structural effects</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">S</forename><surname>Lapedes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">G</forename><surname>Giraud</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">D</forename><surname>Stormo</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Statistics in molecular biology and genetics-IMS</title>
+		<title level="s">Lecture Notes-Monograph Series</title>
+		<imprint>
+			<date type="published" when="1999">1999</date>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="page" from="236" to="256" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Accurate prediction of protein-protein interactions from sequence alignments using a Bayesian method</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Burger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Van Nimwegen</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/msb4100203</idno>
+		<idno type="PMID">18277381</idno>
+		<ptr target="https://doi.org/10.1038/msb4100203" />
+	</analytic>
+	<monogr>
+		<title level="j">Mol Syst Biol</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page">165</biblScope>
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Identification of direct residue contacts in proteinprotein interaction by message passing</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Weigt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>White</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Szurmant</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Hoch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hwa</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.0805923106</idno>
+		<idno type="PMID">19116270</idno>
+		<ptr target="https://doi.org/10.1073/pnas.0805923106" />
+	</analytic>
+	<monogr>
+		<title level="j">Proc Natl Acad Sci USA</title>
+		<imprint>
+			<biblScope unit="volume">106</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="67" to="72" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Information Theory and Statistical Mechanics</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">T</forename><surname>Jaynes</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRev.106.620</idno>
+		<ptr target="https://doi.org/10.1103/PhysRev.106.620" />
+	</analytic>
+	<monogr>
+		<title level="j">Phys Rev</title>
+		<imprint>
+			<biblScope unit="volume">106</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="620" to="630" />
+			<date type="published" when="1957">1957</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Protein 3D structure computed from evolutionary sequence variation</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">S</forename><surname>Marks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">J</forename><surname>Colwell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Sheridan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">A</forename><surname>Hopf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Pagnani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Zecchina</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0028766</idno>
+		<idno type="PMID">22163331</idno>
+		<ptr target="https://doi.org/10.1371/journal.pone.0028766" />
+	</analytic>
+	<monogr>
+		<title level="j">PLoS ONE</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page">e28766</biblScope>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title level="a" type="main">Genomics-aided structure prediction</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">I</forename><surname>Sułkowska</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Morcos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Weigt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hwa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename><surname>Onuchic</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.1207864109</idno>
+		<idno type="PMID">22691493</idno>
+		<ptr target="https://doi.org/10.1073/pnas.1207864109" />
+	</analytic>
+	<monogr>
+		<title level="j">Proc Natl Acad Sci</title>
+		<imprint>
+			<biblScope unit="volume">109</biblScope>
+			<biblScope unit="issue">26</biblScope>
+			<biblScope unit="page" from="10340" to="10345" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title level="a" type="main">Predicting functionally informative mutations in Escherichia coli BamA using evolutionary covariance analysis</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">S</forename><surname>Dwyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">P</forename><surname>Ricci</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">J</forename><surname>Colwell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">J</forename><surname>Silhavy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">S</forename><surname>Wingreen</surname></persName>
+		</author>
+		<idno type="DOI">10.1534/genetics.113.155861</idno>
+		<idno type="PMID">23934888</idno>
+		<ptr target="https://doi.org/10.1534/genetics.113.155861" />
+	</analytic>
+	<monogr>
+		<title level="j">Genetics</title>
+		<imprint>
+			<biblScope unit="volume">195</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="443" to="455" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title level="a" type="main">Toward rationally redesigning bacterial two-component signaling systems using coevolutionary information</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">R</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Morcos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Levine</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename><surname>Onuchic</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.1323734111</idno>
+		<idno type="PMID">24449878</idno>
+		<ptr target="https://doi.org/10.1073/pnas.1323734111" />
+	</analytic>
+	<monogr>
+		<title level="j">Proc Natl Acad Sci</title>
+		<imprint>
+			<biblScope unit="volume">111</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page" from="E563" to="571" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">Connecting the Sequence-Space of Bacterial Signaling Proteins to Phenotypes Using Coevolutionary Landscapes</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">R</forename><surname>Cheng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Nordesjo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">L</forename><surname>Hayes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Levine</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">C</forename><surname>Flores</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename><surname>Onuchic</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/molbev/msw188</idno>
+		<idno type="PMID">27604223</idno>
+		<ptr target="https://doi.org/10.1093/molbev/msw188" />
+	</analytic>
+	<monogr>
+		<title level="j">Mol Biol Evol</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="issue">12</biblScope>
+			<biblScope unit="page" from="3054" to="3064" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Coevolutionary Landscape Inference and the Context-Dependence of Mutations in Beta-Lactamase TEM-1</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Figliuzzi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Jacquier</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Schug</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Tenaillon</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Weigt</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/molbev/msv211</idno>
+		<idno type="PMID">26446903</idno>
+		<ptr target="https://doi.org/10.1093/molbev/msv211" />
+	</analytic>
+	<monogr>
+		<title level="j">Mol Biol Evol</title>
+		<imprint>
+			<biblScope unit="volume">33</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="268" to="280" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Direct-coupling analysis of residue coevolution captures native contacts across many protein families</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Morcos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Pagnani</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Lunt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Bertolino</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">S</forename><surname>Marks</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Sander</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.1111471108</idno>
+		<idno type="PMID">22106262</idno>
+		<ptr target="https://doi.org/10.1073/pnas.1111471108" />
+	</analytic>
+	<monogr>
+		<title level="j">Proc Natl Acad Sci USA</title>
+		<imprint>
+			<biblScope unit="volume">108</biblScope>
+			<biblScope unit="issue">49</biblScope>
+			<biblScope unit="page" from="E1293" to="1301" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">Large-Scale Conformational Transitions and Dimerization Are Encoded in the Amino-Acid Sequences of Hsp70 Chaperones</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Malinverni</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Marsili</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Barducci</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>De Los Rios</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pcbi.1004262</idno>
+		<idno type="PMID">26046683</idno>
+		<ptr target="https://doi.org/10.1371/journal.pcbi.1004262" />
+	</analytic>
+	<monogr>
+		<title level="j">PLoS Comput Biol</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">e1004262</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">Dissecting the specificity of protein-protein interaction in bacterial two-component signaling: orphans and crosstalks</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Procaccini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Lunt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Szurmant</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hwa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Weigt</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0019729</idno>
+		<idno type="PMID">21573011</idno>
+		<ptr target="https://doi.org/10.1371/journal.pone.0019729" />
+	</analytic>
+	<monogr>
+		<title level="j">PLoS ONE</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page">e19729</biblScope>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<analytic>
+		<title level="a" type="main">Fast and accurate multivariate Gaussian modeling of protein families: predicting residue contacts and protein-interaction partners</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Baldassi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Zamparo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Feinauer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Procaccini</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Zecchina</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Weigt</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0092721</idno>
+		<idno type="PMID">24663061</idno>
+		<ptr target="https://doi.org/10.1371/journal.pone.0092721" />
+	</analytic>
+	<monogr>
+		<title level="j">PLoS ONE</title>
+		<imprint>
+			<biblScope unit="volume">9</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page">e92721</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Robust and accurate prediction of residue-residue interactions across protein interfaces using evolutionary information</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ovchinnikov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Kamisetty</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Baker</surname></persName>
+		</author>
+		<idno type="DOI">10.7554/eLife.02030</idno>
+		<idno type="PMID">24842992</idno>
+		<ptr target="https://doi.org/10.7554/eLife.02030" />
+	</analytic>
+	<monogr>
+		<title level="j">Elife</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">e02030</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<analytic>
+		<title level="a" type="main">Sequence co-evolution gives 3D contacts and structures of protein complexes</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">A</forename><surname>Hopf</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">P</forename><surname>Scharfe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Rodrigues</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">G</forename><surname>Green</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Kohlbacher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Sander</surname></persName>
+		</author>
+		<idno type="DOI">10.7554/eLife.03430</idno>
+		<ptr target="https://doi.org/10.7554/eLife.03430" />
+	</analytic>
+	<monogr>
+		<title level="j">Elife</title>
+		<imprint>
+			<biblScope unit="volume">3</biblScope>
+			<biblScope unit="page">e03430</biblScope>
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Integrated strategy reveals the protein interface between cancer targets Bcl-2 and NAF-1</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Tamir</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Rotem-Bamberger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Katz</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Morcos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">L</forename><surname>Hailey</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Zuris</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.1403770111</idno>
+		<idno type="PMID">24706857</idno>
+		<ptr target="https://doi.org/10.1073/pnas.1403770111" />
+	</analytic>
+	<monogr>
+		<title level="j">Proc Natl Acad Sci USA</title>
+		<imprint>
+			<biblScope unit="volume">111</biblScope>
+			<biblScope unit="issue">14</biblScope>
+			<biblScope unit="page" from="5177" to="5182" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Dimeric interactions and complex formation using direct coevolutionary couplings</title>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">N</forename><surname>Santos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Morcos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Jana</forename><forename type="middle">B</forename><surname>Andricopulo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">D</forename><surname>Onuchic</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">N</forename></persName>
+		</author>
+		<idno type="DOI">10.1038/srep13652</idno>
+		<idno type="PMID">26338201</idno>
+		<ptr target="https://doi.org/10.1038/srep13652" />
+	</analytic>
+	<monogr>
+		<title level="j">Sci Rep</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="page">13652</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title level="a" type="main">Inter-Protein Sequence Co-Evolution Predicts Known Physical Interactions in Bacterial Ribosomes and the Trp Operon</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Feinauer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Szurmant</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Weigt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Pagnani</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pone.0149166</idno>
+		<idno type="PMID">26882169</idno>
+		<ptr target="https://doi.org/10.1371/journal.pone.0149166" />
+	</analytic>
+	<monogr>
+		<title level="j">PLoS ONE</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page">e0149166</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title level="a" type="main">Inferring interaction partners from protein sequences</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">F</forename><surname>Bitbol</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">S</forename><surname>Dwyer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">J</forename><surname>Colwell</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">S</forename><surname>Wingreen</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.1606762113</idno>
+		<idno type="PMID">27663738</idno>
+		<ptr target="https://doi.org/10.1073/pnas.1606762113" />
+	</analytic>
+	<monogr>
+		<title level="j">Proc Natl Acad Sci</title>
+		<imprint>
+			<biblScope unit="volume">113</biblScope>
+			<biblScope unit="issue">43</biblScope>
+			<biblScope unit="page" from="12180" to="12185" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Simultaneous identification of specifically interacting paralogs and interprotein contacts by direct coupling analysis</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Gueudre</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Baldassi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Zamparo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Weigt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Pagnani</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.1607570113</idno>
+		<idno type="PMID">27729520</idno>
+		<ptr target="https://doi.org/10.1073/pnas.1607570113" />
+	</analytic>
+	<monogr>
+		<title level="j">Proc Natl Acad Sci USA</title>
+		<imprint>
+			<biblScope unit="volume">113</biblScope>
+			<biblScope unit="issue">43</biblScope>
+			<biblScope unit="page" from="12186" to="12191" />
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Protein sectors: evolutionary units of three-dimensional structure</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Halabi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Rivoire</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Leibler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Ranganathan</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cell.2009.07.038</idno>
+		<idno type="PMID">19703402</idno>
+		<ptr target="https://doi.org/10.1016/j.cell.2009.07.038" />
+	</analytic>
+	<monogr>
+		<title level="j">Cell</title>
+		<imprint>
+			<biblScope unit="volume">138</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="774" to="786" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">Evolution-based functional decomposition of proteins</title>
+		<author>
+			<persName><forename type="first">O</forename><surname>Rivoire</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">A</forename><surname>Reynolds</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Ranganathan</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pcbi.1004817</idno>
+		<idno type="PMID">27254668</idno>
+		<ptr target="https://doi.org/10.1371/journal.pcbi.1004817" />
+	</analytic>
+	<monogr>
+		<title level="j">PLoS Comput Biol</title>
+		<imprint>
+			<biblScope unit="volume">12</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page">e1004817</biblScope>
+			<date type="published" when="2016">2016</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Architecture and coevolution of allosteric materials</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Yan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Ravasio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Brito</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Wyart</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.1615536114</idno>
+		<idno type="PMID">28223497</idno>
+		<ptr target="https://doi.org/10.1073/pnas.1615536114" />
+	</analytic>
+	<monogr>
+		<title level="j">Proc Natl Acad Sci</title>
+		<imprint>
+			<biblScope unit="volume">114</biblScope>
+			<biblScope unit="issue">10</biblScope>
+			<biblScope unit="page" from="2526" to="2531" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<monogr>
+		<title level="m" type="main">Revealing evolutionary constraints on proteins through sequence analysis</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">W</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">F</forename><surname>Bitbol</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">S</forename><surname>Wingreen</surname></persName>
+		</author>
+		<idno>arXiv:180807149</idno>
+		<imprint/>
+	</monogr>
+	<note type="report_type">Preprint</note>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">A method to predict functional residues in proteins</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Casari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Sander</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Valencia</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nsb0295-171</idno>
+		<idno type="PMID">7749921</idno>
+		<ptr target="https://doi.org/10.1038/nsb0295-171" />
+	</analytic>
+	<monogr>
+		<title level="j">Nat Struct Biol</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="171" to="178" />
+			<date type="published" when="1995">1995</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">Power law tails in phylogenetic systems</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Qin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">J</forename><surname>Colwell</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.1711913115</idno>
+		<idno type="PMID">29311320</idno>
+		<ptr target="https://doi.org/10.1073/pnas.1711913115" />
+	</analytic>
+	<monogr>
+		<title level="j">Proc Natl Acad Sci USA</title>
+		<imprint>
+			<biblScope unit="volume">115</biblScope>
+			<biblScope unit="issue">4</biblScope>
+			<biblScope unit="page" from="690" to="695" />
+			<date type="published" when="2018">2018</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<monogr>
+		<title level="m" type="main">Transmission of Information: A Statistical Theory of Communications</title>
+		<author>
+			<persName><forename type="first">R</forename><surname>Fano</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1961">1961</date>
+			<publisher>The MIT Press</publisher>
+			<pubPlace>Cambridge, MA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<title level="m" type="main">Elements of Information Theory</title>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">M</forename><surname>Cover</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Thomas</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2006">2006</date>
+			<pubPlace>New York, NY, USA: Wiley-Interscience</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Word association norms, mutual information, and lexicography</title>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">W</forename><surname>Church</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Hanks</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Comput Linguist</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="22" to="29" />
+			<date type="published" when="1990">1990</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Handling the impact of low frequency events on co-occurrence based measures of word similarity</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Role</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Nadif</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proceedings of the International Conference on Knowledge Discovery and Information Retrieval (KDIR-2011)</title>
+				<editor>
+			<persName><forename type="first">J</forename><surname>Filipe</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">A</forename><surname>Fred</surname></persName>
+		</editor>
+		<meeting>the International Conference on Knowledge Discovery and Information Retrieval (KDIR-2011)</meeting>
+		<imprint>
+			<publisher>Scitepress</publisher>
+			<date type="published" when="2011">2011</date>
+			<biblScope unit="page" from="218" to="223" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<analytic>
+		<title level="a" type="main">Specificity in two-component signal transduction pathways</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">T</forename><surname>Laub</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Goulian</surname></persName>
+		</author>
+		<idno type="DOI">10.1146/annurev.genet.41.042007.170548</idno>
+		<idno type="PMID">18076326</idno>
+		<ptr target="https://doi.org/10.1146/annurev.genet.41.042007.170548" />
+	</analytic>
+	<monogr>
+		<title level="j">Annu Rev Genet</title>
+		<imprint>
+			<biblScope unit="volume">41</biblScope>
+			<biblScope unit="page" from="121" to="145" />
+			<date type="published" when="2007">2007</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<monogr>
+		<title level="m" type="main">Biophysics: Searching for Principles</title>
+		<author>
+			<persName><forename type="first">W</forename><surname>Bialek</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012">2012</date>
+			<publisher>Princeton University Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<analytic>
+		<title level="a" type="main">Entropy and inference, revisited</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Nemenman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Shafee</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Bialek</surname></persName>
+		</author>
+		<ptr target="http://nsb-entropy.sourceforge.net/" />
+	</analytic>
+	<monogr>
+		<title level="m">Advances in Neural Information Processing Systems 14</title>
+				<editor>
+			<persName><forename type="first">T</forename><forename type="middle">G</forename><surname>Dietterich</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">S</forename><surname>Becker</surname></persName>
+		</editor>
+		<editor>
+			<persName><forename type="first">Z</forename><surname>Ghahramani</surname></persName>
+		</editor>
+		<imprint>
+			<publisher>MIT Press</publisher>
+			<date type="published" when="2002">2002</date>
+			<biblScope unit="page" from="471" to="478" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<analytic>
+		<title level="a" type="main">Entropy and information in neural spike trains: progress on the sampling problem</title>
+		<author>
+			<persName><forename type="first">I</forename><surname>Nemenman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Bialek</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>De Ruyter Van Steveninck</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRevE.69.056111</idno>
+		<ptr target="https://doi.org/10.1103/PhysRevE.69.056111" />
+	</analytic>
+	<monogr>
+		<title level="j">Phys Rev E</title>
+		<imprint>
+			<biblScope unit="volume">69</biblScope>
+			<biblScope unit="issue">5</biblScope>
+			<biblScope unit="page">56111</biblScope>
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+	<note>Pt 2</note>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<analytic>
+		<title level="a" type="main">ABC transporters: the power to change</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">C</forename><surname>Rees</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Johnson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Lewinson</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/nrm2646</idno>
+		<idno type="PMID">19234479</idno>
+		<ptr target="https://doi.org/10.1038/nrm2646" />
+	</analytic>
+	<monogr>
+		<title level="j">Nat Rev Mol Cell Biol</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="218" to="227" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<analytic>
+		<title level="a" type="main">Structural basis for channelling mechanism of a fatty acid beta-oxidation multienzyme complex</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ishikawa</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Tsuchiya</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Oyama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Tsunaka</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Morikawa</surname></persName>
+		</author>
+		<idno type="DOI">10.1038/sj.emboj.7600298</idno>
+		<idno type="PMID">15229654</idno>
+		<ptr target="https://doi.org/10.1038/sj.emboj.7600298" />
+	</analytic>
+	<monogr>
+		<title level="j">EMBO J</title>
+		<imprint>
+			<biblScope unit="volume">23</biblScope>
+			<biblScope unit="issue">14</biblScope>
+			<biblScope unit="page" from="2745" to="2754" />
+			<date type="published" when="2004">2004</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<analytic>
+		<title level="a" type="main">Mechanism of Substrate and Inhibitor Binding of Rhodobacter capsulatus Xanthine Dehydrogenase</title>
+		<author>
+			<persName><forename type="first">U</forename><surname>Dietzel</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kuper</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">A</forename><surname>Doebbler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Schulte</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">J</forename><surname>Truglio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Leimkuhler</surname></persName>
+		</author>
+		<idno type="DOI">10.1074/jbc.M808114200</idno>
+		<idno type="PMID">19109249</idno>
+		<ptr target="https://doi.org/10.1074/jbc.M808114200" />
+	</analytic>
+	<monogr>
+		<title level="j">J Biol Chem</title>
+		<imprint>
+			<biblScope unit="volume">284</biblScope>
+			<biblScope unit="issue">13</biblScope>
+			<biblScope unit="page" from="8768" to="8776" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title level="a" type="main">Mutual information without the influence of phylogeny or entropy dramatically improves residue contact prediction</title>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">D</forename><surname>Dunn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><forename type="middle">M</forename><surname>Wahl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><forename type="middle">B</forename><surname>Gloor</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/bioinformatics/btm604</idno>
+		<idno type="PMID">18057019</idno>
+		<ptr target="https://doi.org/10.1093/bioinformatics/btm604" />
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="issue">3</biblScope>
+			<biblScope unit="page" from="333" to="340" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">PSICOV: precise structural contact prediction using sparse inverse covariance estimation on large multiple sequence alignments</title>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">T</forename><surname>Jones</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">W</forename><surname>Buchan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Cozzetto</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Pontil</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/bioinformatics/btr638</idno>
+		<idno type="PMID">22101153</idno>
+		<ptr target="https://doi.org/10.1093/bioinformatics/btr638" />
+	</analytic>
+	<monogr>
+		<title level="j">Bioinformatics</title>
+		<imprint>
+			<biblScope unit="volume">28</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="184" to="190" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">Improved contact prediction in proteins: using pseudolikelihoods to infer Potts models</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ekeberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Lovkvist</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Lan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Weigt</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Aurell</surname></persName>
+		</author>
+		<idno type="DOI">10.1103/PhysRevE.87.012707</idno>
+		<ptr target="https://doi.org/10.1103/PhysRevE.87.012707" />
+	</analytic>
+	<monogr>
+		<title level="j">Phys Rev E</title>
+		<imprint>
+			<biblScope unit="volume">87</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page">12707</biblScope>
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<analytic>
+		<title level="a" type="main">Large-scale determination of previously unsolved protein structures using evolutionary information</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ovchinnikov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Kinch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Park</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Liao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Pei</forename><forename type="middle">J</forename><surname>Kim</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">E</forename></persName>
+		</author>
+		<idno type="DOI">10.7554/eLife.09248</idno>
+		<idno type="PMID">26335199</idno>
+		<ptr target="https://doi.org/10.7554/eLife.09248" />
+	</analytic>
+	<monogr>
+		<title level="j">Elife</title>
+		<imprint>
+			<biblScope unit="volume">4</biblScope>
+			<biblScope unit="page">e09248</biblScope>
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b43">
+	<analytic>
+		<title level="a" type="main">Rewiring the specificity of two-component signal transduction systems</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">M</forename><surname>Skerker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">S</forename><surname>Perchuk</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Siryaporn</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">A</forename><surname>Lubin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Ashenberg</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Goulian</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cell.2008.04.040</idno>
+		<idno type="PMID">18555780</idno>
+		<ptr target="https://doi.org/10.1016/j.cell.2008.04.040" />
+	</analytic>
+	<monogr>
+		<title level="j">Cell</title>
+		<imprint>
+			<biblScope unit="volume">133</biblScope>
+			<biblScope unit="issue">6</biblScope>
+			<biblScope unit="page" from="1043" to="1054" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b44">
+	<analytic>
+		<title level="a" type="main">Determinants of specificity in two-component signal transduction</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">I</forename><surname>Podgornaia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">T</forename><surname>Laub</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.mib.2013.01.004</idno>
+		<idno type="PMID">23352354</idno>
+		<ptr target="https://doi.org/10.1016/j.mib.2013.01.004" />
+	</analytic>
+	<monogr>
+		<title level="j">Curr Opin Microbiol</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="156" to="162" />
+			<date type="published" when="2013">2013</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b45">
+	<analytic>
+		<title level="a" type="main">Protein evolution. Pervasive degeneracy and epistasis in a protein-protein interface</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">I</forename><surname>Podgornaia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">T</forename><surname>Laub</surname></persName>
+		</author>
+		<idno type="DOI">10.1126/science.1257360</idno>
+		<idno type="PMID">25657251</idno>
+		<ptr target="https://doi.org/10.1126/science.1257360" />
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">347</biblScope>
+			<biblScope unit="issue">6222</biblScope>
+			<biblScope unit="page" from="673" to="677" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b46">
+	<analytic>
+		<title level="a" type="main">Co-evolving motions at protein-protein interfaces of two-component signaling systems identified by covariance analysis</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Szurmant</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">G</forename><surname>Bobay</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">A</forename><surname>White</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">M</forename><surname>Sullivan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Thompson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Hwa</surname></persName>
+		</author>
+		<idno type="DOI">10.1021/bi8009604</idno>
+		<idno type="PMID">18588317</idno>
+		<ptr target="https://doi.org/10.1021/bi8009604" />
+	</analytic>
+	<monogr>
+		<title level="j">Biochemistry</title>
+		<imprint>
+			<biblScope unit="volume">47</biblScope>
+			<biblScope unit="issue">30</biblScope>
+			<biblScope unit="page" from="7782" to="7784" />
+			<date type="published" when="2008">2008</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b47">
+	<analytic>
+		<title level="a" type="main">Coupling between Protein Stability and Catalytic Activity Determines Pathogenicity of G6PD Variants</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">D</forename><surname>Cunningham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Colavin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><forename type="middle">C</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Mochly-Rosen</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.celrep.2017.02.048</idno>
+		<idno type="PMID">28297664</idno>
+		<ptr target="https://doi.org/10.1016/j.celrep.2017.02.048" />
+	</analytic>
+	<monogr>
+		<title level="j">Cell Rep</title>
+		<imprint>
+			<biblScope unit="volume">18</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<biblScope unit="page" from="2592" to="2599" />
+			<date type="published" when="2017">2017</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b48">
+	<analytic>
+		<title level="a" type="main">The evolution of two-component systems in bacteria reveals different strategies for niche adaptation</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Alm</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Arkin</surname></persName>
+		</author>
+		<idno type="DOI">10.1371/journal.pcbi.0020143</idno>
+		<idno type="PMID">17083272</idno>
+		<ptr target="https://doi.org/10.1371/journal.pcbi.0020143" />
+	</analytic>
+	<monogr>
+		<title level="j">PLoS Comput Biol</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="issue">11</biblScope>
+			<date type="published" when="2006">2006</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b49">
+	<analytic>
+		<title level="a" type="main">Evolution of two-component signal transduction systems</title>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">J</forename><surname>Capra</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">T</forename><surname>Laub</surname></persName>
+		</author>
+		<idno type="DOI">10.1146/annurev-micro-092611-150039</idno>
+		<idno type="PMID">22746333</idno>
+		<ptr target="https://doi.org/10.1146/annurev-micro-092611-150039" />
+	</analytic>
+	<monogr>
+		<title level="j">Annu Rev Microbiol</title>
+		<imprint>
+			<biblScope unit="volume">66</biblScope>
+			<biblScope unit="page" from="325" to="347" />
+			<date type="published" when="2012">2012</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b50">
+	<analytic>
+		<title level="a" type="main">Crosstalk and the evolution of specificity in two-component signaling</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">A</forename><surname>Rowland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">J</forename><surname>Deeds</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.1317178111</idno>
+		<idno type="PMID">24706803</idno>
+		<ptr target="https://doi.org/10.1073/pnas.1317178111" />
+	</analytic>
+	<monogr>
+		<title level="j">Proc Natl Acad Sci USA</title>
+		<imprint>
+			<biblScope unit="volume">111</biblScope>
+			<biblScope unit="issue">15</biblScope>
+			<biblScope unit="page" from="5550" to="5555" />
+			<date type="published" when="2014">2014</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b51">
+	<analytic>
+		<title level="a" type="main">The Hungarian Method for the assignment problem</title>
+		<author>
+			<persName><forename type="first">H</forename><forename type="middle">W</forename><surname>Kuhn</surname></persName>
+		</author>
+		<idno type="DOI">10.1002/nav.3800020109</idno>
+		<ptr target="https://doi.org/10.1002/nav.3800020109" />
+	</analytic>
+	<monogr>
+		<title level="j">Naval Research Logistics Quarterly</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="83" to="97" />
+			<date type="published" when="1955">1955</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b52">
+	<analytic>
+		<title level="a" type="main">Algorithms for the Assignment and Transportation Problems</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Munkres</surname></persName>
+		</author>
+		<idno type="DOI">10.1137/0105003</idno>
+		<ptr target="https://doi.org/10.1137/0105003" />
+	</analytic>
+	<monogr>
+		<title level="j">Journal of the Society for Industrial and Applied Mathematics</title>
+		<imprint>
+			<biblScope unit="volume">5</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<biblScope unit="page" from="32" to="38" />
+			<date type="published" when="1957">1957</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b53">
+	<monogr>
+		<title level="m" type="main">Functions for the rectangular assignment problem</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Buehren</surname></persName>
+		</author>
+		<ptr target="https://fr.mathworks.com/matlabcentral/fileexchange/6543-functions-for-the-rectangular-assignment-problem" />
+		<imprint>
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b54">
+	<analytic>
+		<title level="a" type="main">P2CS: a two-component system resource for prokaryotic signal transduction research</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Barakat</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Ortet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Jourlin-Castelli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Ansaldi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Mejean</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">E</forename><surname>Whitworth</surname></persName>
+		</author>
+		<idno type="DOI">10.1186/1471-2164-10-315</idno>
+		<idno type="PMID">19604365</idno>
+		<ptr target="https://doi.org/10.1186/1471-2164-10-315" />
+	</analytic>
+	<monogr>
+		<title level="j">BMC Genomics</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page">315</biblScope>
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b55">
+	<analytic>
+		<title level="a" type="main">P2CS: updates of the prokaryotic two-component systems database</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Ortet</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><forename type="middle">E</forename><surname>Whitworth</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Santaella</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Achouak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Barakat</surname></persName>
+		</author>
+		<idno type="DOI">10.1093/nar/gku968</idno>
+		<idno type="PMID">25324303</idno>
+		<ptr target="https://doi.org/10.1093/nar/gku968" />
+	</analytic>
+	<monogr>
+		<title level="j">Nucleic Acids Res</title>
+		<imprint>
+			<biblScope unit="volume">43</biblScope>
+			<biblScope unit="page" from="D536" to="541" />
+			<date type="published" when="2015">2015</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b56">
+	<analytic>
+		<title level="a" type="main">Structural insight into partner specificity and phosphoryl transfer in twocomponent signal transduction</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Casino</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">V</forename><surname>Rubio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Marina</surname></persName>
+		</author>
+		<idno type="DOI">10.1016/j.cell.2009.08.032</idno>
+		<idno type="PMID">19800110</idno>
+		<ptr target="https://doi.org/10.1016/j.cell.2009.08.032" />
+	</analytic>
+	<monogr>
+		<title level="j">Cell</title>
+		<imprint>
+			<biblScope unit="volume">139</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<biblScope unit="page" from="325" to="336" />
+			<date type="published" when="2009">2009</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b57">
+	<analytic>
+		<title level="a" type="main">Snapshots of the maltose transporter during ATP hydrolysis</title>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">L</forename><surname>Oldham</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Chen</surname></persName>
+		</author>
+		<idno type="DOI">10.1073/pnas.1108858108</idno>
+		<idno type="PMID">21825153</idno>
+		<ptr target="https://doi.org/10.1073/pnas.1108858108" />
+	</analytic>
+	<monogr>
+		<title level="j">Proc Natl Acad Sci USA</title>
+		<imprint>
+			<biblScope unit="volume">108</biblScope>
+			<biblScope unit="issue">37</biblScope>
+			<biblScope unit="page" from="15152" to="15156" />
+			<date type="published" when="2011">2011</date>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>
