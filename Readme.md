@@ -4,7 +4,7 @@
 
 Resources and install path of the resources
 
-* Dataseer corpus (`dataseer/`), biomedicine domain, focusing on identification of data sentences, annotations of implicit/explicit data mentions, data types and annotation of data acquisition devices (but missing annotation of explicit dataset names)
+* Dataseer corpus (`dataseer/`), biomedicine domain, focusing on identification of data sentences, annotations of implicit/explicit data mentions, data types and annotation of data acquisition devices (but missing annotation of explicit dataset names), **non-public**
 * https://github.com/xjaeh/ner_dataset_recognition (`ner_dataset_recognition/`), IR/ML/NLP domain, only explicitly named and reused datasets
 * oddpub dataset https://osf.io/yv5rx/ (`oddpub-dataset/`), biomedicine domain, only article screening (no annotation), only datasets with open access statements, only explicit datasets
 * transparency-indicators dataset https://osf.io/e58ws/ (`transparency-indicators-dataset/`), biomedicine domain, only article screening (no annotation)
@@ -33,4 +33,12 @@ python3 assemble.py --output combined/
 ```
 
 This will create under `combined/` one JSON file per orginal corpus in the same JSON format using span offsets. 
+
+## Recycled and upcycled resources
+
+- sentences from https://github.com/xjaeh/ner_dataset_recognition have been reviewed, re-annotated to follow common dataset annotation principles: it covers now new dataset (not just reused ones) and annotation is at dataset level (avoid one annotation for a conjunction expression of datasets). They can be used to train public models for dataset name recognition.  
+
+- sentences from dataseer: labeling of data sentences infomation. Other annotations are implicit data (it should be complete) and data acquisition devices (imcomplete), **non-public**: can be used for eval, but not for training public models (and can't be shared of course).
+
+
 
