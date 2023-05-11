@@ -451,7 +451,8 @@ def process_oddpub(output, fulltext_tei_path="oddpub-dataset/tei"):
 
 
 def process_oddpub_file(dataset_path_csv, fulltext_tei_path, map_publications, document_data_sentence, document_software_sentence):
-    # read "dataset" file
+    # read oddpub "dataset" file, try to match the "mentions" expressed in these oddpub files with full sentences as 
+    # present in the full texts, via the generated TEI XML files of these full text
     
     df = pd.read_csv(dataset_path_csv, keep_default_na=False) 
     
@@ -526,6 +527,7 @@ def process_oddpub_file(dataset_path_csv, fulltext_tei_path, map_publications, d
                 sentence = sentence.strip()
 
                 if len(sentence) < 20:
+                    # if the "sentence" is to short, we skip it because no dataset or software mention will match it
                     continue
 
                 simplified_sentence = simplify_text(sentence)
@@ -534,6 +536,7 @@ def process_oddpub_file(dataset_path_csv, fulltext_tei_path, map_publications, d
 
                 for data_statement in data_statements:
                     if len(data_statement) < 20:
+                        # if the "sentence" is to short, we skip it because no dataset or software mention will match it
                         continue
 
                     data_statement = data_statement.replace("\n"," ")
@@ -558,6 +561,7 @@ def process_oddpub_file(dataset_path_csv, fulltext_tei_path, map_publications, d
 
                 for software_statement in software_statements:
                     if len(software_statement) < 20:
+                        # if the "sentence" is to short, we skip it because no dataset or software mention will match it
                         continue
 
                     software_statement = software_statement.replace("\n"," ")
