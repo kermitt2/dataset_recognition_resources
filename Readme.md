@@ -6,6 +6,7 @@ Resources and install path of the resources
 
 * Dataseer corpus (`dataseer/`), biomedicine domain, focusing on identification of data sentences, annotations of implicit/explicit data mentions, data types and annotation of data acquisition devices (but missing annotation of explicit dataset names), **non-public**
 * https://github.com/xjaeh/ner_dataset_recognition (`ner_dataset_recognition/`), IR/ML/NLP domain, only explicitly named and reused datasets
+* https://www.kaggle.com/datasets/panhuitong/dmdd-corpus (`dmdd/`) is close to the previous one (Heddes et al., 2021), same IR/ML/NLP domain, only explicitly named and reused datasets, 450 manually annotated articles but false negative not manually corrected 
 * oddpub dataset https://osf.io/yv5rx/ (`oddpub-dataset/`), biomedicine domain, only article screening (no annotation), only datasets with open access statements, only explicit datasets
 * transparency-indicators dataset https://osf.io/e58ws/ (`transparency-indicators-dataset/`), biomedicine domain, only article screening (no annotation)
 * Coleridge corpus (`coleridge/`), partial (only a very small subset of named "datasets" considered), no explicit annotation, no valid definition of datasets (e.g. research initiative name considered as "dataset")
